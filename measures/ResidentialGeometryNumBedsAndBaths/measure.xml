@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>f5a09bc1-ac5a-4eba-8b43-1aaebde5d626</version_id>
-  <version_modified>20170330T205257Z</version_modified>
+  <version_id>e7204d33-1bb4-46f3-9971-acd120794993</version_id>
+  <version_modified>20170330T220748Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -81,18 +81,6 @@
       <checksum>262E164D</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -108,7 +96,19 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

@@ -29,7 +29,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_file_path", true)
     arg.setDisplayName("HPXML File Path")
     arg.setDescription("Absolute (or relative) path of the HPXML file.")
-    arg.setDefaultValue("./resources/audit.xml")
+    arg.setDefaultValue("./resources/0da3f1b88d6b3ee7ea3acda8bfbb238f.xml")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_file_path", false)
@@ -94,15 +94,19 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
     # Need to ensure this has the same order as https://github.com/NREL/OpenStudio-Beopt#new-construction-workflow-for-users
     measures_tested = ["ResidentialLocation", 
-                       "ResidentialGeometrySingleFamilyDetached", 
                        "ResidentialGeometryNumBedsAndBaths", 
                        "ResidentialGeometryNumOccupants", 
-                       "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", 
-                       "ResidentialConstructionsFoundationsFloorsSlab", 
-                       "ResidentialConstructionsWallsExteriorWoodStud", 
-                       "ResidentialConstructionsUninsulatedSurfaces", 
-                       "ResidentialHVACFurnaceFuel", 
-                       "ResidentialHVACHeatingSetpoints"] # TODO: Remove
+                       "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
+                       "ResidentialConstructionsCeilingsRoofsFinishedRoof",
+                       "ResidentialConstructionsFoundationsFloorsSlab",
+                       "ResidentialConstructionsWallsExteriorWoodStud",
+                       "ResidentialConstructionsFoundationsFloorsBasementFinished",
+                       "ResidentialConstructionsFoundationsFloorsCrawlspace",
+                       "ResidentialConstructionsUninsulatedSurfaces",
+                       "ResidentialConstructionsWindows", 
+                       "ResidentialHVACFurnaceFuel",
+                       "ResidentialHVACHeatingSetpoints"
+                       ] # TODO: Remove
     
     # Obtain measures and default arguments
     measures = {}
@@ -127,9 +131,9 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     # ResidentialLocation
     if weather_file_path.nil?
     
-      city_municipality = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality/text()")
-      state_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/StateCode/text()")
-      zip_code = doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/ZipCode/text()")
+      city_municipality = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality"]
+      state_code = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/StateCode"]
+      zip_code = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/ZipCode"]
       
       lat, lng = get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
       if lat.nil? and lng.nil?
@@ -149,13 +153,288 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     measures["ResidentialLocation"]["weather_directory"] = File.dirname(weather_file_path)
     measures["ResidentialLocation"]["weather_file_name"] = File.basename(weather_file_path)
     
+    # Geometry
+    
+    # living zone, space
+    living_zone = OpenStudio::Model::ThermalZone.new(model)
+    living_zone.setName(Constants.LivingZone)
+    living_space = OpenStudio::Model::Space.new(model)
+    living_space.setName(Constants.LivingSpace)
+    living_space.setThermalZone(living_zone)    
+    
+    # foundation zone, space
+    foundation_type = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/FoundationType"]
+    unless foundation_type.nil?
+      unless foundation_type.elements["SlabOnGrade"]
+        foundation_zone = OpenStudio::Model::ThermalZone.new(model)
+        foundation_space = OpenStudio::Model::Space.new(model)
+        if foundation_type.elements["Basement/Conditioned/text()='true'"]
+          foundation_zone.setName(Constants.FinishedBasementZone)
+          foundation_space.setName(Constants.FinishedBasementSpace)
+        elsif foundation_type.elements["Basement/Conditioned/text()='false'"]
+          foundation_zone.setName(Constants.UnfinishedBasementZone)
+          foundation_space.setName(Constants.UnfinishedBasementSpace)
+        elsif foundation_type.elements["Crawlspace"]
+          foundation_zone.setName(Constants.CrawlZone)
+          foundation_space.setName(Constants.CrawlSpace)
+        end        
+        foundation_space.setThermalZone(foundation_zone)
+      end
+    end
+    
+    avg_ceil_hgt = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
+    if avg_ceil_hgt.nil?
+      avg_ceil_hgt = 8.0
+    else
+      avg_ceil_hgt = avg_ceil_hgt.text.to_f
+    end
+    
+    num_floors = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"]
+    if num_floors.nil?
+      num_floors = 1.0
+    else
+      num_floors = num_floors.text.to_f
+    end
+    
+    # foundations floors, walls
+    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+    
+      foundation.elements.each("Slab") do |slab|
+      
+        next if slab.elements["Area"].nil?
+        
+        slab_width = OpenStudio.convert(Math::sqrt(slab.elements["Area"].text.to_f),"ft","m").get
+        slab_length = OpenStudio.convert(slab.elements["Area"].text.to_f,"ft^2","m^2").get / slab_width
+        
+        z_origin = 0
+        unless slab.elements["DepthBelowGrade"].nil?
+          z_origin = -OpenStudio.convert(slab.elements["DepthBelowGrade"].text.to_f,"ft","m").get
+        end
+        
+        vertices = OpenStudio::Point3dVector.new
+        vertices << OpenStudio::Point3d.new(0, 0, z_origin)
+        vertices << OpenStudio::Point3d.new(0, slab_width, z_origin)
+        vertices << OpenStudio::Point3d.new(slab_length, slab_width, z_origin)
+        vertices << OpenStudio::Point3d.new(slab_length, 0, z_origin)
+        
+        surface = OpenStudio::Model::Surface.new(vertices, model)
+        surface.setName(slab.elements["SystemIdentifier"].attributes["id"])
+        surface.setSurfaceType("Floor") 
+        surface.setOutsideBoundaryCondition("Ground")
+        if z_origin < 0
+          surface.setSpace(foundation_space)
+        else
+          surface.setSpace(living_space)
+        end
+        
+      end
+      
+      foundation.elements.each("FrameFloor") do |framefloor|
+      
+        next if framefloor.elements["Area"].nil?
+
+        framefloor_width = OpenStudio.convert(Math::sqrt(framefloor.elements["Area"].text.to_f),"ft","m").get
+        framefloor_length = OpenStudio.convert(framefloor.elements["Area"].text.to_f,"ft^2","m^2").get / framefloor_width
+        
+        z_origin = 0
+        
+        vertices = OpenStudio::Point3dVector.new
+        vertices << OpenStudio::Point3d.new(0, 0, z_origin)
+        vertices << OpenStudio::Point3d.new(framefloor_length, 0, z_origin)
+        vertices << OpenStudio::Point3d.new(framefloor_length, framefloor_width, z_origin)
+        vertices << OpenStudio::Point3d.new(0, framefloor_width, z_origin)
+        
+        surface = OpenStudio::Model::Surface.new(vertices, model)
+        surface.setName(framefloor.elements["SystemIdentifier"].attributes["id"])
+        surface.setSurfaceType("RoofCeiling")
+        surface.setSpace(foundation_space)
+        surface.createAdjacentSurface(living_space)
+      
+      end
+      
+      foundation.elements.each("FoundationWall") do |wall|
+        
+        if not wall.elements["Length"].nil? and not wall.elements["Height"].nil?
+        
+          wall_length = OpenStudio.convert(wall.elements["Length"].text.to_f,"ft","m").get
+          wall_height = OpenStudio.convert(wall.elements["Height"].text.to_f,"ft","m").get
+        
+        elsif not wall.elements["Area"].nil?
+        
+          wall_length = OpenStudio.convert(Math::sqrt(wall.elements["Area"].text.to_f),"ft","m").get
+          wall_height = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_length
+        
+        else
+        
+          next
+        
+        end
+        
+        z_origin = 0
+        unless wall.elements["BelowGradeDepth"].nil?
+          z_origin = -OpenStudio.convert(wall.elements["BelowGradeDepth"].text.to_f,"ft","m").get
+        end
+        
+        vertices = OpenStudio::Point3dVector.new
+        vertices << OpenStudio::Point3d.new(0, 0, z_origin)
+        vertices << OpenStudio::Point3d.new(0, 0, z_origin + wall_height)
+        vertices << OpenStudio::Point3d.new(wall_length, 0, z_origin + wall_height)
+        vertices << OpenStudio::Point3d.new(wall_length, 0, z_origin)
+        
+        surface = OpenStudio::Model::Surface.new(vertices, model)
+        surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
+        surface.setSurfaceType("Wall") 
+        surface.setOutsideBoundaryCondition("Ground")
+        surface.setSpace(foundation_space)
+        
+      end
+    
+    end
+        
+    # exterior walls
+    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall") do |wall|
+    
+      next if wall.elements["Area"].nil?
+      
+      unless wall.elements["ExteriorAdjacentTo"].nil?
+        next unless wall.elements["ExteriorAdjacentTo"].text == "ambient"
+      end
+      
+      wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
+      wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
+           
+      vertices = OpenStudio::Point3dVector.new
+      vertices << OpenStudio::Point3d.new(0, 0, 0)
+      vertices << OpenStudio::Point3d.new(0, 0, wall_height)
+      vertices << OpenStudio::Point3d.new(wall_length, 0, wall_height)
+      vertices << OpenStudio::Point3d.new(wall_length, 0, 0)
+      
+      surface = OpenStudio::Model::Surface.new(vertices, model)
+      surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
+      surface.setSurfaceType("Wall") 
+      surface.setOutsideBoundaryCondition("Outdoors")
+      surface.setSpace(living_space)
+      
+    end
+    
+    # attics
+    attic_space = nil
+    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
+    
+      next if attic.elements["Area"].nil?
+    
+      attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
+      attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
+    
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+    
+      vertices = OpenStudio::Point3dVector.new
+      vertices << OpenStudio::Point3d.new(0, 0, z_origin)
+      vertices << OpenStudio::Point3d.new(0, attic_width, z_origin)
+      vertices << OpenStudio::Point3d.new(attic_length, attic_width, z_origin)
+      vertices << OpenStudio::Point3d.new(attic_length, 0, z_origin)
+      
+
+      if attic.elements["AtticType"].text == "cathedral ceiling"
+        surface = OpenStudio::Model::Surface.new(OpenStudio::reverse(vertices), model)
+        surface.setName(attic.elements["SystemIdentifier"].attributes["id"])
+        surface.setSurfaceType("RoofCeiling")
+        surface.setOutsideBoundaryCondition("Outdoors")
+        surface.setSpace(living_space)
+      elsif ["venting unknown attic", "vented attic"].include? attic.elements["AtticType"].text
+        if attic_space.nil?
+          attic_zone = OpenStudio::Model::ThermalZone.new(model)
+          attic_zone.setName(Constants.UnfinishedAtticZone)
+          attic_space = OpenStudio::Model::Space.new(model)
+          attic_space.setName(Constants.UnfinishedAtticSpace)
+          attic_space.setThermalZone(attic_zone)
+        end
+        surface = OpenStudio::Model::Surface.new(vertices, model)
+        surface.setName(attic.elements["SystemIdentifier"].attributes["id"])
+        surface.setSurfaceType("Floor")
+        surface.setSpace(attic_space)
+        surface.createAdjacentSurface(living_space)
+        # FIXME: must assume a roof so the unfinished attic measure runs
+        surface = OpenStudio::Model::Surface.new(OpenStudio::reverse(vertices), model)
+        surface.setName("#{attic.elements["SystemIdentifier"].attributes["id"]} roof")
+        surface.setSurfaceType("RoofCeiling")
+        surface.setOutsideBoundaryCondition("Outdoors")
+        surface.setSpace(attic_space)
+      else
+        puts "#{attic.elements["AtticType"].text} not handled yet."
+      end
+    
+    end
+    
+    # windows
+    surface_window_area = {}
+    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window") do |window|
+      next if window.elements["AttachedToWall"].nil? # TODO: this is probably rare
+      next if window.elements["Area"].nil?
+      if surface_window_area.keys.include? window.elements["AttachedToWall"].attributes["idref"]
+        surface_window_area[window.elements["AttachedToWall"].attributes["idref"]] += window.elements["Area"].text.to_f
+      else
+        surface_window_area[window.elements["AttachedToWall"].attributes["idref"]] = window.elements["Area"].text.to_f
+      end
+    end
+    
+    max_single_window_area = 12.0 # sqft
+    window_gap_y = 1.0 # ft; distance from top of wall
+    window_gap_x = 0.2 # ft; distance between windows in a two-window group
+    aspect_ratio = 1.333
+    facade = Constants.FacadeBack
+    model.getSurfaces.each do |surface|
+      next unless surface_window_area.keys.include? surface.name.to_s
+      next if surface.outsideBoundaryCondition.downcase == "ground" # TODO: can't have windows on surfaces adjacent to ground in energyplus
+      add_windows_to_wall(surface, surface_window_area[surface.name.to_s], window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facade, model, runner)      
+    end
+    
+    # rotate surfaces about the origin so you can see them in sketchup more easily
+    spacing = 90.0 # deg
+    ["wall", "floor", "roofceiling"].each do |surface_type|
+      
+      i = 0.0
+      model.getSurfaces.each do |surface|
+      
+        next unless surface.surfaceType.downcase == surface_type
+        
+        m = OpenStudio::Matrix.new(4, 4, 0)
+        m[0,0] = Math::cos(i * Math::PI / 180.0)
+        m[1,1] = Math::cos(-i * Math::PI / 180.0)
+        m[0,1] = -Math::sin(-i * Math::PI / 180.0)
+        m[1,0] = Math::sin(-i * Math::PI / 180.0)
+        m[2,2] = 1
+        m[3,3] = 1
+        
+        transformation = OpenStudio::Transformation.new(m)
+        
+        surface.subSurfaces.each do |subsurface|
+          next unless subsurface.subSurfaceType.downcase == "fixedwindow"
+          subsurface.setVertices(transformation * subsurface.vertices)
+        end
+        surface.setVertices(transformation * surface.vertices)
+        
+        i += spacing
+        
+      end
+
+    end       
+        
+    # Store building unit information
+    unit = OpenStudio::Model::BuildingUnit.new(model)
+    unit.setBuildingUnitType(Constants.BuildingUnitTypeResidential)
+    unit.setName(Constants.ObjectNameBuildingUnit)
+    model.getSpaces.each do |space|
+      space.setBuildingUnit(unit)
+    end
+        
     # ResidentialGeometryNumBedsAndBaths
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bedrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms/text()")
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bathrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms/text()")
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bedrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bathrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms")
 
     # ResidentialGeometryNumOccupants
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents/text()")
-    
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")        
+
     # Residentialxx...
     # Residentialyy...
     
@@ -181,13 +460,108 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
     return true
 
-  end  
+  end
+  
+  def add_windows_to_wall(surface, window_area, window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facade, model, runner)
+    wall_width = Geometry.get_surface_length(surface)
+    wall_height = Geometry.get_surface_height(surface)
+    
+    # Calculate number of windows needed
+    num_windows = (window_area / max_single_window_area).ceil
+    num_window_groups = (num_windows / 2.0).ceil
+    num_window_gaps = num_window_groups
+    if num_windows % 2 == 1
+        num_window_gaps -= 1
+    end
+    window_width = Math.sqrt((window_area / num_windows.to_f) / aspect_ratio)
+    window_height = (window_area / num_windows.to_f) / window_width
+    width_for_windows = window_width * num_windows.to_f + window_gap_x * num_window_gaps.to_f
+    if width_for_windows > wall_width
+        runner.registerError("Could not fit windows on #{surface.name.to_s}.")
+        return false
+    end
+    
+    # Position window from top of surface
+    win_top = wall_height - window_gap_y
+    if Geometry.is_gable_wall(surface)
+        # For gable surfaces, position windows from bottom of surface so they fit
+        win_top = window_height + window_gap_y
+    end
+    
+    # Groups of two windows
+    win_num = 0
+    for i in (1..num_window_groups)
+        
+        # Center vertex for group
+        group_cx = wall_width * i / (num_window_groups+1).to_f
+        group_cy = win_top - window_height / 2.0
+        
+        if not (i == num_window_groups and num_windows % 2 == 1)
+            # Two windows in group
+            win_num += 1
+            add_window_to_wall(surface, window_width, window_height, group_cx - window_width/2.0 - window_gap_x/2.0, group_cy, win_num, facade, model, runner)
+            win_num += 1
+            add_window_to_wall(surface, window_width, window_height, group_cx + window_width/2.0 + window_gap_x/2.0, group_cy, win_num, facade, model, runner)
+        else
+            # One window in group
+            win_num += 1
+            add_window_to_wall(surface, window_width, window_height, group_cx, group_cy, win_num, facade, model, runner)
+        end
+    end
+    runner.registerInfo("Added #{num_windows.to_s} window(s), totaling #{window_area.round(1).to_s} ft^2, to #{surface.name}.")
+    return true
+  end
+  
+  def add_window_to_wall(surface, win_width, win_height, win_center_x, win_center_y, win_num, facade, model, runner)
+    
+    # Create window vertices in relative coordinates, ft
+    upperleft = [win_center_x - win_width/2.0, win_center_y + win_height/2.0]
+    upperright = [win_center_x + win_width/2.0, win_center_y + win_height/2.0]
+    lowerright = [win_center_x + win_width/2.0, win_center_y - win_height/2.0]
+    lowerleft = [win_center_x - win_width/2.0, win_center_y - win_height/2.0]
+    
+    # Convert to 3D geometry; assign to surface
+    window_polygon = OpenStudio::Point3dVector.new
+    if facade == Constants.FacadeFront
+        multx = 1
+        multy = 0
+    elsif facade == Constants.FacadeBack
+        multx = -1
+        multy = 0
+    elsif facade == Constants.FacadeLeft
+        multx = 0
+        multy = -1
+    elsif facade == Constants.FacadeRight
+        multx = 0
+        multy = 1
+    end
+    if facade == Constants.FacadeBack or facade == Constants.FacadeLeft
+        leftx = Geometry.getSurfaceXValues([surface]).max
+        lefty = Geometry.getSurfaceYValues([surface]).max
+    else
+        leftx = Geometry.getSurfaceXValues([surface]).min
+        lefty = Geometry.getSurfaceYValues([surface]).min
+    end
+    bottomz = Geometry.getSurfaceZValues([surface]).min
+    [upperleft, lowerleft, lowerright, upperright ].each do |coord|
+        newx = OpenStudio.convert(leftx + multx * coord[0], "ft", "m").get
+        newy = OpenStudio.convert(lefty + multy * coord[0], "ft", "m").get
+        newz = OpenStudio.convert(bottomz + coord[1], "ft", "m").get
+        window_vertex = OpenStudio::Point3d.new(newx, newy, newz)
+        window_polygon << window_vertex
+    end
+    sub_surface = OpenStudio::Model::SubSurface.new(window_polygon, model)
+    sub_surface.setName("#{surface.name} - Window #{win_num.to_s}")
+    sub_surface.setSurface(surface)
+    sub_surface.setSubSurfaceType("FixedWindow")
+    
+  end
   
   def update_measure_args(doc, measures, measure, arg, xpath)
     new_measure_args = measures[measure]
-    val = doc.elements.each(xpath)
-    unless val.empty?
-      new_measure_args[arg] = val[0].to_s
+    val = doc.elements[xpath]
+    unless val.nil?
+      new_measure_args[arg] = val.text
     end
     measures[measure].update(new_measure_args)
     return measures
@@ -221,12 +595,12 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
   def get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
     postalcodes = CSV.read(File.expand_path(File.join(resources_dir, "postalcodes.csv")))
     postalcodes.each do |row|
-      if not zip_code.empty?
-        if zip_code[0] == row[0]
+      if not zip_code.nil?
+        if zip_code.text == row[0]
           return row[4], row[5]
         end
-      elsif not city_municipality.empty? and not state_code.empty?
-        if city_municipality[0].downcase == row[1].downcase and state_code[0].downcase == row[2].downcase
+      elsif not city_municipality.nil? and not state_code.nil?
+        if city_municipality.text.downcase == row[1].downcase and state_code.text.downcase == row[2].downcase
           return row[4], row[5]
         end
       else

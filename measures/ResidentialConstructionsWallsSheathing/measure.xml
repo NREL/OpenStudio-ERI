@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>b2f97156-2181-4bf6-81a1-aaa21977d274</version_id>
-  <version_modified>20170330T205256Z</version_modified>
+  <version_id>e12eb46a-7562-4dc2-90f7-8711b4b313f0</version_id>
+  <version_modified>20170330T220747Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
@@ -70,6 +70,12 @@
   </attributes>
   <files>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.0</identifier>
@@ -79,6 +85,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>E2B1A81A</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
@@ -103,18 +115,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
     </file>
   </files>
 </measure>

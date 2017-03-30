@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_miscellaneous_electric_loads</name>
   <uid>3ac41688-ef52-4679-b79c-8cbdf7cbd0e7</uid>
-  <version_id>c9050deb-7cd6-4e3d-af4a-598a6b1cd2c1</version_id>
-  <version_modified>20170330T205311Z</version_modified>
+  <version_id>8c541add-8204-4fa9-bf94-929e7ce2191c</version_id>
+  <version_modified>20170330T220809Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialMiscellaneousElectricLoads</class_name>
   <display_name>Set Residential Plug Loads</display_name>
@@ -65,6 +65,12 @@
   </attributes>
   <files>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -80,18 +86,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>EC1A2DA8</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -121,7 +115,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

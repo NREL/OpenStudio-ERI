@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>815a08f8-d380-495b-ae4e-075299534a32</version_id>
-  <version_modified>20170330T205302Z</version_modified>
+  <version_id>5053670a-a69b-4dca-8c65-fdf74cc17366</version_id>
+  <version_modified>20170330T220755Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
@@ -290,10 +290,27 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.6</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A8C613F1</checksum>
+    </file>
+    <file>
       <filename>process_boiler_electric_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>F237FBF2</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
@@ -380,30 +397,6 @@
       <checksum>4C18854D</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CBDAEC35</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -416,21 +409,28 @@
       <checksum>8F2B366B</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.6</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>E36779AB</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD07CF70</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

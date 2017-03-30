@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>9cf62206-b8ed-49d5-8fb7-5a2b8d63fd5f</version_id>
-  <version_modified>20170330T205257Z</version_modified>
+  <version_id>ca339c77-5e44-4d37-95b5-93ccb1e319c9</version_id>
+  <version_modified>20170330T220747Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -123,6 +123,18 @@
       <checksum>AB0BE816</checksum>
     </file>
     <file>
+      <filename>SFA_4units_1story_FB_UA_Denver_HipRoof.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>093E97A9</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_FB_UA_Denver_FlatRoof.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9B9CBC42</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_GRG_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -139,41 +151,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>8B9E6CC5</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>B6F3AE01</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>262E164D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver_HipRoof.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>093E97A9</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_FB_UA_Denver_FlatRoof.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9B9CBC42</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Inset.osm</filename>
@@ -200,6 +177,23 @@
       <checksum>E5737D44</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B6F3AE01</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>262E164D</checksum>
+    </file>
+    <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -209,7 +203,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>dde67055-f121-46f3-ac82-8c508b270550</version_id>
-  <version_modified>20170330T205303Z</version_modified>
+  <version_id>f730eabd-8f9d-439e-aa2f-14663e156d4d</version_id>
+  <version_modified>20170330T220758Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
@@ -157,6 +157,16 @@
       </choices>
     </argument>
     <argument>
+      <name>max_temp</name>
+      <display_name>Max Supply Temp</display_name>
+      <description>Maximum supply air temperature.</description>
+      <type>Double</type>
+      <units>F</units>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>120</default_value>
+    </argument>
+    <argument>
       <name>fan_power_installed</name>
       <display_name>Installed Supply Fan Power</display_name>
       <description>Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.</description>
@@ -208,6 +218,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>15F47A90</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
@@ -294,36 +310,6 @@
       <checksum>4C18854D</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>041A8AB9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CBDAEC35</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -336,6 +322,24 @@
       <checksum>8F2B366B</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>041A8AB9</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -344,13 +348,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2532278D</checksum>
+      <checksum>6E3655F0</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>DD07CF70</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>e512efea-1c68-47b1-a58d-3f728b2a30a9</version_id>
-  <version_modified>20170330T205251Z</version_modified>
+  <version_id>38ebdd43-db2d-4eac-a848-ccfe7d2a0efe</version_id>
+  <version_modified>20170330T220742Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Set Residential Electric Cooking Range</display_name>
@@ -99,6 +99,12 @@
   </attributes>
   <files>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -114,18 +120,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>09AEDCFF</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -179,7 +173,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

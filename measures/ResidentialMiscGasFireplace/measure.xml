@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>e4c989ec-9a3e-40e8-85f8-0a22d39864e1</version_id>
-  <version_modified>20170330T205310Z</version_modified>
+  <version_id>9c626d28-428f-425c-9987-80f7297da5ad</version_id>
+  <version_modified>20170330T220808Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>
@@ -110,6 +110,12 @@
   </attributes>
   <files>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -125,18 +131,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>BCD7DC1D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -166,7 +160,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

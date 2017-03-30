@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>c837f54d-12b4-4ea5-95be-856d22ba7c89</version_id>
-  <version_modified>20170330T205304Z</version_modified>
+  <version_id>9861ba9b-f619-40ff-84f7-a1552a8197fa</version_id>
+  <version_modified>20170330T220758Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -566,6 +566,18 @@
       <checksum>E2F88296</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F13D8428</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CBDAEC35</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -650,47 +662,6 @@
       <checksum>4C18854D</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>24355322</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F13D8428</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CBDAEC35</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -706,7 +677,36 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>5E0E3007</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD07CF70</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>19d9b6f3-0fa7-4311-b507-f6e8856ff19e</version_id>
-  <version_modified>20170330T205312Z</version_modified>
+  <version_id>43949190-f9ac-49ff-8ca2-e48b1e7bf181</version_id>
+  <version_modified>20170330T220810Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -220,36 +220,6 @@
       <checksum>4301A4E7</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Anchorage.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>86045314</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>041A8AB9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Anchorage.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -274,10 +244,40 @@
       <checksum>8F2B366B</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Anchorage.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>86045314</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>041A8AB9</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD07CF70</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

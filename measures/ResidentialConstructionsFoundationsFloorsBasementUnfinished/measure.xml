@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_unfinished</name>
   <uid>ebc21070-2d4b-4a2a-bd15-f18bf3e77b49</uid>
-  <version_id>acfa8204-0cf4-4c40-ad21-6a4e6e7a8fff</version_id>
-  <version_modified>20170330T205253Z</version_modified>
+  <version_id>26830ee6-ac30-4da7-ae6f-e1b4eff18c0c</version_id>
+  <version_modified>20170330T220744Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementUnfinished</class_name>
   <display_name>Set Residential Foundations/Floors - Unfinished Basement Constructions</display_name>
@@ -202,6 +202,30 @@
       <checksum>52EE59D8</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_CS_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3678EF7D</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_CS_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6DF9D149</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F6C1126D</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F13D8428</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -232,46 +256,22 @@
       <checksum>262E164D</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
+      <checksum>3A58A247</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
+      <checksum>37983CE6</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_CS_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3678EF7D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_CS_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6DF9D149</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F6C1126D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F13D8428</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

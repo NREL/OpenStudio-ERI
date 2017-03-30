@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_heater_elec</name>
   <uid>29865d0a-e979-4f09-87b9-7fa7154b9833</uid>
-  <version_id>14e21bf9-3f10-49cd-8ecc-92a2baa28ff1</version_id>
-  <version_modified>20170330T205311Z</version_modified>
+  <version_id>8ab0ac72-c05d-4f50-9786-43e3b38c752a</version_id>
+  <version_modified>20170330T220809Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolHeaterElec</class_name>
   <display_name>Set Residential Pool Electric Heater</display_name>
@@ -95,6 +95,12 @@
   </attributes>
   <files>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -110,18 +116,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>4C37E3CD</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -157,7 +151,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

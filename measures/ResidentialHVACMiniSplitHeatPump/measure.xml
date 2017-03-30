@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_vrf_minisplit</name>
   <uid>402b168f-ed99-46bb-b367-103937011e91</uid>
-  <version_id>dd9254a1-2ebe-4dd9-acd5-1b96c0a55798</version_id>
-  <version_modified>20170330T222905Z</version_modified>
+  <version_id>96e55ce2-b40d-4c20-8fae-4d35fd635181</version_id>
+  <version_modified>20170330T220759Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVRFMinisplit</class_name>
   <display_name>Set Residential Mini-Split Heat Pump</display_name>
@@ -479,6 +479,12 @@
       <checksum>B14A04A6</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CBDAEC35</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_ASHP.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -563,30 +569,6 @@
       <checksum>4C18854D</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CBDAEC35</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -602,7 +584,19 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD07CF70</checksum>
     </file>
     <file>
       <version>
@@ -613,7 +607,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CAA3C16C</checksum>
+      <checksum>CF74277E</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

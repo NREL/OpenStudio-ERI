@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>5954f2e9-30e7-4e0b-8572-5f1495966016</version_id>
-  <version_modified>20170330T205303Z</version_modified>
+  <version_id>99202343-fd92-4471-8817-0f41cad3cbf7</version_id>
+  <version_modified>20170330T220757Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
@@ -86,41 +86,6 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>041A8AB9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>process_dehumidifier_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DC2BD3E3</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>14CDC530</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -136,7 +101,42 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>041A8AB9</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A144BD6E</checksum>
+    </file>
+    <file>
+      <filename>process_dehumidifier_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DC2BD3E3</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD07CF70</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

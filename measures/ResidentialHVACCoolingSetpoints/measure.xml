@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>d3c9f8a4-86e8-4a6c-a200-a34d9ca5e686</version_id>
-  <version_modified>20170330T205303Z</version_modified>
+  <version_id>f6c880a5-f391-4325-b797-c38d0814e9c2</version_id>
+  <version_modified>20170330T220757Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -84,6 +84,12 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -149,36 +155,6 @@
       <checksum>3BDFAB82</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>262E164D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_CentralAC_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -191,10 +167,34 @@
       <checksum>00DA8BF9</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>262E164D</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD07CF70</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

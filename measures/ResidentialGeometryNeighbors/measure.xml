@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>21c79f5c-bb20-45c9-ad94-1ab14ea21018</version_id>
-  <version_modified>20170330T205257Z</version_modified>
+  <version_id>f686ef42-a7f1-410e-9f47-201d6c82e9b6</version_id>
+  <version_modified>20170330T220748Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -109,30 +109,6 @@
       <checksum>BBA039A3</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Eaves.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A837BAC0</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Overhangs.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>10C52030</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>041A8AB9</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -157,10 +133,34 @@
       <checksum>E9F3D715</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Eaves.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A837BAC0</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Overhangs.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>10C52030</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>041A8AB9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

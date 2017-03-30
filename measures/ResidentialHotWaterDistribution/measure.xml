@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>db0b3eae-3e92-4300-95f9-e94d020f692d</version_id>
-  <version_modified>20170330T205259Z</version_modified>
+  <version_id>260382a2-19f1-42ac-9f9d-5f4e8a0fe082</version_id>
+  <version_modified>20170330T220751Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
@@ -1056,6 +1056,12 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -1077,24 +1083,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>BE1C3240</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -1142,7 +1130,19 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>d9996864-0912-40ae-a924-7331fed805eb</version_id>
-  <version_modified>20170330T205258Z</version_modified>
+  <version_id>dd369e80-3b50-4a84-b9a7-84bc75783463</version_id>
+  <version_modified>20170330T220748Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -76,6 +76,12 @@
   </attributes>
   <files>
     <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -91,24 +97,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>0E21958D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>91730867</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -138,7 +126,19 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
+      <checksum>3A58A247</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37983CE6</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91730867</checksum>
     </file>
   </files>
 </measure>
