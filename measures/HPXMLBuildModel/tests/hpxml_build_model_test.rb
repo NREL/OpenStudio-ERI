@@ -14,7 +14,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["hpxml_file_path"]))}' does not exist or is not an .xml file.")      
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["hpxml_file_path"]))}' does not exist or is not an .xml file.")
   end
 
   def test_invalid_weather_file_path
@@ -24,7 +24,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_file_path"]))}' does not exist or is not an .epw file.")      
+    assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["weather_file_path"]))}' does not exist or is not an .epw file.")
   end  
   
   def test_invalid_measures_path
@@ -33,28 +33,29 @@ class HPXMLBuildModelTest < MiniTest::Test
     result = _test_error_or_NA(nil, args_hash)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
-    puts File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["measures_dir"]))
     assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["measures_dir"]))}' does not exist.")      
   end
   
-  def test_minimal_single_family_detached_no_weather
+  def test_rem_based_hpxml_no_weather
     args_hash = {}
     args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>2, "Construction"=>8, "Material"=>11, "Surface"=>9, "SubSurface"=>19, "ThermalZone"=>3, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
-    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))} based on lat, lng.")
   end
   
-  def test_minimal_single_family_detached_specified_weather
+  def test_rem_based_hpxml_specified_weather
     args_hash = {}
     args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>1, "Construction"=>7, "Material"=>10, "Surface"=>17, "ThermalZone"=>2, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>2, "Construction"=>8, "Material"=>11, "Surface"=>9, "SubSurface"=>19, "ThermalZone"=>3, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
-    _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end  
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
+  end
 
   private
   
@@ -127,7 +128,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
     #assert(result.info.size == num_infos)
-    assert(result.info.size > 0) 
+    assert(result.info.size > 0)
     assert(result.warnings.size == num_warnings)
     
     # get the final objects in the model
@@ -150,7 +151,7 @@ class HPXMLBuildModelTest < MiniTest::Test
         end
     end
     
-    return model
+    return result
   end
 
 end
