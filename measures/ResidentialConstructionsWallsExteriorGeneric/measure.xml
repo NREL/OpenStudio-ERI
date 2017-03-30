@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>04133e69-fece-438b-8f88-a85ca1559faf</version_id>
-  <version_modified>20170329T025836Z</version_modified>
+  <version_id>b1177242-59f2-43e6-898f-d56c2dfcc1d4</version_id>
+  <version_modified>20170329T215511Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -214,12 +214,6 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3A58A247</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -229,12 +223,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>25A8697A</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37983CE6</checksum>
     </file>
     <file>
       <filename>Generic_Test.rb</filename>
@@ -259,6 +247,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>91730867</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>37254C93</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>934BA2A6</checksum>
     </file>
   </files>
 </measure>

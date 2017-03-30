@@ -16,12 +16,6 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 #start the measure
 class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
 
-  class Supply
-    def initialize
-    end
-    attr_accessor(:static, :cfm_ton, :HPCoolingOversizingFactor, :SpaceConditionedMult, :fan_power, :eff, :min_flow_ratio, :FAN_EIR_FPLR_SPEC_coefficients, :max_temp, :Heat_Capacity, :Zone_Water_Remove_Cap_Ft_DB_RH_Coefficients, :Zone_Energy_Factor_Ft_DB_RH_Coefficients, :Zone_DXDH_PLF_F_PLR_Coefficients, :Number_Speeds, :fanspeed_ratio, :CFM_TON_Rated, :COOL_CAP_FT_SPEC_coefficients, :COOL_EIR_FT_SPEC_coefficients, :COOL_CAP_FFLOW_SPEC_coefficients, :COOL_EIR_FFLOW_SPEC_coefficients, :CoolingEIR, :SHR_Rated, :COOL_CLOSS_FPLR_SPEC_coefficients, :Capacity_Ratio_Cooling, :CondenserType, :Crankcase, :Crankcase_MaxT, :EER_CapacityDerateFactor, :HEAT_CAP_FT_SPEC_coefficients, :HEAT_EIR_FT_SPEC_coefficients, :HEAT_CAP_FFLOW_SPEC_coefficients, :HEAT_EIR_FFLOW_SPEC_coefficients, :CFM_TON_Rated_Heat, :HeatingEIR, :HEAT_CLOSS_FPLR_SPEC_coefficients, :Capacity_Ratio_Heating, :fanspeed_ratio_heating, :min_hp_temp, :max_defrost_temp, :COP_CapacityDerateFactor, :fan_power_rated, :htg_supply_air_temp, :supp_htg_max_supply_temp, :supp_htg_max_outdoor_temp)
-  end
-
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -327,59 +321,46 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
       supplementalOutputCapacity = OpenStudio::convert(supplementalOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     
-    supply = Supply.new
+    number_Speeds = 2
     
     # Performance curves
     
     # NOTE: These coefficients are in IP UNITS
-    supply.COOL_CAP_FT_SPEC_coefficients = [[3.998418659, -0.108728222, 0.001056818, 0.007512314, -0.0000139, -0.000164716], 
-                                            [3.466810106, -0.091476056, 0.000901205, 0.004163355, -0.00000919, -0.000110829]]
-    supply.COOL_EIR_FT_SPEC_coefficients = [[-4.282911381, 0.181023691, -0.001357391, -0.026310378, 0.000333282, -0.000197405], 
-                                            [-3.557757517, 0.112737397, -0.000731381, 0.013184877, 0.000132645, -0.000338716]]
-    supply.COOL_CAP_FFLOW_SPEC_coefficients = [[0.655239515, 0.511655216, -0.166894731], 
-                                               [0.618281092, 0.569060264, -0.187341356]]
-    supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1.639108268, -0.998953996, 0.359845728], 
-                                               [1.570774717, -0.914152018, 0.343377302]]
-    supply.HEAT_CAP_FT_SPEC_coefficients = [[0.335690634, 0.002405123, -0.0000464, 0.013498735, 0.0000499, -0.00000725], 
-                                            [0.306358843, 0.005376987, -0.0000579, 0.011645092, 0.0000591, -0.0000203]]
-    supply.HEAT_EIR_FT_SPEC_coefficients = [[0.36338171, 0.013523725, 0.000258872, -0.009450269, 0.000439519, -0.000653723], 
-                                            [0.981100941, -0.005158493, 0.000243416, -0.005274352, 0.000230742, -0.000336954]]
-    supply.HEAT_CAP_FFLOW_SPEC_coefficients = [[0.741466907, 0.378645444, -0.119754733], 
-                                               [0.76634609, 0.32840943, -0.094701495]]
-    supply.HEAT_EIR_FFLOW_SPEC_coefficients = [[2.153618211, -1.737190609, 0.584269478], 
-                                               [2.001041353, -1.58869128, 0.587593517]]
+    cOOL_CAP_FT_SPEC = [[3.998418659, -0.108728222, 0.001056818, 0.007512314, -0.0000139, -0.000164716], 
+                        [3.466810106, -0.091476056, 0.000901205, 0.004163355, -0.00000919, -0.000110829]]
+    cOOL_EIR_FT_SPEC = [[-4.282911381, 0.181023691, -0.001357391, -0.026310378, 0.000333282, -0.000197405], 
+                        [-3.557757517, 0.112737397, -0.000731381, 0.013184877, 0.000132645, -0.000338716]]
+    cOOL_CAP_FFLOW_SPEC = [[0.655239515, 0.511655216, -0.166894731], 
+                           [0.618281092, 0.569060264, -0.187341356]]
+    cOOL_EIR_FFLOW_SPEC = [[1.639108268, -0.998953996, 0.359845728], 
+                           [1.570774717, -0.914152018, 0.343377302]]
+    hEAT_CAP_FT_SPEC = [[0.335690634, 0.002405123, -0.0000464, 0.013498735, 0.0000499, -0.00000725], 
+                        [0.306358843, 0.005376987, -0.0000579, 0.011645092, 0.0000591, -0.0000203]]
+    hEAT_EIR_FT_SPEC = [[0.36338171, 0.013523725, 0.000258872, -0.009450269, 0.000439519, -0.000653723], 
+                        [0.981100941, -0.005158493, 0.000243416, -0.005274352, 0.000230742, -0.000336954]]
+    hEAT_CAP_FFLOW_SPEC = [[0.741466907, 0.378645444, -0.119754733], 
+                           [0.76634609, 0.32840943, -0.094701495]]
+    hEAT_EIR_FFLOW_SPEC = [[2.153618211, -1.737190609, 0.584269478], 
+                           [2.001041353, -1.58869128, 0.587593517]]
 
-    supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
+    static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
-    # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
-    supply.cfm_ton = 400 # cfm / ton
-
-    supply.HPCoolingOversizingFactor = 1 # Default to a value of 1 (currently only used for MSHPs)
-    supply.SpaceConditionedMult = 1 # Default used for central equipment    
-    
     # Cooling Coil
     hpRatedAirFlowRateCooling = 344.1 # cfm
-    supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
-    supply = HVAC._processAirSystemCoolingCoil(runner, 2, hpCoolingEER, hpCoolingInstalledSEER, hpSupplyFanPowerInstalled, hpSupplyFanPowerRated, hpSHRRated, hpCapacityRatio, hpFanspeedRatioCooling, hpCrankcase, hpCrankcaseMaxT, hpEERCapacityDerateFactor, supply)
+    cFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
+    cFM_TON_Rated = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateCooling, hpFanspeedRatioCooling, hpCapacityRatio)
+    coolingEIR = HVAC.calc_cooling_eir(number_Speeds, hpCoolingEER, hpSupplyFanPowerRated)
+    sHR_Rated_Gross = HVAC.calc_shr_rated_gross(number_Speeds, hpSHRRated, hpSupplyFanPowerRated, cFM_TON_Rated)
+    cOOL_CLOSS_FPLR_SPEC = [HVAC.calc_plr_coefficients_cooling(number_Speeds, hpCoolingInstalledSEER)] * number_Speeds
 
     # Heating Coil
     hpRatedAirFlowRateHeating = 352.2 # cfm
-    supply.CFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateHeating, hpFanspeedRatioHeating, hpCapacityRatio)
-    supply = HVAC._processAirSystemHeatingCoil(hpHeatingCOP, hpHeatingInstalledHSPF, hpSupplyFanPowerRated, hpCapacityRatio, hpFanspeedRatioHeating, hpMinT, hpCOPCapacityDerateFactor, supply)
+    cFM_TON_Rated_Heat = HVAC.calc_cfm_ton_rated(hpRatedAirFlowRateHeating, hpFanspeedRatioHeating, hpCapacityRatio)
+    heatingEIR = HVAC.calc_heating_eir(number_Speeds, hpHeatingCOP, hpSupplyFanPowerRated)
+    hEAT_CLOSS_FPLR_SPEC = [HVAC.calc_plr_coefficients_heating(number_Speeds, hpHeatingInstalledHSPF)] * number_Speeds
     
     # Heating defrost curve for reverse cycle
-    defrost_eir = OpenStudio::Model::CurveBiquadratic.new(model)
-    defrost_eir.setName("DefrostEIR")
-    defrost_eir.setCoefficient1Constant(0.1528)
-    defrost_eir.setCoefficient2x(0)
-    defrost_eir.setCoefficient3xPOW2(0)
-    defrost_eir.setCoefficient4y(0)
-    defrost_eir.setCoefficient5yPOW2(0)
-    defrost_eir.setCoefficient6xTIMESY(0)
-    defrost_eir.setMinimumValueofx(-100)
-    defrost_eir.setMaximumValueofx(100)
-    defrost_eir.setMinimumValueofy(-100)
-    defrost_eir.setMaximumValueofy(100)    
+    defrost_eir_curve = HVAC.create_curve_biquadratic(model, [0.1528, 0, 0, 0, 0, 0], "DefrostEIR", -100, 100, -100, 100)
     
     # Remove boiler hot water loop if it exists
     HVAC.remove_hot_water_loop(model, runner)    
@@ -403,24 +384,24 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, control_zone)    
       
         # _processCurvesDXHeating
-        htg_coil_stage_data = HVAC._processCurvesDXHeating(model, supply, hpOutputCapacity)
+        htg_coil_stage_data = HVAC.calc_coil_stage_data_heating(model, hpOutputCapacity, number_Speeds, heatingEIR, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC)
       
         # _processSystemHeatingCoil        
 
         htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
         htg_coil.setName(obj_name + " heating coil")
-        htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(supply.min_hp_temp,"F","C").get)
-        htg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
-        htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
-        htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir)
-        htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(supply.max_defrost_temp,"F","C").get)
+        htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(OpenStudio::convert(hpMinT,"F","C").get)
+        htg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(hpCrankcase,"kW","W").get)
+        htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(hpCrankcaseMaxT,"F","C").get)
+        htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir_curve)
+        htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(OpenStudio::convert(40.0,"F","C").get)
         htg_coil.setDefrostStrategy("ReverseCryle")
         htg_coil.setDefrostControl("OnDemand")
         htg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
         htg_coil.setFuelType("Electricity")
         
-        htg_coil_stage_data.each do |i|
-            htg_coil.addStage(i)
+        htg_coil_stage_data.each do |stage|
+            htg_coil.addStage(stage)
         end
         
         supp_htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, model.alwaysOnDiscreteSchedule)
@@ -432,7 +413,7 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         
         # _processCurvesDXCooling
 
-        clg_coil_stage_data = HVAC._processCurvesDXCooling(model, supply, hpOutputCapacity)        
+        clg_coil_stage_data = HVAC.calc_coil_stage_data_cooling(model, hpOutputCapacity, number_Speeds, coolingEIR, sHR_Rated_Gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC)
         
         # _processSystemCoolingCoil
         
@@ -443,8 +424,8 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)        
         clg_coil.setFuelType("Electricity")
              
-        clg_coil_stage_data.each do |i|
-            clg_coil.addStage(i)
+        clg_coil_stage_data.each do |stage|
+            clg_coil.addStage(stage)
         end   
         
         # _processSystemFan
@@ -452,8 +433,8 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan.setName(obj_name + " supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
-        fan.setFanEfficiency(supply.eff)
-        fan.setPressureRise(supply.static)
+        fan.setFanEfficiency(HVAC.calculate_fan_efficiency(static, hpSupplyFanPowerInstalled))
+        fan.setPressureRise(static)
         fan.setMotorEfficiency(1)
         fan.setMotorInAirstreamFraction(1)
         
@@ -468,8 +449,8 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
         air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get)
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)
+        air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(170.0,"F","C").get) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(40.0,"F","C").get)
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
@@ -527,8 +508,8 @@ class ProcessTwoSpeedAirSourceHeatPump < OpenStudio::Measure::ModelMeasure
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, hpEERCapacityDerateFactor.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, hpCOPCapacityDerateFactor.join(","))
       unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (hpOutputCapacity == Constants.SizingAutoMaxLoad))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating, supply.CFM_TON_Rated_Heat.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, supply.CFM_TON_Rated.join(","))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating, cFM_TON_Rated_Heat.join(","))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cFM_TON_Rated.join(","))
       
     end # unit
 	

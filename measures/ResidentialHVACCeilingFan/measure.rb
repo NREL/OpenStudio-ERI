@@ -449,6 +449,7 @@ class ProcessCeilingFan < OpenStudio::Measure::ModelMeasure
           space_mel_ann = mel_ann * OpenStudio.convert(space.floorArea,"m^2","ft^2").get / unit.finished_floor_area
           space_design_level = sch.calcDesignLevelFromDailykWh(space_mel_ann / 365.0)
 
+          rad = sens / 2.5 * 1.5
           mel_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
           mel = OpenStudio::Model::ElectricEquipment.new(mel_def)
           mel.setName(space_obj_name)
@@ -456,9 +457,9 @@ class ProcessCeilingFan < OpenStudio::Measure::ModelMeasure
           mel.setSpace(space)
           mel_def.setName(space_obj_name)
           mel_def.setDesignLevel(space_design_level)
-          mel_def.setFractionRadiant(Constants.rad)
-          mel_def.setFractionLatent(Constants.lat)
-          mel_def.setFractionLost(1 - Constants.lat - Constants.sens)
+          mel_def.setFractionRadiant(0.558)
+          mel_def.setFractionLatent(0.0)
+          mel_def.setFractionLost(0.07)
           mel.setSchedule(sch.schedule)
                       
         end # benchmark

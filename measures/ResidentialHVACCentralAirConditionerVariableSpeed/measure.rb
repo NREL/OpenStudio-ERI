@@ -10,12 +10,6 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 #start the measure
 class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasure
 
-  class Supply
-    def initialize
-    end
-    attr_accessor(:static, :cfm_ton, :HPCoolingOversizingFactor, :SpaceConditionedMult, :fan_power, :fan_power_rated, :eff, :min_flow_ratio, :FAN_EIR_FPLR_SPEC_coefficients, :max_temp, :Heat_Capacity, :Zone_Water_Remove_Cap_Ft_DB_RH_Coefficients, :Zone_Energy_Factor_Ft_DB_RH_Coefficients, :Zone_DXDH_PLF_F_PLR_Coefficients, :Number_Speeds, :fanspeed_ratio, :CFM_TON_Rated, :COOL_CAP_FT_SPEC_coefficients, :COOL_EIR_FT_SPEC_coefficients, :COOL_CAP_FFLOW_SPEC_coefficients, :COOL_EIR_FFLOW_SPEC_coefficients, :CoolingEIR, :SHR_Rated, :COOL_CLOSS_FPLR_SPEC_coefficients, :Capacity_Ratio_Cooling, :CondenserType, :Crankcase, :Crankcase_MaxT, :EER_CapacityDerateFactor)
-  end
-
   #define the name that a user will see, this method may be deprecated as
   #the display name in PAT comes from the name field in measure.xml
   def name
@@ -270,34 +264,30 @@ class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeas
       acOutputCapacity = OpenStudio::convert(acOutputCapacity.to_f,"ton","Btu/h").get
     end 
     
-    supply = Supply.new
+    number_Speeds = 4
     
     # Performance curves
 
     # NOTE: These coefficients are in IP UNITS
-    supply.COOL_CAP_FT_SPEC_coefficients = [[3.845135427537, -0.095933272242, 0.000924533273, 0.008939030321, -0.000021025870, -0.000191684744], 
-                                            [1.902445285801, -0.042809294549, 0.000555959865, 0.009928999493, -0.000013373437, -0.000211453245], 
-                                            [-3.176259152730, 0.107498394091, -0.000574951600, 0.005484032413, -0.000011584801, -0.000135528854],
-                                            [1.216308942608, -0.021962441981, 0.000410292252, 0.007362335339, -0.000000025748, -0.000202117724]]
-    supply.COOL_EIR_FT_SPEC_coefficients = [[-1.400822352, 0.075567798, -0.000589362, -0.024655521, 0.00032690848, -0.00010222178], 
-                                            [3.278112067, -0.07106453, 0.000468081, -0.014070845, 0.00022267912, -0.00004950051], 
-                                            [1.183747649, -0.041423179, 0.000390378, 0.021207528, 0.00011181091, -0.00034107189], 
-                                            [-3.97662986, 0.115338094, -0.000841943, 0.015962287, 0.00007757092, -0.00018579409]]
-    supply.COOL_CAP_FFLOW_SPEC_coefficients = [[1, 0, 0]] * 4
-    supply.COOL_EIR_FFLOW_SPEC_coefficients = [[1, 0, 0]] * 4
+    cOOL_CAP_FT_SPEC = [[3.845135427537, -0.095933272242, 0.000924533273, 0.008939030321, -0.000021025870, -0.000191684744], 
+                        [1.902445285801, -0.042809294549, 0.000555959865, 0.009928999493, -0.000013373437, -0.000211453245], 
+                        [-3.176259152730, 0.107498394091, -0.000574951600, 0.005484032413, -0.000011584801, -0.000135528854],
+                        [1.216308942608, -0.021962441981, 0.000410292252, 0.007362335339, -0.000000025748, -0.000202117724]]
+    cOOL_EIR_FT_SPEC = [[-1.400822352, 0.075567798, -0.000589362, -0.024655521, 0.00032690848, -0.00010222178], 
+                        [3.278112067, -0.07106453, 0.000468081, -0.014070845, 0.00022267912, -0.00004950051], 
+                        [1.183747649, -0.041423179, 0.000390378, 0.021207528, 0.00011181091, -0.00034107189], 
+                        [-3.97662986, 0.115338094, -0.000841943, 0.015962287, 0.00007757092, -0.00018579409]]
+    cOOL_CAP_FFLOW_SPEC = [[1, 0, 0]] * number_Speeds
+    cOOL_EIR_FFLOW_SPEC = [[1, 0, 0]] * number_Speeds
     
-    supply.static = UnitConversion.inH2O2Pa(0.5) # Pascal
+    static = UnitConversion.inH2O2Pa(0.5) # Pascal
 
-    # Flow rate through AC units - hardcoded assumption of 400 cfm/ton
-    supply.cfm_ton = 400 # cfm / ton
-
-    supply.HPCoolingOversizingFactor = 1 # Default to a value of 1 (currently only used for MSHPs)
-    supply.SpaceConditionedMult = 1 # Default used for central equipment    
-        
     # Cooling Coil
     acRatedAirFlowRate = 315.8 # cfm
-    supply.CFM_TON_Rated = HVAC.calc_cfm_ton_rated(acRatedAirFlowRate, acFanspeedRatio, acCapacityRatio)
-    supply = HVAC._processAirSystemCoolingCoil(runner, 4, acCoolingEER, acCoolingInstalledSEER, acSupplyFanPowerInstalled, acSupplyFanPowerRated, acSHRRated, acCapacityRatio, acFanspeedRatio, acCrankcase, acCrankcaseMaxT, acEERCapacityDerateFactor, supply)
+    cFM_TON_Rated = HVAC.calc_cfm_ton_rated(acRatedAirFlowRate, acFanspeedRatio, acCapacityRatio)
+    coolingEIR = HVAC.calc_cooling_eir(number_Speeds, acCoolingEER, acSupplyFanPowerRated)
+    sHR_Rated_Gross = HVAC.calc_shr_rated_gross(number_Speeds, acSHRRated, acSupplyFanPowerRated, cFM_TON_Rated)
+    cOOL_CLOSS_FPLR_SPEC = [HVAC.calc_plr_coefficients_cooling(number_Speeds, acCoolingInstalledSEER)] * number_Speeds
     
     # Get building units
     units = Geometry.get_building_units(model, runner)
@@ -319,7 +309,7 @@ class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeas
 
         # _processCurvesDXCooling
         
-        clg_coil_stage_data = HVAC._processCurvesDXCooling(model, supply, acOutputCapacity)
+        clg_coil_stage_data = HVAC.calc_coil_stage_data_cooling(model, acOutputCapacity, number_Speeds, coolingEIR, sHR_Rated_Gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC)
 
         # _processSystemCoolingCoil
         
@@ -328,13 +318,13 @@ class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeas
         clg_coil.setCondenserType("AirCooled")
         clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
         clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)
-        clg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(supply.Crankcase,"kW","W").get)
-        clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(supply.Crankcase_MaxT,"F","C").get)
+        clg_coil.setCrankcaseHeaterCapacity(OpenStudio::convert(acCrankcase,"kW","W").get)
+        clg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(OpenStudio::convert(acCrankcaseMaxT,"F","C").get)
         
         clg_coil.setFuelType("Electricity")
              
-        clg_coil_stage_data.each do |i|
-            clg_coil.addStage(i)
+        clg_coil_stage_data.each do |stage|
+            clg_coil.addStage(stage)
         end
           
         # _processSystemFan
@@ -350,8 +340,8 @@ class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeas
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan.setName(obj_name + " supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
-        fan.setFanEfficiency(supply.eff)
-        fan.setPressureRise(supply.static)
+        fan.setFanEfficiency(HVAC.calculate_fan_efficiency(static, acSupplyFanPowerInstalled))
+        fan.setPressureRise(static)
         fan.setMotorEfficiency(1)
         fan.setMotorInAirstreamFraction(1)
       
@@ -427,7 +417,7 @@ class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeas
       unit.setFeature(Constants.SizingInfoHVACFanspeedRatioCooling, acFanspeedRatio.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, acCapacityRatio.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, acEERCapacityDerateFactor.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, supply.CFM_TON_Rated.join(","))
+      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cFM_TON_Rated.join(","))
       
     end # unit
 	

@@ -160,13 +160,6 @@ class HourlyByMonthSchedule
                 end
             end
             
-            sumDesSch = wkdy[6].clone.to_ScheduleDay.get
-            sumDesSch.setName(@sch_name + " summer")
-            winDesSch = wkdy[1].clone.to_ScheduleDay.get
-            winDesSch.setName(@sch_name + " winter")
-            schedule.setSummerDesignDaySchedule(sumDesSch)
-            schedule.setWinterDesignDaySchedule(winDesSch)
-            
             return schedule
         end
     
@@ -390,13 +383,6 @@ class MonthWeekdayWeekendSchedule
                     wknd_rule.setEndDate(date_e)
                 end
             end
-            
-            sumDesSch = wkdy[6].clone.to_ScheduleDay.get
-            sumDesSch.setName(@sch_name + " summer")
-            winDesSch = wkdy[1].clone.to_ScheduleDay.get
-            winDesSch.setName(@sch_name + " winter")
-            schedule.setSummerDesignDaySchedule(sumDesSch)
-            schedule.setWinterDesignDaySchedule(winDesSch)
             
             return schedule
         end

@@ -73,7 +73,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                   :HasFurnace, :HasBoiler, :HasElecBaseboard,
                   :HasAirSourceHeatPump, :HasMiniSplitHeatPump, :HasGroundSourceHeatPump,
                   :NumSpeedsCooling, :NumSpeedsHeating, :CoolingCFMs, :HeatingCFMs, 
-                  :COOL_CAP_FT_SPEC_coefficients, :HEAT_CAP_FT_SPEC_coefficients,
+                  :COOL_CAP_FT_SPEC, :HEAT_CAP_FT_SPEC,
                   :HtgSupplyAirTemp, :SHRRated, :CapacityRatioCooling, :CapacityRatioHeating, 
                   :MinOutdoorTemp, :HeatingCapacityOffset, :OverSizeLimit, :HPSizedForMaxLoad,
                   :FanspeedRatioCooling, :CapacityDerateFactorEER, :CapacityDerateFactorCOP,
@@ -97,7 +97,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
   end
   
   def description
-    return "This measure performs HVAC sizing calculations via Manual J, as well as sizing calculations for ground source heat pumps and dehumidifiers."
+    return "This measure performs HVAC sizing calculations via ACCA Manual J/S, as well as sizing calculations for ground source heat pumps and dehumidifiers."
   end
   
   def modeler_description
@@ -135,18 +135,13 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     # Get year of model
     @modelYear = model.yearDescription.get.assumedYear
     
-    # FIXME FIXME FIXME: Temporary assignments
-    @isExistingHome = false
-    @spaceConditionedMult = 1.0
-    # FIXME FIXME FIXME: Temporary assignments
-    
     @northAxis = model.getBuilding.northAxis
     @minCoolingCapacity = 1 # Btu/hr
     
     # Based on EnergyPlus's model for calculating SHR at off-rated conditions. This curve fit 
     # avoids the iterations in the actual model. It does not account for altitude or variations 
     # in the SHRRated. It is a function of ODB (MJ design temp) and CFM/Ton (from MJ)
-    @shr_biquadratic_coefficients = [1.08464364, 0.002096954, 0, -0.005766327, 0, -0.000011147]
+    @shr_biquadratic = [1.08464364, 0.002096954, 0, -0.005766327, 0, -0.000011147]
     
     @finished_heat_design_temp = 70 # Indoor heating design temperature according to acca MANUAL J
     @finished_cool_design_temp = 75 # Indoor heating design temperature according to acca MANUAL J
@@ -1815,9 +1810,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                         sizingSpeed_Test = temp
                     end
                 end
-                coefficients = hvac.COOL_CAP_FT_SPEC_coefficients[sizingSpeed]
+                coefficients = hvac.COOL_CAP_FT_SPEC[sizingSpeed]
             else
-                coefficients = hvac.COOL_CAP_FT_SPEC_coefficients[0]
+                coefficients = hvac.COOL_CAP_FT_SPEC[0]
             end
             
             unit_final.TotalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, coefficients)
@@ -1834,10 +1829,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             sensCap_Design = sensCap_Rated * sensibleCap_CurveValue
             latCap_Design = [unit_final.Cool_Load_Tot - sensCap_Design, 1].max
             
-            a_sens = @shr_biquadratic_coefficients[0]
-            b_sens = @shr_biquadratic_coefficients[1]
-            c_sens = @shr_biquadratic_coefficients[3]
-            d_sens = @shr_biquadratic_coefficients[5]
+            a_sens = @shr_biquadratic[0]
+            b_sens = @shr_biquadratic[1]
+            c_sens = @shr_biquadratic[3]
+            d_sens = @shr_biquadratic[5]
         
             # Adjust Sizing
             if latCap_Design < unit_final.Cool_Load_Lat
@@ -1933,7 +1928,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                     sizingSpeed_Test = temp
                 end
             end
-            coefficients = hvac.COOL_CAP_FT_SPEC_coefficients[sizingSpeed]
+            coefficients = hvac.COOL_CAP_FT_SPEC[sizingSpeed]
             
             unit_final.TotalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, coefficients)
             
@@ -1943,7 +1938,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         
         elsif hvac.HasRoomAirConditioner
             
-            unit_final.TotalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, hvac.COOL_CAP_FT_SPEC_coefficients[0])
+            unit_final.TotalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, hvac.COOL_CAP_FT_SPEC[0])
             
             unit_final.Cool_Capacity = unit_final.Cool_Load_Tot / unit_final.TotalCap_CurveValue                                            
             unit_final.Cool_Capacity_Sens = unit_final.Cool_Capacity * hvac.SHRRated[0]
@@ -1952,10 +1947,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         elsif hvac.HasGroundSourceHeatPump
         
             # Single speed as current
-            unit_final.TotalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, hvac.COOL_CAP_FT_SPEC_coefficients[0])
+            unit_final.TotalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, hvac.COOL_CAP_FT_SPEC[0])
             # FIXME
-            #sensibleCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, cOOL_SH_FT_SPEC_coefficients)
-            # mj8.BypassFactor_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, mj8.cool_setpoint, cOIL_BF_FT_SPEC_coefficients)
+            #sensibleCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, enteringTemp, cOOL_SH_FT_SPEC)
+            # mj8.BypassFactor_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_cooling, mj8.cool_setpoint, cOIL_BF_FT_SPEC)
 
             # unit_final.Cool_Capacity = unit_final.Cool_Load_Tot / unit_final.TotalCap_CurveValue          # Note: cool_Capacity_Design = unit_final.Cool_Load_Tot
             # mj8.sHR_Rated_Equip = hvac.SHRRated[0]
@@ -2009,7 +2004,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     # Override Manual J sizes if Fixed sizes are being used
     if not hvac.FixedCoolingCapacity.nil?
-        unit_final.Cool_Capacity = OpenStudio::convert(hvac.FixedCoolingCapacity,"ton","Btu/h").get / @spaceConditionedMult
+        unit_final.Cool_Capacity = OpenStudio::convert(hvac.FixedCoolingCapacity,"ton","Btu/h").get
     end
     if not hvac.FixedSuppHeatingCapacity.nil?
         unit_final.Heat_Load = OpenStudio::convert(hvac.FixedSuppHeatingCapacity,"ton","Btu/h").get
@@ -2057,7 +2052,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             return nil if unit_final.nil?
         end
         
-         unit_final.Heat_Capacity = unit_final.Cool_Capacity + (hvac.HeatingCapacityOffset / @spaceConditionedMult)
+        unit_final.Heat_Capacity = unit_final.Cool_Capacity + hvac.HeatingCapacityOffset
         
         if hvac.HasElecBaseboard
             unit_final.Heat_Capacity_Supp = unit_final.Heat_Load
@@ -2219,10 +2214,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     return nil if unit_final.nil?
     
     if hvac.NumSpeedsHeating > 1
-        coefficients = hvac.HEAT_CAP_FT_SPEC_coefficients[hvac.NumSpeedsHeating - 1]
+        coefficients = hvac.HEAT_CAP_FT_SPEC[hvac.NumSpeedsHeating - 1]
         capacity_ratio = hvac.CapacityRatioHeating[hvac.NumSpeedsHeating - 1]
     else
-        coefficients = hvac.HEAT_CAP_FT_SPEC_coefficients[0]
+        coefficients = hvac.HEAT_CAP_FT_SPEC[0]
         capacity_ratio = 1.0
     end
     
@@ -2289,7 +2284,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             unit_final.Heat_Capacity = heatCap_Rated
             if hvac.HasAirSourceHeatPump
                 # When sizing based on heating load, limit the capacity to 5 tons for existing homes
-                if @isExistingHome
+                isExistingHome = false # TODO
+                if isExistingHome
                     unit_final.Heat_Capacity = [unit_final.Heat_Capacity, OpenStudio::convert(5.0,"ton","Btu/hr").get].min
                 end
                 cfm_Btu = unit_final.Cool_Airflow / unit_final.Cool_Capacity
@@ -2450,7 +2446,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
             if not hvac.HasMiniSplitHeatPump
             
-                totalCap_CurveValue_1 = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, dehum_design_db, hvac.COOL_CAP_FT_SPEC_coefficients[0])
+                totalCap_CurveValue_1 = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, dehum_design_db, hvac.COOL_CAP_FT_SPEC[0])
                 dehumid_AC_TotCap_1 = totalCap_CurveValue_1 * unit_final.Cool_Capacity * hvac.CapacityRatioCooling[0]
 
                 sensibleCap_CurveValue_1 = process_curve_fit(unit_final.Cool_Airflow * hvac.FanspeedRatioCooling[0], dehumid_AC_TotCap_1, dehum_design_db)
@@ -2458,7 +2454,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
                 if unit_final.Dehumid_Load_Sens > dehumid_AC_SensCap_1
                     # AC will operate in Stage 2
-                    totalCap_CurveValue_2 = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, dehum_design_db, hvac.COOL_CAP_FT_SPEC_coefficients[1])
+                    totalCap_CurveValue_2 = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, dehum_design_db, hvac.COOL_CAP_FT_SPEC[1])
                     dehumid_AC_TotCap_2 = totalCap_CurveValue_2 * unit_final.Cool_Capacity
             
                     sensibleCap_CurveValue_2 = process_curve_fit(unit_final.Cool_Airflow, dehumid_AC_TotCap_2, dehum_design_db)
@@ -2476,7 +2472,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 dehumid_AC_TotCap_i_1 = 0
                 for i in 0..(hvac.NumSpeedsCooling - 1)
                 
-                    totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, dehum_design_db, hvac.COOL_CAP_FT_SPEC_coefficients[i])
+                    totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, dehum_design_db, hvac.COOL_CAP_FT_SPEC[i])
                     
                     dehumid_AC_TotCap = totalCap_CurveValue * unit_final.Cool_Capacity * hvac.CapacityRatioCooling[i]
                     sens_cap = hvac.SHRRated[i] * dehumid_AC_TotCap  #TODO: This could be slightly improved by not assuming a constant SHR
@@ -2517,7 +2513,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 enteringTemp = weather.data.AnnualAvgDrybulb
             end
             
-            totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, enteringTemp, hvac.COOL_CAP_FT_SPEC_coefficients[0])
+            totalCap_CurveValue = MathTools.biquadratic(mj8.wetbulb_indoor_dehumid, enteringTemp, hvac.COOL_CAP_FT_SPEC[0])
             dehumid_AC_TotCap = totalCap_CurveValue * unit_final.Cool_Capacity
         
             if hvac.HasRoomAirConditioner     # Assume constant SHR for now.
@@ -2549,8 +2545,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                                Liquid.H2O_l.rho * OpenStudio::convert(1,"ft^3","L").get * OpenStudio::convert(1,"day","hr").get].max
 
     # Determine the rated water removal rate using the performance curve
-    zone_Water_Remove_Cap_Ft_DB_RH_coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843] # FIXME
-    dehumid_CurveValue = MathTools.biquadratic(OpenStudio::convert(mj8.cool_setpoint,"F","C").get, mj8.RH_indoor_dehumid * 100, zone_Water_Remove_Cap_Ft_DB_RH_coefficients)
+    zone_Water_Remove_Cap_Ft_DB_RH = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843] # FIXME
+    dehumid_CurveValue = MathTools.biquadratic(OpenStudio::convert(mj8.cool_setpoint,"F","C").get, mj8.RH_indoor_dehumid * 100, zone_Water_Remove_Cap_Ft_DB_RH)
     unit_final.Dehumid_WaterRemoval = dehumid_WaterRemoval / dehumid_CurveValue
   
     return unit_final
@@ -2869,8 +2865,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     hvac.HasGroundSourceHeatPump = false
     hvac.NumSpeedsCooling = 0
     hvac.NumSpeedsHeating = 0
-    hvac.COOL_CAP_FT_SPEC_coefficients = nil
-    hvac.HEAT_CAP_FT_SPEC_coefficients = nil
+    hvac.COOL_CAP_FT_SPEC = nil
+    hvac.HEAT_CAP_FT_SPEC = nil
     hvac.HtgSupplyAirTemp = nil
     hvac.MinOutdoorTemp = nil
     hvac.SHRRated = nil
@@ -2984,7 +2980,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             end
             
             curves = [clg_coil.totalCoolingCapacityFunctionOfTemperatureCurve]
-            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
+            hvac.COOL_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
             if not clg_coil.ratedSensibleHeatRatio.is_initialized
                 runner.registerError("SHR not set for #{clg_coil.name}.")
                 return nil
@@ -3028,7 +3024,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 next if !stage.grossRatedTotalCoolingCapacity.is_initialized
                 hvac.FixedCoolingCapacity = OpenStudio::convert(stage.grossRatedTotalCoolingCapacity.get,"W","ton").get
             end
-            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
+            hvac.COOL_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
             capacityDerateFactorEER = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorEER, 'string')
             return nil if capacityDerateFactorEER.nil?
             hvac.CapacityDerateFactorEER = capacityDerateFactorEER.split(",").map(&:to_f)
@@ -3047,7 +3043,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             hvac.OverSizeLimit = 1.3
             vrf = get_vrf_from_terminal_unit(model, clg_equip)
             curves = [vrf.coolingCapacityRatioModifierFunctionofLowTemperatureCurve.get]
-            hvac.COOL_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
+            hvac.COOL_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
             if not clg_coil.ratedSensibleHeatRatio.is_initialized
                 runner.registerError("SHR not set for #{clg_coil.name}.")
                 return nil
@@ -3066,11 +3062,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
             hvac.NumSpeedsCooling = 1
             hvac.CapacityRatioCooling = [1.0]
-            hvac.COOL_CAP_FT_SPEC_coefficients = [[clg_coil.totalCoolingCapacityCoefficient1,
-                                                   clg_coil.totalCoolingCapacityCoefficient2,
-                                                   clg_coil.totalCoolingCapacityCoefficient3,
-                                                   clg_coil.totalCoolingCapacityCoefficient4,
-                                                   clg_coil.totalCoolingCapacityCoefficient5]] # FIXME: Probably not correct
+            hvac.COOL_CAP_FT_SPEC = [[clg_coil.totalCoolingCapacityCoefficient1,
+                                      clg_coil.totalCoolingCapacityCoefficient2,
+                                      clg_coil.totalCoolingCapacityCoefficient3,
+                                      clg_coil.totalCoolingCapacityCoefficient4,
+                                      clg_coil.totalCoolingCapacityCoefficient5]] # FIXME: Probably not correct
             if not clg_coil.ratedTotalCoolingCapacity.is_initialized or not clg_coil.ratedSensibleCoolingCapacity.is_initialized
                 runner.registerError("SHR not set for #{clg_coil.name}.")
                 return nil
@@ -3161,7 +3157,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             hvac.CapacityRatioHeating = [1.0]
             hvac.MinOutdoorTemp = OpenStudio::convert(htg_coil.minimumOutdoorDryBulbTemperatureforCompressorOperation,"C","F").get
             curves = [htg_coil.totalHeatingCapacityFunctionofTemperatureCurve]
-            hvac.HEAT_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
+            hvac.HEAT_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
             if htg_coil.ratedTotalHeatingCapacity.is_initialized
                 hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.ratedTotalHeatingCapacity.get,"W","ton").get
             end
@@ -3183,7 +3179,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 next if !stage.grossRatedHeatingCapacity.is_initialized
                 hvac.FixedHeatingCapacity = OpenStudio::convert(stage.grossRatedHeatingCapacity.get,"W","ton").get
             end
-            hvac.HEAT_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
+            hvac.HEAT_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
             capacityDerateFactorCOP = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorCOP, 'string')
             return nil if capacityDerateFactorCOP.nil?
             hvac.CapacityDerateFactorCOP = capacityDerateFactorCOP.split(",").map(&:to_f)
@@ -3198,7 +3194,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             hvac.MinOutdoorTemp = OpenStudio::convert(vrf.minimumOutdoorTemperatureinHeatingMode,"C","F").get
             vrf = get_vrf_from_terminal_unit(model, htg_equip)
             curves = [vrf.heatingCapacityRatioModifierFunctionofLowTemperatureCurve.get]
-            hvac.HEAT_CAP_FT_SPEC_coefficients = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating, false) # FIXME: Shouldn't be false; see sizing.py
+            hvac.HEAT_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating, false) # FIXME: Shouldn't be false; see sizing.py
             hvac.HeatingCFMs = []
             for i in 1..hvac.NumSpeedsHeating
                 hvac.HeatingCFMs << 200.0 + 200.0 / 9.0 * (i-1) # FIXME
@@ -3210,11 +3206,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
             hvac.NumSpeedsHeating = 1
             hvac.CapacityRatioHeating = [1.0]
-            hvac.HEAT_CAP_FT_SPEC_coefficients = [[htg_coil.totalHeatingCapacityCoefficient1,
-                                                   htg_coil.totalHeatingCapacityCoefficient2,
-                                                   htg_coil.totalHeatingCapacityCoefficient3,
-                                                   htg_coil.totalHeatingCapacityCoefficient4,
-                                                   htg_coil.totalHeatingCapacityCoefficient5]] # FIXME: Probably not correct
+            hvac.HEAT_CAP_FT_SPEC = [[htg_coil.totalHeatingCapacityCoefficient1,
+                                      htg_coil.totalHeatingCapacityCoefficient2,
+                                      htg_coil.totalHeatingCapacityCoefficient3,
+                                      htg_coil.totalHeatingCapacityCoefficient4,
+                                      htg_coil.totalHeatingCapacityCoefficient5]] # FIXME: Probably not correct
             if htg_coil.ratedHeatingCapacity.is_initialized
                 hvac.FixedHeatingCapacity = OpenStudio::convert(htg_coil.ratedHeatingCapacity.get,"W","ton").get
             end
@@ -3267,15 +3263,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         c_si = [bi.coefficient1Constant, bi.coefficient2x, bi.coefficient3xPOW2, 
              bi.coefficient4y, bi.coefficient5yPOW2, bi.coefficient6xTIMESY]
         if convert_to_ip
-            # Convert from SI coefficients to IP coefficients
-            c_ip = []
-            c_ip << c_si[0] - 160.0/9.0 * (c_si[1] + c_si[3]) + 25600.0/81.0 * (c_si[2] + c_si[4] + c_si[5])
-            c_ip << 5.0/9.0 * (c_si[1] - 320.0/9.0 * c_si[2] - 160.0/9.0 * c_si[5])
-            c_ip << 25.0/81.0 * c_si[2]
-            c_ip << 5.0/9.0 * (c_si[3] - 320.0/9.0 * c_si[4] - 160.0/9.0 * c_si[5])
-            c_ip << 25.0/81.0 * c_si[4]
-            c_ip << 25.0/81.0 * c_si[5]
-            vector << c_ip
+            vector << HVAC.convert_curve_biquadratic(c_si, false)
         else
             vector << c_si
         end
@@ -3292,7 +3280,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
   def process_curve_fit(airFlowRate, capacity, temp)
     # TODO: Get rid of this curve by using ADP/BF calculations
     capacity_tons = OpenStudio::convert(capacity,"Btu/h","ton").get
-    return MathTools.biquadratic(airFlowRate / capacity_tons, temp, @shr_biquadratic_coefficients)
+    return MathTools.biquadratic(airFlowRate / capacity_tons, temp, @shr_biquadratic)
   end
   
   def true_azimuth(surface)

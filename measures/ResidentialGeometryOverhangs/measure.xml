@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>7eae07d6-a25e-4928-932e-b252c870f6c8</version_id>
-  <version_modified>20170329T025838Z</version_modified>
+  <version_id>4a8b458c-92b0-4c02-a1f5-250a592f3e3f</version_id>
+  <version_modified>20170330T160654Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
@@ -159,46 +159,46 @@
       <checksum>612C98ED</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>23A5903F</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B70C0F3B</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>39BB1058</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E9F3D715</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>262E164D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3A58A247</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>91730867</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>934BA2A6</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>36CB8E81</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7F241A94</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB8E92F8</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5C03ECB4</checksum>
     </file>
   </files>
 </measure>

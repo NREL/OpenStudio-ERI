@@ -9,12 +9,6 @@ require "#{File.dirname(__FILE__)}/resources/constants"
 # start the measure
 class ProcessDehumidifier < OpenStudio::Measure::ModelMeasure
 
-  class Curves
-    def initialize
-    end
-    attr_accessor(:Zone_Water_Remove_Cap_Ft_DB_RH_coefficients, :Zone_Energy_Factor_Ft_DB_RH_coefficients, :Zone_DXDH_PLF_F_PLR_coefficients)
-  end
-
   # human readable name
   def name
     return "Set Residential Dehumidifier"
@@ -115,46 +109,9 @@ class ProcessDehumidifier < OpenStudio::Measure::ModelMeasure
 
     # Dehumidifier coefficients
     # Generic model coefficients from Winkler, Christensen, and Tomerlin (2011)
-    curves = Curves.new
-    curves.Zone_Water_Remove_Cap_Ft_DB_RH_coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843]
-    curves.Zone_Energy_Factor_Ft_DB_RH_coefficients = [-1.902154518, 0.063466565, -0.000622839, 0.039540407, -0.000125637, -0.000176722]
-    curves.Zone_DXDH_PLF_F_PLR_coefficients = [0.90, 0.10, 0.0]
-    
-    water_removal_curve = OpenStudio::Model::CurveBiquadratic.new(model)
-    water_removal_curve.setName("DXDH-WaterRemove-Cap-fT")
-    water_removal_curve.setCoefficient1Constant(curves.Zone_Water_Remove_Cap_Ft_DB_RH_coefficients[0])
-    water_removal_curve.setCoefficient2x(curves.Zone_Water_Remove_Cap_Ft_DB_RH_coefficients[1])
-    water_removal_curve.setCoefficient3xPOW2(curves.Zone_Water_Remove_Cap_Ft_DB_RH_coefficients[2])
-    water_removal_curve.setCoefficient4y(curves.Zone_Water_Remove_Cap_Ft_DB_RH_coefficients[3])
-    water_removal_curve.setCoefficient5yPOW2(curves.Zone_Water_Remove_Cap_Ft_DB_RH_coefficients[4])
-    water_removal_curve.setCoefficient6xTIMESY(curves.Zone_Water_Remove_Cap_Ft_DB_RH_coefficients[5])
-    water_removal_curve.setMinimumValueofx(-100)
-    water_removal_curve.setMaximumValueofx(100)
-    water_removal_curve.setMinimumValueofy(-100)
-    water_removal_curve.setMaximumValueofy(100)
-
-    energy_factor_curve = OpenStudio::Model::CurveBiquadratic.new(model)
-    energy_factor_curve.setName("DXDH-EnergyFactor-fT")
-    energy_factor_curve.setCoefficient1Constant(curves.Zone_Energy_Factor_Ft_DB_RH_coefficients[0])
-    energy_factor_curve.setCoefficient2x(curves.Zone_Energy_Factor_Ft_DB_RH_coefficients[1])
-    energy_factor_curve.setCoefficient3xPOW2(curves.Zone_Energy_Factor_Ft_DB_RH_coefficients[2])
-    energy_factor_curve.setCoefficient4y(curves.Zone_Energy_Factor_Ft_DB_RH_coefficients[3])
-    energy_factor_curve.setCoefficient5yPOW2(curves.Zone_Energy_Factor_Ft_DB_RH_coefficients[4])
-    energy_factor_curve.setCoefficient6xTIMESY(curves.Zone_Energy_Factor_Ft_DB_RH_coefficients[5])
-    energy_factor_curve.setMinimumValueofx(-100)
-    energy_factor_curve.setMaximumValueofx(100)
-    energy_factor_curve.setMinimumValueofy(-100)
-    energy_factor_curve.setMaximumValueofy(100)
-
-    part_load_frac_curve = OpenStudio::Model::CurveQuadratic.new(model)
-    part_load_frac_curve.setName("DXDH-PLF-fPLR")
-    part_load_frac_curve.setCoefficient1Constant(curves.Zone_DXDH_PLF_F_PLR_coefficients[0])
-    part_load_frac_curve.setCoefficient2x(curves.Zone_DXDH_PLF_F_PLR_coefficients[1])
-    part_load_frac_curve.setCoefficient3xPOW2(curves.Zone_DXDH_PLF_F_PLR_coefficients[2])
-    part_load_frac_curve.setMinimumValueofx(0)
-    part_load_frac_curve.setMaximumValueofx(1)
-    part_load_frac_curve.setMinimumCurveOutput(0.7)
-    part_load_frac_curve.setMaximumCurveOutput(1)
+    water_removal_curve = HVAC.create_curve_biquadratic(model, [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843], "DXDH-WaterRemove-Cap-fT", -100, 100, -100, 100)
+    energy_factor_curve = HVAC.create_curve_biquadratic(model, [-1.902154518, 0.063466565, -0.000622839, 0.039540407, -0.000125637, -0.000176722], "DXDH-EnergyFactor-fT", -100, 100, -100, 100)
+    part_load_frac_curve = HVAC.create_curve_quadratic(model, [0.90, 0.10, 0.0], "DXDH-PLF-fPLR", 0, 1, 0.7, 1)
     
     # Get building units
     units = Geometry.get_building_units(model, runner)

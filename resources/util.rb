@@ -61,16 +61,6 @@ class HelperMethods
         end
     end
 
-    def self.get_design_day_temperature(model, runner, dd_name)
-        model.getDesignDays.each do |d|
-            if d.name.get =~ /#{dd_name}/
-                return OpenStudio::convert(d.maximumDryBulbTemperature, "C", "F").get
-            end
-        end
-        runner.registerError("Could not find design day temperature.")
-        return nil
-    end
-    
 end
 
 class MathTools

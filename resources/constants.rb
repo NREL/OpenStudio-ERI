@@ -5,9 +5,6 @@ class Constants
   def self.AssumedInsideTemp
     return 73.5 # deg-F
   end
-  def self.conv
-    return self.sens / 2.5
-  end
   def self.DefaultCoolingSetpoint
     return 76.0
   end
@@ -38,56 +35,17 @@ class Constants
   def self.g
     return 32.174    # gravity (ft/s2)
   end
-  def self.GSHPPumpCapacityCtrl
-    return 1 # Default to 1 speed control
-  end  
-  def self.GSHPPipeCond
-    return 0.23 # Pipe thermal conductivity, default to high density polyethylene
-  end
-  def self.GSHPPumpEff
-    return 0.77
-  end
-  def self.GSHPPumpMinSpeed
-    return 1.0
-  end
-  def self.GSHP_CFM_Btuh
-    return OpenStudio::convert(400.0,"Btu/hr","ton").get
-  end
-  def self.GSHP_GPM_Btuh
-    return OpenStudio::convert(3.0,"Btu/hr","ton").get
-  end
-  def self.lat
-    return 0.021
-  end
   def self.MixedUseT
     return 110 # F
   end
   def self.MinimumBasementHeight
     return 7 # ft
   end
-  def self.MSHP_Cd_Cooling
-    return 0.25
-  end
-  def self.MSHP_Cd_Heating
-    return 0.40
-  end
-  def self.MSHP_Min_T
-    return -30.0
-  end
   def self.MonthNumDays
     return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
   end
-  def self.Num_Speeds_MSHP
-    return 10
-  end
   def self.Patm
     return 14.696 # standard atmospheric pressure (psia)
-  end
-  def self.rad
-    return self.conv * 1.5
-  end
-  def self.sens
-    return 0.93
   end
   def self.small 
     return 1e-9
@@ -218,12 +176,6 @@ class Constants
   def self.CeilingFanControlSmart
     return 'smart'
   end
-  def self.CollectorTypeClosedLoop
-    return 'closed loop'
-  end
-  def self.CollectorTypeICS
-    return 'ics'
-  end
   def self.CondenserTypeWater
     return 'watercooled'
   end
@@ -256,15 +208,6 @@ class Constants
   end
   def self.Ducted
     return 'ducted'
-  end
-  def self.DDYHtgDrybulb
-    return 'Htg 99. Condns DB'
-  end
-  def self.DDYClgDrybulb
-    return 'Clg 1. Condns WB=>MDB'
-  end
-  def self.DDYClgWetbulb
-    return 'Clg 1. Condns DB=>MWB'
   end
   def self.EndUseHVACFan
     return 'residential hvac fan'
@@ -360,39 +303,6 @@ class Constants
     end
     return "garage zone#{s_unit}"
   end
-  def self.InfMethodSG
-    return 'S-G'
-  end
-  def self.InfMethodASHRAE
-    return 'ASHRAE-ENHANCED'
-  end
-  def self.InfMethodRes
-    return 'RESIDENTIAL'
-  end
-  def self.InsulationCellulose
-    return 'cellulose'
-  end
-  def self.InsulationFiberglass
-    return 'fiberglass'
-  end
-  def self.InsulationFiberglassBatt
-    return 'fiberglass batt'
-  end
-  def self.InsulationPolyiso
-    return 'polyiso'
-  end
-  def self.InsulationSIP
-    return 'sip'
-  end
-  def self.InsulationClosedCellSprayFoam
-    return 'closed cell spray foam'
-  end
-  def self.InsulationOpenCellSprayFoam
-    return 'open cell spray foam'
-  end
-  def self.InsulationXPS
-    return 'xps'
-  end
   def self.LivingSpace(story=1, unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     s_story = ""
@@ -482,9 +392,6 @@ class Constants
   end
   def self.MaterialWallSheathing
     return 'ResExtWallSheathing'
-  end
-  def self.PVModuleTypeCSI
-    return 'c-si'
   end
   def self.PVModuleTypeStandard
     return 'standard'
@@ -1137,7 +1044,7 @@ class Constants
     return "unfinished basement zone#{s_unit}"
   end
   def self.URBANoptFinishedZoneIdentifier
-    return "Story"
+    return 'Story'
   end
   def self.VentTypeExhaust
     return 'exhaust'

@@ -646,6 +646,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     else
       ductSystemEfficiency = nil
     end
+    
+    infMethodRes = 'RESIDENTIAL'
+    infMethodASHRAE = 'ASHRAE-ENHANCED'
+    infMethodSG = 'SHERMAN-GRIMSRUD'
 
     # Create the class instances
     infil = Infiltration.new(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationGarageACH50)
@@ -740,7 +744,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           next unless flow_rate.name.to_s == obj_name
           flow_rate.remove
         end
-        if building.unfinished_basement.inf_method == Constants.InfMethodRes
+        if building.unfinished_basement.inf_method == infMethodRes
           if building.unfinished_basement.ACH > 0
             flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
             flow_rate.setName(obj_name)
@@ -1118,7 +1122,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             next unless flow_rate.name.to_s == obj_name
             flow_rate.remove
           end
-          if unit.finished_basement.inf_method == Constants.InfMethodRes
+          if unit.finished_basement.inf_method == infMethodRes
             if unit.finished_basement.ACH > 0            
               flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
               flow_rate.setName(obj_name)
@@ -1252,7 +1256,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       infil_program.addLine("Set z_s = #{OpenStudio::convert(unit.living.height,"ft","m").get}")
       infil_program.addLine("Set f_t = (((s_m/z_m)^p_m)*((z_s/s_s)^p_s))")
       
-      if unit.living.inf_method == Constants.InfMethodASHRAE
+      if unit.living.inf_method == infMethodASHRAE
         if unit.living.SLA > 0
           infil_program.addLine("Set Tdiff = #{tin_sensor.name} - #{tout_sensor.name}")
           infil_program.addLine("Set DeltaT = @Abs Tdiff")
@@ -1265,7 +1269,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         else
           infil_program.addLine("Set Qn = 0")
         end
-      elsif unit.living.inf_method == Constants.InfMethodRes
+      elsif unit.living.inf_method == infMethodRes
         infil_program.addLine("Set Qn = #{unit.living.ACH * OpenStudio::convert(unit.living.volume,"ft^3","m^3").get / OpenStudio::convert(1.0,"hr","s").get}")
       end
       
@@ -1942,7 +1946,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end 
   
     unless building.garage_zone.nil?
-      building.garage.inf_method = Constants.InfMethodSG
+      building.garage.inf_method = infMethodSG
       building.garage.hor_leak_frac = 0.4 # DOE-2 Default
       building.garage.neutral_level = 0.5 # DOE-2 Default
       building.garage.SLA = get_infiltration_SLA_from_ACH50(infil.InfiltrationGarageACH50, 0.67, building.garage.area, building.garage.volume)
@@ -1951,22 +1955,22 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end
 
     unless building.unfinished_basement_zone.nil?
-      building.unfinished_basement.inf_method = Constants.InfMethodRes # Used for constant ACH
+      building.unfinished_basement.inf_method = infMethodRes # Used for constant ACH
       building.unfinished_basement.inf_flow = building.unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * building.unfinished_basement.volume
     end
 
     unless building.crawlspace_zone.nil?
-      building.crawlspace.inf_method = Constants.InfMethodRes
+      building.crawlspace.inf_method = infMethodRes
       building.crawlspace.inf_flow = building.crawlspace.ACH / OpenStudio::convert(1.0,"hr","min").get * building.crawlspace.volume
     end
 
     unless building.pierbeam_zone.nil?
-      building.pierbeam.inf_method = Constants.InfMethodRes
+      building.pierbeam.inf_method = infMethodRes
       building.pierbeam.inf_flow = building.pierbeam.ACH / OpenStudio::convert(1.0,"hr","min").get * building.pierbeam.volume
     end
 
     unless building.unfinished_attic_zone.nil?
-      building.unfinished_attic.inf_method = Constants.InfMethodSG
+      building.unfinished_attic.inf_method = infMethodSG
       building.unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
       building.unfinished_attic.neutral_level = 0.5 # DOE-2 Default
       building.unfinished_attic.ACH = get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0)
@@ -1981,7 +1985,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
-      if space.inf_method == Constants.InfMethodSG
+      if space.inf_method == infMethodSG
         space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
         space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
         space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (Constants.AssumedInsideTemp + 460.0)
@@ -2019,7 +2023,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           unit.living.inf_flow = 0
       else
           # Living Space Infiltration
-          unit.living.inf_method = Constants.InfMethodASHRAE
+          unit.living.inf_method = infMethodASHRAE
 
           # Based on "Field Validation of Algebraic Equations for Stack and
           # Wind Driven Air Infiltration Calculations" by Walker and Wilson (1998)
@@ -2147,7 +2151,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end
     
     unless unit.finished_basement_zone.nil?
-      unit.finished_basement.inf_method = Constants.InfMethodRes # Used for constant ACH
+      unit.finished_basement.inf_method = infMethodRes # Used for constant ACH
       unit.finished_basement.inf_flow = unit.finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * unit.finished_basement.volume
     end
 
@@ -2159,13 +2163,13 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             
       space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
-      if space.inf_method == Constants.InfMethodSG
+      if space.inf_method == infMethodSG
         space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
         space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
         space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (infil.assumed_inside_temp + 460.0)
         space.C_w_SG = space.f_w_SG ** 2.0
         space.ELA = space.SLA * space.area # ft^2
-      elsif space.inf_method == Constants.InfMethodASHRAE
+      elsif space.inf_method == infMethodASHRAE
         space.ELA = space.SLA * space.area # ft^2
       end
 

@@ -10,18 +10,6 @@ require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 # start the measure
 class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasure
 
-  class Curves
-    def initialize
-    end
-    attr_accessor(:COOL_EIR_FPLR_SPEC_coefficients, :COOL_CAP_FT_SPEC_coefficients, :COOL_SH_FT_SPEC_coefficients, :COIL_BF_FT_SPEC_coefficients, :COOL_EIR_FT_SPEC_coefficients, :COOL_POWER_FT_SPEC_coefficients, :COOL_CLOSS_FPLR_SPEC_coefficients, :FAN_EIR_FPLR_SPEC_coefficients, :Number_Speeds)
-  end
-  
-  class Supply
-    def initialize
-    end
-    attr_accessor(:CoolStages, :PVVTminUnloadRatio, :PVVTminHGBratio, :CoolingEIR, :SHR_Rated, :CoilBF, :Crankcase, :Crankcase_MaxT, :CondenserType, :static, :fan_power, :eff, :min_flow_ratio, :HeatingEIR, :heat_stages, :min_hp_temp, :supp_htg_max_outdoor_temp, :hasDHWdesuperheater, :htg_supply_air_temp, :supp_htg_max_supply_temp, :fanspeed_ratio)
-  end  
-
   # human readable name
   def name
     return "Set Residential Ground Source Heat Pump Vertical Bore"
@@ -267,7 +255,8 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
     pipe_od, pipe_id = get_gshp_hx_pipe_diameters(nom_pipe_size)
     
     # Thermal Resistance of Pipe
-    pipe_r_value = get_gshp_hx_pipe_rvalue(pipe_od, pipe_id, Constants.GSHPPipeCond)    
+    gSHPPipeCond = 0.23 # Pipe thermal conductivity, default to high density polyethylene
+    pipe_r_value = get_gshp_hx_pipe_rvalue(pipe_od, pipe_id, gSHPPipeCond)    
 
     # Ground Loop And Loop Pump
     weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
@@ -275,57 +264,30 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
       return false
     end    
     
-    heat_design_db = HelperMethods.get_design_day_temperature(model, runner, Constants.DDYHtgDrybulb)
-    cool_design_db = HelperMethods.get_design_day_temperature(model, runner, Constants.DDYClgDrybulb)
+    heat_design_db = weather.design.HeatingDrybulb
+    cool_design_db = weather.design.CoolingDrybulb
     chw_design = get_gshp_HXCHWDesign(weather, cool_design_db)
     hw_design = get_gshp_HXHWDesign(weather, heat_design_db, fluid_type)
     
     # Cooling Coil
-    curves = Curves.new
-    curves.COOL_EIR_FPLR_SPEC_coefficients = [0.00002020, 1.08669544, -0.09354337, 0.00683019]
-    curves.COOL_CAP_FT_SPEC_coefficients = [0.39039063, 0.01382596, 0.00000000, -0.00445738, 0.00000000, 0.00000000]
-    curves.COOL_SH_FT_SPEC_coefficients = [4.27136253, -0.04678521, 0.00000000, -0.00219031, 0.00000000, 0.00000000]
-    curves.COIL_BF_FT_SPEC_coefficients = [1.21005458, -0.00664200, 0.00000000, 0.00348246, 0.00000000, 0.00000000]
-    curves.COOL_EIR_FT_SPEC_coefficients = [0.76864167, -0.01422450, 0.00000000, 0.01652510, 0.00000000, 0.00000000]
-    curves.COOL_POWER_FT_SPEC_coefficients = [0.01717338, 0.00316077, 0.00000000, 0.01043792, 0.00000000, 0.00000000]
-    curves.COOL_CLOSS_FPLR_SPEC_coefficients = [0.86019467, 0.15916327, -0.01954345]
-    supply = Supply.new
-    supply.CoolStages = [0.99890000, 1.00000000] # For one-speed compressor only
-    supply.PVVTminUnloadRatio = 0.99890000 # For one-speed compressor only
-    supply.PVVTminHGBratio = 0.99890000 # For one-speed compressor only
-    fanKW_Adjust = get_gshp_FanKW_Adjust(Constants.GSHP_CFM_Btuh)
-    pumpKW_Adjust = get_gshp_PumpKW_Adjust(Constants.GSHP_GPM_Btuh)
-    supply.CoolingEIR = get_gshp_cooling_eir(eer, fanKW_Adjust, pumpKW_Adjust)
-    supply.SHR_Rated = [rated_shr]
-    supply.CoilBF = 0.0806
-    supply.Crankcase = 0.0
-    supply.Crankcase_MaxT = 55.0
-    supply.CondenserType = Constants.CondenserTypeWater
+    cOOL_CAP_FT_SPEC = [0.39039063, 0.01382596, 0.00000000, -0.00445738, 0.00000000, 0.00000000]
+    cOOL_SH_FT_SPEC = [4.27136253, -0.04678521, 0.00000000, -0.00219031, 0.00000000, 0.00000000]
+    cOOL_POWER_FT_SPEC = [0.01717338, 0.00316077, 0.00000000, 0.01043792, 0.00000000, 0.00000000]
+    
+    fanKW_Adjust = get_gshp_FanKW_Adjust(OpenStudio::convert(400.0,"Btu/hr","ton").get)
+    pumpKW_Adjust = get_gshp_PumpKW_Adjust(OpenStudio::convert(3.0,"Btu/hr","ton").get)
+    coolingEIR = get_gshp_cooling_eir(eer, fanKW_Adjust, pumpKW_Adjust)
     
     # Supply Fan
-    supply.static = UnitConversion.inH2O2Pa(0.5)
-    supply.fan_power = supply_fan_power
-    supply.eff = OpenStudio::convert(UnitConversion.inH2O2Pa(0.5) / supply.fan_power,"cfm","m^3/s").get # Overall Efficiency of the Supply Fan, Motor and Drive
-    supply.min_flow_ratio = 1.0
-    curves.FAN_EIR_FPLR_SPEC_coefficients = [0.00000000, 1.00000000, 0.00000000, 0.00000000] # For one-speed compressor only
+    static = UnitConversion.inH2O2Pa(0.5)
     
     # Heating Coil
-    supply.HeatingEIR = get_gshp_heating_eir(cop, fanKW_Adjust, pumpKW_Adjust)
-    supply.heat_stages = [0.99890000, 1.00000000]
-    supply.min_hp_temp = -30.0 # Moved from DOE-2. No reference given.
-    supply.supp_htg_max_outdoor_temp = 40.0 # Moved from DOE-2. DOE-2 Default
-    supply.hasDHWdesuperheater = false    
-    
-    # Supply Air Temperatures
-    supply.htg_supply_air_temp = 105.0 # used for sizing heating flow rate
-    supply.supp_htg_max_supply_temp = 170.0 # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
-    
-    curves.Number_Speeds = 1
-    supply.fanspeed_ratio = [1]
+    heatingEIR = get_gshp_heating_eir(cop, fanKW_Adjust, pumpKW_Adjust)
+    min_hp_temp = -30.0
     
     htd = 70.0 - heat_design_db
     ctd = cool_design_db - 75.0
-    nom_length_heat, nom_length_cool = gshp_hxbore_ft_per_ton(weather, htd, ctd, bore_spacing, ground_conductivity, grout_conductivity, bore_diameter, pipe_od, pipe_r_value, supply.HeatingEIR[0], supply.CoolingEIR[0], chw_design, hw_design, design_delta_t)    
+    nom_length_heat, nom_length_cool = gshp_hxbore_ft_per_ton(weather, htd, ctd, bore_spacing, ground_conductivity, grout_conductivity, bore_diameter, pipe_od, pipe_r_value, heatingEIR[0], coolingEIR[0], chw_design, hw_design, design_delta_t)    
     
     bore_length_heat = nom_length_heat * gshp_capacity / OpenStudio::convert(1.0,"ton","Btu/h").get
     bore_length_cool = nom_length_cool * gshp_capacity / OpenStudio::convert(1.0,"ton","Btu/h").get
@@ -430,7 +392,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
     ground_heat_exch_vert.setGroundThermalHeatCapacity(OpenStudio::convert(ground_conductivity / ground_diffusivity,"Btu/ft^3*F","J/m^3*K").get)
     ground_heat_exch_vert.setGroundTemperature(OpenStudio::convert(weather.data.AnnualAvgDrybulb,"F","C").get)
     ground_heat_exch_vert.setGroutThermalConductivity(OpenStudio::convert(grout_conductivity,"Btu/hr*ft*R","W/m*K").get)
-    ground_heat_exch_vert.setPipeThermalConductivity(OpenStudio::convert(Constants.GSHPPipeCond,"Btu/hr*ft*R","W/m*K").get)
+    ground_heat_exch_vert.setPipeThermalConductivity(OpenStudio::convert(gSHPPipeCond,"Btu/hr*ft*R","W/m*K").get)
     ground_heat_exch_vert.setPipeOutDiameter(OpenStudio::convert(pipe_od,"in","m").get)
     ground_heat_exch_vert.setUTubeDistance(OpenStudio::convert(leg_separation,"in","m").get)
     ground_heat_exch_vert.setPipeThickness(OpenStudio::convert((pipe_od - pipe_id)/2.0,"in","m").get)
@@ -535,7 +497,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
         htg_coil.setName(obj_name + " heating coil")
         htg_coil.setRatedWaterFlowRate(OpenStudio::OptionalDouble.new(OpenStudio::convert(loop_flow,"gal/min","m^3/s").get))
         htg_coil.setRatedHeatingCapacity(OpenStudio::OptionalDouble.new(OpenStudio::convert(gshp_capacity,"Btu/h","W").get))
-        htg_coil.setRatedHeatingCoefficientofPerformance(1.0 / supply.HeatingEIR[0])
+        htg_coil.setRatedHeatingCoefficientofPerformance(1.0 / heatingEIR[0])
         htg_coil.setHeatingCapacityCoefficient1(gshp_Heat_CAP_fT_coeff[0])
         htg_coil.setHeatingCapacityCoefficient2(gshp_Heat_CAP_fT_coeff[1])
         htg_coil.setHeatingCapacityCoefficient3(gshp_Heat_CAP_fT_coeff[2])
@@ -556,7 +518,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
           supp_htg_coil.setNominalCapacity(OpenStudio::convert(supp_capacity,"Btu/h","W").get) # Used by HVACSizing measure
         end        
         
-        c = curves.COOL_CAP_FT_SPEC_coefficients
+        c = cOOL_CAP_FT_SPEC
         gshp_Cool_CAP_fT_coeff = []
         gshp_Cool_CAP_fT_coeff << c[0] +(32-273.15*1.8)*(c[1] + c[3])
         gshp_Cool_CAP_fT_coeff << 283*1.8*c[1]
@@ -564,7 +526,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
         gshp_Cool_CAP_fT_coeff << 0
         gshp_Cool_CAP_fT_coeff << 0
 
-        c = curves.COOL_SH_FT_SPEC_coefficients
+        c = cOOL_SH_FT_SPEC
         gshp_COOL_SH_fT_coeff = []
         gshp_COOL_SH_fT_coeff << c[0]+(32-273.15*1.8)*(c[1] + c[3])
         gshp_COOL_SH_fT_coeff << 0
@@ -573,7 +535,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
         gshp_COOL_SH_fT_coeff << 0
         gshp_COOL_SH_fT_coeff << 0
 
-        c = curves.COOL_POWER_FT_SPEC_coefficients
+        c = cOOL_POWER_FT_SPEC
         gshp_Cool_Power_fT_coeff = []
         gshp_Cool_Power_fT_coeff << c[0]+(32-273.15*1.8)*(c[1] + c[3])
         gshp_Cool_Power_fT_coeff << 283*1.8*c[1]
@@ -585,8 +547,8 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
         clg_coil.setName(obj_name + " cooling coil")
         clg_coil.setRatedWaterFlowRate(OpenStudio::convert(loop_flow,"gal/min","m^3/s").get)
         clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(gshp_capacity,"Btu/h","W").get)
-        clg_coil.setRatedSensibleCoolingCapacity(OpenStudio::convert(gshp_capacity,"Btu/h","W").get * supply.SHR_Rated[0])
-        clg_coil.setRatedCoolingCoefficientofPerformance(1.0 / supply.CoolingEIR[0])
+        clg_coil.setRatedSensibleCoolingCapacity(OpenStudio::convert(gshp_capacity,"Btu/h","W").get * rated_shr)
+        clg_coil.setRatedCoolingCoefficientofPerformance(1.0 / coolingEIR[0])
         clg_coil.setTotalCoolingCapacityCoefficient1(gshp_Cool_CAP_fT_coeff[0])
         clg_coil.setTotalCoolingCapacityCoefficient2(gshp_Cool_CAP_fT_coeff[1])
         clg_coil.setTotalCoolingCapacityCoefficient3(gshp_Cool_CAP_fT_coeff[2])
@@ -610,8 +572,8 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan.setName(obj_name + " #{control_zone.name} supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
-        fan.setFanEfficiency(supply.eff)
-        fan.setPressureRise(supply.static)
+        fan.setFanEfficiency(HVAC.calculate_fan_efficiency(static, supply_fan_power))
+        fan.setPressureRise(static)
         fan.setMotorEfficiency(1)
         fan.setMotorInAirstreamFraction(1)
           
@@ -624,8 +586,8 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
         air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(supply.supp_htg_max_supply_temp,"F","C").get)
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(supply.supp_htg_max_outdoor_temp,"F","C").get)
+        air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(170.0,"F","C").get) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
+        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(OpenStudio::convert(40.0,"F","C").get)
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
