@@ -682,7 +682,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 6,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Vented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -737,7 +737,7 @@ class ProcessHVACSizingTest < MiniTest::Test
 						'Cool_AirFlowRate' => 0,
 						'Heat_AirFlowRate' => 0,
 						'Fan_AirFlowRate' => 0,
-						'Dehumid_WaterRemoval_Auto' => 6,
+						'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_InsRoof.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -793,7 +793,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 6,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_NoMechVent.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -849,7 +849,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 7,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_SupplyMechVent.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -905,7 +905,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 5,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_ERV.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -961,7 +961,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 4,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_HRV.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -1017,7 +1017,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 42,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Vented_Atlanta_ExtFinDark.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -1073,7 +1073,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 21,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_S_UA_Vented_LosAngeles.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -1129,7 +1129,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 0,
                         'Heat_AirFlowRate' => 0,
                         'Fan_AirFlowRate' => 0,
-                        'Dehumid_WaterRemoval_Auto' => 6,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_PB_UA_Vented.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end
@@ -1185,7 +1185,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 664,
                         'Heat_AirFlowRate' => 503,
                         'Fan_AirFlowRate' => 664,
-                        'Dehumid_WaterRemoval_Auto' => 1,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_PB_UA_Vented_ASHP_DuctsInPB.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end  
@@ -1241,7 +1241,7 @@ class ProcessHVACSizingTest < MiniTest::Test
                         'Cool_AirFlowRate' => 1315,
                         'Heat_AirFlowRate' => 997,
                         'Fan_AirFlowRate' => 1315,
-                        'Dehumid_WaterRemoval_Auto' => 1,
+                        'Dehumid_WaterRemoval_Auto' => 0,
                       }
     _test_measure("SFD_HVACSizing_Load_1story_PB_UA_Vented_ASHP_DuctsInUA.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, false)
   end  
@@ -3209,7 +3209,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
     
-    show_output(result)
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
@@ -3271,7 +3271,7 @@ class ProcessHVACSizingTest < MiniTest::Test
             end
         end
         
-        puts "#{os_header}: #{os_key}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+        #puts "#{os_header}: #{os_key}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
         
         if os_key.downcase.include?("water")
             assert_in_delta(beopt_val, os_val, water_removal_tolerance)
@@ -3623,21 +3623,21 @@ class ProcessHVACSizingTest < MiniTest::Test
         if is_flowrate
             os_val = OpenStudio.convert(os_val,"m^3/s","cfm").get
             beopt_val = OpenStudio.convert(beopt_val,"m^3/s","cfm").get
-            puts "#{beopt_key.gsub(flowrate_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
+            #puts "#{beopt_key.gsub(flowrate_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
             assert_in_delta(beopt_val, os_val, airflow_tolerance)
         elsif is_capacity
             os_val = OpenStudio.convert(os_val,"W","Btu/h").get
             beopt_val = OpenStudio.convert(beopt_val,"W","Btu/h").get
-            puts "#{beopt_key.gsub(capacity_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            #puts "#{beopt_key.gsub(capacity_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
             assert_in_delta(beopt_val, os_val, load_total_tolerance)
         elsif is_water_removal
-            puts "#{beopt_key.gsub(water_removal_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
+            #puts "#{beopt_key.gsub(water_removal_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
             assert_in_delta(beopt_val, os_val, water_removal_tolerance)
         elsif is_energy_factor
-            puts "#{beopt_key.gsub(energy_factor_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
+            #puts "#{beopt_key.gsub(energy_factor_units,'').strip}: #{beopt_val.round(1)} (BEopt) vs. #{os_val.round(1)} (OS)"
             assert_in_delta(beopt_val, os_val, energy_factor_tolerance)
         elsif is_ua
-            puts "#{beopt_key.gsub(ua_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            #puts "#{beopt_key.gsub(ua_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
             assert_in_delta(beopt_val, os_val, ua_tolerance)
         end
     end

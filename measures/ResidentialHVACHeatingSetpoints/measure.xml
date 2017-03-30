@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>e8d6487b-25cb-4a6b-b6b0-758453448ad4</version_id>
-  <version_modified>20170330T193139Z</version_modified>
+  <version_id>2fd6f7b5-c5d2-41bc-a8c1-2b3a8b742165</version_id>
+  <version_modified>20170330T205304Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -169,28 +169,28 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>934BA2A6</checksum>
+      <checksum>ECD4089D</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_Furnace_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8691CA42</checksum>
+      <checksum>444FF8E3</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_3Beds_2Baths_Denver_Furnace_NoSetpoints.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>27D0FEA5</checksum>
+      <checksum>8F4D49F0</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
+      <checksum>E8C7726A</checksum>
     </file>
   </files>
 </measure>

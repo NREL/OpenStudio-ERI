@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>9f9b85ef-b822-4375-8ffa-88751edd29a1</version_id>
-  <version_modified>20170330T193144Z</version_modified>
+  <version_id>19d9b6f3-0fa7-4311-b507-f6e8856ff19e</version_id>
+  <version_modified>20170330T205312Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -244,40 +244,40 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>934BA2A6</checksum>
+      <checksum>ECD4089D</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Anchorage.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D698517A</checksum>
+      <checksum>269EDACF</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C8017F83</checksum>
+      <checksum>BFCA157D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Anchorage.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B6FA5006</checksum>
+      <checksum>AC1E71F0</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3C7D35D7</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
+      <checksum>E8C7726A</checksum>
     </file>
   </files>
 </measure>

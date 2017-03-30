@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>78cf1eeb-1d58-4ee4-884a-eb20f22d7125</version_id>
-  <version_modified>20170330T193138Z</version_modified>
+  <version_id>dde67055-f121-46f3-ac82-8c508b270550</version_id>
+  <version_modified>20170330T205303Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
@@ -155,16 +155,6 @@
           <display_name>150</display_name>
         </choice>
       </choices>
-    </argument>
-    <argument>
-      <name>max_temp</name>
-      <display_name>Max Supply Temp</display_name>
-      <description>Maximum supply air temperature.</description>
-      <type>Double</type>
-      <units>F</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>120</default_value>
     </argument>
     <argument>
       <name>fan_power_installed</name>
@@ -322,28 +312,28 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>934BA2A6</checksum>
+      <checksum>ECD4089D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6C9F46C8</checksum>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C8017F83</checksum>
+      <checksum>BFCA157D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3C7D35D7</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
     <file>
       <version>
@@ -354,13 +344,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B019C2C5</checksum>
+      <checksum>2532278D</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
+      <checksum>E8C7726A</checksum>
     </file>
   </files>
 </measure>

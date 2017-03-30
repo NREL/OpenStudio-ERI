@@ -1,10 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>C:/Users/shorowit/Documents/GitHub/OpenStudio-BEopt/measures/ResidentialHVACBoilerFuel/measure.rb:362: syntax error, unexpected keyword_end, expecting end-of-input</error>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>ee03ed2e-5c9d-468a-ad93-91ead7b5a875</version_id>
-  <version_modified>20170330T193137Z</version_modified>
+  <version_id>9b8b2403-29d5-47a1-bf2a-66d0aec4e6a3</version_id>
+  <version_modified>20170330T205302Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
@@ -416,28 +415,28 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>934BA2A6</checksum>
+      <checksum>ECD4089D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6C9F46C8</checksum>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C8017F83</checksum>
+      <checksum>BFCA157D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3C7D35D7</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
     <file>
       <version>
@@ -448,13 +447,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A4F1D33E</checksum>
+      <checksum>FF5BFAA5</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
+      <checksum>E8C7726A</checksum>
     </file>
   </files>
 </measure>

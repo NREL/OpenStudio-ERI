@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_orientation</name>
   <uid>4bf5a7c5-bce4-404a-bc7b-72dc02b379f8</uid>
-  <version_id>47a62a6e-9ed0-4ced-be0a-475ee4507ccc</version_id>
-  <version_modified>20170330T160653Z</version_modified>
+  <version_id>a7256816-a64c-42df-9398-51851a5c80b6</version_id>
+  <version_modified>20170330T201142Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialOrientation</class_name>
   <display_name>Set Residential Orientation</display_name>
@@ -88,13 +88,13 @@
       <filename>MF_8units_1story_SL_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>FB8E92F8</checksum>
+      <checksum>39BB1058</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5C03ECB4</checksum>
+      <checksum>E9F3D715</checksum>
     </file>
   </files>
 </measure>

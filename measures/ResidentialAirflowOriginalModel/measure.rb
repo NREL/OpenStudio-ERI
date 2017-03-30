@@ -838,9 +838,9 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
       infiltrationLivingSpaceACH50 = nil
     end
     
-    infMethodRes = 'RESIDENTIAL'
-    infMethodASHRAE = 'ASHRAE-ENHANCED'
-    infMethodSG = 'SHERMAN-GRIMSRUD'
+    @infMethodRes = 'RESIDENTIAL'
+    @infMethodASHRAE = 'ASHRAE-ENHANCED'
+    @infMethodSG = 'SHERMAN-GRIMSRUD'
 	
     # Create the material class instances
     si = Infiltration.new(infiltrationLivingSpaceACH50, infiltrationShelterCoefficient, infiltrationGarageACH50)
@@ -1331,7 +1331,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
         Set z_s = #{OpenStudio::convert(living_space.height,"ft","m").get},
         Set f_t = (((s_m/z_m)^p_m)*((z_s/s_s)^p_s)),
         Set VwindL_#{unit_num} = (f_t*Vwind_#{unit_num}),"
-      if living_space.inf_method == infMethodASHRAE
+      if living_space.inf_method == @infMethodASHRAE
         if living_space.SLA > 0
           inf = si
           ems_program += "
@@ -1347,7 +1347,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
           ems_program += "
             Set Qn = 0,"
         end
-      elsif living_space.inf_method == infMethodRes
+      elsif living_space.inf_method == @infMethodRes
         ems_program += "
         Set Qn = #{living_space.ACH * OpenStudio::convert(living_space.volume,"ft^3","m^3").get / OpenStudio::convert(1.0,"hr","s").get},"
       end
@@ -1656,7 +1656,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
       # _processZoneFinishedBasement
       unless fbasement_thermal_zone.nil?
         #--- Infiltration
-        if fb.inf_method == infMethodRes
+        if fb.inf_method == @infMethodRes
           if fb.ACH > 0
             ems << "
             ZoneInfiltration:DesignFlowRate,
@@ -1679,7 +1679,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
       # _processZoneUnfinishedBasement
       unless ufbasement_thermal_zone.nil?
         #--- Infiltration
-        if ub.inf_method == infMethodRes
+        if ub.inf_method == @infMethodRes
           if ub.ACH > 0
             ems << "
             ZoneInfiltration:DesignFlowRate,
@@ -2888,7 +2888,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
 
     unless garage_thermal_zone.nil?
     
-      garage.inf_method = infMethodSG
+      garage.inf_method = @infMethodSG
       garage.hor_leak_frac = 0.4 # DOE-2 Default
       garage.neutral_level = 0.5 # DOE-2 Default
       garage.SLA = get_infiltration_SLA_from_ACH50(si.InfiltrationGarageACH50, 0.67, garage.area, garage.volume)
@@ -2900,7 +2900,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
 
     unless ufbasement_thermal_zone.nil?
 
-      unfinished_basement.inf_method = infMethodRes # Used for constant ACH
+      unfinished_basement.inf_method = @infMethodRes # Used for constant ACH
       unfinished_basement.ACH = unfinished_basement.UFBsmtACH
       # Convert ACH to cfm
       unfinished_basement.inf_flow = unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * unfinished_basement.volume
@@ -2909,7 +2909,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
 
     unless crawl_thermal_zone.nil?
 
-      crawlspace.inf_method = infMethodRes
+      crawlspace.inf_method = @infMethodRes
 
       crawlspace.ACH = crawlspace.CrawlACH
       # Convert ACH to cfm
@@ -2919,7 +2919,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
 
     unless pierbeam_thermal_zone.nil?
 
-      pierbeam.inf_method = infMethodRes
+      pierbeam.inf_method = @infMethodRes
 
       pierbeam.ACH = pierbeam.PierBeamACH
       # Convert ACH to cfm
@@ -2929,7 +2929,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
 
     unless ufattic_thermal_zone.nil?
 
-      unfinished_attic.inf_method = infMethodSG
+      unfinished_attic.inf_method = @infMethodSG
       unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
       unfinished_attic.neutral_level = 0.5 # DOE-2 Default
       unfinished_attic.SLA = unfinished_attic.UASLA
@@ -2971,7 +2971,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
           living_space.inf_flow = 0
       else
           # Living Space Infiltration
-          living_space.inf_method = infMethodASHRAE
+          living_space.inf_method = @infMethodASHRAE
 
           # Based on "Field Validation of Algebraic Equations for Stack and
           # Wind Driven Air Infiltration Calculations" by Walker and Wilson (1998)
@@ -3101,7 +3101,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
     
     unless fbasement_thermal_zone.nil?
 
-      finished_basement.inf_method = infMethodRes # Used for constant ACH
+      finished_basement.inf_method = @infMethodRes # Used for constant ACH
       finished_basement.ACH = finished_basement.FBsmtACH
       # Convert ACH to cfm
       finished_basement.inf_flow = finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * finished_basement.volume
@@ -3121,7 +3121,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
       space.C_w_SG = nil
       space.ELA = nil
 
-      if space.inf_method == infMethodSG
+      if space.inf_method == @infMethodSG
 
         space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
         space.f_w_SG = ws.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
@@ -3129,7 +3129,7 @@ class ProcessAirflowOriginalModel < OpenStudio::Measure::EnergyPlusMeasure
         space.C_w_SG = space.f_w_SG ** 2.0
         space.ELA = space.SLA * space.area # ft^2
 
-      elsif space.inf_method == infMethodASHRAE
+      elsif space.inf_method == @infMethodASHRAE
 
         space.ELA = space.SLA * space.area # ft^2
 

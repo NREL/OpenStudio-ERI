@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_fuel</name>
   <uid>1a71ae9e-5485-4cca-a369-16c6b8a9c1d8</uid>
-  <version_id>beb86ac4-f35a-45e1-9b55-b538a0ed01da</version_id>
-  <version_modified>20170330T193138Z</version_modified>
+  <version_id>6986ca0b-486c-4583-b176-20709698c0ce</version_id>
+  <version_modified>20170330T205304Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessFurnaceFuel</class_name>
   <display_name>Set Residential Furnace Fuel</display_name>
@@ -180,16 +180,6 @@
       </choices>
     </argument>
     <argument>
-      <name>max_temp</name>
-      <display_name>Max Supply Temp</display_name>
-      <description>Maximum supply air temperature.</description>
-      <type>Double</type>
-      <units>F</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>120</default_value>
-    </argument>
-    <argument>
       <name>fan_power_installed</name>
       <display_name>Installed Supply Fan Power</display_name>
       <description>Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.</description>
@@ -355,28 +345,28 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>934BA2A6</checksum>
+      <checksum>ECD4089D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6C9F46C8</checksum>
+      <checksum>CBDAEC35</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C8017F83</checksum>
+      <checksum>BFCA157D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3C7D35D7</checksum>
+      <checksum>8F2B366B</checksum>
     </file>
     <file>
       <version>
@@ -387,13 +377,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4EC3D1FD</checksum>
+      <checksum>76224980</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>ECD4089D</checksum>
+      <checksum>E8C7726A</checksum>
     </file>
   </files>
 </measure>

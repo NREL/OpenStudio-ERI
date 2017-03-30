@@ -55,14 +55,6 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
     furnacecap.setDefaultValue(Constants.SizingAuto)
     args << furnacecap
 
-    #make an argument for entering furnace max supply temp
-    maxtemp = OpenStudio::Measure::OSArgument::makeDoubleArgument("max_temp",true)
-    maxtemp.setDisplayName("Max Supply Temp")
-    maxtemp.setUnits("F")
-    maxtemp.setDescription("Maximum supply air temperature.")
-    maxtemp.setDefaultValue(120.0)
-    args << maxtemp
-
     #make an argument for entering furnace installed supply fan power
     fanpower = OpenStudio::Measure::OSArgument::makeDoubleArgument("fan_power_installed",true)
     fanpower.setDisplayName("Installed Supply Fan Power")
@@ -88,7 +80,6 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
     if not furnaceOutputCapacity == Constants.SizingAuto
       furnaceOutputCapacity = OpenStudio::convert(furnaceOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
-    furnaceMaxSupplyTemp = runner.getDoubleArgumentValue("max_temp",user_arguments)
     furnaceInstalledSupplyFanPower = runner.getDoubleArgumentValue("fan_power_installed",user_arguments)
     
     # _processAirSystem
@@ -161,7 +152,7 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
         air_loop_unitary.setSupplyFan(fan)
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(furnaceMaxSupplyTemp,"F","C").get)      
+        air_loop_unitary.setMaximumSupplyAirTemperature(OpenStudio::convert(120.0,"F","C").get)      
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
 
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)

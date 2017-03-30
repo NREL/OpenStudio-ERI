@@ -384,9 +384,9 @@ class ProcessCeilingFan < OpenStudio::Measure::ModelMeasure
       equip.setName(equip_def.name.to_s)
       equip.setSpace(unit.living_zone.spaces[0])
       equip_def.setDesignLevel(OpenStudio::convert(ceiling_fans_max_power,"kW","W").get)
+      equip_def.setFractionRadiant(0.558)
       equip_def.setFractionLatent(0)
-      equip_def.setFractionRadiant(Constants.rad)
-      equip_def.setFractionLost(0)
+      equip_def.setFractionLost(0.07)
       equip.setSchedule(schedules.CeilingFansMaster)
       
       # Sensor that reports the value of the schedule CeilingFan (0 if cooling setpoint setup is in effect, 1 otherwise).
@@ -449,7 +449,6 @@ class ProcessCeilingFan < OpenStudio::Measure::ModelMeasure
           space_mel_ann = mel_ann * OpenStudio.convert(space.floorArea,"m^2","ft^2").get / unit.finished_floor_area
           space_design_level = sch.calcDesignLevelFromDailykWh(space_mel_ann / 365.0)
 
-          rad = sens / 2.5 * 1.5
           mel_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
           mel = OpenStudio::Model::ElectricEquipment.new(mel_def)
           mel.setName(space_obj_name)

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>513a27ef-ca73-4e03-9ce6-2bce7807dca4</version_id>
-  <version_modified>20170330T160653Z</version_modified>
+  <version_id>9cf62206-b8ed-49d5-8fb7-5a2b8d63fd5f</version_id>
+  <version_modified>20170330T205257Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -164,52 +164,52 @@
       <checksum>91730867</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>934BA2A6</checksum>
-    </file>
-    <file>
       <filename>SFA_4units_1story_FB_UA_Denver_HipRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1D6C4454</checksum>
+      <checksum>093E97A9</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>08CAAA82</checksum>
+      <checksum>9B9CBC42</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Inset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>68E7C3BC</checksum>
+      <checksum>49BC9778</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_InsetLeft.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3F439E37</checksum>
+      <checksum>6059BBD6</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_1story_SL_GRG_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7EBD8F58</checksum>
+      <checksum>A111505A</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_1story_SL_GRGLeft_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E7F39194</checksum>
+      <checksum>E5737D44</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3C7D35D7</checksum>
+      <checksum>8F2B366B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E8C7726A</checksum>
     </file>
   </files>
 </measure>

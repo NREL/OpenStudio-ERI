@@ -70,14 +70,14 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     attr_accessor(:HasCooling, :HasHeating, :HasForcedAirCooling, :HasForcedAirHeating,
                   :FixedCoolingCapacity, :FixedHeatingCapacity, :FixedSuppHeatingCapacity,
                   :HasCentralAirConditioner, :HasRoomAirConditioner,
-                  :HasFurnace, :HasBoiler, :HasElecBaseboard,
+                  :HasFurnace, :HasBoiler, :HasElecBaseboard, :HasDehumidifier,
                   :HasAirSourceHeatPump, :HasMiniSplitHeatPump, :HasGroundSourceHeatPump,
                   :NumSpeedsCooling, :NumSpeedsHeating, :CoolingCFMs, :HeatingCFMs, 
                   :COOL_CAP_FT_SPEC, :HEAT_CAP_FT_SPEC,
                   :HtgSupplyAirTemp, :SHRRated, :CapacityRatioCooling, :CapacityRatioHeating, 
                   :MinOutdoorTemp, :HeatingCapacityOffset, :OverSizeLimit, :HPSizedForMaxLoad,
                   :FanspeedRatioCooling, :CapacityDerateFactorEER, :CapacityDerateFactorCOP,
-                  :BoilerDesignTemp)
+                  :BoilerDesignTemp, :Dehumidifier_Water_Remove_Cap_Ft_DB_RH)
 
   end
   
@@ -1453,7 +1453,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     end
     
     if hvac.HtgSupplyAirTemp.nil?
-        # FIXME: This is correct. But remove Furnace heating supply temp variable?
         if hvac.HasFurnace
             hvac.HtgSupplyAirTemp = 120 # F
         else
@@ -2378,7 +2377,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     tonnages = [1.5, 2, 3, 4, 5]
     
-    # capacityDerateFactorEER values correspond to 1.5, 2, 3, 4, 5 ton air-conditioners. Interpolate in between nominal sizes.
+    # capacityDerateFactorEER values correspond to 1.5, 2, 3, 4, 5 ton equipment. Interpolate in between nominal sizes.
     tons = OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","ton").get
     
     if tons <= 1.5
@@ -2544,10 +2543,13 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     dehumid_WaterRemoval = [0, (dehumid_Load_Lat - dehumid_AC_RTF * dehumid_AC_LatCap) / air_h_fg /
                                Liquid.H2O_l.rho * OpenStudio::convert(1,"ft^3","L").get * OpenStudio::convert(1,"day","hr").get].max
 
-    # Determine the rated water removal rate using the performance curve
-    zone_Water_Remove_Cap_Ft_DB_RH = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843] # FIXME
-    dehumid_CurveValue = MathTools.biquadratic(OpenStudio::convert(mj8.cool_setpoint,"F","C").get, mj8.RH_indoor_dehumid * 100, zone_Water_Remove_Cap_Ft_DB_RH)
-    unit_final.Dehumid_WaterRemoval = dehumid_WaterRemoval / dehumid_CurveValue
+    if hvac.HasDehumidifier
+        # Determine the rated water removal rate using the performance curve
+        dehumid_CurveValue = MathTools.biquadratic(OpenStudio::convert(mj8.cool_setpoint,"F","C").get, mj8.RH_indoor_dehumid * 100, hvac.Dehumidifier_Water_Remove_Cap_Ft_DB_RH)
+        unit_final.Dehumid_WaterRemoval = dehumid_WaterRemoval / dehumid_CurveValue
+    else
+        unit_final.Dehumid_WaterRemoval = 0
+    end
   
     return unit_final
   end
@@ -2863,6 +2865,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     hvac.HasAirSourceHeatPump = false
     hvac.HasMiniSplitHeatPump = false
     hvac.HasGroundSourceHeatPump = false
+    hvac.HasDehumidifier = false
     hvac.NumSpeedsCooling = 0
     hvac.NumSpeedsHeating = 0
     hvac.COOL_CAP_FT_SPEC = nil
@@ -2884,6 +2887,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     hvac.CapacityDerateFactorEER = nil
     hvac.CapacityDerateFactorCOP = nil
     hvac.BoilerDesignTemp = nil
+    hvac.Dehumidifier_Water_Remove_Cap_Ft_DB_RH = nil
     
     clg_equips = []
     htg_equips = []
@@ -2908,7 +2912,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         htg_equips << htg_equip
     end
     
-    # FIXME: Can we get rid of all of this and just use the coil types?
     if not HVAC.has_central_air_conditioner(model, runner, control_zone, false, false).nil?
         hvac.HasCentralAirConditioner = true
     end
@@ -3036,9 +3039,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
             hvac.NumSpeedsCooling = hvac.CapacityRatioCooling.size
             
-            fanspeed_ratio = get_unit_feature(runner, unit, Constants.SizingInfoHVACFanspeedRatioCooling, 'string')
-            return nil if fanspeed_ratio.nil?
-            hvac.FanspeedRatioCooling = fanspeed_ratio.split(",").map(&:to_f)
+            #fanspeed_ratio = get_unit_feature(runner, unit, Constants.SizingInfoHVACFanspeedRatioCooling, 'string')
+            #return nil if fanspeed_ratio.nil?
+            #hvac.FanspeedRatioCooling = fanspeed_ratio.split(",").map(&:to_f)
             
             hvac.OverSizeLimit = 1.3
             vrf = get_vrf_from_terminal_unit(model, clg_equip)
@@ -3048,9 +3051,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 runner.registerError("SHR not set for #{clg_coil.name}.")
                 return nil
             end
-            hvac.SHRRated = [0.896737099817, 0.814581591155, 0.762663646105, 0.726553338446, 0.699820222665,
-                              0.679170768918, 0.662742694445, 0.649401104015, 0.638412246934, 0.629278372246] # FIXME
-                              
+            
+            shr_rated = get_unit_feature(runner, unit, Constants.SizingInfoHVACSHR, 'string')
+            return nil if shr_rated.nil?
+            hvac.SHRRated = shr_rated.split(",").map(&:to_f)
+
             coolingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACCoolingCFMs, 'string')
             return nil if coolingCFMs.nil?
             hvac.CoolingCFMs = coolingCFMs.split(",").map(&:to_f)
@@ -3243,6 +3248,18 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
         end
     end
+    
+    # Dehumidifier?
+    dehumids = model.getZoneHVACDehumidifierDXs
+    if dehumids.size > 1
+        runner.registerError("Cannot currently handle multiple zone dehumidifiers in a unit: #{dehumids.to_s}.")
+        return nil
+    end
+    if dehumids.size == 1
+        hvac.HasDehumidifier = true
+        curve = dehumids[0].waterRemovalCurve.to_CurveBiquadratic.get
+        hvac.Dehumidifier_Water_Remove_Cap_Ft_DB_RH = [curve.coefficient1Constant, curve.coefficient2x, curve.coefficient3xPOW2, curve.coefficient4y, curve.coefficient5yPOW2, curve.coefficient6xTIMESY]
+    end
 
     return hvac, clg_equips, htg_equips
   end
@@ -3260,8 +3277,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     vector = []
     curves.each do |curve|
         bi = curve.to_CurveBiquadratic.get
-        c_si = [bi.coefficient1Constant, bi.coefficient2x, bi.coefficient3xPOW2, 
-             bi.coefficient4y, bi.coefficient5yPOW2, bi.coefficient6xTIMESY]
+        c_si = [bi.coefficient1Constant, bi.coefficient2x, bi.coefficient3xPOW2, bi.coefficient4y, bi.coefficient5yPOW2, bi.coefficient6xTIMESY]
         if convert_to_ip
             vector << HVAC.convert_curve_biquadratic(c_si, false)
         else
@@ -3766,7 +3782,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 clg_coil_airflow = hvac.CoolingCFMs[mshp_indices[-1]] * unit_final.Cool_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
                 htg_airflow = OpenStudio::convert(unit_final.Heat_Airflow,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
                 clg_airflow = OpenStudio::convert(unit_final.Cool_Airflow,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
-                fan_airflow = hvac.FanspeedRatioCooling.max * OpenStudio.convert(unit_final.Fan_Airflow + 0.01,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
+                fan_airflow = OpenStudio.convert(unit_final.Fan_Airflow + 0.01,"cfm","m^3/s").get * unit_final.Zone_FlowRatios[thermal_zone]
                 
                 # VRF
                 vrf.setRatedTotalHeatingCapacity(htg_cap)
