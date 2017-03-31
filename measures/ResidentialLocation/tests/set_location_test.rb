@@ -41,14 +41,14 @@ class SetResidentialEPWFileTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ClimateZones"=>1, "Site"=>1, "YearDescription"=>1}
     expected_values = {"StartDate"=>"2009-Apr-07", "EndDate"=>"2009-Oct-26"}
-    model = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 8)
+    model = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
     args_hash = {}
     args_hash["dst_start_date"] = "April 8"
     args_hash["dst_end_date"] = "October 27"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {"StartDate"=>"2009-Apr-08", "EndDate"=>"2009-Oct-27"}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 9)      
+    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)      
   end
   
   private
@@ -116,6 +116,8 @@ class SetResidentialEPWFileTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
+    
+    #show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
