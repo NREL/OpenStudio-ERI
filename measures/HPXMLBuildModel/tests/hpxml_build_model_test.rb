@@ -40,23 +40,214 @@ class HPXMLBuildModelTest < MiniTest::Test
     args_hash = {}
     args_hash["measures_dir"] = ".."
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>2, "Construction"=>8, "Material"=>11, "Surface"=>9, "SubSurface"=>19, "ThermalZone"=>3, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>6, "Material"=>7, "Surface"=>5, "SubSurface"=>34, "ThermalZone"=>2, "Space"=>2, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))} based on lat, lng.")
   end
-  
-  def test_rem_based_hpxml_specified_weather
+
+  def test_rem_based_hpxml_1
     args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/CasaElena.xml"
     args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "ThermostatSetpointDualSetpoint"=>2, "Construction"=>8, "Material"=>11, "Surface"=>9, "SubSurface"=>19, "ThermalZone"=>3, "AirLoopHVACZoneSplitter"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "Space"=>3, "CoilHeatingGas"=>1, "AirLoopHVACUnitarySystem"=>1, "FanOnOff"=>1, "AirLoopHVACZoneMixer"=>1, "AirLoopHVAC"=>1, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>8, "Material"=>11, "Surface"=>num_surfaces, "SubSurface"=>50, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join("./measures/ResidentialLocation/resources", File.basename(args_hash["weather_file_path"])))}.")
+  end
+  
+  def test_rem_based_hpxml_2
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/CedarUtopian4.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>8, "Material"=>11, "Surface"=>num_surfaces, "SubSurface"=>192, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
   end
 
+  def test_rem_based_hpxml_3
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/Crawlspace.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
+  end
+  
+  def test_rem_based_hpxml_4
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/Estar3Tropics.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
+  end
+  
+  def test_rem_based_hpxml_5
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/Estar3TropicsWoNat.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
+  end
+  
+  def test_rem_based_hpxml_6
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/HE-GSHP.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join("./measures/ResidentialLocation/resources", File.basename(args_hash["weather_file_path"])))}.")
+  end
+  
+  def test_rem_based_hpxml_7
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/HE-RESNET.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
+  end
+
+  def test_rem_based_hpxml_8
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/MobileHome.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    result = _test_error_or_NA(nil, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Residential facility type not single-family detached.")
+  end
+  
+  def test_rem_based_hpxml_9
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/MultiFamily2.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    result = _test_error_or_NA(nil, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Residential facility type not single-family detached.")
+  end
+  
+  def test_rem_based_hpxml_10
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/RESNET QA Test - EGWA within limit.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
+  end
+  
+  def test_rem_based_hpxml_11
+    args_hash = {}
+    args_hash["hpxml_file_path"] = "./resources/SimpInput.xml"
+    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+    args_hash["measures_dir"] = ".."
+    doc = REXML::Document.new(File.read(File.expand_path(File.join("./measures/HPXMLBuildModel", args_hash["hpxml_file_path"]))))
+    num_roofs = REXML::XPath.first(doc, "count(//Roofs/Roof)")
+    num_attics = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='venting unknown attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='vented attic'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='unvented attic'])")) * 2
+    num_framefloors = REXML::XPath.first(doc, "count(//Foundation/FrameFloor)") * 2
+    num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
+    num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
+    num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>6, "Material"=>7, "Surface"=>num_surfaces, "SubSurface"=>34, "ThermalZone"=>2, "Space"=>2, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
+  end
+  
   private
   
   def _test_error_or_NA(osm_file_or_model, args_hash)

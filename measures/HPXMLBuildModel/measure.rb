@@ -29,7 +29,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_file_path", true)
     arg.setDisplayName("HPXML File Path")
     arg.setDescription("Absolute (or relative) path of the HPXML file.")
-    arg.setDefaultValue("./resources/0da3f1b88d6b3ee7ea3acda8bfbb238f.xml")
+    arg.setDefaultValue("./resources/SimpInput.xml")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_file_path", false)
@@ -104,8 +104,11 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
                        "ResidentialConstructionsFoundationsFloorsCrawlspace",
                        "ResidentialConstructionsUninsulatedSurfaces",
                        "ResidentialConstructionsWindows", 
-                       "ResidentialHVACFurnaceFuel",
-                       "ResidentialHVACHeatingSetpoints"
+                       # "ResidentialHVACFurnaceFuel",
+                       # "ResidentialHVACHeatingSetpoints",
+                       # "ResidentialAirflow", # TODO: our spaces don't have volumes
+                       # "ResidentialHVACSizing",
+                       # "ResidentialPhotovoltaics"
                        ] # TODO: Remove
     
     # Obtain measures and default arguments
@@ -128,18 +131,27 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       event_types << el.text
     end
     
+    # Error checking
+    facility_types_handled = ["single-family detached"]
+    if doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType"].nil?
+      runner.registerError("Residential facility type not specified.")
+      return false
+    elsif not facility_types_handled.include? doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType"].text
+      runner.registerError("Residential facility type not #{facility_types_handled.join(", ")}.")
+      return false
+    end    
+    
     # ResidentialLocation
     if weather_file_path.nil?
     
-      city_municipality = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality"]
-      state_code = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/StateCode"]
-      zip_code = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/ZipCode"]
+      city_municipality = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality"]
+      state_code = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/StateCode"]
+      zip_code = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/ZipCode"]
       
       lat, lng = get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
       if lat.nil? and lng.nil?
         return false
       end
-      
       weather_file_path = File.join(measures["ResidentialLocation"]["weather_directory"], get_epw_from_lat_lng(runner, resources_dir, lat, lng))
       if weather_file_path.nil?
         return false
@@ -163,41 +175,49 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     living_space.setThermalZone(living_zone)    
     
     # foundation zone, space
-    foundation_type = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/FoundationType"]
+    foundation_type = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/FoundationType"]
     unless foundation_type.nil?
-      unless foundation_type.elements["SlabOnGrade"]
+      foundation_space_name = nil
+      foundation_zone_name = nil
+      if foundation_type.elements["Basement/Conditioned/text()='true'"] or foundation_type.elements["Basement/Finished/text()='true'"]
+        foundation_zone_name = Constants.FinishedBasementZone
+        foundation_space_name = Constants.FinishedBasementSpace
+      elsif foundation_type.elements["Basement/Conditioned/text()='false'"] or foundation_type.elements["Basement/Finished/text()='false'"]
+        foundation_zone_name = Constants.UnfinishedBasementZone
+        foundation_space_name = Constants.UnfinishedBasementSpace
+      elsif foundation_type.elements["Crawlspace/Vented/text()='true'"] or foundation_type.elements["Crawlspace/Vented/text()='false'"] or foundation_type.elements["Crawlspace/Conditioned/text()='true'"] or foundation_type.elements["Crawlspace/Conditioned/text()='false'"]
+        foundation_zone_name = Constants.CrawlZone
+        foundation_space_name = Constants.CrawlSpace
+      elsif foundation_type.elements["Garage/Conditioned/text()='true'"] or foundation_type.elements["Garage/Conditioned/text()='false'"]
+        foundation_zone_name = Constants.GarageZone
+        foundation_space_name = Constants.GarageSpace
+      elsif foundation_type.elements["SlabOnGrade"]     
+      end
+      if not foundation_space_name.nil? and not foundation_zone_name.nil?
         foundation_zone = OpenStudio::Model::ThermalZone.new(model)
+        foundation_zone.setName(foundation_zone_name)
         foundation_space = OpenStudio::Model::Space.new(model)
-        if foundation_type.elements["Basement/Conditioned/text()='true'"]
-          foundation_zone.setName(Constants.FinishedBasementZone)
-          foundation_space.setName(Constants.FinishedBasementSpace)
-        elsif foundation_type.elements["Basement/Conditioned/text()='false'"]
-          foundation_zone.setName(Constants.UnfinishedBasementZone)
-          foundation_space.setName(Constants.UnfinishedBasementSpace)
-        elsif foundation_type.elements["Crawlspace"]
-          foundation_zone.setName(Constants.CrawlZone)
-          foundation_space.setName(Constants.CrawlSpace)
-        end        
+        foundation_space.setName(foundation_space_name)
         foundation_space.setThermalZone(foundation_zone)
       end
     end
     
-    avg_ceil_hgt = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
+    avg_ceil_hgt = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
     if avg_ceil_hgt.nil?
       avg_ceil_hgt = 8.0
     else
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
     
-    num_floors = doc.elements["//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"]
+    num_floors = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
     if num_floors.nil?
-      num_floors = 1.0
+      num_floors = 1
     else
-      num_floors = num_floors.text.to_f
+      num_floors = num_floors.text.to_i
     end
     
     # foundations floors, walls
-    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
       foundation.elements.each("Slab") do |slab|
       
@@ -292,22 +312,25 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     end
         
     # exterior walls
-    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall") do |wall|
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next if wall.elements["Area"].nil?
       
+      z_origin = 0
       unless wall.elements["ExteriorAdjacentTo"].nil?
-        next unless wall.elements["ExteriorAdjacentTo"].text == "ambient"
+        if wall.elements["ExteriorAdjacentTo"].text == "attic"
+          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+        end
       end
       
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
       wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
            
       vertices = OpenStudio::Point3dVector.new
-      vertices << OpenStudio::Point3d.new(0, 0, 0)
-      vertices << OpenStudio::Point3d.new(0, 0, wall_height)
-      vertices << OpenStudio::Point3d.new(wall_length, 0, wall_height)
-      vertices << OpenStudio::Point3d.new(wall_length, 0, 0)
+      vertices << OpenStudio::Point3d.new(0, 0, z_origin)
+      vertices << OpenStudio::Point3d.new(0, 0, z_origin + wall_height)
+      vertices << OpenStudio::Point3d.new(wall_length, 0, z_origin + wall_height)
+      vertices << OpenStudio::Point3d.new(wall_length, 0, z_origin)
       
       surface = OpenStudio::Model::Surface.new(vertices, model)
       surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
@@ -319,7 +342,8 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
     # attics
     attic_space = nil
-    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
+    has_cathedral_ceiling = false
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
       next if attic.elements["Area"].nil?
     
@@ -332,16 +356,24 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       vertices << OpenStudio::Point3d.new(0, 0, z_origin)
       vertices << OpenStudio::Point3d.new(0, attic_width, z_origin)
       vertices << OpenStudio::Point3d.new(attic_length, attic_width, z_origin)
-      vertices << OpenStudio::Point3d.new(attic_length, 0, z_origin)
-      
+      vertices << OpenStudio::Point3d.new(attic_length, 0, z_origin)      
 
-      if attic.elements["AtticType"].text == "cathedral ceiling"
-        surface = OpenStudio::Model::Surface.new(OpenStudio::reverse(vertices), model)
+      if attic.elements["AtticType"].nil?
+        surface = OpenStudio::Model::Surface.new(vertices, model)
         surface.setName(attic.elements["SystemIdentifier"].attributes["id"])
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")
-        surface.setSpace(living_space)
-      elsif ["venting unknown attic", "vented attic"].include? attic.elements["AtticType"].text
+        surface.setSpace(living_space)        
+      elsif ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
+        # TODO: create an adiabatic surface here?
+        # surface = OpenStudio::Model::Surface.new(OpenStudio::reverse(vertices), model)
+        # surface.setName(attic.elements["SystemIdentifier"].attributes["id"])
+        # surface.setSurfaceType("RoofCeiling")
+        # surface.setOutsideBoundaryCondition("Outdoors")
+        # surface.setSpace(living_space)
+        # surface.createAdjacentSurface(living_space)
+        has_cathedral_ceiling = true
+      elsif ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text
         if attic_space.nil?
           attic_zone = OpenStudio::Model::ThermalZone.new(model)
           attic_zone.setName(Constants.UnfinishedAtticZone)
@@ -354,22 +386,40 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
         surface.setSurfaceType("Floor")
         surface.setSpace(attic_space)
         surface.createAdjacentSurface(living_space)
-        # FIXME: must assume a roof so the unfinished attic measure runs
-        surface = OpenStudio::Model::Surface.new(OpenStudio::reverse(vertices), model)
-        surface.setName("#{attic.elements["SystemIdentifier"].attributes["id"]} roof")
-        surface.setSurfaceType("RoofCeiling")
-        surface.setOutsideBoundaryCondition("Outdoors")
-        surface.setSpace(attic_space)
       else
         puts "#{attic.elements["AtticType"].text} not handled yet."
       end
     
     end
     
+    # roofs
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
+    
+      next if roof.elements["RoofArea"].nil?
+    
+      roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
+      roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
+    
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * (num_floors + 1) # TODO: is this a bad assumption?
+    
+      vertices = OpenStudio::Point3dVector.new
+      vertices << OpenStudio::Point3d.new(0, 0, z_origin)
+      vertices << OpenStudio::Point3d.new(0, roof_width, z_origin)
+      vertices << OpenStudio::Point3d.new(roof_length, roof_width, z_origin)
+      vertices << OpenStudio::Point3d.new(roof_length, 0, z_origin)
+
+      surface = OpenStudio::Model::Surface.new(OpenStudio::reverse(vertices), model)
+      surface.setName("#{roof.elements["SystemIdentifier"].attributes["id"]}")
+      surface.setSurfaceType("RoofCeiling")
+      surface.setOutsideBoundaryCondition("Outdoors")
+      surface.setSpace(attic_space)
+
+    end    
+    
     # windows
     surface_window_area = {}
-    doc.elements.each("//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window") do |window|
-      next if window.elements["AttachedToWall"].nil? # TODO: this is probably rare
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window") do |window|
+      next if window.elements["AttachedToWall"].nil?
       next if window.elements["Area"].nil?
       if surface_window_area.keys.include? window.elements["AttachedToWall"].attributes["idref"]
         surface_window_area[window.elements["AttachedToWall"].attributes["idref"]] += window.elements["Area"].text.to_f
@@ -390,7 +440,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     end
     
     # rotate surfaces about the origin so you can see them in sketchup more easily
-    spacing = 90.0 # deg
+    spacing = 0.0 # deg
     ["wall", "floor", "roofceiling"].each do |surface_type|
       
       i = 0.0
@@ -420,6 +470,9 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
 
     end       
         
+    # Store building name
+    model.getBuilding.setName(File.basename(hpxml_file_path))
+        
     # Store building unit information
     unit = OpenStudio::Model::BuildingUnit.new(model)
     unit.setBuildingUnitType(Constants.BuildingUnitTypeResidential)
@@ -427,13 +480,33 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     model.getSpaces.each do |space|
       space.setBuildingUnit(unit)
     end
+    
+    # Store number of units
+    model.getBuilding.setStandardsNumberOfLivingUnits(1)    
+    
+    # Store number of stories
+    if has_cathedral_ceiling
+      num_floors += 1
+    end
+    model.getBuilding.setStandardsNumberOfAboveGroundStories(num_floors)
+    model.getSpaces.each do |space|
+      if space.name.to_s == Constants.FinishedBasementSpace
+        num_floors += 1  
+        break
+      end
+    end
+    model.getBuilding.setStandardsNumberOfStories(num_floors)
+    
+    # Store the building type
+    facility_types_map = {"single-family detached"=>Constants.BuildingTypeSingleFamilyDetached}
+    model.getBuilding.setStandardsBuildingType(facility_types_map[doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType"].text])
         
     # ResidentialGeometryNumBedsAndBaths
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bedrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bathrooms", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms")
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bedrooms", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bathrooms", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms")
 
     # ResidentialGeometryNumOccupants
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//HPXML/Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")        
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")        
 
     # Residentialxx...
     # Residentialyy...
@@ -596,11 +669,17 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     postalcodes = CSV.read(File.expand_path(File.join(resources_dir, "postalcodes.csv")))
     postalcodes.each do |row|
       if not zip_code.nil?
-        if zip_code.text == row[0]
-          return row[4], row[5]
+        if not zip_code.text.nil?
+          if zip_code.text == row[0]
+            return row[4], row[5]
+          end
+        elsif not city_municipality.nil? and not state_code.nil?
+          if city_municipality.text.downcase == row[1].downcase and state_code.text.downcase == row[3].downcase
+            return row[4], row[5]
+          end
         end
       elsif not city_municipality.nil? and not state_code.nil?
-        if city_municipality.text.downcase == row[1].downcase and state_code.text.downcase == row[2].downcase
+        if city_municipality.text.downcase == row[1].downcase and state_code.text.downcase == row[3].downcase
           return row[4], row[5]
         end
       else
