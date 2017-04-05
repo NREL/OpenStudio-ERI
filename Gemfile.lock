@@ -47,6 +47,7 @@ GEM
     excon (0.55.0)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
+    ffi (1.9.18)
     ffi (1.9.18-x64-mingw32)
     hashie (3.5.5)
     json (1.8.6)
@@ -65,6 +66,8 @@ GEM
       ruby-progressbar
     multi_json (1.12.1)
     multipart-post (2.0.0)
+    nokogiri (1.6.8.1)
+      mini_portile2 (~> 2.1.0)
     nokogiri (1.6.8.1-x64-mingw32)
       mini_portile2 (~> 2.1.0)
     parser (2.4.0.0)
@@ -106,6 +109,7 @@ GEM
     zliby (0.0.5)
 
 PLATFORMS
+  ruby
   x64-mingw32
 
 DEPENDENCIES

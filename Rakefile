@@ -17,7 +17,7 @@ require 'json'
 # upload content to that group
 
 # Get latest installed version of openstudio.exe
-os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"]
+os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
 if os_clis.size == 0
     puts "ERROR: Could not find openstudio.exe. You may need to install the OpenStudio Command Line Interface."
     exit

@@ -21,6 +21,80 @@ You can now run ```rake update_resources``` to update the measures' resource fil
 
 You can run ```rake -T``` to see the list of possible rake tasks.
 
+### macOS Specific Installation
+
+Install [Homebrew](https://brew.sh/) if you don't have it already.
+
+Run `brew doctor`. It should give you, among other issues, a list of unexpected dylibs that you'll need to move for this to work such as:
+
+```
+Unexpected dylibs:
+  /usr/local/lib/libcrypto.0.9.8.dylib
+  /usr/local/lib/libcrypto.1.0.0.dylib
+  /usr/local/lib/libcrypto.dylib
+  /usr/local/lib/libklcsagt.dylib
+  /usr/local/lib/libklcskca.dylib
+  /usr/local/lib/libklcsnagt.dylib
+  /usr/local/lib/libklcsrt.dylib
+  /usr/local/lib/libklcsstd.dylib
+  /usr/local/lib/libklcstr.dylib
+  /usr/local/lib/libklmspack.0.1.0.dylib
+  /usr/local/lib/libklmspack.0.dylib
+  /usr/local/lib/libklmspack.dylib
+  /usr/local/lib/libssl.0.9.8.dylib
+  /usr/local/lib/libssl.1.0.0.dylib
+  /usr/local/lib/libssl.dylib
+  /usr/local/lib/libz.1.2.5.dylib
+  /usr/local/lib/libz.1.2.6.dylib
+  /usr/local/lib/libz.1.dylib
+  /usr/local/lib/libz.dylib
+```
+
+Highlight and copy the list (without the header "Unexpected dylibs:). Run the following commands to move them to another location where they won't interfere.
+
+```bash
+mkdir ~/unused_dylibs
+pbpaste | xargs -t -I % mv % ~/unused_dylibs
+```
+
+Install `rbenv` and required dependencies.
+
+```bash
+brew install openssl libyaml libffi rbenv
+```
+
+Initialize `rbenv` by running the command below and following the instructions to add the appropriate things to your `~/.bash_profile`.
+
+```bash
+rbenv init
+```
+
+Install the appropriate ruby version.
+
+```bash
+cd path/to/repo
+rbenv install `cat .ruby-version`
+```
+
+Add the path to the install ruby libraries top the bottom of your `~/.bash_profile`
+
+```bash
+echo "export RUBYLIB=/Applications/OpenStudio-2.0.5/Ruby" >> ~/.bash_profile
+```
+
+Install bundler and the libraries that bundler installs.
+
+```bash
+gem install bundler
+bundle install
+```
+
+And finally
+
+```bash
+rake update_resources
+```
+
 ## New Construction Workflow for Users
 
 The New Construction workflow illustrates how to build up a complete residential building model from an [empty seed model](https://github.com/NREL/OpenStudio-BEopt/blob/master/seeds/EmptySeedModel.osm). Note that some measures need to be called before others. For example, the Window Constructions measure must be called after windows have been added to the building. The list below documents the intended workflow for using these measures.
