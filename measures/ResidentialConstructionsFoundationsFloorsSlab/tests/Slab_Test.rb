@@ -49,6 +49,7 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
 
   def test_add_uninsulated
     args_hash = {}
+    args_hash["exposed_perim"] = "134.16407864998726"
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>3, "Construction"=>1}
     expected_values = {"LayerRValue"=>0.0254/0.02949+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2}
@@ -201,6 +202,20 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
     args_hash["ext_depth"] = 10
     result = _test_error(osm_geo_slab, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Invalid insulation configuration. The only valid configurations are: Exterior, Perimeter+Gap, Whole+Gap, Perimeter, or Whole.")
+  end
+  
+  def test_argument_error_exposed_perimeter_bad_string
+    args_hash = {}
+    args_hash["exposed_perim"] = "bad"
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
+  end
+
+  def test_argument_error_exposed_perimeter_negative
+    args_hash = {}
+    args_hash["exposed_perim"] = "-1"
+    result = _test_error(osm_geo_slab, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
   end
 
   def test_not_applicable_no_geometry

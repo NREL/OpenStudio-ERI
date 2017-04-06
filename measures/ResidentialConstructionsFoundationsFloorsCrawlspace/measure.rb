@@ -77,6 +77,14 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
 	ceil_joist_height.setDefaultValue("9.25")
 	args << ceil_joist_height	
     
+    #make a string argument for exposed perimeter
+    exposed_perim = OpenStudio::Measure::OSArgument::makeStringArgument("exposed_perim", true)
+	exposed_perim.setDisplayName("Exposed Perimeter")
+	exposed_perim.setUnits("ft")
+	exposed_perim.setDescription("Total length of the crawlspace's perimeter that is on the exterior of the building's footprint.")
+	exposed_perim.setDefaultValue(Constants.Auto)
+	args << exposed_perim	
+    
     return args
   end #end the arguments method
 
@@ -126,6 +134,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
     crawlCeilingInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("ceil_cavity_grade",user_arguments)]
     crawlCeilingFramingFactor = runner.getDoubleArgumentValue("ceil_ff",user_arguments)
     crawlCeilingJoistHeight = runner.getDoubleArgumentValue("ceil_joist_height",user_arguments)
+    exposed_perim = runner.getStringArgumentValue("exposed_perim",user_arguments)
     
     # Validate Inputs
     if crawlWallContInsRvalueNominal < 0.0
@@ -148,11 +157,19 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
         runner.registerError("Ceiling Joist Height must be greater than 0.")
         return false
     end    
+    if exposed_perim != Constants.Auto and (not MathTools.valid_float?(exposed_perim) or exposed_perim.to_f < 0)
+        runner.registerError("Exposed Perimeter must be #{Constants.Auto} or a number greater than or equal to 0.")
+        return false
+    end
     
     # Get geometry values
     csHeight = Geometry.spaces_avg_height(spaces)
     csFloorArea = Geometry.get_floor_area_from_spaces(spaces)
-    csExtPerimeter = Geometry.calculate_perimeter(model, floor_surfaces, has_foundation_walls=true)
+    if exposed_perim == Constants.Auto
+        csExtPerimeter = Geometry.calculate_exposed_perimeter(model, floor_surfaces, has_foundation_walls=true)
+    else
+        csExtPerimeter = exposed_perim.to_f
+    end
     csExtWallArea = csExtPerimeter * Geometry.spaces_avg_height(spaces)
 
     # -------------------------------

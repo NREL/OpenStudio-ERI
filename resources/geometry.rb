@@ -649,7 +649,7 @@ class Geometry
     # FIXME: Has not been tested on buildings with multiple foundations 
     #        (aside from basements/crawls with attached garages over slabs)
     # TODO: Update code to work for non-rectangular buildings.
-    def self.calculate_perimeter(model, ground_floor_surfaces, has_foundation_walls=false)
+    def self.calculate_exposed_perimeter(model, ground_floor_surfaces, has_foundation_walls=false)
 
         perimeter = 0
 

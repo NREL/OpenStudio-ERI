@@ -57,6 +57,27 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinishedTest < MiniTest::Te
     args_hash["ceil_cavity_grade"] = "II" # no insulation, shouldn't apply
     args_hash["ceil_ff"] = 0.13
     args_hash["ceil_joist_height"] = 9.25
+    args_hash["exposed_perim"] = "134.16407864998726"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>6, "Construction"=>3}
+    expected_values = {"LayerRValue"=>0.40683+0.3048/1.731+0.2032/1.3114+176.1+0.1016/1.3114+0.23495/2.59817, "LayerDensity"=>1842.3+2242.8+2242.8+67.642, "LayerSpecificHeat"=>418.7+837.4+837.4+1211.14, "LayerIndex"=>0+1+2+0+1+2+0}
+    _test_measure(osm_geo_unfinished_basement, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+
+  def test_add_uninsulated
+    args_hash = {}
+    args_hash["wall_ins_height"] = 0
+    args_hash["wall_cavity_r"] = 0
+    args_hash["wall_cavity_grade"] = "II" # no insulation, shouldn't apply
+    args_hash["wall_cavity_depth"] = 0
+    args_hash["wall_cavity_insfills"] = true
+    args_hash["wall_ff"] = 0
+    args_hash["wall_rigid_r"] = 0
+    args_hash["wall_rigid_thick_in"] = 0
+    args_hash["ceil_cavity_r"] = 0
+    args_hash["ceil_cavity_grade"] = "II" # no insulation, shouldn't apply
+    args_hash["ceil_ff"] = 0.13
+    args_hash["ceil_joist_height"] = 9.25
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>6, "Construction"=>3}
     expected_values = {"LayerRValue"=>0.40683+0.3048/1.731+0.2032/1.3114+176.1+0.1016/1.3114+0.23495/2.59817, "LayerDensity"=>1842.3+2242.8+2242.8+67.642, "LayerSpecificHeat"=>418.7+837.4+837.4+1211.14, "LayerIndex"=>0+1+2+0+1+2+0}
@@ -238,6 +259,20 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinishedTest < MiniTest::Te
     args_hash["ceil_joist_height"] =0
     result = _test_error(osm_geo_unfinished_basement, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Ceiling Joist Height must be greater than 0.")
+  end
+  
+  def test_argument_error_exposed_perimeter_bad_string
+    args_hash = {}
+    args_hash["exposed_perim"] = "bad"
+    result = _test_error(osm_geo_unfinished_basement, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
+  end
+
+  def test_argument_error_exposed_perimeter_negative
+    args_hash = {}
+    args_hash["exposed_perim"] = "-1"
+    result = _test_error(osm_geo_unfinished_basement, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
   end
 
   def test_not_applicable_no_geometry

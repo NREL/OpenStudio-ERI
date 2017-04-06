@@ -51,6 +51,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspaceTest < MiniTest::Test
     args_hash["ceil_cavity_grade"] = "II" # no insulation, shouldn't apply
     args_hash["ceil_ff"] = 0.13
     args_hash["ceil_joist_height"] = 9.25
+    args_hash["exposed_perim"] = "134.16407864998726"
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>4, "Construction"=>3}
     expected_values = {"LayerRValue"=>0.23495/2.59817+0.3048/1.731+0.2032/1.3114+11.24877, "LayerDensity"=>67.641+1842.3+2242.8, "LayerSpecificHeat"=>1211.14+418.7+837.4, "LayerIndex"=>0+0+1+0+1}
@@ -139,6 +140,20 @@ class ProcessConstructionsFoundationsFloorsCrawlspaceTest < MiniTest::Test
     args_hash["ceil_joist_height"] =0
     result = _test_error(osm_geo_crawl, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Ceiling Joist Height must be greater than 0.")
+  end
+  
+  def test_argument_error_exposed_perimeter_bad_string
+    args_hash = {}
+    args_hash["exposed_perim"] = "bad"
+    result = _test_error(osm_geo_crawl, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
+  end
+
+  def test_argument_error_exposed_perimeter_negative
+    args_hash = {}
+    args_hash["exposed_perim"] = "-1"
+    result = _test_error(osm_geo_crawl, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
   end
 
   def test_not_applicable_no_geometry

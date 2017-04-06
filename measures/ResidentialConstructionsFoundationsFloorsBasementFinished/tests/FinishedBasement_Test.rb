@@ -55,12 +55,13 @@ class ProcessConstructionsFoundationsFloorsBasementFinishedTest < MiniTest::Test
     args_hash["wall_rigid_thick_in"] = 0
     args_hash["ceil_ff"] = 0.13
     args_hash["ceil_joist_height"] = 9.25
+    args_hash["exposed_perim"] = "109.54451150103338"
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>5, "Construction"=>2}
     expected_values = {"LayerRValue"=>0.3275+0.3048/1.731+0.2032/1.3114+176.1+0.1016/1.3114, "LayerDensity"=>1842.3+2242.8+2242.8, "LayerSpecificHeat"=>418.7+837.4+837.4, "LayerIndex"=>0+1+2+0+1+2}
     _test_measure(osm_geo_finished_basement, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
-
+  
   def test_add_half_wall_r10
     args_hash = {}
     args_hash["wall_ins_height"] = 4
@@ -202,7 +203,21 @@ class ProcessConstructionsFoundationsFloorsBasementFinishedTest < MiniTest::Test
     result = _test_error(osm_geo_finished_basement, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Ceiling Joist Height must be greater than 0.")
   end
+  
+  def test_argument_error_exposed_perimeter_bad_string
+    args_hash = {}
+    args_hash["exposed_perim"] = "bad"
+    result = _test_error(osm_geo_finished_basement, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
+  end
 
+  def test_argument_error_exposed_perimeter_negative
+    args_hash = {}
+    args_hash["exposed_perim"] = "-1"
+    result = _test_error(osm_geo_finished_basement, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Exposed Perimeter must be auto or a number greater than or equal to 0.")
+  end
+  
   def test_not_applicable_no_geometry
     args_hash = {}
     _test_na(nil, args_hash)

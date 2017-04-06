@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>d659c929-b039-4c8b-8cb6-5a02b59f2422</version_id>
-  <version_modified>20170405T184503Z</version_modified>
+  <version_id>42040e31-dc48-445e-973a-dad34c6f3026</version_id>
+  <version_modified>20170406T165427Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
@@ -84,16 +84,16 @@
       <checksum>4529B921</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>041A8AB9</checksum>
-    </file>
-    <file>
       <filename>sam-sdk-2017-1-17-r1.zip</filename>
       <filetype>zip</filetype>
       <usage_type>resource</usage_type>
       <checksum>14339B8F</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C7C92EA5</checksum>
     </file>
   </files>
 </measure>

@@ -104,6 +104,14 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
 	mass_specheat.setDescription("Specific heat of the slab foundation mass.")
 	mass_specheat.setDefaultValue(0.2)
 	args << mass_specheat
+    
+    #make a string argument for exposed perimeter
+    exposed_perim = OpenStudio::Measure::OSArgument::makeStringArgument("exposed_perim", true)
+	exposed_perim.setDisplayName("Exposed Perimeter")
+	exposed_perim.setUnits("ft")
+	exposed_perim.setDescription("Total length of the slab's perimeter that is on the exterior of the building's footprint.")
+	exposed_perim.setDefaultValue(Constants.Auto)
+	args << exposed_perim	
 
     return args
   end #end the arguments method
@@ -150,6 +158,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
     slabMassCond = runner.getDoubleArgumentValue("mass_conductivity",user_arguments)
     slabMassDens = runner.getDoubleArgumentValue("mass_density",user_arguments)
     slabMassSpecHeat = runner.getDoubleArgumentValue("mass_specific_heat",user_arguments)
+    exposed_perim = runner.getStringArgumentValue("exposed_perim",user_arguments)
 
     # Validate Inputs
     if slabPerimeterRvalue < 0.0
@@ -208,10 +217,18 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
         runner.registerError("Invalid insulation configuration. The only valid configurations are: Exterior, Perimeter+Gap, Whole+Gap, Perimeter, or Whole.")
         return false    
     end
+    if exposed_perim != Constants.Auto and (not MathTools.valid_float?(exposed_perim) or exposed_perim.to_f < 0)
+        runner.registerError("Exposed Perimeter must be #{Constants.Auto} or a number greater than or equal to 0.")
+        return false
+    end
     
     # Get geometry values
     slabArea = Geometry.calculate_total_area_from_surfaces(surfaces)
-    slabExtPerimeter = Geometry.calculate_perimeter(model, surfaces)
+    if exposed_perim == Constants.Auto
+        slabExtPerimeter = Geometry.calculate_exposed_perimeter(model, surfaces)
+    else
+        slabExtPerimeter = exposed_perim.to_f
+    end
     
 	# Process the slab
 
