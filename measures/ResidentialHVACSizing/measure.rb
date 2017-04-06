@@ -400,7 +400,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
 
                 roof_color = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofColor(surface), 'string')
                 roof_material = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofMaterial(surface), 'string')
-                return false if roof_color.nil? or roof_material.nil?
+                return nil if roof_color.nil? or roof_material.nil?
                 
                 has_radiant_barrier = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoRoofHasRadiantBarrier(surface), 'boolean', false)
                 has_radiant_barrier = false if has_radiant_barrier.nil?
