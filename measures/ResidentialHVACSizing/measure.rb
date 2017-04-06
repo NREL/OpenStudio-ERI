@@ -2873,8 +2873,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     hvac.HtgSupplyAirTemp = nil
     hvac.MinOutdoorTemp = nil
     hvac.SHRRated = nil
-    hvac.CapacityRatioCooling = nil
-    hvac.CapacityRatioHeating = nil
+    hvac.CapacityRatioCooling = [1.0]
+    hvac.CapacityRatioHeating = [1.0]
     hvac.FixedCoolingCapacity = nil
     hvac.FixedHeatingCapacity = nil
     hvac.FixedSuppHeatingCapacity = nil
@@ -2883,7 +2883,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     hvac.HPSizedForMaxLoad = false
     hvac.CoolingCFMs = nil
     hvac.HeatingCFMs = nil
-    hvac.FanspeedRatioCooling = nil
+    hvac.FanspeedRatioCooling = [1.0]
     hvac.CapacityDerateFactorEER = nil
     hvac.CapacityDerateFactorCOP = nil
     hvac.BoilerDesignTemp = nil
@@ -2973,8 +2973,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         # Cooling coil
         if clg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
             hvac.NumSpeedsCooling = 1
-            hvac.CapacityRatioCooling = [1.0]
-            hvac.FanspeedRatioCooling = [1.0]
             
             if hvac.HasRoomAirConditioner
                 coolingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACCoolingCFMs, 'string')
@@ -3039,10 +3037,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
             hvac.NumSpeedsCooling = hvac.CapacityRatioCooling.size
             
-            #fanspeed_ratio = get_unit_feature(runner, unit, Constants.SizingInfoHVACFanspeedRatioCooling, 'string')
-            #return nil if fanspeed_ratio.nil?
-            #hvac.FanspeedRatioCooling = fanspeed_ratio.split(",").map(&:to_f)
-            
             hvac.OverSizeLimit = 1.3
             vrf = get_vrf_from_terminal_unit(model, clg_equip)
             curves = [vrf.coolingCapacityRatioModifierFunctionofLowTemperatureCurve.get]
@@ -3066,7 +3060,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
             hvac.NumSpeedsCooling = 1
-            hvac.CapacityRatioCooling = [1.0]
             hvac.COOL_CAP_FT_SPEC = [[clg_coil.totalCoolingCapacityCoefficient1,
                                       clg_coil.totalCoolingCapacityCoefficient2,
                                       clg_coil.totalCoolingCapacityCoefficient3,
@@ -3159,7 +3152,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
             hvac.NumSpeedsHeating = 1
-            hvac.CapacityRatioHeating = [1.0]
             hvac.MinOutdoorTemp = OpenStudio::convert(htg_coil.minimumOutdoorDryBulbTemperatureforCompressorOperation,"C","F").get
             curves = [htg_coil.totalHeatingCapacityFunctionofTemperatureCurve]
             hvac.HEAT_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
@@ -3210,7 +3202,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
             hvac.NumSpeedsHeating = 1
-            hvac.CapacityRatioHeating = [1.0]
             hvac.HEAT_CAP_FT_SPEC = [[htg_coil.totalHeatingCapacityCoefficient1,
                                       htg_coil.totalHeatingCapacityCoefficient2,
                                       htg_coil.totalHeatingCapacityCoefficient3,

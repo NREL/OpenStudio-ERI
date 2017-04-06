@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>c8632366-9835-4daf-83f7-bf434090d212</version_id>
-  <version_modified>20170406T203219Z</version_modified>
+  <version_id>55b00b29-b616-4cef-b66c-86c467925894</version_id>
+  <version_modified>20170406T211751Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -117,22 +117,10 @@
       <checksum>ECD4089D</checksum>
     </file>
     <file>
-      <filename>residential_hvac_sizing_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D436755B</checksum>
-    </file>
-    <file>
       <filename>_hvac_tests.BEopt</filename>
       <filetype>BEopt</filetype>
       <usage_type>test</usage_type>
       <checksum>D0952EF0</checksum>
-    </file>
-    <file>
-      <filename>_hvac_tests2.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8E5E90BE</checksum>
     </file>
     <file>
       <filename>_load_tests.BEopt</filename>
@@ -441,6 +429,18 @@
       <checksum>A07B2161</checksum>
     </file>
     <file>
+      <filename>residential_hvac_sizing_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FF8715B6</checksum>
+    </file>
+    <file>
+      <filename>_hvac_tests2.BEopt</filename>
+      <filetype>BEopt</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4275FB82</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.11.5</identifier>
@@ -449,7 +449,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1B404D6A</checksum>
+      <checksum>994C9726</checksum>
+    </file>
+    <file>
+      <filename>SFD_HVACSizing_Equip_GF_Autosize.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D3572236</checksum>
+    </file>
+    <file>
+      <filename>SFD_HVACSizing_Equip_GF_Fixed.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3AB0A61C</checksum>
     </file>
   </files>
 </measure>
