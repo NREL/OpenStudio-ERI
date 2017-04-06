@@ -29,7 +29,6 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_file_path", true)
     arg.setDisplayName("HPXML File Path")
     arg.setDescription("Absolute (or relative) path of the HPXML file.")
-    arg.setDefaultValue("./resources/SimpInput.xml")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_file_path", false)
@@ -152,6 +151,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       if lat.nil? and lng.nil?
         return false
       end
+
       weather_file_path = File.join(measures["ResidentialLocation"]["weather_directory"], get_epw_from_lat_lng(runner, resources_dir, lat, lng))
       if weather_file_path.nil?
         return false
@@ -669,7 +669,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     postalcodes = CSV.read(File.expand_path(File.join(resources_dir, "postalcodes.csv")))
     postalcodes.each do |row|
       if not zip_code.nil?
-        if not zip_code.text.nil?
+        if not zip_code.text.nil? and postalcodes.transpose[0].include? zip_code.text
           if zip_code.text == row[0]
             return row[4], row[5]
           end

@@ -7,13 +7,114 @@ require 'fileutils'
 
 class UtilityBillCalculationsTest < MiniTest::Test
   
-  def test_parse_timeseries_csv
+  def test_parse_timeseries_csv_eia_9778
     args_hash = {}
     args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "9778"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 12)  
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+  
+  def test_parse_timeseries_csv_eia_16954
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "16954"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end  
+  
+  def test_parse_timeseries_csv_eia_13577
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "13577"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+  
+  def test_parse_timeseries_csv_eia_10000
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "10000"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+  
+  def test_parse_timeseries_csv_eia_5957
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "5957"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+  
+  def test_parse_timeseries_csv_eia_6442
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "6442"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+  
+  def test_parse_timeseries_csv_eia_3245
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "3245"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+
+  def test_parse_timeseries_csv_eia_1891
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "1891"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+  
+  def test_parse_timeseries_csv_eia_3315
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "3315"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  end
+  
+  def test_parse_timeseries_csv_eia_2600
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    args_hash["eia_id"] = "2600"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
   end
   
   private
@@ -33,6 +134,10 @@ class UtilityBillCalculationsTest < MiniTest::Test
   def run_dir(test_name)
     # always generate test output in specially named 'output' directory so result files are not made part of the measure
     return "#{File.dirname(__FILE__)}/output/#{test_name}/run"
+  end
+  
+  def resources_dir(test_name)
+    return "#{run_dir(test_name)}/UtilityBillCalculations/resources"
   end
 
   def model_out_path(test_name)
@@ -86,6 +191,10 @@ class UtilityBillCalculationsTest < MiniTest::Test
       FileUtils.mkdir_p("#{run_dir(test_name)}")
     end
     FileUtils.cp("#{File.dirname(__FILE__)}/enduse_timeseries.csv", "#{run_dir(test_name)}")
+    if !File.exist?("#{run_dir(test_name)}/UtilityBillCalculations/resources")
+      FileUtils.mkdir_p("#{resources_dir(test_name)}")
+    end
+    FileUtils.cp("#{File.dirname(__FILE__)}/../resources/utilities.csv", "#{resources_dir(test_name)}")
     
     return model
     
