@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_attached_geometry</name>
   <uid>fb4e4db8-1b29-4cbf-abcd-6af194ad945c</uid>
-  <version_id>46b02af6-6b40-416e-8d63-de117bf3e657</version_id>
-  <version_modified>20170406T204420Z</version_modified>
+  <version_id>9d5d1f54-06f0-4d0f-9bad-49f028b23577</version_id>
+  <version_modified>20170407T193751Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyAttachedGeometry</class_name>
   <display_name>Create Residential Single-Family Attached Geometry</display_name>
@@ -308,7 +308,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF4114CA</checksum>
+      <checksum>B890B8BC</checksum>
     </file>
   </files>
 </measure>

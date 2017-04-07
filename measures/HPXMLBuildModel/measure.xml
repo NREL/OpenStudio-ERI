@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>79490cd0-ecf8-4972-9030-272a549c1f5a</version_id>
-  <version_modified>20170406T195358Z</version_modified>
+  <version_id>a1a23721-4d1a-4ef4-a16d-9711239a4153</version_id>
+  <version_modified>20170407T173913Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -88,17 +88,6 @@
       <checksum>0332EBDF</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>50C9FDF0</checksum>
-    </file>
-    <file>
       <filename>CasaElena.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
@@ -163,6 +152,17 @@
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
       <checksum>33AFC81E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4EF39290</checksum>
     </file>
   </files>
 </measure>

@@ -241,7 +241,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     #make a double argument for infiltration of unfinished attic
     unfinished_attic_sla = OpenStudio::Measure::OSArgument::makeDoubleArgument("unfinished_attic_sla", false)
     unfinished_attic_sla.setDisplayName("Unfinished Attic: SLA")
-    unfinished_attic_sla.setDescription("Ratio of the effective lkage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.")
+    unfinished_attic_sla.setDescription("Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.")
     unfinished_attic_sla.setDefaultValue(0.00333)
     args << unfinished_attic_sla
 
@@ -300,14 +300,14 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     #make a double argument for total efficiency
     mech_vent_total_efficiency = OpenStudio::Measure::OSArgument::makeDoubleArgument("mech_vent_total_efficiency",false)
     mech_vent_total_efficiency.setDisplayName("Mechanical Ventilation: Total Recovery Efficiency")
-    mech_vent_total_efficiency.setDescription("The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air lkage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.")
+    mech_vent_total_efficiency.setDescription("The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.")
     mech_vent_total_efficiency.setDefaultValue(0)
     args << mech_vent_total_efficiency
 
     #make a double argument for sensible efficiency
     mech_vent_sensible_efficiency = OpenStudio::Measure::OSArgument::makeDoubleArgument("mech_vent_sensible_efficiency",false)
     mech_vent_sensible_efficiency.setDisplayName("Mechanical Ventilation: Sensible Recovery Efficiency")
-    mech_vent_sensible_efficiency.setDescription("The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air lkage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.")
+    mech_vent_sensible_efficiency.setDescription("The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air leakage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.")
     mech_vent_sensible_efficiency.setDefaultValue(0)
     args << mech_vent_sensible_efficiency
 
@@ -472,53 +472,53 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     duct_location.setDefaultValue(Constants.Auto)
     args << duct_location
     
-    #make a double argument for total lkage
-    duct_total_lkage = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_total_lkage", false)
-    duct_total_lkage.setDisplayName("Ducts: Total Leakage")
-    duct_total_lkage.setUnits("frac")
-    duct_total_lkage.setDescription("The total amount of air flow lkage expressed as a fraction of the total air flow rate.")
-    duct_total_lkage.setDefaultValue(0.3)
-    args << duct_total_lkage
+    #make a double argument for total leakage
+    duct_total_leakage = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_total_leakage", false)
+    duct_total_leakage.setDisplayName("Ducts: Total Leakage")
+    duct_total_leakage.setUnits("frac")
+    duct_total_leakage.setDescription("The total amount of air flow leakage expressed as a fraction of the total air flow rate.")
+    duct_total_leakage.setDefaultValue(0.3)
+    args << duct_total_leakage
 
-    #make a double argument for supply lkage fraction of total
+    #make a double argument for supply leakage fraction of total
     duct_supply_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_supply_frac", false)
     duct_supply_frac.setDisplayName("Ducts: Supply Leakage Fraction of Total")
     duct_supply_frac.setUnits("frac")
-    duct_supply_frac.setDescription("The amount of air flow lkage lking out from the supply duct expressed as a fraction of the total duct lkage.")
+    duct_supply_frac.setDescription("The amount of air flow leakage leaking out from the supply duct expressed as a fraction of the total duct leakage.")
     duct_supply_frac.setDefaultValue(0.6)
     args << duct_supply_frac
 
-    #make a double argument for return lkage fraction of total
+    #make a double argument for return leakage fraction of total
     duct_return_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_return_frac", false)
     duct_return_frac.setDisplayName("Ducts: Return Leakage Fraction of Total")
     duct_return_frac.setUnits("frac")
-    duct_return_frac.setDescription("The amount of air flow lkage lking into the return duct expressed as a fraction of the total duct lkage.")
+    duct_return_frac.setDescription("The amount of air flow leakage leaking into the return duct expressed as a fraction of the total duct leakage.")
     duct_return_frac.setDefaultValue(0.067)
     args << duct_return_frac  
 
-    #make a double argument for supply AH lkage fraction of total
+    #make a double argument for supply AH leakage fraction of total
     duct_ah_supply_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_ah_supply_frac", false)
     duct_ah_supply_frac.setDisplayName("Ducts: Supply Air Handler Leakage Fraction of Total")
     duct_ah_supply_frac.setUnits("frac")
-    duct_ah_supply_frac.setDescription("The amount of air flow lkage lking out from the supply-side of the air handler expressed as a fraction of the total duct lkage.")
+    duct_ah_supply_frac.setDescription("The amount of air flow leakage leaking out from the supply-side of the air handler expressed as a fraction of the total duct leakage.")
     duct_ah_supply_frac.setDefaultValue(0.067)
     args << duct_ah_supply_frac  
 
-    #make a double argument for return AH lkage fraction of total
+    #make a double argument for return AH leakage fraction of total
     duct_ah_return_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_ah_return_frac", false)
     duct_ah_return_frac.setDisplayName("Ducts: Return Air Handler Leakage Fraction of Total")
     duct_ah_return_frac.setUnits("frac")
-    duct_ah_return_frac.setDescription("The amount of air flow lkage lking out from the return-side of the air handler expressed as a fraction of the total duct lkage.")
+    duct_ah_return_frac.setDescription("The amount of air flow leakage leaking out from the return-side of the air handler expressed as a fraction of the total duct leakage.")
     duct_ah_return_frac.setDefaultValue(0.267)
     args << duct_ah_return_frac
     
-    # #make a string argument for norm lkage to outside
-    # duct_norm_lkage_25pa = OpenStudio::Measure::OSArgument::makeStringArgument("duct_norm_lkage_25pa", false)
-    # duct_norm_lkage_25pa.setDisplayName("Ducts: Leakage to Outside at 25Pa")
-    # duct_norm_lkage_25pa.setUnits("cfm/100 ft^2 Finished Floor")
-    # duct_norm_lkage_25pa.setDescription("Normalized lkage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
-    # duct_norm_lkage_25pa.setDefaultValue("NA")
-    # args << duct_norm_lkage_25pa
+    # #make a string argument for norm leakage to outside
+    # duct_norm_leakage_25pa = OpenStudio::Measure::OSArgument::makeStringArgument("duct_norm_leakage_25pa", false)
+    # duct_norm_leakage_25pa.setDisplayName("Ducts: Leakage to Outside at 25Pa")
+    # duct_norm_leakage_25pa.setUnits("cfm/100 ft^2 Finished Floor")
+    # duct_norm_leakage_25pa.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
+    # duct_norm_leakage_25pa.setDefaultValue("NA")
+    # args << duct_norm_leakage_25pa
     
     #make a string argument for duct location frac    
     duct_location_frac = OpenStudio::Measure::OSArgument::makeStringArgument("duct_location_frac", true)
@@ -622,12 +622,12 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     natVentMaxOAHumidityRatio = runner.getDoubleArgumentValue("nat_vent_max_oa_hr",user_arguments)
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("nat_vent_max_oa_rh",user_arguments)    
     ductLocation = runner.getStringArgumentValue("duct_location",user_arguments)
-    ductTotalLeakage = runner.getDoubleArgumentValue("duct_total_lkage",user_arguments)
+    ductTotalLeakage = runner.getDoubleArgumentValue("duct_total_leakage",user_arguments)
     ductSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_supply_frac",user_arguments)
     ductReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_return_frac",user_arguments)
     ductAHSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_supply_frac",user_arguments)
     ductAHReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_return_frac",user_arguments)
-    # ductNormLeakageToOutside = runner.getStringArgumentValue("duct_norm_lkage_25pa",user_arguments)
+    # ductNormLeakageToOutside = runner.getStringArgumentValue("duct_norm_leakage_25pa",user_arguments)
     ductNormLeakageToOutside = "NA"
     unless ductNormLeakageToOutside == "NA"
       ductNormLeakageToOutside = ductNormLeakageToOutside.to_f
@@ -721,18 +721,18 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     unless building.garage_zone.nil?
       building.garage_zone.spaces.each do |space|
         obj_name = "#{Constants.ObjectNameInfiltration}|#{space.name}"
-        space.spaceInfiltrationEffectiveLeakageAreas.each do |lkage_area|
-          next unless lkage_area.name.to_s == obj_name
-          lkage_area.remove
+        space.spaceInfiltrationEffectiveLeakageAreas.each do |leakage_area|
+          next unless leakage_area.name.to_s == obj_name
+          leakage_area.remove
         end      
         if building.garage.SLA > 0
-          lkage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
-          lkage_area.setName(obj_name)
-          lkage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-          lkage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.garage.ELA,"ft^2","cm^2").get)
-          lkage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.garage.C_s_SG))
-          lkage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.garage.C_w_SG))
-          lkage_area.setSpace(space)
+          leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
+          leakage_area.setName(obj_name)
+          leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
+          leakage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.garage.ELA,"ft^2","cm^2").get)
+          leakage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.garage.C_s_SG))
+          leakage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.garage.C_w_SG))
+          leakage_area.setSpace(space)
         end
       end
     end        
@@ -789,17 +789,17 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     unless building.unfinished_attic_zone.nil?
       building.unfinished_attic_zone.spaces.each do |space|
         obj_name = "#{Constants.ObjectNameInfiltration}|#{space.name}"
-        space.spaceInfiltrationEffectiveLeakageAreas.each do |lkage_area|
-          next unless lkage_area.name.to_s == obj_name
-          lkage_area.remove
+        space.spaceInfiltrationEffectiveLeakageAreas.each do |leakage_area|
+          next unless leakage_area.name.to_s == obj_name
+          leakage_area.remove
         end
-        lkage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
-        lkage_area.setName(obj_name)
-        lkage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-        lkage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.unfinished_attic.ELA,"ft^2","cm^2").get)
-        lkage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.unfinished_attic.C_s_SG))
-        lkage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.unfinished_attic.C_w_SG))
-        lkage_area.setSpace(space)
+        leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
+        leakage_area.setName(obj_name)
+        leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
+        leakage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.unfinished_attic.ELA,"ft^2","cm^2").get)
+        leakage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.unfinished_attic.C_s_SG))
+        leakage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.unfinished_attic.C_w_SG))
+        leakage_area.setSpace(space)
       end
     end
 
@@ -1490,7 +1490,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and ducts.has_forced_air_equipment
       
-        # Other equipment objects to cancel out the supply air lkage directly into the return plenum   
+        # Other equipment objects to cancel out the supply air leakage directly into the return plenum   
         
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
         other_equip_def.setName(supply_sensible_lkage_to_living + " equip")
@@ -2059,11 +2059,11 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           end
 
           if has_flue
-            infil.Y_i = 0.2 # Fraction of lkage through the flue; 0.2 is a "typical" value according to THE ALBERTA AIR INFIL1RATION MODEL, Walker and Wilson, 1990
+            infil.Y_i = 0.2 # Fraction of leakage through the flue; 0.2 is a "typical" value according to THE ALBERTA AIR INFIL1RATION MODEL, Walker and Wilson, 1990
             infil.flue_height = building.building_height + 2.0 # ft
             infil.S_wflue = 1.0 # Flue Shelter Coefficient
           else
-            infil.Y_i = 0.0 # Fraction of lkage through the flu
+            infil.Y_i = 0.0 # Fraction of leakage through the flu
             infil.flue_height = 0.0 # ft
             infil.S_wflue = 0.0 # Flue Shelter Coefficient
           end
@@ -2075,12 +2075,12 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           
           # Leakage distributions per Iain Walker (LBL) recommendations
           if vented_crawl
-            # 15% ceiling, 35% walls, 50% floor lkage distribution for vented crawl
+            # 15% ceiling, 35% walls, 50% floor leakage distribution for vented crawl
             lkage_ceiling = 0.15
             lkage_walls = 0.35
             lkage_floor = 0.50
           else
-            # 25% ceiling, 50% walls, 25% floor lkage distribution for slab/basement/unvented crawl
+            # 25% ceiling, 50% walls, 25% floor leakage distribution for slab/basement/unvented crawl
             lkage_ceiling = 0.25
             lkage_walls = 0.50
             lkage_floor = 0.25          
@@ -2112,7 +2112,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             # Additive flue function, Eq. 12            
             infil.F_i = infil.n_i * infil.Y_i * (infil.Z_f - 1.0) ** ((3.0 * infil.n_i - 1.0) / 3.0) * (1.0 - (3.0 * (infil.X_c - infil.X_i) ** 2.0 * infil.R_i ** (1 - infil.n_i)) / (2.0 * (infil.Z_f + 1.0)))
           else
-            # Critical value of ceiling-floor lkage difference where the
+            # Critical value of ceiling-floor leakage difference where the
             # neutral level is located at the ceiling (eq. 13)
             infil.X_c = infil.R_i + (2.0 * (1.0 - infil.R_i - infil.Y_i)) / (infil.n_i + 1.0)
             # Additive flue function (eq. 12)
@@ -2209,8 +2209,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             # ASHRAE Standard 62.2 2013
             # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
             # rate shall not be reduced as described in Section 4.1.3.").     
-            ela = infil.A_o # Effective lkage area, ft^2
-            nl = 1000.0 * ela / unit.living.area * (unit.living.height / 8.2) ** 0.4 # Normalized lkage, eq. 4.4
+            ela = infil.A_o # Effective leakage area, ft^2
+            nl = 1000.0 * ela / unit.living.area * (unit.living.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
             qinf = nl * @weather.data.WSF * unit.living.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
             infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
         end
@@ -2555,7 +2555,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     ducts.num_stories = ducts.num_stories_for_ducts
         
     if ducts.DuctNormLeakageToOutside.nil?
-      # Normalize values in case user inadvertently entered values that add up to the total duct lkage, 
+      # Normalize values in case user inadvertently entered values that add up to the total duct leakage, 
       # as opposed to adding up to 1
       sumFractionOfTotal = (ducts.DuctSupplyLeakageFractionOfTotal + ducts.DuctReturnLeakageFractionOfTotal + ducts.DuctAHSupplyLeakageFractionOfTotal + ducts.DuctAHReturnLeakageFractionOfTotal)
       if sumFractionOfTotal > 0
@@ -2564,7 +2564,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         ducts.DuctAHSupplyLeakageFractionOfTotal = ducts.DuctAHSupplyLeakageFractionOfTotal / sumFractionOfTotal
         ducts.DuctAHReturnLeakageFractionOfTotal = ducts.DuctAHReturnLeakageFractionOfTotal / sumFractionOfTotal
       end        
-      # Calculate actual lkages from percentages
+      # Calculate actual leakages from percentages
       ducts.DuctSupplyLeakage = ducts.DuctSupplyLeakageFractionOfTotal * ducts.DuctTotalLeakage
       ducts.DuctReturnLeakage = ducts.DuctReturnLeakageFractionOfTotal * ducts.DuctTotalLeakage
       ducts.DuctAHSupplyLeakage = ducts.DuctAHSupplyLeakageFractionOfTotal * ducts.DuctTotalLeakage
@@ -2633,7 +2633,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and ducts.supply_duct_loss > 0
       # Calculate d.frac_oa = fraction of unbalanced make-up air that is outside air
       if ducts.total_duct_unbalance <=  0
-        # Handle the exception for if there is no lkage unbalance.
+        # Handle the exception for if there is no leakage unbalance.
         ducts.frac_oa = 0
       else
         unless unit.finished_basement_zone.nil?
@@ -2667,7 +2667,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           ducts.frac_oa = 1
         end
       end
-      # d.oa_duct_makeup =  fraction of the supply duct air loss that is made up by outside air (via return lkage)
+      # d.oa_duct_makeup =  fraction of the supply duct air loss that is made up by outside air (via return leakage)
       ducts.oa_duct_makeup = [ducts.frac_oa * ducts.total_duct_unbalance / [ducts.supply_duct_loss, ducts.return_duct_loss].max, 1].min
     else
       ducts.frac_oa = 0
@@ -2864,8 +2864,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
   
   def calc_duct_lkage_from_test(ducts, ffa, fan_AirFlowRate)
     '''
-    Calculates duct lkage inputs based on duct blaster type lkage measurements (cfm @ 25 Pa per 100 ft2 conditioned floor area).
-    Requires assumptions about supply/return lkage split, air handler lkage, and duct plenum (de)pressurization. 
+    Calculates duct leakage inputs based on duct blaster type lkage measurements (cfm @ 25 Pa per 100 ft2 conditioned floor area).
+    Requires assumptions about supply/return leakage split, air handler leakage, and duct plenum (de)pressurization. 
     '''
     # Assumptions
     supply_duct_lkage_frac = 0.67 # 2013 RESNET Standards, Appendix A, p.A-28
@@ -2877,8 +2877,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     p_return = 25.0 # though it is likely lower (Reference: Pigg and Francisco 2008 "A Field Study of Exterior Duct Leakage in New Wisconsin Homes")
 
     # Conversion
-    cfm25 = ducts.DuctNormLeakageToOutside * ffa / 100.0 #denormalize lkage
-    ah_cfm25 = ah_lkage * fan_AirFlowRate # air handler lkage flow rate at 25 Pa
+    cfm25 = ducts.DuctNormLeakageToOutside * ffa / 100.0 #denormalize leakage
+    ah_cfm25 = ah_lkage * fan_AirFlowRate # air handler leakage flow rate at 25 Pa
     ah_supply_lk_cfm25 = [ah_cfm25 * ah_supply_frac, cfm25 * supply_duct_lkage_frac].min
     ah_return_lk_cfm25 = [ah_cfm25 * ah_return_frac, cfm25 * return_duct_lkage_frac].min
     supply_lk_cfm25 = [cfm25 * supply_duct_lkage_frac - ah_supply_lk_cfm25, 0].max

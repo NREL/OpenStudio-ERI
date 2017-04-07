@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>0eed01e7-5ab0-46d7-af3f-a0fee28bfaa2</version_id>
-  <version_modified>20170406T204428Z</version_modified>
+  <version_id>cf85ac8c-586a-456b-a2c1-e2461e0ae2c4</version_id>
+  <version_modified>20170407T193803Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -234,7 +234,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>CF4114CA</checksum>
+      <checksum>B890B8BC</checksum>
     </file>
   </files>
 </measure>

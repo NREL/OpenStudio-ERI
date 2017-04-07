@@ -296,6 +296,13 @@ class Constants
     end
     return "garage attic space#{s_unit}"
   end
+  def self.GarageFinishedAtticSpace(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "garage finished attic space#{s_unit}"
+  end
   def self.GarageZone(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit

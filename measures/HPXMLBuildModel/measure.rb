@@ -519,7 +519,6 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
     # Call each measure for sample to build up model
     measures.keys.each do |measure_subdir|
-      next if measure_subdir == "ResidentialAirflowOriginalModel" # Temporary while Airflow is an EnergyPlus measure
       # Gather measure arguments and call measure
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")      
       measure_instance = get_measure_instance(full_measure_path)

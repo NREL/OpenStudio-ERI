@@ -118,7 +118,7 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
           resources_dir = File.expand_path(File.join(run_dir, entry, "resources"))
         end
       end
-      cols = CSV.read(File.expand_path(File.join(resources_dir, "utilities.csv")), {:encoding => 'ISO-8859-1'}).transpose
+      cols = CSV.read(File.expand_path(File.join(resources_dir, "utilities.csv")), {:encoding=>'ISO-8859-1'}).transpose
       cols.each do |col|
         unless col[0].nil?
           if col[0].include? "eiaid"
