@@ -410,7 +410,7 @@ class Constants
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
     end
-    return "res airflow#{s_unit}"
+    return "res af#{s_unit}"
   end
   def self.ObjectNameAirSourceHeatPump(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
@@ -507,7 +507,7 @@ class Constants
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
     end
-    return "res ducts#{s_unit}"
+    return "res ds#{s_unit}"
   end  
   def self.ObjectNameEaves(facade="")
     if facade.nil?
@@ -637,7 +637,7 @@ class Constants
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
     end
-    return "res mech vent#{s_unit}"
+    return "res mv#{s_unit}"
   end
   def self.ObjectNameMiniSplitHeatPump(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
@@ -658,7 +658,7 @@ class Constants
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
     end
-    return "res nat vent#{s_unit}"
+    return "res nv#{s_unit}"
   end
   def self.ObjectNameNeighbors(facade="")
     if facade.nil?

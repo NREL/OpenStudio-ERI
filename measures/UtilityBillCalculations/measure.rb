@@ -34,13 +34,17 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
     arg.setDefaultValue("..")
     args << arg    
     
-    arg = OpenStudio::Measure::OSArgument::makeStringArgument("api_key", true)
+    arg = OpenStudio::Measure::OSArgument::makeStringArgument("api_key", false)
     arg.setDisplayName("EIA API Key")
     args << arg    
     
-    arg = OpenStudio::Measure::OSArgument::makeStringArgument("eia_id", true)
+    arg = OpenStudio::Measure::OSArgument::makeStringArgument("eia_id", false)
     arg.setDisplayName("EIA Utility ID")
-    args << arg      
+    args << arg
+    
+    arg = OpenStudio::Measure::OSArgument::makeStringArgument("json_file_path", false)
+    arg.setDisplayName("JSON File Path")
+    args << arg
     
     arg = OpenStudio::Measure::OSArgument::makeDoubleArgument("analysis_period", false)
     arg.setDisplayName("Analysis Period")
@@ -69,12 +73,26 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
     
     # Assign the user inputs to variables
     run_dir = runner.getStringArgumentValue("run_dir", user_arguments)
-    api_key = runner.getStringArgumentValue("api_key", user_arguments)
-    eia_id = runner.getStringArgumentValue("eia_id", user_arguments)
+    api_key = runner.getOptionalStringArgumentValue("api_key", user_arguments)
+    api_key.is_initialized ? api_key = api_key.get : api_key = nil
+    eia_id = runner.getOptionalStringArgumentValue("eia_id", user_arguments)
+    eia_id.is_initialized ? eia_id = eia_id.get : eia_id = nil
+    json_file_path = runner.getOptionalStringArgumentValue("json_file_path", user_arguments)
+    json_file_path.is_initialized ? json_file_path = json_file_path.get : json_file_path = nil
     analysis_period = runner.getDoubleArgumentValue("analysis_period",user_arguments)
     
+    unless json_file_path.nil?
+      unless (Pathname.new json_file_path).absolute?
+        json_file_path = File.expand_path(File.join(File.dirname(__FILE__), json_file_path))
+      end 
+      unless File.exists?(json_file_path) and json_file_path.downcase.end_with? ".json"
+        runner.registerError("'#{json_file_path}' does not exist or is not an .json file.")
+        return false
+      end
+    end
+    
+    # load profile
     cols = CSV.read(File.expand_path(File.join(run_dir, "enduse_timeseries.csv"))).transpose
-
     elec_load = nil
     elec_generated = nil
     cols.each do |col|
@@ -84,38 +102,49 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
         elec_generated = col[1..-1]
       end
     end
-    # elec_generated = [0] * 8760 # this is to check against Pieter's code
     
     # tariff
-    utility_ix = nil
-    resources_dir = nil
-    Dir.entries(run_dir).each do |entry|
-      if entry.include? "UtilityBillCalculations"
-        resources_dir = File.expand_path(File.join(run_dir, entry, "resources"))
+    if not json_file_path.nil?
+      tariff = JSON.parse(File.read(json_file_path), :symbolize_names=>true)[:items][0]
+    elsif not api_key.nil?
+      if eia_id.nil?
+        runner.registerInfo("API Key supplied but no EIA Utility ID supplied. Assuming 10000.")
+        eia_id = "10000"
       end
-    end
-    cols = CSV.read(File.expand_path(File.join(resources_dir, "utilities.csv"))).transpose
-    cols.each do |col|
-      unless col[0].nil?
-        if col[0].include? "eiaid"
-          unless col[1..-1].include? eia_id
-            runner.registerError("Could not find EIA Utility ID: #{eia_id}.")
-            return false
-          end
-          utility_ix = col.index(eia_id)
+      utility_ix = nil
+      resources_dir = nil
+      Dir.entries(run_dir).each do |entry|
+        if entry.include? "UtilityBillCalculations"
+          resources_dir = File.expand_path(File.join(run_dir, entry, "resources"))
         end
       end
+      cols = CSV.read(File.expand_path(File.join(resources_dir, "utilities.csv")), {:encoding => 'ISO-8859-1'}).transpose
+      cols.each do |col|
+        unless col[0].nil?
+          if col[0].include? "eiaid"
+            eia_ids = col.collect { |i| i.to_i.to_s }
+            unless eia_ids[1..-1].include? eia_id
+              runner.registerError("Could not find EIA Utility ID: #{eia_id}.")
+              return false
+            end
+            utility_ix = col.index(eia_id)
+          end
+        end
+      end
+      getpage = cols[3][utility_ix]
+      runner.registerInfo("Processing api request on getpage=#{getpage}.")
+      params = {'version':3, 'format':'json', 'detail':'full', 'getpage':getpage, 'api_key':api_key}
+      request = RestClient::Resource.new('http://api.openei.org/utility_rates?')
+      response = request.get(params: params)
+      tariff = JSON.parse(response.body, :symbolize_names=>true)[:items][0]
+      
+      # File.open('result.json', 'w') do |f|
+        # f.write(tariff.to_json)
+      # end
+    else
+      runner.registerError("Did not supply an API Key or a JSON File Path.")
+      return false
     end
-
-    runner.registerInfo("Process api request on getpage=#{cols[4][utility_ix]}.")
-    params = {'version':3, 'format':'json', 'detail':'full', 'getpage':cols[4][utility_ix], 'api_key':api_key}
-    request = RestClient::Resource.new('http://api.openei.org/utility_rates?')
-    response = request.get(params: params)
-    tariff = JSON.parse(response.body, :symbolize_names=>true)[:items][0]    
-    
-    # File.open('result.json', 'w') do |f|
-      # f.write(tariff.to_json)
-    # end
     
     # utilityrate3
     p_data = SscApi.create_data_object
@@ -123,7 +152,6 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
     SscApi.set_array(p_data, 'degradation', [0])
     SscApi.set_array(p_data, 'gen', elec_generated) # kW
     SscApi.set_array(p_data, 'load', elec_load) # kW
-    # SscApi.set_number(p_data, 'ur_enable_net_metering', 1)
     SscApi.set_number(p_data, 'system_use_lifetime_output', 0) # TODO: what should this be?
     SscApi.set_number(p_data, 'inflation_rate', 0) # TODO: assume what?
     SscApi.set_number(p_data, 'ur_flat_buy_rate', 0) # TODO: how to get this from list of energyratestructure rates?

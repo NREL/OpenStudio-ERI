@@ -29,7 +29,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @DuctNumReturns = ductNumReturns
       @DuctLocation = ductLocation
     end
-    attr_accessor(:DuctTotalLeakage, :DuctNormLeakageToOutside, :DuctSupplySurfaceAreaMultiplier, :DuctReturnSurfaceAreaMultiplier, :DuctUnconditionedRvalue, :DuctSupplyLeakageFractionOfTotal, :DuctReturnLeakageFractionOfTotal, :DuctAHSupplyLeakageFractionOfTotal, :DuctAHReturnLeakageFractionOfTotal, :DuctSystemEfficiency, :duct_location_zone, :duct_location_name, :has_ducts, :ducts_not_in_living, :num_stories, :num_stories_for_ducts, :DuctLocationFrac, :DuctLocationFracLeakage, :DuctLocationFracConduction, :DuctSupplyLeakageFractionOfTotal, :DuctReturnLeakageFractionOfTotal, :DuctAHSupplyLeakageFractionOfTotal, :DuctAHReturnLeakageFractionOfTotal, :DuctSupplyLeakage, :DuctReturnLeakage, :DuctAHSupplyLeakage, :DuctAHReturnLeakage, :DuctNumReturns, :supply_duct_surface_area, :return_duct_surface_area, :unconditioned_duct_area, :supply_duct_r, :return_duct_r, :unconditioned_duct_ua, :return_duct_ua, :supply_duct_volume, :return_duct_volume, :direct_oa_supply_duct_loss, :supply_duct_loss, :return_duct_loss, :supply_leak_oper, :return_leak_oper, :ah_supply_leak_oper, :ah_return_leak_oper, :total_duct_unbalance, :frac_oa, :oa_duct_makeup, :has_forced_air_equipment, :DuctLocationFrac, :DuctNumReturns, :DuctLocation)
+    attr_accessor(:DuctTotalLeakage, :DuctNormLeakageToOutside, :DuctSupplySurfaceAreaMultiplier, :DuctReturnSurfaceAreaMultiplier, :DuctUnconditionedRvalue, :DuctSupplyLeakageFractionOfTotal, :DuctReturnLeakageFractionOfTotal, :DuctAHSupplyLeakageFractionOfTotal, :DuctAHReturnLeakageFractionOfTotal, :DuctSystemEfficiency, :duct_location_zone, :duct_location_name, :has_ducts, :ducts_not_in_living, :num_stories, :num_stories_for_ducts, :DuctLocationFrac, :DuctLocationFracLeakage, :DuctLocationFracConduction, :DuctSupplyLeakageFractionOfTotal, :DuctReturnLeakageFractionOfTotal, :DuctAHSupplyLeakageFractionOfTotal, :DuctAHReturnLeakageFractionOfTotal, :DuctSupplyLeakage, :DuctReturnLeakage, :DuctAHSupplyLeakage, :DuctAHReturnLeakage, :DuctNumReturns, :supply_duct_surface_area, :return_duct_surface_area, :unconditioned_duct_area, :supply_duct_r, :return_duct_r, :unconditioned_duct_ua, :return_duct_ua, :supply_duct_volume, :return_duct_volume, :direct_oa_supply_duct_loss, :supply_duct_loss, :return_duct_loss, :supply_lk_oper, :return_lk_oper, :ah_supply_lk_oper, :ah_return_lk_oper, :total_duct_unbalance, :frac_oa, :oa_duct_makeup, :has_forced_air_equipment, :DuctLocationFrac, :DuctNumReturns, :DuctLocation)
   end
 
   class Infiltration
@@ -48,7 +48,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @volume = volume
       @coord_z = coord_z
     end
-    attr_accessor(:height, :area, :volume, :coord_z, :inf_method, :SLA, :ACH, :inf_flow, :hor_leak_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
+    attr_accessor(:height, :area, :volume, :coord_z, :inf_method, :SLA, :ACH, :inf_flow, :hor_lk_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
   end
 
   class Garage
@@ -58,7 +58,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @volume = volume
       @coord_z = coord_z       
     end
-    attr_accessor(:height, :area, :volume, :coord_z, :inf_method, :SLA, :ACH, :inf_flow, :hor_leak_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
+    attr_accessor(:height, :area, :volume, :coord_z, :inf_method, :SLA, :ACH, :inf_flow, :hor_lk_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
   end
 
   class FinBasement
@@ -69,7 +69,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @volume = volume
       @coord_z = coord_z
     end
-    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_leak_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
+    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_lk_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
   end
 
   class UnfinBasement
@@ -80,7 +80,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @volume = volume
       @coord_z = coord_z      
     end
-    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_leak_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
+    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_lk_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
   end
 
   class Crawl
@@ -91,7 +91,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @volume = volume
       @coord_z = coord_z      
     end
-    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_leak_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
+    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_lk_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
   end
 
   class PierBeam
@@ -102,7 +102,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @volume = volume
       @coord_z = coord_z      
     end
-    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_leak_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
+    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_lk_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
   end
 
   class UnfinAttic
@@ -113,7 +113,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @volume = volume
       @coord_z = coord_z      
     end
-    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_leak_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
+    attr_accessor(:height, :area, :volume, :inf_method, :coord_z, :SLA, :ACH, :inf_flow, :hor_lk_frac, :neutral_level, :f_t_SG, :f_s_SG, :f_w_SG, :C_s_SG, :C_w_SG, :ELA)
   end
 
   class WindSpeed
@@ -241,7 +241,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     #make a double argument for infiltration of unfinished attic
     unfinished_attic_sla = OpenStudio::Measure::OSArgument::makeDoubleArgument("unfinished_attic_sla", false)
     unfinished_attic_sla.setDisplayName("Unfinished Attic: SLA")
-    unfinished_attic_sla.setDescription("Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.")
+    unfinished_attic_sla.setDescription("Ratio of the effective lkage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.")
     unfinished_attic_sla.setDefaultValue(0.00333)
     args << unfinished_attic_sla
 
@@ -300,14 +300,14 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     #make a double argument for total efficiency
     mech_vent_total_efficiency = OpenStudio::Measure::OSArgument::makeDoubleArgument("mech_vent_total_efficiency",false)
     mech_vent_total_efficiency.setDisplayName("Mechanical Ventilation: Total Recovery Efficiency")
-    mech_vent_total_efficiency.setDescription("The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.")
+    mech_vent_total_efficiency.setDescription("The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air lkage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.")
     mech_vent_total_efficiency.setDefaultValue(0)
     args << mech_vent_total_efficiency
 
     #make a double argument for sensible efficiency
     mech_vent_sensible_efficiency = OpenStudio::Measure::OSArgument::makeDoubleArgument("mech_vent_sensible_efficiency",false)
     mech_vent_sensible_efficiency.setDisplayName("Mechanical Ventilation: Sensible Recovery Efficiency")
-    mech_vent_sensible_efficiency.setDescription("The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air leakage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.")
+    mech_vent_sensible_efficiency.setDescription("The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air lkage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.")
     mech_vent_sensible_efficiency.setDefaultValue(0)
     args << mech_vent_sensible_efficiency
 
@@ -472,53 +472,53 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     duct_location.setDefaultValue(Constants.Auto)
     args << duct_location
     
-    #make a double argument for total leakage
-    duct_total_leakage = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_total_leakage", false)
-    duct_total_leakage.setDisplayName("Ducts: Total Leakage")
-    duct_total_leakage.setUnits("frac")
-    duct_total_leakage.setDescription("The total amount of air flow leakage expressed as a fraction of the total air flow rate.")
-    duct_total_leakage.setDefaultValue(0.3)
-    args << duct_total_leakage
+    #make a double argument for total lkage
+    duct_total_lkage = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_total_lkage", false)
+    duct_total_lkage.setDisplayName("Ducts: Total Leakage")
+    duct_total_lkage.setUnits("frac")
+    duct_total_lkage.setDescription("The total amount of air flow lkage expressed as a fraction of the total air flow rate.")
+    duct_total_lkage.setDefaultValue(0.3)
+    args << duct_total_lkage
 
-    #make a double argument for supply leakage fraction of total
+    #make a double argument for supply lkage fraction of total
     duct_supply_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_supply_frac", false)
     duct_supply_frac.setDisplayName("Ducts: Supply Leakage Fraction of Total")
     duct_supply_frac.setUnits("frac")
-    duct_supply_frac.setDescription("The amount of air flow leakage leaking out from the supply duct expressed as a fraction of the total duct leakage.")
+    duct_supply_frac.setDescription("The amount of air flow lkage lking out from the supply duct expressed as a fraction of the total duct lkage.")
     duct_supply_frac.setDefaultValue(0.6)
     args << duct_supply_frac
 
-    #make a double argument for return leakage fraction of total
+    #make a double argument for return lkage fraction of total
     duct_return_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_return_frac", false)
     duct_return_frac.setDisplayName("Ducts: Return Leakage Fraction of Total")
     duct_return_frac.setUnits("frac")
-    duct_return_frac.setDescription("The amount of air flow leakage leaking into the return duct expressed as a fraction of the total duct leakage.")
+    duct_return_frac.setDescription("The amount of air flow lkage lking into the return duct expressed as a fraction of the total duct lkage.")
     duct_return_frac.setDefaultValue(0.067)
     args << duct_return_frac  
 
-    #make a double argument for supply AH leakage fraction of total
+    #make a double argument for supply AH lkage fraction of total
     duct_ah_supply_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_ah_supply_frac", false)
     duct_ah_supply_frac.setDisplayName("Ducts: Supply Air Handler Leakage Fraction of Total")
     duct_ah_supply_frac.setUnits("frac")
-    duct_ah_supply_frac.setDescription("The amount of air flow leakage leaking out from the supply-side of the air handler expressed as a fraction of the total duct leakage.")
+    duct_ah_supply_frac.setDescription("The amount of air flow lkage lking out from the supply-side of the air handler expressed as a fraction of the total duct lkage.")
     duct_ah_supply_frac.setDefaultValue(0.067)
     args << duct_ah_supply_frac  
 
-    #make a double argument for return AH leakage fraction of total
+    #make a double argument for return AH lkage fraction of total
     duct_ah_return_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("duct_ah_return_frac", false)
     duct_ah_return_frac.setDisplayName("Ducts: Return Air Handler Leakage Fraction of Total")
     duct_ah_return_frac.setUnits("frac")
-    duct_ah_return_frac.setDescription("The amount of air flow leakage leaking out from the return-side of the air handler expressed as a fraction of the total duct leakage.")
+    duct_ah_return_frac.setDescription("The amount of air flow lkage lking out from the return-side of the air handler expressed as a fraction of the total duct lkage.")
     duct_ah_return_frac.setDefaultValue(0.267)
     args << duct_ah_return_frac
     
-    # #make a string argument for norm leakage to outside
-    # duct_norm_leakage_25pa = OpenStudio::Measure::OSArgument::makeStringArgument("duct_norm_leakage_25pa", false)
-    # duct_norm_leakage_25pa.setDisplayName("Ducts: Leakage to Outside at 25Pa")
-    # duct_norm_leakage_25pa.setUnits("cfm/100 ft^2 Finished Floor")
-    # duct_norm_leakage_25pa.setDescription("Normalized leakage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
-    # duct_norm_leakage_25pa.setDefaultValue("NA")
-    # args << duct_norm_leakage_25pa
+    # #make a string argument for norm lkage to outside
+    # duct_norm_lkage_25pa = OpenStudio::Measure::OSArgument::makeStringArgument("duct_norm_lkage_25pa", false)
+    # duct_norm_lkage_25pa.setDisplayName("Ducts: Leakage to Outside at 25Pa")
+    # duct_norm_lkage_25pa.setUnits("cfm/100 ft^2 Finished Floor")
+    # duct_norm_lkage_25pa.setDescription("Normalized lkage to the outside when tested at a pressure differential of 25 Pascals (0.1 inches w.g.) across the system.")
+    # duct_norm_lkage_25pa.setDefaultValue("NA")
+    # args << duct_norm_lkage_25pa
     
     #make a string argument for duct location frac    
     duct_location_frac = OpenStudio::Measure::OSArgument::makeStringArgument("duct_location_frac", true)
@@ -622,12 +622,12 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     natVentMaxOAHumidityRatio = runner.getDoubleArgumentValue("nat_vent_max_oa_hr",user_arguments)
     natVentMaxOARelativeHumidity = runner.getDoubleArgumentValue("nat_vent_max_oa_rh",user_arguments)    
     ductLocation = runner.getStringArgumentValue("duct_location",user_arguments)
-    ductTotalLeakage = runner.getDoubleArgumentValue("duct_total_leakage",user_arguments)
+    ductTotalLeakage = runner.getDoubleArgumentValue("duct_total_lkage",user_arguments)
     ductSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_supply_frac",user_arguments)
     ductReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_return_frac",user_arguments)
     ductAHSupplyLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_supply_frac",user_arguments)
     ductAHReturnLeakageFractionOfTotal = runner.getDoubleArgumentValue("duct_ah_return_frac",user_arguments)
-    # ductNormLeakageToOutside = runner.getStringArgumentValue("duct_norm_leakage_25pa",user_arguments)
+    # ductNormLeakageToOutside = runner.getStringArgumentValue("duct_norm_lkage_25pa",user_arguments)
     ductNormLeakageToOutside = "NA"
     unless ductNormLeakageToOutside == "NA"
       ductNormLeakageToOutside = ductNormLeakageToOutside.to_f
@@ -690,19 +690,19 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     model.getThermalZones.each do |thermal_zone|
       if Geometry.is_garage(thermal_zone)
         building.garage_zone = thermal_zone
-        building.garage = Garage.new(Geometry.get_height_of_spaces(building.garage_zone.spaces), OpenStudio::convert(building.garage_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.garage = Garage.new(Geometry.get_height_of_spaces(building.garage_zone.spaces), OpenStudio.convert(building.garage_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_unfinished_basement(thermal_zone)
         building.unfinished_basement_zone = thermal_zone
-        building.unfinished_basement = UnfinBasement.new(ufbsmtACH, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces), OpenStudio::convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.unfinished_basement = UnfinBasement.new(ufbsmtACH, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces), OpenStudio.convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_crawl(thermal_zone)
         building.crawlspace_zone = thermal_zone
-        building.crawlspace = Crawl.new(crawlACH, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces), OpenStudio::convert(building.crawlspace_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.crawlspace = Crawl.new(crawlACH, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces), OpenStudio.convert(building.crawlspace_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_pier_beam(thermal_zone)
         building.pierbeam_zone = thermal_zone
-        building.pierbeam = PierBeam.new(pierbeamACH, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces), OpenStudio::convert(building.pierbeam_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.pierbeam = PierBeam.new(pierbeamACH, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces), OpenStudio.convert(building.pierbeam_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_unfinished_attic(thermal_zone)
         building.unfinished_attic_zone = thermal_zone
-        building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces), OpenStudio::convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces), OpenStudio.convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       end
     end
 
@@ -721,18 +721,18 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     unless building.garage_zone.nil?
       building.garage_zone.spaces.each do |space|
         obj_name = "#{Constants.ObjectNameInfiltration}|#{space.name}"
-        space.spaceInfiltrationEffectiveLeakageAreas.each do |leakage_area|
-          next unless leakage_area.name.to_s == obj_name
-          leakage_area.remove
+        space.spaceInfiltrationEffectiveLeakageAreas.each do |lkage_area|
+          next unless lkage_area.name.to_s == obj_name
+          lkage_area.remove
         end      
         if building.garage.SLA > 0
-          leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
-          leakage_area.setName(obj_name)
-          leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-          leakage_area.setEffectiveAirLeakageArea(OpenStudio::convert(building.garage.ELA,"ft^2","cm^2").get)
-          leakage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.garage.C_s_SG))
-          leakage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.garage.C_w_SG))
-          leakage_area.setSpace(space)
+          lkage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
+          lkage_area.setName(obj_name)
+          lkage_area.setSchedule(model.alwaysOnDiscreteSchedule)
+          lkage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.garage.ELA,"ft^2","cm^2").get)
+          lkage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.garage.C_s_SG))
+          lkage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.garage.C_w_SG))
+          lkage_area.setSpace(space)
         end
       end
     end        
@@ -789,17 +789,17 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     unless building.unfinished_attic_zone.nil?
       building.unfinished_attic_zone.spaces.each do |space|
         obj_name = "#{Constants.ObjectNameInfiltration}|#{space.name}"
-        space.spaceInfiltrationEffectiveLeakageAreas.each do |leakage_area|
-          next unless leakage_area.name.to_s == obj_name
-          leakage_area.remove
+        space.spaceInfiltrationEffectiveLeakageAreas.each do |lkage_area|
+          next unless lkage_area.name.to_s == obj_name
+          lkage_area.remove
         end
-        leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
-        leakage_area.setName(obj_name)
-        leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-        leakage_area.setEffectiveAirLeakageArea(OpenStudio::convert(building.unfinished_attic.ELA,"ft^2","cm^2").get)
-        leakage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.unfinished_attic.C_s_SG))
-        leakage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.unfinished_attic.C_w_SG))
-        leakage_area.setSpace(space)
+        lkage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
+        lkage_area.setName(obj_name)
+        lkage_area.setSchedule(model.alwaysOnDiscreteSchedule)
+        lkage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.unfinished_attic.ELA,"ft^2","cm^2").get)
+        lkage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.unfinished_attic.C_s_SG))
+        lkage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.unfinished_attic.C_w_SG))
+        lkage_area.setSpace(space)
       end
     end
 
@@ -850,12 +850,12 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     adiabatic_const.insertLayer(0, adiabatic_mat)
      
     units.each do |building_unit|
-    
-      obj_name_airflow = Constants.ObjectNameAirflow(building_unit.name.to_s)
-      obj_name_infil = Constants.ObjectNameInfiltration(building_unit.name.to_s)
-      obj_name_natvent = Constants.ObjectNameNaturalVentilation(building_unit.name.to_s)
-      obj_name_mechvent = Constants.ObjectNameMechanicalVentilation(building_unit.name.to_s)
-      obj_name_ducts = Constants.ObjectNameDucts(building_unit.name.to_s)
+
+      obj_name_airflow = Constants.ObjectNameAirflow(building_unit.name.to_s.gsub("unit", "u"))
+      obj_name_infil = Constants.ObjectNameInfiltration(building_unit.name.to_s.gsub("unit", "u"))
+      obj_name_natvent = Constants.ObjectNameNaturalVentilation(building_unit.name.to_s.gsub("unit", "u"))
+      obj_name_mechvent = Constants.ObjectNameMechanicalVentilation(building_unit.name.to_s.gsub("unit", "u"))
+      obj_name_ducts = Constants.ObjectNameDucts(building_unit.name.to_s.gsub("unit", "u"))
     
       unit = Unit.new
       unit.num_bedrooms, unit.num_bathrooms = Geometry.get_unit_beds_baths(model, building_unit, runner)
@@ -872,10 +872,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       Geometry.get_thermal_zones_from_spaces(building_unit.spaces).each do |thermal_zone|
         if Geometry.is_living(thermal_zone) or not /#{Constants.URBANoptFinishedZoneIdentifier} [1-9]\d*/.match(thermal_zone.name.to_s).nil?
           unit.living_zone = thermal_zone
-          unit.living = LivingSpace.new(Geometry.get_height_of_spaces(unit.living_zone.spaces), OpenStudio::convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+          unit.living = LivingSpace.new(Geometry.get_height_of_spaces(unit.living_zone.spaces), OpenStudio.convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
         elsif Geometry.is_finished_basement(thermal_zone) or thermal_zone.name.to_s.start_with? "#{Constants.URBANoptFinishedZoneIdentifier} 0"
           unit.finished_basement_zone = thermal_zone
-          unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces), OpenStudio::convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+          unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces), OpenStudio.convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
         end
       end
 
@@ -894,7 +894,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       # Remove existing infiltration  
       
       model.getEnergyManagementSystemSensors.each do |sensor|
-        next unless ["#{obj_name_airflow} tout", "#{obj_name_airflow} tin", "#{obj_name_natvent} pbar", "#{obj_name_natvent} phiin", "#{obj_name_natvent} wout", "#{obj_name_airflow} vwind", "#{obj_name_infil} wh sch", "#{obj_name_infil} range sch", "#{obj_name_infil} bath sch", "#{obj_name_infil} clothes dryer sch", "#{obj_name_natvent} nvavail", "#{obj_name_natvent} sp"].map{|x| "#{x} sens".gsub("|","_").gsub(" ","_")}.include? sensor.name.to_s
+        next unless ["#{obj_name_airflow} tt", "#{obj_name_airflow} tin", "#{obj_name_natvent} pb", "#{obj_name_natvent} phiin", "#{obj_name_natvent} wt", "#{obj_name_airflow} vw", "#{obj_name_infil} wh sch", "#{obj_name_infil} range sch", "#{obj_name_infil} bath sch", "#{obj_name_infil} clothes dryer sch", "#{obj_name_natvent} nva", "#{obj_name_natvent} sp"].map{|x| "#{x} s".gsub("|","_").gsub(" ","_")}.include? sensor.name.to_s
         sensor.remove
       end
       
@@ -944,20 +944,20 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       air_handler_mfr = "#{obj_name_ducts} ah mfr".gsub(" ","_").gsub("|","_")
       fan_rtf = "#{obj_name_ducts} fan rtf".gsub(" ","_").gsub("|","_")
       air_handler_vfr = "#{obj_name_ducts} ah vfr".gsub(" ","_").gsub("|","_")
-      air_handler_tout = "#{obj_name_ducts} ah tout".gsub(" ","_").gsub("|","_")
+      air_handler_tout = "#{obj_name_ducts} ah tt".gsub(" ","_").gsub("|","_")
       return_air_t = "#{obj_name_ducts} ret air t".gsub(" ","_").gsub("|","_")
-      air_handler_wout = "#{obj_name_ducts} ah wout".gsub(" ","_").gsub("|","_")
+      air_handler_wout = "#{obj_name_ducts} ah wt".gsub(" ","_").gsub("|","_")
       return_air_w = "#{obj_name_ducts} ret air w".gsub(" ","_").gsub("|","_")
       air_handler_t = "#{obj_name_ducts} ah t".gsub(" ","_").gsub("|","_")
       air_handler_w = "#{obj_name_ducts} ah w".gsub(" ","_").gsub("|","_")       
       
       model.getEnergyManagementSystemSensors.each do |sensor|
-        next unless [air_handler_mfr, fan_rtf, air_handler_vfr, air_handler_tout, return_air_t, air_handler_wout, return_air_w, air_handler_t, air_handler_w].map{|x| "#{x} sens"}.include? sensor.name.to_s
+        next unless [air_handler_mfr, fan_rtf, air_handler_vfr, air_handler_tout, return_air_t, air_handler_wout, return_air_w, air_handler_t, air_handler_w].map{|x| "#{x} s"}.include? sensor.name.to_s
         sensor.remove
       end   
       
-      air_handler_to_living_flow_rate = "#{obj_name_ducts} ah to living".gsub("|","_").gsub(" ","_")
-      living_to_air_handler_flow_rate = "#{obj_name_ducts} living to ah".gsub("|","_").gsub(" ","_")
+      air_handler_to_living_flow_rate = "#{obj_name_ducts} ah to liv".gsub("|","_").gsub(" ","_")
+      living_to_air_handler_flow_rate = "#{obj_name_ducts} liv to ah".gsub("|","_").gsub(" ","_")
       model.getEnergyManagementSystemActuators.each do |actuator|
         next unless [air_handler_to_living_flow_rate, living_to_air_handler_flow_rate].map{|x| "#{x} mix act".gsub(" ","_")}.include? actuator.name.to_s
         actuator.actuatedComponent.remove
@@ -965,23 +965,23 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       end
       
       model.getEnergyManagementSystemSubroutines.each do |subroutine|
-        next unless subroutine.name.to_s == "#{obj_name_ducts} leak subrout".gsub("|","_").gsub(" ","_")
+        next unless subroutine.name.to_s == "#{obj_name_ducts} lk subrout".gsub("|","_").gsub(" ","_")
         subroutine.remove
       end
     
-      supply_sensible_leakage_to_living = "#{obj_name_ducts} sup sens leak to living".gsub(" ","_").gsub("|","_")
-      supply_latent_leakage_to_living = "#{obj_name_ducts} sup lat leak to living".gsub(" ","_").gsub("|","_")
-      supply_duct_conduction_to_living = "#{obj_name_ducts} sup duct cond to living".gsub(" ","_").gsub("|","_")
-      supply_duct_conduction_to_air_handler = "#{obj_name_ducts} sup duct cond to ah".gsub(" ","_").gsub("|","_")
-      return_duct_conduction_to_plenum = "#{obj_name_ducts} ret duct cond to plen".gsub(" ","_").gsub("|","_")
-      return_duct_conduction_to_air_handler = "#{obj_name_ducts} ret duct cond to ah".gsub(" ","_").gsub("|","_")
-      supply_sensible_leakage_to_air_handler = "#{obj_name_ducts} sup sens leak to ah".gsub(" ","_").gsub("|","_")
-      supply_latent_leakage_to_air_handler = "#{obj_name_ducts} sup lat leak to ah".gsub(" ","_").gsub("|","_")
-      return_sensible_leakage = "#{obj_name_ducts} ret sens leak".gsub(" ","_").gsub("|","_")
-      return_latent_leakage = "#{obj_name_ducts} ret lat leak".gsub(" ","_").gsub("|","_")
+      supply_sensible_lkage_to_living = "#{obj_name_ducts} sup s lk to lv".gsub(" ","_").gsub("|","_")
+      supply_latent_lkage_to_living = "#{obj_name_ducts} sup lat lk to lv".gsub(" ","_").gsub("|","_")
+      supply_duct_conduction_to_living = "#{obj_name_ducts} sup d cn to lv".gsub(" ","_").gsub("|","_")
+      supply_duct_conduction_to_air_handler = "#{obj_name_ducts} sup d cn to ah".gsub(" ","_").gsub("|","_")
+      return_duct_conduction_to_plenum = "#{obj_name_ducts} ret d cn to pl".gsub(" ","_").gsub("|","_")
+      return_duct_conduction_to_air_handler = "#{obj_name_ducts} ret d cn to ah".gsub(" ","_").gsub("|","_")
+      supply_sensible_lkage_to_air_handler = "#{obj_name_ducts} sup s lk to ah".gsub(" ","_").gsub("|","_")
+      supply_latent_lkage_to_air_handler = "#{obj_name_ducts} sup lat lk to ah".gsub(" ","_").gsub("|","_")
+      return_sensible_lkage = "#{obj_name_ducts} ret s lk".gsub(" ","_").gsub("|","_")
+      return_latent_lkage = "#{obj_name_ducts} ret lat lk".gsub(" ","_").gsub("|","_")
       
       model.getEnergyManagementSystemActuators.each do |actuator|
-        next unless [supply_sensible_leakage_to_living, supply_latent_leakage_to_living, supply_duct_conduction_to_living, supply_duct_conduction_to_air_handler, return_duct_conduction_to_plenum, return_duct_conduction_to_air_handler, supply_sensible_leakage_to_air_handler, supply_latent_leakage_to_air_handler, return_sensible_leakage, return_latent_leakage].map{|x| "#{x} equip act".gsub(" ","_")}.include? actuator.name.to_s
+        next unless [supply_sensible_lkage_to_living, supply_latent_lkage_to_living, supply_duct_conduction_to_living, supply_duct_conduction_to_air_handler, return_duct_conduction_to_plenum, return_duct_conduction_to_air_handler, supply_sensible_lkage_to_air_handler, supply_latent_lkage_to_air_handler, return_sensible_lkage, return_latent_lkage].map{|x| "#{x} equip act".gsub(" ","_")}.include? actuator.name.to_s
         actuator.actuatedComponent.to_OtherEquipment.get.otherEquipmentDefinition.remove
         actuator.remove
       end
@@ -996,11 +996,11 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         program_calling_manager.remove
       end
       
-      duct_leak_supply_fan_equiv = "#{obj_name_ducts} leak sup fan equiv".gsub("|","_").gsub(" ","_")
-      duct_leak_exhaust_fan_equiv = "#{obj_name_ducts} leak exh fan equiv".gsub("|","_").gsub(" ","_")      
+      duct_lk_supply_fan_equiv = "#{obj_name_ducts} lk sup fan equiv".gsub("|","_").gsub(" ","_")
+      duct_lk_exhaust_fan_equiv = "#{obj_name_ducts} lk exh fan equiv".gsub("|","_").gsub(" ","_")      
     
       model.getEnergyManagementSystemGlobalVariables.each do |ems_global_var|
-        next unless [air_handler_mfr, fan_rtf, air_handler_vfr, air_handler_tout, return_air_t, air_handler_wout, return_air_w, air_handler_t, air_handler_w, supply_sensible_leakage_to_living, supply_latent_leakage_to_living, supply_duct_conduction_to_living, supply_duct_conduction_to_air_handler, return_duct_conduction_to_plenum, return_duct_conduction_to_air_handler, supply_sensible_leakage_to_air_handler, supply_latent_leakage_to_air_handler, return_sensible_leakage, return_latent_leakage, living_to_air_handler_flow_rate, air_handler_to_living_flow_rate, duct_leak_supply_fan_equiv, duct_leak_exhaust_fan_equiv].include? ems_global_var.name.to_s
+        next unless [air_handler_mfr, fan_rtf, air_handler_vfr, air_handler_tout, return_air_t, air_handler_wout, return_air_w, air_handler_t, air_handler_w, supply_sensible_lkage_to_living, supply_latent_lkage_to_living, supply_duct_conduction_to_living, supply_duct_conduction_to_air_handler, return_duct_conduction_to_plenum, return_duct_conduction_to_air_handler, supply_sensible_lkage_to_air_handler, supply_latent_lkage_to_air_handler, return_sensible_lkage, return_latent_lkage, living_to_air_handler_flow_rate, air_handler_to_living_flow_rate, duct_lk_supply_fan_equiv, duct_lk_exhaust_fan_equiv].include? ems_global_var.name.to_s
         ems_global_var.remove
       end
 
@@ -1034,14 +1034,14 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       nat_vent = _processNaturalVentilationForUnit(model, runner, nat_vent, wind_speed, infil, building, unit)   
       ducts = _processDuctsForUnit(model, runner, ducts, building, unit)
       
-      schedules.BathExhaust = HourlyByMonthSchedule.new(model, runner, obj_name_infil + " bath exhaust schedule", [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, normalize_values=false)
-      schedules.ClothesDryerExhaust = HourlyByMonthSchedule.new(model, runner, obj_name_infil + " clothes dryer exhaust schedule", [Array.new(10, 0.0) + [1.0] + Array.new(13, 0.0)] * 12, [Array.new(10, 0.0) + [1.0] + Array.new(13, 0.0)] * 12, normalize_values=false)
-      schedules.RangeHood = HourlyByMonthSchedule.new(model, runner, obj_name_infil + " range hood schedule", [Array.new(17, 0.0) + [1.0] + Array.new(6, 0.0)] * 12, [Array.new(17, 0.0) + [1.0] + Array.new(6, 0.0)] * 12, normalize_values=false)
+      schedules.BathExhaust = HourlyByMonthSchedule.new(model, runner, obj_name_infil + " bath exhaust schedule", [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, normalize_values = false)
+      schedules.ClothesDryerExhaust = HourlyByMonthSchedule.new(model, runner, obj_name_infil + " clothes dryer exhaust schedule", [Array.new(10, 0.0) + [1.0] + Array.new(13, 0.0)] * 12, [Array.new(10, 0.0) + [1.0] + Array.new(13, 0.0)] * 12, normalize_values = false)
+      schedules.RangeHood = HourlyByMonthSchedule.new(model, runner, obj_name_infil + " range hood schedule", [Array.new(17, 0.0) + [1.0] + Array.new(6, 0.0)] * 12, [Array.new(17, 0.0) + [1.0] + Array.new(6, 0.0)] * 12, normalize_values = false)
       
-      schedules.MechanicalVentilationEnergy = HourlyByMonthSchedule.new(model, runner, obj_name_mechvent + " energy schedule", [mech_vent.hourly_energy_schedule] * 12, [mech_vent.hourly_energy_schedule] * 12, normalize_values=false)
-      schedules.MechanicalVentilation = HourlyByMonthSchedule.new(model, runner, obj_name_mechvent + " schedule", [mech_vent.hourly_schedule] * 12, [mech_vent.hourly_schedule] * 12, normalize_values=false)      
+      schedules.MechanicalVentilationEnergy = HourlyByMonthSchedule.new(model, runner, obj_name_mechvent + " energy schedule", [mech_vent.hourly_energy_schedule] * 12, [mech_vent.hourly_energy_schedule] * 12, normalize_values = false)
+      schedules.MechanicalVentilation = HourlyByMonthSchedule.new(model, runner, obj_name_mechvent + " schedule", [mech_vent.hourly_schedule] * 12, [mech_vent.hourly_schedule] * 12, normalize_values = false)      
       
-      schedules.NatVentTemp = HourlyByMonthSchedule.new(model, runner, obj_name_natvent + " temp schedule", nat_vent.temp_hourly_wkdy, nat_vent.temp_hourly_wked, normalize_values=false)
+      schedules.NatVentTemp = HourlyByMonthSchedule.new(model, runner, obj_name_natvent + " temp schedule", nat_vent.temp_hourly_wkdy, nat_vent.temp_hourly_wked, normalize_values = false)
       schedules.NatVentAvailability = OpenStudio::Model::ScheduleRuleset.new(model)
       schedules.NatVentAvailability.setName(obj_name_natvent + " avail schedule")
 
@@ -1058,7 +1058,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         date_s = OpenStudio::Date::fromDayOfYear(day_startm[m])
         date_e = OpenStudio::Date::fromDayOfYear(day_endm[m])
         
-        if ((nat_vent.season_type[m-1] == Constants.SeasonHeating and nat_vent.NatVentHeatingSeason) or (nat_vent.season_type[m-1] == Constants.SeasonCooling and nat_vent.NatVentCoolingSeason) or (nat_vent.season_type[m-1] == Constants.SeasonOverlap and nat_vent.NatVentOverlapSeason)) and (nat_vent.NatVentNumberWeekdays + nat_vent.NatVentNumberWeekendDays != 0)
+        if ((nat_vent.season_type[m-1] == Constants.SeasonHeating and nat_vent.NatVentHeatingSeason) or (nat_vent.season_type[m-1] == Constants.SeasonCooling and nat_vent.NatVentCoolingSeason) or (nat_vent.season_type[m-1] == Constants.SeasonOverlap and nat_vent.NatVentOverlapSeason)) and (nat_vent.NatVentNumberWeekdays + nat_vent.NatVentNumberWeekendDays !=  0)
           on_rule = OpenStudio::Model::ScheduleRule.new(schedules.NatVentAvailability)
           on_rule.setName(obj_name_natvent + " availability schedule allday ruleset#{m} on")
           on_rule_day = on_rule.daySchedule
@@ -1101,7 +1101,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           off_rule_day = off_rule.daySchedule
           off_rule_day.setName(obj_name_natvent + " availability schedule allday1 off")
           for h in 1..24
-              off_rule_day.addValue(time[h],0)
+            off_rule_day.addValue(time[h],0)
           end
           off_rule.setApplyMonday(true)
           off_rule.setApplyTuesday(true)
@@ -1137,48 +1137,48 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       # Sensors
     
       tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_outdoor_air_drybulb_temp_output_var)
-      tout_sensor.setName("#{obj_name_airflow} tout sens".gsub("|","_"))
+      tout_sensor.setName("#{obj_name_airflow} tt s".gsub("|","_"))
       tout_sensor.setKeyName(unit.living_zone.name.to_s)
       
       tin_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_mean_air_temp_output_var)
-      tin_sensor.setName("#{obj_name_airflow} tin sens".gsub("|","_"))
+      tin_sensor.setName("#{obj_name_airflow} tin s".gsub("|","_"))
       tin_sensor.setKeyName(unit.living_zone.name.to_s)
       
       pbar_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, outdoor_air_barometric_pressure_output_var)
-      pbar_sensor.setName("#{obj_name_natvent} pbar sens".gsub("|","_"))      
+      pbar_sensor.setName("#{obj_name_natvent} pb s".gsub("|","_"))      
 
       phiin_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_air_relative_humidity_output_var)
-      phiin_sensor.setName("#{obj_name_natvent} phiin sens".gsub("|","_"))
+      phiin_sensor.setName("#{obj_name_natvent} phiin s".gsub("|","_"))
       phiin_sensor.setKeyName(unit.living_zone.name.to_s)
 
       wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, outdoor_air_humidity_ratio_output_var)
-      wout_sensor.setName("#{obj_name_natvent} wout sens".gsub("|","_"))
+      wout_sensor.setName("#{obj_name_natvent} wt s".gsub("|","_"))
    
       vwind_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, wind_speed_output_var)
-      vwind_sensor.setName("#{obj_name_airflow} vwind sens".gsub("|","_"))
+      vwind_sensor.setName("#{obj_name_airflow} vw s".gsub("|","_"))
       
       wh_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
-      wh_sch_sensor.setName("#{obj_name_infil} wh sch sens".gsub("|","_"))
+      wh_sch_sensor.setName("#{obj_name_infil} wh sch s".gsub("|","_"))
       wh_sch_sensor.setKeyName(model.alwaysOnDiscreteSchedule.name.to_s)
       
       range_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
-      range_sch_sensor.setName("#{obj_name_infil} range sch sens".gsub("|","_"))
+      range_sch_sensor.setName("#{obj_name_infil} range sch s".gsub("|","_"))
       range_sch_sensor.setKeyName(schedules.RangeHood.schedule.name.to_s)
       
       bath_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
-      bath_sch_sensor.setName("#{obj_name_infil} bath sch sens".gsub("|","_"))
+      bath_sch_sensor.setName("#{obj_name_infil} bath sch s".gsub("|","_"))
       bath_sch_sensor.setKeyName(schedules.BathExhaust.schedule.name.to_s)      
       
       clothes_dryer_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
-      clothes_dryer_sch_sensor.setName("#{obj_name_infil} clothes dryer sch sens".gsub("|","_"))
+      clothes_dryer_sch_sensor.setName("#{obj_name_infil} clothes dryer sch s".gsub("|","_"))
       clothes_dryer_sch_sensor.setKeyName(schedules.ClothesDryerExhaust.schedule.name.to_s)
       
       nvavail_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
-      nvavail_sensor.setName("#{obj_name_natvent} nvavail sens".gsub("|","_"))
+      nvavail_sensor.setName("#{obj_name_natvent} nva s".gsub("|","_"))
       nvavail_sensor.setKeyName(schedules.NatVentAvailability.name.to_s)
       
       nvsp_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
-      nvsp_sensor.setName("#{obj_name_natvent} sp sens".gsub("|","_"))
+      nvsp_sensor.setName("#{obj_name_natvent} sp s".gsub("|","_"))
       nvsp_sensor.setKeyName(schedules.NatVentTemp.schedule.name.to_s)
       
       # Actuators
@@ -1241,8 +1241,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       # Global Variables
       
-      ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, duct_leak_supply_fan_equiv)
-      ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, duct_leak_exhaust_fan_equiv)
+      ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, duct_lk_supply_fan_equiv)
+      ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, duct_lk_exhaust_fan_equiv)
       
       # Programs
 
@@ -1252,95 +1252,98 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       infil_program.addLine("Set p_s = #{wind_speed.ashrae_site_terrain_exponent}")
       infil_program.addLine("Set s_m = #{wind_speed.ashrae_terrain_thickness}")
       infil_program.addLine("Set s_s = #{wind_speed.ashrae_site_terrain_thickness}")
-      infil_program.addLine("Set z_m = #{OpenStudio::convert(wind_speed.height,"ft","m").get}")
-      infil_program.addLine("Set z_s = #{OpenStudio::convert(unit.living.height,"ft","m").get}")
+      infil_program.addLine("Set z_m = #{OpenStudio.convert(wind_speed.height,"ft","m").get}")
+      infil_program.addLine("Set z_s = #{OpenStudio.convert(unit.living.height,"ft","m").get}")
       infil_program.addLine("Set f_t = (((s_m/z_m)^p_m)*((z_s/s_s)^p_s))")
       
       if unit.living.inf_method == @infMethodASHRAE
         if unit.living.SLA > 0
-          infil_program.addLine("Set Tdiff = #{tin_sensor.name} - #{tout_sensor.name}")
-          infil_program.addLine("Set DeltaT = @Abs Tdiff")
-          infil_program.addLine("Set c = #{((OpenStudio::convert(infil.C_i,"cfm","m^3/s").get / (UnitConversion.inH2O2Pa(1.0) ** infil.n_i))).round(4)}")
+          infil_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
+          infil_program.addLine("Set dT = @Abs Tdiff")
+          infil_program.addLine("Set c = #{((OpenStudio.convert(infil.C_i,"cfm","m^3/s").get / (UnitConversion.inH2O2Pa(1.0) ** infil.n_i))).round(4)}")
           infil_program.addLine("Set Cs = #{(infil.stack_coef * (UnitConversion.inH2O_R2Pa_K(1.0) ** infil.n_i)).round(4)}")
           infil_program.addLine("Set Cw = #{(infil.wind_coef * (UnitConversion.inH2O_mph2Pas2_m2(1.0) ** infil.n_i)).round(4)}")
           infil_program.addLine("Set n = #{infil.n_i}")
           infil_program.addLine("Set sft = (f_t*#{(((wind_speed.S_wo * (1.0 - infil.Y_i)) + (infil.S_wflue * (1.5 * infil.Y_i))))})")
-          infil_program.addLine("Set Qn = (((c*Cs*(DeltaT^n))^2)+(((c*Cw)*((sft*#{vwind_sensor.name})^(2*n)))^2))^0.5")
+          infil_program.addLine("Set temp1 = ((c*Cw)*((sft*#{vwind_sensor.name})^(2*n)))^2")
+          infil_program.addLine("Set Qn = (((c*Cs*(dT^n))^2)+temp1)^0.5")
         else
           infil_program.addLine("Set Qn = 0")
         end
       elsif unit.living.inf_method == @infMethodRes
-        infil_program.addLine("Set Qn = #{unit.living.ACH * OpenStudio::convert(unit.living.volume,"ft^3","m^3").get / OpenStudio::convert(1.0,"hr","s").get}")
+        infil_program.addLine("Set Qn = #{unit.living.ACH * OpenStudio.convert(unit.living.volume,"ft^3","m^3").get / OpenStudio.convert(1.0,"hr","s").get}")
       end
       
-      infil_program.addLine("Set Tdiff = #{tin_sensor.name} - #{tout_sensor.name}")
-      infil_program.addLine("Set DeltaT = @Abs Tdiff")
-      infil_program.addLine("Set QWHV = #{wh_sch_sensor.name}*#{OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get}")
-      infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{OpenStudio::convert(mech_vent.range_hood_hour_avg_exhaust,"cfm","m^3/s").get}")
-      infil_program.addLine("Set Qdryer = #{clothes_dryer_sch_sensor.name}*#{OpenStudio::convert(mech_vent.clothes_dryer_hour_avg_exhaust,"cfm","m^3/s").get}")
-      infil_program.addLine("Set Qbath = #{bath_sch_sensor.name}*#{OpenStudio::convert(mech_vent.bathroom_hour_avg_exhaust,"cfm","m^3/s").get}")
+      infil_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
+      infil_program.addLine("Set dT = @Abs Tdiff")
+      infil_program.addLine("Set QWHV = #{wh_sch_sensor.name}*#{OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get}")
+      infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{OpenStudio.convert(mech_vent.range_hood_hour_avg_exhaust,"cfm","m^3/s").get}")
+      infil_program.addLine("Set Qdryer = #{clothes_dryer_sch_sensor.name}*#{OpenStudio.convert(mech_vent.clothes_dryer_hour_avg_exhaust,"cfm","m^3/s").get}")
+      infil_program.addLine("Set Qbath = #{bath_sch_sensor.name}*#{OpenStudio.convert(mech_vent.bathroom_hour_avg_exhaust,"cfm","m^3/s").get}")
       infil_program.addLine("Set QhpwhOut = 0")
       infil_program.addLine("Set QhpwhIn = 0")
-      infil_program.addLine("Set QductsOut = #{duct_leak_exhaust_fan_equiv}")
-      infil_program.addLine("Set QductsIn = #{duct_leak_supply_fan_equiv}")
+      infil_program.addLine("Set QductsOut = #{duct_lk_exhaust_fan_equiv}")
+      infil_program.addLine("Set QductsIn = #{duct_lk_supply_fan_equiv}")
       
       if mech_vent.MechVentType == Constants.VentTypeBalanced
         infil_program.addLine("Set Qout = Qrange+Qbath+Qdryer+QhpwhOut+QductsOut")
         infil_program.addLine("Set Qin = QhpwhIn+QductsIn")
-        infil_program.addLine("Set Qu = (@Abs (Qout - Qin))")
+        infil_program.addLine("Set Qu = (@Abs (Qout-Qin))")
         infil_program.addLine("Set Qb = QWHV + (@Min Qout Qin)")
         infil_program.addLine("Set #{whole_house_fan_actuator.name} = 0")
       else
         if mech_vent.MechVentType == Constants.VentTypeExhaust
           infil_program.addLine("Set Qout = QWHV+Qrange+Qbath+Qdryer+QhpwhOut+QductsOut")
           infil_program.addLine("Set Qin = QhpwhIn+QductsIn")
-          infil_program.addLine("Set Qu = (@Abs (Qout - Qin))")
+          infil_program.addLine("Set Qu = (@Abs (Qout-Qin))")
           infil_program.addLine("Set Qb = (@Min Qout Qin)")
         else # mech_vent.MechVentType == Constants.VentTypeSupply
           infil_program.addLine("Set Qout = Qrange+Qbath+Qdryer+QhpwhOut+QductsOut")
           infil_program.addLine("Set Qin = QWHV+QhpwhIn+QductsIn")
-          infil_program.addLine("Set Qu = @Abs (Qout - Qin)")
+          infil_program.addLine("Set Qu = @Abs (Qout- Qin)")
           infil_program.addLine("Set Qb = (@Min Qout Qin)")
         end
-        if mech_vent.MechVentHouseFanPower != 0
-          infil_program.addLine("Set faneff_wh = #{OpenStudio::convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get}")
+        if mech_vent.MechVentHouseFanPower !=  0
+          infil_program.addLine("Set faneff_wh = #{OpenStudio.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get}")
         else
           infil_program.addLine("Set faneff_wh = 1")
         end
         infil_program.addLine("Set #{whole_house_fan_actuator.name} = (QWHV*300)/faneff_wh")
       end
 
-      if mech_vent.MechVentSpotFanPower != 0
-        infil_program.addLine("Set faneff_sp = #{OpenStudio::convert(300.0 / mech_vent.MechVentSpotFanPower,"cfm","m^3/s").get}")
+      if mech_vent.MechVentSpotFanPower !=  0
+        infil_program.addLine("Set faneff_sp = #{OpenStudio.convert(300.0 / mech_vent.MechVentSpotFanPower,"cfm","m^3/s").get}")
       else
         infil_program.addLine("Set faneff_sp = 1")
       end
       
       infil_program.addLine("Set #{range_hood_fan_actuator.name} = (Qrange*300)/faneff_sp")
       infil_program.addLine("Set #{bath_exhaust_fan_actuator.name} = (Qbath*300)/faneff_sp")
-      infil_program.addLine("Set Q_acctd_for_elsewhere = QhpwhOut + QhpwhIn + QductsOut + QductsIn")
-      infil_program.addLine("Set #{infil_flow_actuator.name} = (((Qu^2) + (Qn^2))^0.5) - Q_acctd_for_elsewhere")
+      infil_program.addLine("Set Q_acctd_for_elsewhere = QhpwhOut+QhpwhIn+QductsOut+QductsIn")
+      infil_program.addLine("Set #{infil_flow_actuator.name} = (((Qu^2)+(Qn^2))^0.5)-Q_acctd_for_elsewhere")
       infil_program.addLine("Set #{infil_flow_actuator.name} = (@Max #{infil_flow_actuator.name} 0)")
       
       nat_vent_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
       nat_vent_program.setName(obj_name_natvent + " program")
-      nat_vent_program.addLine("Set Tdiff = #{tin_sensor.name} - #{tout_sensor.name}")
-      nat_vent_program.addLine("Set DeltaT = (@Abs Tdiff)")
-      nat_vent_program.addLine("Set Phiout = (@RhFnTdbWPb #{tout_sensor.name} #{wout_sensor.name} #{pbar_sensor.name})")
+      nat_vent_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
+      nat_vent_program.addLine("Set dT = (@Abs Tdiff)")
+      nat_vent_program.addLine("Set pt = (@RhFnTdbWPb #{tout_sensor.name} #{wout_sensor.name} #{pbar_sensor.name})")
       nat_vent_program.addLine("Set Hin = (@HFnTdbRhPb #{tout_sensor.name} #{phiin_sensor.name} #{pbar_sensor.name})")
-      nat_vent_program.addLine("Set NVArea = #{OpenStudio::convert(nat_vent.area,"ft^2","cm^2").get}")
+      nat_vent_program.addLine("Set NVA = #{OpenStudio.convert(nat_vent.area,"ft^2","cm^2").get}")
       nat_vent_program.addLine("Set Cs = #{UnitConversion.ft2_s2R2L2_s2cm4K(nat_vent.C_s)}")
       nat_vent_program.addLine("Set Cw = #{UnitConversion._2L2s2_s2cm4m2(nat_vent.C_w)}")
-      nat_vent_program.addLine("Set MaxNV = #{OpenStudio::convert(nat_vent.max_flow_rate,"cfm","m^3/s").get}")
-      nat_vent_program.addLine("Set MaxHR = #{nat_vent.NatVentMaxOAHumidityRatio}")
-      nat_vent_program.addLine("Set MaxRH = #{nat_vent.NatVentMaxOARelativeHumidity}")
-      nat_vent_program.addLine("Set SGNV = (#{nvavail_sensor.name}*NVArea)*((((Cs*DeltaT)+(Cw*(#{vwind_sensor.name}^2)))^0.5)/1000)")
-      nat_vent_program.addLine("If (#{wout_sensor.name} < MaxHR) && (Phiout < MaxRH) && (#{tin_sensor.name} > #{nvsp_sensor.name})")
-      nat_vent_program.addLine("Set NVadj1 = (#{tin_sensor.name} - #{nvsp_sensor.name})/(#{tin_sensor.name} - #{tout_sensor.name})")
+      nat_vent_program.addLine("Set MNV = #{OpenStudio.convert(nat_vent.max_flow_rate,"cfm","m^3/s").get}")
+      nat_vent_program.addLine("Set MHR = #{nat_vent.NatVentMaxOAHumidityRatio}")
+      nat_vent_program.addLine("Set MRH = #{nat_vent.NatVentMaxOARelativeHumidity}")
+      nat_vent_program.addLine("Set temp1 = (#{nvavail_sensor.name}*NVA)")
+      nat_vent_program.addLine("Set SGNV = temp1*((((Cs*dT)+(Cw*(#{vwind_sensor.name}^2)))^0.5)/1000)")
+      nat_vent_program.addLine("If (#{wout_sensor.name}<MHR) && (pt<MRH) && (#{tin_sensor.name}>#{nvsp_sensor.name})")
+      nat_vent_program.addLine("Set temp2 = (#{tin_sensor.name}-#{nvsp_sensor.name})")
+      nat_vent_program.addLine("Set NVadj1 = temp2/(#{tin_sensor.name}-#{tout_sensor.name})")
       nat_vent_program.addLine("Set NVadj2 = (@Min NVadj1 1)")
       nat_vent_program.addLine("Set NVadj3 = (@Max NVadj2 0)")
       nat_vent_program.addLine("Set NVadj = SGNV*NVadj3")
-      nat_vent_program.addLine("Set #{natvent_flow_actuator.name} = (@Min NVadj MaxNV)")
+      nat_vent_program.addLine("Set #{natvent_flow_actuator.name} = (@Min NVadj MNV)")
       nat_vent_program.addLine("Else")
       nat_vent_program.addLine("Set #{natvent_flow_actuator.name} = 0")
       nat_vent_program.addLine("EndIf")     
@@ -1357,18 +1360,18 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
         supply_fan = OpenStudio::Model::FanOnOff.new(model)
         supply_fan.setName(obj_name_mechvent + " erv supply fan")
-        supply_fan.setFanEfficiency(OpenStudio::convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get)
+        supply_fan.setFanEfficiency(OpenStudio.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get)
         supply_fan.setPressureRise(300.0)
-        supply_fan.setMaximumFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
+        supply_fan.setMaximumFlowRate(OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         supply_fan.setMotorEfficiency(1)
         supply_fan.setMotorInAirstreamFraction(1)
         supply_fan.setEndUseSubcategory(Constants.EndUseMechVentFan)
 
         exhaust_fan = OpenStudio::Model::FanOnOff.new(model)
         exhaust_fan.setName(obj_name_mechvent + " erv exhaust fan")
-        exhaust_fan.setFanEfficiency(OpenStudio::convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get)
+        exhaust_fan.setFanEfficiency(OpenStudio.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get)
         exhaust_fan.setPressureRise(300.0)
-        exhaust_fan.setMaximumFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
+        exhaust_fan.setMaximumFlowRate(OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         exhaust_fan.setMotorEfficiency(1)
         exhaust_fan.setMotorInAirstreamFraction(0)
         exhaust_fan.setEndUseSubcategory(Constants.EndUseMechVentFan)
@@ -1382,7 +1385,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
         heat_exchanger = OpenStudio::Model::HeatExchangerAirToAirSensibleAndLatent.new(model)
         heat_exchanger.setName(obj_name_mechvent + " erv heat exchanger")
-        heat_exchanger.setNominalSupplyAirFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
+        heat_exchanger.setNominalSupplyAirFlowRate(OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         heat_exchanger.setSensibleEffectivenessat100HeatingAirFlow(mech_vent.MechVentHXCoreSensibleEffectiveness)
         heat_exchanger.setLatentEffectivenessat100HeatingAirFlow(mech_vent.MechVentLatentEffectiveness)
         heat_exchanger.setSensibleEffectivenessat75HeatingAirFlow(mech_vent.MechVentHXCoreSensibleEffectiveness)
@@ -1395,8 +1398,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         zone_hvac = OpenStudio::Model::ZoneHVACEnergyRecoveryVentilator.new(model, heat_exchanger, supply_fan, exhaust_fan)
         zone_hvac.setName(obj_name_mechvent + " erv")
         zone_hvac.setController(erv_controller)
-        zone_hvac.setSupplyAirFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
-        zone_hvac.setExhaustAirFlowRate(OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
+        zone_hvac.setSupplyAirFlowRate(OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
+        zone_hvac.setExhaustAirFlowRate(OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get)
         zone_hvac.addToThermalZone(unit.living_zone)
         unit.living_zone.setCoolingPriority(zone_hvac, 1)
         unit.living_zone.setHeatingPriority(zone_hvac, 1)
@@ -1438,7 +1441,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     
       ra_duct_zone = OpenStudio::Model::ThermalZone.new(model)
       ra_duct_zone.setName(obj_name_ducts + " ret air zone")
-      ra_duct_zone.setVolume(OpenStudio::convert(ducts.return_duct_volume,"ft^3","m^3").get)
+      ra_duct_zone.setVolume(OpenStudio.convert(ducts.return_duct_volume,"ft^3","m^3").get)
       
       sw_point = OpenStudio::Point3d.new(0, 74, 0)
       nw_point = OpenStudio::Point3d.new(0, 75, 0)
@@ -1487,27 +1490,27 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and ducts.has_forced_air_equipment
       
-        # Other equipment objects to cancel out the supply air leakage directly into the return plenum   
+        # Other equipment objects to cancel out the supply air lkage directly into the return plenum   
         
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip_def.setName(supply_sensible_leakage_to_living + " equip")
+        other_equip_def.setName(supply_sensible_lkage_to_living + " equip")
         other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
         other_equip.setName(other_equip_def.name.to_s)
         other_equip.setFuelType("None")
         other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
         other_equip.setSpace(unit.living_zone.spaces[0])
-        supply_sensible_leakage_to_living_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        supply_sensible_leakage_to_living_actuator.setName("#{other_equip.name} act".gsub("|","_"))
+        supply_sensible_lkage_to_living_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+        supply_sensible_lkage_to_living_actuator.setName("#{other_equip.name} act".gsub("|","_"))
         
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip_def.setName(supply_latent_leakage_to_living + " equip")
+        other_equip_def.setName(supply_latent_lkage_to_living + " equip")
         other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
         other_equip.setName(other_equip_def.name.to_s)
         other_equip.setFuelType("None")
         other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
         other_equip.setSpace(unit.living_zone.spaces[0])
-        supply_latent_leakage_to_living_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        supply_latent_leakage_to_living_actuator.setName("#{other_equip.name} act".gsub("|","_"))        
+        supply_latent_lkage_to_living_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+        supply_latent_lkage_to_living_actuator.setName("#{other_equip.name} act".gsub("|","_"))        
         
         # Supply duct conduction load added to the living space
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
@@ -1553,54 +1556,54 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         return_duct_conduction_to_air_handler_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
         return_duct_conduction_to_air_handler_actuator.setName("#{other_equip.name} act".gsub("|","_"))
         
-        # Supply duct sensible leakage impact on the air handler zone.
+        # Supply duct sensible lkage impact on the air handler zone.
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip_def.setName(supply_sensible_leakage_to_air_handler + " equip")
+        other_equip_def.setName(supply_sensible_lkage_to_air_handler + " equip")
         other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
         other_equip.setName(other_equip_def.name.to_s)
         other_equip.setFuelType("None")
         other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
         other_equip.setSpace(ducts.duct_location_zone.spaces[0])
-        supply_sensible_leakage_to_air_handler_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        supply_sensible_leakage_to_air_handler_actuator.setName("#{other_equip.name} act".gsub("|","_"))
+        supply_sensible_lkage_to_air_handler_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+        supply_sensible_lkage_to_air_handler_actuator.setName("#{other_equip.name} act".gsub("|","_"))
         
-        # Supply duct latent leakage impact on the air handler zone.
+        # Supply duct latent lkage impact on the air handler zone.
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip_def.setName(supply_latent_leakage_to_air_handler + " equip")
+        other_equip_def.setName(supply_latent_lkage_to_air_handler + " equip")
         other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
         other_equip.setName(other_equip_def.name.to_s)
         other_equip.setFuelType("None")
         other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
         other_equip.setSpace(ducts.duct_location_zone.spaces[0])
-        supply_latent_leakage_to_air_handler_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        supply_latent_leakage_to_air_handler_actuator.setName("#{other_equip.name} act".gsub("|","_"))
+        supply_latent_lkage_to_air_handler_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+        supply_latent_lkage_to_air_handler_actuator.setName("#{other_equip.name} act".gsub("|","_"))
       
-        # Return duct sensible leakage impact on the return plenum
+        # Return duct sensible lkage impact on the return plenum
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip_def.setName(return_sensible_leakage + " equip")
+        other_equip_def.setName(return_sensible_lkage + " equip")
         other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
         other_equip.setName(other_equip_def.name.to_s)
         other_equip.setFuelType("None")
         other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
         other_equip.setSpace(ra_duct_space)
-        return_sensible_leakage_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        return_sensible_leakage_actuator.setName("#{other_equip.name} act".gsub("|","_"))
+        return_sensible_lkage_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+        return_sensible_lkage_actuator.setName("#{other_equip.name} act".gsub("|","_"))
         
-        # Return duct latent leakage impact on the return plenum
+        # Return duct latent lkage impact on the return plenum
         other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
-        other_equip_def.setName(return_latent_leakage + " equip")
+        other_equip_def.setName(return_latent_lkage + " equip")
         other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
         other_equip.setName(other_equip_def.name.to_s)
         other_equip.setFuelType("None")
         other_equip.setSchedule(model.alwaysOnDiscreteSchedule)
         other_equip.setSpace(ra_duct_space)
-        return_latent_leakage_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
-        return_latent_leakage_actuator.setName("#{other_equip.name} act".gsub("|","_"))
+        return_latent_lkage_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(other_equip, "OtherEquipment", "Power Level")
+        return_latent_lkage_actuator.setName("#{other_equip.name} act".gsub("|","_"))
       
         # Two objects are required to model the air exchange between the air handler zone and the living space since
         # ZoneMixing objects can not account for direction of air flow (both are controlled by EMS)
 
-        # Accounts for leaks from the AH zone to the Living zone
+        # Accounts for lks from the AH zone to the Living zone
         
         zone_mixing_ah_to_living = OpenStudio::Model::ZoneMixing.new(unit.living_zone)
         zone_mixing_ah_to_living.setName(air_handler_to_living_flow_rate + " mix")
@@ -1617,39 +1620,39 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         # Sensors
         
         air_handler_mfr_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_mass_flow_rate_output_var)
-        air_handler_mfr_sensor.setName(air_handler_mfr + " sens")
+        air_handler_mfr_sensor.setName(air_handler_mfr + " s")
         air_handler_mfr_sensor.setKeyName(air_demand_inlet_node.name.to_s)        
     
         fan_rtf_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, fan_runtime_fraction_output_var)
-        fan_rtf_sensor.setName(fan_rtf + " sens")
+        fan_rtf_sensor.setName(fan_rtf + " s")
         fan_rtf_sensor.setKeyName(supply_fan.name.to_s)
 
         air_handler_vfr_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_current_density_volume_flow_rate_output_var)
-        air_handler_vfr_sensor.setName(air_handler_vfr + " sens")
+        air_handler_vfr_sensor.setName(air_handler_vfr + " s")
         air_handler_vfr_sensor.setKeyName(air_demand_inlet_node.name.to_s)
         
         air_handler_tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_temp_output_var)
-        air_handler_tout_sensor.setName(air_handler_tout + " sens")
+        air_handler_tout_sensor.setName(air_handler_tout + " s")
         air_handler_tout_sensor.setKeyName(air_demand_inlet_node.name.to_s)        
         
         return_air_t_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_temp_output_var)
-        return_air_t_sensor.setName(return_air_t + " sens")
+        return_air_t_sensor.setName(return_air_t + " s")
         return_air_t_sensor.setKeyName(living_zone_return_air_node.name.to_s)
         
         air_handler_wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_humidity_ratio_output_var)
-        air_handler_wout_sensor.setName(air_handler_wout + " sens")
+        air_handler_wout_sensor.setName(air_handler_wout + " s")
         air_handler_wout_sensor.setKeyName(air_demand_inlet_node.name.to_s)        
         
         return_air_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, system_node_humidity_ratio_output_var)
-        return_air_w_sensor.setName(return_air_w + " sens")
+        return_air_w_sensor.setName(return_air_w + " s")
         return_air_w_sensor.setKeyName(living_zone_return_air_node.name.to_s)
     
         air_handler_t_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_air_temp_output_var)
-        air_handler_t_sensor.setName(air_handler_t + " sens")
+        air_handler_t_sensor.setName(air_handler_t + " s")
         air_handler_t_sensor.setKeyName(ducts.duct_location_name)        
         
         air_handler_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_mean_air_humidity_ratio_output_var)
-        air_handler_w_sensor.setName(air_handler_w + " sens")
+        air_handler_w_sensor.setName(air_handler_w + " s")
         air_handler_w_sensor.setKeyName(ducts.duct_location_name)
         
         # Global Variables
@@ -1663,137 +1666,144 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, return_air_w)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, air_handler_t)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, air_handler_w)
-        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_sensible_leakage_to_living)
-        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_latent_leakage_to_living)
+        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_sensible_lkage_to_living)
+        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_latent_lkage_to_living)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_duct_conduction_to_living)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_duct_conduction_to_air_handler)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, return_duct_conduction_to_plenum)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, return_duct_conduction_to_air_handler)        
-        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_sensible_leakage_to_air_handler)
-        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_latent_leakage_to_air_handler)
-        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, return_sensible_leakage)
-        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, return_latent_leakage)
+        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_sensible_lkage_to_air_handler)
+        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, supply_latent_lkage_to_air_handler)
+        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, return_sensible_lkage)
+        ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, return_latent_lkage)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, living_to_air_handler_flow_rate)
         ems_global_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, air_handler_to_living_flow_rate)        
 
         # Subroutine
         
-        duct_leakage_subroutine = OpenStudio::Model::EnergyManagementSystemSubroutine.new(model)
-        duct_leakage_subroutine.setName("#{obj_name_ducts} leak subrout".gsub("|","_"))
-        duct_leakage_subroutine.addLine("Set f_sup = #{ducts.supply_duct_loss}")
-        duct_leakage_subroutine.addLine("Set f_ret = #{ducts.return_duct_loss}")
-        duct_leakage_subroutine.addLine("Set f_OA = #{ducts.frac_oa * ducts.total_duct_unbalance}")
-        duct_leakage_subroutine.addLine("Set OAFlowRate = f_OA * #{air_handler_vfr_sensor.name}")
-        duct_leakage_subroutine.addLine("Set SupplyLeakFlowRate = f_sup * #{air_handler_vfr_sensor.name}")
-        duct_leakage_subroutine.addLine("Set ReturnLeakFlowRate = f_ret * #{air_handler_vfr_sensor.name}")
+        duct_lkage_subroutine = OpenStudio::Model::EnergyManagementSystemSubroutine.new(model)
+        duct_lkage_subroutine.setName("#{obj_name_ducts} lk subrout".gsub("|","_"))
+        duct_lkage_subroutine.addLine("Set f_sup = #{ducts.supply_duct_loss}")
+        duct_lkage_subroutine.addLine("Set f_ret = #{ducts.return_duct_loss}")
+        duct_lkage_subroutine.addLine("Set f_OA = #{ducts.frac_oa * ducts.total_duct_unbalance}")
+        duct_lkage_subroutine.addLine("Set oafrate = f_OA * #{air_handler_vfr_sensor.name}")
+        duct_lkage_subroutine.addLine("Set suplkfrate = f_sup * #{air_handler_vfr_sensor.name}")
+        duct_lkage_subroutine.addLine("Set retlkfrate = f_ret * #{air_handler_vfr_sensor.name}")
         
         if ducts.return_duct_loss > ducts.supply_duct_loss
           # Supply air flow rate is greater than return flow rate
           # Living zone is pressurized in this case      
-          duct_leakage_subroutine.addLine("Set #{living_to_air_handler_flow_rate} = (@Abs (ReturnLeakFlowRate - SupplyLeakFlowRate - OAFlowRate))")
-          duct_leakage_subroutine.addLine("Set #{air_handler_to_living_flow_rate} = 0")
-          duct_leakage_subroutine.addLine("Set #{duct_leak_supply_fan_equiv} = OAFlowRate")
-          duct_leakage_subroutine.addLine("Set #{duct_leak_exhaust_fan_equiv} = 0")
+          duct_lkage_subroutine.addLine("Set #{living_to_air_handler_flow_rate} = (@Abs (retlkfrate-suplkfrate-oafrate))")
+          duct_lkage_subroutine.addLine("Set #{air_handler_to_living_flow_rate} = 0")
+          duct_lkage_subroutine.addLine("Set #{duct_lk_supply_fan_equiv} = oafrate")
+          duct_lkage_subroutine.addLine("Set #{duct_lk_exhaust_fan_equiv} = 0")
         else
           # Living zone is depressurized in this case
-          duct_leakage_subroutine.addLine("Set #{air_handler_to_living_flow_rate} = (@Abs (SupplyLeakFlowRate - ReturnLeakFlowRate - OAFlowRate))")
-          duct_leakage_subroutine.addLine("Set #{living_to_air_handler_flow_rate} = 0")
-          duct_leakage_subroutine.addLine("Set #{duct_leak_supply_fan_equiv} = 0")
-          duct_leakage_subroutine.addLine("Set #{duct_leak_exhaust_fan_equiv} = OAFlowRate")
+          duct_lkage_subroutine.addLine("Set #{air_handler_to_living_flow_rate} = (@Abs (suplkfrate-retlkfrate-oafrate))")
+          duct_lkage_subroutine.addLine("Set #{living_to_air_handler_flow_rate} = 0")
+          duct_lkage_subroutine.addLine("Set #{duct_lk_supply_fan_equiv} = 0")
+          duct_lkage_subroutine.addLine("Set #{duct_lk_exhaust_fan_equiv} = oafrate")
         end        
       
         if ducts.ducts_not_in_living
-          duct_leakage_subroutine.addLine("If (#{air_handler_mfr_sensor.name} > 0)")
-          duct_leakage_subroutine.addLine("Set h_SA = (@HFnTdbW #{air_handler_tout_sensor.name} #{air_handler_wout_sensor.name})")
-          duct_leakage_subroutine.addLine("Set h_AHZone = (@HFnTdbW #{air_handler_t_sensor.name} #{air_handler_w_sensor.name})")
-          duct_leakage_subroutine.addLine("Set h_RA = (@HFnTdbW #{return_air_t_sensor.name} #{return_air_w_sensor.name})")
-          duct_leakage_subroutine.addLine("Set h_fg = (@HfgAirFnWTdb #{air_handler_wout_sensor.name} #{air_handler_tout_sensor.name})")
-          duct_leakage_subroutine.addLine("Set SALeakageQtot = f_sup * #{air_handler_mfr_sensor.name} * (h_RA - h_SA)")
-          duct_leakage_subroutine.addLine("Set #{supply_latent_leakage_to_living} = f_sup * #{air_handler_mfr_sensor.name} * h_fg * (#{return_air_w_sensor.name} - #{air_handler_wout_sensor.name})")
-          duct_leakage_subroutine.addLine("Set #{supply_sensible_leakage_to_living} = SALeakageQtot - #{supply_latent_leakage_to_living}")
-          duct_leakage_subroutine.addLine("Set expTerm = (#{fan_rtf_sensor.name} / (#{air_handler_mfr_sensor.name} * 1006.0)) * #{OpenStudio::convert(ducts.unconditioned_duct_ua,"Btu/hr*R","W/K").get}")
-          duct_leakage_subroutine.addLine("Set expTerm = 0 - expTerm")
-          duct_leakage_subroutine.addLine("If expTerm < -1000")
-          duct_leakage_subroutine.addLine("Set Tsupply = #{air_handler_t_sensor.name}")
-          duct_leakage_subroutine.addLine("Else")
-          duct_leakage_subroutine.addLine("Set Tsupply = #{air_handler_t_sensor.name} + ((#{air_handler_tout_sensor.name} - #{air_handler_t_sensor.name}) * (@Exp expTerm))")
-          duct_leakage_subroutine.addLine("EndIf")
-          duct_leakage_subroutine.addLine("Set #{supply_duct_conduction_to_living} = #{air_handler_mfr_sensor.name} * 1006.0 * (Tsupply - #{air_handler_tout_sensor.name})")
-          duct_leakage_subroutine.addLine("Set #{supply_duct_conduction_to_air_handler} = 0 - #{supply_duct_conduction_to_living}")
-          duct_leakage_subroutine.addLine("Set expTerm = (#{fan_rtf_sensor.name} / (#{air_handler_mfr_sensor.name} * 1006.0)) * #{OpenStudio::convert(ducts.return_duct_ua,"Btu/hr*R","W/K").get}")
-          duct_leakage_subroutine.addLine("Set expTerm = 0 - expTerm")
-          duct_leakage_subroutine.addLine("If expTerm < -1000")
-          duct_leakage_subroutine.addLine("Set Treturn = #{air_handler_t_sensor.name}")
-          duct_leakage_subroutine.addLine("Else")
-          duct_leakage_subroutine.addLine("Set Treturn = #{air_handler_t_sensor.name} + ((#{return_air_t_sensor.name} - #{air_handler_t_sensor.name}) * (@Exp expTerm))")
-          duct_leakage_subroutine.addLine("EndIf")
-          duct_leakage_subroutine.addLine("Set #{return_duct_conduction_to_plenum} = #{air_handler_mfr_sensor.name} * 1006.0 * (Treturn - #{return_air_t_sensor.name})")
-          duct_leakage_subroutine.addLine("Set #{return_duct_conduction_to_air_handler} = 0 - #{return_duct_conduction_to_plenum}")
-          duct_leakage_subroutine.addLine("Set #{return_latent_leakage} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_sensible_leakage} = f_ret * #{air_handler_mfr_sensor.name} * 1006.0 * (#{air_handler_t_sensor.name} - #{return_air_t_sensor.name})")
-          duct_leakage_subroutine.addLine("Set QtotLeakageToAHZone = f_sup * #{air_handler_mfr_sensor.name} * (h_SA - h_AHZone)")
-          duct_leakage_subroutine.addLine("Set #{supply_latent_leakage_to_air_handler} = f_sup * #{air_handler_mfr_sensor.name} * h_fg * (#{air_handler_wout_sensor.name} - #{air_handler_w_sensor.name})")
-          duct_leakage_subroutine.addLine("Set S#{supply_sensible_leakage_to_air_handler} = QtotLeakageToAHZone - #{supply_latent_leakage_to_air_handler}")
-          duct_leakage_subroutine.addLine("Else")
-          duct_leakage_subroutine.addLine("Set #{supply_latent_leakage_to_living} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_sensible_leakage_to_living} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_duct_conduction_to_living} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_duct_conduction_to_air_handler} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_duct_conduction_to_plenum} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_duct_conduction_to_air_handler} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_latent_leakage} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_sensible_leakage} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_latent_leakage_to_air_handler} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_sensible_leakage_to_air_handler} = 0")
-          duct_leakage_subroutine.addLine("EndIf")
+          duct_lkage_subroutine.addLine("If #{air_handler_mfr_sensor.name}>0")
+          duct_lkage_subroutine.addLine("Set h_SA = (@HFnTdbW #{air_handler_tout_sensor.name} #{air_handler_wout_sensor.name})")
+          duct_lkage_subroutine.addLine("Set h_AHZone = (@HFnTdbW #{air_handler_t_sensor.name} #{air_handler_w_sensor.name})")
+          duct_lkage_subroutine.addLine("Set h_RA = (@HFnTdbW #{return_air_t_sensor.name} #{return_air_w_sensor.name})")
+          duct_lkage_subroutine.addLine("Set h_fg = (@HfgAirFnWTdb #{air_handler_wout_sensor.name} #{air_handler_tout_sensor.name})")
+          duct_lkage_subroutine.addLine("Set SALeakageQtot = f_sup * #{air_handler_mfr_sensor.name}*(h_RA - h_SA)")          
+          duct_lkage_subroutine.addLine("Set temp1 = h_fg*(#{return_air_w_sensor.name}-#{air_handler_wout_sensor.name})")
+          duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_living} = f_sup*#{air_handler_mfr_sensor.name}*temp1")
+          duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_living} = SALeakageQtot-#{supply_latent_lkage_to_living}")
+          duct_lkage_subroutine.addLine("Set eTm = (#{fan_rtf_sensor.name}/(#{air_handler_mfr_sensor.name}*1006.0))*#{OpenStudio.convert(ducts.unconditioned_duct_ua,"Btu/hr*R","W/K").get.round(3)}")
+          duct_lkage_subroutine.addLine("Set eTm = 0-eTm")
+          duct_lkage_subroutine.addLine("If eTm<-1000")
+          duct_lkage_subroutine.addLine("Set tsup = #{air_handler_t_sensor.name}")
+          duct_lkage_subroutine.addLine("Else")
+          duct_lkage_subroutine.addLine("Set temp4 = #{air_handler_t_sensor.name}")
+          duct_lkage_subroutine.addLine("Set tsup = temp4+((#{air_handler_tout_sensor.name}-#{air_handler_t_sensor.name})*(@Exp eTm))")
+          duct_lkage_subroutine.addLine("EndIf")
+          duct_lkage_subroutine.addLine("Set temp5 = tsup-#{air_handler_tout_sensor.name}")
+          duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_living} = #{air_handler_mfr_sensor.name}*1006.0*temp5")
+          duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_air_handler} = 0-#{supply_duct_conduction_to_living}")
+          duct_lkage_subroutine.addLine("Set eTm = (#{fan_rtf_sensor.name}/(#{air_handler_mfr_sensor.name}*1006.0))*#{OpenStudio.convert(ducts.return_duct_ua,"Btu/hr*R","W/K").get.round(3)}")
+          duct_lkage_subroutine.addLine("Set eTm = 0-eTm")
+          duct_lkage_subroutine.addLine("If eTm<-1000")
+          duct_lkage_subroutine.addLine("Set tret = #{air_handler_t_sensor.name}")
+          duct_lkage_subroutine.addLine("Else")
+          duct_lkage_subroutine.addLine("Set temp6 = #{air_handler_t_sensor.name}")
+          duct_lkage_subroutine.addLine("Set tret = temp6+((#{return_air_t_sensor.name}-#{air_handler_t_sensor.name})*(@Exp eTm))")
+          duct_lkage_subroutine.addLine("EndIf")
+          duct_lkage_subroutine.addLine("Set temp7 = tret-#{return_air_t_sensor.name}")
+          duct_lkage_subroutine.addLine("Set #{return_duct_conduction_to_plenum} = #{air_handler_mfr_sensor.name}*1006.0*temp7")
+          duct_lkage_subroutine.addLine("Set #{return_duct_conduction_to_air_handler} = 0-#{return_duct_conduction_to_plenum}")
+          duct_lkage_subroutine.addLine("Set #{return_latent_lkage} = 0")
+          duct_lkage_subroutine.addLine("Set temp2 = (#{air_handler_t_sensor.name}-#{return_air_t_sensor.name})")
+          duct_lkage_subroutine.addLine("Set #{return_sensible_lkage} = f_ret*#{air_handler_mfr_sensor.name}*1006.0*temp2")
+          duct_lkage_subroutine.addLine("Set QtotLeakToAHZn = f_sup*#{air_handler_mfr_sensor.name}*(h_SA-h_AHZone)")
+          duct_lkage_subroutine.addLine("Set temp3 = (#{air_handler_wout_sensor.name}-#{air_handler_w_sensor.name})")
+          duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_air_handler} = f_sup*#{air_handler_mfr_sensor.name}*h_fg*temp3")
+          duct_lkage_subroutine.addLine("Set S#{supply_sensible_lkage_to_air_handler} = QtotLeakToAHZn-#{supply_latent_lkage_to_air_handler}")
+          duct_lkage_subroutine.addLine("Else")
+          duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_living} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_living} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_living} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_duct_conduction_to_plenum} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_duct_conduction_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_latent_lkage} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_sensible_lkage} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("EndIf")
         else
-          duct_leakage_subroutine.addLine("Set #{supply_latent_leakage_to_living} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_sensible_leakage_to_living} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_duct_conduction_to_living} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_duct_conduction_to_air_handler} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_duct_conduction_to_plenum} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_duct_conduction_to_air_handler} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_latent_leakage} = 0")
-          duct_leakage_subroutine.addLine("Set #{return_sensible_leakage} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_latent_leakage_to_air_handler} = 0")
-          duct_leakage_subroutine.addLine("Set #{supply_sensible_leakage_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_living} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_living} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_living} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_duct_conduction_to_plenum} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_duct_conduction_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_latent_lkage} = 0")
+          duct_lkage_subroutine.addLine("Set #{return_sensible_lkage} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_air_handler} = 0")
+          duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_air_handler} = 0")
         end      
       
         # Program     
         
-        duct_leakage_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
-        duct_leakage_program.setName(obj_name_ducts + " program")
-        duct_leakage_program.addLine("Set #{air_handler_mfr} = #{air_handler_mfr_sensor.name}")
-        duct_leakage_program.addLine("Set #{fan_rtf} = #{fan_rtf_sensor.name}")
-        duct_leakage_program.addLine("Set #{air_handler_vfr} = #{air_handler_vfr_sensor.name}")
-        duct_leakage_program.addLine("Set #{air_handler_tout} = #{air_handler_tout_sensor.name}")
-        duct_leakage_program.addLine("Set #{air_handler_wout} = #{air_handler_wout_sensor.name}")
-        duct_leakage_program.addLine("Set #{return_air_t} = #{return_air_t_sensor.name}")
-        duct_leakage_program.addLine("Set #{return_air_w} = #{return_air_w_sensor.name}")
-        duct_leakage_program.addLine("Set #{air_handler_t} = #{air_handler_t_sensor.name}")
-        duct_leakage_program.addLine("Set #{air_handler_w} = #{air_handler_w_sensor.name}")        
-        duct_leakage_program.addLine("Run #{duct_leakage_subroutine.name}")
-        duct_leakage_program.addLine("Set #{supply_sensible_leakage_to_living_actuator.name} = #{supply_sensible_leakage_to_living}")
-        duct_leakage_program.addLine("Set #{supply_latent_leakage_to_living_actuator.name} = #{supply_latent_leakage_to_living}")
-        duct_leakage_program.addLine("Set #{supply_duct_conduction_to_living_actuator.name} = #{supply_duct_conduction_to_living}")
-        duct_leakage_program.addLine("Set #{supply_duct_conduction_to_air_handler_actuator.name} = #{supply_duct_conduction_to_air_handler}")
-        duct_leakage_program.addLine("Set #{supply_sensible_leakage_to_air_handler_actuator.name} = #{supply_sensible_leakage_to_air_handler}")
-        duct_leakage_program.addLine("Set #{supply_latent_leakage_to_air_handler_actuator.name} = #{supply_latent_leakage_to_air_handler}")
-        duct_leakage_program.addLine("Set #{return_sensible_leakage_actuator.name} = #{return_sensible_leakage}")
-        duct_leakage_program.addLine("Set #{return_latent_leakage_actuator.name} = #{return_latent_leakage}")
-        duct_leakage_program.addLine("Set #{return_duct_conduction_to_plenum_actuator.name} = #{return_duct_conduction_to_plenum}")
-        duct_leakage_program.addLine("Set #{return_duct_conduction_to_air_handler_actuator.name} = #{return_duct_conduction_to_air_handler}")
-        duct_leakage_program.addLine("Set #{zone_mixing_ah_to_living_actuator.name} = #{air_handler_to_living_flow_rate}")
-        duct_leakage_program.addLine("Set #{zone_mixing_living_to_ah_actuator.name} = #{living_to_air_handler_flow_rate}")
+        duct_lkage_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
+        duct_lkage_program.setName(obj_name_ducts + " program")
+        duct_lkage_program.addLine("Set #{air_handler_mfr} = #{air_handler_mfr_sensor.name}")
+        duct_lkage_program.addLine("Set #{fan_rtf} = #{fan_rtf_sensor.name}")
+        duct_lkage_program.addLine("Set #{air_handler_vfr} = #{air_handler_vfr_sensor.name}")
+        duct_lkage_program.addLine("Set #{air_handler_tout} = #{air_handler_tout_sensor.name}")
+        duct_lkage_program.addLine("Set #{air_handler_wout} = #{air_handler_wout_sensor.name}")
+        duct_lkage_program.addLine("Set #{return_air_t} = #{return_air_t_sensor.name}")
+        duct_lkage_program.addLine("Set #{return_air_w} = #{return_air_w_sensor.name}")
+        duct_lkage_program.addLine("Set #{air_handler_t} = #{air_handler_t_sensor.name}")
+        duct_lkage_program.addLine("Set #{air_handler_w} = #{air_handler_w_sensor.name}")
+        duct_lkage_program.addLine("Run #{duct_lkage_subroutine.name}")
+        duct_lkage_program.addLine("Set #{supply_sensible_lkage_to_living_actuator.name} = #{supply_sensible_lkage_to_living}")
+        duct_lkage_program.addLine("Set #{supply_latent_lkage_to_living_actuator.name} = #{supply_latent_lkage_to_living}")
+        duct_lkage_program.addLine("Set #{supply_duct_conduction_to_living_actuator.name} = #{supply_duct_conduction_to_living}")
+        duct_lkage_program.addLine("Set #{supply_duct_conduction_to_air_handler_actuator.name} = #{supply_duct_conduction_to_air_handler}")
+        duct_lkage_program.addLine("Set #{supply_sensible_lkage_to_air_handler_actuator.name} = #{supply_sensible_lkage_to_air_handler}")
+        duct_lkage_program.addLine("Set #{supply_latent_lkage_to_air_handler_actuator.name} = #{supply_latent_lkage_to_air_handler}")
+        duct_lkage_program.addLine("Set #{return_sensible_lkage_actuator.name} = #{return_sensible_lkage}")
+        duct_lkage_program.addLine("Set #{return_latent_lkage_actuator.name} = #{return_latent_lkage}")
+        duct_lkage_program.addLine("Set #{return_duct_conduction_to_plenum_actuator.name} = #{return_duct_conduction_to_plenum}")
+        duct_lkage_program.addLine("Set #{return_duct_conduction_to_air_handler_actuator.name} = #{return_duct_conduction_to_air_handler}")
+        duct_lkage_program.addLine("Set #{zone_mixing_ah_to_living_actuator.name} = #{air_handler_to_living_flow_rate}")
+        duct_lkage_program.addLine("Set #{zone_mixing_living_to_ah_actuator.name} = #{living_to_air_handler_flow_rate}")
                 
       else # no ducts
       
         # Program
         
-        duct_leakage_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
-        duct_leakage_program.setName(obj_name_ducts + " program")
-        duct_leakage_program.addLine("Set #{duct_leak_supply_fan_equiv} = 0")
-        duct_leakage_program.addLine("Set #{duct_leak_exhaust_fan_equiv} = 0")
+        duct_lkage_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
+        duct_lkage_program.setName(obj_name_ducts + " program")
+        duct_lkage_program.addLine("Set #{duct_lk_supply_fan_equiv} = 0")
+        duct_lkage_program.addLine("Set #{duct_lk_exhaust_fan_equiv} = 0")
             
       end # end has ducts loop
     
@@ -1802,7 +1812,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       program_calling_manager = OpenStudio::Model::EnergyManagementSystemProgramCallingManager.new(model)
       program_calling_manager.setName(obj_name_ducts + " program calling manager")
       program_calling_manager.setCallingPoint("EndOfSystemTimestepAfterHVACReporting")
-      program_calling_manager.addProgram(duct_leakage_program)
+      program_calling_manager.addProgram(duct_lkage_program)
 
       # Store info for HVAC Sizing measure
       building_unit.setFeature(Constants.SizingInfoMechVentType, mech_vent.MechVentType)
@@ -1947,34 +1957,34 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
   
     unless building.garage_zone.nil?
       building.garage.inf_method = @infMethodSG
-      building.garage.hor_leak_frac = 0.4 # DOE-2 Default
+      building.garage.hor_lk_frac = 0.4 # DOE-2 Default
       building.garage.neutral_level = 0.5 # DOE-2 Default
       building.garage.SLA = get_infiltration_SLA_from_ACH50(infil.InfiltrationGarageACH50, 0.67, building.garage.area, building.garage.volume)
       building.garage.ACH = get_infiltration_ACH_from_SLA(building.garage.SLA, 1.0)
-      building.garage.inf_flow = building.garage.ACH / OpenStudio::convert(1.0,"hr","min").get * building.garage.volume # cfm          
+      building.garage.inf_flow = building.garage.ACH / OpenStudio.convert(1.0,"hr","min").get * building.garage.volume # cfm          
     end
 
     unless building.unfinished_basement_zone.nil?
       building.unfinished_basement.inf_method = @infMethodRes # Used for constant ACH
-      building.unfinished_basement.inf_flow = building.unfinished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * building.unfinished_basement.volume
+      building.unfinished_basement.inf_flow = building.unfinished_basement.ACH / OpenStudio.convert(1.0,"hr","min").get * building.unfinished_basement.volume
     end
 
     unless building.crawlspace_zone.nil?
       building.crawlspace.inf_method = @infMethodRes
-      building.crawlspace.inf_flow = building.crawlspace.ACH / OpenStudio::convert(1.0,"hr","min").get * building.crawlspace.volume
+      building.crawlspace.inf_flow = building.crawlspace.ACH / OpenStudio.convert(1.0,"hr","min").get * building.crawlspace.volume
     end
 
     unless building.pierbeam_zone.nil?
       building.pierbeam.inf_method = @infMethodRes
-      building.pierbeam.inf_flow = building.pierbeam.ACH / OpenStudio::convert(1.0,"hr","min").get * building.pierbeam.volume
+      building.pierbeam.inf_flow = building.pierbeam.ACH / OpenStudio.convert(1.0,"hr","min").get * building.pierbeam.volume
     end
 
     unless building.unfinished_attic_zone.nil?
       building.unfinished_attic.inf_method = @infMethodSG
-      building.unfinished_attic.hor_leak_frac = 0.75 # Same as Energy Gauge USA Attic Model
+      building.unfinished_attic.hor_lk_frac = 0.75 # Same as Energy Gauge USA Attic Model
       building.unfinished_attic.neutral_level = 0.5 # DOE-2 Default
       building.unfinished_attic.ACH = get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0)
-      building.unfinished_attic.inf_flow = building.unfinished_attic.ACH / OpenStudio::convert(1.0,"hr","min").get * building.unfinished_attic.volume
+      building.unfinished_attic.inf_flow = building.unfinished_attic.ACH / OpenStudio.convert(1.0,"hr","min").get * building.unfinished_attic.volume
     end
   
     spaces.each do |space|
@@ -1986,8 +1996,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
       if space.inf_method == @infMethodSG
-        space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
-        space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
+        space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_lk_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
+        space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_lk_frac) ** (1.0 / 3.0) * space.f_t_SG
         space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (Constants.AssumedInsideTemp + 460.0)
         space.C_w_SG = space.f_w_SG ** 2.0
         space.ELA = space.SLA * space.area # ft^2
@@ -2049,11 +2059,11 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           end
 
           if has_flue
-            infil.Y_i = 0.2 # Fraction of leakage through the flue; 0.2 is a "typical" value according to THE ALBERTA AIR INFIL1RATION MODEL, Walker and Wilson, 1990
+            infil.Y_i = 0.2 # Fraction of lkage through the flue; 0.2 is a "typical" value according to THE ALBERTA AIR INFIL1RATION MODEL, Walker and Wilson, 1990
             infil.flue_height = building.building_height + 2.0 # ft
             infil.S_wflue = 1.0 # Flue Shelter Coefficient
           else
-            infil.Y_i = 0.0 # Fraction of leakage through the flu
+            infil.Y_i = 0.0 # Fraction of lkage through the flu
             infil.flue_height = 0.0 # ft
             infil.S_wflue = 0.0 # Flue Shelter Coefficient
           end
@@ -2065,32 +2075,32 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           
           # Leakage distributions per Iain Walker (LBL) recommendations
           if vented_crawl
-            # 15% ceiling, 35% walls, 50% floor leakage distribution for vented crawl
-            leakage_ceiling = 0.15
-            leakage_walls = 0.35
-            leakage_floor = 0.50
+            # 15% ceiling, 35% walls, 50% floor lkage distribution for vented crawl
+            lkage_ceiling = 0.15
+            lkage_walls = 0.35
+            lkage_floor = 0.50
           else
-            # 25% ceiling, 50% walls, 25% floor leakage distribution for slab/basement/unvented crawl
-            leakage_ceiling = 0.25
-            leakage_walls = 0.50
-            leakage_floor = 0.25          
+            # 25% ceiling, 50% walls, 25% floor lkage distribution for slab/basement/unvented crawl
+            lkage_ceiling = 0.25
+            lkage_walls = 0.50
+            lkage_floor = 0.25          
           end
-          if leakage_ceiling + leakage_walls + leakage_floor != 1
-            runner.registerError("Invalid air leakage distribution specified (#{leakage_ceiling}, #{leakage_walls}, #{leakage_floor}); does not add up to 1.")
+          if lkage_ceiling + lkage_walls + lkage_floor !=  1
+            runner.registerError("Invalid air lkage distribution specified (#{lkage_ceiling}, #{lkage_walls}, #{lkage_floor}); does not add up to 1.")
             return false
           end
-          infil.R_i = (leakage_ceiling + leakage_floor)
-          infil.X_i = (leakage_ceiling - leakage_floor)
+          infil.R_i = (lkage_ceiling + lkage_floor)
+          infil.X_i = (lkage_ceiling - lkage_floor)
           infil.R_i = infil.R_i * (1 - infil.Y_i)
           infil.X_i = infil.X_i * (1 - infil.Y_i)         
           
-          unit.living.hor_leak_frac = infil.R_i
+          unit.living.hor_lk_frac = infil.R_i
           infil.Z_f = infil.flue_height / (unit.living.height + unit.living.coord_z)
 
           # Calculate Stack Coefficient
           infil.M_o = (infil.X_i + (2.0 * infil.n_i + 1.0) * infil.Y_i) ** 2.0 / (2 - infil.R_i)
 
-          if infil.M_o <= 1.0
+          if infil.M_o <=  1.0
             infil.M_i = infil.M_o # eq. 10
           else
             infil.M_i = 1.0 # eq. 11
@@ -2102,7 +2112,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             # Additive flue function, Eq. 12            
             infil.F_i = infil.n_i * infil.Y_i * (infil.Z_f - 1.0) ** ((3.0 * infil.n_i - 1.0) / 3.0) * (1.0 - (3.0 * (infil.X_c - infil.X_i) ** 2.0 * infil.R_i ** (1 - infil.n_i)) / (2.0 * (infil.Z_f + 1.0)))
           else
-            # Critical value of ceiling-floor leakage difference where the
+            # Critical value of ceiling-floor lkage difference where the
             # neutral level is located at the ceiling (eq. 13)
             infil.X_c = infil.R_i + (2.0 * (1.0 - infil.R_i - infil.Y_i)) / (infil.n_i + 1.0)
             # Additive flue function (eq. 12)
@@ -2144,7 +2154,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           unit.living.ACH = get_infiltration_ACH_from_SLA(unit.living.SLA, building.stories)
 
           # Convert living space ACH to cfm:
-          unit.living.inf_flow = unit.living.ACH / OpenStudio::convert(1.0,"hr","min").get * unit.living.volume # cfm
+          unit.living.inf_flow = unit.living.ACH / OpenStudio.convert(1.0,"hr","min").get * unit.living.volume # cfm
           
       end
           
@@ -2152,7 +2162,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     
     unless unit.finished_basement_zone.nil?
       unit.finished_basement.inf_method = @infMethodRes # Used for constant ACH
-      unit.finished_basement.inf_flow = unit.finished_basement.ACH / OpenStudio::convert(1.0,"hr","min").get * unit.finished_basement.volume
+      unit.finished_basement.inf_flow = unit.finished_basement.ACH / OpenStudio.convert(1.0,"hr","min").get * unit.finished_basement.volume
     end
 
     spaces.each do |space|
@@ -2164,8 +2174,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
       if space.inf_method == @infMethodSG
-        space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_leak_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
-        space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_leak_frac) ** (1.0 / 3.0) * space.f_t_SG
+        space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_lk_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
+        space.f_w_SG = wind_speed.shielding_coef * (1.0 - space.hor_lk_frac) ** (1.0 / 3.0) * space.f_t_SG
         space.C_s_SG = space.f_s_SG ** 2.0 * Constants.g * space.height / (infil.assumed_inside_temp + 460.0)
         space.C_w_SG = space.f_w_SG ** 2.0
         space.ELA = space.SLA * space.area # ft^2
@@ -2199,8 +2209,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             # ASHRAE Standard 62.2 2013
             # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
             # rate shall not be reduced as described in Section 4.1.3.").     
-            ela = infil.A_o # Effective leakage area, ft^2
-            nl = 1000.0 * ela / unit.living.area * (unit.living.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
+            ela = infil.A_o # Effective lkage area, ft^2
+            nl = 1000.0 * ela / unit.living.area * (unit.living.height / 8.2) ** 0.4 # Normalized lkage, eq. 4.4
             qinf = nl * @weather.data.WSF * unit.living.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
             infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
         end
@@ -2244,15 +2254,15 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     mech_vent.range_hood_hour_avg_exhaust = mech_vent.MechVentRangeHoodExhaust * mech_vent.range_hood_exhaust_operation / 60.0 # cfm
     mech_vent.clothes_dryer_hour_avg_exhaust = unit.dryer_exhaust * mech_vent.clothes_dryer_exhaust_operation / 60.0 # cfm
 
-    mech_vent.max_power = [mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans, mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans].max / OpenStudio::convert(1.0,"kW","W").get # kW
+    mech_vent.max_power = [mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans, mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans].max / OpenStudio.convert(1.0,"kW","W").get # kW
 
     # Fan energy schedule (as fraction of maximum power). Bathroom
     # exhaust at 7:00am and range hood exhaust at 6:00pm. Clothes
     # dryer exhaust not included in mech vent power.
     if mech_vent.max_power > 0
-      mech_vent.hourly_energy_schedule = Array.new(24, mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans / OpenStudio::convert(1.0,"kW","W").get / mech_vent.max_power)
-      mech_vent.hourly_energy_schedule[6] = ((mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / OpenStudio::convert(1.0,"kW","W").get / mech_vent.max_power)
-      mech_vent.hourly_energy_schedule[17] = ((mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / OpenStudio::convert(1.0,"kW","W").get / mech_vent.max_power)
+      mech_vent.hourly_energy_schedule = Array.new(24, mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans / OpenStudio.convert(1.0,"kW","W").get / mech_vent.max_power)
+      mech_vent.hourly_energy_schedule[6] = ((mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / OpenStudio.convert(1.0,"kW","W").get / mech_vent.max_power)
+      mech_vent.hourly_energy_schedule[17] = ((mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / OpenStudio.convert(1.0,"kW","W").get / mech_vent.max_power)
       mech_vent.average_vent_fan_eff = ((mech_vent.whole_house_vent_rate * 24.0 * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans + (mech_vent.bathroom_hour_avg_exhaust + mech_vent.range_hood_hour_avg_exhaust) * mech_vent.MechVentSpotFanPower) / (mech_vent.whole_house_vent_rate * 24.0 + mech_vent.bathroom_hour_avg_exhaust + mech_vent.range_hood_hour_avg_exhaust))
     else
       mech_vent.hourly_energy_schedule = Array.new(24, 0.0)
@@ -2288,7 +2298,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       cp_a = 1006
       p_fan = mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower # Watts
 
-      m_fan = OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * Psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
+      m_fan = OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * Psychrometrics.rhoD_fT_w_P(OpenStudio.convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
 
       # The following is derived from (taken from CSA 439):
       #    E_SHR = (m_sup,fan * Cp * (Tsup,out - Tsup,in) - P_sup,fan) / (m_exh,fan * Cp * (Texh,in - Tsup,in) + P_exh,fan)
@@ -2315,7 +2325,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         t_exh_in = 24.0
         w_exh_in = 0.0092
 
-        m_fan = OpenStudio::convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get * UnitConversion.lbm_ft32kg_m3(Psychrometrics.rhoD_fT_w_P(OpenStudio::convert(t_sup_in,"C","F").get, w_sup_in, 14.7)) # kg/s
+        m_fan = OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get * UnitConversion.lbm_ft32kg_m3(Psychrometrics.rhoD_fT_w_P(OpenStudio.convert(t_sup_in,"C","F").get, w_sup_in, 14.7)) # kg/s
 
         t_sup_out_gross = t_sup_in - mech_vent.MechVentHXCoreSensibleEffectiveness * (t_sup_in - t_exh_in)
         t_sup_out = t_sup_out_gross + p_fan / (m_fan * cp_a)
@@ -2358,14 +2368,14 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value > heatingSetpointWeekday[hour]
-              heatingSetpointWeekday[hour] = OpenStudio::convert(value,"C","F").get
+              heatingSetpointWeekday[hour] = OpenStudio.convert(value,"C","F").get
             end
           end
         end
         if rule.applySaturday and rule.applySunday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value > heatingSetpointWeekend[hour]
-              heatingSetpointWeekend[hour] = OpenStudio::convert(value,"C","F").get
+              heatingSetpointWeekend[hour] = OpenStudio.convert(value,"C","F").get
             end
           end
         end
@@ -2380,14 +2390,14 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value < coolingSetpointWeekday[hour]
-              coolingSetpointWeekday[hour] = OpenStudio::convert(value,"C","F").get
+              coolingSetpointWeekday[hour] = OpenStudio.convert(value,"C","F").get
             end
           end
         end
         if rule.applySaturday and rule.applySunday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value < coolingSetpointWeekend[hour]
-              coolingSetpointWeekend[hour] = OpenStudio::convert(value,"C","F").get
+              coolingSetpointWeekend[hour] = OpenStudio.convert(value,"C","F").get
             end
           end
         end
@@ -2396,9 +2406,9 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
     if heatingSetpointWeekday.all? {|x| x == -10000}
       runner.registerWarning("No heating equipment found. Assuming #{Constants.DefaultHeatingSetpoint} F for natural ventilation calculations.")
-      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio::convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
+      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
     else
-      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio::convert([heatingSetpointWeekday.max, heatingSetpointWeekend.max].max + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
+      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio.convert([heatingSetpointWeekday.max, heatingSetpointWeekend.max].max + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
     end
     if coolingSetpointWeekday.all? {|x| x == 10000}
       runner.registerWarning("No cooling equipment found. Assuming #{Constants.DefaultCoolingSetpoint} F for natural ventilation calculations.")
@@ -2415,46 +2425,46 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     nat_vent.htg_ssn_hourly_temp = Array.new
     coolingSetpointWeekday.each do |x|
       if x == 10000
-        nat_vent.htg_ssn_hourly_temp << OpenStudio::convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_temp << OpenStudio.convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
       else
-        nat_vent.htg_ssn_hourly_temp << OpenStudio::convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_temp << OpenStudio.convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
       end
     end
     nat_vent.htg_ssn_hourly_weekend_temp = Array.new
     coolingSetpointWeekend.each do |x|
       if x == 10000
-        nat_vent.htg_ssn_hourly_weekend_temp << OpenStudio::convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_weekend_temp << OpenStudio.convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
       else
-        nat_vent.htg_ssn_hourly_weekend_temp << OpenStudio::convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_weekend_temp << OpenStudio.convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
       end
     end
 
     nat_vent.clg_ssn_hourly_temp = Array.new
     heatingSetpointWeekday.each do |x|
       if x == -10000
-        nat_vent.clg_ssn_hourly_temp << OpenStudio::convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_temp << OpenStudio.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
       else
-        nat_vent.clg_ssn_hourly_temp << OpenStudio::convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_temp << OpenStudio.convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
       end
     end
     nat_vent.clg_ssn_hourly_weekend_temp = Array.new
     heatingSetpointWeekend.each do |x|
       if x == -10000
-        nat_vent.clg_ssn_hourly_weekend_temp << OpenStudio::convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_weekend_temp << OpenStudio.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
       else
-        nat_vent.clg_ssn_hourly_weekend_temp << OpenStudio::convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_weekend_temp << OpenStudio.convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
       end
     end
 
     # Explanation for FRAC-VENT-AREA equation:
-    # From DOE22 Vol2-Dictionary: For VENT-METHOD=S-G, this is 0.6 times
+    # From DOE22 Vol2-Dictionary: For VENT-METHOD = S-G, this is 0.6 times
     # the open window area divided by the floor area.
     # According to 2010 BA Benchmark, 33% of the windows on any facade will
     # be open at any given time and can only be opened to 20% of their area.
 
     nat_vent.area = 0.6 * unit.window_area * nat_vent.NatVentFractionWindowsOpen * nat_vent.NatVentFractionWindowAreaOpen # ft^2 (For S-G, this is 0.6*(open window area))
     nat_vent.max_rate = 20.0 # Air Changes per hour
-    nat_vent.max_flow_rate = nat_vent.max_rate * unit.living.volume / OpenStudio::convert(1.0,"hr","min").get
+    nat_vent.max_flow_rate = nat_vent.max_rate * unit.living.volume / OpenStudio.convert(1.0,"hr","min").get
     nv_neutral_level = 0.5
     nat_vent.hor_vent_frac = 0.0
     f_s_nv = 2.0 / 3.0 * (1.0 + nat_vent.hor_vent_frac / 2.0) * (2.0 * nv_neutral_level * (1 - nv_neutral_level)) ** 0.5 / (nv_neutral_level ** 0.5 + (1 - nv_neutral_level) ** 0.5)
@@ -2498,7 +2508,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
   
   def _processDuctsForUnit(model, runner, ducts, building, unit)
   
-    if ducts.DuctLocation != "none" and HVAC.has_central_air_conditioner(model, runner, unit.living_zone, false, false).nil? and HVAC.has_furnace(model, runner, unit.living_zone, false, false).nil? and HVAC.has_air_source_heat_pump(model, runner, unit.living_zone, false).nil?
+    if ducts.DuctLocation !=  "none" and HVAC.has_central_air_conditioner(model, runner, unit.living_zone, false, false).nil? and HVAC.has_furnace(model, runner, unit.living_zone, false, false).nil? and HVAC.has_air_source_heat_pump(model, runner, unit.living_zone, false).nil?
       runner.registerWarning("No ducted HVAC equipment was found but ducts were specified. Overriding duct specification.")
       ducts.DuctLocation = "none"
     end        
@@ -2539,13 +2549,13 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     
     ducts.num_stories_for_ducts = building.stories
     unless unit.finished_basement_zone.nil?
-      ducts.num_stories_for_ducts += 1
+      ducts.num_stories_for_ducts +=  1
     end
     
     ducts.num_stories = ducts.num_stories_for_ducts
         
     if ducts.DuctNormLeakageToOutside.nil?
-      # Normalize values in case user inadvertently entered values that add up to the total duct leakage, 
+      # Normalize values in case user inadvertently entered values that add up to the total duct lkage, 
       # as opposed to adding up to 1
       sumFractionOfTotal = (ducts.DuctSupplyLeakageFractionOfTotal + ducts.DuctReturnLeakageFractionOfTotal + ducts.DuctAHSupplyLeakageFractionOfTotal + ducts.DuctAHReturnLeakageFractionOfTotal)
       if sumFractionOfTotal > 0
@@ -2554,7 +2564,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         ducts.DuctAHSupplyLeakageFractionOfTotal = ducts.DuctAHSupplyLeakageFractionOfTotal / sumFractionOfTotal
         ducts.DuctAHReturnLeakageFractionOfTotal = ducts.DuctAHReturnLeakageFractionOfTotal / sumFractionOfTotal
       end        
-      # Calculate actual leakages from percentages
+      # Calculate actual lkages from percentages
       ducts.DuctSupplyLeakage = ducts.DuctSupplyLeakageFractionOfTotal * ducts.DuctTotalLeakage
       ducts.DuctReturnLeakage = ducts.DuctReturnLeakageFractionOfTotal * ducts.DuctTotalLeakage
       ducts.DuctAHSupplyLeakage = ducts.DuctAHSupplyLeakageFractionOfTotal * ducts.DuctTotalLeakage
@@ -2614,7 +2624,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     
     unless ducts.DuctNormLeakageToOutside.nil?
       fan_AirFlowRate = 1000.0 # TODO: what should fan_AirFlowRate be?
-      ducts = calc_duct_leakage_from_test(ducts, unit.finished_floor_area, fan_AirFlowRate)
+      ducts = calc_duct_lkage_from_test(ducts, unit.finished_floor_area, fan_AirFlowRate)
     end
     
     ducts.total_duct_unbalance = (ducts.supply_duct_loss - ducts.return_duct_loss).abs
@@ -2622,8 +2632,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
     if not ducts.duct_location_name == unit.living_zone.name.to_s and not ducts.duct_location_name == "none" and ducts.supply_duct_loss > 0
       # Calculate d.frac_oa = fraction of unbalanced make-up air that is outside air
-      if ducts.total_duct_unbalance <= 0
-        # Handle the exception for if there is no leakage unbalance.
+      if ducts.total_duct_unbalance <=  0
+        # Handle the exception for if there is no lkage unbalance.
         ducts.frac_oa = 0
       else
         unless unit.finished_basement_zone.nil?
@@ -2657,7 +2667,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           ducts.frac_oa = 1
         end
       end
-      # d.oa_duct_makeup =  fraction of the supply duct air loss that is made up by outside air (via return leakage)
+      # d.oa_duct_makeup =  fraction of the supply duct air loss that is made up by outside air (via return lkage)
       ducts.oa_duct_makeup = [ducts.frac_oa * ducts.total_duct_unbalance / [ducts.supply_duct_loss, ducts.return_duct_loss].max, 1].min
     else
       ducts.frac_oa = 0
@@ -2688,16 +2698,16 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     w = calc_infiltration_w_factor
 
     # Equation from ASHRAE 119-1998 (using numStories for simplification)
-    norm_leakage = 1000.0 * sla * numStories ** 0.3
+    norm_lkage = 1000.0 * sla * numStories ** 0.3
 
     # Equation from ASHRAE 136-1993
-    return norm_leakage * w
+    return norm_lkage * w
   end  
   
   def get_infiltration_SLA_from_ACH50(ach50, n_i, livingSpaceFloorArea, livingSpaceVolume)
     # Pressure difference between indoors and outdoors, such as during a pressurization test.
     pressure_difference = 50.0 # Pa
-    return ((ach50 * 0.2835 * 4.0 ** n_i * livingSpaceVolume) / (livingSpaceFloorArea * OpenStudio::convert(1.0,"ft^2","in^2").get * pressure_difference ** n_i * 60.0))
+    return ((ach50 * 0.2835 * 4.0 ** n_i * livingSpaceVolume) / (livingSpaceFloorArea * OpenStudio.convert(1.0,"ft^2","in^2").get * pressure_difference ** n_i * 60.0))
   end  
   
   def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
@@ -2842,7 +2852,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     # Return  | 4.9 | 6.3 | 7.8 | 9.7
     #
     # Uninsulated ducts are set to R-1.7 based on ASHRAE HOF and the above paper.
-    if nominalR <= 0
+    if nominalR <=  0
       return 1.7
     end
     if isSupply
@@ -2852,32 +2862,32 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end
   end
   
-  def calc_duct_leakage_from_test(ducts, ffa, fan_AirFlowRate)
+  def calc_duct_lkage_from_test(ducts, ffa, fan_AirFlowRate)
     '''
-    Calculates duct leakage inputs based on duct blaster type leakage measurements (cfm @ 25 Pa per 100 ft2 conditioned floor area).
-    Requires assumptions about supply/return leakage split, air handler leakage, and duct plenum (de)pressurization. 
+    Calculates duct lkage inputs based on duct blaster type lkage measurements (cfm @ 25 Pa per 100 ft2 conditioned floor area).
+    Requires assumptions about supply/return lkage split, air handler lkage, and duct plenum (de)pressurization. 
     '''
     # Assumptions
-    supply_duct_leakage_frac = 0.67 # 2013 RESNET Standards, Appendix A, p.A-28
-    return_duct_leakage_frac = 0.33 # 2013 RESNET Standards, Appendix A, p.A-28
-    ah_leakage = 0.025 # 2.5% of air handler flow at 25 P (Reference: ASHRAE Standard 152-2004, Annex C, p 33; Walker et al 2010. "Air Leakage of Furnaces and Air Handlers") 
+    supply_duct_lkage_frac = 0.67 # 2013 RESNET Standards, Appendix A, p.A-28
+    return_duct_lkage_frac = 0.33 # 2013 RESNET Standards, Appendix A, p.A-28
+    ah_lkage = 0.025 # 2.5% of air handler flow at 25 P (Reference: ASHRAE Standard 152-2004, Annex C, p 33; Walker et al 2010. "Air Leakage of Furnaces and Air Handlers") 
     ah_supply_frac = 0.20 # (Reference: Walker et al 2010. "Air Leakage of Furnaces and Air Handlers") 
     ah_return_frac = 0.80 # (Reference: Walker et al 2010. "Air Leakage of Furnaces and Air Handlers") 
     p_supply = 25.0 # Assume average operating pressure in ducts is 25 Pa, 
     p_return = 25.0 # though it is likely lower (Reference: Pigg and Francisco 2008 "A Field Study of Exterior Duct Leakage in New Wisconsin Homes")
 
     # Conversion
-    cfm25 = ducts.DuctNormLeakageToOutside * ffa / 100.0 #denormalize leakage
-    ah_cfm25 = ah_leakage * fan_AirFlowRate # air handler leakage flow rate at 25 Pa
-    ah_supply_leak_cfm25 = [ah_cfm25 * ah_supply_frac, cfm25 * supply_duct_leakage_frac].min
-    ah_return_leak_cfm25 = [ah_cfm25 * ah_return_frac, cfm25 * return_duct_leakage_frac].min
-    supply_leak_cfm25 = [cfm25 * supply_duct_leakage_frac - ah_supply_leak_cfm25, 0].max
-    return_leak_cfm25 = [cfm25 * return_duct_leakage_frac - ah_return_leak_cfm25, 0].max
+    cfm25 = ducts.DuctNormLeakageToOutside * ffa / 100.0 #denormalize lkage
+    ah_cfm25 = ah_lkage * fan_AirFlowRate # air handler lkage flow rate at 25 Pa
+    ah_supply_lk_cfm25 = [ah_cfm25 * ah_supply_frac, cfm25 * supply_duct_lkage_frac].min
+    ah_return_lk_cfm25 = [ah_cfm25 * ah_return_frac, cfm25 * return_duct_lkage_frac].min
+    supply_lk_cfm25 = [cfm25 * supply_duct_lkage_frac - ah_supply_lk_cfm25, 0].max
+    return_lk_cfm25 = [cfm25 * return_duct_lkage_frac - ah_return_lk_cfm25, 0].max
     
-    ducts.supply_leak_oper = calc_duct_leakage_at_diff_pressure(supply_leak_cfm25, 25.0, p_supply) # cfm at operating pressure
-    ducts.return_leak_oper = calc_duct_leakage_at_diff_pressure(return_leak_cfm25, 25.0, p_return) # cfm at operating pressure
-    ducts.ah_supply_leak_oper = calc_duct_leakage_at_diff_pressure(ah_supply_leak_cfm25, 25.0, p_supply) # cfm at operating pressure
-    ducts.ah_return_leak_oper = calc_duct_leakage_at_diff_pressure(ah_return_leak_cfm25, 25.0, p_return) # cfm at operating pressure
+    ducts.supply_lk_oper = calc_duct_lkage_at_diff_pressure(supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
+    ducts.return_lk_oper = calc_duct_lkage_at_diff_pressure(return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
+    ducts.ah_supply_lk_oper = calc_duct_lkage_at_diff_pressure(ah_supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
+    ducts.ah_return_lk_oper = calc_duct_lkage_at_diff_pressure(ah_return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
     
     if fan_AirFlowRate == 0
         ducts.DuctSupplyLeakage = 0
@@ -2885,10 +2895,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         ducts.DuctAHSupplyLeakage = 0
         ducts.DuctAHReturnLeakage = 0
     else
-        ducts.DuctSupplyLeakage   = ducts.supply_leak_oper / fan_AirFlowRate
-        ducts.DuctReturnLeakage   = ducts.return_leak_oper / fan_AirFlowRate
-        ducts.DuctAHSupplyLeakage = ducts.ah_supply_leak_oper / fan_AirFlowRate
-        ducts.DuctAHReturnLeakage = ducts.ah_return_leak_oper / fan_AirFlowRate
+        ducts.DuctSupplyLeakage = ducts.supply_lk_oper / fan_AirFlowRate
+        ducts.DuctReturnLeakage = ducts.return_lk_oper / fan_AirFlowRate
+        ducts.DuctAHSupplyLeakage = ducts.ah_supply_lk_oper / fan_AirFlowRate
+        ducts.DuctAHReturnLeakage = ducts.ah_return_lk_oper / fan_AirFlowRate
     end
 
     ducts.supply_duct_loss = ducts.DuctSupplyLeakage + ducts.DuctAHSupplyLeakage
@@ -2900,7 +2910,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     return ducts
   end
   
-  def calc_duct_leakage_at_diff_pressure(q_old, p_old, p_new)
+  def calc_duct_lkage_at_diff_pressure(q_old, p_old, p_new)
     return q_old * (p_new / p_old) ** 0.6 # Derived from Equation C-1 (Annex C), p34, ASHRAE Standard 152-2004.
   end
   

@@ -7,114 +7,56 @@ require 'fileutils'
 
 class UtilityBillCalculationsTest < MiniTest::Test
   
-  def test_parse_timeseries_csv_eia_9778
+  def test_error_api_but_eiaid_not_found
     args_hash = {}
     args_hash["run_dir"] = "."
     args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "9778"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+    args_hash["eia_id"] = "00000"
+    result = _test_error_or_NA("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, __method__)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Could not find EIA Utility ID: #{args_hash["eia_id"]}.")    
   end
   
-  def test_parse_timeseries_csv_eia_16954
+  def test_error_no_api_key_or_json_file_path
     args_hash = {}
     args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "16954"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end  
-  
-  def test_parse_timeseries_csv_eia_13577
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "13577"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+    args_hash["eia_id"] = "00000"
+    result = _test_error_or_NA("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, __method__)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_includes(result.errors.map{ |x| x.logMessage }, "Did not supply an API Key or a JSON File Path.")    
   end
   
-  def test_parse_timeseries_csv_eia_10000
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "10000"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end
+  # def test_api_eiaid_10000
+    # args_hash = {}
+    # args_hash["run_dir"] = "."
+    # args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    # args_hash["eia_id"] = "10000"
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  # end
   
-  def test_parse_timeseries_csv_eia_5957
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "5957"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end
+  # def test_api_but_no_eiaid
+    # args_hash = {}
+    # args_hash["run_dir"] = "."
+    # args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+  # end
   
-  def test_parse_timeseries_csv_eia_6442
+  def test_json_eiaid_17609
     args_hash = {}
     args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "6442"
+    args_hash["json_file_path"] = "./tests/result.json"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end
-  
-  def test_parse_timeseries_csv_eia_3245
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "3245"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end
-
-  def test_parse_timeseries_csv_eia_1891
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "1891"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end
-  
-  def test_parse_timeseries_csv_eia_3315
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "3315"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end
-  
-  def test_parse_timeseries_csv_eia_2600
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "2600"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 5)
   end
   
   private
@@ -195,11 +137,64 @@ class UtilityBillCalculationsTest < MiniTest::Test
       FileUtils.mkdir_p("#{resources_dir(test_name)}")
     end
     FileUtils.cp("#{File.dirname(__FILE__)}/../resources/utilities.csv", "#{resources_dir(test_name)}")
+    FileUtils.cp("#{File.dirname(__FILE__)}/result.json", "#{resources_dir(test_name)}")
     
     return model
     
   end
 
+  def _test_error_or_NA(osm_file_or_model, args_hash, test_name)
+    # create an instance of the measure
+    measure = UtilityBillCalculations.new
+
+    # create an instance of a runner
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+
+    model = get_model(File.dirname(__FILE__), osm_file_or_model)
+
+    # get arguments
+    arguments = measure.arguments()
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # populate argument with specified hash value if specified
+    arguments.each do |arg|
+      temp_arg_var = arg.clone
+      if args_hash[arg.name]
+        assert(temp_arg_var.setValue(args_hash[arg.name]))
+      end
+      argument_map[arg.name] = temp_arg_var
+    end
+
+    # get the energyplus output requests, this will be done automatically by OS App and PAT
+    idf_output_requests = measure.energyPlusOutputRequests(runner, argument_map)
+    assert(idf_output_requests.size == 0)
+
+    # mimic the process of running this measure in OS App or PAT. Optionally set custom model_in_path and custom epw_path.
+    model = setup_test(test_name, idf_output_requests)
+
+    assert(File.exist?(model_out_path(test_name)))
+
+    # set up runner, this will happen automatically when measure is run in PAT or OpenStudio
+    runner.setLastOpenStudioModelPath(OpenStudio::Path.new(model_out_path(test_name)))
+
+    assert(File.exist?(timeseries_path(test_name)))
+
+    # temporarily change directory to the run directory and run the measure
+    start_dir = Dir.pwd
+    begin
+      Dir.chdir(run_dir(test_name))
+
+      # run the measure
+      measure.run(runner, argument_map)
+      result = runner.result
+    ensure
+      Dir.chdir(start_dir)
+    end
+      
+    return result
+    
+  end  
+  
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, test_name, num_infos=0, num_warnings=0, debug=false)
     # create an instance of the measure
     measure = UtilityBillCalculations.new

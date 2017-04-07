@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
   <error>Could not find 'rest-client' (>= 0) - did find: [rest-client-2.0.1-x64-mingw32]
-Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ruby/2.2.0;:/ruby/2.2.0/gems/;:/ruby/2.2.0/bundler/gems/', execute `gem env` for more information</error>
+Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/jrobert1/.gem/ruby/2.2.0;:/ruby/2.2.0/gems/;:/ruby/2.2.0/bundler/gems/', execute `gem env` for more information</error>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>d639e67e-477b-4930-8ff0-1b409514c102</version_id>
-  <version_modified>20170406T195405Z</version_modified>
+  <version_id>673af551-ba7d-479e-8fa9-becfb278e90d</version_id>
+  <version_modified>20170406T225957Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
@@ -75,10 +75,16 @@ Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ru
       <checksum>C7C92EA5</checksum>
     </file>
     <file>
+      <filename>enduse_timeseries.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>test</usage_type>
+      <checksum>42875535</checksum>
+    </file>
+    <file>
       <filename>utility_bill_calculations_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D9085D66</checksum>
+      <checksum>027CF110</checksum>
     </file>
     <file>
       <version>
@@ -89,19 +95,13 @@ Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ru
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>13EC83B6</checksum>
-    </file>
-    <file>
-      <filename>enduse_timeseries.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>test</usage_type>
-      <checksum>42875535</checksum>
+      <checksum>6628AC12</checksum>
     </file>
     <file>
       <filename>utilities.csv</filename>
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B4568D1B</checksum>
+      <checksum>49E7C310</checksum>
     </file>
   </files>
 </measure>

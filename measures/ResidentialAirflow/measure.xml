@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>246f818f-a7c9-4113-a639-9db08fa6d1c7</version_id>
-  <version_modified>20170406T165410Z</version_modified>
+  <version_id>db184ccb-db4a-4c81-91db-97fedf13d36b</version_id>
+  <version_modified>20170406T224117Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -73,7 +73,7 @@
     <argument>
       <name>unfinished_attic_sla</name>
       <display_name>Unfinished Attic: SLA</display_name>
-      <description>Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.</description>
+      <description>Ratio of the effective lkage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -205,7 +205,7 @@
     <argument>
       <name>mech_vent_total_efficiency</name>
       <display_name>Mechanical Ventilation: Total Recovery Efficiency</display_name>
-      <description>The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air leakage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.</description>
+      <description>The net total energy (sensible plus latent, also called enthalpy) recovered by the supply airstream adjusted by electric consumption, case heat loss or heat gain, air lkage and airflow mass imbalance between the two airstreams, as a percent of the potential total energy that could be recovered plus the exhaust fan energy.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -214,7 +214,7 @@
     <argument>
       <name>mech_vent_sensible_efficiency</name>
       <display_name>Mechanical Ventilation: Sensible Recovery Efficiency</display_name>
-      <description>The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air leakage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.</description>
+      <description>The net sensible energy recovered by the supply airstream as adjusted by electric consumption, case heat loss or heat gain, air lkage, airflow mass imbalance between the two airstreams and the energy used for defrost (when running the Very Low Temperature Test), as a percent of the potential sensible energy that could be recovered plus the exhaust fan energy.</description>
       <type>Double</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -512,9 +512,9 @@
       </choices>
     </argument>
     <argument>
-      <name>duct_total_leakage</name>
+      <name>duct_total_lkage</name>
       <display_name>Ducts: Total Leakage</display_name>
-      <description>The total amount of air flow leakage expressed as a fraction of the total air flow rate.</description>
+      <description>The total amount of air flow lkage expressed as a fraction of the total air flow rate.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
@@ -524,7 +524,7 @@
     <argument>
       <name>duct_supply_frac</name>
       <display_name>Ducts: Supply Leakage Fraction of Total</display_name>
-      <description>The amount of air flow leakage leaking out from the supply duct expressed as a fraction of the total duct leakage.</description>
+      <description>The amount of air flow lkage lking out from the supply duct expressed as a fraction of the total duct lkage.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
@@ -534,7 +534,7 @@
     <argument>
       <name>duct_return_frac</name>
       <display_name>Ducts: Return Leakage Fraction of Total</display_name>
-      <description>The amount of air flow leakage leaking into the return duct expressed as a fraction of the total duct leakage.</description>
+      <description>The amount of air flow lkage lking into the return duct expressed as a fraction of the total duct lkage.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
@@ -544,7 +544,7 @@
     <argument>
       <name>duct_ah_supply_frac</name>
       <display_name>Ducts: Supply Air Handler Leakage Fraction of Total</display_name>
-      <description>The amount of air flow leakage leaking out from the supply-side of the air handler expressed as a fraction of the total duct leakage.</description>
+      <description>The amount of air flow lkage lking out from the supply-side of the air handler expressed as a fraction of the total duct lkage.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
@@ -554,7 +554,7 @@
     <argument>
       <name>duct_ah_return_frac</name>
       <display_name>Ducts: Return Air Handler Leakage Fraction of Total</display_name>
-      <description>The amount of air flow leakage leaking out from the return-side of the air handler expressed as a fraction of the total duct leakage.</description>
+      <description>The amount of air flow lkage lking out from the return-side of the air handler expressed as a fraction of the total duct lkage.</description>
       <type>Double</type>
       <units>frac</units>
       <required>false</required>
@@ -677,22 +677,10 @@
       <checksum>457F689A</checksum>
     </file>
     <file>
-      <filename>residential_airflow_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D93AEE48</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E957CFBF</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E8C7726A</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -705,17 +693,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>ECD4089D</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.1</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>7DBE229F</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -806,6 +783,29 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>71FB1EC6</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CF4114CA</checksum>
+    </file>
+    <file>
+      <filename>residential_airflow_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>862380AF</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.1</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>EA9DE3B2</checksum>
     </file>
   </files>
 </measure>

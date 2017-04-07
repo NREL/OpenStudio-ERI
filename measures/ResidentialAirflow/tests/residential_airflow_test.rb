@@ -477,6 +477,11 @@ class ResidentialAirflowTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
     
+    model.to_s.each_line do |line|
+      next unless line.strip.start_with?("Set", "If", "Else", "EndIf")
+      assert(line.length <= 100)
+    end    
+    
     #show_output(result)
 
     # assert that it ran correctly
