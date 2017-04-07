@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>d1ce48c0-f557-4822-8efe-3a9105e704da</version_id>
-  <version_modified>20170407T225011Z</version_modified>
+  <version_id>7f3612a1-31b3-44b9-a901-32c05d9661be</version_id>
+  <version_modified>20170407T231609Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
@@ -230,7 +230,7 @@
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>040A6648</checksum>
+      <checksum>E3C3E884</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>802ef777-6eb4-49b2-bc50-39ad5b0274b9</version_id>
-  <version_modified>20170407T225011Z</version_modified>
+  <version_id>71fa63c2-9426-4305-bdc9-fdbe25882d6c</version_id>
+  <version_modified>20170407T231609Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -1083,12 +1083,6 @@
       <checksum>B890B8BC</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>040A6648</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -1098,6 +1092,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>9F0F930A</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E3C3E884</checksum>
     </file>
   </files>
 </measure>

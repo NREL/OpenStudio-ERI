@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_distribution</name>
   <uid>4615ccb7-3ce5-4627-b7c2-a7fea9c4af87</uid>
-  <version_id>cac20f13-14bb-4a7f-8b8d-e73802c7ae06</version_id>
-  <version_modified>20170407T225010Z</version_modified>
+  <version_id>9cce5a51-6fa3-456c-b35d-b44c26c1f57a</version_id>
+  <version_modified>20170407T231608Z</version_modified>
   <xml_checksum>D2231FB9</xml_checksum>
   <class_name>ResidentialHotWaterDistribution</class_name>
   <display_name>Set Residential Hot Water Distribution</display_name>
@@ -1128,12 +1128,6 @@
       <checksum>B890B8BC</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>040A6648</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -1143,6 +1137,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>3DAF77F7</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E3C3E884</checksum>
     </file>
   </files>
 </measure>
