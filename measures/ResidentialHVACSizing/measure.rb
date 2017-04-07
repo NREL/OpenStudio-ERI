@@ -3719,10 +3719,13 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         
     end
     if not airLoopHVACUnitarySystem.nil?
+        clg_airflow = OpenStudio.convert([unit_final.Cool_Airflow, 0.01].max,"cfm","m^3/s").get
+        htg_airflow = OpenStudio.convert([unit_final.Heat_Airflow, 0.01].max,"cfm","m^3/s").get
+    
         airLoopHVACUnitarySystem.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
-        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringCoolingOperation(OpenStudio.convert(unit_final.Cool_Airflow,"cfm","m^3/s").get)
+        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
         airLoopHVACUnitarySystem.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
-        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringHeatingOperation(OpenStudio.convert(unit_final.Heat_Airflow,"cfm","m^3/s").get)
+        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
         fanonoff = airLoopHVACUnitarySystem.supplyFan.get.to_FanOnOff.get
         fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * OpenStudio.convert(unit_final.Fan_Airflow + 0.01,"cfm","m^3/s").get)
     end

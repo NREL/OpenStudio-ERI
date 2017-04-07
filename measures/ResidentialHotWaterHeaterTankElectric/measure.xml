@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_electric</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>65f6b035-4e79-4076-ab3a-a727cb342e8a</version_id>
-  <version_modified>20170407T193753Z</version_modified>
+  <version_id>bcf83894-3d20-4a31-9504-7a673ab14539</version_id>
+  <version_modified>20170407T225011Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankElectric</class_name>
   <display_name>Set Residential Electric Tank Water Heater</display_name>
@@ -100,12 +100,6 @@
       <filetype>csv</filetype>
       <usage_type>resource</usage_type>
       <checksum>9D722D63</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BFF023C0</checksum>
     </file>
     <file>
       <filename>psychrometrics.rb</filename>
@@ -255,6 +249,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B890B8BC</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>040A6648</checksum>
     </file>
   </files>
 </measure>
