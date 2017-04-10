@@ -689,6 +689,20 @@ class HVAC
       return nil
     end
     
+    def self.prioritize_zone_hvac(model, runner, zone)
+      zone_hvac_priority_list = ["ZoneHVACEnergyRecoveryVentilator", "ZoneHVACTerminalUnitVariableRefrigerantFlow", "ZoneHVACBaseboardConvectiveElectric", "ZoneHVACBaseboardConvectiveWater", "AirTerminalSingleDuctUncontrolled", "ZoneHVACDehumidifierDX", "ZoneHVACPackagedTerminalAirConditioner"]    
+      zone_hvac_list = []
+      zone_hvac_priority_list.each do |zone_hvac_type|
+        zone.equipment.each do |object|
+          next if not object.respond_to?("to_#{zone_hvac_type}")
+          next if not object.public_send("to_#{zone_hvac_type}").is_initialized
+          new_object = object.public_send("to_#{zone_hvac_type}").get
+          zone_hvac_list << new_object
+        end
+      end
+      return zone_hvac_list
+    end
+    
     def self.remove_existing_hvac_equipment(model, runner, new_equip, thermal_zone)
       counterpart_equip = nil
       case new_equip

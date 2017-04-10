@@ -189,6 +189,11 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
         air_loop.addBranchForZone(control_zone)
         runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
       
+        HVAC.prioritize_zone_hvac(model, runner, control_zone).reverse.each do |object|
+          control_zone.setCoolingPriority(object, 1)
+          control_zone.setHeatingPriority(object, 1)
+        end
+      
         slave_zones.each do |slave_zone|
         
           # Remove existing equipment
@@ -200,6 +205,11 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
 
           air_loop.addBranchForZone(slave_zone)
           runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
+        
+          HVAC.prioritize_zone_hvac(model, runner, slave_zone).reverse.each do |object|
+            slave_zone.setCoolingPriority(object, 1)
+            slave_zone.setHeatingPriority(object, 1)
+          end
         
         end    
       
