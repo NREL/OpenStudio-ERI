@@ -21,7 +21,7 @@ class ProcessSingleSpeedAirSourceHeatPumpTest < MiniTest::Test
     args_hash["supplemental_capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXSingleSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXSingleSpeed"=>1}
-    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "MaximumSupplyAirTemperature"=>76.66, "hvac_priority"=>1}
+    expected_values = {"CoolingCOP"=>4.07, "HeatingCOP"=>3.33, "CoolingNominalCapacity"=>10550.55, "HeatingNominalCapacity"=>10550.55, "SuppNominalCapacity"=>5861.42, "MaximumSupplyAirTemperature"=>76.66, "hvac_priority"=>1}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)    
   end
   
@@ -248,9 +248,7 @@ class ProcessSingleSpeedAirSourceHeatPumpTest < MiniTest::Test
             if obj_type == "AirLoopHVACUnitarySystem"
                 assert_in_epsilon(expected_values["MaximumSupplyAirTemperature"], new_object.maximumSupplyAirTemperature.get, 0.01)
             elsif obj_type == "CoilCoolingDXSingleSpeed"
-                if new_object.ratedCOP.is_initialized
-                  assert_in_epsilon(expected_values["CoolingCOP"], new_object.ratedCOP.get, 0.01)
-                end
+                assert_in_epsilon(expected_values["CoolingCOP"], new_object.ratedCOP.get, 0.01)
                 if new_object.ratedTotalCoolingCapacity.is_initialized
                   assert_in_epsilon(expected_values["CoolingNominalCapacity"], new_object.ratedTotalCoolingCapacity.get, 0.01)
                 end
@@ -259,6 +257,10 @@ class ProcessSingleSpeedAirSourceHeatPumpTest < MiniTest::Test
                 if new_object.ratedTotalHeatingCapacity.is_initialized
                   assert_in_epsilon(expected_values["HeatingNominalCapacity"], new_object.ratedTotalHeatingCapacity.get, 0.01)
                 end                
+            elsif obj_type == "CoilHeatingElectric"
+                if new_object.nominalCapacity.is_initialized
+                  assert_in_epsilon(expected_values["SuppNominalCapacity"], new_object.nominalCapacity.get, 0.01)
+                end
             elsif obj_type == "AirTerminalSingleDuctUncontrolled"
                 model.getThermalZones.each do |thermal_zone|
                   cooling_seq = thermal_zone.equipmentInCoolingOrder.index new_object

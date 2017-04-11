@@ -21,7 +21,7 @@ class ProcessVariableSpeedAirSourceHeatPumpTest < MiniTest::Test
     args_hash["supplemental_capacity"] = "20"
     expected_num_del_objects = {}
     expected_num_new_objects = {"AirLoopHVACUnitarySystem"=>1, "AirLoopHVAC"=>1, "CoilCoolingDXMultiSpeed"=>1, "FanOnOff"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "CoilHeatingElectric"=>1, "CoilHeatingDXMultiSpeed"=>1, "CoilCoolingDXMultiSpeedStageData"=>4, "CoilHeatingDXMultiSpeedStageData"=>4}
-    expected_values = {"CoolingCOP"=>[5.65, 5.44, 4.57, 4.13], "HeatingCOP"=>[5.13, 4.83, 4.08, 4.11], "CoolingNominalCapacity"=>[OpenStudio::convert(3.0,"ton","W").get]*4, "HeatingNominalCapacity"=>[OpenStudio::convert(3.0,"ton","W").get]*4, "MaximumSupplyAirTemperature"=>76.66, "hvac_priority"=>1}
+    expected_values = {"CoolingCOP"=>[5.65, 5.44, 4.57, 4.13], "HeatingCOP"=>[5.13, 4.83, 4.08, 4.11], "CoolingNominalCapacity"=>[OpenStudio::convert(3.0,"ton","W").get]*4, "HeatingNominalCapacity"=>[OpenStudio::convert(3.0,"ton","W").get]*4, "SuppNominalCapacity"=>5861.42, "MaximumSupplyAirTemperature"=>76.66, "hvac_priority"=>1}
     _test_measure("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 6)    
   end
   
@@ -260,6 +260,10 @@ class ProcessVariableSpeedAirSourceHeatPumpTest < MiniTest::Test
                     if stage.grossRatedHeatingCapacity.is_initialized
                         assert_in_epsilon(expected_values["HeatingNominalCapacity"][i], stage.grossRatedHeatingCapacity.get, 0.01)
                     end
+                end
+            elsif obj_type == "CoilHeatingElectric"
+                if new_object.nominalCapacity.is_initialized
+                  assert_in_epsilon(expected_values["SuppNominalCapacity"], new_object.nominalCapacity.get, 0.01)
                 end
             elsif obj_type == "AirTerminalSingleDuctUncontrolled"
                 model.getThermalZones.each do |thermal_zone|

@@ -106,7 +106,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
     miniSplitHPHeatingMaxCapacity.setDisplayName("Maximum Heating Capacity")
     miniSplitHPHeatingMaxCapacity.setUnits("frac")
     miniSplitHPHeatingMaxCapacity.setDescription("Maximum heating capacity as a fraction of nominal heating capacity at rated conditions.")
-    miniSplitHPHeatingMaxCapacity.setDefaultValue(1.2)
+    miniSplitHPHeatingMaxCapacity.setDefaultValue(1.5)
     args << miniSplitHPHeatingMaxCapacity        
     
     #make a double argument for minisplit heating min airflow
@@ -877,7 +877,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
         end
         
         error = heatingHSPF - calc_HSPF_VariableSpeed(cops_Rated, c_d, capacity_Ratio_Heating, coolingCFMs, fanPowsRated, min_hp_temp, number_Speeds, mshp_capacity_retention_fraction, mshp_capacity_retention_temperature, hEAT_EIR_FT_SPEC, hEAT_CAP_FT_SPEC)
-
+        
         cop_maxSpeed,cvg,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2 = MathTools.Iterate(cop_maxSpeed,error,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2,n,cvg)
     
         if cvg
@@ -886,7 +886,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
     end
     
     if not cvg or final_n > itmax
-        cop_maxSpeed = OpenStudio::convert(0.4174*heatingHSPF - 1.1134,"Btu/h","W").get  # Correlation developed from JonW's MatLab scripts. Only used is a COP cannot be found.   
+        cop_maxSpeed = OpenStudio::convert(0.4174*heatingHSPF - 1.1134,"Btu/h","W").get  # Correlation developed from JonW's MatLab scripts. Only used if a COP cannot be found.   
         runner.registerWarning('Mini-split heat pump COP iteration failed to converge. Setting to default value.')
     end
 
