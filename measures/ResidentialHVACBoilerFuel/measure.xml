@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>2604a173-1adc-47b7-bb05-d73520f00a70</version_id>
-  <version_modified>20170410T211030Z</version_modified>
+  <version_id>aae7b638-1b4f-46c0-9a19-85c892a4097d</version_id>
+  <version_modified>20170411T142141Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
@@ -313,23 +313,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>process_boiler_fuel_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6C13D6B3</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>FF5BFAA5</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -454,6 +437,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7D6D81BF</checksum>
+    </file>
+    <file>
+      <filename>process_boiler_fuel_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9C2B408F</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>683AE8E9</checksum>
     </file>
   </files>
 </measure>

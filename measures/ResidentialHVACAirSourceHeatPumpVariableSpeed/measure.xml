@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>275db20b-2c20-4916-bcdd-54c79d0f7e12</version_id>
-  <version_modified>20170410T211030Z</version_modified>
+  <version_id>5d61ac39-a989-434c-8502-03ee1993470a</version_id>
+  <version_modified>20170411T181415Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>
@@ -678,27 +678,10 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
-      <filename>process_variable_speed_air_source_heat_pump_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F0CEBD4B</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.13.2</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>50342F8C</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -825,6 +808,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7D6D81BF</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.13.2</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>EA5235B7</checksum>
+    </file>
+    <file>
+      <filename>process_variable_speed_air_source_heat_pump_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>780F8B3D</checksum>
     </file>
   </files>
 </measure>

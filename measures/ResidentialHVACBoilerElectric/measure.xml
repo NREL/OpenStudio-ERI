@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>a6195b5a-c08a-4372-98c8-6fd65c77b98d</version_id>
-  <version_modified>20170410T211030Z</version_modified>
+  <version_id>c5f2577a-2c5a-491b-8f29-8465e6d29d56</version_id>
+  <version_modified>20170411T142141Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
@@ -290,23 +290,6 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>process_boiler_electric_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F237FBF2</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.6</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>E36779AB</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -431,6 +414,23 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>7D6D81BF</checksum>
+    </file>
+    <file>
+      <filename>process_boiler_electric_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AC029BAB</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.6</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>218EA538</checksum>
     </file>
   </files>
 </measure>
