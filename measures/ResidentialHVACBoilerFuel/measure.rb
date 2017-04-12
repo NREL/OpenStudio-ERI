@@ -310,6 +310,11 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
         living_baseboard_heater.addToThermalZone(control_zone)
         runner.registerInfo("Added '#{living_baseboard_heater.name}' to '#{control_zone.name}' of #{unit.name}")
         
+        HVAC.prioritize_zone_hvac(model, runner, control_zone).reverse.each do |object|
+          control_zone.setCoolingPriority(object, 1)
+          control_zone.setHeatingPriority(object, 1)
+        end
+        
         plant_loop.addDemandBranchForComponent(baseboard_coil)
         
         slave_zones.each do |slave_zone|
@@ -331,6 +336,11 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
           fbasement_baseboard_heater.setName(obj_name + " #{slave_zone.name} convective water")
           fbasement_baseboard_heater.addToThermalZone(slave_zone)
           runner.registerInfo("Added '#{fbasement_baseboard_heater.name}' to '#{slave_zone.name}' of #{unit.name}")
+          
+          HVAC.prioritize_zone_hvac(model, runner, slave_zone).reverse.each do |object|
+            slave_zone.setCoolingPriority(object, 1)
+            slave_zone.setHeatingPriority(object, 1)
+          end
           
           plant_loop.addDemandBranchForComponent(baseboard_coil)
 

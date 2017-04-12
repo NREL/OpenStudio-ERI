@@ -37,7 +37,7 @@ class ProcessDehumidifierTest < MiniTest::Test
     args_hash["water_removal_rate"] = "35"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>1, "ZoneControlHumidistat"=>1}
-    expected_values = {"water_removal_rate"=>UnitConversion.pint2liter(args_hash["water_removal_rate"].to_f), "energy_factor"=>autosize, "air_flow_rate"=>autosize}
+    expected_values = {"water_removal_rate"=>UnitConversion.pint2liter(args_hash["water_removal_rate"].to_f), "energy_factor"=>autosize, "air_flow_rate"=>autosize, "hvac_priority"=>1}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
@@ -46,7 +46,7 @@ class ProcessDehumidifierTest < MiniTest::Test
     args_hash["water_removal_rate"] = "200"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>1, "ZoneControlHumidistat"=>1}
-    expected_values = {"water_removal_rate"=>UnitConversion.pint2liter(args_hash["water_removal_rate"].to_f), "energy_factor"=>autosize, "air_flow_rate"=>autosize}
+    expected_values = {"water_removal_rate"=>UnitConversion.pint2liter(args_hash["water_removal_rate"].to_f), "energy_factor"=>autosize, "air_flow_rate"=>autosize, "hvac_priority"=>1}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
@@ -55,7 +55,7 @@ class ProcessDehumidifierTest < MiniTest::Test
     args_hash["air_flow_rate"] = "88.0"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>1, "ZoneControlHumidistat"=>1}
-    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>autosize, "air_flow_rate"=>OpenStudio::convert(args_hash["air_flow_rate"].to_f,"cfm","m^3/s").get}
+    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>autosize, "air_flow_rate"=>OpenStudio::convert(args_hash["air_flow_rate"].to_f,"cfm","m^3/s").get, "hvac_priority"=>1}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
@@ -64,7 +64,7 @@ class ProcessDehumidifierTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>num_units, "ZoneControlHumidistat"=>num_units}
-    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>autosize, "air_flow_rate"=>autosize}
+    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>autosize, "air_flow_rate"=>autosize, "hvac_priority"=>1}
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
@@ -73,7 +73,7 @@ class ProcessDehumidifierTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>num_units, "ZoneControlHumidistat"=>num_units}
-    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>autosize, "air_flow_rate"=>autosize}
+    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>autosize, "air_flow_rate"=>autosize, "hvac_priority"=>1}
     _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
   
@@ -82,12 +82,12 @@ class ProcessDehumidifierTest < MiniTest::Test
     args_hash["energy_factor"] = "1.2"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleConstant"=>2, "ZoneHVACDehumidifierDX"=>1, "ZoneControlHumidistat"=>1}
-    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>args_hash["energy_factor"].to_f, "air_flow_rate"=>autosize}
+    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>args_hash["energy_factor"].to_f, "air_flow_rate"=>autosize, "hvac_priority"=>1}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash["energy_factor"] = "1.5"
     expected_num_del_objects = {"ScheduleConstant"=>1, "ZoneHVACDehumidifierDX"=>1, "ZoneControlHumidistat"=>1}
     expected_num_new_objects = {"ScheduleConstant"=>1, "ZoneHVACDehumidifierDX"=>1, "ZoneControlHumidistat"=>1}
-    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>args_hash["energy_factor"].to_f, "air_flow_rate"=>autosize}
+    expected_values = {"water_removal_rate"=>autosize, "energy_factor"=>args_hash["energy_factor"].to_f, "air_flow_rate"=>autosize, "hvac_priority"=>1}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 2)     
   end
     
@@ -187,6 +187,13 @@ class ProcessDehumidifierTest < MiniTest::Test
               assert_in_epsilon(expected_values["water_removal_rate"], new_object.ratedWaterRemoval, 0.01)
               assert_in_epsilon(expected_values["energy_factor"], new_object.ratedEnergyFactor, 0.01)
               assert_in_epsilon(expected_values["air_flow_rate"], new_object.ratedAirFlowRate, 0.01)
+              model.getThermalZones.each do |thermal_zone|
+                cooling_seq = thermal_zone.equipmentInCoolingOrder.index new_object
+                heating_seq = thermal_zone.equipmentInHeatingOrder.index new_object
+                next if cooling_seq.nil? or heating_seq.nil?
+                assert_equal(expected_values["hvac_priority"], cooling_seq+1)
+                assert_equal(expected_values["hvac_priority"], heating_seq+1)
+              end
             end
         end
     end
