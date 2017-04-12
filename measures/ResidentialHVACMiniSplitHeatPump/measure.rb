@@ -106,7 +106,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
     miniSplitHPHeatingMaxCapacity.setDisplayName("Maximum Heating Capacity")
     miniSplitHPHeatingMaxCapacity.setUnits("frac")
     miniSplitHPHeatingMaxCapacity.setDescription("Maximum heating capacity as a fraction of nominal heating capacity at rated conditions.")
-    miniSplitHPHeatingMaxCapacity.setDefaultValue(1.2)
+    miniSplitHPHeatingMaxCapacity.setDefaultValue(1.5)
     args << miniSplitHPHeatingMaxCapacity        
     
     #make a double argument for minisplit heating min airflow
@@ -454,6 +454,11 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
         vrf.addTerminal(tu_vrf)
         runner.registerInfo("Added '#{tu_vrf.name}' to '#{control_zone.name}' of #{unit.name}")        
         
+        HVAC.prioritize_zone_hvac(model, runner, control_zone).reverse.each do |object|
+          control_zone.setCoolingPriority(object, 1)
+          control_zone.setHeatingPriority(object, 1)
+        end
+        
         # Supplemental heat
         unless baseboardOutputCapacity == "NO SUPP HEAT"
           supp_htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
@@ -537,6 +542,11 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
           tu_vrf.addToThermalZone(slave_zone)
           vrf.addTerminal(tu_vrf)
           runner.registerInfo("Added '#{tu_vrf.name}' to '#{slave_zone.name}' of #{unit.name}") 
+          
+          HVAC.prioritize_zone_hvac(model, runner, slave_zone).reverse.each do |object|
+            slave_zone.setCoolingPriority(object, 1)
+            slave_zone.setHeatingPriority(object, 1)
+          end
           
           unless baseboardOutputCapacity == "NO SUPP HEAT"
             supp_htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
@@ -867,7 +877,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
         end
         
         error = heatingHSPF - calc_HSPF_VariableSpeed(cops_Rated, c_d, capacity_Ratio_Heating, coolingCFMs, fanPowsRated, min_hp_temp, number_Speeds, mshp_capacity_retention_fraction, mshp_capacity_retention_temperature, hEAT_EIR_FT_SPEC, hEAT_CAP_FT_SPEC)
-
+        
         cop_maxSpeed,cvg,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2 = MathTools.Iterate(cop_maxSpeed,error,cop_maxSpeed_1,error1,cop_maxSpeed_2,error2,n,cvg)
     
         if cvg
@@ -876,7 +886,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
     end
     
     if not cvg or final_n > itmax
-        cop_maxSpeed = OpenStudio::convert(0.4174*heatingHSPF - 1.1134,"Btu/h","W").get  # Correlation developed from JonW's MatLab scripts. Only used is a COP cannot be found.   
+        cop_maxSpeed = OpenStudio::convert(0.4174*heatingHSPF - 1.1134,"Btu/h","W").get  # Correlation developed from JonW's MatLab scripts. Only used if a COP cannot be found.   
         runner.registerWarning('Mini-split heat pump COP iteration failed to converge. Setting to default value.')
     end
 

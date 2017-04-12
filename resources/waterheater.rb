@@ -384,7 +384,7 @@ class Waterheater
 		wh_type = nil
 		hpwh = model.getWaterHeaterHeatPumpWrappedCondensers
 		len_wh_array = 0 #TODO: what to do for MF cases with multiple HPWHs? presumably this method will be called with a unit number and the # of hpwhs should be 1
-		if !hpwh.nil?
+		if hpwh.size > 0
 			wh_type = "hpwh"
 			for wh in hpwh
 				waterHeater = wh
