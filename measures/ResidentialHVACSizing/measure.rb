@@ -3719,13 +3719,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         
     end
     if not airLoopHVACUnitarySystem.nil?
-        clg_airflow = OpenStudio.convert([unit_final.Cool_Airflow, 0.00001].max,"cfm","m^3/s").get # A value of 0 does not change from autosize
-        htg_airflow = OpenStudio.convert([unit_final.Heat_Airflow, 0.00001].max,"cfm","m^3/s").get # A value of 0 does not change from autosize
-    
         airLoopHVACUnitarySystem.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
-        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
+        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringCoolingOperation(OpenStudio.convert(unit_final.Cool_Airflow,"cfm","m^3/s").get)
         airLoopHVACUnitarySystem.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
-        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
+        airLoopHVACUnitarySystem.setSupplyAirFlowRateDuringHeatingOperation(OpenStudio.convert(unit_final.Heat_Airflow,"cfm","m^3/s").get)
         fanonoff = airLoopHVACUnitarySystem.supplyFan.get.to_FanOnOff.get
         fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * OpenStudio.convert(unit_final.Fan_Airflow + 0.01,"cfm","m^3/s").get)
     end
@@ -3752,7 +3749,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     # Zone HVAC Window AC
     if clg_equip.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner
         clg_equip.setSupplyAirFlowRateDuringCoolingOperation(OpenStudio.convert(unit_final.Cool_Airflow,"cfm","m^3/s").get)
-        clg_equip.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
+        clg_equip.setSupplyAirFlowRateDuringHeatingOperation(0.0)
         clg_equip.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
         clg_equip.setOutdoorAirFlowRateDuringCoolingOperation(0.0)
         clg_equip.setOutdoorAirFlowRateDuringHeatingOperation(0.0)
@@ -3761,10 +3758,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         # Fan
         fanonoff = clg_equip.supplyAirFan.to_FanOnOff.get
         fanonoff.setMaximumFlowRate(OpenStudio.convert(unit_final.Cool_Airflow,"cfm","m^3/s").get)
-        
-        # Heating coil
-        ptac_htg_coil = clg_equip.heatingCoil.to_CoilHeatingElectric.get
-        ptac_htg_coil.setNominalCapacity(0.0)
     end
     
     # VRFs

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>93c03f05-fd82-48a0-942f-4b81a175bb9a</version_id>
-  <version_modified>20170411T142142Z</version_modified>
+  <version_id>beee3d60-7eb9-419a-b23d-1febaa930ebd</version_id>
+  <version_modified>20170407T193755Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>
@@ -258,10 +258,33 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
+      <filename>process_single_speed_central_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4124A797</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37254C93</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8EBDECF1</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ECD4089D</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -382,29 +405,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B890B8BC</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D6D81BF</checksum>
-    </file>
-    <file>
-      <filename>process_single_speed_central_air_conditioner_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>43A4EEE2</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>57648898</checksum>
     </file>
   </files>
 </measure>

@@ -151,22 +151,12 @@ class ProcessRoomAirConditioner < OpenStudio::Measure::ModelMeasure
         ptac.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         ptac.addToThermalZone(control_zone)
         runner.registerInfo("Added '#{ptac.name}' to '#{control_zone.name}' of #{unit.name}")
-              
-        HVAC.prioritize_zone_hvac(model, runner, control_zone).reverse.each do |object|
-          control_zone.setCoolingPriority(object, 1)
-          control_zone.setHeatingPriority(object, 1)
-        end
       
         slave_zones.each do |slave_zone|
 
           # Remove existing equipment
           HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameRoomAirConditioner, slave_zone)
 
-          HVAC.prioritize_zone_hvac(model, runner, slave_zone).reverse.each do |object|
-            slave_zone.setCoolingPriority(object, 1)
-            slave_zone.setHeatingPriority(object, 1)
-          end
-          
         end # slave_zone
       
       end # control_zone

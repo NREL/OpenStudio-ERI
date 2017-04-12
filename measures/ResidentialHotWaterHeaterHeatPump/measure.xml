@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_heat_pump</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>3eb03706-ab9e-4e70-8bfe-cb892a1cd558</version_id>
-  <version_modified>20170407T232130Z</version_modified>
-  <xml_checksum>9882CBDB</xml_checksum>
+  <version_id>e8ae4605-f773-4d72-af17-02007933c271</version_id>
+  <version_modified>20170407T203220Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotWaterHeaterHeatPump</class_name>
   <display_name>Set Residential Heat Pump Water Heater</display_name>
   <description>This measure adds a new residential heat pump water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.</description>
@@ -162,6 +162,33 @@
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
     </argument>
+    <argument>
+      <name>ducting</name>
+      <display_name>Ducting</display_name>
+      <description>Specifies where the HPWH pulls air from/exhausts to. The HPWH can currentlyonly be ducted outside of the home, not to different zones within the home.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>none</default_value>
+      <choices>
+        <choice>
+          <value>none</value>
+          <display_name>none</display_name>
+        </choice>
+        <choice>
+          <value>exhaust</value>
+          <display_name>exhaust</display_name>
+        </choice>
+        <choice>
+          <value>supply</value>
+          <display_name>supply</display_name>
+        </choice>
+        <choice>
+          <value>balanced</value>
+          <display_name>balanced</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <outputs/>
   <provenances/>
@@ -182,10 +209,130 @@
   </attributes>
   <files>
     <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
+      <filetype>ddy</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB253570</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E23378AA</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>850FE64F</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7FCAB593</checksum>
+    </file>
+    <file>
+      <filename>ResidentialWaterHeaterTankElectric_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2C6AAECE</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A910973A</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_1Beds_1Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B93F106A</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_2Beds_1Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>24DEC8FD</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_2Beds_2Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DDB020B7</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_5Beds_3Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1E878793</checksum>
+    </file>
+    <file>
+      <filename>multifamily_3_units_Beds_Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EFE6DE93</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3AE34E51</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankGas.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5FC72DAA</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessElectric.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DCEC327B</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessGas.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E85A7794</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TanklessPropane.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3DE62E6B</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankOil.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A38F0DBB</checksum>
+    </file>
+    <file>
+      <filename>2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_TankPropane.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3F4CE80E</checksum>
+    </file>
+    <file>
+      <filename>multifamily_12_units_Beds_Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8E13C9DA</checksum>
+    </file>
+    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>DCB12FCF</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>38632BB3</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
@@ -194,34 +341,34 @@
       <checksum>457F689A</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BAAF2AEF</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>53D20E39</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07204EC3</checksum>
+    </file>
+    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3C131B97</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
+      <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37254C93</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11B29BB7</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B890B8BC</checksum>
+      <checksum>4FDBEDAB</checksum>
     </file>
     <file>
       <version>
@@ -232,13 +379,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7C0F5897</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E3C3E884</checksum>
+      <checksum>1D69DF4A</checksum>
     </file>
   </files>
 </measure>

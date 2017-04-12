@@ -86,7 +86,7 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
         json_file_path = File.expand_path(File.join(File.dirname(__FILE__), json_file_path))
       end 
       unless File.exists?(json_file_path) and json_file_path.downcase.end_with? ".json"
-        runner.registerError("'#{json_file_path}' does not exist or is not a .json file.")
+        runner.registerError("'#{json_file_path}' does not exist or is not an .json file.")
         return false
       end
     end

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>71fa63c2-9426-4305-bdc9-fdbe25882d6c</version_id>
-  <version_modified>20170407T231609Z</version_modified>
+  <version_id>b98bd364-8223-4cea-8966-3d9556dd4c2f</version_id>
+  <version_modified>20170407T193753Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -1005,6 +1005,12 @@
       <checksum>75FAFE79</checksum>
     </file>
     <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BFF023C0</checksum>
+    </file>
+    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -1021,6 +1027,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>457F689A</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3B74D45B</checksum>
     </file>
     <file>
       <filename>ResidentialHotWaterFixtures_Test.rb</filename>
@@ -1081,23 +1098,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B890B8BC</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9F0F930A</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E3C3E884</checksum>
     </file>
   </files>
 </measure>

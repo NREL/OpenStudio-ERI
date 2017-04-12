@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>7058990c-3a97-423e-acce-d3e310498b23</version_id>
-  <version_modified>20170410T211032Z</version_modified>
+  <version_id>cbc5d236-4b88-4bfb-a769-2da2d5ac311f</version_id>
+  <version_modified>20170407T193755Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -119,6 +119,12 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ECD4089D</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -189,12 +195,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B890B8BC</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D6D81BF</checksum>
     </file>
   </files>
 </measure>

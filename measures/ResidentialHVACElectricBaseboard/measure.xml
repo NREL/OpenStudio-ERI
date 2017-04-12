@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_electric_baseboard</name>
   <uid>3ed9f2f9-5d0a-4115-ac5b-b11db9a5b02d</uid>
-  <version_id>526cdf27-df42-475f-9bdb-dd0ca34cc559</version_id>
-  <version_modified>20170411T181416Z</version_modified>
+  <version_id>2f708641-0556-4351-94e2-258a6027ab39</version_id>
+  <version_modified>20170407T193756Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessElectricBaseboard</class_name>
   <display_name>Set Residential Electric Baseboard</display_name>
@@ -188,10 +188,33 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
+      <filename>process_electric_baseboard_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B2EEA7C9</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>DBC507D7</checksum>
+    </file>
+    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>37254C93</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ECD4089D</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -306,29 +329,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B890B8BC</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>97E3FCD6</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D6D81BF</checksum>
-    </file>
-    <file>
-      <filename>process_electric_baseboard_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>46F839BA</checksum>
     </file>
   </files>
 </measure>

@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
   <error>Could not find 'rest-client' (>= 0) - did find: [rest-client-2.0.1-x64-mingw32]
-Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ruby/2.2.0;:/ruby/2.2.0/gems/;:/ruby/2.2.0/bundler/gems/', execute `gem env` for more information</error>
+Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/jrobert1/.gem/ruby/2.2.0;:/ruby/2.2.0/gems/;:/ruby/2.2.0/bundler/gems/', execute `gem env` for more information</error>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>0fa1583b-fd66-4276-900e-e1e480ebd641</version_id>
-  <version_modified>20170411T181421Z</version_modified>
+  <version_id>49c651ee-c141-49cf-9889-1cca3c1c38e8</version_id>
+  <version_modified>20170407T173935Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
@@ -87,16 +87,10 @@ Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ru
       <checksum>49E7C310</checksum>
     </file>
     <file>
-      <filename>result.json</filename>
-      <filetype>json</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EF682B2D</checksum>
-    </file>
-    <file>
       <filename>utility_bill_calculations_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>EA3C9E90</checksum>
+      <checksum>D213D2DA</checksum>
     </file>
     <file>
       <version>
@@ -107,7 +101,13 @@ Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ru
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>589197D3</checksum>
+      <checksum>6D183722</checksum>
+    </file>
+    <file>
+      <filename>result.json</filename>
+      <filetype>json</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EF682B2D</checksum>
     </file>
   </files>
 </measure>
