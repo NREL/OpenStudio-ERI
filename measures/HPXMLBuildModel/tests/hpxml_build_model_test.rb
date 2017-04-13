@@ -49,9 +49,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls    
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>8, "Material"=>11, "Surface"=>num_surfaces, "SubSurface"=>50, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>10, "Material"=>13, "Surface"=>num_surfaces, "SubSurface"=>50, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))} based on lat, lng.")
@@ -69,9 +70,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>8, "Material"=>11, "Surface"=>num_surfaces, "SubSurface"=>50, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>10, "Material"=>13, "Surface"=>num_surfaces, "SubSurface"=>50, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join("./measures/ResidentialLocation/resources", File.basename(args_hash["weather_file_path"])))}.")
@@ -89,7 +91,8 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
     expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>8, "Material"=>11, "Surface"=>num_surfaces, "SubSurface"=>192, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
@@ -109,9 +112,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -129,9 +133,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -149,9 +154,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -169,9 +175,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join("./measures/ResidentialLocation/resources", File.basename(args_hash["weather_file_path"])))}.")
@@ -189,9 +196,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>9, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -231,7 +239,8 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
     expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>7, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>17, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
@@ -251,9 +260,10 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_foundationwalls = REXML::XPath.first(doc, "count(//Foundation/FoundationWall)")
     num_slabs = REXML::XPath.first(doc, "count(//Foundation/Slab)")
     num_walls = REXML::XPath.first(doc, "count(//Walls/Wall)")
-    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls
+    num_atticwalls = (REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Attics/Attic[AtticType='cape cod'])")) * 2    
+    num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>6, "Material"=>7, "Surface"=>num_surfaces, "SubSurface"=>34, "ThermalZone"=>2, "Space"=>2, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>6, "Material"=>8, "Surface"=>num_surfaces, "SubSurface"=>34, "ThermalZone"=>2, "Space"=>2, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
