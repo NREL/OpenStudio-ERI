@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>0cf7897c-d51f-4e3a-b57f-45b900bf3d60</version_id>
-  <version_modified>20170411T142142Z</version_modified>
+  <version_id>24248d9f-47d5-4f5b-928d-304a4807887b</version_id>
+  <version_modified>20170413T220554Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
@@ -116,12 +116,6 @@
       <checksum>B890B8BC</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D6D81BF</checksum>
-    </file>
-    <file>
       <filename>process_dehumidifier_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -137,6 +131,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>463BF809</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1778F683</checksum>
     </file>
   </files>
 </measure>

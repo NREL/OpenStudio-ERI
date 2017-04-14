@@ -193,6 +193,7 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
     plant_loop.setMaximumLoopTemperature(100)
     plant_loop.setMinimumLoopTemperature(0)
     plant_loop.setMinimumLoopFlowRate(0)
+    plant_loop.autocalculatePlantLoopVolume()
     
     loop_sizing = plant_loop.sizingPlant
     loop_sizing.setLoopType("Heating")

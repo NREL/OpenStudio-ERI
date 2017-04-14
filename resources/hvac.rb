@@ -88,6 +88,26 @@ class HVAC
         return curve
     end
     
+    def self.create_curve_bicubic(model, coeff, name, minX, maxX, minY, maxY)
+        curve = OpenStudio::Model::CurveBicubic.new(model)
+        curve.setName(name)
+        curve.setCoefficient1Constant(coeff[0])
+        curve.setCoefficient2x(coeff[1])
+        curve.setCoefficient3xPOW2(coeff[2])
+        curve.setCoefficient4y(coeff[3])
+        curve.setCoefficient5yPOW2(coeff[4])
+        curve.setCoefficient6xTIMESY(coeff[5])
+        curve.setCoefficient7xPOW3(coeff[6])
+        curve.setCoefficient8yPOW3(coeff[7])
+        curve.setCoefficient9xPOW2TIMESY(coeff[8])
+        curve.setCoefficient10xTIMESYPOW2(coeff[9])
+        curve.setMinimumValueofx(minX)
+        curve.setMaximumValueofx(maxX)
+        curve.setMinimumValueofy(minY)
+        curve.setMaximumValueofy(maxY)
+        return curve
+    end
+    
     def self.create_curve_quadratic(model, coeff, name, minX, maxX, minY, maxY, is_dimensionless=false)
         curve = OpenStudio::Model::CurveQuadratic.new(model)
         curve.setName(name)
@@ -245,9 +265,9 @@ class HVAC
     
     def self.get_boiler_curve(model, isCondensing)
         if isCondensing
-            return HVAC.create_curve_biquadratic(model, [1.058343061, -0.052650153, -0.0087272, -0.001742217, 0.00000333715, 0.000513723], "CondensingBoilerEff", 0.2, 1.0, 30, 85.0)
+            return HVAC.create_curve_biquadratic(model, [1.058343061, -0.052650153, -0.0087272, -0.001742217, 0.00000333715, 0.000513723], "CondensingBoilerEff", 0.2, 1.0, 30.0, 85.0)
         else
-            return HVAC.create_curve_biquadratic(model, [1.111720116, 0.078614078, -0.400425756, 0.0, -0.000156783, 0.009384599, 0.234257955, 1.32927e-06], "NonCondensingBoilerEff", 0.1, 1.0, 20, 80.0)
+            return HVAC.create_curve_bicubic(model, [1.111720116, 0.078614078, -0.400425756, 0.0, -0.000156783, 0.009384599, 0.234257955, 1.32927e-06, -0.004446701, -1.22498e-05], "NonCondensingBoilerEff", 0.1, 1.0, 20.0, 80.0)
         end
     end
   

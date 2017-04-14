@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>fe734ed7-74c7-4df0-a070-70a07c339e80</version_id>
-  <version_modified>20170411T181416Z</version_modified>
+  <version_id>972a19c6-7f87-478c-a717-fe7218ec2843</version_id>
+  <version_modified>20170413T220555Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -686,12 +686,6 @@
       <checksum>B890B8BC</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D6D81BF</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -707,6 +701,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>B75D7ABB</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1778F683</checksum>
     </file>
   </files>
 </measure>
