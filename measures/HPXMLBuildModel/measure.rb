@@ -209,36 +209,50 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       measures[measure]["exposed_perim"] = exposed_perim.to_s
     end
     
-    # rotate surfaces about the origin so you can see them in sketchup more easily
-    spacing = 0.0 # deg
-    ["wall", "floor", "roofceiling"].each do |surface_type|
-      
-      i = 0.0
-      model.getSurfaces.each do |surface|
-      
-        next unless surface.surfaceType.downcase == surface_type
-        
-        m = OpenStudio::Matrix.new(4, 4, 0)
-        m[0,0] = Math::cos(i * Math::PI / 180.0)
-        m[1,1] = Math::cos(-i * Math::PI / 180.0)
-        m[0,1] = -Math::sin(-i * Math::PI / 180.0)
-        m[1,0] = Math::sin(-i * Math::PI / 180.0)
-        m[2,2] = 1
-        m[3,3] = 1
-        
-        transformation = OpenStudio::Transformation.new(m)
-        
-        surface.subSurfaces.each do |subsurface|
-          next unless subsurface.subSurfaceType.downcase == "fixedwindow"
-          subsurface.setVertices(transformation * subsurface.vertices)
-        end
-        surface.setVertices(transformation * surface.vertices)
-        
-        i += spacing
-        
+    # explode wall surfaces out from origin, from top down
+    wall_surfaces = {}
+    model.getSurfaces.each do |surface|
+      next unless surface.surfaceType.downcase == "wall"
+      if surface.adjacentSurface.is_initialized
+        next if wall_surfaces.keys.include? surface or wall_surfaces.keys.include? surface.adjacentSurface.get
       end
+      z_val = -10000
+      surface.vertices.each do |vertex|
+        if vertex.z > z_val
+          wall_surfaces[surface] = vertex.z.to_f
+          z_val = vertex.z
+        end
+      end
+    end
+        
+    offset = 30.0 # m
+    wall_surfaces.sort_by{|k, v| v}.reverse.to_h.keys.each do |surface|
 
-    end       
+      m = OpenStudio::Matrix.new(4, 4, 0)
+      m[0,0] = 1
+      m[1,1] = 1
+      m[2,2] = 1
+      m[3,3] = 1
+      if Geometry.get_facade_for_surface(surface) == Constants.FacadeFront or Geometry.get_facade_for_surface(surface) == Constants.FacadeBack
+        m[1,3] = offset
+      elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeLeft or Geometry.get_facade_for_surface(surface) == Constants.FacadeRight
+        m[2,3] = offset
+      end
+   
+      transformation = OpenStudio::Transformation.new(m)      
+      
+      surface.subSurfaces.each do |subsurface|
+        next unless subsurface.subSurfaceType.downcase == "fixedwindow"
+        subsurface.setVertices(transformation * subsurface.vertices)
+      end
+      if surface.adjacentSurface.is_initialized
+        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+      end
+      surface.setVertices(transformation * surface.vertices)
+      
+      offset += 5.0 # m
+        
+    end      
         
     # Store building name
     model.getBuilding.setName(File.basename(hpxml_file_path))
@@ -354,7 +368,12 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       next if wall.elements["Area"].nil?
       
       z_origin = 0
-      
+      unless wall.elements["ExteriorAdjacentTo"].nil?
+        if wall.elements["ExteriorAdjacentTo"].text == "attic"
+          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+        end
+      end
+
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
       wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
 
@@ -560,19 +579,14 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       next unless wall.elements["InteriorAdjacentTo"].text == "attic"
       next if wall.elements["Area"].nil?
       
-      z_origin = 0
-      unless wall.elements["ExteriorAdjacentTo"].nil?
-        if wall.elements["ExteriorAdjacentTo"].text == "attic"
-          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
-        end
-      end
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
       
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
       wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
 
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_height, wall_length, z_origin), model)
       surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
-      surface.setSurfaceType("Wall") 
+      surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
       if wall.elements["ExteriorAdjacentTo"].text == "living space"
         surface.createAdjacentSurface(living_space)
