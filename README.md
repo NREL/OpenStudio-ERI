@@ -17,11 +17,16 @@ A number of measures in this GitHub repository share the same resource files, fo
 
 To be able to use the rakefile, download the OpenStudio installer from [openstudio.net](https://www.openstudio.net/) and, at a minimum, install the "Command Line Interface".
 
-You can now run ```rake update_resources``` to update the measures' resource files. You will want to perform this task anytime you do a clone or pull of the repository.
+Follow the instructions below for [Windows setup](#windows-setup) or [Mac setup](#mac-setup). Upon completion, you can now run ```rake update_resources``` to update the measures' resource files. You will want to perform this task anytime you do a clone or pull of the repository. You can also run ```rake -T``` to see the list of possible rake tasks.
 
-You can run ```rake -T``` to see the list of possible rake tasks.
+### Windows Setup
 
-### macOS Specific Installation
+1. Install [Ruby](http://rubyinstaller.org/downloads/archives), making sure to use the [version compatible with OpenStudio](https://github.com/NREL/OpenStudio/wiki/OpenStudio-Version-Compatibility-Matrix). Add the ruby location to your PATH.
+2. Run ```gem install bundler```. (If you get an error, you may have to issue the following: ```gem sources -r https://rubygems.org/``` followed by ```gem sources -a http://rubygems.org/```.)
+3. Download DevKit at http://rubyinstaller.org/downloads/. Choose either the 32-bit or 64-bit version depending on which version of Ruby you installed. Run the installer and extract to a directory (e.g., C:\RubyDevKit). Go to this directory, run ```ruby dk.rb init```, modify the config.yml file as needed, and finally run ```ruby dk.rb install```.
+4. Run ```bundler```.
+
+### Mac Setup
 
 Install [Homebrew](https://brew.sh/) if you don't have it already.
 
