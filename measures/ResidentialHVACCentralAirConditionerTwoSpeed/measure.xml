@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>6c3bc823-7c0f-453a-944c-12688b6fadf0</version_id>
-  <version_modified>20170413T220554Z</version_modified>
+  <version_id>c4b87d3c-aca5-43e7-a526-ae64dc7b0c13</version_id>
+  <version_modified>20170417T180412Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
@@ -469,7 +469,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>1778F683</checksum>
+      <checksum>118D319F</checksum>
     </file>
   </files>
 </measure>

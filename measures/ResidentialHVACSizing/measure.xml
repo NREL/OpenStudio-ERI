@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>9d2a4cd4-2844-46af-9343-e10c92e4974a</version_id>
-  <version_modified>20170413T220600Z</version_modified>
+  <version_id>1af41609-33c5-477d-8930-9c77c4b016df</version_id>
+  <version_modified>20170417T182620Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -447,6 +447,12 @@
       <checksum>98F2BDB6</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>118D319F</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.11.5</identifier>
@@ -456,12 +462,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>B042E824</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1778F683</checksum>
     </file>
   </files>
 </measure>

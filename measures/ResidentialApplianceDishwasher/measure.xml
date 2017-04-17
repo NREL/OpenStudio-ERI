@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_dishwasher</name>
   <uid>09ea4570-4666-4a55-812f-5e90091f5325</uid>
-  <version_id>b236d900-df38-4adf-b61e-125a8b65cb77</version_id>
-  <version_modified>20170407T231607Z</version_modified>
+  <version_id>6e6dc8c7-72ed-42f4-9364-b681642fb316</version_id>
+  <version_modified>20170417T180407Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialDishwasher</class_name>
   <display_name>Set Residential Dishwasher</display_name>
@@ -587,7 +587,7 @@
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E3C3E884</checksum>
+      <checksum>87AF42A7</checksum>
     </file>
   </files>
 </measure>

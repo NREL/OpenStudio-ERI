@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>89b5d87a-c994-4343-9af4-5fcb37653553</version_id>
-  <version_modified>20170413T221633Z</version_modified>
+  <version_id>ee8db96a-3c89-441f-b3f4-b098043aeb95</version_id>
+  <version_modified>20170417T180411Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
@@ -416,12 +416,6 @@
       <checksum>AC029BAB</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1778F683</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.6</identifier>
@@ -431,6 +425,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>E38F1CAC</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>118D319F</checksum>
     </file>
   </files>
 </measure>

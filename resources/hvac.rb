@@ -136,8 +136,8 @@ class HVAC
       clg_coil_stage_data = []
       (0...number_Speeds).to_a.each do |speed|
       
-        cool_cap_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(cOOL_CAP_FT_SPEC[speed], true), "Cool-Cap-fT#{speed+1}", -100, 100, -100, 100)
-        cool_eir_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(cOOL_EIR_FT_SPEC[speed], true), "Cool-EIR-fT#{speed+1}", -100, 100, -100, 100)
+        cool_cap_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(cOOL_CAP_FT_SPEC[speed], true), "Cool-Cap-fT#{speed+1}", 13.88, 23.88, 18.33, 51.66)
+        cool_eir_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(cOOL_EIR_FT_SPEC[speed], true), "Cool-EIR-fT#{speed+1}", 13.88, 23.88, 18.33, 51.66)
         cool_plf_fplr_curve = self.create_curve_quadratic(model, cOOL_CLOSS_FPLR_SPEC[speed], "Cool-PLF-fPLR#{speed+1}", 0, 1, 0.7, 1)
         cool_cap_fff_curve = self.create_curve_quadratic(model, cOOL_CAP_FFLOW_SPEC[speed], "Cool-Cap-fFF#{speed+1}", 0, 2, 0, 2)
         cool_eir_fff_curve = self.create_curve_quadratic(model, cOOL_EIR_FFLOW_SPEC[speed], "Cool-EIR-fFF#{speed+1}", 0, 2, 0, 2)
