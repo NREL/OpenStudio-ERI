@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_finished_roof</name>
   <uid>6349eb9b-6e7e-4ba9-b518-76d2f9f73c79</uid>
-  <version_id>58fd7297-cdf7-4ead-90b8-08bc7d2e59e1</version_id>
-  <version_modified>20170407T193748Z</version_modified>
+  <version_id>6de1b068-a94b-434a-87b8-df9bd2b5e7bd</version_id>
+  <version_modified>20170418T214730Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsFinishedRoof</class_name>
   <display_name>Set Residential Ceilings/Roofs - Finished Roof Construction</display_name>
@@ -152,7 +152,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B890B8BC</checksum>
+      <checksum>AAE3D2EE</checksum>
     </file>
   </files>
 </measure>

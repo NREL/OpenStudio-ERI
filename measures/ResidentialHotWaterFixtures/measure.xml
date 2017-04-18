@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_fixtures</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>1030e26a-208a-4c6f-8c51-364963c09491</version_id>
-  <version_modified>20170417T180409Z</version_modified>
+  <version_id>97ad2260-f19c-48a5-97e6-82b62538220d</version_id>
+  <version_modified>20170418T222412Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ResidentialHotWaterFixtures</class_name>
   <display_name>Set Residential Hot Water Fixtures</display_name>
@@ -1017,12 +1017,6 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>457F689A</checksum>
-    </file>
-    <file>
       <filename>ResidentialHotWaterFixtures_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -1077,12 +1071,6 @@
       <checksum>26BBAEC7</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B890B8BC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -1094,10 +1082,22 @@
       <checksum>9F0F930A</checksum>
     </file>
     <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D04CADDB</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AAE3D2EE</checksum>
+    </file>
+    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>87AF42A7</checksum>
+      <checksum>0BCD9D89</checksum>
     </file>
   </files>
 </measure>

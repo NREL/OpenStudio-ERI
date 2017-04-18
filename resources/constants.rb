@@ -920,6 +920,9 @@ class Constants
   def self.SizingInfoHVACHeatingCapacityOffset
     return self.SizingInfo(__method__.to_s)
   end
+  def self.SizingInfoHVACHeatingCFMs
+    return self.SizingInfo(__method__.to_s)
+  end
   def self.SizingInfoHVACRatedCFMperTonHeating
     return self.SizingInfo(__method__.to_s)
   end
@@ -942,6 +945,9 @@ class Constants
     return self.SizingInfo(__method__.to_s)
   end
   def self.SizingInfoMechVentWholeHouseRate
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoMSHPIndices
     return self.SizingInfo(__method__.to_s)
   end
   def self.SizingInfoRoofCavityRvalue(surface)

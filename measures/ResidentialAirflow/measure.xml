@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>736e13a7-48a8-45f0-bcde-11e863073485</version_id>
-  <version_modified>20170418T170026Z</version_modified>
+  <version_id>cb93684b-4672-4312-a9a9-98c83dc9d3e9</version_id>
+  <version_modified>20170418T214729Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -671,12 +671,6 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>457F689A</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -779,12 +773,6 @@
       <checksum>71FB1EC6</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B890B8BC</checksum>
-    </file>
-    <file>
       <filename>residential_airflow_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -806,6 +794,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>27E5CCE6</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D04CADDB</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AAE3D2EE</checksum>
     </file>
   </files>
 </measure>

@@ -35,7 +35,10 @@ class WeatherProcess
         @epw_path = wf.url.to_s.sub("file:///","").sub("file://","").sub("file:","")
       end
       if not File.exist? @epw_path # Handle relative paths for unit tests
-        @epw_path = File.join(measure_dir, "resources", @epw_path)
+        epw_path2 = File.join(measure_dir, "resources", @epw_path)
+        if File.exist? epw_path2
+            @epw_path = epw_path2
+        end
       end
       @header, @data, @design = process_epw(@epw_path, header_only)
     else

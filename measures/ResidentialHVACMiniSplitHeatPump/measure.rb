@@ -629,9 +629,11 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
       unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_Ratio_Cooling.join(","))
       unit.setFeature(Constants.SizingInfoHVACCapacityRatioHeating, capacity_Ratio_Heating.join(","))
       unit.setFeature(Constants.SizingInfoHVACCoolingCFMs, coolingCFMs.join(","))
+      unit.setFeature(Constants.SizingInfoHVACHeatingCFMs, heatingCFMs.join(","))
       unit.setFeature(Constants.SizingInfoHVACHeatingCapacityOffset, miniSplitHPHeatingCapacityOffset)
       unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (miniSplitCoolingOutputCapacity == Constants.SizingAutoMaxLoad))
       unit.setFeature(Constants.SizingInfoHVACSHR, sHR_Rated.join(","))
+      unit.setFeature(Constants.SizingInfoMSHPIndices, mshp_indices.join(","))
       
     end # unit
 

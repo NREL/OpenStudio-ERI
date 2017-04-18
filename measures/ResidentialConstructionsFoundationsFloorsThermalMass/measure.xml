@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_thermal_mass</name>
   <uid>324b197d-f75e-4513-b8b8-151d77132961</uid>
-  <version_id>ad067284-7007-4f60-909e-d3575f6eecf2</version_id>
-  <version_modified>20170407T193749Z</version_modified>
+  <version_id>01c18165-a79f-41c1-87e0-f3a2145ec798</version_id>
+  <version_modified>20170418T214732Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsThermalMass</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Thermal Mass</display_name>
@@ -96,7 +96,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B890B8BC</checksum>
+      <checksum>AAE3D2EE</checksum>
     </file>
   </files>
 </measure>
