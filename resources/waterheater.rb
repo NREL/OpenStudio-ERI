@@ -31,33 +31,33 @@ class Waterheater
         spaces.each do |space|
             next if !space.thermalZone.is_initialized
             zone = space.thermalZone.get
-			wh_type = "none" #TODO: 2 tank SHW might have both mixed and stratified tanks
+            wh_type = "none" #TODO: 2 tank SHW might have both mixed and stratified tanks
             plant_loops.each do |pl|
                 pl.supplyComponents.each do |wh|
                     if wh.to_WaterHeaterMixed.is_initialized
                         waterHeater = wh.to_WaterHeaterMixed.get
-						wh_type = "mixed" 
+                        wh_type = "mixed" 
                     elsif wh.to_WaterHeaterStratified.is_initialized
                         waterHeater = wh.to_WaterHeaterStratified.get
-						wh_type = "stratified"
+                        wh_type = "stratified"
                     else
                         next
                     end
-					if wh_type == "mixed"
-						next if !waterHeater.ambientTemperatureThermalZone.is_initialized
-						next if waterHeater.ambientTemperatureThermalZone.get.name.to_s != zone.name.to_s
-						return pl
-					elsif wh_type == "stratified"
-						#Check if the water heater has a thermal zone attached to it, if not check if it has a schedule and the schedule name matches what we expect
-						if waterHeater.ambientTemperatureThermalZone.is_initialized
-							next if waterHeater.ambientTemperatureThermalZone.get.name.to_s != zone.name.to_s
-							return pl
-						elsif waterHeater.ambientTemperatureSchedule.is_initialized
-							if waterHeater.ambientTemperatureSchedule.get.name.to_s == "HPWH_Tamb_act_#{unit_num}" or waterHeater.ambientTemperatureSchedule.get.name.to_s == "HPWH_Tamb_act2_#{unit_num}"
-								return pl
-							end
-						end
-					end
+                    if wh_type == "mixed"
+                        next if !waterHeater.ambientTemperatureThermalZone.is_initialized
+                        next if waterHeater.ambientTemperatureThermalZone.get.name.to_s != zone.name.to_s
+                        return pl
+                    elsif wh_type == "stratified"
+                        #Check if the water heater has a thermal zone attached to it, if not check if it has a schedule and the schedule name matches what we expect
+                        if waterHeater.ambientTemperatureThermalZone.is_initialized
+                            next if waterHeater.ambientTemperatureThermalZone.get.name.to_s != zone.name.to_s
+                            return pl
+                        elsif waterHeater.ambientTemperatureSchedule.is_initialized
+                            if waterHeater.ambientTemperatureSchedule.get.name.to_s == "HPWH_Tamb_act_#{unit_num}" or waterHeater.ambientTemperatureSchedule.get.name.to_s == "HPWH_Tamb_act2_#{unit_num}"
+                                return pl
+                            end
+                        end
+                    end
                 end
             end
         end
@@ -259,13 +259,12 @@ class Waterheater
     end
     
     def self.create_new_schedule_manager(t_set, model, wh_type)
-        
         if wh_type == "tank"
-			new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get + 1, model)
-		else #tankless
-			new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get, model)
-		end
-		OpenStudio::Model::SetpointManagerScheduled.new(model, new_schedule)
+            new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get + 1, model)
+        else #tankless
+            new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get, model)
+        end
+        OpenStudio::Model::SetpointManagerScheduled.new(model, new_schedule)
     end 
     
     def self.create_new_schedule_ruleset(name, schedule_name, t_set_c, model)
@@ -371,11 +370,11 @@ class Waterheater
         #Create a new plant loop for the water heater
         loop = OpenStudio::Model::PlantLoop.new(model)
         loop.setName(name)
-		if wh_type == "tank"
-			loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get + 1)
-		else #tankless
-			loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get)
-		end
+        if wh_type == "tank"
+            loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get + 1)
+        else #tankless
+            loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get)
+        end
         loop.sizingPlant.setLoopDesignTemperatureDifference(OpenStudio::convert(10,"R","K").get)
         loop.setPlantLoopVolume(0.003) #~1 gal
         loop.setMaximumLoopFlowRate(0.01) # This size represents the physical limitations to flow due to losses in the piping system. For BEopt we assume that the pipes are always adequately sized
@@ -391,55 +390,55 @@ class Waterheater
     
     def self.get_water_heater_setpoint(model, plant_loop, runner)
         waterHeater = nil
-		wh_type = nil
-		hpwh = model.getWaterHeaterHeatPumpWrappedCondensers
-		len_wh_array = 0 #TODO: what to do for MF cases with multiple HPWHs? presumably this method will be called with a unit number and the # of hpwhs should be 1
-		if hpwh.size > 0
-			wh_type = "hpwh"
-			for wh in hpwh
-				waterHeater = wh
-				len_wh_array += 1
-			end
-		end
-		if wh_type.nil?
-			plant_loop.supplyComponents.each do |wh|
-				if wh.to_WaterHeaterMixed.is_initialized
-					waterHeater = wh.to_WaterHeaterMixed.get
-					wh_type = "mixed"
-				else
-					next
-				end
+        wh_type = nil
+        hpwh = model.getWaterHeaterHeatPumpWrappedCondensers
+        len_wh_array = 0 #TODO: what to do for MF cases with multiple HPWHs? presumably this method will be called with a unit number and the # of hpwhs should be 1
+        if hpwh.size > 0
+            wh_type = "hpwh"
+            for wh in hpwh
+                waterHeater = wh
+                len_wh_array += 1
             end
-		end
-		if wh_type == "mixed"
-			if waterHeater.setpointTemperatureSchedule.nil?
-				runner.registerError("Water heater found without a setpoint temperature schedule.")
-				return nil
-			end
-		elsif wh_type == "hpwh"
-			if waterHeater.compressorSetpointTemperatureSchedule.nil?
-				runner.registerError("Heat pump water heater found without a setpoint temperature schedule.")
-				return nil
-			end
+        end
+        if wh_type.nil?
+            plant_loop.supplyComponents.each do |wh|
+                if wh.to_WaterHeaterMixed.is_initialized
+                    waterHeater = wh.to_WaterHeaterMixed.get
+                    wh_type = "mixed"
+                else
+                    next
+                end
+            end
+        end
+        if wh_type == "mixed"
+            if waterHeater.setpointTemperatureSchedule.nil?
+                runner.registerError("Water heater found without a setpoint temperature schedule.")
+                return nil
+            end
+        elsif wh_type == "hpwh"
+            if waterHeater.compressorSetpointTemperatureSchedule.nil?
+                runner.registerError("Heat pump water heater found without a setpoint temperature schedule.")
+                return nil
+            end
         end
         if waterHeater.nil?
             runner.registerError("No water heater found; add a residential water heater first.")
             return nil
         end
-		if wh_type == "mixed"
-			min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.setpointTemperatureSchedule.get)
-			wh_setpoint = (min_max_result['min'] + min_max_result['max'])/2.0
-			wh_setpoint -= waterHeater.deadbandTemperatureDifference/2.0
-			if min_max_result['min'] != min_max_result['max']
-				runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
-			end
-		else #wh_type == "hpwh"
-			min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.compressorSetpointTemperatureSchedule)
-			wh_setpoint = (min_max_result['min'] + min_max_result['max'])/2.0
-			if min_max_result['min'] != min_max_result['max']
-				runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
-			end
-		end
+        if wh_type == "mixed"
+            min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.setpointTemperatureSchedule.get)
+            wh_setpoint = (min_max_result['min'] + min_max_result['max'])/2.0
+            wh_setpoint -= waterHeater.deadbandTemperatureDifference/2.0
+            if min_max_result['min'] != min_max_result['max']
+                runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
+            end
+        else #wh_type == "hpwh"
+            min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.compressorSetpointTemperatureSchedule)
+            wh_setpoint = (min_max_result['min'] + min_max_result['max'])/2.0
+            if min_max_result['min'] != min_max_result['max']
+                runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
+            end
+        end
         return OpenStudio.convert(wh_setpoint, "C", "F").get
     end
     
