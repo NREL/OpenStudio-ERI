@@ -337,7 +337,10 @@ class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeas
           obj_name = Constants.ObjectNameFurnaceAndCentralAirConditioner(furnaceFuelType, unit.name.to_s)
         end
         
-        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+        fan_power_curve = HVAC.create_curve_exponent(model, [0, 1, 3], obj_name + " fan power curve", -100, 100)        
+        fan_eff_curve = HVAC.create_curve_cubic(model, [0, 1, 0, 0], obj_name + " fan eff curve", 0, 1, 0.01, 1)
+        
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
         fan.setName(obj_name + " supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
         fan.setFanEfficiency(HVAC.calculate_fan_efficiency(static, acSupplyFanPowerInstalled))

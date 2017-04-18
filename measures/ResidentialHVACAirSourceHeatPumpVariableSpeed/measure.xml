@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>4550bc04-e350-4d82-a346-23f2869b7861</version_id>
-  <version_modified>20170417T180411Z</version_modified>
+  <version_id>370d4cb1-cde3-4897-bfd2-5f14208059ab</version_id>
+  <version_modified>20170418T170029Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>
@@ -804,6 +804,12 @@
       <checksum>B890B8BC</checksum>
     </file>
     <file>
+      <filename>process_variable_speed_air_source_heat_pump_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>780F8B3D</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -812,19 +818,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>EA5235B7</checksum>
-    </file>
-    <file>
-      <filename>process_variable_speed_air_source_heat_pump_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>780F8B3D</checksum>
+      <checksum>9BFD4917</checksum>
     </file>
     <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>118D319F</checksum>
+      <checksum>27E5CCE6</checksum>
     </file>
   </files>
 </measure>

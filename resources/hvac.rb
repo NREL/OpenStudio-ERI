@@ -128,6 +128,31 @@ class HVAC
         end
         return curve
     end
+    
+    def self.create_curve_cubic(model, coeff, name, minX, maxX, minY, maxY)    
+      curve = OpenStudio::Model::CurveCubic.new(model)
+      curve.setName(name)
+      curve.setCoefficient1Constant(coeff[0])
+      curve.setCoefficient2x(coeff[1])
+      curve.setCoefficient3xPOW2(coeff[2])
+      curve.setCoefficient4xPOW3(coeff[3])
+      curve.setMinimumValueofx(minX)
+      curve.setMaximumValueofx(maxX)
+      curve.setMinimumCurveOutput(minY)
+      curve.setMaximumCurveOutput(maxY)
+      return curve
+    end
+    
+    def self.create_curve_exponent(model, coeff, name, minX, maxX)
+      curve = OpenStudio::Model::CurveExponent.new(model)
+      curve.setName(name)
+      curve.setCoefficient1Constant(coeff[0])
+      curve.setCoefficient2Constant(coeff[1])
+      curve.setCoefficient3Constant(coeff[2])
+      curve.setMinimumValueofx(minX)
+      curve.setMaximumValueofx(maxX)
+      return curve
+    end
       
     def self.calc_coil_stage_data_cooling(model, outputCapacity, number_Speeds, coolingEIR, shr_Rated_Gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC)
 

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>1abf81d4-01f0-403e-b803-f94474694dbf</version_id>
-  <version_modified>20170417T180407Z</version_modified>
+  <version_id>7feb5015-0f2a-465e-ae13-50d0a90af8c0</version_id>
+  <version_modified>20170418T170027Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -159,7 +159,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>118D319F</checksum>
+      <checksum>27E5CCE6</checksum>
     </file>
   </files>
 </measure>
