@@ -258,9 +258,14 @@ class Waterheater
         return pump
     end
     
-    def self.create_new_schedule_manager(t_set, model)
-        new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get, model)
-        OpenStudio::Model::SetpointManagerScheduled.new(model, new_schedule)
+    def self.create_new_schedule_manager(t_set, model, wh_type)
+        
+        if wh_type == "tank"
+			new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get + 1, model)
+		else #tankless
+			new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get, model)
+		end
+		OpenStudio::Model::SetpointManagerScheduled.new(model, new_schedule)
     end 
     
     def self.create_new_schedule_ruleset(name, schedule_name, t_set_c, model)
@@ -362,11 +367,15 @@ class Waterheater
         new_heater.setSetpointTemperatureSchedule(new_schedule)
     end
     
-    def self.create_new_loop(model, name, t_set)
+    def self.create_new_loop(model, name, t_set, wh_type)
         #Create a new plant loop for the water heater
         loop = OpenStudio::Model::PlantLoop.new(model)
         loop.setName(name)
-        loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get)
+		if wh_type == "tank"
+			loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get + 1)
+		else #tankless
+			loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get)
+		end
         loop.sizingPlant.setLoopDesignTemperatureDifference(OpenStudio::convert(10,"R","K").get)
         loop.setPlantLoopVolume(0.003) #~1 gal
         loop.setMaximumLoopFlowRate(0.01) # This size represents the physical limitations to flow due to losses in the piping system. For BEopt we assume that the pipes are always adequately sized
