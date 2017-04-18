@@ -227,6 +227,45 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             return false
         end
         
+        #remove all EMS and output variables
+        model.getOutputVariables.each do |output_var|
+            next unless output_var.name.to_s.start_with?("Zone Outdoor Air Drybulb Temperature","Zone Outdoor Air Relative Humidity","Zone Mean Air Temperature","Zone Air Relative Humidity","Water Heater Heat Loss Rate","Cooling Coil Sensible Cooling Rate","Cooling Coil Latent Cooling Rate","Fan Electric Power","Zone Mean Air Humidity Ratio","System Node Pressure","System Node Temperature","System Node Humidity Ratio","System Node Current Density Volume Flow Rate","Water Heater Temperature Node 3","Water Heater Heater 2 Heating Energy","Water Heater Heater 1 Heating Energy")
+            output_var.remove
+        end
+        
+        model.getEnergyManagementSystemProgramCallingManagers.each do |program_calling_manager|
+            next unless program_calling_manager.name.to_s.start_with?("HPWHProgramManager")
+            program_calling_manager.remove
+            runner.registerInfo("An existing HPWH was found and removed from the model.")
+        end
+        
+        model.getEnergyManagementSystemSensors.each do |sensor|
+            next unless sensor.name.to_s.start_with?("Tout","RHout","HPWH_amb_temp","HPWH_amb_rh","HPWH_tl","HPWH_sens_cool","HPWH_lat_cool","HPWH_fan_power","HPWH_amb_w","HPWH_amb_p","HPWH_tair_out","HPWH_wair_out","HPWH_v_air","T_ctrl","LE_P","UE_P")
+            sensor.remove
+        end
+        
+        model.getEnergyManagementSystemActuators.each do |actuator|
+            next unless actuator.name.to_s.start_with?("HPWH_RHamb_act", "HPWH_Tamb_act", "UESchedOverride", "LESchedOverride", "HPSchedOverride")
+            actuator.actuatedComponent.remove
+            actuator.remove
+        end
+        
+        model.getEnergyManagementSystemActuators.each do |actuator|
+            next unless actuator.name.to_s.start_with?("HPWH_sens_act","HPWH_lat_act")
+            actuator.actuatedComponent.to_OtherEquipment.get.otherEquipmentDefinition.remove
+            actuator.remove
+        end
+        
+        model.getEnergyManagementSystemPrograms.each do |program|
+            next unless program.name.to_s.start_with?("HPWHInletAir", "HPWHControl")
+            program.remove
+        end
+        
+        model.getEnergyManagementSystemTrendVariables.each do |trend_var|
+            next unless trend_var.name.to_s.start_with?("UETrend", "LETrend", "HPWH_on_off")
+            trend_var.remove
+        end
+        
         units.each do |unit|
             
             unit_num = Geometry.get_unit_number(model, unit, runner)
@@ -260,24 +299,47 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 next if pl.name.to_s != Constants.PlantLoopDomesticWater(unit.name.to_s)
                 loop = pl
                 #Remove any existing water heater
-                wh_removed = false
+                wh_type = "none"
+                objects_to_remove = []
                 pl.supplyComponents.each do |wh|
-                    next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized and !wh.to_WaterHeaterHeatPump.is_initialized
-                    wh.remove
-                    wh_removed = true
+                    next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized
+                    runner.registerInfo("Found a mixed, stratified, or hpwh")
+                    objects_to_remove << wh
+                    if wh.to_WaterHeaterMixed.is_initialized
+                        wh = wh.to_WaterHeaterMixed.get
+                        wh_type = "mixed"
+                    elsif wh.to_WaterHeaterStratified.is_initialized
+                        wh = wh.to_WaterHeaterStratified.get
+                        wh_type = "stratified"
+                    end
+                    if wh_type == "mixed" #TODO: stratified water heater setpoint schedules
+                        if wh.setpointTemperatureSchedule.is_initialized
+                            objects_to_remove << wh.setpointTemperatureSchedule.get
+                        end
+                    end
                 end
-                if wh_removed
+                if objects_to_remove.size > 0
                     runner.registerInfo("Removed existing water heater from plant loop #{pl.name.to_s}.")
                 end
-            end
-            
-            if loop.nil?
-                runner.registerInfo("A new plant loop for DHW will be added to the model")
-                runner.registerInitialCondition("No water heater model currently exists")
-                loop = Waterheater.create_new_loop(model, Constants.PlantLoopDomesticWater(unit_num), t_set)
+                objects_to_remove.uniq.each do |object|
+                    begin
+                        runner.registerInfo("removed object #{object.name.to_s}")
+                        object.remove
+                    rescue
+                        # no op
+                    end
+                end
             end
 
-            if loop.components(OpenStudio::Model::PumpConstantSpeed::iddObjectType).empty?
+            if loop.nil?
+                runner.registerInfo("A new plant loop for DHW will be added to the model")
+                runner.registerInitialCondition("There is no existing water heater")
+                loop = Waterheater.create_new_loop(model, Constants.PlantLoopDomesticWater(unit_num), t_set)
+            else
+                runner.registerInitialCondition("An existing water heater was found in the model. This water heater will be removed and replace with a heat pump water heater")
+            end
+
+            if loop.components(OpenStudio::Model::PumpVariableSpeed::iddObjectType).empty?
                 new_pump = Waterheater.create_new_pump(model)
                 new_pump.addToNode(loop.supplyInletNode)
             end
@@ -286,9 +348,27 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 new_manager = Waterheater.create_new_schedule_manager(t_set, model)
                 new_manager.addToNode(loop.supplyOutletNode)
             end
-            
+
+            #If the model currently has a HPWH, remove it
+            for hpwh in model.getWaterHeaterHeatPumpWrappedCondensers
+                hpwh.remove
+            end
+
+            #remove the HPWH fan
+            model.getFanOnOffs.each do |fan|	
+                if fan.name.to_s.start_with? "hpwh_fan"
+                    fan.remove
+                    break
+                end
+            end
+
+            #remove the HP
+            for hpwh_coil in model.getCoilWaterHeatingAirToWaterHeatPumpWrappeds
+                hpwh_coil.remove
+            end
+
             #Only ever going to make HPWHs in this measure, so don't split this code out to waterheater.rb
-            #Calculate some geometry parameters for UA and the location of sensors and heat sources in the tank
+            #Calculate some geometry parameters for UA, the location of sensors and heat sources in the tank
             
             if vol > 50
                 hpwh_param = 80
@@ -369,6 +449,40 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 hpwh_top_element_sp.setValue(sp)
             end
             
+            #WaterHeater:HeatPump:WrappedCondenser
+            hpwh = OpenStudio::Model::WaterHeaterHeatPumpWrappedCondenser.new(model)
+            hpwh.setName("hpwh_#{unit_num}")
+            hpwh.setCompressorSetpointTemperatureSchedule(hp_setpoint)
+            if hpwh_param == 50
+                hpwh.setDeadBandTemperatureDifference(0.5)
+            else
+                hpwh.setDeadBandTemperatureDifference(3.89)
+            end
+            hpwh.setCondenserBottomLocation(h_condbot)
+            hpwh.setCondenserTopLocation(h_condtop)
+            hpwh.setEvaporatorAirFlowRate(OpenStudio.convert(airflow_rate,"ft^3/min","m^3/s").get)
+            hpwh.setInletAirConfiguration("Schedule")
+            hpwh.setInletAirTemperatureSchedule(hpwh_tamb)
+            hpwh.setInletAirHumiditySchedule(hpwh_rhamb)
+            hpwh.setMinimumInletAirTemperatureforCompressorOperation(OpenStudio.convert(min_temp,"F","C").get)
+            hpwh.setMaximumInletAirTemperatureforCompressorOperation(OpenStudio.convert(max_temp,"F","C").get)
+            hpwh.setCompressorLocation("Schedule")
+            hpwh.setCompressorAmbientTemperatureSchedule(hpwh_tamb)
+            hpwh.setFanPlacement("DrawThrough")
+            hpwh.setOnCycleParasiticElectricLoad(0)
+            hpwh.setOffCycleParasiticElectricLoad(0)
+            hpwh.setParasiticHeatRejectionLocation("Outdoors")
+            hpwh.setTankElementControlLogic("MutuallyExclusive")
+            if hpwh_param == 50
+                hpwh.setControlSensor1HeightInStratifiedTank(h_hpctrl)
+                hpwh.setControlSensor1Weight(1)
+                hpwh.setControlSensor2HeightInStratifiedTank(h_hpctrl)
+            else
+                hpwh.setControlSensor1HeightInStratifiedTank(h_hpctrl_up)
+                hpwh.setControlSensor1Weight(0.75)
+                hpwh.setControlSensor2HeightInStratifiedTank(h_hpctrl_low)
+            end
+
             #Curves
             hpwh_cap = OpenStudio::Model::CurveBiquadratic.new(model)
             hpwh_cap.setName("HPWH-Cap-fT")
@@ -396,8 +510,8 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             hpwh_cop.setMinimumValueofy(0)
             hpwh_cop.setMaximumValueofy(100)  
             
-            #Coil:WaterHeating:AirToWaterHeatPump:Wrapped
-            coil = OpenStudio::Model::CoilWaterHeatingAirToWaterHeatPumpWrapped.new(model)
+            #Coil:WaterHeating:AirToWaterHeatPump:Wrapped (get the object created by the HPWH object and modify that)
+            coil = model.getCoilWaterHeatingAirToWaterHeatPumpWrappeds[unit_num-1] #There's only one per unit in the model
             coil.setName("hpwh_coil_#{unit_num}")
             coil.setRatedHeatingCapacity(OpenStudio.convert(cap,"kW","W").get)
             coil.setRatedCOP(cop)
@@ -412,8 +526,8 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             coil.setHeatingCOPFunctionofTemperatureCurve(hpwh_cop)
             coil.setMaximumAmbientTemperatureforCrankcaseHeaterOperation(0)
             
-            #WaterHeater:Stratified
-            tank = OpenStudio::Model::WaterHeaterStratified.new(model)
+            #WaterHeater:Stratified (get the object created by the HPWH object and modify that)
+            tank = model.getWaterHeaterStratifieds[unit_num-1]
             tank.setName("hpwh_tank_#{unit_num}")
             tank.setEndUseSubcategory("Domestic Hot Water")
             tank.setTankVolume(OpenStudio.convert(v_actual,"gal","m^3").get)
@@ -469,47 +583,11 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             tank.setSourceSideInletHeight(0)
             tank.setSourceSideOutletHeight(0)
             
-            #WaterHeater:HeatPump:WrappedCondenser
-            hpwh = OpenStudio::Model::WaterHeaterHeatPumpWrappedCondenser.new(model)
-            hpwh.setName("hpwh_#{unit_num}")
-            hpwh.setCompressorSetpointTemperatureSchedule(hp_setpoint)
-            if hpwh_param == 50
-                hpwh.setDeadBandTemperatureDifference(0.5)
-            else
-                hpwh.setDeadBandTemperatureDifference(3.89)
-            end
-            hpwh.setCondenserBottomLocation(h_condbot)
-            hpwh.setCondenserTopLocation(h_condtop)
-            hpwh.setEvaporatorAirFlowRate(OpenStudio.convert(airflow_rate,"ft^3/min","m^3/s").get)
-            hpwh.setInletAirConfiguration("Schedule")
-            hpwh.setInletAirTemperatureSchedule(hpwh_tamb)
-            hpwh.setInletAirHumiditySchedule(hpwh_rhamb)
-            hpwh.setTank(tank)
-            hpwh.setDXCoil(coil)
-            hpwh.setMinimumInletAirTemperatureforCompressorOperation(OpenStudio.convert(min_temp,"F","C").get)
-            hpwh.setMaximumInletAirTemperatureforCompressorOperation(OpenStudio.convert(max_temp,"F","C").get)
-            hpwh.setCompressorLocation("Schedule")
-            hpwh.setCompressorAmbientTemperatureSchedule(hpwh_tamb)
-            hpwh.setFanPlacement("DrawThrough")
-            hpwh.setOnCycleParasiticElectricLoad(0)
-            hpwh.setOffCycleParasiticElectricLoad(0)
-            hpwh.setParasiticHeatRejectionLocation("Outdoors")
-            hpwh.setTankElementControlLogic("MutuallyExclusive")
-            if hpwh_param == 50
-                hpwh.setControlSensor1HeightInStratifiedTank(h_hpctrl)
-                hpwh.setControlSensor1Weight(1)
-                hpwh.setControlSensor2HeightInStratifiedTank(h_hpctrl)
-            else
-                hpwh.setControlSensor1HeightInStratifiedTank(h_hpctrl_up)
-                hpwh.setControlSensor1Weight(0.75)
-                hpwh.setControlSensor2HeightInStratifiedTank(h_hpctrl_low)
-            end
-            runner.registerInfo("Added HPWH to the model")
-            
             #Fan:OnOff
             #The hpwh object creates a fan, so we're getting that fan and setting the apropriate values
             model.getFanOnOffs.each do |fan|	
-                if fan.name.to_s.start_with?("Fan On Off")
+                #Look for a fan with the default properties to make sure we're getting the newly created fan object
+                if fan.fanEfficiency == 0.6 and fan.pressureRise == 300 and fan.isMaximumFlowRateAutosized == true and fan.isMotorEfficiencyDefaulted == false
                     fan.setName("hpwh_fan_#{unit_num}")
                     if hpwh_param == 50
                         fan.setFanEfficiency(23/fan_power * OpenStudio.convert(1,"ft^3/min","m^3/s").get)
@@ -527,7 +605,9 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 end
             end
             
-            
+            #Set the HPWH tank and coil objects
+            hpwh.setTank(tank)
+            hpwh.setDXCoil(coil)
             
             #Add in EMS program for HPWH interaction with the living space & ambient air temperature depression
             if int_factor != 1 and ducting != "none"
@@ -632,7 +712,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             actuator.setName("HPWH_lat_act_#{unit_num}")
             
             trend_var = OpenStudio::Model::EnergyManagementSystemTrendVariable.new(model, "HPWH_sens_cool_#{unit_num}")
-            trend_var.setName("hpwh_on_off_#{unit_num}")
+            trend_var.setName("HPWH_on_off_#{unit_num}")
             trend_var.setNumberOfTimestepsToBeLogged(2)
             
             #Additioanl sensors if supply or exhaust to calculate the load on the space from the HPWH
@@ -776,7 +856,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 sensor.setKeyName("hpwh_tank_#{unit_num}")
                 
                 hpSchedOverride = OpenStudio::Model::ScheduleConstant.new(model)
-                hpSchedOverride.setName("HPSchedOverride")
+                hpSchedOverride.setName("HPOverride_#{unit_num}")
                 hpSchedOverride.setValue(tset_C)
                 
                 ueSchedOverride = OpenStudio::Model::ScheduleConstant.new(model)
@@ -833,42 +913,17 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             program_calling_manager.addProgram(hpwh_ducting_program)
             
             loop.addSupplyBranchForComponent(tank)
+
             
         end
-        
-        register_final_conditions(runner, model)
+
+        runner.registerFinalCondition("A new  #{vol.round} gallon heat pump water heater, with a rated COP of #{cop} and a heat pump capacity of #{cap} has been added to the model")
         
         return true
  
     end #end the run method
 
     private
-
-    def register_final_conditions(runner, model)
-        final_condition = list_water_heaters(model, runner).join("\n")
-        runner.registerFinalCondition(final_condition)
-    end    
-
-    def list_water_heaters(model, runner)
-        water_heaters = []
-
-        existing_heaters = model.getWaterHeaterMixeds
-        for heater in existing_heaters do
-            heatername = heater.name.get
-            loopname = heater.plantLoop.get.name.get
-
-            capacity_si = heater.getHeaterMaximumCapacity.get
-            capacity = OpenStudio.convert(capacity_si.value, capacity_si.units.standardString, "kW").get
-            volume_si = heater.getTankVolume.get
-            volume = OpenStudio.convert(volume_si.value, volume_si.units.standardString, "gal").get
-            te = heater.getHeaterThermalEfficiency
-          
-            water_heaters << "Water heater '#{heatername}' added to plant loop '#{loopname}', with a capacity of #{capacity.round(1)} kW" +
-            " and an actual tank volume of #{volume.round(1)} gal."
-        end
-        water_heaters
-    end
-
     
     def validate_storage_tank_volume(vol, runner)
         return true if (vol == Constants.Auto)  # flag for autosizing
