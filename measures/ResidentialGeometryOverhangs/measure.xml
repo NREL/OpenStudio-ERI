@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>0eaab076-2f6c-49ed-96f2-f07563c5398e</version_id>
-  <version_modified>20170419T194306Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>87c03bdf-b9e2-4646-bd15-d43982642c6c</version_id>
+  <version_modified>20170419T215208Z</version_modified>
+  <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
   <description>Sets presence/dimensions of overhangs for windows on the specified building facade(s).</description>
@@ -153,12 +153,6 @@
       <checksum>14237DE1</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11B29BB7</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -199,6 +193,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3F876495</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>17063A91</checksum>
     </file>
   </files>
 </measure>

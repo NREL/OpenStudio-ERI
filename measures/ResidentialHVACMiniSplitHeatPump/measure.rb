@@ -106,7 +106,7 @@ class ProcessVRFMinisplit < OpenStudio::Measure::ModelMeasure
     miniSplitHPHeatingMaxCapacity.setDisplayName("Maximum Heating Capacity")
     miniSplitHPHeatingMaxCapacity.setUnits("frac")
     miniSplitHPHeatingMaxCapacity.setDescription("Maximum heating capacity as a fraction of nominal heating capacity at rated conditions.")
-    miniSplitHPHeatingMaxCapacity.setDefaultValue(1.5)
+    miniSplitHPHeatingMaxCapacity.setDefaultValue(1.2)
     args << miniSplitHPHeatingMaxCapacity        
     
     #make a double argument for minisplit heating min airflow

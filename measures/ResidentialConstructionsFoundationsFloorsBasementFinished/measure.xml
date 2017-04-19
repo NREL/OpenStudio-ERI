@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>4e42973d-bf02-4169-8cc8-468f2de2c3b1</version_id>
-  <version_modified>20170419T194304Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>d6d0db39-15fd-48cd-bce3-8a2cc6865537</version_id>
+  <version_modified>20170419T215204Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
   <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
   <description>This measure assigns constructions to finished basement walls and floors.</description>
@@ -168,12 +168,6 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11B29BB7</checksum>
-    </file>
-    <file>
       <filename>FinishedBasement_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -249,6 +243,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3F876495</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>17063A91</checksum>
     </file>
   </files>
 </measure>

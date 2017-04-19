@@ -808,11 +808,11 @@ class Geometry
     end
     
     def self.is_unfinished_attic(space_or_zone)
-        return true if space_or_zone.name.to_s.start_with?(Constants.UnfinishedAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.UnfinishedAtticZone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.UnfinishedAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.GarageAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.UnfinishedAtticZone)
     end
     
     def self.is_finished_attic(space_or_zone)
-        return true if space_or_zone.name.to_s.start_with?(Constants.FinishedAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.FinishedAtticZone)
+        return true if space_or_zone.name.to_s.start_with?(Constants.FinishedAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.GarageFinishedAtticSpace) or space_or_zone.name.to_s.start_with?(Constants.FinishedAtticZone)
     end
     
     def self.is_garage(space_or_zone)

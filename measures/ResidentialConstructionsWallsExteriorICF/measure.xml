@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_icf</name>
   <uid>41d87ab7-8f06-4b12-b0b6-61ccbe8887e3</uid>
-  <version_id>f60be77e-4cbf-4e40-81c2-a9779010b0c0</version_id>
-  <version_modified>20170419T194305Z</version_modified>
-  <xml_checksum>0D0748A3</xml_checksum>
+  <version_id>ae96b9da-5a0b-484c-93bf-31c1e3eb1d3e</version_id>
+  <version_modified>20170419T215206Z</version_modified>
+  <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorICF</class_name>
   <display_name>Set Residential Walls - ICF Construction</display_name>
   <description>This measure assigns an ICF construction to above-grade exterior walls adjacent to finished space or attic walls under insulated roofs.</description>
@@ -103,12 +103,6 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11B29BB7</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -125,6 +119,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3F876495</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>17063A91</checksum>
     </file>
   </files>
 </measure>

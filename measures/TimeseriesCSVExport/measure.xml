@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>timeseries_csv_export</name>
   <uid>2a3442c1-944d-4e91-9e11-11e0cf368c64</uid>
-  <version_id>e65c6938-7ae3-419c-98ba-9401a5ce7ab8</version_id>
-  <version_modified>20170419T194316Z</version_modified>
-  <xml_checksum>27EA4DD1</xml_checksum>
+  <version_id>a04c3f7f-d8cd-45e7-a9c3-80686b6c6423</version_id>
+  <version_modified>20170419T215221Z</version_modified>
+  <xml_checksum>15BF4E57</xml_checksum>
   <class_name>TimeseriesCSVExport</class_name>
   <display_name>Timeseries CSV Export</display_name>
   <description>Exports all available hourly timeseries enduses to csv, and uses them for utility bill calculations.</description>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>dc4e8340-4b34-4697-ac10-584898403f95</version_id>
-  <version_modified>20170419T194306Z</version_modified>
-  <xml_checksum>A02778FF</xml_checksum>
+  <version_id>56b6ff05-7e12-454b-8ed3-37fb9252d2f1</version_id>
+  <version_modified>20170419T215208Z</version_modified>
+  <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
   <description>Sets the window area for the building. Doors with glazing should be set as window area.</description>
@@ -117,12 +117,6 @@
       <checksum>6773DCAB</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11B29BB7</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -163,6 +157,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3F876495</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>17063A91</checksum>
     </file>
   </files>
 </measure>

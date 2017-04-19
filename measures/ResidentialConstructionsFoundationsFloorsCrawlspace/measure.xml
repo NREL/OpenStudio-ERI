@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>9eef7b33-b42c-4f16-9bb3-f22927f9935a</version_id>
-  <version_modified>20170419T194304Z</version_modified>
-  <xml_checksum>BCB7218E</xml_checksum>
+  <version_id>2eb8ddd1-c425-40f0-82fe-d5009ba961cf</version_id>
+  <version_modified>20170419T215205Z</version_modified>
+  <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
   <description>This measure assigns constructions to the crawlspace ceilings, walls, and floors.</description>
@@ -119,12 +119,6 @@
       <checksum>37254C93</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>11B29BB7</checksum>
-    </file>
-    <file>
       <filename>Crawlspace_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -200,6 +194,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3F876495</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>17063A91</checksum>
     </file>
   </files>
 </measure>
