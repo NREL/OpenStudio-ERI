@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>c6a80950-cb1c-421d-9ce5-e5f23464718c</version_id>
-  <version_modified>20170418T214738Z</version_modified>
+  <version_id>ba5c3c30-f20f-4727-a1e8-193ba1545c41</version_id>
+  <version_modified>20170419T181808Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
@@ -215,7 +215,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AAE3D2EE</checksum>
+      <checksum>3F876495</checksum>
     </file>
   </files>
 </measure>

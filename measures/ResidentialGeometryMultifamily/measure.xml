@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>b793b52b-dee9-431c-be3a-ad3fa93dd6a5</version_id>
-  <version_modified>20170418T214734Z</version_modified>
+  <version_id>0aa99c97-4f41-4f46-b99d-8d91a9afb090</version_id>
+  <version_modified>20170419T181805Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -279,7 +279,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AAE3D2EE</checksum>
+      <checksum>3F876495</checksum>
     </file>
   </files>
 </measure>

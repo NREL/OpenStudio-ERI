@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>60ad9f03-0514-4ae2-a749-18e3c9a19f6a</version_id>
-  <version_modified>20170418T222413Z</version_modified>
+  <version_id>c8e979fd-2278-42d2-ba77-2b1f3b397d08</version_id>
+  <version_modified>20170419T181808Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>
@@ -243,12 +243,6 @@
       <checksum>D04CADDB</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>AAE3D2EE</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -264,6 +258,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>0BCD9D89</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3F876495</checksum>
     </file>
   </files>
 </measure>

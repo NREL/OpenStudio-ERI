@@ -185,11 +185,15 @@ class ProcessBoilerElectric < OpenStudio::Measure::ModelMeasure
     loop_sizing.setDesignLoopExitTemperature(OpenStudio::convert(boilerDesignTemp - 32.0,"R","K").get)
     loop_sizing.setLoopDesignTemperatureDifference(OpenStudio::convert(20.0,"R","K").get)
     
-    pump = OpenStudio::Model::PumpConstantSpeed.new(model)
+    pump = OpenStudio::Model::PumpVariableSpeed.new(model)
     pump.setName(Constants.ObjectNameBoiler(Constants.FuelTypeElectric) + " hydronic pump")
     pump.setRatedPumpHead(179352)
     pump.setMotorEfficiency(0.9)
     pump.setFractionofMotorInefficienciestoFluidStream(0)
+    pump.setCoefficient1ofthePartLoadPerformanceCurve(0)
+    pump.setCoefficient2ofthePartLoadPerformanceCurve(1)
+    pump.setCoefficient3ofthePartLoadPerformanceCurve(0)
+    pump.setCoefficient4ofthePartLoadPerformanceCurve(0)
     pump.setPumpControlType("Intermittent")
         
     boiler = OpenStudio::Model::BoilerHotWater.new(model)

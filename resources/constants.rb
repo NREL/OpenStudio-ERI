@@ -122,6 +122,12 @@ class Constants
   def self.BoilerTypeSteam
     return 'steam'
   end
+  def self.BoilerTypeModulating
+    return 'modulating'
+  end
+  def self.BoilerTypeNonModulating
+    return 'non modulating'
+  end
   def self.BoreConfigSingle
     return 'single'
   end

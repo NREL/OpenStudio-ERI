@@ -114,6 +114,17 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
     boilerOutputCapacity.setUnits("kBtu/hr")
     boilerOutputCapacity.setDefaultValue(Constants.SizingAuto)
     args << boilerOutputCapacity  
+    
+    #make an argument for whether the boiler is modulating or not
+    mod_display_names = OpenStudio::StringVector.new
+    mod_display_names << Constants.BoilerTypeModulating
+    mod_display_names << Constants.BoilerTypeNonModulating
+    boilerModulation = OpenStudio::Measure::OSArgument::makeChoiceArgument("modulation", mod_display_names, true)
+    boilerModulation.setDisplayName("Boiler Modulation")
+    boilerModulation.setDescription("Whether the burner on the boiler can fully modulate or not. Typically modulating boilers are higher efficiency units (such as condensing boilers).")
+    boilerModulation.setUnits("")
+    boilerModulation.setDefaultValue(Constants.BoilerTypeNonModulating)
+    args << boilerModulation
 
     return args
   end
@@ -144,10 +155,21 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
       boilerOutputCapacity = OpenStudio::convert(boilerOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     boilerDesignTemp = runner.getDoubleArgumentValue("design_temp",user_arguments)
+    boilerModulation = runner.getStringArgumentValue("modulation",user_arguments)
     
     hasBoilerCondensing = false
     if boilerType == Constants.BoilerTypeCondensing
       hasBoilerCondensing = true
+    end
+    
+    if boilerModulation == Constants.BoilerTypeModulating
+        hasBoilerModulating = true
+    else
+        hasBoilerModulating = false
+    end
+    
+    if hasBoilerCondensing == true and hasBoilerModulating == false
+        runner.registerInfo("A non modulating, condensing boilers has been selected. These types of units are very uncommon, double check inputs.")
     end
     
     # _processHydronicSystem
@@ -200,7 +222,7 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
     loop_sizing.setDesignLoopExitTemperature(OpenStudio::convert(boilerDesignTemp - 32.0,"R","K").get)
     loop_sizing.setLoopDesignTemperatureDifference(OpenStudio::convert(20.0,"R","K").get)
     
-    pump = OpenStudio::Model::PumpConstantSpeed.new(model)
+    pump = OpenStudio::Model::PumpVariableSpeed.new(model)
     pump.setName(Constants.ObjectNameBoiler(boilerFuelType) + " hydronic pump")
     if boilerOutputCapacity != Constants.SizingAuto
       pump.setRatedFlowRate(OpenStudio::convert(boilerOutputCapacity/20.0/500.0,"gal/min","m^3/s").get)
@@ -208,6 +230,10 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
     pump.setRatedPumpHead(179352)
     pump.setMotorEfficiency(0.9)
     pump.setFractionofMotorInefficienciestoFluidStream(0)
+    pump.setCoefficient1ofthePartLoadPerformanceCurve(0)
+    pump.setCoefficient2ofthePartLoadPerformanceCurve(1)
+    pump.setCoefficient3ofthePartLoadPerformanceCurve(0)
+    pump.setCoefficient4ofthePartLoadPerformanceCurve(0)
     pump.setPumpControlType("Intermittent")
         
     boiler = OpenStudio::Model::BoilerHotWater.new(model)
@@ -229,19 +255,32 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
       boiler.setEfficiencyCurveTemperatureEvaluationVariable("EnteringBoiler")
       boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
       boiler.setDesignWaterOutletTemperature(OpenStudio::convert(boilerDesignTemp - 32.0,"R","K").get)
-      boiler.setMinimumPartLoadRatio(0.0) 
-      boiler.setMaximumPartLoadRatio(1.0)
+      if boilerModulation == Constants.BoilerTypeModulating
+        boiler.setMinimumPartLoadRatio(0.0) 
+        boiler.setMaximumPartLoadRatio(1.0)
+        boiler.setBoilerFlowMode("LeavingSetpointModulated")
+      else
+        boiler.setMinimumPartLoadRatio(0.99) 
+        boiler.setMaximumPartLoadRatio(1.0)
+        boiler.setBoilerFlowMode("ConstantFlow")
+      end
     else
       boiler.setNominalThermalEfficiency(1.0 / boiler_hir)
       boiler.setEfficiencyCurveTemperatureEvaluationVariable("LeavingBoiler")
       boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
       boiler.setDesignWaterOutletTemperature(OpenStudio::convert(boilerDesignTemp - 32.0,"R","K").get)
-      boiler.setMinimumPartLoadRatio(0.0) 
-      boiler.setMaximumPartLoadRatio(1.1)
+      if boilerModulation == Constants.BoilerTypeModulating
+        boiler.setMinimumPartLoadRatio(0.0) 
+        boiler.setMaximumPartLoadRatio(1.0)
+        boiler.setBoilerFlowMode("LeavingSetpointModulated")
+      else
+        boiler.setMinimumPartLoadRatio(0.99) 
+        boiler.setMaximumPartLoadRatio(1.0)
+        boiler.setBoilerFlowMode("ConstantFlow")
+      end
     end
     boiler.setOptimumPartLoadRatio(1.0)
     boiler.setWaterOutletUpperTemperatureLimit(99.9)
-    boiler.setBoilerFlowMode("ConstantFlow")
     boiler.setParasiticElectricLoad(boiler_aux)
        
     if boilerType == Constants.BoilerTypeCondensing and boilerOATResetEnabled
