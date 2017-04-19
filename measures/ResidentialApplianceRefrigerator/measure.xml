@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_refrigerator</name>
   <uid>f0259bdc-1391-41eb-80eb-efc10bd1bc02</uid>
-  <version_id>43d982b3-dac8-4a78-a807-f68a87e973f5</version_id>
-  <version_modified>20170419T181803Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>ca4be683-e968-4a8b-92c4-01ba0a46f8af</version_id>
+  <version_modified>20170419T194303Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialRefrigerator</class_name>
   <display_name>Set Residential Refrigerator</display_name>
   <description>Adds (or replaces) a residential refrigerator with the specified efficiency, operation, and schedule. For multifamily buildings, the refrigerator can be set for all units of the building.</description>

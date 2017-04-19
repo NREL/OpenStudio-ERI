@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_well_pump</name>
   <uid>13183743-6249-4762-8050-cf80f5d4650b</uid>
-  <version_id>c2afd800-4a4b-453d-9319-1ea4209ffd42</version_id>
-  <version_modified>20170419T181814Z</version_modified>
-  <xml_checksum>126F1C43</xml_checksum>
+  <version_id>ea09d48d-0c8a-48e1-8019-3e6426609628</version_id>
+  <version_modified>20170419T194316Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialWellPump</class_name>
   <display_name>Set Residential Well Pump</display_name>
   <description>Adds (or replaces) a residential well pump with the specified efficiency and schedule. The well is assumed to be outdoors. For multifamily buildings, the well pump is set for all units of the building.</description>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>c14586b7-2de4-4fdf-ba41-7440eaaf9d5e</version_id>
-  <version_modified>20170419T181806Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>79ced838-9f01-450e-a27f-08399dd2b137</version_id>
+  <version_modified>20170419T194306Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
   <description>Sets the neighbors (front, back, left, and/or right) of the building for shading purposes. Neighboring buildings will have the same geometry as the model building.</description>

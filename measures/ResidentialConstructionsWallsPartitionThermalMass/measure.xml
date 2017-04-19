@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>03266808-ff6a-40ef-89d5-a05a732c290c</version_id>
-  <version_modified>20170419T181805Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>9c8e9f4e-46b2-422d-aa43-45b2b3e8a25c</version_id>
+  <version_modified>20170419T194305Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
   <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
   <description>This measure assigns partition wall mass to finished spaces.</description>

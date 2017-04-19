@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>6c98576a-d42f-4b13-98ba-36b76dd2ec64</version_id>
-  <version_modified>20170419T181809Z</version_modified>
-  <xml_checksum>0DA5C9E6</xml_checksum>
+  <version_id>633c2f7f-cb2a-4aeb-b555-26954c19546d</version_id>
+  <version_modified>20170419T194310Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
   <description>This measure removes any existing HVAC heating components from the building and adds a furnace along with an on/off supply fan to a unitary air loop. For multifamily buildings, the furnace can be set for all units of the building.</description>
@@ -306,12 +306,6 @@
       <checksum>C7C92EA5</checksum>
     </file>
     <file>
-      <filename>process_furnace_electric_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>ADA1FB85</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -351,6 +345,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>3F876495</checksum>
+    </file>
+    <file>
+      <filename>process_furnace_electric_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BF98CD4F</checksum>
     </file>
   </files>
 </measure>

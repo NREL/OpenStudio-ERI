@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_steel_stud</name>
   <uid>1ff01961-2d80-4074-90ea-84c56a7204be</uid>
-  <version_id>56c14842-d3e3-4a9b-8ee3-1d7ee65f596a</version_id>
-  <version_modified>20170419T181805Z</version_modified>
-  <xml_checksum>2609226D</xml_checksum>
+  <version_id>d08bb612-a2b4-48a9-b230-508154dfa551</version_id>
+  <version_modified>20170419T194305Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSteelStud</class_name>
   <display_name>Set Residential Walls - Steel Stud Construction</display_name>
   <description>This measure assigns a steel stud construction to above-grade exterior walls adjacent to finished space or attic walls under insulated roofs.</description>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_gas</name>
   <uid>65550b9d-c0bf-405b-9229-dc63721eb887</uid>
-  <version_id>65a04dbd-2bef-41c7-ad24-c807199b3909</version_id>
-  <version_modified>20170419T181814Z</version_modified>
-  <xml_checksum>25A40D75</xml_checksum>
+  <version_id>f46117c5-b57a-4bfa-8cc9-5b69cca840c2</version_id>
+  <version_modified>20170419T194315Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ResidentialHotTubHeaterGas</class_name>
   <display_name>Set Residential Hot Tub Gas Heater</display_name>
   <description>Adds (or replaces) a residential hot tub heater with the specified efficiency and schedule. The hot tub is assumed to be outdoors. For multifamily buildings, the hot tub heater is set for all units of the building.</description>

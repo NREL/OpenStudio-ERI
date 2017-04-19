@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_roofing_material</name>
   <uid>3239e82d-5efc-4a17-9223-c7c1cd8c9cf7</uid>
-  <version_id>e47da26b-7bc4-4d32-9e8a-7982847b2f4e</version_id>
-  <version_modified>20170419T181803Z</version_modified>
-  <xml_checksum>A465C8A5</xml_checksum>
+  <version_id>7f97ce5d-7ac3-48b9-9ab8-733c6f7ad19f</version_id>
+  <version_modified>20170419T194303Z</version_modified>
+  <xml_checksum>A02778FF</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRoofingMaterial</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roofing Material</display_name>
   <description>This measure assigns the roofing material to all roof surfaces.</description>

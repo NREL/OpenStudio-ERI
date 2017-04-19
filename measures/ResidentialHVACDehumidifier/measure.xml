@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_dehumidifier</name>
   <uid>f2d9e1e8-17bd-4a4a-a46b-df5f7e54e6c3</uid>
-  <version_id>c1011674-e12c-477a-8472-b2a9b07dd539</version_id>
-  <version_modified>20170419T181809Z</version_modified>
-  <xml_checksum>D48F381B</xml_checksum>
+  <version_id>a59c307e-eaf1-4fd3-a244-91a042f59f56</version_id>
+  <version_modified>20170419T194309Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>ProcessDehumidifier</class_name>
   <display_name>Set Residential Dehumidifier</display_name>
   <description>This measure removes any existing dehumidifiers from the building and adds a dehumidifier. For multifamily buildings, the dehumidifier can be set for all units of the building.</description>

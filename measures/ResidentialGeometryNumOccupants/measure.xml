@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>d70fc317-77eb-4ecb-b630-79c0f56947c8</version_id>
-  <version_modified>20170419T181806Z</version_modified>
-  <xml_checksum>57232789</xml_checksum>
+  <version_id>7212aaad-06e6-4027-8040-b683836b953b</version_id>
+  <version_modified>20170419T194306Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
   <description>Sets the number of occupants in the building. For multifamily buildings, the people can be set for all units of the building.</description>

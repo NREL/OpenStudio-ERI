@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>0aa99c97-4f41-4f46-b99d-8d91a9afb090</version_id>
-  <version_modified>20170419T181805Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>c5bf8417-c8d8-4587-8941-363bc0f77bb9</version_id>
+  <version_modified>20170419T194306Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
   <description>Sets the basic geometry for the building.</description>

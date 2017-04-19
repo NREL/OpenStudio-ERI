@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>78ed0dbd-2b51-4892-b6a6-e81614705a09</version_id>
-  <version_modified>20170419T181805Z</version_modified>
-  <xml_checksum>6FAFA9DE</xml_checksum>
+  <version_id>6ad5e654-9ce1-45c2-bb1f-7d265c61510d</version_id>
+  <version_modified>20170419T194305Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
   <description>This measure assigns a construction to windows. This measure also creates the interior shading schedule, which is based on shade multipliers and the heating and cooling season logic defined in the Building America House Simulation Protocols.</description>

@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>3a270e49-5403-4981-9c79-85a9f03fc936</version_id>
-  <version_modified>20170419T181806Z</version_modified>
-  <xml_checksum>2AF3A68E</xml_checksum>
+  <version_id>fb8b2486-d3c6-452a-9a5d-6d87bdefc90e</version_id>
+  <version_modified>20170419T194306Z</version_modified>
+  <xml_checksum>0D0748A3</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
   <description>Sets the number of bedrooms and bathrooms in the building. For multifamily buildings, the bedrooms/bathrooms can be set for all units of the building.</description>

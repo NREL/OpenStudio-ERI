@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_surfaces</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>74605c0d-3072-4b8c-b2b9-5d607e0d16bf</version_id>
-  <version_modified>20170419T181804Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>f0aa4ef8-e7f7-4400-ba19-7515643511e3</version_id>
+  <version_modified>20170419T194304Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSurfaces</class_name>
   <display_name>Set Residential Uninsulated Surfaces</display_name>
   <description>This measure assigns an uninsulated constructions to 1) exterior surfaces adjacent to unfinished space, 2) surfaces between two unfinished (or two finished) spaces, or 3) adiabatic surfaces.</description>

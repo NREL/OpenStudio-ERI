@@ -2,9 +2,9 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_double_wood_stud</name>
   <uid>d3ae8875-36bc-4e4f-a5a9-c9d0dcd46651</uid>
-  <version_id>1e304036-4570-4fe3-83ff-4d09aedeca88</version_id>
-  <version_modified>20170419T181804Z</version_modified>
-  <xml_checksum>1E963D9C</xml_checksum>
+  <version_id>6d89dd58-ebf1-4f31-8fe0-19fbb14267be</version_id>
+  <version_modified>20170419T194304Z</version_modified>
+  <xml_checksum>BCB7218E</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorDoubleWoodStud</class_name>
   <display_name>Set Residential Walls - Double Wood Stud Construction</display_name>
   <description>This measure assigns a double wood stud construction to above-grade exterior walls adjacent to finished space or attic walls under insulated roofs.</description>
