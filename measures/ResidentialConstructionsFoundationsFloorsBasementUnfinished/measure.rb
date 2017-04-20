@@ -239,7 +239,6 @@ class ProcessConstructionsFoundationsFloorsBasementUnfinished < OpenStudio::Meas
     else
         ubExtPerimeter = exposed_perim.to_f
     end
-    puts "ubExtPerimeter #{ubExtPerimeter}"
     ubExtWallArea = ubExtPerimeter * Geometry.spaces_avg_height(spaces)
 
     # -------------------------------

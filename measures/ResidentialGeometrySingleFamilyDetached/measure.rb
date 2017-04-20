@@ -701,13 +701,7 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Measure::Model
           wall_n.setSpace(garage_attic_space)
           wall_s.setSpace(garage_attic_space)
           
-          if num_floors == 1 and not attic_type == Constants.FinishedAtticType
-            
-            garage_attic_space_name = Constants.GarageAtticSpace
-            garage_attic_space.setThermalZone(garage_zone)
-            surface.remove
-            
-          elsif attic_type == Constants.FinishedAtticType
+          if attic_type == Constants.FinishedAtticType
           
             garage_attic_space_name = Constants.GarageFinishedAtticSpace
             garage_attic_space.setThermalZone(living_zone)
