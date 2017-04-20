@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>2c22157c-cf2f-4313-a813-3cab017f831f</version_id>
-  <version_modified>20170419T215212Z</version_modified>
+  <version_id>e2aab2c1-a028-4c41-817e-f4e6156f0d7f</version_id>
+  <version_modified>20170420T170549Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
@@ -53,10 +53,6 @@
         <choice>
           <value>hot water, natural draft</value>
           <display_name>hot water, natural draft</display_name>
-        </choice>
-        <choice>
-          <value>steam</value>
-          <display_name>steam</display_name>
         </choice>
       </choices>
     </argument>
@@ -273,21 +269,20 @@
     </argument>
     <argument>
       <name>modulation</name>
-      <display_name>Boiler Modulation</display_name>
+      <display_name>Modulating Boiler</display_name>
       <description>Whether the burner on the boiler can fully modulate or not. Typically modulating boilers are higher efficiency units (such as condensing boilers).</description>
-      <type>Choice</type>
-      <units></units>
+      <type>Boolean</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>non modulating</default_value>
+      <default_value>false</default_value>
       <choices>
         <choice>
-          <value>modulating</value>
-          <display_name>modulating</display_name>
+          <value>true</value>
+          <display_name>true</display_name>
         </choice>
         <choice>
-          <value>non modulating</value>
-          <display_name>non modulating</display_name>
+          <value>false</value>
+          <display_name>false</display_name>
         </choice>
       </choices>
     </argument>
@@ -447,16 +442,16 @@
       <checksum>98D29F9B</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>17063A91</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3F876495</checksum>
-    </file>
-    <file>
-      <filename>process_boiler_fuel_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>70054135</checksum>
+      <checksum>AAE3D2EE</checksum>
     </file>
     <file>
       <version>
@@ -467,13 +462,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>35D99702</checksum>
+      <checksum>93F7F86E</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>process_boiler_fuel_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>17063A91</checksum>
+      <usage_type>test</usage_type>
+      <checksum>9974B671</checksum>
     </file>
   </files>
 </measure>

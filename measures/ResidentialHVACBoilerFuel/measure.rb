@@ -44,7 +44,7 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
     boiler_display_names << Constants.BoilerTypeForcedDraft
     boiler_display_names << Constants.BoilerTypeCondensing
     boiler_display_names << Constants.BoilerTypeNaturalDraft
-    boiler_display_names << Constants.BoilerTypeSteam
+    #boiler_display_names << Constants.BoilerTypeSteam
     boilerType = OpenStudio::Measure::OSArgument::makeChoiceArgument("system_type", boiler_display_names, true)
     boilerType.setDisplayName("System Type")
     boilerType.setDescription("The system type of the boiler.")
@@ -116,14 +116,10 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
     args << boilerOutputCapacity  
     
     #make an argument for whether the boiler is modulating or not
-    mod_display_names = OpenStudio::StringVector.new
-    mod_display_names << Constants.BoilerTypeModulating
-    mod_display_names << Constants.BoilerTypeNonModulating
-    boilerModulation = OpenStudio::Measure::OSArgument::makeChoiceArgument("modulation", mod_display_names, true)
-    boilerModulation.setDisplayName("Boiler Modulation")
+    boilerModulation = OpenStudio::Measure::OSArgument::makeBoolArgument("modulation", true)
+    boilerModulation.setDisplayName("Modulating Boiler")
     boilerModulation.setDescription("Whether the burner on the boiler can fully modulate or not. Typically modulating boilers are higher efficiency units (such as condensing boilers).")
-    boilerModulation.setUnits("")
-    boilerModulation.setDefaultValue(Constants.BoilerTypeNonModulating)
+    boilerModulation.setDefaultValue(false)
     args << boilerModulation
 
     return args
@@ -155,21 +151,15 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
       boilerOutputCapacity = OpenStudio::convert(boilerOutputCapacity.to_f,"kBtu/h","Btu/h").get
     end
     boilerDesignTemp = runner.getDoubleArgumentValue("design_temp",user_arguments)
-    boilerModulation = runner.getStringArgumentValue("modulation",user_arguments)
+    hasBoilerModulating = runner.getBoolArgumentValue("modulation",user_arguments)
     
     hasBoilerCondensing = false
     if boilerType == Constants.BoilerTypeCondensing
       hasBoilerCondensing = true
     end
     
-    if boilerModulation == Constants.BoilerTypeModulating
-        hasBoilerModulating = true
-    else
-        hasBoilerModulating = false
-    end
-    
-    if hasBoilerCondensing == true and hasBoilerModulating == false
-        runner.registerInfo("A non modulating, condensing boilers has been selected. These types of units are very uncommon, double check inputs.")
+    if hasBoilerCondensing and not hasBoilerModulating
+        runner.registerWarning("A non modulating, condensing boilers has been selected. These types of units are very uncommon, double check inputs.")
     end
     
     # _processHydronicSystem
@@ -255,7 +245,7 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
       boiler.setEfficiencyCurveTemperatureEvaluationVariable("EnteringBoiler")
       boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
       boiler.setDesignWaterOutletTemperature(OpenStudio::convert(boilerDesignTemp - 32.0,"R","K").get)
-      if boilerModulation == Constants.BoilerTypeModulating
+      if hasBoilerModulating
         boiler.setMinimumPartLoadRatio(0.0) 
         boiler.setMaximumPartLoadRatio(1.0)
         boiler.setBoilerFlowMode("LeavingSetpointModulated")
@@ -269,7 +259,7 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
       boiler.setEfficiencyCurveTemperatureEvaluationVariable("LeavingBoiler")
       boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
       boiler.setDesignWaterOutletTemperature(OpenStudio::convert(boilerDesignTemp - 32.0,"R","K").get)
-      if boilerModulation == Constants.BoilerTypeModulating
+      if hasBoilerModulating
         boiler.setMinimumPartLoadRatio(0.0) 
         boiler.setMaximumPartLoadRatio(1.0)
         boiler.setBoilerFlowMode("LeavingSetpointModulated")

@@ -7,19 +7,19 @@ require 'fileutils'
 
 class ProcessBoilerFuelTest < MiniTest::Test
   
-  def test_argument_error_steam_boiler
-    args_hash = {}
-    args_hash["system_type"] = Constants.BoilerTypeSteam
-    result = _test_error("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "Cannot currently model steam boilers.")    
-  end  
+  #def test_argument_error_steam_boiler
+  #  args_hash = {}
+  #  args_hash["system_type"] = Constants.BoilerTypeSteam
+  #  result = _test_error("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash)
+  #  assert_includes(result.errors.map{ |x| x.logMessage }, "Cannot currently model steam boilers.")    
+  #end  
   
   def test_oat_reset_enabled_nil_oat
     args_hash = {}
     args_hash["system_type"] = Constants.BoilerTypeCondensing
     args_hash["oat_reset_enabled"] = "true"
     args_hash["capacity"] = "20"
-    args_hash["modulation"] = Constants.BoilerTypeModulating
+    args_hash["modulation"] = true
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1}
     expected_values = {"Efficiency"=>0.76, "NominalCapacity"=>5861.42, "FuelType"=>Constants.FuelTypeGas, "hvac_priority"=>1}
@@ -34,7 +34,7 @@ class ProcessBoilerFuelTest < MiniTest::Test
     args_hash["oat_hwst_low"] = 180.0
     args_hash["oat_high"] = 68.0
     args_hash["oat_hwst_high"] = 95.0
-    args_hash["modulation"] =  Constants.BoilerTypeModulating
+    args_hash["modulation"] =  true
     expected_num_del_objects = {}
     expected_num_new_objects = {"BoilerHotWater"=>1, "ZoneHVACBaseboardConvectiveWater"=>2, "PlantLoop"=>1, "CoilHeatingWaterBaseboard"=>2, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1}
     expected_values = {"Efficiency"=>0.76, "FuelType"=>Constants.FuelTypeGas, "hvac_priority"=>1}
