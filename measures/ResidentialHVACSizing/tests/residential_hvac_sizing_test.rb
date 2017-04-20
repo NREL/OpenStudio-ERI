@@ -1978,8 +1978,6 @@ class ProcessHVACSizingTest < MiniTest::Test
     _test_measure("SFD_HVACSizing_Equip_BB_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
-=begin
-  # FIXME: Need to update from BEopt
   def test_equip_electric_boiler_autosize
     args_hash = {}
     args_hash["show_debug_info"] = true
@@ -2033,12 +2031,12 @@ class ProcessHVACSizingTest < MiniTest::Test
 						'Heat_AirFlowRate' => 0,
 						'Fan_AirFlowRate' => 0,
 						'Dehumid_WaterRemoval_Auto' => 0,
-						'Pump:ConstantSpeed_Design Flow Rate {m3/s}' => 0.000262377620982,
+						'Pump:VariableSpeed_Design Flow Rate {m3/s}' => 0.000262377620982,
 						'Boiler:HotWater_Nomimal Capacity {W}' => 12189.3551749,
 						'ZoneHVAC:Baseboard:Convective:Water_Living_U-Factor Times Area Value {W/K}' => 877.633572593,
 						'ZoneHVAC:Baseboard:Convective:Water_Living_Maximum Water Flow rate {m3/s}' => 0.000525093264264,
 						'ZoneHVAC:Baseboard:Convective:Water_Basement_U-Factor Times Area Value {W/K}' => 877.633572593,
-						'ZoneHVAC:Baseboard:Convective:Water_Basement_Maximum Water Flow rate {m3/s}' => 0.000525093264264,
+						'ZoneHVAC:Baseboard:Convective:Water_Basement_Maximum Water Flow rate {m3/s}' => 0.000525093264264,    
                       }
     _test_measure("SFD_HVACSizing_Equip_ElecBoiler_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
@@ -2096,7 +2094,7 @@ class ProcessHVACSizingTest < MiniTest::Test
 						'Heat_AirFlowRate' => 0,
 						'Fan_AirFlowRate' => 0,
 						'Dehumid_WaterRemoval_Auto' => 0,
-						'Pump:ConstantSpeed_Design Flow Rate {m3/s}' => 0.00063090196,
+						'Pump:VariableSpeed_Design Flow Rate {m3/s}' => 0.00063090196,
 						'Boiler:HotWater_Nomimal Capacity {W}' => 29310.0,
 						'ZoneHVAC:Baseboard:Convective:Water_Living_U-Factor Times Area Value {W/K}' => 2110.32,
 						'ZoneHVAC:Baseboard:Convective:Water_Living_Maximum Water Flow rate {m3/s}' => 0.00126261671391,
@@ -2105,7 +2103,6 @@ class ProcessHVACSizingTest < MiniTest::Test
                       }
     _test_measure("SFD_HVACSizing_Equip_ElecBoiler_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
-=end
   
   def test_equip_gas_furnace_autosize
     args_hash = {}
@@ -3764,9 +3761,11 @@ class ProcessHVACSizingTest < MiniTest::Test
             ensure_num_objects(model.getZoneHVACDehumidifierDXs, beopt_key, 1)
             os_val = model.getZoneHVACDehumidifierDXs[0].ratedAirFlowRate
             
-        elsif beopt_key == 'Pump:ConstantSpeed_Design Flow Rate {m3/s}'
-            ensure_num_objects(model.getPumpConstantSpeeds, beopt_key, 1)
-            os_val = model.getPumpConstantSpeeds[0].ratedFlowRate.get
+        elsif beopt_key == 'Pump:VariableSpeed_Design Flow Rate {m3/s}'
+            model.getPumpVariableSpeeds.each do |pump|
+                next if !pump.name.to_s.downcase.include?('boiler')
+                os_val = pump.ratedFlowRate.get
+            end
         
         elsif beopt_key == 'Boiler:HotWater_Nomimal Capacity {W}'
             ensure_num_objects(model.getBoilerHotWaters, beopt_key, 1)
@@ -3839,7 +3838,7 @@ class ProcessHVACSizingTest < MiniTest::Test
   def ensure_num_objects(objects, beopt_key, num=1)
     num_objects = objects.size
     if num_objects != num
-        assert_equal(num_objects, num)
+        assert_equal(num, num_objects)
     end
   end
 
