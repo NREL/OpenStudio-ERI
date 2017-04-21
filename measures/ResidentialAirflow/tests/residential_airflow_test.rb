@@ -480,7 +480,7 @@ class ResidentialAirflowTest < MiniTest::Test
     model.to_s.each_line do |line|
       next unless line.strip.start_with?("Set", "If", "Else", "EndIf")
       assert(line.length <= 100)
-    end    
+    end
     
     #show_output(result)
 

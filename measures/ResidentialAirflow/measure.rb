@@ -1746,7 +1746,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           duct_lkage_subroutine.addLine("Set QtotLeakToAHZn = f_sup*#{air_handler_mfr_sensor.name}*(h_SA-h_AHZone)")
           duct_lkage_subroutine.addLine("Set temp3 = (#{air_handler_wout_sensor.name}-#{air_handler_w_sensor.name})")
           duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_air_handler} = f_sup*#{air_handler_mfr_sensor.name}*h_fg*temp3")
-          duct_lkage_subroutine.addLine("Set S#{supply_sensible_lkage_to_air_handler} = QtotLeakToAHZn-#{supply_latent_lkage_to_air_handler}")
+          duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_air_handler} = QtotLeakToAHZn-#{supply_latent_lkage_to_air_handler}")
           duct_lkage_subroutine.addLine("Else")
           duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_living} = 0")
           duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_living} = 0")

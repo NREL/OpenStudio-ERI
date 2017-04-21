@@ -749,6 +749,13 @@ class Constants
     end
     return "residential sink dist#{s_unit}"
   end
+  def self.ObjectNameSolarHotWater(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "residential solar hot water#{s_unit}"
+  end
   def self.ObjectNameWaterHeater(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit

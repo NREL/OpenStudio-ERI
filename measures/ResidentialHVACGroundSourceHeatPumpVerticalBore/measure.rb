@@ -428,8 +428,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
     setpoint_mgr_follow_ground_temp.setName(Constants.ObjectNameGroundSourceHeatPumpVerticalBore + " condenser loop temp")
     setpoint_mgr_follow_ground_temp.setControlVariable('Temperature')
     setpoint_mgr_follow_ground_temp.setMaximumSetpointTemperature(48.88889)
-    setpoint_mgr_follow_ground_temp.setMinimumSetpointTemperature(OpenStudio::convert(hw_design,"F","C").get)
-    
+    setpoint_mgr_follow_ground_temp.setMinimumSetpointTemperature(OpenStudio::convert(hw_design,"F","C").get)    
     setpoint_mgr_follow_ground_temp.addToNode(plant_loop.supplyOutletNode)
     
     pump = OpenStudio::Model::PumpVariableSpeed.new(model)
@@ -444,7 +443,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
     pump.setCoefficient4ofthePartLoadPerformanceCurve(0)
     pump.setMinimumFlowRate(0)
     pump.setPumpControlType('Intermittent')
-    pump.addToNode(plant_loop.supplyInletNode)           
+    pump.addToNode(plant_loop.supplyInletNode)
     
     plant_loop.addSupplyBranchForComponent(ground_heat_exch_vert)
     

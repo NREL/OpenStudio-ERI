@@ -405,8 +405,7 @@ class Waterheater
                 if wh.to_WaterHeaterMixed.is_initialized
                     waterHeater = wh.to_WaterHeaterMixed.get
                     wh_type = "mixed"
-                else
-                    next
+                    break
                 end
             end
         end
@@ -432,14 +431,15 @@ class Waterheater
             if min_max_result['min'] != min_max_result['max']
                 runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
             end
+            return OpenStudio.convert(wh_setpoint,"C","F").get
         else #wh_type == "hpwh"
             min_max_result = Schedule.getMinMaxAnnualProfileValue(model, waterHeater.compressorSetpointTemperatureSchedule)
             wh_setpoint = (min_max_result['min'] + min_max_result['max'])/2.0
             if min_max_result['min'] != min_max_result['max']
                 runner.registerWarning("Water heater setpoint is not constant. Using average setpoint temperature of #{wh_setpoint.round} F.")
             end
+            return OpenStudio.convert(wh_setpoint,"C","F").get
         end
-        return OpenStudio.convert(wh_setpoint, "C", "F").get
     end
     
     def self.get_water_heater_location_auto(model, spaces, runner)
