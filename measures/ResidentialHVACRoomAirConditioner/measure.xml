@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>5c33d0cc-a4c8-434a-b5f8-a1404a02b469</version_id>
-  <version_modified>20170420T165557Z</version_modified>
+  <version_id>21507c10-97eb-4b54-8f47-dc8cec1253c7</version_id>
+  <version_modified>20170423T133757Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -310,13 +310,13 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>17063A91</checksum>
+      <checksum>7C5F3C4D</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AAE3D2EE</checksum>
+      <checksum>7E7350E1</checksum>
     </file>
   </files>
 </measure>

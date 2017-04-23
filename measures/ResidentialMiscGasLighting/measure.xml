@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_lighting</name>
   <uid>6b9211da-6274-4b09-8c76-9edbc85886c0</uid>
-  <version_id>a769b64e-e5db-453e-81f4-932a032d7ef0</version_id>
-  <version_modified>20170420T165601Z</version_modified>
+  <version_id>8f8fe2fb-c163-4d64-a09d-0b9aad59693f</version_id>
+  <version_modified>20170423T133801Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasLighting</class_name>
   <display_name>Set Residential Gas Lighting</display_name>
@@ -145,13 +145,13 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>17063A91</checksum>
+      <checksum>7C5F3C4D</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AAE3D2EE</checksum>
+      <checksum>7E7350E1</checksum>
     </file>
   </files>
 </measure>

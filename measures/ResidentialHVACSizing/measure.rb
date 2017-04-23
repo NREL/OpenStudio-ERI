@@ -1288,8 +1288,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     gains.each do |gain|
     
-        # TODO: The line below is for testing against BEopt
-        next if gain.name.to_s == 'residential hot water distribution'
+        # TODO: The lines below are for equivalence with BEopt
+        next if gain.name.to_s == Constants.ObjectNameHotWaterDistribution
+        next if gain.name.to_s == Constants.ObjectNameHotWaterRecircPump
     
         sched = nil
         sensible_frac = nil
@@ -3220,6 +3221,8 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             return nil if hvac.HeatingCapacityOffset.nil?
             
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
+            runner.registerError("Cannot currently handle ground-source heat pumps.")
+            return nil
             hvac.NumSpeedsHeating = 1
             hvac.HEAT_CAP_FT_SPEC = [[htg_coil.totalHeatingCapacityCoefficient1,
                                       htg_coil.totalHeatingCapacityCoefficient2,
@@ -3494,7 +3497,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     # The following correlations were estimated by analyzing MJ8 construction tables. This is likely a better
     # approach than including the Group Number.
     if ['WoodStud', 'SteelStud'].include?(wall_type)
-        cavity_r = get_unit_feature(runner, unit, Constants.SizingInfoWoodStudWallCavityRvalue(wall), 'double')
+        cavity_r = get_unit_feature(runner, unit, Constants.SizingInfoStudWallCavityRvalue(wall), 'double')
         return nil if cavity_r.nil?
     
         wallGroup = get_wallgroup_wood_or_steel_stud(cavity_r)
@@ -3531,15 +3534,15 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         
     elsif wall_type == 'SIP'
         rigid_thick_in = get_unit_feature(runner, unit, Constants.SizingInfoWallRigidInsThickness(wall), 'double', false)
-        rigid_r = 0 if rigid_thick_in.nil?
+        rigid_thick_in = 0 if rigid_thick_in.nil?
         
         sip_ins_thick_in = get_unit_feature(runner, unit, Constants.SizingInfoSIPWallInsThickness(wall), 'double')
         return nil if sip_ins_thick_in.nil?
         
         # Manual J refers to SIPs as Structural Foam Panel (SFP)
-        if sipInsThickness + rigid_thick_in < 4.5
+        if sip_ins_thick_in + rigid_thick_in < 4.5
             wallGroup = 7   # G
-        elsif sipInsThickness + rigid_thick_in < 6.5
+        elsif sip_ins_thick_in + rigid_thick_in < 6.5
             wallGroup = 9   # I
         else
             wallGroup = 11  # K
@@ -3549,18 +3552,21 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         end
         
     elsif wall_type == 'CMU'
+        cmu_furring_ins_r = get_unit_feature(runner, unit, Constants.SizingInfoCMUWallFurringInsRvalue(wall), 'double')
+        return nil if cmu_furring_ins_r.nil?        
+    
         # Manual J uses the same wall group for filled or hollow block
-        if cmuFurringInsRvalue < 2
+        if cmu_furring_ins_r < 2
             wallGroup = 5   # E
-        elsif cmuFurringInsRvalue <= 11
+        elsif cmu_furring_ins_r <= 11
             wallGroup = 8   # H
-        elsif cmuFurringInsRvalue <= 13
+        elsif cmu_furring_ins_r <= 13
             wallGroup = 9   # I
-        elsif cmuFurringInsRvalue <= 15
+        elsif cmu_furring_ins_r <= 15
             wallGroup = 9   # I
-        elsif cmuFurringInsRvalue <= 19
+        elsif cmu_furring_ins_r <= 19
             wallGroup = 10  # J
-        elsif cmuFurringInsRvalue <= 21
+        elsif cmu_furring_ins_r <= 21
             wallGroup = 11  # K
         else
             wallGroup = 11  # K

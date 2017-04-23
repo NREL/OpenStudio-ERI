@@ -879,6 +879,9 @@ class Constants
   def self.SizingInfoBasementWallRvalue(surface)
     return self.SizingInfo(__method__.to_s, surface)
   end
+  def self.SizingInfoCMUWallFurringInsRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
   def self.SizingInfoDuctsLocationFrac
     return self.SizingInfo(__method__.to_s)
   end
@@ -984,6 +987,9 @@ class Constants
   def self.SizingInfoSpaceWallsInsulated(space)
     return self.SizingInfo(__method__.to_s, space)
   end
+  def self.SizingInfoStudWallCavityRvalue(surface)
+    return self.SizingInfo(__method__.to_s, surface)
+  end
   def self.SizingInfoWallType(surface)
     return self.SizingInfo(__method__.to_s, surface)
   end
@@ -991,9 +997,6 @@ class Constants
     return self.SizingInfo(__method__.to_s, surface)
   end
   def self.SizingInfoWallRigidInsThickness(surface)
-    return self.SizingInfo(__method__.to_s, surface)
-  end
-  def self.SizingInfoWoodStudWallCavityRvalue(surface)
     return self.SizingInfo(__method__.to_s, surface)
   end
   def self.SizingInfoZoneInfiltrationCFM(zone)
