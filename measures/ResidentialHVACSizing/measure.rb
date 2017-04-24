@@ -60,7 +60,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                   :Heat_Load, :Heat_Load_Ducts, 
                   :Heat_Capacity, :Heat_Capacity_Supp, :Heat_Airflow,
                   :Fan_Airflow, :dse_Fregain, :Dehumid_WaterRemoval, :TotalCap_CurveValue,
-                  :Zone_FlowRatios)
+                  :Zone_FlowRatios, :EER_Multiplier, :COP_Multiplier)
   end
   
   class HVACInfo
@@ -348,36 +348,23 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     elsif Geometry.is_garage(space)
         # Garage
         # Calculate the cooling design temperature for the garage
-        # FIXME: Need to update this
-        garage_area_under_finished = 0.0
-        garage_area_under_unfinished = 0.0
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "roofceiling"
-            next if surface.outsideBoundaryCondition.downcase != "surface"
-            adjacent_space = surface.adjacentSurface.get.space.get
-            if Geometry.space_is_finished(adjacent_space)
-                garage_area_under_finished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get
-            else
-                garage_area_under_unfinished += OpenStudio::convert(surface.netArea,"m^2","ft^2").get
-            end
-        end
-        
-        garage_area = garage_area_under_finished + garage_area_under_unfinished
+        garage_frac_under_finished = get_unit_feature(runner, space.buildingUnit.get, Constants.SizingInfoGarageFracUnderFinishedSpace, 'double')
+        return nil if garage_frac_under_finished.nil?
         
         # Calculate the garage cooling design temperature based on Table 4C
         # Linearly interpolate between having living space over the garage and not having living space above the garage
         if mj8.daily_range_num == 0
             cool_temp = (weather.design.CoolingDrybulb + 
-                         (11 * garage_area_under_finished / garage_area) + 
-                         (22 * garage_area_under_unfinished / garage_area))
+                         (11 * garage_frac_under_finished) + 
+                         (22 * (1 - garage_frac_under_finished)))
         elsif mj8.daily_range_num == 1
             cool_temp = (weather.design.CoolingDrybulb + 
-                         (6 * garage_area_under_finished / garage_area) + 
-                         (17 * garage_area_under_unfinished / garage_area))
+                         (6 * garage_frac_under_finished) + 
+                         (17 * (1 - garage_frac_under_finished)))
         else
             cool_temp = (weather.design.CoolingDrybulb + 
-                         (1 * garage_area_under_finished / garage_area) + 
-                         (12 * garage_area_under_unfinished / garage_area))
+                         (1 * garage_frac_under_finished) + 
+                         (12 * (1 - garage_frac_under_finished)))
         end
         
     elsif Geometry.is_unfinished_attic(space)
@@ -2383,6 +2370,10 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     return nil if unit_final.nil?
     
+    # Initialize
+    unit_final.EER_Multiplier = 1.0
+    unit_final.COP_Multiplier = 1.0
+
     if not hvac.HasCentralAirConditioner and not hvac.HasAirSourceHeatPump
         return unit_final
     end
@@ -2393,49 +2384,39 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     tons = OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","ton").get
     
     if tons <= 1.5
-        eER_Multiplier = hvac.CapacityDerateFactorEER[0]
+        unit_final.EER_Multiplier = hvac.CapacityDerateFactorEER[0]
     elsif tons <= 5
         index = (tons.floor - 1).to_i
-        eER_Multiplier = MathTools.interp2(tons, tonnages[index-1], tonnages[index],
-                                           hvac.CapacityDerateFactorEER[index-1], 
-                                           hvac.CapacityDerateFactorEER[index])
+        unit_final.EER_Multiplier = MathTools.interp2(tons, tonnages[index-1], tonnages[index],
+                                                      hvac.CapacityDerateFactorEER[index-1], 
+                                                      hvac.CapacityDerateFactorEER[index])
     elsif tons <= 10
         index = ((tons/2.0).floor - 1).to_i
-        eER_Multiplier = MathTools.interp2(tons/2.0, tonnages[index-1], tonnages[index],
-                                           hvac.CapacityDerateFactorEER[index-1], 
-                                           hvac.CapacityDerateFactorEER[index])
+        unit_final.EER_Multiplier = MathTools.interp2(tons/2.0, tonnages[index-1], tonnages[index],
+                                                      hvac.CapacityDerateFactorEER[index-1], 
+                                                      hvac.CapacityDerateFactorEER[index])
     else
-        eER_Multiplier = hvac.CapacityDerateFactorEER[-1]
-    end
-    
-    for speed in 0..(hvac.NumSpeedsCooling-1)
-        # FIXME
-        #unit.supply.CoolingEIR[speed] = unit.supply.CoolingEIR[speed] / eER_Multiplier
+        unit_final.EER_Multiplier = hvac.CapacityDerateFactorEER[-1]
     end
     
     if hvac.HasAirSourceHeatPump
     
         if tons <= 1.5
-            cOP_Multiplier = hvac.CapacityDerateFactorCOP[0]
+            unit_final.COP_Multiplier = hvac.CapacityDerateFactorCOP[0]
         elsif tons <= 5
             index = (tons.floor - 1).to_i
-            cOP_Multiplier = MathTools.interp2(tons, tonnages[index-1], tonnages[index], 
-                                               hvac.CapacityDerateFactorCOP[index-1], 
-                                               hvac.CapacityDerateFactorCOP[index])
+            unit_final.COP_Multiplier = MathTools.interp2(tons, tonnages[index-1], tonnages[index], 
+                                                          hvac.CapacityDerateFactorCOP[index-1], 
+                                                          hvac.CapacityDerateFactorCOP[index])
         elsif tons <= 10
             index = ((tons/2.0).floor - 1).to_i
-            cOP_Multiplier = MathTools.interp2(tons/2.0, tonnages[index-1], tonnages[index], 
-                                               hvac.CapacityDerateFactorCOP[index-1], 
-                                               hvac.CapacityDerateFactorCOP[index])
+            unit_final.COP_Multiplier = MathTools.interp2(tons/2.0, tonnages[index-1], tonnages[index], 
+                                                          hvac.CapacityDerateFactorCOP[index-1], 
+                                                          hvac.CapacityDerateFactorCOP[index])
         else
-            cOP_Multiplier = hvac.CapacityDerateFactorCOP[-1]
+            unit_final.COP_Multiplier = hvac.CapacityDerateFactorCOP[-1]
         end
-    
-        for speed in 0..(hvac.NumSpeedsCooling-1)
-            # FIXME
-            #unit.supply.HeatingEIR[speed] = unit.supply.HeatingEIR[speed] / cOP_Multiplier
-        end
-        
+            
     end
   
     return unit_final
@@ -3645,6 +3626,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             clg_coil.setRatedTotalCoolingCapacity(OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","W").get)
             clg_coil.setRatedAirFlowRate(ratedCFMperTonCooling[0] * unit_final.Cool_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
             
+            # Adjust COP as appropriate
+            clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(clg_coil.ratedCOP.get * unit_final.EER_Multiplier))
+            
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
             if ratedCFMperTonCooling.nil?
                 runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling}' with datatype 'string'.")
@@ -3653,6 +3637,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             clg_coil.stages.each_with_index do |stage, speed|
                 stage.setGrossRatedTotalCoolingCapacity(OpenStudio::convert(unit_final.Cool_Capacity,"Btu/h","W").get * hvac.CapacityRatioCooling[speed])
                 stage.setRatedAirFlowRate(ratedCFMperTonCooling[speed] * unit_final.Cool_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * hvac.CapacityRatioCooling[speed]) 
+                
+                # Adjust COP as appropriate
+                stage.setGrossRatedCoolingCOP(stage.grossRatedCoolingCOP * unit_final.EER_Multiplier)
             end
             
         elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
@@ -3701,6 +3688,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             htg_coil.setRatedTotalHeatingCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get)
             htg_coil.setRatedAirFlowRate(ratedCFMperTonHeating[0] * unit_final.Heat_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get)
             
+            # Adjust COP as appropriate
+            htg_coil.setRatedCOP(htg_coil.ratedCOP * unit_final.COP_Multiplier)
+            
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
             if ratedCFMperTonHeating.nil?
                 runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating}' with datatype 'string'.")
@@ -3709,6 +3699,9 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             htg_coil.stages.each_with_index do |stage, speed|
                 stage.setGrossRatedHeatingCapacity(OpenStudio::convert(unit_final.Heat_Capacity,"Btu/h","W").get * hvac.CapacityRatioHeating[speed])
                 stage.setRatedAirFlowRate(ratedCFMperTonHeating[speed] * unit_final.Heat_Capacity * OpenStudio::convert(1.0,"Btu/h","ton").get * OpenStudio::convert(1.0,"cfm","m^3/s").get * hvac.CapacityRatioHeating[speed]) 
+                
+                # Adjust COP as appropriate
+                stage.setGrossRatedHeatingCOP(stage.grossRatedHeatingCOP * unit_final.COP_Multiplier)
             end
             
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit

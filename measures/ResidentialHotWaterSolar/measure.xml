@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_solar</name>
   <uid>b969f216-f3c0-4301-9b85-34ce2b45f551</uid>
-  <version_id>9bfee953-eb69-4b1b-bf9f-f46defe311d5</version_id>
-  <version_modified>20170423T133755Z</version_modified>
+  <version_id>8093a0c6-db0b-441d-b07b-c8a6c39363c4</version_id>
+  <version_modified>20170424T231302Z</version_modified>
   <xml_checksum>F33F6E26</xml_checksum>
   <class_name>ResidentialHotWaterSolar</class_name>
   <display_name>Set Residential Solar Water Heating</display_name>
@@ -290,16 +290,16 @@
       <checksum>21C29776</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7E7350E1</checksum>
-    </file>
-    <file>
       <filename>residential_hot_water_solar_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>E7A0F3D4</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7D9B1D58</checksum>
     </file>
   </files>
 </measure>

@@ -906,6 +906,9 @@ class Constants
   def self.SizingInfoDuctsSupplySurfaceArea
     return self.SizingInfo(__method__.to_s)
   end
+  def self.SizingInfoGarageFracUnderFinishedSpace
+    return self.SizingInfo(__method__.to_s)
+  end
   def self.SizingInfoHPSizedForMaxLoad
     return self.SizingInfo(__method__.to_s)
   end
