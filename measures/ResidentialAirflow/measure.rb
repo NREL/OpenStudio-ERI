@@ -920,6 +920,11 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         program.remove
       end
       
+      model.getEnergyManagementSystemOutputVariables.each do |output_var|
+        next unless output_var.name.to_s == "#{obj_name_infil} loc w spd"
+        output_var.remove      
+      end
+      
       # Remove existing natural ventilation
       
       model.getEnergyManagementSystemPrograms.each do |program|
@@ -1255,6 +1260,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       infil_program.addLine("Set z_m = #{OpenStudio.convert(wind_speed.height,"ft","m").get}")
       infil_program.addLine("Set z_s = #{OpenStudio.convert(unit.living.height,"ft","m").get}")
       infil_program.addLine("Set f_t = (((s_m/z_m)^p_m)*((z_s/s_s)^p_s))")
+      infil_program.addLine("Set #{building_unit.name.to_s.gsub("unit", "u").gsub(" ","_")}_VwindL = (f_t*#{vwind_sensor.name})")
       
       if unit.living.inf_method == @infMethodASHRAE
         if unit.living.SLA > 0
@@ -1323,12 +1329,17 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       infil_program.addLine("Set #{infil_flow_actuator.name} = (((Qu^2)+(Qn^2))^0.5)-Q_acctd_for_elsewhere")
       infil_program.addLine("Set #{infil_flow_actuator.name} = (@Max #{infil_flow_actuator.name} 0)")
       
+      # EMS Output Variables
+      ems_output_var = OpenStudio::Model::EnergyManagementSystemOutputVariable.new(model, "#{building_unit.name.to_s.gsub("unit", "u").gsub(" ","_")}_VwindL")
+      ems_output_var.setName(obj_name_infil + " loc w spd")
+      ems_output_var.setEMSProgramOrSubroutineName(infil_program)
+      ems_output_var.setUnits("m/s")
+      
       nat_vent_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
       nat_vent_program.setName(obj_name_natvent + " program")
       nat_vent_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
       nat_vent_program.addLine("Set dT = (@Abs Tdiff)")
       nat_vent_program.addLine("Set pt = (@RhFnTdbWPb #{tout_sensor.name} #{wout_sensor.name} #{pbar_sensor.name})")
-      nat_vent_program.addLine("Set Hin = (@HFnTdbRhPb #{tout_sensor.name} #{phiin_sensor.name} #{pbar_sensor.name})")
       nat_vent_program.addLine("Set NVA = #{OpenStudio.convert(nat_vent.area,"ft^2","cm^2").get}")
       nat_vent_program.addLine("Set Cs = #{UnitConversion.ft2_s2R2L2_s2cm4K(nat_vent.C_s)}")
       nat_vent_program.addLine("Set Cw = #{UnitConversion._2L2s2_s2cm4m2(nat_vent.C_w)}")
