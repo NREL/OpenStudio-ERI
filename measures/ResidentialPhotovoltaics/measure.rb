@@ -95,8 +95,8 @@ class ResidentialPhotovoltaics < OpenStudio::Measure::ModelMeasure
     azimuth = OpenStudio::Measure::OSArgument::makeDoubleArgument("azimuth", false)
     azimuth.setDisplayName("Azimuth")
     azimuth.setUnits("degrees")
-    azimuth.setDescription("The azimuth angle is measured clockwise.")
-    azimuth.setDefaultValue(0)
+    azimuth.setDescription("The azimuth angle is measured clockwise, based on the azimuth type specified.")
+    azimuth.setDefaultValue(180.0)
     args << azimuth
     
     #make a choice arguments for tilt type

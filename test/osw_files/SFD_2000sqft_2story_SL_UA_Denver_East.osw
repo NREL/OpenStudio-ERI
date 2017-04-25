@@ -13,10 +13,13 @@
             }
         },
         {
-			"measure_dir_name": "ResidentialLocation",
-			"arguments": {
-                "weather_file_name": "USA_AK_Anchorage.Intl.AP.702730_TMY3.epw"
-            }      
+			"measure_dir_name": "ResidentialLocation"
+		},
+    {
+			"measure_dir_name": "ResidentialGeometryOrientation",
+      "arguments": {
+                "orientation": 270.0
+            }
 		}
 	]
 }

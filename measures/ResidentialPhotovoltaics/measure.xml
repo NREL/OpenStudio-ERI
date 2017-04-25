@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>76526676-6a56-4177-bd7a-621720a4f968</version_id>
-  <version_modified>20170424T231308Z</version_modified>
+  <version_id>0eedd6b3-09ac-4320-8f8b-f1e93c9ed556</version_id>
+  <version_modified>20170425T145951Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -85,12 +85,12 @@
     <argument>
       <name>azimuth</name>
       <display_name>Azimuth</display_name>
-      <description>The azimuth angle is measured clockwise.</description>
+      <description>The azimuth angle is measured clockwise, based on the azimuth type specified.</description>
       <type>Double</type>
       <units>degrees</units>
       <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>180</default_value>
     </argument>
     <argument>
       <name>tilt_type</name>
@@ -185,12 +185,6 @@
       <checksum>C9DD9291</checksum>
     </file>
     <file>
-      <filename>USA_AK_Anchorage.Intl.AP.702730_TMY3.epw</filename>
-      <filetype>epw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>01DBB4A1</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -203,34 +197,16 @@
       <checksum>14339B8F</checksum>
     </file>
     <file>
-      <filename>MF_8units_1story_SL_Anchorage.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D086E2E0</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>6DA7F072</checksum>
     </file>
     <file>
-      <filename>SFA_4units_1story_FB_UA_Anchorage.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>778E5586</checksum>
-    </file>
-    <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>30D177B6</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Anchorage.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>77B9157B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
@@ -251,6 +227,12 @@
       <checksum>D04CADDB</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7D9B1D58</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.14.0</identifier>
@@ -259,25 +241,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2BF50C9B</checksum>
+      <checksum>5AE292CF</checksum>
     </file>
     <file>
       <filename>residential_photovoltaics_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>B80BBDCE</checksum>
+      <checksum>17FA59C5</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7C5F3C4D</checksum>
+      <checksum>D909FE3D</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D9B1D58</checksum>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver_East.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>303872F3</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver_North.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>681047D7</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver_West.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F9E4B02F</checksum>
     </file>
   </files>
 </measure>

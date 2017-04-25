@@ -20,121 +20,330 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     assert_includes(result.errors.map{ |x| x.logMessage }, "Invalid azimuth entered.")
   end
   
-  def test_azimuth_back_roof
+  def test_faces_north_azimuth_back_roof
     args_hash = {}
     args_hash["azimuth"] = 180.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"total_kwhs"=>3707}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>2198}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+    expected_values = {"total_kwhs"=>3714}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
-  def test_azimuth_absolute_west
+  def test_faces_west_azimuth_back_roof
+    args_hash = {}
+    args_hash["azimuth"] = 180.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3086}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+  
+  def test_faces_east_azimuth_back_roof
+    args_hash = {}
+    args_hash["azimuth"] = 180.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2896}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+  
+  def test_faces_south_azimuth_back_roof
+    args_hash = {}
+    args_hash["azimuth"] = 180.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2072}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+  
+  def test_faces_north_azimuth_absolute_west
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
     args_hash["azimuth"] = 270.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"total_kwhs"=>2887}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>1720}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+    expected_values = {"total_kwhs"=>2896}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
   end
   
-  def test_azimuth_absolute_southwest
+  def test_faces_west_azimuth_absolute_west
+    args_hash = {}
+    args_hash["azimuth_type"] = Constants.CoordAbsolute
+    args_hash["azimuth"] = 270.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2896}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end
+  
+  def test_faces_east_azimuth_absolute_west
+    args_hash = {}
+    args_hash["azimuth_type"] = Constants.CoordAbsolute
+    args_hash["azimuth"] = 270.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2896}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end  
+  
+  def test_faces_south_azimuth_absolute_west
+    args_hash = {}
+    args_hash["azimuth_type"] = Constants.CoordAbsolute
+    args_hash["azimuth"] = 270.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2896}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end  
+  
+  def test_faces_north_azimuth_absolute_southwest
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
     args_hash["azimuth"] = 225.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>3444}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>2060}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
-  end  
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+  end
+  
+  def test_faces_west_azimuth_absolute_southwest
+    args_hash = {}
+    args_hash["azimuth_type"] = Constants.CoordAbsolute
+    args_hash["azimuth"] = 225.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3444}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+  end
 
-  def test_tilt_absolute_zero
+    def test_faces_east_azimuth_absolute_southwest
+    args_hash = {}
+    args_hash["azimuth_type"] = Constants.CoordAbsolute
+    args_hash["azimuth"] = 225.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3444}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+  end
+
+  def test_faces_south_azimuth_absolute_southwest
+    args_hash = {}
+    args_hash["azimuth_type"] = Constants.CoordAbsolute
+    args_hash["azimuth"] = 225.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3444}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+  end  
+  
+  def test_faces_north_tilt_absolute_zero
     args_hash = {}
     args_hash["tilt_type"] = Constants.CoordAbsolute
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"total_kwhs"=>3069}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>1750}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+    expected_values = {"total_kwhs"=>3071}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1) 
   end
   
-  def test_tilt_absolute_thirty
+  def test_faces_west_tilt_absolute_zero
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.CoordAbsolute
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3071}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1) 
+  end
+  
+  def test_faces_east_tilt_absolute_zero
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.CoordAbsolute
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3071}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1) 
+  end
+  
+  def test_faces_south_tilt_absolute_zero
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.CoordAbsolute
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3071}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1) 
+  end
+  
+  
+  def test_faces_north_tilt_absolute_thirty
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.CoordAbsolute
+    args_hash["tilt"] = 30.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3745}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
+  end
+  
+  def test_faces_west_tilt_absolute_thirty
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.CoordAbsolute
+    args_hash["tilt"] = 30.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3060}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
+  end
+
+  def test_faces_east_tilt_absolute_thirty
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.CoordAbsolute
+    args_hash["tilt"] = 30.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2863}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
+  end
+
+  def test_faces_south_tilt_absolute_thirty
     args_hash = {}
     args_hash["tilt_type"] = Constants.CoordAbsolute
     args_hash["tilt"] = 30.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>1961}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>1125}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
   end  
   
-  def test_tilt_latitude_minus_15_deg
+  def test_faces_north_tilt_latitude_minus_15_deg
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["tilt"] = -15.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3693}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)  
+  end
+  
+  def test_faces_west_tilt_latitude_minus_15_deg
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["tilt"] = -15.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3098}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)  
+  end
+  
+  def test_faces_east_tilt_latitude_minus_15_deg
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["tilt"] = -15.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2922}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)  
+  end
+  
+  def test_faces_south_tilt_latitude_minus_15_deg
     args_hash = {}
     args_hash["tilt_type"] = Constants.TiltLatitude
     args_hash["tilt"] = -15.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>2151}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>862}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)  
   end
   
-  def test_tilt_latitude_plus_15_deg
+  def test_faces_north_tilt_latitude_plus_15_deg
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["tilt"] = 15.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3655}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end
+
+  def test_faces_west_tilt_latitude_plus_15_deg
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["tilt"] = 15.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2752}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end
+
+  def test_faces_east_tilt_latitude_plus_15_deg
+    args_hash = {}
+    args_hash["tilt_type"] = Constants.TiltLatitude
+    args_hash["tilt"] = 15.0
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2497}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end  
+  
+  def test_faces_south_tilt_latitude_plus_15_deg
     args_hash = {}
     args_hash["tilt_type"] = Constants.TiltLatitude
     args_hash["tilt"] = 15.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>1196}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>680}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end
+  
+  def test_faces_north_tilt_pitch_roof
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3714}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_North.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
+  end
+
+  def test_faces_west_tilt_pitch_roof
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>3087}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
+  end
+
+  def test_faces_east_tilt_pitch_roof
+    args_hash = {}
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
+    expected_values = {"total_kwhs"=>2905}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver_East.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
   end  
   
-  def test_tilt_pitch_roof
+  def test_faces_south_tilt_pitch_roof
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>2084}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>1193}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
-  end  
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)     
+  end
   
-  def test_single_family_attached_new_construction
+  def test_faces_south_single_family_attached_new_construction
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>2084}
-    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>1193}
-    _test_measure("SFA_4units_1story_FB_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)  
   end
   
-  def test_multifamily_new_construction
+  def test_faces_south_multifamily_new_construction
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>3069}
-    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    expected_values = {"total_kwhs"=>1753}
-    _test_measure("MF_8units_1story_SL_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)      
-  end
+    _test_measure("MF_8units_1story_SL_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
+  end  
   
-  def test_retrofit_size
+  def test_faces_south_retrofit_size
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
@@ -144,16 +353,6 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     expected_num_del_objects = {"GeneratorMicroTurbine"=>1, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>4173}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
-    args_hash = {}
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"total_kwhs"=>1193}
-    model = _test_measure("SFD_2000sqft_2story_SL_UA_Anchorage.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
-    args_hash["size"] = 5.0
-    expected_num_del_objects = {"GeneratorMicroTurbine"=>1, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"total_kwhs"=>2389}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   

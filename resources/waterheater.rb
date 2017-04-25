@@ -258,7 +258,7 @@ class Waterheater
         return pump
     end
     
-    def self.create_new_schedule_manager(t_set, model, wh_type)
+    def self.create_new_schedule_manager(t_set, model, wh_type="tank")
         if wh_type == "tank"
             new_schedule = self.create_new_schedule_ruleset("DHW Temp", "DHW Temp Default", OpenStudio::convert(t_set,"F","C").get + 1, model)
         else #tankless
@@ -366,7 +366,7 @@ class Waterheater
         new_heater.setSetpointTemperatureSchedule(new_schedule)
     end
     
-    def self.create_new_loop(model, name, t_set, wh_type)
+    def self.create_new_loop(model, name, t_set, wh_type="tank")
         #Create a new plant loop for the water heater
         loop = OpenStudio::Model::PlantLoop.new(model)
         loop.setName(name)

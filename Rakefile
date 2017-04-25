@@ -173,7 +173,7 @@ namespace :test do
     if File.exists?(File.expand_path("../log", __FILE__))
         FileUtils.rm(File.expand_path("../log", __FILE__))
     end
-    
+
     osw_files.each do |osw|
 
         # Generate osm from osw

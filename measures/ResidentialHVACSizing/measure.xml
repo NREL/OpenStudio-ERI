@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>51e70a3d-8365-4ef7-97dd-d5bf752c8f94</version_id>
-  <version_modified>20170424T234828Z</version_modified>
+  <version_id>8248980f-1d52-4799-ad0f-90a0832c58f7</version_id>
+  <version_modified>20170425T145948Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -135,12 +135,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>21CE70F8</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7C5F3C4D</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_CS_GRG_FA.osm</filename>
@@ -460,34 +454,10 @@
       <checksum>7D9B1D58</checksum>
     </file>
     <file>
-      <filename>_hvac_tests-v2.7.0.0.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0C7E9A06</checksum>
-    </file>
-    <file>
-      <filename>_hvac_tests.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>85E9E702</checksum>
-    </file>
-    <file>
-      <filename>_hvac_tests2.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>15725389</checksum>
-    </file>
-    <file>
-      <filename>_load_tests.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4A90B74D</checksum>
-    </file>
-    <file>
-      <filename>_load_tests2.BEopt</filename>
-      <filetype>BEopt</filetype>
-      <usage_type>test</usage_type>
-      <checksum>82DD7DDF</checksum>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D909FE3D</checksum>
     </file>
   </files>
 </measure>

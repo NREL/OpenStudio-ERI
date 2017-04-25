@@ -2,10 +2,10 @@ require "#{File.dirname(__FILE__)}/constants"
 
 class Geometry
 
-    def self.get_abs_azimuth(azimuth_type, relative_azimuth, building_orientation)
+    def self.get_abs_azimuth(azimuth_type, relative_azimuth, building_orientation, offset=180.0)
       azimuth = nil
       if azimuth_type == Constants.CoordRelative
-        azimuth = relative_azimuth + building_orientation
+        azimuth = relative_azimuth + building_orientation + offset
       elsif azimuth_type == Constants.CoordAbsolute
         azimuth = relative_azimuth
       end    
