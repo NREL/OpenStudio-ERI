@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>9a95f314-80b9-4f52-bda0-218325d38522</version_id>
-  <version_modified>20170425T145934Z</version_modified>
+  <version_id>ba3d3db9-bbf8-497f-b0de-7e5017e019fe</version_id>
+  <version_modified>20170425T212559Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
@@ -436,12 +436,6 @@
       <checksum>2C7F4325</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>27E5CCE6</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver_Boiler.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -460,16 +454,22 @@
       <checksum>98D29F9B</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D9B1D58</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>D909FE3D</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EB0DBEE2</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8DCDCE57</checksum>
     </file>
   </files>
 </measure>

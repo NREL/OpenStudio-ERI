@@ -909,6 +909,27 @@ class Constants
   def self.SizingInfoGarageFracUnderFinishedSpace
     return self.SizingInfo(__method__.to_s)
   end
+  def self.SizingInfoGSHPBoreConfig
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoGSHPBoreDepth
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoGSHPBoreHoles
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoGSHPBoreSpacing
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoGSHPCoil_BF_FT_SPEC
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoGSHPCoilBF
+    return self.SizingInfo(__method__.to_s)
+  end
+  def self.SizingInfoGSHPUTubeSpacingType
+    return self.SizingInfo(__method__.to_s)
+  end
   def self.SizingInfoHPSizedForMaxLoad
     return self.SizingInfo(__method__.to_s)
   end

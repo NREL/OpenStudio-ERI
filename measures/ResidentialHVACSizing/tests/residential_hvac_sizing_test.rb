@@ -1860,6 +1860,206 @@ class ProcessHVACSizingTest < MiniTest::Test
     _test_measure("SFD_HVACSizing_Equip_ASHPV_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end  
   
+  def test_equip_GSHP_autosize
+    args_hash = {}
+    args_hash["show_debug_info"] = true
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 94511,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 70883,
+						'Cool_SensCap' => 51886,
+						'Heat_Capacity' => 70883,
+						'SuppHeat_Capacity' => 94511,
+						'Cool_AirFlowRate' => 2978,
+						'Heat_AirFlowRate' => 2235,
+						'Fan_AirFlowRate' => 2978,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'GroundHeatExchanger:Vertical_Design Flow Rate {m3/s}' => 0.00094635294,
+						'GroundHeatExchanger:Vertical_Number of Bore Holes' => 9.0,
+						'GroundHeatExchanger:Vertical_Bore Hole Length {m}' => 97.2312,
+						'GroundHeatExchanger:Vertical_Pair 1 - GFNC' => 2.679,
+						'GroundHeatExchanger:Vertical_Pair 2 - GFNC' => 3.023,
+						'GroundHeatExchanger:Vertical_Pair 3 - GFNC' => 3.318,
+						'GroundHeatExchanger:Vertical_Pair 4 - GFNC' => 3.664,
+						'GroundHeatExchanger:Vertical_Pair 5 - GFNC' => 3.962,
+						'GroundHeatExchanger:Vertical_Pair 6 - GFNC' => 4.312,
+						'GroundHeatExchanger:Vertical_Pair 7 - GFNC' => 4.693,
+						'GroundHeatExchanger:Vertical_Pair 8 - GFNC' => 4.972,
+						'GroundHeatExchanger:Vertical_Pair 9 - GFNC' => 5.589,
+						'GroundHeatExchanger:Vertical_Pair 10 - GFNC' => 6.03,
+						'GroundHeatExchanger:Vertical_Pair 11 - GFNC' => 6.381,
+						'GroundHeatExchanger:Vertical_Pair 12 - GFNC' => 6.936,
+						'GroundHeatExchanger:Vertical_Pair 13 - GFNC' => 7.364,
+						'GroundHeatExchanger:Vertical_Pair 14 - GFNC' => 8.436,
+						'GroundHeatExchanger:Vertical_Pair 15 - GFNC' => 9.655,
+						'GroundHeatExchanger:Vertical_Pair 16 - GFNC' => 10.027,
+						'GroundHeatExchanger:Vertical_Pair 17 - GFNC' => 10.391,
+						'GroundHeatExchanger:Vertical_Pair 18 - GFNC' => 10.751,
+						'GroundHeatExchanger:Vertical_Pair 19 - GFNC' => 11.04,
+						'GroundHeatExchanger:Vertical_Pair 20 - GFNC' => 11.298,
+						'GroundHeatExchanger:Vertical_Pair 21 - GFNC' => 11.527,
+						'GroundHeatExchanger:Vertical_Pair 22 - GFNC' => 11.726,
+						'GroundHeatExchanger:Vertical_Pair 23 - GFNC' => 11.879,
+						'GroundHeatExchanger:Vertical_Pair 24 - GFNC' => 12.054,
+						'GroundHeatExchanger:Vertical_Pair 25 - GFNC' => 12.175,
+						'GroundHeatExchanger:Vertical_Pair 26 - GFNC' => 12.234,
+						'GroundHeatExchanger:Vertical_Pair 27 - GFNC' => 12.331,
+						'CondenserLoop_Maximum Loop Flow Rate {m3/s}' => 0.00094635294,
+						'Pump:VariableSpeed_Design Flow Rate {m3/s}' => 0.00094635294,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 1.40555686576,
+						'AirLoopHVAC:UnitaryHeatPump:WaterToAir_Supply Air Flow Rate {m3/s}' => 1.40555686576,
+						'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Air Flow Rate {m3/s}' => 1.05519705158,
+						'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Water Flow Rate {m3/s}' => 0.00094635294,
+						'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Heating Capacity {W}' => 20775.9743614,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 27701.2991485,
+						'Coil:Cooling:WaterToAirHeatPump:EquationFit_Rated Water Flow Rate {m3/s}' => 0.00094635294,
+						'Coil:Cooling:WaterToAirHeatPump:EquationFit_Rated Total Cooling Capacity {W}' => 20775.9743614,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 1.40556158523,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 1.34105028467,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.0645065810927,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_GSHP_Autosize.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
+  def test_equip_GSHP_fixedsize
+    args_hash = {}
+    args_hash["show_debug_info"] = true
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {
+						'DehumidLoad_Inf_Sens' => -1567,
+						'DehumidLoad_Inf_Lat' => -1161,
+						'DehumidLoad_Int_Sens' => 2303,
+						'DehumidLoad_Int_Lat' => 1065,
+						'Heat Windows' => 8623,
+						'Heat Doors' => 252,
+						'Heat Walls' => 12768,
+						'Heat Roofs' => 2242,
+						'Heat Floors' => 2049,
+						'Heat Infil' => 15650,
+						'Dehumid Windows' => -1053,
+						'Dehumid Doors' => -30,
+						'Dehumid Walls' => -1069,
+						'Dehumid Roofs' => -273,
+						'Dehumid Floors' => 9,
+						'Cool Windows' => 5778,
+						'Cool Doors' => 91,
+						'Cool Walls' => 1777,
+						'Cool Roofs' => 591,
+						'Cool Floors' => 230,
+						'Cool Infil Sens' => 1963,
+						'Cool Infil Lat' => -3226,
+						'Cool IntGains Sens' => 2912,
+						'Cool IntGains Lat' => 1062,
+						'Heat Load' => 41587,
+						'Cool Load Sens' => 13344,
+						'Cool Load Lat' => 0,
+						'Dehumid Load Sens' => -1682,
+						'Dehumid Load Lat' => -95,
+						'Heat Airflow' => 1311,
+						'Cool Airflow' => 1738,
+						'HeatingLoad' => 50000,
+						'HeatingDuctLoad' => 52923,
+						'CoolingLoad_Lat' => 0,
+						'CoolingLoad_Sens' => 26771,
+						'CoolingLoad_Ducts_Lat' => -609,
+						'CoolingLoad_Ducts_Sens' => 14036,
+						'DehumidLoad_Sens' => -2314,
+						'DehumidLoad_Ducts_Lat' => 0,
+						'Cool_Capacity' => 60000,
+						'Cool_SensCap' => 43920,
+						'Heat_Capacity' => 60000,
+						'SuppHeat_Capacity' => 50000,
+						'Cool_AirFlowRate' => 2520,
+						'Heat_AirFlowRate' => 1892,
+						'Fan_AirFlowRate' => 2520,
+						'Dehumid_WaterRemoval_Auto' => 0,
+						'GroundHeatExchanger:Vertical_Design Flow Rate {m3/s}' => 0.00094635294,
+						'GroundHeatExchanger:Vertical_Number of Bore Holes' => 8.0,
+						'GroundHeatExchanger:Vertical_Bore Hole Length {m}' => 94.488,
+						'GroundHeatExchanger:Vertical_Pair 1 - GFNC' => 2.679,
+						'GroundHeatExchanger:Vertical_Pair 2 - GFNC' => 3.023,
+						'GroundHeatExchanger:Vertical_Pair 3 - GFNC' => 3.318,
+						'GroundHeatExchanger:Vertical_Pair 4 - GFNC' => 3.664,
+						'GroundHeatExchanger:Vertical_Pair 5 - GFNC' => 3.962,
+						'GroundHeatExchanger:Vertical_Pair 6 - GFNC' => 4.312,
+						'GroundHeatExchanger:Vertical_Pair 7 - GFNC' => 4.692,
+						'GroundHeatExchanger:Vertical_Pair 8 - GFNC' => 4.97,
+						'GroundHeatExchanger:Vertical_Pair 9 - GFNC' => 5.583,
+						'GroundHeatExchanger:Vertical_Pair 10 - GFNC' => 6.018,
+						'GroundHeatExchanger:Vertical_Pair 11 - GFNC' => 6.364,
+						'GroundHeatExchanger:Vertical_Pair 12 - GFNC' => 6.909,
+						'GroundHeatExchanger:Vertical_Pair 13 - GFNC' => 7.327,
+						'GroundHeatExchanger:Vertical_Pair 14 - GFNC' => 8.366,
+						'GroundHeatExchanger:Vertical_Pair 15 - GFNC' => 9.531,
+						'GroundHeatExchanger:Vertical_Pair 16 - GFNC' => 9.883,
+						'GroundHeatExchanger:Vertical_Pair 17 - GFNC' => 10.225,
+						'GroundHeatExchanger:Vertical_Pair 18 - GFNC' => 10.562,
+						'GroundHeatExchanger:Vertical_Pair 19 - GFNC' => 10.83,
+						'GroundHeatExchanger:Vertical_Pair 20 - GFNC' => 11.069,
+						'GroundHeatExchanger:Vertical_Pair 21 - GFNC' => 11.28,
+						'GroundHeatExchanger:Vertical_Pair 22 - GFNC' => 11.463,
+						'GroundHeatExchanger:Vertical_Pair 23 - GFNC' => 11.602,
+						'GroundHeatExchanger:Vertical_Pair 24 - GFNC' => 11.762,
+						'GroundHeatExchanger:Vertical_Pair 25 - GFNC' => 11.872,
+						'GroundHeatExchanger:Vertical_Pair 26 - GFNC' => 11.925,
+						'GroundHeatExchanger:Vertical_Pair 27 - GFNC' => 12.013,
+						'CondenserLoop_Maximum Loop Flow Rate {m3/s}' => 0.00094635294,
+						'Pump:VariableSpeed_Design Flow Rate {m3/s}' => 0.00094635294,
+						'AirLoopHVAC_Design Supply Air Flow rate {m3/s}' => 1.1897455499,
+						'AirLoopHVAC:UnitaryHeatPump:WaterToAir_Supply Air Flow Rate {m3/s}' => 1.1897455499,
+						'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Air Flow Rate {m3/s}' => 0.893180508712,
+						'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Water Flow Rate {m3/s}' => 0.00094635294,
+						'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Heating Capacity {W}' => 17586.0,
+						'Coil:Heating:Electric_Nominal Capacity {W}' => 14655.0,
+						'Coil:Cooling:WaterToAirHeatPump:EquationFit_Rated Water Flow Rate {m3/s}' => 0.00094635294,
+						'Coil:Cooling:WaterToAirHeatPump:EquationFit_Rated Total Cooling Capacity {W}' => 17586.0,
+						'Fan:OnOff_Living_Maximum Flow Rate {m3/s}' => 1.18975026937,
+						'AirTerminal:SingleDuct:Uncontrolled_Living_Maximum Flow Rate {m3/s}' => 1.08653502015,
+						'AirTerminal:SingleDuct:Uncontrolled_Basement_Maximum Flow Rate {m3/s}' => 0.103210529748,
+                      }
+    _test_measure("SFD_HVACSizing_Equip_GSHP_Fixed.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
+  end  
+  
   def test_equip_electric_baseboard_autosize
     args_hash = {}
     args_hash["show_debug_info"] = true
@@ -3421,6 +3621,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     water_removal_tolerance = 3 # L/day
     energy_factor_tolerance = 0.1 # L/kWh
     ua_tolerance = 20 # W/K
+    length_tolerance = 30 # ft
     
     # Compare intermediate values to result.info values
     map = beopt_to_os_mapping()
@@ -3472,6 +3673,7 @@ class ProcessHVACSizingTest < MiniTest::Test
     water_removal_units = "{L/day}"
     energy_factor_units = "{L/kWh}"
     ua_units = "{W/K}"
+    length_units = "{m}"
     expected_values.each do |beopt_key, beopt_val|
         next if !map[beopt_key].nil?
         os_val = nil
@@ -3481,6 +3683,8 @@ class ProcessHVACSizingTest < MiniTest::Test
         is_water_removal = false
         is_energy_factor = false
         is_ua = false
+        is_length = false
+        is_unitless = false
         if beopt_key.include?(flowrate_units)
             is_flowrate = true
         elsif beopt_key.include?(capacity_units)
@@ -3491,6 +3695,10 @@ class ProcessHVACSizingTest < MiniTest::Test
             is_energy_factor = true
         elsif beopt_key.include?(ua_units)
             is_ua = true
+        elsif beopt_key.include?(length_units)
+            is_length = true
+        elsif !beopt_key.include?("{") and !beopt_key.include?("}")
+            is_unitless = true
         else
             puts "WARNING: Unhandled key type: #{beopt_key}."
             next
@@ -3501,7 +3709,8 @@ class ProcessHVACSizingTest < MiniTest::Test
             os_val = model.getAirLoopHVACs[0].designSupplyAirFlowRate.get
             
         elsif (beopt_key == 'AirLoopHVAC:UnitaryHeatCool_Supply Air Flow Rate During Cooling Operation {m3/s}' or
-               beopt_key == 'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Cooling Operation {m3/s}')
+               beopt_key == 'AirLoopHVAC:UnitaryHeatPump:AirToAir_Supply Air Flow Rate During Cooling Operation {m3/s}' or
+               beopt_key == 'AirLoopHVAC:UnitaryHeatPump:WaterToAir_Supply Air Flow Rate {m3/s}')
             ensure_num_objects(model.getAirLoopHVACUnitarySystems, beopt_key)
             os_val = model.getAirLoopHVACUnitarySystems[0].supplyAirFlowRateDuringCoolingOperation.get
             
@@ -3518,6 +3727,20 @@ class ProcessHVACSizingTest < MiniTest::Test
         elsif beopt_key.start_with?('AirLoopHVAC:UnitaryHeatPump:AirToAir:MultiSpeed_Speed') and beopt_key.end_with?('Supply Air Flow Rate During Heating Operation {m3/s}')
             # FIXME: ASKJON
             next
+            
+        elsif beopt_key == 'GroundHeatExchanger:Vertical_Design Flow Rate {m3/s}'
+            ensure_num_objects(model.getGroundHeatExchangerVerticals, beopt_key)
+            os_val = model.getGroundHeatExchangerVerticals[0].designFlowRate.get
+            
+        elsif beopt_key == 'GroundHeatExchanger:Vertical_Bore Hole Length {m}'
+            ensure_num_objects(model.getGroundHeatExchangerVerticals, beopt_key)
+            os_val = model.getGroundHeatExchangerVerticals[0].boreHoleLength.get
+            # Evaluate total bore length (bore hole length * num bore holes)
+            os_val *= model.getGroundHeatExchangerVerticals[0].numberofBoreHoles.get
+            beopt_val *= expected_values['GroundHeatExchanger:Vertical_Number of Bore Holes']
+            
+        elsif beopt_key == 'GroundHeatExchanger:Vertical_Number of Bore Holes'
+            next # captured above in total bore length
             
         elsif beopt_key == 'Coil:Heating:Fuel_Nominal Capacity {W}'
             ensure_num_objects(model.getCoilHeatingGass, beopt_key)
@@ -3550,6 +3773,14 @@ class ProcessHVACSizingTest < MiniTest::Test
             ensure_num_objects(model.getCoilHeatingDXSingleSpeeds, beopt_key)
             os_val = model.getCoilHeatingDXSingleSpeeds[0].ratedAirFlowRate.get
             
+        elsif beopt_key == 'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Heating Capacity {W}'
+            ensure_num_objects(model.getCoilHeatingWaterToAirHeatPumpEquationFits, beopt_key)
+            os_val = model.getCoilHeatingWaterToAirHeatPumpEquationFits[0].ratedHeatingCapacity.get
+            
+        elsif beopt_key == 'Coil:Cooling:WaterToAirHeatPump:EquationFit_Rated Total Cooling Capacity {W}'
+            ensure_num_objects(model.getCoilCoolingWaterToAirHeatPumpEquationFits, beopt_key)
+            os_val = model.getCoilCoolingWaterToAirHeatPumpEquationFits[0].ratedTotalCoolingCapacity.get
+            
         elsif beopt_key.start_with?('Coil:Heating:DX:MultiSpeed_Speed') and beopt_key.end_with?('Rated Air Flow Rate {m3/s}')
             if model.getCoilHeatingDXMultiSpeeds.size > 0
                 ensure_num_objects(model.getCoilHeatingDXMultiSpeeds, beopt_key)
@@ -3564,6 +3795,24 @@ class ProcessHVACSizingTest < MiniTest::Test
                 ensure_num_objects(model.getCoilHeatingGass, beopt_key)
                 next # no airflow property
             end
+        
+        elsif beopt_key == 'CondenserLoop_Maximum Loop Flow Rate {m3/s}'
+            model.getPlantLoops.each do |pl|
+                next if !pl.name.to_s.downcase.include?('condenser')
+                os_val = pl.maximumLoopFlowRate.get
+            end
+            
+        elsif beopt_key == 'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Air Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilHeatingWaterToAirHeatPumpEquationFits, beopt_key)
+            os_val = model.getCoilHeatingWaterToAirHeatPumpEquationFits[0].ratedAirFlowRate.get
+            
+        elsif beopt_key == 'Coil:Heating:WaterToAirHeatPump:EquationFit_Rated Water Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilHeatingWaterToAirHeatPumpEquationFits, beopt_key)
+            os_val = model.getCoilHeatingWaterToAirHeatPumpEquationFits[0].ratedWaterFlowRate.get
+            
+        elsif beopt_key == 'Coil:Cooling:WaterToAirHeatPump:EquationFit_Rated Water Flow Rate {m3/s}'
+            ensure_num_objects(model.getCoilCoolingWaterToAirHeatPumpEquationFits, beopt_key)
+            os_val = model.getCoilCoolingWaterToAirHeatPumpEquationFits[0].ratedWaterFlowRate.get
             
         elsif beopt_key == 'Coil:Cooling:DX:SingleSpeed_Rated Total Cooling Capacity {W}'
             ensure_num_objects(model.getCoilCoolingDXSingleSpeeds, beopt_key)
@@ -3763,7 +4012,7 @@ class ProcessHVACSizingTest < MiniTest::Test
             
         elsif beopt_key == 'Pump:VariableSpeed_Design Flow Rate {m3/s}'
             model.getPumpVariableSpeeds.each do |pump|
-                next if !pump.name.to_s.downcase.include?('boiler')
+                next if !pump.name.to_s.downcase.include?('boiler') and !pump.name.to_s.downcase.include?('gshp')
                 os_val = pump.ratedFlowRate.get
             end
         
@@ -3799,6 +4048,13 @@ class ProcessHVACSizingTest < MiniTest::Test
                 os_val = bb.heatingCoil.to_CoilHeatingWaterBaseboard.get.maximumWaterFlowRate.get
             end
             
+        elsif beopt_key.start_with?('GroundHeatExchanger:Vertical_Pair') and beopt_key.end_with?('GFNC')
+            ensure_num_objects(model.getGroundHeatExchangerVerticals, beopt_key)
+            pair_num = beopt_key.gsub('GroundHeatExchanger:Vertical_Pair','').gsub('GFNC','').to_i
+            # TODO: Cannot currently get gFunction value for comparison, so skipping.
+            #       See https://github.com/NREL/OpenStudio/issues/2591
+            next
+           
         else
             puts "WARNING: Unhandled key: #{beopt_key}."
             next
@@ -3825,6 +4081,14 @@ class ProcessHVACSizingTest < MiniTest::Test
         elsif is_ua
             str = "#{beopt_key.gsub(ua_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
             tolerance = ua_tolerance
+        elsif is_length
+            os_val = OpenStudio.convert(os_val,"m","ft").get
+            beopt_val = OpenStudio.convert(beopt_val,"m","ft").get
+            str = "#{beopt_key.gsub(length_units,'').strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            tolerance = length_tolerance
+        elsif is_unitless
+            str = "#{beopt_key.strip}: #{beopt_val.round(0)} (BEopt) vs. #{os_val.round(0)} (OS)"
+            tolerance = 0
         end
         if print_debug_info
             puts str

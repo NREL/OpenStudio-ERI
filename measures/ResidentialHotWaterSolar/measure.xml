@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_solar</name>
   <uid>b969f216-f3c0-4301-9b85-34ce2b45f551</uid>
-  <version_id>a9c523cf-0504-4af9-9da3-f3e3d65e5718</version_id>
-  <version_modified>20170425T185717Z</version_modified>
+  <version_id>cc0289d9-2eba-40e4-b8a8-0af3241a995e</version_id>
+  <version_modified>20170425T223526Z</version_modified>
   <xml_checksum>F33F6E26</xml_checksum>
   <class_name>ResidentialHotWaterSolar</class_name>
   <display_name>Set Residential Solar Water Heating</display_name>
@@ -183,12 +183,6 @@
   </attributes>
   <files>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>27E5CCE6</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -223,12 +217,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E957CFBF</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7D9B1D58</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -297,6 +285,18 @@
       <checksum>71AD7FED</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EB0DBEE2</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8DCDCE57</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.0</identifier>
@@ -305,7 +305,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3DF6CEDF</checksum>
+      <checksum>B4EAE2DA</checksum>
     </file>
   </files>
 </measure>

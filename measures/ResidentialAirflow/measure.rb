@@ -2522,7 +2522,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
   
   def _processDuctsForUnit(model, runner, ducts, building, unit)
   
-    if ducts.DuctLocation !=  "none" and HVAC.has_central_air_conditioner(model, runner, unit.living_zone, false, false).nil? and HVAC.has_furnace(model, runner, unit.living_zone, false, false).nil? and HVAC.has_air_source_heat_pump(model, runner, unit.living_zone, false).nil?
+    if ducts.DuctLocation !=  "none" and HVAC.has_central_air_conditioner(model, runner, unit.living_zone, false, false).nil? and HVAC.has_furnace(model, runner, unit.living_zone, false, false).nil? and HVAC.has_air_source_heat_pump(model, runner, unit.living_zone, false).nil? and HVAC.has_gshp_vert_bore(model, runner, unit.living_zone, false).nil?
       runner.registerWarning("No ducted HVAC equipment was found but ducts were specified. Overriding duct specification.")
       ducts.DuctLocation = "none"
     end        
