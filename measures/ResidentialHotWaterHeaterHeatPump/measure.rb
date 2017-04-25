@@ -93,7 +93,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
         cap.setDisplayName("Rated Capacity")
         cap.setDescription("The input power of the HPWH compressor at rated conditions.")
         cap.setUnits("kW")
-        cap.setDefaultValue("1.4")
+        cap.setDefaultValue("0.5")
         args << cap
         
         # make an argument for cop
@@ -196,6 +196,9 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
         #ducting = runner.getStringArgumentValue("ducting",user_arguments)
         ducting = "none"
         
+        input_power_w = OpenStudio.convert(cap,"kW","W").get 
+        rated_heat_cap = input_power_w * cop
+        
         #Validate inputs
         if not runner.validateUserArguments(arguments(model), user_arguments)
             return false
@@ -212,6 +215,61 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
         end
         valid_cap = validate_element_capacity(e_cap, runner)
         if valid_cap.nil?
+            return false
+        end
+        
+        valid_min_temp = validate_min_temp(min_temp,runner)
+        if valid_min_temp.nil?
+            return false
+        end
+        
+        valid_max_temp = validate_max_temp(max_temp,runner)
+        if valid_max_temp.nil?
+            return false
+        end
+        
+        valid_cap = validate_cap(cap,runner)
+        if valid_cap.nil?
+            return false
+        end
+        
+        valid_cop = validate_cop(cop,runner)
+        if valid_cop.nil?
+            return false
+        end
+        
+        valid_shr = validate_shr(shr,runner)
+        if valid_shr.nil?
+            return false
+        end
+        
+        valid_airflow_rate = validate_airflow_rate(airflow_rate,runner)
+        if valid_airflow_rate.nil?
+            return false
+        end
+        
+        valid_fan_power = validate_fan_power(fan_power,runner)
+        if valid_fan_power.nil?
+            return false
+        end
+        
+        valid_parasitics = validate_parasitics(parasitics,runner)
+        if valid_parasitics.nil?
+            return false
+        end
+        
+        valid_ua = validate_tank_ua(tank_ua,runner)
+        if valid_ua.nil?
+            return false
+        end
+        
+        valid_int_factor = validate_int_factor(int_factor,runner)
+        if valid_int_factor.nil?
+            return false
+        end
+        
+        valid_temp_depress = validate_temp_depress(temp_depress,runner)
+        if valid_temp_depress.nil?
             return false
         end
         
@@ -236,7 +294,6 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
         model.getEnergyManagementSystemProgramCallingManagers.each do |program_calling_manager|
             next unless program_calling_manager.name.to_s.start_with?("HPWHProgramManager")
             program_calling_manager.remove
-            runner.registerInfo("An existing HPWH was found and removed from the model.")
         end
         
         model.getEnergyManagementSystemSensors.each do |sensor|
@@ -264,6 +321,16 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
         model.getEnergyManagementSystemTrendVariables.each do |trend_var|
             next unless trend_var.name.to_s.start_with?("UETrend", "LETrend", "HPWH_on_off")
             trend_var.remove
+        end
+        
+        model.getScheduleConstants.each do |sched|
+            next unless sched.name.to_s.start_with?("HPWHBottomElementSetpoint", "HPWHTopElementSetpoint", "HPWH_Tamb_act", "HPWH_RHamb_act", "HPWH_Tamb_act2")
+            sched.remove
+        end
+        
+        model.getScheduleRulesets.each do |sched|
+            next unless sched.name.to_s.start_with?("CompressorSPSchedule", "DHWTemp")
+            sched.remove
         end
         
         units.each do |unit|
@@ -303,7 +370,6 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 objects_to_remove = []
                 pl.supplyComponents.each do |wh|
                     next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized
-                    runner.registerInfo("Found a mixed, stratified, or hpwh")
                     objects_to_remove << wh
                     if wh.to_WaterHeaterMixed.is_initialized
                         wh = wh.to_WaterHeaterMixed.get
@@ -319,7 +385,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                     end
                 end
                 if objects_to_remove.size > 0
-                    runner.registerInfo("Removed existing water heater from plant loop #{pl.name.to_s}.")
+                    runner.registerInfo("Removed the existing water heater from plant loop #{pl.name.to_s}.")
                 end
                 objects_to_remove.uniq.each do |object|
                     begin
@@ -334,7 +400,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             if loop.nil?
                 runner.registerInfo("A new plant loop for DHW will be added to the model")
                 runner.registerInitialCondition("There is no existing water heater")
-                loop = Waterheater.create_new_loop(model, Constants.PlantLoopDomesticWater(unit.name.to_s), t_set)
+                loop = Waterheater.create_new_loop(model, Constants.PlantLoopDomesticWater(unit.name.to_s), t_set, "hpwh")
             else
                 runner.registerInitialCondition("An existing water heater was found in the model. This water heater will be removed and replace with a heat pump water heater")
             end
@@ -345,7 +411,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             end
 
             if loop.supplyOutletNode.setpointManagers.empty?
-                new_manager = Waterheater.create_new_schedule_manager(t_set, model)
+                new_manager = Waterheater.create_new_schedule_manager(t_set, model, "hpwh")
                 new_manager.addToNode(loop.supplyOutletNode)
             end
 
@@ -431,7 +497,6 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             
             tset_C = OpenStudio.convert(t_set,"F","C").to_f.round(2)
             hp_setpoint = Waterheater.create_new_schedule_ruleset("CompressorSPSchedule_#{unit_num}", "WaterHeaterHPSchedule_#{unit_num}", tset_C, model) 
-            OpenStudio::Model::ScheduleConstant.new(model)
             
             hpwh_bottom_element_sp = OpenStudio::Model::ScheduleConstant.new(model)
             hpwh_bottom_element_sp.setName("HPWHBottomElementSetpoint_#{unit_num}")
@@ -513,7 +578,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             #Coil:WaterHeating:AirToWaterHeatPump:Wrapped (get the object created by the HPWH object and modify that)
             coil = model.getCoilWaterHeatingAirToWaterHeatPumpWrappeds[unit_num-1] #There's only one per unit in the model
             coil.setName("hpwh_coil_#{unit_num}")
-            coil.setRatedHeatingCapacity(OpenStudio.convert(cap,"kW","W").get)
+            coil.setRatedHeatingCapacity(rated_heat_cap)
             coil.setRatedCOP(cop)
             coil.setRatedSensibleHeatRatio(shr)
             coil.setRatedEvaporatorInletAirDryBulbTemperature(rated_edb)
@@ -747,7 +812,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 sensor.setName("HPWH_v_air_#{unit_num}")
             end
             
-            temp_depress_c = temp_depress * 1.8 #don't use convert because it's a delta
+            temp_depress_c = temp_depress / 1.8 #don't use convert because it's a delta
             timestep_minutes = (60/model.getTimestep.numberOfTimestepsPerHour).to_i
             #EMS Program for ducting
             hpwh_ducting_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
@@ -822,7 +887,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             #schedules come from sim.py
             if hpwh_param == 80
                 actuator =  OpenStudio::Model::EnergyManagementSystemActuator.new(hpwh_bottom_element_sp,"Schedule:Constant","Schedule Value")
-                actuator.setName("LESchedOverride#{unit_num}")
+                actuator.setName("LESchedOverride_#{unit_num}")
                 
                 hpwh_ctrl_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
                 hpwh_ctrl_program.setName("HPWHControl_#{unit_num}")
@@ -914,10 +979,16 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             
             loop.addSupplyBranchForComponent(tank)
 
+            #Remove any extra Schedule:Rulesets that was autogenerated by the HPWH object
+            model.getScheduleRulesets.each do |schedule|
+                next unless schedule.name.to_s.start_with?("Schedule Ruleset")
+                schedule.remove
+            end
             
         end
-
-        runner.registerFinalCondition("A new  #{vol.round} gallon heat pump water heater, with a rated COP of #{cop} and a heat pump capacity of #{cap} has been added to the model")
+        
+        rated_heat_cap_kW = OpenStudio.convert(rated_heat_cap,"W","kW").get 
+        runner.registerFinalCondition("A new  #{vol.round} gallon heat pump water heater, with a rated COP of #{cop} and a nominal heat pump capacity of #{rated_heat_cap_kW.round(2)} kW has been added to the model")
         
         return true
  
@@ -926,10 +997,9 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
     private
     
     def validate_storage_tank_volume(vol, runner)
-        return true if (vol == Constants.Auto)  # flag for autosizing
         vol = vol.to_f
         if vol <= 0.0
-            runner.registerError("Storage tank volume must be greater than 0 or #{Constants.Auto}.")   
+            runner.registerError("Storage tank volume must be greater than 0.")   
             return nil
         end
         if vol < 20.0
@@ -970,7 +1040,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
     
     def validate_min_temp(min_temp, runner)
         if min_temp >= 80.0
-            runner.registerError("Maximum temperature will prevent HPWH from running, double check inputs.")
+            runner.registerError("Minimum temperature will prevent HPWH from running, double check inputs.")
             return nil
         end
         if min_temp <= -30.0
