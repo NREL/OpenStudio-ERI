@@ -380,8 +380,8 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
         storage_tank.setHeaterThermalEfficiency(1)
         storage_tank.ambientTemperatureSchedule.get.remove
         storage_tank.setAmbientTemperatureThermalZone(control_zone)
-        storage_tank.setAmbientTemperatureIndicator('Zone')        
-        storage_tank.setUniformSkinLossCoefficientperUnitAreatoAmbientTemperature(OpenStudio.convert(shw_system.storage_Uvalue,"Btu/hr*ft^2*F","W/m^2*K").get)
+        storage_tank.setAmbientTemperatureIndicator('ThermalZone')
+        storage_tank.setUniformSkinLossCoefficientperUnitAreatoAmbientTemperature(OpenStudio.convert(shw_system.storage_Uvalue,"Btu/hr*ft^2*R","W/m^2*K").get)
         storage_tank.setSkinLossFractiontoZone(1)
         storage_tank.setOffCycleFlueLossFractiontoZone(1)
         storage_tank.setUseSideEffectiveness(1)
@@ -393,6 +393,9 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
         storage_tank.setInletMode('Fixed')
         storage_tank.setIndirectWaterHeatingRecoveryTime(1.5)
         storage_tank.setNumberofNodes(8)
+        storage_tank.setAdditionalDestratificationConductivity(0)
+        storage_tank.setNode1AdditionalLossCoefficient(0)
+        storage_tank.setNode6AdditionalLossCoefficient(0)
         
         plant_loop.addDemandBranchForComponent(storage_tank)
         runner.registerInfo("Added '#{storage_tank.name}' to demand branch of '#{plant_loop.name}'.")
