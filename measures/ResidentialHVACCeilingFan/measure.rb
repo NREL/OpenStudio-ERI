@@ -291,58 +291,64 @@ class ProcessCeilingFan < OpenStudio::Measure::ModelMeasure
       # period. Determine the lowest value of all of the hourly cooling setpoints.
       
       # Get cooling setpoints
+      clg_wkdy = nil
+      clg_wked = nil
       thermostatsetpointdualsetpoint = unit.living_zone.thermostatSetpointDualSetpoint
-      coolingSetpointWeekday = Array.new(24, 10000)
-      coolingSetpointWeekend = Array.new(24, 10000)
       if thermostatsetpointdualsetpoint.is_initialized
         thermostatsetpointdualsetpoint.get.coolingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
+          coolingSetpointWeekday = Array.new(24, 10000)
+          coolingSetpointWeekend = Array.new(24, 10000)
+          # weekday
           if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
             rule.daySchedule.values.each_with_index do |value, hour|
               if value < coolingSetpointWeekday[hour]
                 coolingSetpointWeekday[hour] = OpenStudio::convert(value,"C","F").get + cooling_setpoint_offset
               end
             end
-            if rule.daySchedule.values.all? {|x| x == 10000}
+            unless rule.daySchedule.values.all? {|x| x == 10000}
               rule.daySchedule.clearValues
               coolingSetpointWeekday.each_with_index do |value, hour|
                 rule.daySchedule.addValue(OpenStudio::Time.new(0,hour+1,0,0), OpenStudio::convert(value,"F","C").get)
               end
-            end
+              clg_wkdy = coolingSetpointWeekday
+            end            
           end
+          # weekend
           if rule.applySaturday and rule.applySunday
             rule.daySchedule.values.each_with_index do |value, hour|
               if value < coolingSetpointWeekend[hour]
                 coolingSetpointWeekend[hour] = OpenStudio::convert(value,"C","F").get + cooling_setpoint_offset
               end
             end
-            if rule.daySchedule.values.all? {|x| x == 10000}          
+            unless rule.daySchedule.values.all? {|x| x == 10000}          
               rule.daySchedule.clearValues
               coolingSetpointWeekend.each_with_index do |value, hour|
                 rule.daySchedule.addValue(OpenStudio::Time.new(0,hour+1,0,0), OpenStudio::convert(value,"F","C").get)
               end
-            end
+              clg_wked = coolingSetpointWeekend
+            end            
           end
         end
       end    
-      
-      if coolingSetpointWeekday.all? {|x| x == 10000}
+
+      if clg_wkdy.nil? and clg_wked.nil?
         runner.registerWarning("No cooling equipment found. Assuming #{Constants.DefaultCoolingSetpoint} F for ceiling fan operation.")
-        coolingSetpointWeekday = Array.new(24, Constants.DefaultCoolingSetpoint)
-        coolingSetpointWeekend = Array.new(24, Constants.DefaultCoolingSetpoint)
+        clg_wkdy = Array.new(24, Constants.DefaultCoolingSetpoint)
+        clg_wked = Array.new(24, Constants.DefaultCoolingSetpoint)
       end
       
-      unit.cooling_setpoint_min = (coolingSetpointWeekday + coolingSetpointWeekend).min
+      unit.cooling_setpoint_min = (clg_wkdy + clg_wked).min
       
       ceiling_fans_hourly_weekday = []
       ceiling_fans_hourly_weekend = []
     
       (0..23).to_a.each do |hour|
-        if coolingSetpointWeekday[hour] > unit.cooling_setpoint_min
+        if clg_wkdy[hour] > unit.cooling_setpoint_min
           ceiling_fans_hourly_weekday << 0
         else
           ceiling_fans_hourly_weekday << 1
         end
-        if coolingSetpointWeekend[hour] > unit.cooling_setpoint_min
+        if clg_wked[hour] > unit.cooling_setpoint_min
           ceiling_fans_hourly_weekend << 0
         else
           ceiling_fans_hourly_weekend << 1

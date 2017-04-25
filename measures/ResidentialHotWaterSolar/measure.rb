@@ -378,9 +378,9 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
         storage_tank.setHeater2Height(0)        
         storage_tank.setHeaterFuelType('Electricity')
         storage_tank.setHeaterThermalEfficiency(1)
-        storage_tank.setAmbientTemperatureIndicator('Zone')
-        storage_tank.setAmbientTemperatureThermalZone(control_zone)
         storage_tank.ambientTemperatureSchedule.get.remove
+        storage_tank.setAmbientTemperatureThermalZone(control_zone)
+        storage_tank.setAmbientTemperatureIndicator('Zone')        
         storage_tank.setUniformSkinLossCoefficientperUnitAreatoAmbientTemperature(OpenStudio.convert(shw_system.storage_Uvalue,"Btu/hr*ft^2*F","W/m^2*K").get)
         storage_tank.setSkinLossFractiontoZone(1)
         storage_tank.setOffCycleFlueLossFractiontoZone(1)
