@@ -327,7 +327,7 @@ class ProcessGroundSourceHeatPumpVerticalBore < OpenStudio::Measure::ModelMeasur
       plant_loop.setFluidType('Water')
     else
       runner.registerWarning("OpenStudio does not currently support glycol as a fluid type. Overriding to water.")
-      plant_loop.setFluidType('Glycol') # FIXME: openstudio changes this to Water since it's not an available fluid type option
+      plant_loop.setFluidType('Glycol') # TODO: openstudio changes this to Water since it's not an available fluid type option
     end
     plant_loop.setMaximumLoopTemperature(48.88889)
     plant_loop.setMinimumLoopTemperature(OpenStudio::convert(hw_design,"F","C").get)
