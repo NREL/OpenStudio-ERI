@@ -286,52 +286,52 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
         end
         
         #remove all EMS and output variables
-        model.getOutputVariables.each do |output_var|
-            next unless output_var.name.to_s.start_with?("Zone Outdoor Air Drybulb Temperature","Zone Outdoor Air Relative Humidity","Zone Mean Air Temperature","Zone Air Relative Humidity","Water Heater Heat Loss Rate","Cooling Coil Sensible Cooling Rate","Cooling Coil Latent Cooling Rate","Fan Electric Power","Zone Mean Air Humidity Ratio","System Node Pressure","System Node Temperature","System Node Humidity Ratio","System Node Current Density Volume Flow Rate","Water Heater Temperature Node 3","Water Heater Heater 2 Heating Energy","Water Heater Heater 1 Heating Energy")
-            output_var.remove
-        end
+        #model.getOutputVariables.each do |output_var|
+        #    next unless output_var.name.to_s.start_with?("Zone Outdoor Air Drybulb Temperature","Zone Outdoor Air Relative Humidity","Zone Mean Air Temperature","Zone Air Relative Humidity","Water Heater Heat Loss Rate","Cooling Coil Sensible Cooling Rate","Cooling Coil Latent Cooling Rate","Fan Electric Power","Zone Mean Air Humidity Ratio","System Node Pressure","System Node Temperature","System Node Humidity Ratio","System Node Current Density Volume Flow Rate","Water Heater Temperature Node 3","Water Heater Heater 2 Heating Energy","Water Heater Heater 1 Heating Energy")
+        #    output_var.remove
+        #end
         
-        model.getEnergyManagementSystemProgramCallingManagers.each do |program_calling_manager|
-            next unless program_calling_manager.name.to_s.start_with?("HPWHProgramManager")
-            program_calling_manager.remove
-        end
+        #model.getEnergyManagementSystemProgramCallingManagers.each do |program_calling_manager|
+        #    next unless program_calling_manager.name.to_s.start_with?("HPWHProgramManager")
+        #    program_calling_manager.remove
+        #end
         
-        model.getEnergyManagementSystemSensors.each do |sensor|
-            next unless sensor.name.to_s.start_with?("Tout","RHout","HPWH_amb_temp","HPWH_amb_rh","HPWH_tl","HPWH_sens_cool","HPWH_lat_cool","HPWH_fan_power","HPWH_amb_w","HPWH_amb_p","HPWH_tair_out","HPWH_wair_out","HPWH_v_air","T_ctrl","LE_P","UE_P")
-            sensor.remove
-        end
+        #model.getEnergyManagementSystemSensors.each do |sensor|
+        #    next unless sensor.name.to_s.start_with?("Tout","RHout","HPWH_amb_temp","HPWH_amb_rh","HPWH_tl","HPWH_sens_cool","HPWH_lat_cool","HPWH_fan_power","HPWH_amb_w","HPWH_amb_p","HPWH_tair_out","HPWH_wair_out","HPWH_v_air","T_ctrl","LE_P","UE_P")
+        #    sensor.remove
+        #end
         
-        model.getEnergyManagementSystemActuators.each do |actuator|
-            next unless actuator.name.to_s.start_with?("HPWH_RHamb_act", "HPWH_Tamb_act", "UESchedOverride", "LESchedOverride", "HPSchedOverride")
-            actuator.actuatedComponent.remove
-            actuator.remove
-        end
+        #model.getEnergyManagementSystemActuators.each do |actuator|
+        #    next unless actuator.name.to_s.start_with?("HPWH_RHamb_act", "HPWH_Tamb_act", "UESchedOverride", "LESchedOverride", "HPSchedOverride")
+        #    actuator.actuatedComponent.remove
+        #    actuator.remove
+        #end
         
-        model.getEnergyManagementSystemActuators.each do |actuator|
-            next unless actuator.name.to_s.start_with?("HPWH_sens_act","HPWH_lat_act")
-            actuator.actuatedComponent.to_OtherEquipment.get.otherEquipmentDefinition.remove
-            actuator.remove
-        end
+        #model.getEnergyManagementSystemActuators.each do |actuator|
+        #    next unless actuator.name.to_s.start_with?("HPWH_sens_act","HPWH_lat_act")
+        #    actuator.actuatedComponent.to_OtherEquipment.get.otherEquipmentDefinition.remove
+        #    actuator.remove
+        #end
         
-        model.getEnergyManagementSystemPrograms.each do |program|
-            next unless program.name.to_s.start_with?("HPWHInletAir", "HPWHControl")
-            program.remove
-        end
+        #model.getEnergyManagementSystemPrograms.each do |program|
+        #    next unless program.name.to_s.start_with?("HPWHInletAir", "HPWHControl")
+        #    program.remove
+        #end
         
-        model.getEnergyManagementSystemTrendVariables.each do |trend_var|
-            next unless trend_var.name.to_s.start_with?("UETrend", "LETrend", "HPWH_on_off")
-            trend_var.remove
-        end
+        #model.getEnergyManagementSystemTrendVariables.each do |trend_var|
+        #    next unless trend_var.name.to_s.start_with?("UETrend", "LETrend", "HPWH_on_off")
+        #    trend_var.remove
+        #end
         
-        model.getScheduleConstants.each do |sched|
-            next unless sched.name.to_s.start_with?("HPWHBottomElementSetpoint", "HPWHTopElementSetpoint", "HPWH_Tamb_act", "HPWH_RHamb_act", "HPWH_Tamb_act2")
-            sched.remove
-        end
+        #model.getScheduleConstants.each do |sched|
+        #    next unless sched.name.to_s.start_with?("HPWHBottomElementSetpoint", "HPWHTopElementSetpoint", "HPWH_Tamb_act", "HPWH_RHamb_act", "HPWH_Tamb_act2")
+        #    sched.remove
+        #end
         
-        model.getScheduleRulesets.each do |sched|
-            next unless sched.name.to_s.start_with?("CompressorSPSchedule", "DHWTemp")
-            sched.remove
-        end
+        #model.getScheduleRulesets.each do |sched|
+        #    next unless sched.name.to_s.start_with?("CompressorSPSchedule", "DHWTemp")
+        #    sched.remove
+        #end
         
         units.each do |unit|
             
@@ -416,22 +416,22 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             end
 
             #If the model currently has a HPWH, remove it
-            for hpwh in model.getWaterHeaterHeatPumpWrappedCondensers
-                hpwh.remove
-            end
+            #for hpwh in model.getWaterHeaterHeatPumpWrappedCondensers
+            #    hpwh.remove
+            #end
 
             #remove the HPWH fan
-            model.getFanOnOffs.each do |fan|	
-                if fan.name.to_s.start_with? "hpwh_fan"
-                    fan.remove
-                    break
-                end
-            end
+            #model.getFanOnOffs.each do |fan|	
+            #    if fan.name.to_s.start_with? "hpwh_fan"
+            #        fan.remove
+            #        break
+            #    end
+            #end
 
             #remove the HP
-            for hpwh_coil in model.getCoilWaterHeatingAirToWaterHeatPumpWrappeds
-                hpwh_coil.remove
-            end
+            #for hpwh_coil in model.getCoilWaterHeatingAirToWaterHeatPumpWrappeds
+            #    hpwh_coil.remove
+            #end
 
             #Only ever going to make HPWHs in this measure, so don't split this code out to waterheater.rb
             #Calculate some geometry parameters for UA, the location of sensors and heat sources in the tank
@@ -980,10 +980,10 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             loop.addSupplyBranchForComponent(tank)
 
             #Remove any extra Schedule:Rulesets that was autogenerated by the HPWH object
-            model.getScheduleRulesets.each do |schedule|
-                next unless schedule.name.to_s.start_with?("Schedule Ruleset")
-                schedule.remove
-            end
+            #model.getScheduleRulesets.each do |schedule|
+            #    next unless schedule.name.to_s.start_with?("Schedule Ruleset")
+            #    schedule.remove
+            #end
             
         end
         
