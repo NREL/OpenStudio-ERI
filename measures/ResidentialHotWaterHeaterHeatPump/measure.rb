@@ -285,16 +285,69 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             return false
         end
         
-        #remove all EMS and output variables
-        #model.getOutputVariables.each do |output_var|
-        #    next unless output_var.name.to_s.start_with?("Zone Outdoor Air Drybulb Temperature","Zone Outdoor Air Relative Humidity","Zone Mean Air Temperature","Zone Air Relative Humidity","Water Heater Heat Loss Rate","Cooling Coil Sensible Cooling Rate","Cooling Coil Latent Cooling Rate","Fan Electric Power","Zone Mean Air Humidity Ratio","System Node Pressure","System Node Temperature","System Node Humidity Ratio","System Node Current Density Volume Flow Rate","Water Heater Temperature Node 3","Water Heater Heater 2 Heating Energy","Water Heater Heater 1 Heating Energy")
-        #    output_var.remove
-        #end
-        
         #model.getEnergyManagementSystemProgramCallingManagers.each do |program_calling_manager|
         #    next unless program_calling_manager.name.to_s.start_with?("HPWHProgramManager")
         #    program_calling_manager.remove
         #end
+
+        ["Zone Outdoor Air Drybulb Temperature", "Zone Outdoor Air Relative Humidity", "Zone Mean Air Temperature", "Zone Air Relative Humidity", "Water Heater Heat Loss Rate", "Cooling Coil Sensible Cooling Rate", "Cooling Coil Latent Cooling Rate", "Fan Electric Power", "Zone Mean Air Humidity Ratio", "System Node Pressure", "System Node Temperature", "System Node Humidity Ratio", "System Node Current Density Volume Flow Rate", "Water Heater Temperature Node 3", "Water Heater Heater 2 Heating Energy", "Water Heater Heater 1 Heating Energy"].each do |output_var_name|
+          unless model.getOutputVariables.any? {|existing_output_var| existing_output_var.name.to_s == output_var_name} 
+            output_var = OpenStudio::Model::OutputVariable.new(output_var_name, model)
+            output_var.setName(output_var_name)
+          end
+        end
+        
+        zone_outdoor_air_drybulb_temp_output_var = nil
+        zone_outdoor_air_relative_humidity_output_var = nil
+        space_temp_output_var = nil
+        space_rh_output_var = nil
+        wh_tank_losses = nil
+        hpwh_sensible_cooling = nil
+        hpwh_latent_cooling = nil
+        hpwh_fan_power = nil
+        hpwh_amb_w = nil
+        hpwh_amb_p = nil
+        hpwh_tair_out = nil
+        hpwh_wair_out = nil
+        hpwh_v_air = nil
+        t_ctrl = nil
+        le_p = nil
+        ue_p = nil
+        model.getOutputVariables.each do |output_var|
+          if output_var.name.to_s == "Zone Outdoor Air Drybulb Temperature"
+            zone_outdoor_air_drybulb_temp_output_var = output_var
+          elsif output_var.name.to_s == "Zone Outdoor Air Relative Humidity"
+            zone_outdoor_air_relative_humidity_output_var = output_var
+          elsif output_var.name.to_s == "Zone Mean Air Temperature"
+            space_temp_output_var = output_var
+          elsif output_var.name.to_s == "Zone Air Relative Humidity"
+            space_rh_output_var = output_var
+          elsif output_var.name.to_s == "Water Heater Heat Loss Rate"
+            wh_tank_losses = output_var
+          elsif output_var.name.to_s == "Cooling Coil Sensible Cooling Rate"
+            hpwh_sensible_cooling = output_var
+          elsif output_var.name.to_s == "Cooling Coil Latent Cooling Rate"
+            hpwh_latent_cooling = output_var
+          elsif output_var.name.to_s == "Fan Electric Power"
+            hpwh_fan_power = output_var
+          elsif output_var.name.to_s == "Zone Mean Air Humidity Ratio"
+            hpwh_amb_w = output_var
+          elsif output_var.name.to_s == "System Node Pressure"
+            hpwh_amb_p = output_var
+          elsif output_var.name.to_s == "System Node Temperature"
+            hpwh_tair_out = output_var       
+          elsif output_var.name.to_s == "System Node Humidity Ratio"
+            hpwh_wair_out = output_var
+          elsif output_var.name.to_s == "System Node Current Density Volume Flow Rate"
+            hpwh_v_air = output_var
+          elsif output_var.name.to_s == "Water Heater Temperature Node 3"
+            t_ctrl = output_var
+          elsif output_var.name.to_s == "Water Heater Heater 2 Heating Energy"
+            le_p = output_var  
+          elsif output_var.name.to_s == "Water Heater Heater 1 Heating Energy"
+            ue_p = output_var              
+          end
+        end
         
         #model.getEnergyManagementSystemSensors.each do |sensor|
         #    next unless sensor.name.to_s.start_with?("Tout","RHout","HPWH_amb_temp","HPWH_amb_rh","HPWH_tl","HPWH_sens_cool","HPWH_lat_cool","HPWH_fan_power","HPWH_amb_w","HPWH_amb_p","HPWH_tair_out","HPWH_wair_out","HPWH_v_air","T_ctrl","LE_P","UE_P")
@@ -705,14 +758,11 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             
             #If ducted to outside, get outdoor air T & RH and add a separate actuator for the space temperature for tank losses
             if ducting == Constants.VentTypeSupply or ducting == Constants.VentTypeBalanced
-                zone_outdoor_air_drybulb_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Outdoor Air Drybulb Temperature", model)
-                zone_outdoor_air_drybulb_temp_output_var.setName("Zone Outdoor Air Drybulb Temperature")
+
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_outdoor_air_drybulb_temp_output_var)
                 sensor.setName("Tout_#{unit_num}")
                 sensor.setKeyName(unit.living_zone.name.to_s)  
                 
-                zone_outdoor_air_relative_humidity_output_var = OpenStudio::Model::OutputVariable.new("Zone Outdoor Air Relative Humidity", model)
-                zone_outdoor_air_drybulb_temp_output_var.setName("Zone Outdoor Air Relative Humidity")
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_outdoor_air_relative_humidity_output_var)
                 sensor.setName("RHout_#{unit_num}")
                 sensor.setKeyName(unit.living_zone.name.to_s)  
@@ -727,38 +777,26 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             end
             
             #EMS Sensors: Space Temperature & RH, HP sens and latent loads, tank losses, fan power
-            space_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Temperature", model)
-            space_temp_output_var.setName("Zone Mean Air Temperature")
             sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, space_temp_output_var)
             sensor.setName("HPWH_amb_temp_#{unit_num}")
             sensor.setKeyName(water_heater_tz.name.to_s)
             
-            space_rh_output_var = OpenStudio::Model::OutputVariable.new("Zone Air Relative Humidity", model)
-            space_rh_output_var.setName("Zone Air Relative Humidity")
             sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, space_rh_output_var)
             sensor.setName("HPWH_amb_rh_#{unit_num}")
             sensor.setKeyName(water_heater_tz.name.to_s)
             
-            wh_tank_losses = OpenStudio::Model::OutputVariable.new("Water Heater Heat Loss Rate", model)
-            wh_tank_losses.setName("Water Heater Heat Loss Rate")
             sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, wh_tank_losses)
             sensor.setName("HPWH_tl_#{unit_num}")
             sensor.setKeyName("hpwh_tank_#{unit_num}")
             
-            hpwh_sensible_cooling = OpenStudio::Model::OutputVariable.new("Cooling Coil Sensible Cooling Rate", model)
-            hpwh_sensible_cooling.setName("Cooling Coil Sensible Cooling Rate")
             sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_sensible_cooling)
             sensor.setName("HPWH_sens_cool_#{unit_num}")
             sensor.setKeyName("HPWH_coil_#{unit_num}")
             
-            hpwh_latent_cooling = OpenStudio::Model::OutputVariable.new("Cooling Coil Latent Cooling Rate", model)
-            hpwh_latent_cooling.setName("Cooling Coil Latent Cooling Rate")
             sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_latent_cooling)
             sensor.setName("HPWH_lat_cool_#{unit_num}")
             sensor.setKeyName("HPWH_coil_#{unit_num}")
             
-            hpwh_fan_power = OpenStudio::Model::OutputVariable.new("Fan Electric Power", model)
-            hpwh_fan_power.setName("Fan Electric Power")
             sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_fan_power)
             sensor.setName("HPWH_fan_power_#{unit_num}")
             sensor.setKeyName("HPWH_fan_#{unit_num}")
@@ -782,34 +820,26 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             
             #Additioanl sensors if supply or exhaust to calculate the load on the space from the HPWH
             if ducting == Constants.VentTypeSupply or ducting == Constants.VentTypeExhaust
-                hpwh_amb_w = OpenStudio::Model::OutputVariable.new("Zone Mean Air Humidity Ratio", model)
-                hpwh_amb_w.setName("Zone Mean Air Humidity Ratio")
+
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_amb_w)
                 sensor.setName("HPWH_amb_w_#{unit_num}")
                 sensor.setKeyName(water_heater_tz)
-                
-                hpwh_amb_p = OpenStudio::Model::OutputVariable.new("System Node Pressure", model)
-                hpwh_amb_p.setName("System Node Pressure")
+
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_amb_p)
                 sensor.setName("HPWH_amb_p_#{unit_num}")
                 sensor.setKeyName(water_heater_tz)
-                
-                hpwh_tair_out = OpenStudio::Model::OutputVariable.new("System Node Temperature", model)
-                hpwh_tair_out.setName("System Node Temperature")
+
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_tair_out)
                 sensor.setName("HPWH_tair_out_#{unit_num}")
                 sensor.setKeyName(water_heater_tz)
-                
-                hpwh_wair_out = OpenStudio::Model::OutputVariable.new("System Node Humidity Ratio", model)
-                hpwh_wair_out.setName("System Node Humidity Ratio")
+
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_wair_out)
                 sensor.setName("HPWH_wair_out_#{unit_num}")
                 sensor.setKeyName(water_heater_tz)
-                
-                hpwh_v_air = OpenStudio::Model::OutputVariable.new("System Node Current Density Volume Flow Rate", model)
-                hpwh_v_air.setName("System Node Current Density Volume Flow Rate")
+
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, hpwh_v_air)
                 sensor.setName("HPWH_v_air_#{unit_num}")
+                
             end
             
             temp_depress_c = temp_depress / 1.8 #don't use convert because it's a delta
@@ -902,20 +932,15 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 hpwh_ctrl_program.addLine("EndIf")
                 
             else #hpwh_param == 50
-                t_ctrl = OpenStudio::Model::OutputVariable.new("Water Heater Temperature Node 3", model)
-                t_ctrl.setName("Water Heater Temperature Node 3")
+
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, t_ctrl)
                 sensor.setName("T_ctrl_#{unit_num}")
                 sensor.setKeyName("hpwh_tank_#{unit_num}")
                 
-                le_p = OpenStudio::Model::OutputVariable.new("Water Heater Heater 2 Heating Energy", model)
-                le_p.setName("Water Heater Heater 2 Heating Energy")
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, le_p)
                 sensor.setName("LE_P_#{unit_num}")
                 sensor.setKeyName("hpwh_tank_#{unit_num}")
                 
-                ue_p = OpenStudio::Model::OutputVariable.new("Water Heater Heater 1 Heating Energy", model)
-                ue_p.setName("Water Heater Heater 1 Heating Energy")
                 sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, ue_p)
                 sensor.setName("UE_P_#{unit_num}")
                 sensor.setKeyName("hpwh_tank_#{unit_num}")

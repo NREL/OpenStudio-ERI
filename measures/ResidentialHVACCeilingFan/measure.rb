@@ -168,18 +168,22 @@ class ProcessCeilingFan < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    model.getOutputVariables.each do |output_var|
-      next unless output_var.name.to_s == Constants.ObjectNameCeilingFan + " sched val output var"
-      output_var.remove
+    ["Schedule Value", "Zone Mean Air Temperature"].each do |output_var_name|
+      unless model.getOutputVariables.any? {|existing_output_var| existing_output_var.name.to_s == output_var_name} 
+        output_var = OpenStudio::Model::OutputVariable.new(output_var_name, model)
+        output_var.setName(output_var_name)
+      end
     end
+
+    schedule_value_output_var = nil
+    zone_mean_air_temp_output_var = nil
     model.getOutputVariables.each do |output_var|
-      next unless output_var.name.to_s == Constants.ObjectNameCeilingFan + " zone mean air temp output var"       
-      output_var.remove
+      if output_var.name.to_s == "Schedule Value"
+        schedule_value_output_var = output_var
+      elsif output_var.name.to_s == "Zone Mean Air Temperature"
+        zone_mean_air_temp_output_var = output_var
+      end
     end
-    schedule_value_output_var = OpenStudio::Model::OutputVariable.new("Schedule Value", model)
-    schedule_value_output_var.setName(Constants.ObjectNameCeilingFan + " sched val output var")
-    zone_mean_air_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Temperature", model)
-    zone_mean_air_temp_output_var.setName(Constants.ObjectNameCeilingFan + " zone mean air temp output var")
     
     sch = nil
     units.each do |building_unit|

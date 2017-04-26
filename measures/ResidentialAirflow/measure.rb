@@ -803,39 +803,59 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       end
     end
 
-    model.getOutputVariables.each do |output_var|
-      next unless ["Zone Outdoor Air Drybulb Temperature", "Site Outdoor Air Barometric Pressure", "Zone Mean Air Temperature", "Zone Air Relative Humidity", "Site Outdoor Air Humidity Ratio", "Zone Mean Air Humidity Ratio", "Site Wind Speed", "Schedule Value", "System Node Mass Flow Rate", "Fan Runtime Fraction", "System Node Current Density Volume Flow Rate", "System Node Temperature", "System Node Humidity Ratio", "Zone Air Temperature"].include? output_var.name.to_s
-      output_var.remove
+    ["Zone Outdoor Air Drybulb Temperature", "Site Outdoor Air Barometric Pressure", "Zone Mean Air Temperature", "Zone Air Relative Humidity", "Site Outdoor Air Humidity Ratio", "Zone Mean Air Humidity Ratio", "Site Wind Speed", "Schedule Value", "System Node Mass Flow Rate", "Fan Runtime Fraction", "System Node Current Density Volume Flow Rate", "System Node Temperature", "System Node Humidity Ratio", "Zone Air Temperature"].each do |output_var_name|
+      unless model.getOutputVariables.any? {|existing_output_var| existing_output_var.name.to_s == output_var_name} 
+        output_var = OpenStudio::Model::OutputVariable.new(output_var_name, model)
+        output_var.setName(output_var_name)
+      end
     end
-    zone_outdoor_air_drybulb_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Outdoor Air Drybulb Temperature", model)
-    zone_outdoor_air_drybulb_temp_output_var.setName("Zone Outdoor Air Drybulb Temperature")
-    outdoor_air_barometric_pressure_output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Barometric Pressure", model)
-    outdoor_air_barometric_pressure_output_var.setName("Site Outdoor Air Barometric Pressure")
-    zone_mean_air_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Temperature", model)
-    zone_mean_air_temp_output_var.setName("Zone Mean Air Temperature")
-    zone_air_relative_humidity_output_var = OpenStudio::Model::OutputVariable.new("Zone Air Relative Humidity", model)
-    zone_air_relative_humidity_output_var.setName("Zone Air Relative Humidity")
-    outdoor_air_humidity_ratio_output_var = OpenStudio::Model::OutputVariable.new("Site Outdoor Air Humidity Ratio", model)
-    outdoor_air_humidity_ratio_output_var.setName("Site Outdoor Air Humidity Ratio")
-    zone_mean_air_humidity_ratio_output_var = OpenStudio::Model::OutputVariable.new("Zone Mean Air Humidity Ratio", model)
-    zone_mean_air_humidity_ratio_output_var.setName("Zone Mean Air Humidity Ratio")    
-    wind_speed_output_var = OpenStudio::Model::OutputVariable.new("Site Wind Speed", model)
-    wind_speed_output_var.setName("Site Wind Speed")
-    schedule_value_output_var = OpenStudio::Model::OutputVariable.new("Schedule Value", model)
-    schedule_value_output_var.setName("Schedule Value")
-    system_node_mass_flow_rate_output_var = OpenStudio::Model::OutputVariable.new("System Node Mass Flow Rate", model)
-    system_node_mass_flow_rate_output_var.setName("System Node Mass Flow Rate")
-    fan_runtime_fraction_output_var = OpenStudio::Model::OutputVariable.new("Fan Runtime Fraction", model)
-    fan_runtime_fraction_output_var.setName("Fan Runtime Fraction")
-    system_node_current_density_volume_flow_rate_output_var = OpenStudio::Model::OutputVariable.new("System Node Current Density Volume Flow Rate", model)
-    system_node_current_density_volume_flow_rate_output_var.setName("System Node Current Density Volume Flow Rate")                
-    system_node_temp_output_var = OpenStudio::Model::OutputVariable.new("System Node Temperature", model)
-    system_node_temp_output_var.setName("System Node Temperature")        
-    system_node_humidity_ratio_output_var = OpenStudio::Model::OutputVariable.new("System Node Humidity Ratio", model)
-    system_node_humidity_ratio_output_var.setName("System Node Humidity Ratio")        
-    zone_air_temp_output_var = OpenStudio::Model::OutputVariable.new("Zone Air Temperature", model)
-    zone_air_temp_output_var.setName("Zone Air Temperature")
-     
+    
+    zone_outdoor_air_drybulb_temp_output_var = nil
+    outdoor_air_barometric_pressure_output_var = nil
+    zone_mean_air_temp_output_var = nil
+    zone_air_relative_humidity_output_var = nil
+    outdoor_air_humidity_ratio_output_var = nil
+    zone_mean_air_humidity_ratio_output_var = nil
+    wind_speed_output_var = nil
+    schedule_value_output_var = nil
+    system_node_mass_flow_rate_output_var = nil
+    fan_runtime_fraction_output_var = nil
+    system_node_current_density_volume_flow_rate_output_var = nil
+    system_node_temp_output_var = nil
+    system_node_humidity_ratio_output_var = nil
+    zone_air_temp_output_var = nil
+    model.getOutputVariables.each do |output_var|
+      if output_var.name.to_s == "Zone Outdoor Air Drybulb Temperature"
+        zone_outdoor_air_drybulb_temp_output_var = output_var
+      elsif output_var.name.to_s == "Site Outdoor Air Barometric Pressure"
+        outdoor_air_barometric_pressure_output_var = output_var
+      elsif output_var.name.to_s == "Zone Mean Air Temperature"
+        zone_mean_air_temp_output_var = output_var
+      elsif output_var.name.to_s == "Zone Air Relative Humidity"
+        zone_air_relative_humidity_output_var = output_var
+      elsif output_var.name.to_s == "Site Outdoor Air Humidity Ratio"
+        outdoor_air_humidity_ratio_output_var = output_var
+      elsif output_var.name.to_s == "Zone Mean Air Humidity Ratio"
+        zone_mean_air_humidity_ratio_output_var = output_var
+      elsif output_var.name.to_s == "Site Wind Speed"
+        wind_speed_output_var = output_var
+      elsif output_var.name.to_s == "Schedule Value"
+        schedule_value_output_var = output_var
+      elsif output_var.name.to_s == "System Node Mass Flow Rate"
+        system_node_mass_flow_rate_output_var = output_var
+      elsif output_var.name.to_s == "Fan Runtime Fraction"
+        fan_runtime_fraction_output_var = output_var
+      elsif output_var.name.to_s == "System Node Current Density Volume Flow Rate"
+        system_node_current_density_volume_flow_rate_output_var = output_var       
+      elsif output_var.name.to_s == "System Node Temperature"
+        system_node_temp_output_var = output_var
+      elsif output_var.name.to_s == "System Node Humidity Ratio"
+        system_node_humidity_ratio_output_var = output_var
+      elsif output_var.name.to_s == "Zone Air Temperature"
+        zone_air_temp_output_var = output_var        
+      end
+    end
+ 
     model.getLayeredConstructions.each do |construction|
       next unless construction.name.to_s == "AdiabaticConst"
       construction.layers.each do |material|
@@ -957,7 +977,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       air_handler_w = "#{obj_name_ducts} ah w".gsub(" ","_").gsub("|","_")       
       
       model.getEnergyManagementSystemSensors.each do |sensor|
-        next unless [air_handler_mfr, fan_rtf, air_handler_vfr, air_handler_tout, return_air_t, air_handler_wout, return_air_w, air_handler_t, air_handler_w].map{|x| "#{x} s"}.include? sensor.name.to_s
+        next unless [air_handler_mfr, fan_rtf, air_handler_vfr, air_handler_tout, return_air_t, air_handler_wout, return_air_w, air_handler_t, air_handler_w].map{|x| "#{x}_s"}.include? sensor.name.to_s
         sensor.remove
       end   
       
