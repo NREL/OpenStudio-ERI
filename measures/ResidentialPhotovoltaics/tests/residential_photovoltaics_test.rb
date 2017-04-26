@@ -59,7 +59,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_faces_north_azimuth_absolute_west
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 270.0
+    args_hash["azimuth"] = 90.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>2896}
@@ -69,17 +69,17 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_faces_west_azimuth_absolute_west
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 270.0
+    args_hash["azimuth"] = 90.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
-    expected_values = {"total_kwhs"=>2896}
+    expected_values = {"total_kwhs"=>2904}
     _test_measure("SFD_2000sqft_2story_SL_UA_Denver_West.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)    
   end
   
   def test_faces_east_azimuth_absolute_west
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 270.0
+    args_hash["azimuth"] = 90.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>2896}
@@ -89,7 +89,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_faces_south_azimuth_absolute_west
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 270.0
+    args_hash["azimuth"] = 90.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>2896}
@@ -99,7 +99,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_faces_north_azimuth_absolute_southwest
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 225.0
+    args_hash["azimuth"] = 45.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>3444}
@@ -109,7 +109,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_faces_west_azimuth_absolute_southwest
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 225.0
+    args_hash["azimuth"] = 45.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>3444}
@@ -119,7 +119,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
     def test_faces_east_azimuth_absolute_southwest
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 225.0
+    args_hash["azimuth"] = 45.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>3444}
@@ -129,7 +129,7 @@ class ResidentialPhotovoltaicsTest < MiniTest::Test
   def test_faces_south_azimuth_absolute_southwest
     args_hash = {}
     args_hash["azimuth_type"] = Constants.CoordAbsolute
-    args_hash["azimuth"] = 225.0
+    args_hash["azimuth"] = 45.0
     expected_num_del_objects = {}
     expected_num_new_objects = {"GeneratorMicroTurbine"=>1, "CurveBiquadratic"=>1, "CurveCubic"=>2, "ElectricLoadCenterDistribution"=>1, "ScheduleFixedInterval"=>1}
     expected_values = {"total_kwhs"=>3444}

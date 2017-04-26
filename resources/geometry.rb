@@ -7,7 +7,7 @@ class Geometry
       if azimuth_type == Constants.CoordRelative
         azimuth = relative_azimuth + building_orientation + offset
       elsif azimuth_type == Constants.CoordAbsolute
-        azimuth = relative_azimuth
+        azimuth = relative_azimuth + offset
       end    
       
       # Ensure Azimuth is >=0 and <=360

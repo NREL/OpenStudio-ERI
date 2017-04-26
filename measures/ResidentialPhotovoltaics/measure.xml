@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>d9775ad1-6411-4d3a-8537-912bc56fb86b</version_id>
-  <version_modified>20170425T234442Z</version_modified>
+  <version_id>9b999f8e-8ac0-487f-b0fd-eecb36798972</version_id>
+  <version_modified>20170426T181920Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -209,23 +209,6 @@
       <checksum>C7C92EA5</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.14.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>5AE292CF</checksum>
-    </file>
-    <file>
-      <filename>residential_photovoltaics_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>17FA59C5</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_East.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -268,10 +251,39 @@
       <checksum>36B7CAC2</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.14.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3F342A1C</checksum>
+    </file>
+    <file>
+      <filename>residential_photovoltaics_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5B4159E1</checksum>
+    </file>
+    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>16129898</checksum>
+      <checksum>718606B8</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver_NNE.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>86A25EA5</checksum>
+    </file>
+    <file>
+      <filename>USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>92912389</checksum>
     </file>
   </files>
 </measure>
