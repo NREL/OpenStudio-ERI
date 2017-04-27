@@ -867,7 +867,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 hpwh_ducting_program.addLine("Set T_dep = (#{temp_depress_c} * exponent) - #{temp_depress_c}")
                 hpwh_ducting_program.addLine("Set HPWHOn_#{unit_num} = HPWHOn_#{unit_num} + #{timestep_minutes}")
                 hpwh_ducting_program.addLine("Else")
-                hpwh_ducting_program.addLine("If (Hour == 1) && (DayOfYear == 1)")
+                hpwh_ducting_program.addLine("If (Hour == 0) && (DayOfYear == 1)")
                 hpwh_ducting_program.addLine("Set HPWHOn_#{unit_num} = 0") #Assume HPWH starts off for initial conditions
                 hpwh_ducting_program.addLine("EndIF")
                 hpwh_ducting_program.addLine("Set HPWHOn_#{unit_num} = HPWHOn_#{unit_num} - #{timestep_minutes}")
