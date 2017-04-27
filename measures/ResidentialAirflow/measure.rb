@@ -130,7 +130,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       @MechVentFractionOfASHRAE = mechVentFractionOfASHRAE
       @MechVentHouseFanPower = mechVentHouseFanPower
       @MechVentSensibleEfficiency = mechVentSensibleEfficiency
-      @mechVentASHRAEStandard = mechVentASHRAEStandard
+      @MechVentASHRAEStandard = mechVentASHRAEStandard
     end
     attr_accessor(:MechVentType, :MechVentInfilCredit, :MechVentTotalEfficiency, :MechVentFractionOfASHRAE, :MechVentHouseFanPower, :MechVentSensibleEfficiency, :MechVentASHRAEStandard, :MechVentBathroomExhaust, :MechVentRangeHoodExhaust, :MechVentSpotFanPower, :bath_exhaust_operation, :range_hood_exhaust_operation, :clothes_dryer_exhaust_operation, :ashrae_vent_rate, :num_vent_fans, :percent_fan_heat_to_space, :whole_house_vent_rate, :bathroom_hour_avg_exhaust, :range_hood_hour_avg_exhaust, :clothes_dryer_hour_avg_exhaust, :max_power, :base_vent_rate, :max_vent_rate, :MechVentApparentSensibleEffectiveness, :MechVentHXCoreSensibleEffectiveness, :MechVentLatentEffectiveness, :hourly_energy_schedule, :hourly_schedule, :average_vent_fan_eff)
   end
@@ -1302,10 +1302,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       infil_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
       infil_program.addLine("Set dT = @Abs Tdiff")
-      infil_program.addLine("Set QWHV = #{wh_sch_sensor.name}*#{OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get}")
-      infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{OpenStudio.convert(mech_vent.range_hood_hour_avg_exhaust,"cfm","m^3/s").get}")
+      infil_program.addLine("Set QWHV = #{wh_sch_sensor.name}*#{OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get.round(4)}")
+      infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{OpenStudio.convert(mech_vent.range_hood_hour_avg_exhaust,"cfm","m^3/s").get.round(4)}")
       infil_program.addLine("Set Qdryer = #{clothes_dryer_sch_sensor.name}*#{OpenStudio.convert(mech_vent.clothes_dryer_hour_avg_exhaust,"cfm","m^3/s").get}")
-      infil_program.addLine("Set Qbath = #{bath_sch_sensor.name}*#{OpenStudio.convert(mech_vent.bathroom_hour_avg_exhaust,"cfm","m^3/s").get}")
+      infil_program.addLine("Set Qbath = #{bath_sch_sensor.name}*#{OpenStudio.convert(mech_vent.bathroom_hour_avg_exhaust,"cfm","m^3/s").get.round(4)}")
       infil_program.addLine("Set QhpwhOut = 0")
       infil_program.addLine("Set QhpwhIn = 0")
       infil_program.addLine("Set QductsOut = #{duct_lk_exhaust_fan_equiv}")
