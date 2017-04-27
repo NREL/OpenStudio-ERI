@@ -405,14 +405,14 @@ class HotWaterSchedule
         
         timestep_minutes = (60/@model.getTimestep.numberOfTimestepsPerHour).to_i
         
-        timeInDays, values = loadMinuteDrawProfileFromFile(timestep_minutes, measure_dir)
+        data = loadMinuteDrawProfileFromFile(timestep_minutes, measure_dir)
         @totflow, @maxflow, @ontime = loadDrawProfileStatsFromFile(measure_dir)
-        if timeInDays.nil? or values.nil? or @totflow.nil? or @maxflow.nil? or @ontime.nil?
+        if data.nil? or @totflow.nil? or @maxflow.nil? or @ontime.nil?
             @validated = false
             return
         end
         if create_sch_object
-            @schedule = createSchedule(timeInDays, values, timestep_minutes)
+            @schedule = createSchedule(data, timestep_minutes)
         end
     end
 
@@ -450,11 +450,10 @@ class HotWaterSchedule
     private
     
         def loadMinuteDrawProfileFromFile(timestep_minutes, measure_dir)
-            timeInDays = []
-            values = []
+            data = []
             
             if @file_prefix.nil?
-                return timeInDays, values
+                return data
             end
 
             # Get appropriate file
@@ -482,20 +481,13 @@ class HotWaterSchedule
             
             # Aggregate minute schedule up to the timestep level to reduce the size 
             # and speed of processing.
-            avgitem_last = 0
             for tstep in 0..(minutes_in_year/timestep_minutes).to_i-1
                 timestep_items = items[tstep*timestep_minutes,timestep_minutes]
                 avgitem = timestep_items.reduce(:+).to_f/timestep_items.size
-                if avgitem != avgitem_last
-                    timeInDays.push(tstep*timestep_minutes/(24.0*60.0))
-                    values.push(avgitem_last)
-                end
-                avgitem_last = avgitem
+                data.push(avgitem)
             end
-            timeInDays.push(minutes_in_year/(24.0*60.0))
-            values.push(avgitem_last)
             
-            return timeInDays, values
+            return data
         end
         
         def loadDrawProfileStatsFromFile(measure_dir)
@@ -549,16 +541,19 @@ class HotWaterSchedule
             
         end
     
-        def createSchedule(timeInDays, values, timestep_minutes)
+        def createSchedule(data, timestep_minutes)
             # OpenStudio does not yet support ScheduleFile. So we use ScheduleInterval instead.
-            if timeInDays.size == 0 or values.size == 0
+            # See https://unmethours.com/question/2877/has-anyone-used-the-variable-interval-schedule-sets-in-os-16/
+            # for an example.
+            if data.size == 0
                 return nil
             end
             
             yd = @model.getYearDescription
-            start_date = OpenStudio::DateTime.new(yd.makeDate(1,1), OpenStudio::Time.new(timeInDays[0]))
+            start_date = yd.makeDate(1,1)
+            interval = OpenStudio::Time.new(0, 0, timestep_minutes)
             
-            time_series = OpenStudio::TimeSeries.new(start_date, timeInDays, values, "")
+            time_series = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(data), "")
             
             schedule = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series, @model).get
             schedule.setName(@sch_name)
