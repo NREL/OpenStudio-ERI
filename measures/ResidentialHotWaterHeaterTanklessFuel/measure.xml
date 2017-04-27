@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>36873e2e-3b9d-4b39-a8d6-554b7a017c73</version_id>
-  <version_modified>20170426T181909Z</version_modified>
+  <version_id>693398b6-fad0-4922-9ae0-3a334349733d</version_id>
+  <version_modified>20170427T060416Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>
@@ -159,12 +159,6 @@
       <checksum>070BB9BF</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -264,6 +258,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>718606B8</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C813C446</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>9f5fcbfc-6716-40ea-b50f-1e8cfed7c94a</version_id>
-  <version_modified>20170426T181903Z</version_modified>
+  <version_id>207837aa-a1c9-416f-a59b-57bd7b3b06c3</version_id>
+  <version_modified>20170427T060414Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -533,18 +533,6 @@
       <checksum>DCB12FCF</checksum>
     </file>
     <file>
-      <filename>ResidentialClothesWasher_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4DCA12F5</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -626,6 +614,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>718606B8</checksum>
+    </file>
+    <file>
+      <filename>ResidentialClothesWasher_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2B87F219</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C813C446</checksum>
     </file>
   </files>
 </measure>

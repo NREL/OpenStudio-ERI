@@ -43,7 +43,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>42.9, "HotWater_gpd"=>10.00, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -55,7 +55,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_annual_cost"] = 9.0
     args_hash["cw_drum_volume"] = 3.68
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>34.9, "HotWater_gpd"=>2.27, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -66,7 +66,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["cw_test_date"] = 2003
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>176.0, "HotWater_gpd"=>4.80, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -78,7 +78,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_mult_e"] = 0.8
     args_hash["cw_mult_hw"] = 0.8
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>34.3, "HotWater_gpd"=>8.00, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -89,7 +89,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["cw_internal_heater"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>42.9, "HotWater_gpd"=>10.00, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -100,7 +100,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["cw_thermostatic_control"] = "false"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>42.9, "HotWater_gpd"=>8.67, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -113,7 +113,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_drum_volume"] = 3.68
     args_hash["cw_cold_cycle"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>34.9, "HotWater_gpd"=>2.27, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -126,7 +126,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_drum_volume"] = 3.68
     args_hash["cw_cold_cycle"] = "true"
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>34.9, "HotWater_gpd"=>2.27, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tanklesswh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -137,7 +137,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_rated_annual_energy"] = 387
     args_hash["space"] = Constants.FinishedBasementSpace
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>42.9, "HotWater_gpd"=>10.00, "Space"=>args_hash["space"]}
     _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
@@ -147,7 +147,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>42.9, "HotWater_gpd"=>10.00, "Space"=>args_hash["space"]}
     model = _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
@@ -155,8 +155,8 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_rated_annual_energy"] = 123.0
     args_hash["cw_annual_cost"] = 9.0
     args_hash["cw_drum_volume"] = 3.68
-    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>34.9, "HotWater_gpd"=>2.27, "Space"=>args_hash["space"]}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -166,13 +166,13 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash["cw_imef"] = (1.41 - 0.503) / 0.95
     args_hash["cw_rated_annual_energy"] = 387
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_values = {"Annual_kwh"=>42.9, "HotWater_gpd"=>10.00, "Space"=>args_hash["space"]}
     model = _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
     args_hash["cw_mult_e"] = 0.0
     args_hash["cw_mult_hw"] = 0.0
-    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
+    expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleVariableInterval"=>1, "ScheduleConstant"=>1}
     expected_num_new_objects = {}
     expected_values = {"Annual_kwh"=>0, "HotWater_gpd"=>0, "Space"=>args_hash["space"]}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
@@ -290,7 +290,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleConstant"=>num_units, "ScheduleFixedInterval"=>num_units, "WaterUseEquipment"=>num_units, "WaterUseEquipmentDefinition"=>num_units}
+    expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleConstant"=>num_units, "ScheduleVariableInterval"=>num_units, "WaterUseEquipment"=>num_units, "WaterUseEquipmentDefinition"=>num_units}
     expected_values = {"Annual_kwh"=>171.77, "HotWater_gpd"=>39.99, "Space"=>args_hash["space"]}
     _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver_ElecWHTank.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
@@ -300,7 +300,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     args_hash = {}
     args_hash["space"] = Constants.FinishedBasementSpace
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "ScheduleConstant"=>1, "ScheduleFixedInterval"=>1, "WaterUseEquipment"=>1, "WaterUseEquipmentDefinition"=>1}
+    expected_num_new_objects = {"ElectricEquipment"=>1, "ElectricEquipmentDefinition"=>1, "ScheduleConstant"=>1, "ScheduleVariableInterval"=>1, "WaterUseEquipment"=>1, "WaterUseEquipmentDefinition"=>1}
     expected_values = {"Annual_kwh"=>42.94, "HotWater_gpd"=>9.99, "Space"=>args_hash["space"]}
     _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver_ElecWHTank.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end  
@@ -309,7 +309,7 @@ class ResidentialClothesWasherTest < MiniTest::Test
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleConstant"=>num_units, "ScheduleFixedInterval"=>num_units, "WaterUseEquipment"=>num_units, "WaterUseEquipmentDefinition"=>num_units}
+    expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleConstant"=>num_units, "ScheduleVariableInterval"=>num_units, "WaterUseEquipment"=>num_units, "WaterUseEquipmentDefinition"=>num_units}
     expected_values = {"Annual_kwh"=>343.54, "HotWater_gpd"=>79.99, "Space"=>args_hash["space"]}
     _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver_ElecWHTank.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end

@@ -1326,12 +1326,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         sched_base = gain.schedule.get
         if sched_base.to_ScheduleRuleset.is_initialized
             sched = sched_base.to_ScheduleRuleset.get
-        elsif sched_base.to_ScheduleFixedInterval.is_initialized
-            sched = sched_base.to_ScheduleFixedInterval.get
+        elsif sched_base.to_ScheduleVariableInterval.is_initialized
+            sched = sched_base.to_ScheduleVariableInterval.get
         elsif sched_base.to_ScheduleConstant.is_initialized 
             sched = sched_base.to_ScheduleConstant.get
         else
-            runner.registerWarning("Expected ScheduleRuleset or ScheduleFixedInterval for object '#{gain.name.to_s}'. Skipping...")
+            runner.registerWarning("Expected ScheduleRuleset or ScheduleVariableInterval for object '#{gain.name.to_s}'. Skipping...")
             next
         end
         next if sched.nil?
@@ -1341,7 +1341,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             sched_values = sched.getDaySchedules(july_dates[0], july_dates[1])[0].values
         elsif sched.is_a?(OpenStudio::Model::ScheduleConstant)
             sched_values = [sched.value]*24
-        elsif sched.is_a?(OpenStudio::Model::ScheduleFixedInterval)
+        elsif sched.is_a?(OpenStudio::Model::ScheduleVariableInterval)
             # Override with smoothed schedules
             # TODO: Is there a better approach here?
             if gain.name.to_s.start_with?(Constants.ObjectNameShower)
@@ -1362,7 +1362,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 sched_values = [0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.052, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017]
                 max_mult = 1.15 * 1.04
             else
-                runner.registerError("Unexpected gain '#{gain.name.to_s}' with ScheduleFixedInterval in processInternalGains.")
+                runner.registerError("Unexpected gain '#{gain.name.to_s}' with ScheduleVariableInterval in processInternalGains.")
                 return nil
             end
             # Calculate daily load
@@ -2468,6 +2468,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     
     return nil if mj8.nil? or unit_final.nil?
     
+    # FIXME: Need to check with Jon
+    dehumid_AC_SensCap = 0
+    dehumid_AC_LatCap = 0
+    dehumid_AC_RTF = 0
+    
     if hvac.HasCooling and unit_final.Cool_Capacity > @minCoolingCapacity
     
         dehum_design_db = weather.design.DehumidDrybulb
@@ -2573,10 +2578,6 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             
         end
             
-    else
-        dehumid_AC_SensCap = 0
-        dehumid_AC_LatCap = 0
-        dehumid_AC_RTF = 0
     end
             
             
