@@ -24,7 +24,7 @@ class ProcessMiniSplitHeatPumpTest < MiniTest::Test
     args_hash = {}
     args_hash["pan_heater_power"] = 150.0
     args_hash["heat_pump_capacity"] = "3.0"
-    args_hash["supplemental_capacity"] = "NO SUPP HEAT"
+    args_hash["supplemental_capacity"] = "0.0"
     args_hash["max_cooling_capacity"] = 1.5
     args_hash["max_heating_capacity"] = 1.5
     expected_num_del_objects = {}
