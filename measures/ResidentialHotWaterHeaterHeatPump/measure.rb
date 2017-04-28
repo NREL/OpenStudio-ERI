@@ -847,7 +847,10 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             #EMS Program for ducting
             hpwh_ducting_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
             hpwh_ducting_program.setName("HPWHInletAir_#{unit_num}")
-            if (water_heater_tz.name.to_s.start_with?(Constants.FinishedBasementZone) or water_heater_tz.name.to_s.start_with?(Constants.LivingZone)) and temp_depress_c > 0 and ducting == "none"
+            if not (water_heater_tz.name.to_s.start_with?(Constants.FinishedBasementZone) or water_heater_tz.name.to_s.start_with?(Constants.LivingZone))
+                runner.registerWarning("Confined space installations are typically used represent installations in locations like a utility closet. Utility closets installations are typically only done in conditioned spaces.")
+            end
+            if temp_depress_c > 0 and ducting == "none"
                 hpwh_ducting_program.addLine("Set HPWH_last_#{unit_num} = (@TrendValue HPWH_on_off_#{unit_num} 1)")
                 hpwh_ducting_program.addLine("Set HPWH_now_#{unit_num} = HPWH_on_off_#{unit_num}")
                 hpwh_ducting_program.addLine("Set num = (@Ln 2)")
@@ -891,12 +894,12 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 end
             end
             if ducting == "none"
-                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = HPWH_amb_temp_#{unit_num}")
+                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = T_hpwh_inlet_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_RHamb_act_#{unit_num} = HPWH_amb_rh_#{unit_num}/100")
                 hpwh_ducting_program.addLine("Set HPWH_sens_act_#{unit_num} = 0 - (HPWH_sens_cool_#{unit_num} * #{int_factor}) -(HPWH_tl_#{unit_num} * #{int_factor}) + HPWH_fan_power_#{unit_num} * #{int_factor}")
                 hpwh_ducting_program.addLine("Set HPWH_lat_act_#{unit_num} = 0 - HPWH_lat_cool_#{unit_num} * #{int_factor}")
             elsif ducting == Constants.VentTypeBalanced
-                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = HPWH_out_temp_#{unit_num}")
+                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = T_hpwh_inlet_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_Tamb_act2_#{unit_num} = HPWH_amb_temp_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_HRamb_act_#{unit_num} = HPWH_out_rh_#{unit_num}/100")
                 hpwh_ducting_program.addLine("Set HPWH_sens_act_#{unit_num} = 0 - HPWH_tl_#{unit_num}")
@@ -907,7 +910,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 hpwh_ducting_program.addLine("Set h = (@HFnTdbW HPWHTair_out_#{unit_num} HPWHWair_out_#{unit_num})")
                 hpwh_ducting_program.addLine("Set HPWH_sens_gain = rho*cp*(HPWHTair_out_#{unit_num}-HPWH_amb_temp_#{unit_num})*V_airHPWH_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_lat_gain = h*rho*(HPWHWair_out_#{unit_num}-HPWH_amb_w_#{unit_num})*V_airHPWH_#{unit_num}")
-                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = HPWH_out_temp_#{unit_num}")
+                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = T_hpwh_inlet_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_Tamb_act2_#{unit_num} = HPWH_amb_temp_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_HRamb_act_#{unit_num} = HPWH_out_rh_#{unit_num}/100")
                 hpwh_ducting_program.addLine("Set HPWH_sens_act_#{unit_num} = HPWH_sens_gain_#{unit_num} - HPWH_tl_#{unit_num}")
@@ -918,7 +921,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 hpwh_ducting_program.addLine("Set h = (@HFnTdbW HPWHTair_out_#{unit_num} HPWHWair_out_#{unit_num})")
                 hpwh_ducting_program.addLine("Set HPWH_sens_gain = rho*cp*(Tout_#{unit_num}-HPWH_amb_temp_#{unit_num})*V_airHPWH_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_lat_gain = h*rho*(Wout_#{unit_num}-HPWH_amb_w_#{unit_num})*V_airHPWH_#{unit_num}")
-                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = HPWH_amb_temp_#{unit_num}")
+                hpwh_ducting_program.addLine("Set HPWH_Tamb_act_#{unit_num} = T_hpwh_inlet_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_HRamb_act_#{unit_num} = HPWH_amb_rh_#{unit_num}/100")
                 hpwh_ducting_program.addLine("Set HPWH_sens_act_#{unit_num} = HPWH_sens_gain_#{unit_num} - HPWH_tl_#{unit_num}")
                 hpwh_ducting_program.addLine("Set HPWH_lat_act_#{unit_num} = HPWH_lat_gain_#{unit_num}")
