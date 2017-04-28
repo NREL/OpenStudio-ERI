@@ -198,62 +198,72 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     add_foundation_floors(model, doc, event_types, living_space, foundation_space)
     add_foundation_walls(model, doc, event_types, living_space, foundation_space)
     add_foundation_ceilings(model, doc, event_types, foundation_space, living_space)
-    add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space)
+    wall_fractions, window_areas = get_wall_orientation_fractions(doc, event_types)
+    surface_window_area = add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space, wall_fractions, window_areas)
     add_attic_floors(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
     add_attic_walls(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
-    add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)   
-    add_windows(model, doc, event_types, runner)
+    add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+    add_windows(model, doc, event_types, runner, surface_window_area)
     
     measures.keys.each do |measure|
       next unless measures[measure].keys.include? "exposed_perim"
       measures[measure]["exposed_perim"] = exposed_perim.to_s
     end
-    
+   
     # explode wall surfaces out from origin, from top down
-    wall_surfaces = {}
-    model.getSurfaces.each do |surface|
-      next unless surface.surfaceType.downcase == "wall"
-      if surface.adjacentSurface.is_initialized
-        next if wall_surfaces.keys.include? surface or wall_surfaces.keys.include? surface.adjacentSurface.get
-      end
-      z_val = -10000
-      surface.vertices.each do |vertex|
-        if vertex.z > z_val
-          wall_surfaces[surface] = vertex.z.to_f
-          z_val = vertex.z
+    [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight].each do |facade|
+    
+      wall_surfaces = {}
+      model.getSurfaces.each do |surface|
+        next unless Geometry.get_facade_for_surface(surface) == facade
+        next unless surface.surfaceType.downcase == "wall"
+        if surface.adjacentSurface.is_initialized
+          next if wall_surfaces.keys.include? surface or wall_surfaces.keys.include? surface.adjacentSurface.get
+        end
+        z_val = -10000
+        surface.vertices.each do |vertex|
+          if vertex.z > z_val
+            wall_surfaces[surface] = vertex.z.to_f
+            z_val = vertex.z
+          end
         end
       end
-    end
-        
-    offset = 30.0 # m
-    wall_surfaces.sort_by{|k, v| v}.reverse.to_h.keys.each do |surface|
+          
+      offset = 30.0 # m
+      wall_surfaces.sort_by{|k, v| v}.reverse.to_h.keys.each do |surface|
 
-      m = OpenStudio::Matrix.new(4, 4, 0)
-      m[0,0] = 1
-      m[1,1] = 1
-      m[2,2] = 1
-      m[3,3] = 1
-      if Geometry.get_facade_for_surface(surface) == Constants.FacadeFront or Geometry.get_facade_for_surface(surface) == Constants.FacadeBack
-        m[1,3] = offset
-      elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeLeft or Geometry.get_facade_for_surface(surface) == Constants.FacadeRight
-        m[2,3] = offset
-      end
-   
-      transformation = OpenStudio::Transformation.new(m)      
-      
-      surface.subSurfaces.each do |subsurface|
-        next unless subsurface.subSurfaceType.downcase == "fixedwindow"
-        subsurface.setVertices(transformation * subsurface.vertices)
-      end
-      if surface.adjacentSurface.is_initialized
-        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
-      end
-      surface.setVertices(transformation * surface.vertices)
-      
-      offset += 5.0 # m
+        m = OpenStudio::Matrix.new(4, 4, 0)
+        m[0,0] = 1
+        m[1,1] = 1
+        m[2,2] = 1
+        m[3,3] = 1
+        if Geometry.get_facade_for_surface(surface) == Constants.FacadeFront
+          m[1,3] = -offset
+        elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeBack
+          m[1,3] = offset
+        elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeLeft
+          m[0,3] = -offset
+        elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeRight
+          m[0,3] = offset
+        end
+     
+        transformation = OpenStudio::Transformation.new(m)      
         
-    end      
+        surface.subSurfaces.each do |subsurface|
+          next unless subsurface.subSurfaceType.downcase == "fixedwindow"
+          subsurface.setVertices(transformation * subsurface.vertices)
+        end
+        if surface.adjacentSurface.is_initialized
+          surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+        end
+        surface.setVertices(transformation * surface.vertices)
         
+        offset += 5.0 # m
+          
+      end
+
+    end
+    
     # Store building name
     model.getBuilding.setName(File.basename(hpxml_file_path))
         
@@ -330,14 +340,30 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def add_wall_polygon(x, y, z)
+  def add_wall_polygon(x, y, z, orientation="south")
   
     vertices = OpenStudio::Point3dVector.new
-    vertices << OpenStudio::Point3d.new(0, 0, z)
-    vertices << OpenStudio::Point3d.new(0, 0, z + y)
-    vertices << OpenStudio::Point3d.new(x, 0, z + y)
-    vertices << OpenStudio::Point3d.new(x, 0, z)
-    
+    if orientation == "north"      
+      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z)
+      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z + y)
+      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z + y)
+      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z)
+    elsif orientation == "south"
+      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z)
+      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z + y)
+      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z + y)
+      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z)
+    elsif orientation == "east"
+      vertices << OpenStudio::Point3d.new(0, x-(x/2), z)
+      vertices << OpenStudio::Point3d.new(0, x-(x/2), z + y)
+      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z + y)
+      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z)
+    elsif orientation == "west"
+      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z)
+      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z + y)
+      vertices << OpenStudio::Point3d.new(0, x-(x/2), z + y)
+      vertices << OpenStudio::Point3d.new(0, x-(x/2), z)
+    end
     return vertices
     
   end
@@ -360,8 +386,57 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space)
+  def get_wall_orientation_fractions(doc, event_types)
   
+    wall_fractions = {}
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window") do |window|
+      orientation = window.elements["Orientation"].text
+      if orientation == "southwest"
+        orientation = "south"
+      elsif orientation == "northwest"
+        orientation = "west"
+      elsif orientation == "southeast"
+        orientation = "east"
+      elsif orientation == "northeast"
+        orientation = "north"
+      end
+      if wall_fractions.keys.include? window.elements["AttachedToWall"].attributes["idref"]      
+        if wall_fractions[window.elements["AttachedToWall"].attributes["idref"]].keys.include? orientation
+          wall_fractions[window.elements["AttachedToWall"].attributes["idref"]][orientation] += window.elements["Area"].text.to_f
+        else
+          wall_fractions[window.elements["AttachedToWall"].attributes["idref"]][orientation] = window.elements["Area"].text.to_f
+        end
+      else      
+        wall_fractions[window.elements["AttachedToWall"].attributes["idref"]] = {}
+        wall_fractions[window.elements["AttachedToWall"].attributes["idref"]][orientation] = window.elements["Area"].text.to_f        
+      end
+    end
+
+    window_areas = {}
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window") do |window|
+      if window_areas.keys.include? window.elements["AttachedToWall"].attributes["idref"]
+        window_areas[window.elements["AttachedToWall"].attributes["idref"]] += window.elements["Area"].text.to_f        
+      else
+        window_areas[window.elements["AttachedToWall"].attributes["idref"]] = {}
+        window_areas[window.elements["AttachedToWall"].attributes["idref"]] = window.elements["Area"].text.to_f        
+      end
+    end
+
+    wall_fractions.each do |wall_id, orientations|    
+      orientations.each do |orientation, area|
+        wall_fractions[wall_id][orientation] /= window_areas[wall_id]
+      end    
+    end
+    
+    return wall_fractions, window_areas
+  
+  end  
+  
+  def add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space, wall_fractions, window_areas)
+  
+    rotate = {"north"=>0, "south"=>180, "west"=>90, "east"=>270}
+  
+    surface_window_area = {}
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next unless wall.elements["InteriorAdjacentTo"].text == "living space"
@@ -373,23 +448,52 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
           z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
         end
       end
+    
+      if not wall_fractions.keys.include? wall.elements["SystemIdentifier"].attributes["id"]
+      
+        wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
+        wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
 
-      wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
-
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
-      surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
-      surface.setSurfaceType("Wall") 
-      surface.setSpace(living_space)
-      if wall.elements["ExteriorAdjacentTo"].text == "attic"
-        surface.createAdjacentSurface(attic_space)
-      elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
-        surface.setOutsideBoundaryCondition("Outdoors")
+        surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
+        surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
+        surface.setSurfaceType("Wall") 
+        surface.setSpace(living_space)
+        if wall.elements["ExteriorAdjacentTo"].text == "attic"
+          surface.createAdjacentSurface(attic_space)
+        elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
+          surface.setOutsideBoundaryCondition("Outdoors")
+        else
+          puts "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
+        end      
+      
       else
-        puts "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
+      
+        wall_fractions[wall.elements["SystemIdentifier"].attributes["id"]].each do |orientation, frac|
+        
+          wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
+          wall_length = frac * OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
+
+          surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin, orientation), model)
+          surface.setName("#{wall.elements["SystemIdentifier"].attributes["id"]} #{orientation}")
+          surface.setSurfaceType("Wall") 
+          surface.setSpace(living_space)
+          if wall.elements["ExteriorAdjacentTo"].text == "attic"
+            surface.createAdjacentSurface(attic_space)
+          elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
+            surface.setOutsideBoundaryCondition("Outdoors")
+          else
+            puts "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
+          end
+          
+          surface_window_area["#{wall.elements["SystemIdentifier"].attributes["id"]} #{orientation}"] = frac * window_areas[wall.elements["SystemIdentifier"].attributes["id"]]      
+        
+        end
+        
       end
       
     end
+    
+    return surface_window_area
     
   end
   
@@ -644,29 +748,17 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       
   end
   
-  def add_windows(model, doc, event_types, runner)
-  
-    # windows
-    surface_window_area = {}
-    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window") do |window|
-      next if window.elements["AttachedToWall"].nil?
-      next if window.elements["Area"].nil?
-      if surface_window_area.keys.include? window.elements["AttachedToWall"].attributes["idref"]
-        surface_window_area[window.elements["AttachedToWall"].attributes["idref"]] += window.elements["Area"].text.to_f
-      else
-        surface_window_area[window.elements["AttachedToWall"].attributes["idref"]] = window.elements["Area"].text.to_f
-      end
-    end
+  def add_windows(model, doc, event_types, runner, surface_window_area)
     
     max_single_window_area = 12.0 # sqft
     window_gap_y = 1.0 # ft; distance from top of wall
     window_gap_x = 0.2 # ft; distance between windows in a two-window group
     aspect_ratio = 1.333
-    facade = Constants.FacadeBack
+    facades = {"south"=>Constants.FacadeFront, "north"=>Constants.FacadeBack, "west"=>Constants.FacadeLeft, "east"=>Constants.FacadeRight}
     model.getSurfaces.each do |surface|
       next unless surface_window_area.keys.include? surface.name.to_s
       next if surface.outsideBoundaryCondition.downcase == "ground" # TODO: can't have windows on surfaces adjacent to ground in energyplus
-      add_windows_to_wall(surface, surface_window_area[surface.name.to_s], window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facade, model, runner)      
+      add_windows_to_wall(surface, surface_window_area[surface.name.to_s], window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facades[surface.name.to_s.split(' ')[1]], model, runner)      
     end
     
   end

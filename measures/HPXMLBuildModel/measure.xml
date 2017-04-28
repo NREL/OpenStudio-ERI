@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>e782b986-501e-4568-a7e5-114dc3856cfe</version_id>
-  <version_modified>20170419T215202Z</version_modified>
+  <version_id>348866b0-d184-42bb-b4d0-d4c92a977415</version_id>
+  <version_modified>20170428T220951Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -151,7 +151,7 @@
       <filename>hpxml_build_model_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>7ED848B3</checksum>
+      <checksum>98361428</checksum>
     </file>
     <file>
       <version>
@@ -162,7 +162,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D4665F7D</checksum>
+      <checksum>171F69ED</checksum>
     </file>
   </files>
 </measure>
