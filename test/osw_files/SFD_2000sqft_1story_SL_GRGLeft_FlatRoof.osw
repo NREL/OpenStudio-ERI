@@ -2,18 +2,18 @@
     "measure_paths": [
         "../../measures/"
     ],
-    "seed_file": "../../seeds/EmptySeedModel.osm",	
+    "seed_file": "../../seeds/EmptySeedModel.osm",    
     "steps": [
-		{
-			"measure_dir_name": "ResidentialGeometrySingleFamilyDetached",
-			"arguments": {
-                "num_floors": 1,
+        {
+            "measure_dir_name": "ResidentialGeometrySingleFamilyDetached",
+            "arguments": {
+                "num_floors": "1",
                 "foundation_type": "slab",
-                "garage_width": 20.0,
-                "garage_protrusion": 0.5,
+                "garage_width": "20.0",
+                "garage_protrusion": "0.5",
                 "roof_type": "flat",
                 "garage_pos": "Left"
             }
-		}
-	]
+        }
+    ]
 }

@@ -2,22 +2,22 @@
     "measure_paths": [
         "../../measures/"
     ],
-    "seed_file": "../../seeds/EmptySeedModel.osm",	
+    "seed_file": "../../seeds/EmptySeedModel.osm",    
     "steps": [
-		{
-			"measure_dir_name": "ResidentialGeometrySingleFamilyAttached",
-			"arguments": {
-                "num_units": 4
+        {
+            "measure_dir_name": "ResidentialGeometrySingleFamilyAttached",
+            "arguments": {
+                "num_units": "4"
             }
     },
     {
-			"measure_dir_name": "ResidentialGeometryNumBedsAndBaths"
+            "measure_dir_name": "ResidentialGeometryNumBedsAndBaths"
     },
     {
-			"measure_dir_name": "ResidentialLocation"
-		},
-		{
-			"measure_dir_name": "ResidentialHVACFurnaceFuel"
-		}   
-	]
+            "measure_dir_name": "ResidentialLocation"
+        },
+        {
+            "measure_dir_name": "ResidentialHVACFurnaceFuel"
+        }   
+    ]
 }

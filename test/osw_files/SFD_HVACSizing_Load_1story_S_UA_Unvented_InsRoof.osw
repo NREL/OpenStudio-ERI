@@ -2,153 +2,153 @@
     "measure_paths": [
         "../../measures/"
     ],
-    "seed_file": "../../seeds/EmptySeedModel.osm",	
+    "seed_file": "../../seeds/EmptySeedModel.osm",    
     "steps": [
         {
-			"measure_dir_name": "ResidentialLocation"
+            "measure_dir_name": "ResidentialLocation"
         },
-		{
-			"measure_dir_name": "ResidentialGeometrySingleFamilyDetached",
-			"arguments": {
+        {
+            "measure_dir_name": "ResidentialGeometrySingleFamilyDetached",
+            "arguments": {
                 "foundation_type": "slab",
                 "attic_type": "unfinished attic",
-                "total_ffa": 851,
-                "aspect_ratio": 1.608695652,
-                "num_floors": 1
+                "total_ffa": "851",
+                "aspect_ratio": "1.608695652",
+                "num_floors": "1"
             }
         },
         {
-			"measure_dir_name": "ResidentialGeometryNumBedsAndBaths"
+            "measure_dir_name": "ResidentialGeometryNumBedsAndBaths"
         },
         {
-			"measure_dir_name": "ResidentialGeometryNumOccupants"
-		},
+            "measure_dir_name": "ResidentialGeometryNumOccupants"
+        },
         {
-			"measure_dir_name": "ResidentialGeometryOrientation",
-			"arguments": {
-                "orientation": 22.5
+            "measure_dir_name": "ResidentialGeometryOrientation",
+            "arguments": {
+                "orientation": "22.5"
             }
-		},
+        },
         {
-			"measure_dir_name": "ResidentialGeometryEaves",
-			"arguments": {
-                "eaves_depth": 0.0
+            "measure_dir_name": "ResidentialGeometryEaves",
+            "arguments": {
+                "eaves_depth": "0.0"
             }
-		},
+        },
         {
-			"measure_dir_name": "ResidentialGeometryDoorArea"
-		},
+            "measure_dir_name": "ResidentialGeometryDoorArea"
+        },
         {
-			"measure_dir_name": "ResidentialGeometryWindowArea"
-		},
+            "measure_dir_name": "ResidentialGeometryWindowArea"
+        },
         {
-			"measure_dir_name": "ResidentialGeometryNeighbors"
-		},
+            "measure_dir_name": "ResidentialGeometryNeighbors"
+        },
         {
-			"measure_dir_name": "ResidentialGeometryOverhangs"
-		},
+            "measure_dir_name": "ResidentialGeometryOverhangs"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
-			"arguments": {
-                "roof_cavity_r": 30,
-                "roof_cavity_ins_thick_in": 9.5,
-                "ceil_r": 0,
-                "ceil_ins_thick_in": 0
+            "measure_dir_name": "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
+            "arguments": {
+                "roof_cavity_r": "30",
+                "roof_cavity_ins_thick_in": "9.5",
+                "ceil_r": "0",
+                "ceil_ins_thick_in": "0"
             }
-		},
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
-		},
+            "measure_dir_name": "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsCeilingsRoofsSheathing"
-		},        
+            "measure_dir_name": "ResidentialConstructionsCeilingsRoofsSheathing"
+        },        
         {
-			"measure_dir_name": "ResidentialConstructionsFoundationsFloorsSlab"
-		},
+            "measure_dir_name": "ResidentialConstructionsFoundationsFloorsSlab"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
-		},
+            "measure_dir_name": "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsFoundationsFloorsCovering"
-		},
+            "measure_dir_name": "ResidentialConstructionsFoundationsFloorsCovering"
+        },
         {
             "measure_dir_name": "ResidentialConstructionsFoundationsFloorsSheathing"
         },
         {
-			"measure_dir_name": "ResidentialConstructionsWallsExteriorWoodStud"
-		},
+            "measure_dir_name": "ResidentialConstructionsWallsExteriorWoodStud"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsWallsSheathing"
-		},
+            "measure_dir_name": "ResidentialConstructionsWallsSheathing"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsWallsInterzonal"
-		},
+            "measure_dir_name": "ResidentialConstructionsWallsInterzonal"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsWallsExteriorFinish"
-		},
+            "measure_dir_name": "ResidentialConstructionsWallsExteriorFinish"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsUninsulatedSurfaces"
-		},
+            "measure_dir_name": "ResidentialConstructionsUninsulatedSurfaces"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsFoundationsFloorsThermalMass"
-		},
+            "measure_dir_name": "ResidentialConstructionsFoundationsFloorsThermalMass"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsWallsExteriorThermalMass"
-		},
+            "measure_dir_name": "ResidentialConstructionsWallsExteriorThermalMass"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsWallsPartitionThermalMass"
-		},
+            "measure_dir_name": "ResidentialConstructionsWallsPartitionThermalMass"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsCeilingsRoofsThermalMass"
-		},
+            "measure_dir_name": "ResidentialConstructionsCeilingsRoofsThermalMass"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsFurnitureThermalMass"
-		},
+            "measure_dir_name": "ResidentialConstructionsFurnitureThermalMass"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsWindows"
-		},
+            "measure_dir_name": "ResidentialConstructionsWindows"
+        },
         {
-			"measure_dir_name": "ResidentialConstructionsDoors"
-		},
+            "measure_dir_name": "ResidentialConstructionsDoors"
+        },
         {
-			"measure_dir_name": "ResidentialHotWaterHeaterTankElectric"
-		},
+            "measure_dir_name": "ResidentialHotWaterHeaterTankElectric"
+        },
         {
-			"measure_dir_name": "ResidentialHotWaterFixtures"
-		},
+            "measure_dir_name": "ResidentialHotWaterFixtures"
+        },
         {
-			"measure_dir_name": "ResidentialHotWaterDistribution"
-		},
+            "measure_dir_name": "ResidentialHotWaterDistribution"
+        },
         {
-			"measure_dir_name": "ResidentialHVACCeilingFan"
-		},
+            "measure_dir_name": "ResidentialHVACCeilingFan"
+        },
         {
-			"measure_dir_name": "ResidentialApplianceRefrigerator"
-		},
+            "measure_dir_name": "ResidentialApplianceRefrigerator"
+        },
         {
-			"measure_dir_name": "ResidentialApplianceCookingRangeFuel"
-		},
+            "measure_dir_name": "ResidentialApplianceCookingRangeFuel"
+        },
         {
-			"measure_dir_name": "ResidentialApplianceDishwasher"
-		},
+            "measure_dir_name": "ResidentialApplianceDishwasher"
+        },
         {
-			"measure_dir_name": "ResidentialApplianceClothesWasher"
-		},
+            "measure_dir_name": "ResidentialApplianceClothesWasher"
+        },
         {
-			"measure_dir_name": "ResidentialApplianceClothesDryerFuel"
-		},
+            "measure_dir_name": "ResidentialApplianceClothesDryerFuel"
+        },
         {
-			"measure_dir_name": "ResidentialLighting"
-		},
+            "measure_dir_name": "ResidentialLighting"
+        },
         {
-			"measure_dir_name": "ResidentialMiscPlugLoads"
-		},
+            "measure_dir_name": "ResidentialMiscPlugLoads"
+        },
         {
-			"measure_dir_name": "ResidentialAirflow",
-			"arguments": {
+            "measure_dir_name": "ResidentialAirflow",
+            "arguments": {
                 "duct_location": "none",
-                "unfinished_attic_sla": 0.0
+                "unfinished_attic_sla": "0.0"
             }            
-		}
-	]
+        }
+    ]
 }
