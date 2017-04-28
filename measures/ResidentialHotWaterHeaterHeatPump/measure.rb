@@ -340,7 +340,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             hpwh_wair_out = output_var
           elsif output_var.name.to_s == "System Node Current Density Volume Flow Rate"
             hpwh_v_air = output_var
-          elsif output_var.name.to_s == "Water Heater Temperature Node 2"
+          elsif output_var.name.to_s == "Water Heater Temperature Node 3"
             t_ctrl = output_var
           elsif output_var.name.to_s == "Water Heater Heater 2 Heating Energy"
             le_p = output_var  
