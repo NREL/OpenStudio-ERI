@@ -340,7 +340,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             hpwh_wair_out = output_var
           elsif output_var.name.to_s == "System Node Current Density Volume Flow Rate"
             hpwh_v_air = output_var
-          elsif output_var.name.to_s == "Water Heater Temperature Node 3"
+          elsif output_var.name.to_s == "Water Heater Temperature Node 2"
             t_ctrl = output_var
           elsif output_var.name.to_s == "Water Heater Heater 2 Heating Energy"
             le_p = output_var  
@@ -557,7 +557,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             hpwh_top_element_sp = OpenStudio::Model::ScheduleConstant.new(model)
             hpwh_top_element_sp.setName("HPWHTopElementSetpoint_#{unit_num}")
             
-            if hpwh_param == 80
+            if hpwh_param == 50
                 hpwh_bottom_element_sp.setValue(-60)
                 sp = (tset_C-2.89).round(2)
                 hpwh_top_element_sp.setValue(sp)
