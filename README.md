@@ -126,7 +126,7 @@ This workflow includes simple geometry measures to quickly develop 3D building g
 
 Status: **Available**
 
-![Modify Model Workflow Diagram](https://cloud.githubusercontent.com/assets/5861765/25557651/00626b9e-2cd3-11e7-9f56-f380a23a575d.png)
+![Modify Model Workflow Diagram](https://cloud.githubusercontent.com/assets/5861765/25558184/800d5682-2cde-11e7-988b-772d8a729941.png)
 
 Most of these measures were written to be reusable for existing building retrofits. For example, while the dishwasher measure adds a dishwasher to a model without a dishwasher, the same measure will replace a dishwasher that already exists in an existing building model (rather than adding an additional dishwasher to the model). This could be used to evaluate an EnergyStar dishwasher replacement, for example.
 
