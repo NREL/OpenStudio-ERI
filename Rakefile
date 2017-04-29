@@ -356,6 +356,149 @@ task :copy_resstock_resources do
   end  
 end
 
+
+desc 'Generates an OpenStudio Workflow OSW file with all measures in it, including descriptions'
+task :generate_full_osw do  
+  generate_osw_of_all_measures_in_order(os_cli)
+end
+
+# This function will generate an OpenStudio OSW
+# with all the measures in it, in the order specific in /resources/measure-order.json
+# All arguments are explicitly set with placeholders for those that don't have a default value
+# The placeholder is "#{REQUIRED/OPTIONAL} - #{argument description}"
+#
+#@return [Bool] true if successful, false if not
+def generate_osw_of_all_measures_in_order(os_cli)
+
+	require 'openstudio'
+
+  puts "Generating a full OSW"
+  
+  workflowJSON = OpenStudio::WorkflowJSON.new
+  workflowJSON.setOswPath("test/osw_files/FullJSON.osw")
+  workflowJSON.addMeasurePath("../../measures")
+  workflowJSON.setSeedFile("../../seeds/EmptySeedModel.osm")
+  
+  # Prepare model path to pass it to the cli (convert to absolute)
+  model_path = File.expand_path(workflowJSON.seedFile.get.to_s, workflowJSON.oswDir.to_s)
+	
+  
+  # Check that there is no missing/extra measures in the measure-order.json
+  # and get all_measures name (folders) in the correct order
+  #
+  # @Todo: here I'm getting a list of ALL measures in the order, but for some steps
+  # @Todo: eg Geometry: you pick one of [SFA, SFD, MF]here are clearly alternatives
+  # @Todo: we might to instead use the measure-order.json, loop on groups, steps in groups, and get measures[0] 
+  
+  all_measures = get_and_proof_measure_order_json(os_cli)
+  if all_measures.size == 0
+    exit
+  end
+  
+  steps = OpenStudio::WorkflowStepVector.new
+  
+  all_measures.each do |measure|
+
+		measure_path = File.expand_path(File.join("../../measures", measure), workflowJSON.oswDir.to_s) 
+		
+		# Prepare the cli command
+    command = "\"#{os_cli}\" measure --compute_arguments #{model_path} #{measure_path}"
+    
+    puts "adding #{measure}"
+    
+    # The problem with this is that it's going to crash if it's not a model measure...
+    measure_info =  `#{command}`
+    if measure_info == ""
+      command = "\"#{os_cli}\" measure --compute_arguments #{measure_path}"
+      measure_info =  `#{command}`
+    end
+  	# Parse JSON and use hashrocket notation for keys
+		measure_info_hash = JSON.parse(measure_info, {:symbolize_names => true})
+		
+		step = OpenStudio::MeasureStep.new(measure)
+		step.setName(measure_info_hash[:display_name])
+		step.setDescription(measure_info_hash[:description])
+		
+		# step.setModelerDescription(measure_info_hash[:modeler_description])
+		
+		# Get Measure Type
+		measure_type = measure_info_hash[:attributes].select {|a| a[:name].downcase == "measure type"}[0][:value]
+		step.setModelerDescription("[#{measure_type}] #{measure_info_hash[:modeler_description]}")
+
+		# Loop on each argument
+		measure_info_hash[:arguments].each do |arg|
+			# If there is a default_value, use it
+			if arg.key?(:default_value)
+				step.setArgument(arg[:name], arg[:default_value])
+			# Otherwise, if it's required
+			elsif arg[:required]
+				step.setArgument(arg[:name], "REQUIRED - #{arg[:description]}")
+			# If it's not required
+			# @Todo: determine whether we want to simply ommit the argument
+			else
+			 step.setArgument(arg[:name], "Optional - #{arg[:description]}")
+			end
+		end
+  
+  	# Push step in Steps
+    steps.push(step)
+  end 
+
+  workflowJSON.setWorkflowSteps(steps)
+  workflowJSON.save #FullJSON.osw")
+  
+  
+end
+
+# This function will check that all measure folders (in measures/) 
+# are listed in the /resources/measure-order.json and vice versa
+# and return the list of all measures used in the proper order
+#
+# @return [Array] of all measures used is successful, [] otherwise
+def get_and_proof_measure_order_json(os_cli)
+  # List all measures in measures/ folder
+  beopt_measure_folder = File.expand_path("../measures/", __FILE__)
+  all_measures = Dir.entries(beopt_measure_folder).select{|entry| !(entry.start_with? '.')}
+  
+  # Load json, and get all measures in there
+  json_path = File.expand_path("../resources/measure-order.json", __FILE__)
+  data_hash = JSON.parse(File.read(json_path))
+
+  measures_json = []
+  data_hash.each do |group|
+    group["steps"].each do |step|
+      measures_json += step["measures"]
+    end 
+  end
+  
+  is_correct = true
+  # Check for missing in JSON file
+  missing_in_json = all_measures - measures_json
+  if missing_in_json.size > 0
+    puts "There are #{missing_in_json.size} that are present in the `/measures` folder but not in the `measure-order.json`"
+    missing_in_json.each do |missing|
+      puts missing
+    end
+    is_correct = false
+  end
+
+  # Check for measures in JSON that don't have a corresponding folder
+  extra_in_json = measures_json - all_measures
+  if extra_in_json.size > 0
+    puts "There are #{extra_in_json.size} that are present in the `measure-order.json` but not in the `/measures` folder"
+    extra_in_json.each do |extra|
+      puts extra
+    end
+    is_correct = false
+  end
+  
+  if is_correct
+    return measures_json
+  else
+    return []
+  end
+end
+
 def get_requires_from_file(filerb)
   requires = []
   if not File.exists?(filerb)
