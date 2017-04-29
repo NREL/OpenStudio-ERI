@@ -1,7 +1,7 @@
 [
   {
     "group_name": "1. Location",
-    "steps": [
+    "group_steps": [
       {
         "name": "1. Location",
         "dependencies": "",
@@ -13,9 +13,9 @@
   },
   {
     "group_name": "2. Geometry",
-    "steps": [
+    "group_steps": [
       {
-        "name": "1. Geometry Single-Family Detached (or Single-Family Attached or Multifamily)",
+        "name": "1. Geometry - Single-Family Detached (or Single-Family Attached or Multifamily)",
         "dependencies": "",
         "measures": [
           "ResidentialGeometrySingleFamilyDetached",
@@ -83,9 +83,9 @@
   },
   {
     "group_name": "3. Envelope Constructions",
-    "steps": [
+    "group_steps": [
       {
-        "name": "1. Ceilings/Roofs - Unfinished Attic Constructions (or Finished Roof)",
+        "name": "1. Ceilings/Roofs - Unfinished Attic (or Finished Roof)",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
@@ -121,14 +121,14 @@
         ]
       },
       {
-        "name": "6. Foundations/Floors - Unfinished Basement Construction (or Finished Basement, Crawlspace, Slab, or Pier & Beam)",
+        "name": "6. Foundations/Floors - Slab (or Finished Basement, Unfinished Basement, Crawlspace, Pier & Beam)",
         "dependencies": "",
         "measures": [
+          "ResidentialConstructionsFoundationsFloorsSlab",
           "ResidentialConstructionsFoundationsFloorsBasementUnfinished",
           "ResidentialConstructionsFoundationsFloorsBasementFinished",
           "ResidentialConstructionsFoundationsFloorsCrawlspace",
-          "ResidentialConstructionsFoundationsFloorsPierBeam",
-          "ResidentialConstructionsFoundationsFloorsSlab"
+          "ResidentialConstructionsFoundationsFloorsPierBeam"
         ]
       },
       {
@@ -160,7 +160,7 @@
         ]
       },
       {
-        "name": "11. Walls - Wood Stud Construction (or Double Stud, CMU, etc.)",
+        "name": "11. Walls - Wood Stud (or Double Stud, CMU, etc.)",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsWallsExteriorWoodStud",
@@ -239,14 +239,14 @@
   }, 
   {
     "group_name": "4. Domestic Hot Water",
-    "steps": [
+    "group_steps": [
       {
-        "name": "1. Water Heater (Electric Tank, Fuel Tankless, etc.)",
+        "name": "1. Water Heater - Fuel Tank (or Electric Tank, Fuel Tankless, Heat Pump, etc.)",
         "dependencies": "Beds/Baths",
         "measures": [
+          "ResidentialHotWaterHeaterTankFuel",
           "ResidentialHotWaterHeaterHeatPump",
           "ResidentialHotWaterHeaterTankElectric",
-          "ResidentialHotWaterHeaterTankFuel",
           "ResidentialHotWaterHeaterTanklessElectric",
           "ResidentialHotWaterHeaterTanklessFuel"
         ]
@@ -269,15 +269,15 @@
   },
   {
     "group_name": "5. HVAC",
-    "steps": [
+    "group_steps": [
       {
-        "name": "1. Central Air Conditioner and Furnace (or ASHP, Boiler, MSHP, etc.)",
+        "name": "1. Central Air Source Heat Pump (or AC/Furnace, Boiler, MSHP, etc.)",
         "dependencies": "",
         "measures": [
-          "ResidentialHVACCentralAirConditionerSingleSpeed", 
           "ResidentialHVACAirSourceHeatPumpSingleSpeed",     
           "ResidentialHVACAirSourceHeatPumpTwoSpeed",
           "ResidentialHVACAirSourceHeatPumpVariableSpeed",
+          "ResidentialHVACCentralAirConditionerSingleSpeed", 
           "ResidentialHVACBoilerElectric",
           "ResidentialHVACBoilerFuel",
           "ResidentialHVACCentralAirConditionerTwoSpeed",
@@ -286,7 +286,6 @@
           "ResidentialHVACElectricBaseboard",
           "ResidentialHVACFurnaceElectric",
           "ResidentialHVACFurnaceFuel",
-          "ResidentialHVACGroundSourceHeatPumpVerticalBore",
           "ResidentialHVACMiniSplitHeatPump",
           "ResidentialHVACRoomAirConditioner"
         ]
@@ -316,7 +315,7 @@
   },
   {
     "group_name": "6. Major Appliances",
-    "steps": [
+    "group_steps": [
       {
         "name": "1. Refrigerator",
         "dependencies": "",
@@ -332,7 +331,7 @@
         ]
       },
       {
-        "name": "3. Clothes Dryer (Electric or Fuel)",
+        "name": "3. Clothes Dryer - Electric (or Fuel)",
         "dependencies": "Beds/Baths, Clothes Washer",
         "measures": [
           "ResidentialApplianceClothesDryerElectric",
@@ -347,7 +346,7 @@
         ]
       },
       {
-        "name": "5. Cooking Range (Electric or Fuel)",
+        "name": "5. Cooking Range - Electric (or Fuel)",
         "dependencies": "Beds/Baths",
         "measures": [
           "ResidentialApplianceCookingRangeElectric",
@@ -358,7 +357,7 @@
   },
   {
     "group_name": "7. Lighting",
-    "steps": [
+    "group_steps": [
       {
         "name": "1. Lighting",
         "dependencies": "Location",
@@ -370,7 +369,7 @@
   },
   {
     "group_name": "8. Misc Loads",
-    "steps": [
+    "group_steps": [
       {
         "name": "1. Plug Loads",
         "dependencies": "Beds/Baths",
@@ -393,7 +392,7 @@
         ]
       },
       {
-        "name": "4. Hot Tub Heater (Electric or Gas)",
+        "name": "4. Hot Tub Heater - Electric (or Gas)",
         "dependencies": "Beds/Baths",
         "measures": [
           "ResidentialMiscHotTubHeaterElectric",
@@ -408,7 +407,7 @@
         ]
       },
       {
-        "name": "6. Pool Heater (Electric or Gas)",
+        "name": "6. Pool Heater - Electric (or Gas)",
         "dependencies": "Beds/Baths",
         "measures": [
           "ResidentialMiscPoolHeaterElectric",
@@ -454,7 +453,7 @@
   },
   {
     "group_name": "9. Airflow",
-    "steps": [
+    "group_steps": [
       {
         "name": "1. Airflow",
         "dependencies": "Location, Beds/Baths, HVAC Equipment, Clothes Dryer",
@@ -466,50 +465,12 @@
   },
   {
     "group_name": "10. Sizing",
-    "steps": [
+    "group_steps": [
       {
         "name": "1. HVAC Sizing",
         "dependencies": "(lots of measures...)",
         "measures": [
           "ResidentialHVACSizing"
-        ]
-      }
-    ]
-  },
-  {
-    "group_name": "11. Renewables",
-    "steps": [
-      {
-        "name": "1. Photovoltaics",
-        "dependencies": "Geometry",
-        "measures": [
-          "ResidentialPhotovoltaics"
-        ]
-      }
-    ]
-  },
-  {
-    "group_name": "Other",
-    "steps": [
-      {
-        "name": "Full workflow from HPXML",
-        "dependencies": "",
-        "measures": [
-          "HPXMLBuildModel"
-        ]
-      },
-      {
-        "name": "TimeseriesCSVExport",
-        "dependencies": "",
-        "measures": [
-          "TimeseriesCSVExport"
-        ]
-      },
-      {
-        "name": "UtilityBillCalculations",
-        "dependencies": "",
-        "measures": [
-          "UtilityBillCalculations"
         ]
       }
     ]
