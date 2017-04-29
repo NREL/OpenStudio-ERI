@@ -14,7 +14,7 @@ cd /OpenStudio-Beopt
 rm -f Gemfile.lock
 bundle install
 
-rake update_resources
+rake update_measures
 
 # Run a specific set of tests on each node.
 # Test groups are defined in the Rakefile.

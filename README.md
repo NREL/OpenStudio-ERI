@@ -5,9 +5,9 @@ Residential OpenStudio Measures
 
 **Code Coverage:** [![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-Beopt/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-Beopt?branch=master)
 
-This project includes [OpenStudio measures](http://nrel.github.io/OpenStudio-user-documentation/getting_started/about_measures/) used to model residential buildings.
+This project includes [OpenStudio measures](http://nrel.github.io/OpenStudio-user-documentation/getting_started/about_measures/) used to model residential buildings via the [EnergyPlus simulation engine](http://energyplus.net/).
 
-This project is a <b>work-in-progress</b>. The models are not fully completed nor tested. These measures will eventually be posted on the [Building Component Library](https://bcl.nrel.gov/)
+This project is a <b>work-in-progress</b>. The models are not fully completed nor tested. These measures will eventually be posted on the [Building Component Library](https://bcl.nrel.gov/).
 
 Progress is tracked in this [spreadsheet](https://docs.google.com/spreadsheets/d/1vIwgJtkB-sCFCV2Tnp1OqnjXgA9vTaxtWXw0gpq_Lc4).
 
@@ -28,11 +28,13 @@ Please read the [Workflows](#workflows) section to understand how the measures a
 
 The measures can be run via the standard OpenStudio approaches: the user interfaces ([OpenStudio Application](http://nrel.github.io/OpenStudio-user-documentation/reference/openstudio_application_interface/) and [Parametric Analysis Tool](http://nrel.github.io/OpenStudio-user-documentation/reference/parametric_analysis_tool_2/)), the [Command Line Interface](http://nrel.github.io/OpenStudio-user-documentation/reference/command_line_interface/), or via the [OpenStudio SDK](https://openstudio-sdk-documentation.s3.amazonaws.com/index.html).
 
-If interested in programatically driving the simulations, you will likely find it easiest to use the Command Line Interface approach. An example OpenStudio workflow [(create-model-example.osw)](https://github.com/NREL/OpenStudio-BEopt/blob/master/workflows/create-model-example.osw) is provided with a pre-populated selection of residential measures and arguments. It can be modified as needed and then run like so:
+If interested in programatically driving the simulations, you will likely find it easiest to use the Command Line Interface approach. The Command Line Interface is a self-contained executable that can run an OpenStudio Workflow file, which defines a series of OpenStudio measures to apply.
+
+An example OpenStudio Workflow [(create-model-example.osw)](https://github.com/NREL/OpenStudio-BEopt/blob/master/workflows/create-model-example.osw) is provided with a pre-populated selection of residential measures and arguments. It can be modified as needed and then run like so:
 
 `openstudio.exe run -w create-model-example.osw`
 
-This will apply the measures to the OpenStudio seed model specified in the .osw and run the EnergyPlus simulation. 
+This will apply the measures to the OpenStudio seed model specified in the .osw, run the EnergyPlus simulation, and produce output. 
 
 ### Measure Order
 
@@ -104,7 +106,7 @@ The order in which these measures are called is important. For example, the Wind
 
 ## Workflows
 
-These measures are intended to be used in multiple workflows:
+These measures can be used in different workflows:
 * [Create Model](#workflow-create-model) - Build up a model from scratch.
 * [Modify Model](#workflow-modify-model) - Apply a measure to an existing model.
 * [Translate Model From HPXML](#workflow-translate-model-from-hpxml) - Translate a model from a supplyied HPXML file.
@@ -112,7 +114,7 @@ These measures are intended to be used in multiple workflows:
 
 ### Workflow: Create Model
 
-**Status: Available**
+Status: **Available**
 
 ![Create Model Diagram](https://cloud.githubusercontent.com/assets/5861765/25557650/fde65e34-2cd2-11e7-8b72-f48745203637.png)
 
@@ -122,25 +124,27 @@ This workflow includes simple geometry measures to quickly develop 3D building g
 
 ### Workflow: Modify Model
 
-**Status: Available**
+Status: **Available**
 
 ![Modify Model Workflow Diagram](https://cloud.githubusercontent.com/assets/5861765/25557651/00626b9e-2cd3-11e7-9f56-f380a23a575d.png)
 
-Most of these measures were written to be reusable for existing building retrofits. For example, while the dishwasher measure adds a dishwasher to a model without a dishwasher, the same measure will replace a dishwasher that already exists in an existing building model (rather than adding an additional dishwasher to the model). This example could be used to evaluate an EnergyStar dishwasher replacement, for example. Alternatively, if the existing building was never assigned a dishwasher, then the measure would indeed add a dishwasher to the model.
+Most of these measures were written to be reusable for existing building retrofits. For example, while the dishwasher measure adds a dishwasher to a model without a dishwasher, the same measure will replace a dishwasher that already exists in an existing building model (rather than adding an additional dishwasher to the model). This could be used to evaluate an EnergyStar dishwasher replacement, for example.
 
 Note that some measures are dependent on others. For example, if the Clothes Washer measure were to be applied to the existing building model, such that the existing clothes washer is replaced, the Clothes Dryer measure would also need to be subsequently applied to the existing building model so that its energy use, as dependent on the clothes washer, is correct.
 
-While some of these measure may work on any user-created OpenStudio model, they have only been tested on, and are primarily intended to operate on, models created via one of the supported [Workflows](#workflows).
+While some of these measures may work on any user-created OpenStudio model, they have only been tested on, and are primarily intended to operate on, models created via one of the supported [Workflows](#workflows).
 
 ### Workflow: Translate Model From HPXML
 
-**Status: Under Development**
+Status: **Under Development**
 
 ![Translate Model From HPXML Diagram](https://cloud.githubusercontent.com/assets/5861765/25557649/fb0fd910-2cd2-11e7-8e23-bd7815ffd982.png)
 
 [HPXML](http://www.hpxmlonline.com/) is an open data standard that supports the exchange of information and data for residential buildings. A number of software tools have capabilities for reading or writing these XML files.
 
 For software that can export a HPXML file, development is underway to easily translate this into an OpenStudio model. If you are a tool developer that is interested to export HPXML files, see the [HPXML Toolbox](https://hpxml.nrel.gov/) for additional resources.
+
+One of the primary reasons for supporting this workflow is to allow the calculation of an [Energy Rating Index](#output-energy-rating-index-eri) using EnergyPlus.
 
 ### Workflow: Create Model From Geometry
 
@@ -159,19 +163,19 @@ These measures allow multiple outputs to be calculated:
 
 ### Output: Simulation Results
 
-**Status: Available**
+Status: **Available**
 
 Description pending.
 
 ### Output: Utility Bills
 
-**Status: Under Development**
+Status: **Under Development**
 
 Description pending.
 
 ### Output: Energy Rating Index (ERI)
 
-**Status: Under Development**
+Status: **Under Development**
 
 Calculations are under development for ANSI/RESNET 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using the HERS Index". This metric is also a performance compliance path in the 2015 IECC. Any OpenStudio model created via one of the above [Workflows](#workflows) will be able to obtain an ERI.
 
