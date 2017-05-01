@@ -116,7 +116,7 @@ These measures can be used in different workflows:
 
 Status: **Available**
 
-![Create Model Diagram](https://cloud.githubusercontent.com/assets/5861765/25557650/fde65e34-2cd2-11e7-8b72-f48745203637.png)
+![Create Model Diagram](https://cloud.githubusercontent.com/assets/5861765/25581277/308515a2-2e44-11e7-88c2-7f9bca55bb5c.png)
 
 The Create Model workflow allows building up a complete residential building model from an [empty seed](https://github.com/NREL/OpenStudio-BEopt/blob/master/seeds/EmptySeedModel.osm) and calling a series of measures. The measures should be applied according to the specified [measure order](#measure-order).
 
@@ -126,7 +126,7 @@ This workflow includes simple geometry measures to quickly develop 3D building g
 
 Status: **Available**
 
-![Modify Model Workflow Diagram](https://cloud.githubusercontent.com/assets/5861765/25558184/800d5682-2cde-11e7-988b-772d8a729941.png)
+![Modify Model Workflow Diagram](https://cloud.githubusercontent.com/assets/5861765/25581274/2c469998-2e44-11e7-9ed0-d08eec6f6178.png)
 
 Most of these measures were written to be reusable for existing building retrofits. For example, while the dishwasher measure adds a dishwasher to a model without a dishwasher, the same measure will replace a dishwasher that already exists in an existing building model (rather than adding an additional dishwasher to the model). This could be used to evaluate an EnergyStar dishwasher replacement, for example.
 
