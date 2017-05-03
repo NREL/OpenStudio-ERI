@@ -77,19 +77,23 @@ end
   
 def check_num_objects(objects, expected_num_objects, mode)
     # Checks for the exact number of objects as defined in expected_num_objects
+    list_of_expected_vs_actual = []
     objects.each do |obj_type, new_objects|
         next if not new_objects[0].respond_to?("to_#{obj_type}")
         if expected_num_objects.include?(obj_type)
-            puts "Incorrect number of #{obj_type} objects #{mode}." if new_objects.size != expected_num_objects[obj_type]
-            assert_equal(expected_num_objects[obj_type], new_objects.size)
+            list_of_expected_vs_actual << [obj_type, expected_num_objects[obj_type], new_objects.size] if new_objects.size != expected_num_objects[obj_type]
         else
-            puts "Incorrect number of #{obj_type} objects #{mode}." if new_objects.size != 0
-            assert_equal(0, new_objects.size)
+            list_of_expected_vs_actual << [obj_type, 0, new_objects.size] if new_objects.size != 0
         end
     end
     expected_num_objects.each do |obj_type, num_objects|
         next if objects.keys.include?(obj_type)
-        puts "Incorrect number of #{obj_type} objects #{mode}." if num_objects != 0
-        assert_equal(num_objects, 0)
+        list_of_expected_vs_actual << [obj_type, num_objects, 0] if num_objects.size != 0
+    end
+    list_of_expected_vs_actual.each do |obj_type, expected, actual|
+        puts "Incorrect number of #{obj_type} objects #{mode}. Expected: #{expected}. Actual: #{actual}"
+    end
+    unless list_of_expected_vs_actual.empty?
+        assert_equal(list_of_expected_vs_actual[0][1], list_of_expected_vs_actual[0][2])
     end
 end

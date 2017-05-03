@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>2c751436-5a6c-484d-a71b-986d5c2fee16</version_id>
-  <version_modified>20170429T155827Z</version_modified>
+  <version_id>87a955bd-a3d5-49f0-9ac4-a9f64c7e69ba</version_id>
+  <version_modified>20170502T222855Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -786,12 +786,6 @@
       <checksum>397E3EBC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -807,6 +801,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>8E1337C0</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31FE0BE6</checksum>
     </file>
   </files>
 </measure>

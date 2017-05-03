@@ -92,9 +92,10 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     require File.join(File.dirname(helper_methods_file), File.basename(helper_methods_file, File.extname(helper_methods_file)))    
     
     # Need to ensure this has the same order as https://github.com/NREL/OpenStudio-Beopt#new-construction-workflow-for-users
-    measures_tested = ["ResidentialLocation", 
+    measures_tested = ["ResidentialLocation",
                        "ResidentialGeometryNumBedsAndBaths", 
-                       "ResidentialGeometryNumOccupants", 
+                       "ResidentialGeometryNumOccupants",
+                       "ResidentialGeometryDoorArea",
                        "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
                        "ResidentialConstructionsCeilingsRoofsFinishedRoof",
                        "ResidentialConstructionsCeilingsRoofsRoofingMaterial",
@@ -104,11 +105,12 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
                        "ResidentialConstructionsWallsExteriorWoodStud",
                        "ResidentialConstructionsWallsInterzonal",                       
                        "ResidentialConstructionsUninsulatedSurfaces",
-                       "ResidentialConstructionsWindows", 
+                       "ResidentialConstructionsWindows",
+                       "ResidentialConstructionsDoors",
                        # "ResidentialHVACFurnaceFuel",
                        # "ResidentialHVACHeatingSetpoints",
-                       # "ResidentialAirflow", # TODO: our spaces don't have volumes
-                       # "ResidentialHVACSizing",
+                       "ResidentialAirflow",
+                       "ResidentialHVACSizing",
                        # "ResidentialPhotovoltaics"
                        ] # TODO: Remove
     
@@ -175,42 +177,42 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     else
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
-    
-    num_floors = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
-    if num_floors.nil?
-      num_floors = 1
-    else
-      num_floors = num_floors.text.to_i
-    end
-      
-    exposed_perim = 0
-    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|    
-      foundation.elements.each("Slab") do |slab|        
-        unless slab.elements["ExposedPerimeter"].nil?
-          exposed_perim += slab.elements["ExposedPerimeter"].text.to_f
-        end
-      end      
-    end
-          
-    foundation_space = build_foundation_space(model, doc, event_types)
+
+    foundation_space, foundation_zone = build_foundation_space(model, doc, event_types)
     living_space = build_living_space(model, doc, event_types)
-    attic_space = build_attic_space(model, doc, event_types)
-    add_foundation_floors(model, doc, event_types, living_space, foundation_space)
+    attic_space, attic_zone = build_attic_space(model, doc, event_types)
+    foundation_finished_floor_area = add_foundation_floors(model, doc, event_types, living_space, foundation_space)
     add_foundation_walls(model, doc, event_types, living_space, foundation_space)
-    add_foundation_ceilings(model, doc, event_types, foundation_space, living_space)
+    foundation_finished_floor_area = add_foundation_ceilings(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area)
+    add_living_floors(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area) # TODO: need these assumptions for airflow measure
     wall_fractions, window_areas = get_wall_orientation_fractions(doc, event_types)
-    surface_window_area = add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space, wall_fractions, window_areas)
-    add_attic_floors(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
-    add_attic_walls(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
-    add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+    surface_window_area = add_living_walls(model, doc, event_types, avg_ceil_hgt, living_space, attic_space, wall_fractions, window_areas)
+    add_attic_floors(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
+    add_attic_walls(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
+    add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
     add_windows(model, doc, event_types, runner, surface_window_area)
     
-    measures.keys.each do |measure|
-      next unless measures[measure].keys.include? "exposed_perim"
-      measures[measure]["exposed_perim"] = exposed_perim.to_s
+    # Set the zone volumes based on the sum of space volumes
+    model.getThermalZones.each do |thermal_zone|
+      zone_volume = 0
+      if not Geometry.get_volume_from_spaces(thermal_zone.spaces) > 0 # space doesn't have a floor
+        if thermal_zone.name.to_s == Constants.CrawlZone
+          floor_area = nil
+          thermal_zone.spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "roofceiling"
+              floor_area = surface.grossArea
+            end
+          end
+          zone_volume = OpenStudio.convert(floor_area,"m^2","ft^2").get * Geometry.get_height_of_spaces(thermal_zone.spaces)
+        end
+      else # space has a floor
+        zone_volume = Geometry.get_volume_from_spaces(thermal_zone.spaces)
+      end
+      thermal_zone.setVolume(OpenStudio.convert(zone_volume,"ft^3","m^3").get)
     end
    
-    # explode wall surfaces out from origin, from top down
+    # Explode wall surfaces out from origin, from top down
     [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight].each do |facade|
     
       wall_surfaces = {}
@@ -264,6 +266,20 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
 
     end
     
+    exposed_perim = 0
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+      foundation.elements.each("Slab") do |slab|        
+        unless slab.elements["ExposedPerimeter"].nil?
+          exposed_perim += slab.elements["ExposedPerimeter"].text.to_f
+        end
+      end      
+    end
+          
+    measures.keys.each do |measure|
+      next unless measures[measure].keys.include? "exposed_perim"
+      measures[measure]["exposed_perim"] = exposed_perim.to_s
+    end
+    
     # Store building name
     model.getBuilding.setName(File.basename(hpxml_file_path))
         
@@ -279,6 +295,13 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     model.getBuilding.setStandardsNumberOfLivingUnits(1)    
     
     # Store number of stories
+    num_floors = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
+    if num_floors.nil?
+      num_floors = 1
+    else
+      num_floors = num_floors.text.to_i
+    end    
+    
     if (REXML::XPath.first(doc, "count(//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cape cod'])")) > 0
       num_floors += 1
     end
@@ -300,10 +323,10 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bathrooms", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms")
 
     # ResidentialGeometryNumOccupants
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")        
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")
 
-    # Residentialxx...
-    # Residentialyy...
+    # ResidentialGeometryDoorArea
+    measures = update_measure_args(doc, measures, "ResidentialGeometryDoorArea", "door_area", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Doors/Door/Area")
     
     select_measures = {} # TODO: Remove
     measures_tested.each do |k|
@@ -432,7 +455,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
   
   end  
   
-  def add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space, wall_fractions, window_areas)
+  def add_living_walls(model, doc, event_types, avg_ceil_hgt, living_space, attic_space, wall_fractions, window_areas)
   
     rotate = {"north"=>0, "south"=>180, "west"=>90, "east"=>270}
   
@@ -445,7 +468,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       z_origin = 0
       unless wall.elements["ExteriorAdjacentTo"].nil?
         if wall.elements["ExteriorAdjacentTo"].text == "attic"
-          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
         end
       end
     
@@ -526,12 +549,13 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       end
     end
     
-    return foundation_space
+    return foundation_space, foundation_zone
     
   end
   
   def add_foundation_floors(model, doc, event_types, living_space, foundation_space)
     
+    foundation_finished_floor_area = 0
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
       foundation.elements.each("Slab") do |slab|
@@ -555,10 +579,17 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
         else
           surface.setSpace(living_space)
         end
+        if foundation_space.nil?
+          foundation_finished_floor_area += slab.elements["Area"].text.to_f # is a slab foundation
+        elsif foundation_space.name.to_s == Constants.FinishedBasementSpace
+          foundation_finished_floor_area += slab.elements["Area"].text.to_f # is a finished basement foundation
+        end
         
       end
       
     end
+    
+    return foundation_finished_floor_area
       
   end
   
@@ -601,7 +632,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
   
   end
   
-  def add_foundation_ceilings(model, doc, event_types, foundation_space, living_space)
+  def add_foundation_ceilings(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area)
      
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
      
@@ -619,16 +650,53 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
         surface.setSurfaceType("RoofCeiling")
         surface.setSpace(foundation_space)
         surface.createAdjacentSurface(living_space)
+        
+        foundation_finished_floor_area += framefloor.elements["Area"].text.to_f
       
       end
     
     end
     
+    return foundation_finished_floor_area
+    
+  end
+  
+  def add_living_floors(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area)
+  
+    finished_floor_area = nil
+    if not doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/FinishedFloorArea"].nil?
+      finished_floor_area = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/FinishedFloorArea"].text.to_f
+      if finished_floor_area == 0 and not doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].nil?
+        finished_floor_area = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
+      end
+    elsif not doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].nil?
+      finished_floor_area = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
+    end
+    if finished_floor_area.nil?
+      puts "Could not find finished floor area."
+    end
+    above_grade_finished_floor_area = finished_floor_area - foundation_finished_floor_area
+    return unless above_grade_finished_floor_area > 0
+    
+    finishedfloor_width = OpenStudio.convert(Math::sqrt(above_grade_finished_floor_area),"ft","m").get
+    finishedfloor_length = OpenStudio.convert(above_grade_finished_floor_area,"ft^2","m^2").get / finishedfloor_width
+    
+    surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model) # don't put it right on top of existing finished floor
+    surface.setName("inferred above grade finished floor")
+    surface.setSurfaceType("Floor")
+    surface.setSpace(living_space)
+    if foundation_space.nil?
+      surface.createAdjacentSurface(living_space)
+    else
+      surface.createAdjacentSurface(foundation_space)
+    end
+  
   end
   
   def build_attic_space(model, doc, event_types)
 
     attic_space = nil
+    attic_zone = nil
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
       next if attic.elements["Area"].nil?
@@ -645,11 +713,11 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       
     end
     
-    return attic_space
+    return attic_space, attic_zone
     
   end
   
-  def add_attic_floors(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+  def add_attic_floors(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
   
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -659,7 +727,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
     
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
      
       if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
       elsif ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text
@@ -676,14 +744,14 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def add_attic_walls(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+  def add_attic_walls(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
   
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next unless wall.elements["InteriorAdjacentTo"].text == "attic"
       next if wall.elements["Area"].nil?
       
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
       
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
       wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
@@ -704,7 +772,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+  def add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
   
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -714,7 +782,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
     
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
      
       if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, z_origin), model)
@@ -736,7 +804,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
       roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
     
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * (num_floors + 1) # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 2 # TODO: is this a bad assumption?
 
       surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, z_origin), model)
       surface.setName("#{roof.elements["SystemIdentifier"].attributes["id"]}")
