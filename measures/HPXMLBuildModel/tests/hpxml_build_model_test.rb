@@ -53,7 +53,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>12, "Material"=>15, "Surface"=>num_surfaces, "SubSurface"=>51, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>12, "Material"=>15, "Surface"=>num_surfaces, "SubSurface"=>51, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>2, "LightsDefinition"=>2, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "PlantLoop"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))} based on lat, lng.")
@@ -75,7 +75,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>12, "Material"=>15, "Surface"=>num_surfaces, "SubSurface"=>51, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>12, "Material"=>15, "Surface"=>num_surfaces, "SubSurface"=>51, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>2, "LightsDefinition"=>2, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "PlantLoop"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join("./measures/ResidentialLocation/resources", File.basename(args_hash["weather_file_path"])))}.")
@@ -97,7 +97,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>10, "Material"=>13, "Surface"=>num_surfaces, "SubSurface"=>194, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>10, "Material"=>13, "Surface"=>num_surfaces, "SubSurface"=>194, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "AirLoopHVAC"=>1, "AirLoopHVACUnitarySystem"=>1, "PlantLoop"=>2, "SetpointManagerFollowGroundTemperature"=>1, "ThermostatSetpointDualSetpoint"=>2, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "FanOnOff"=>1, "GroundHeatExchangerVertical"=>1, "CoilHeatingElectric"=>1, "AirTerminalSingleDuctUncontrolled"=>2, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>2, "LightsDefinition"=>2, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>2, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -119,7 +119,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>1, "LightsDefinition"=>1, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "PlantLoop"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -141,7 +141,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>1, "LightsDefinition"=>1, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -163,7 +163,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>1, "LightsDefinition"=>1, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -185,7 +185,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "AirLoopHVAC"=>1, "AirLoopHVACUnitarySystem"=>1, "PlantLoop"=>2, "SetpointManagerFollowGroundTemperature"=>1, "ThermostatSetpointDualSetpoint"=>1, "CoilHeatingWaterToAirHeatPumpEquationFit"=>1, "CoilCoolingWaterToAirHeatPumpEquationFit"=>1, "FanOnOff"=>1, "GroundHeatExchangerVertical"=>1, "CoilHeatingElectric"=>1, "AirTerminalSingleDuctUncontrolled"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>1, "LightsDefinition"=>1, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>2, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join("./measures/ResidentialLocation/resources", File.basename(args_hash["weather_file_path"])))}.")
@@ -207,7 +207,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>9, "Material"=>12, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>1, "LightsDefinition"=>1, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "PlantLoop"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -251,7 +251,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>10, "Material"=>13, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>10, "Material"=>13, "Surface"=>num_surfaces, "SubSurface"=>20, "ThermalZone"=>4, "Space"=>4, "BuildingUnit"=>1, "People"=>2, "PeopleDefinition"=>2, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>2, "LightsDefinition"=>2, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "PlantLoop"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -273,7 +273,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     num_ducts = 6
     num_surfaces = num_roofs + num_attics + num_framefloors + num_foundationwalls + num_slabs + num_walls + num_atticwalls + num_ducts
     expected_num_del_objects = {}
-    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>8, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>37, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>3, "ElectricEquipmentDefinition"=>3}
+    expected_num_new_objects = {"SiteGroundTemperatureDeep"=>1, "RunPeriodControlDaylightSavingTime"=>1, "SiteGroundTemperatureBuildingSurface"=>1, "SiteWaterMainsTemperature"=>1, "WeatherFile"=>1, "Construction"=>8, "Material"=>10, "Surface"=>num_surfaces, "SubSurface"=>37, "ThermalZone"=>3, "Space"=>3, "BuildingUnit"=>1, "People"=>1, "PeopleDefinition"=>1, "SimpleGlazing"=>1, "ShadingControl"=>1, "ElectricEquipment"=>5, "ElectricEquipmentDefinition"=>5, "Lights"=>1, "LightsDefinition"=>1, "ExteriorLights"=>1, "ExteriorLightsDefinition"=>1, "PlantLoop"=>1, "SetpointManagerScheduled"=>1, "PumpVariableSpeed"=>1, "WaterHeaterMixed"=>1}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     assert_includes(result.info.map{ |x| x.logMessage }, "Found user-specified #{File.expand_path(File.join(".", "measures", "ResidentialLocation", "resources", "USA_CO_Denver_Intl_AP_725650_TMY3.epw"))}.")
@@ -357,7 +357,7 @@ class HPXMLBuildModelTest < MiniTest::Test
     final_objects = get_objects(model)
     
     # get new and deleted objects
-    obj_type_exclusions = ["ClimateZones", "Site", "YearDescription", "ScheduleDay", "ScheduleRuleset", "ScheduleRule", "ScheduleTypeLimits", "ScheduleConstant", "ZoneHVACEquipmentList", "SizingSystem", "SizingZone", "Node", "Building", "PortList", "CurveExponent", "CurveCubic", "EnergyManagementSystemSubroutine", "EnergyManagementSystemProgramCallingManager", "EnergyManagementSystemProgram", "EnergyManagementSystemSensor", "EnergyManagementSystemActuator", "EnergyManagementSystemGlobalVariable", "SpaceInfiltrationDesignFlowRate", "SpaceInfiltrationEffectiveLeakageArea", "EnergyManagementSystemOutputVariable", "OutputVariable", "OtherEquipment", "OtherEquipmentDefinition", "SurfacePropertyConvectionCoefficients"]
+    obj_type_exclusions = ["ClimateZones", "Site", "YearDescription", "ScheduleDay", "ScheduleRuleset", "ScheduleRule", "ScheduleTypeLimits", "ScheduleConstant", "ZoneHVACEquipmentList", "SizingSystem", "SizingZone", "Node", "Building", "PortList", "CurveExponent", "CurveCubic", "EnergyManagementSystemSubroutine", "EnergyManagementSystemProgramCallingManager", "EnergyManagementSystemProgram", "EnergyManagementSystemSensor", "EnergyManagementSystemActuator", "EnergyManagementSystemGlobalVariable", "SpaceInfiltrationDesignFlowRate", "SpaceInfiltrationEffectiveLeakageArea", "EnergyManagementSystemOutputVariable", "OutputVariable", "OtherEquipment", "OtherEquipmentDefinition", "SurfacePropertyConvectionCoefficients", "ConnectorSplitter", "ConnectorMixer", "PipeAdiabatic", "ZoneMixing", "AirLoopHVACZoneSplitter", "AirLoopHVACZoneMixer", "AirLoopHVACReturnPlenum", "SizingPlant", "Timestep"]
     all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
     all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
     
