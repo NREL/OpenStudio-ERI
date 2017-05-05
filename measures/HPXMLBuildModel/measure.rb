@@ -91,55 +91,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     helper_methods_file = File.join(resources_dir, "helper_methods.rb")
     
     # Load helper_methods
-    require File.join(File.dirname(helper_methods_file), File.basename(helper_methods_file, File.extname(helper_methods_file)))    
-    
-    # Need to ensure this has the same order as https://github.com/NREL/OpenStudio-Beopt#new-construction-workflow-for-users
-    measures_workflow_order = [
-                               "ResidentialLocation",
-                               "ResidentialGeometryNumBedsAndBaths", 
-                               "ResidentialGeometryNumOccupants",
-                               "ResidentialGeometryDoorArea",
-                               "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
-                               "ResidentialConstructionsCeilingsRoofsFinishedRoof",
-                               "ResidentialConstructionsCeilingsRoofsRoofingMaterial",
-                               "ResidentialConstructionsFoundationsFloorsSlab",
-                               "ResidentialConstructionsFoundationsFloorsBasementFinished",
-                               "ResidentialConstructionsFoundationsFloorsCrawlspace",
-                               "ResidentialConstructionsWallsExteriorWoodStud",
-                               "ResidentialConstructionsWallsInterzonal",                       
-                               "ResidentialConstructionsUninsulatedSurfaces",
-                               "ResidentialConstructionsWindows",
-                               "ResidentialConstructionsDoors",
-                               "ResidentialHotWaterHeaterTankElectric",
-                               "ResidentialHotWaterHeaterTankFuel",
-                               "ResidentialHotWaterHeaterTanklessElectric",
-                               "ResidentialHotWaterHeaterTanklessFuel",
-                               "ResidentialHotWaterHeaterHeatPump",
-                               "ResidentialHVACAirSourceHeatPumpSingleSpeed",
-                               "ResidentialHVACAirSourceHeatPumpTwoSpeed",
-                               "ResidentialHVACAirSourceHeatPumpVariableSpeed",
-                               "ResidentialHVACCentralAirConditionerSingleSpeed",
-                               "ResidentialHVACCentralAirConditionerTwoSpeed",
-                               "ResidentialHVACCentralAirConditionerVariableSpeed",
-                               "ResidentialHVACRoomAirConditioner",
-                               "ResidentialHVACElectricBaseboard",
-                               "ResidentialHVACFurnaceElectric",
-                               "ResidentialHVACFurnaceFuel",
-                               "ResidentialHVACBoilerElectric",
-                               "ResidentialHVACBoilerFuel",
-                               "ResidentialHVACMiniSplitHeatPump",
-                               "ResidentialHVACGroundSourceHeatPumpVerticalBore",
-                               "ResidentialHVACHeatingSetpoints",
-                               "ResidentialHVACCoolingSetpoints",
-                               "ResidentialHVACCeilingFan",
-                               "ResidentialApplianceRefrigerator",
-                               "ResidentialApplianceClothesWasher",
-                               "ResidentialApplianceClothesDryerElectric",
-                               "ResidentialApplianceClothesDryerFuel",
-                               "ResidentialLighting",
-                               "ResidentialAirflow",
-                               "ResidentialHVACSizing"
-                               ]
+    require File.join(File.dirname(helper_methods_file), File.basename(helper_methods_file, File.extname(helper_methods_file)))
     
     doc = REXML::Document.new(File.read(hpxml_file_path))
     
@@ -363,8 +315,9 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     measures = add_heating_system(model, measures_dir, doc, event_types, measures, runner)
     measures = add_cooling_system(model, measures_dir, doc, event_types, measures, runner)
     measures = add_heat_pump(model, measures_dir, doc, event_types, measures, runner)
-    measures = add_measure(model, measures_dir, measures, "ResidentialHVACHeatingSetpoints", runner)
-    measures = add_measure(model, measures_dir, measures, "ResidentialHVACCoolingSetpoints", runner)
+    measures = add_heating_setpoint(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_cooling_setpoint(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_ceiling_fan(model, measures_dir, doc, event_types, measures, runner)
     
     # Appliances
     measures = add_appliances(model, measures_dir, doc, event_types, measures, runner)
@@ -377,21 +330,32 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
     # Airflow
     measures = add_measure(model, measures_dir, measures, "ResidentialAirflow", runner)
+    measures = add_infiltration(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_mechanical_ventilation(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_natural_ventilation(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_ducts(model, measures_dir, doc, event_types, measures, runner)
     
     # Sizing
     measures = add_measure(model, measures_dir, measures, "ResidentialHVACSizing", runner)
     
-    ordered_measures = {}
-    measures_workflow_order.each do |k| # put them in order
-      unless measures[k].nil?
-        ordered_measures[k] = measures[k]
+    # Photovoltaics
+    measures = add_photovoltaics(model, measures_dir, doc, event_types, measures, runner)
+    
+    workflow_order = []
+    workflow_json = JSON.parse(File.read(File.join(File.dirname(__FILE__), "resources", "measure-info.json")), :symbolize_names=>true)
+    
+    workflow_json.each do |group|
+      group[:group_steps].each do |step|
+        step[:measures].each do |measure|
+          workflow_order << measure
+        end
       end
     end
-    measures = ordered_measures
     
     # Call each measure for sample to build up model
-    measures.keys.each do |measure_subdir|
-    
+    workflow_order.each do |measure_subdir|
+      next unless measures.keys.include? measure_subdir
+
       # Gather measure arguments and call measure
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
       measure_instance = get_measure_instance(full_measure_path)
@@ -427,6 +391,78 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       end
     end
     return false
+  end
+  
+  def add_photovoltaics(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/Photovoltaics") do |pv|
+      measures = add_measure(model, measures_dir, measures, "ResidentialPhotovoltaics", runner)
+      break
+    end  
+  
+    return measures  
+  
+  end
+  
+  def add_ceiling_fan(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/CeilingFan") do |cf|
+      measures = add_measure(model, measures_dir, measures, "ResidentialHVACCeilingFan", runner)
+      break
+    end  
+  
+    return measures
+  
+  end
+  
+  def add_heating_setpoint(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl") do |cont|
+      measures = add_measure(model, measures_dir, measures, "ResidentialHVACHeatingSetpoints", runner)
+      measures = update_measure_args(cont, measures, "ResidentialHVACHeatingSetpoints", "htg_wkdy", "SetpointTempHeatingSeason")
+      measures = update_measure_args(cont, measures, "ResidentialHVACHeatingSetpoints", "htg_wked", "SetpointTempHeatingSeason")
+      break
+    end
+    
+    return measures
+  
+  end
+  
+  def add_cooling_setpoint(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl") do |cont|
+      measures = add_measure(model, measures_dir, measures, "ResidentialHVACCoolingSetpoints", runner)
+      measures = update_measure_args(cont, measures, "ResidentialHVACCoolingSetpoints", "clg_wkdy", "SetpointTempHeatingSeason")
+      measures = update_measure_args(cont, measures, "ResidentialHVACCoolingSetpoints", "clg_wked", "SetpointTempHeatingSeason")
+      break
+    end
+    
+    return measures
+  
+  end
+  
+  def add_infiltration(model, measures_dir, doc, event_types, measures, runner)
+  
+    return measures
+    
+  end
+  
+  def add_mechanical_ventilation(model, measures_dir, doc, event_types, measures, runner)
+  
+    return measures
+    
+  end
+  
+  def add_natural_ventilation(model, measures_dir, doc, event_types, measures, runner)
+  
+    return measures
+    
+  end
+  
+  def add_ducts(model, measures_dir, doc, event_types, measures, runner)
+  
+    return measures
+    
   end
   
   def add_appliances(model, measures_dir, doc, event_types, measures, runner)

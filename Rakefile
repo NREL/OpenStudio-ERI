@@ -422,6 +422,18 @@ def generate_example_osw_of_all_measures_in_order()
   workflowJSON.setWorkflowSteps(steps)
   workflowJSON.save
   
+  # Copy osw into HPXMLBuildModel/resources
+  json_path = "workflows/measure-info.json"
+  dest_resource = File.expand_path("measures/HPXMLBuildModel/resources/#{File.basename(json_path)}")
+  measure_resource_dir = File.dirname(dest_resource)  
+  if not File.file?(dest_resource)
+    FileUtils.cp(json_path, measure_resource_dir)
+    puts "Added #{File.basename(json_path)} to HPXMLBuildModel/resources."
+  elsif not FileUtils.compare_file(json_path, dest_resource)
+    FileUtils.cp(json_path, measure_resource_dir)
+    puts "Updated #{File.basename(json_path)} in HPXMLBuildModel/resources."
+  end
+  
   # Replace "\n" strings with newlines in the JSON
  # s = IO.read(osw_path)
  # s.gsub!("\\n", "\n")
