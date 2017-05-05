@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>348866b0-d184-42bb-b4d0-d4c92a977415</version_id>
-  <version_modified>20170428T220951Z</version_modified>
+  <version_id>c972b790-1fa3-4c79-b917-0caeb0944c8a</version_id>
+  <version_modified>20170504T211751Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -88,12 +88,6 @@
       <checksum>1741B3EF</checksum>
     </file>
     <file>
-      <filename>CedarUtopian4.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E9D72A1F</checksum>
-    </file>
-    <file>
       <filename>Crawlspace.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
@@ -148,10 +142,22 @@
       <checksum>33AFC81E</checksum>
     </file>
     <file>
-      <filename>hpxml_build_model_test.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8DCDCE57</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31FE0BE6</checksum>
+    </file>
+    <file>
+      <filename>CedarUtopian4.xml</filename>
+      <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>98361428</checksum>
+      <checksum>AE1750C4</checksum>
     </file>
     <file>
       <version>
@@ -162,7 +168,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>171F69ED</checksum>
+      <checksum>CAC93DB7</checksum>
+    </file>
+    <file>
+      <filename>hpxml_build_model_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>20C4360B</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_pool_pump</name>
   <uid>b5648903-279f-4e58-9139-c44134c0cf76</uid>
-  <version_id>cff1f34a-1f16-4543-b106-7096df79345e</version_id>
-  <version_modified>20170427T163802Z</version_modified>
+  <version_id>1d98f708-3415-4098-af79-46d8dfbca47e</version_id>
+  <version_modified>20170502T222916Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialPoolPump</class_name>
   <display_name>Set Residential Pool Pump</display_name>
@@ -142,16 +142,16 @@
       <checksum>8DCDCE57</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E957CFBF</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31FE0BE6</checksum>
     </file>
   </files>
 </measure>

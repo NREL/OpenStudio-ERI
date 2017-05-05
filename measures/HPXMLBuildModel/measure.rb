@@ -4,6 +4,8 @@
 require 'rexml/document'
 require 'rexml/xpath'
 
+require "#{File.dirname(__FILE__)}/resources/geometry"
+
 # start the measure
 class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
 
@@ -92,38 +94,53 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     require File.join(File.dirname(helper_methods_file), File.basename(helper_methods_file, File.extname(helper_methods_file)))    
     
     # Need to ensure this has the same order as https://github.com/NREL/OpenStudio-Beopt#new-construction-workflow-for-users
-    measures_tested = ["ResidentialLocation", 
-                       "ResidentialGeometryNumBedsAndBaths", 
-                       "ResidentialGeometryNumOccupants", 
-                       "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
-                       "ResidentialConstructionsCeilingsRoofsFinishedRoof",
-                       "ResidentialConstructionsCeilingsRoofsRoofingMaterial",
-                       "ResidentialConstructionsFoundationsFloorsSlab",
-                       "ResidentialConstructionsFoundationsFloorsBasementFinished",
-                       "ResidentialConstructionsFoundationsFloorsCrawlspace",
-                       "ResidentialConstructionsWallsExteriorWoodStud",
-                       "ResidentialConstructionsWallsInterzonal",                       
-                       "ResidentialConstructionsUninsulatedSurfaces",
-                       "ResidentialConstructionsWindows", 
-                       # "ResidentialHVACFurnaceFuel",
-                       # "ResidentialHVACHeatingSetpoints",
-                       # "ResidentialAirflow", # TODO: our spaces don't have volumes
-                       # "ResidentialHVACSizing",
-                       # "ResidentialPhotovoltaics"
-                       ] # TODO: Remove
+    measures_workflow_order = [
+                               "ResidentialLocation",
+                               "ResidentialGeometryNumBedsAndBaths", 
+                               "ResidentialGeometryNumOccupants",
+                               "ResidentialGeometryDoorArea",
+                               "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
+                               "ResidentialConstructionsCeilingsRoofsFinishedRoof",
+                               "ResidentialConstructionsCeilingsRoofsRoofingMaterial",
+                               "ResidentialConstructionsFoundationsFloorsSlab",
+                               "ResidentialConstructionsFoundationsFloorsBasementFinished",
+                               "ResidentialConstructionsFoundationsFloorsCrawlspace",
+                               "ResidentialConstructionsWallsExteriorWoodStud",
+                               "ResidentialConstructionsWallsInterzonal",                       
+                               "ResidentialConstructionsUninsulatedSurfaces",
+                               "ResidentialConstructionsWindows",
+                               "ResidentialConstructionsDoors",
+                               "ResidentialHotWaterHeaterTankElectric",
+                               "ResidentialHotWaterHeaterTankFuel",
+                               "ResidentialHotWaterHeaterTanklessElectric",
+                               "ResidentialHotWaterHeaterTanklessFuel",
+                               "ResidentialHotWaterHeaterHeatPump",
+                               "ResidentialHVACAirSourceHeatPumpSingleSpeed",
+                               "ResidentialHVACAirSourceHeatPumpTwoSpeed",
+                               "ResidentialHVACAirSourceHeatPumpVariableSpeed",
+                               "ResidentialHVACCentralAirConditionerSingleSpeed",
+                               "ResidentialHVACCentralAirConditionerTwoSpeed",
+                               "ResidentialHVACCentralAirConditionerVariableSpeed",
+                               "ResidentialHVACRoomAirConditioner",
+                               "ResidentialHVACElectricBaseboard",
+                               "ResidentialHVACFurnaceElectric",
+                               "ResidentialHVACFurnaceFuel",
+                               "ResidentialHVACBoilerElectric",
+                               "ResidentialHVACBoilerFuel",
+                               "ResidentialHVACMiniSplitHeatPump",
+                               "ResidentialHVACGroundSourceHeatPumpVerticalBore",
+                               "ResidentialHVACHeatingSetpoints",
+                               "ResidentialHVACCoolingSetpoints",
+                               "ResidentialHVACCeilingFan",
+                               "ResidentialApplianceRefrigerator",
+                               "ResidentialApplianceClothesWasher",
+                               "ResidentialApplianceClothesDryerElectric",
+                               "ResidentialApplianceClothesDryerFuel",
+                               "ResidentialLighting",
+                               "ResidentialAirflow",
+                               "ResidentialHVACSizing"
+                               ]
     
-    # Obtain measures and default arguments
-    measures = {}
-    Dir.foreach(measures_dir) do |measure_subdir|
-      next if !measure_subdir.include? 'Residential'
-      next if !measures_tested.include? measure_subdir # TODO: Remove
-      full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
-      check_file_exists(full_measure_path, runner)      
-      measure_instance = get_measure_instance(full_measure_path)
-      measures[measure_subdir] = default_args_hash(model, measure_instance)
-    end
-    
-    # TODO: Parse hpxml and update measure arguments
     doc = REXML::Document.new(File.read(hpxml_file_path))
     
     event_types = []
@@ -141,8 +158,9 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       runner.registerError("Residential facility type not #{facility_types_handled.join(", ")}.")
       return false
     end    
-    
-    # ResidentialLocation
+
+    measures = {}
+    measures = add_measure(model, measures_dir, measures, "ResidentialLocation", runner)
     if weather_file_path.nil?
     
       city_municipality = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/Site/Address/CityMunicipality"]
@@ -167,50 +185,49 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     measures["ResidentialLocation"]["weather_directory"] = File.dirname(weather_file_path)
     measures["ResidentialLocation"]["weather_file_name"] = File.basename(weather_file_path)
     
-    # Geometry
-    
+    # Geometry    
     avg_ceil_hgt = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
     if avg_ceil_hgt.nil?
       avg_ceil_hgt = 8.0
     else
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
-    
-    num_floors = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
-    if num_floors.nil?
-      num_floors = 1
-    else
-      num_floors = num_floors.text.to_i
-    end
-      
-    exposed_perim = 0
-    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|    
-      foundation.elements.each("Slab") do |slab|        
-        unless slab.elements["ExposedPerimeter"].nil?
-          exposed_perim += slab.elements["ExposedPerimeter"].text.to_f
-        end
-      end      
-    end
-          
-    foundation_space = build_foundation_space(model, doc, event_types)
+
+    foundation_space, foundation_zone = build_foundation_space(model, doc, event_types)
     living_space = build_living_space(model, doc, event_types)
-    attic_space = build_attic_space(model, doc, event_types)
-    add_foundation_floors(model, doc, event_types, living_space, foundation_space)
+    attic_space, attic_zone = build_attic_space(model, doc, event_types)
+    foundation_finished_floor_area = add_foundation_floors(model, doc, event_types, living_space, foundation_space)
     add_foundation_walls(model, doc, event_types, living_space, foundation_space)
-    add_foundation_ceilings(model, doc, event_types, foundation_space, living_space)
+    foundation_finished_floor_area = add_foundation_ceilings(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area)
+    add_living_floors(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area) # TODO: need these assumptions for airflow measure
     wall_fractions, window_areas = get_wall_orientation_fractions(doc, event_types)
-    surface_window_area = add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space, wall_fractions, window_areas)
-    add_attic_floors(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
-    add_attic_walls(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
-    add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+    surface_window_area = add_living_walls(model, doc, event_types, avg_ceil_hgt, living_space, attic_space, wall_fractions, window_areas)
+    add_attic_floors(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
+    add_attic_walls(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
+    add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
     add_windows(model, doc, event_types, runner, surface_window_area)
     
-    measures.keys.each do |measure|
-      next unless measures[measure].keys.include? "exposed_perim"
-      measures[measure]["exposed_perim"] = exposed_perim.to_s
+    # Set the zone volumes based on the sum of space volumes
+    model.getThermalZones.each do |thermal_zone|
+      zone_volume = 0
+      if not Geometry.get_volume_from_spaces(thermal_zone.spaces) > 0 # space doesn't have a floor
+        if thermal_zone.name.to_s == Constants.CrawlZone
+          floor_area = nil
+          thermal_zone.spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "roofceiling"
+              floor_area = surface.grossArea
+            end
+          end
+          zone_volume = OpenStudio.convert(floor_area,"m^2","ft^2").get * Geometry.get_height_of_spaces(thermal_zone.spaces)
+        end
+      else # space has a floor
+        zone_volume = Geometry.get_volume_from_spaces(thermal_zone.spaces)
+      end
+      thermal_zone.setVolume(OpenStudio.convert(zone_volume,"ft^3","m^3").get)
     end
    
-    # explode wall surfaces out from origin, from top down
+    # Explode wall surfaces out from origin, from top down
     [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight].each do |facade|
     
       wall_surfaces = {}
@@ -279,6 +296,13 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     model.getBuilding.setStandardsNumberOfLivingUnits(1)    
     
     # Store number of stories
+    num_floors = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
+    if num_floors.nil?
+      num_floors = 1
+    else
+      num_floors = num_floors.text.to_i
+    end    
+    
     if (REXML::XPath.first(doc, "count(//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(doc, "count(//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cape cod'])")) > 0
       num_floors += 1
     end
@@ -295,26 +319,81 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     facility_types_map = {"single-family detached"=>Constants.BuildingTypeSingleFamilyDetached}
     model.getBuilding.setStandardsBuildingType(facility_types_map[doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType"].text])
         
-    # ResidentialGeometryNumBedsAndBaths
+    measures = add_measure(model, measures_dir, measures, "ResidentialGeometryNumBedsAndBaths", runner)
     measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bedrooms", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
     measures = update_measure_args(doc, measures, "ResidentialGeometryNumBedsAndBaths", "num_bathrooms", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms")
 
-    # ResidentialGeometryNumOccupants
-    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")        
+    measures = add_measure(model, measures_dir, measures, "ResidentialGeometryNumOccupants", runner)
+    measures = update_measure_args(doc, measures, "ResidentialGeometryNumOccupants", "num_occ", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")
 
-    # Residentialxx...
-    # Residentialyy...
+    measures = add_measure(model, measures_dir, measures, "ResidentialGeometryDoorArea", runner)
+    measures = update_measure_args(doc, measures, "ResidentialGeometryDoorArea", "door_area", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Doors/Door/Area")
     
-    select_measures = {} # TODO: Remove
-    measures_tested.each do |k|
-      select_measures[k] = measures[k]
+    # Constructions
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsCeilingsRoofsUnfinishedAttic", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsCeilingsRoofsFinishedRoof", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsCeilingsRoofsRoofingMaterial", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsFoundationsFloorsSlab", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsFoundationsFloorsBasementFinished", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsFoundationsFloorsCrawlspace", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsWallsExteriorWoodStud", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsWallsInterzonal", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsUninsulatedSurfaces", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsWindows", runner)    
+    measures = add_measure(model, measures_dir, measures, "ResidentialConstructionsDoors", runner)
+    
+    exposed_perim = 0
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+      foundation.elements.each("Slab") do |slab|        
+        unless slab.elements["ExposedPerimeter"].nil?
+          exposed_perim += slab.elements["ExposedPerimeter"].text.to_f
+        end
+      end
     end
-    measures = select_measures
+          
+    measures.keys.each do |measure|
+      next unless measures[measure].keys.include? "exposed_perim"
+      measures[measure]["exposed_perim"] = exposed_perim.to_s
+    end
+    
+    # DHW
+    measures = add_water_heating(model, measures_dir, doc, event_types, measures, runner)
+    
+    # HVAC
+    measures = add_heating_system(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_cooling_system(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_heat_pump(model, measures_dir, doc, event_types, measures, runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialHVACHeatingSetpoints", runner)
+    measures = add_measure(model, measures_dir, measures, "ResidentialHVACCoolingSetpoints", runner)
+    
+    # Appliances
+    measures = add_appliances(model, measures_dir, doc, event_types, measures, runner)
+    
+    # Lighting
+    measures = add_lighting(model, measures_dir, doc, event_types, measures, runner)
+    
+    # Misc Loads
+    # TODO
+    
+    # Airflow
+    measures = add_measure(model, measures_dir, measures, "ResidentialAirflow", runner)
+    
+    # Sizing
+    measures = add_measure(model, measures_dir, measures, "ResidentialHVACSizing", runner)
+    
+    ordered_measures = {}
+    measures_workflow_order.each do |k| # put them in order
+      unless measures[k].nil?
+        ordered_measures[k] = measures[k]
+      end
+    end
+    measures = ordered_measures
     
     # Call each measure for sample to build up model
     measures.keys.each do |measure_subdir|
+    
       # Gather measure arguments and call measure
-      full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")      
+      full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
       measure_instance = get_measure_instance(full_measure_path)
       argument_map = get_argument_map(model, measure_instance, measures[measure_subdir], measure_subdir, runner)
       print_measure_call(measures[measure_subdir], measure_subdir, runner)
@@ -322,10 +401,244 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       if not run_measure(model, measure_instance, argument_map, runner)
         return false
       end
+
     end
     
     return true
 
+  end
+  
+  def add_measure(model, measures_dir, measures, measure_subdir, runner)
+    unless measures.keys.include? measure_subdir
+      full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
+      check_file_exists(full_measure_path, runner)      
+      measure_instance = get_measure_instance(full_measure_path)
+      measures[measure_subdir] = default_args_hash(model, measure_instance)
+    end
+    return measures
+  end
+  
+  def element_exists(element)
+    if element.nil?
+      return false
+    else
+      if element.text
+        return true
+      end
+    end
+    return false
+  end
+  
+  def add_appliances(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/Refrigerator") do |ref|
+      measures = add_measure(model, measures_dir, measures, "ResidentialApplianceRefrigerator", runner)
+      measures = update_measure_args(ref, measures, "ResidentialApplianceRefrigerator", "fridge_E", "RatedAnnualkWh")
+      break
+    end
+
+    unless model.getPlantLoops.length == 0 # must have a water heater in the model
+      doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/ClothesWasher") do |cw|
+        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceClothesWasher", runner)
+        measures = update_measure_args(cw, measures, "ResidentialApplianceClothesWasher", "cw_imef", "ModifiedEnergyFactor")
+        break
+      end
+    end
+    
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/ClothesDryer") do |cd|
+      if cd.elements["FuelType"].text == "electricity"
+        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceClothesDryerElectric", runner)
+      elsif ["natural gas", "fuel oil", "propane"].include? cd.elements["FuelType"].text
+        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceClothesDryerFuel", runner)
+        measures["ResidentialApplianceClothesDryerFuel"]["cd_fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[cd.elements["FuelType"].text]
+      end
+      break
+    end
+  
+    unless model.getPlantLoops.length == 0 # must have a water heater in the model
+      doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/Dishwasher") do |dw|
+        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceDishwasher", runner)
+        measures = update_measure_args(dw, measures, "ResidentialApplianceDishwasher", "cold_use", "RatedWaterGalPerCycle")
+        break
+      end
+    end
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/Oven") do |ov|
+      if ov.elements["FuelType"].text == "electricity"
+        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceCookingRangeElectric", runner)
+      elsif ["natural gas", "fuel oil", "propane"].include? ov.elements["FuelType"].text
+        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceCookingRangeFuel", runner)
+        measures["ResidentialApplianceCookingRangeFuel"]["fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[ov.elements["FuelType"].text]
+      end
+      break
+    end
+  
+    return measures
+  
+  end
+  
+  def add_lighting(model, measures_dir, doc, event_types, measures, runner)
+  
+    if element_exists(doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/LightingFractions"])
+  
+      measures = add_measure(model, measures_dir, measures, "ResidentialLighting", runner)
+      measures = update_measure_args(doc, measures, "ResidentialLighting", "hw_cfl", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/LightingFractions/FractionCFL")
+      measures = update_measure_args(doc, measures, "ResidentialLighting", "hw_lfl", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/LightingFractions/FractionLFL")
+      measures = update_measure_args(doc, measures, "ResidentialLighting", "hw_led", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/LightingFractions/FractionLED")
+      measures = update_measure_args(doc, measures, "ResidentialLighting", "pg_cfl", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/LightingFractions/FractionCFL")
+      measures = update_measure_args(doc, measures, "ResidentialLighting", "pg_lfl", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/LightingFractions/FractionLFL")
+      measures = update_measure_args(doc, measures, "ResidentialLighting", "pg_led", "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Lighting/LightingFractions/FractionLED")
+
+    end
+      
+    return measures
+  
+  end
+  
+  def add_water_heating(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw|
+    
+      next if dhw.elements["WaterHeaterType"].nil?
+      
+      if dhw.elements["WaterHeaterType"].text == "storage water heater"
+        if dhw.elements["FuelType"].text == "electricity"
+          measures = add_measure(model, measures_dir, measures, "ResidentialHotWaterHeaterTankElectric", runner)
+          measures["ResidentialHotWaterHeaterTankElectric"]["energy_factor"] = dhw.elements["EnergyFactor"].text
+        elsif ["natural gas", "fuel oil", "propane"].include? dhw.elements["FuelType"].text
+          measures = add_measure(model, measures_dir, measures, "ResidentialHotWaterHeaterTankFuel", runner)
+          measures["ResidentialHotWaterHeaterTankFuel"]["fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[dhw.elements["FuelType"].text]
+          measures["ResidentialHotWaterHeaterTankFuel"]["energy_factor"] = dhw.elements["EnergyFactor"].text
+        end      
+      elsif dhw.elements["WaterHeaterType"].text == "instantaneous water heater"
+        if dhw.elements["FuelType"].text == "electricity"
+          measures = add_measure(model, measures_dir, measures, "ResidentialHotWaterHeaterTanklessElectric", runner)
+          measures["ResidentialHotWaterHeaterTanklessElectric"]["energy_factor"] = dhw.elements["EnergyFactor"].text
+        elsif ["natural gas", "fuel oil", "propane"].include? dhw.elements["FuelType"].text
+          measures = add_measure(model, measures_dir, measures, "ResidentialHotWaterHeaterTanklessFuel", runner)
+          measures["ResidentialHotWaterHeaterTanklessFuel"]["fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[dhw.elements["FuelType"].text]
+          measures["ResidentialHotWaterHeaterTanklessFuel"]["energy_factor"] = dhw.elements["EnergyFactor"].text
+        end       
+      elsif dhw.elements["WaterHeaterType"].text == "heat pump water heater"
+        measures = add_measure(model, measures_dir, measures, "ResidentialHotWaterHeaterHeatPump", runner)
+      else
+        runner.registerWarning("#{dhw.elements["WaterHeaterType"].text} water heating system type not supported.")
+      end
+    
+    end
+  
+    return measures
+  
+  end
+  
+  def add_heating_system(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htgsys|
+    
+      next if htgsys.elements["FractionHeatLoadServed"].nil?
+      next unless htgsys.elements["FractionHeatLoadServed"].text == "1"
+      next if htgsys.elements["HeatingSystemType"].nil?
+      
+      if element_exists(htgsys.elements["HeatingSystemType/Furnace"])
+        if htgsys.elements["HeatingSystemFuel"].text == "electricity"
+          measures = add_measure(model, measures_dir, measures, "ResidentialHVACFurnaceElectric", runner)
+        elsif ["natural gas", "fuel oil", "propane"].include? htgsys.elements["HeatingSystemFuel"].text
+          measures = add_measure(model, measures_dir, measures, "ResidentialHVACFurnaceFuel", runner)
+          measures["ResidentialHVACFurnaceFuel"]["fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[htgsys.elements["HeatingSystemFuel"].text]
+        end
+      elsif element_exists(htgsys.elements["HeatingSystemType/WallFurnace"])
+        runner.registerWarning("Wall furnace heating system type not supported.")
+      elsif element_exists(htgsys.elements["HeatingSystemType/Boiler"])
+        if htgsys.elements["HeatingSystemFuel"].text == "electricity"
+          measures = add_measure(model, measures_dir, measures, "ResidentialHVACBoilerElectric", runner)
+        elsif ["natural gas", "fuel oil", "propane"].include? htgsys.elements["HeatingSystemFuel"].text
+          measures = add_measure(model, measures_dir, measures, "ResidentialHVACBoilerFuel", runner)
+          measures["ResidentialHVACBoilerFuel"]["fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[htgsys.elements["HeatingSystemFuel"].text]
+        end
+      elsif element_exists(htgsys.elements["HeatingSystemType/ElectricResistance"])
+        measures = add_measure(model, measures_dir, measures, "ResidentialHVACElectricBaseboard", runner)
+      elsif element_exists(htgsys.elements["HeatingSystemType/Fireplace"])
+        runner.registerWarning("Fireplace heating system type not supported.")
+      elsif element_exists(htgsys.elements["HeatingSystemType/Stove"])
+        runner.registerWarning("Stove heating system type not supported.")
+      elsif element_exists(htgsys.elements["HeatingSystemType/PortableHeater"])
+        runner.registerWarning("Portable heater heating system type not supported.")
+      elsif element_exists(htgsys.elements["HeatingSystemType/SolarThermal"])
+        runner.registerWarning("Solar thermal heating system type not supported.")
+      elsif element_exists(htgsys.elements["HeatingSystemType/DistrictSteam"])
+        runner.registerWarning("District steam heating system type not supported.")
+      elsif element_exists(htgsys.elements["HeatingSystemType/Other"])
+        runner.registerWarning("Other heating system type not supported.")
+      end
+    
+    end
+    
+    return measures
+  
+  end
+  
+  def add_cooling_system(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
+    
+      next if clgsys.elements["FractionCoolLoadServed"].nil?
+      next unless clgsys.elements["FractionCoolLoadServed"].text == "1"      
+      next if clgsys.elements["CoolingSystemType"].nil?
+      
+      if clgsys.elements["CoolingSystemType"].text == "central air conditioning"
+        clgsys.elements.each("AnnualCoolingEfficiency") do |eff|
+          if eff.elements["Value"].text.to_f < 16
+            measures = add_measure(model, measures_dir, measures, "ResidentialHVACCentralAirConditionerSingleSpeed", runner)
+          elsif eff.elements["Value"].text.to_f >= 16 and eff.elements["Value"].text.to_f <= 21
+            measures = add_measure(model, measures_dir, measures, "ResidentialHVACCentralAirConditionerTwoSpeed", runner)
+          else
+            measures = add_measure(model, measures_dir, measures, "ResidentialHVACCentralAirConditionerVariableSpeed", runner)   
+          end
+        end
+      elsif clgsys.elements["CoolingSystemType"].text == "mini-split"
+        measures = add_measure(model, measures_dir, measures, "ResidentialHVACMiniSplitHeatPump", runner)
+      elsif clgsys.elements["CoolingSystemType"].text == "room air conditioner"
+        measures = add_measure(model, measures_dir, measures, "ResidentialHVACRoomAirConditioner", runner)
+      else
+        runner.registerWarning("#{clgsys.elements["CoolingSystemType"].text} cooling system type not supported.")
+      end
+    
+    end
+    
+    return measures  
+  
+  end
+  
+  def add_heat_pump(model, measures_dir, doc, event_types, measures, runner)
+  
+    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
+    
+      next if hp.elements["FractionHeatLoadServed"].nil?
+      next unless hp.elements["FractionHeatLoadServed"].text == "1"      
+      next if hp.elements["HeatPumpType"].nil?
+      
+      if hp.elements["HeatPumpType"].text == "air-to-air"        
+        hp.elements.each("AnnualCoolingEfficiency") do |eff|
+          if eff.elements["Value"].text.to_f < 16
+            measures = add_measure(model, measures_dir, measures, "ResidentialHVACAirSourceHeatPumpSingleSpeed", runner)
+          elsif eff.elements["Value"].text.to_f >= 16 and eff.elements["Value"].text.to_f <= 21
+            measures = add_measure(model, measures_dir, measures, "ResidentialHVACAirSourceHeatPumpTwoSpeed", runner)
+          else
+            measures = add_measure(model, measures_dir, measures, "ResidentialHVACAirSourceHeatPumpVariableSpeed", runner)   
+          end
+        end
+      elsif hp.elements["HeatPumpType"].text == "mini-split"
+        measures = add_measure(model, measures_dir, measures, "ResidentialHVACMiniSplitHeatPump", runner)
+      elsif hp.elements["HeatPumpType"].text == "ground-to-air"
+        measures = add_measure(model, measures_dir, measures, "ResidentialHVACGroundSourceHeatPumpVerticalBore", runner)
+      else
+        runner.registerWarning("#{hp.elements["HeatPumpType"].text} heat pump type not supported.")
+      end
+    
+    end
+    
+    return measures
+  
   end
   
   def add_floor_polygon(x, y, z)
@@ -432,7 +745,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
   
   end  
   
-  def add_living_walls(model, doc, event_types, avg_ceil_hgt, num_floors, living_space, attic_space, wall_fractions, window_areas)
+  def add_living_walls(model, doc, event_types, avg_ceil_hgt, living_space, attic_space, wall_fractions, window_areas)
   
     rotate = {"north"=>0, "south"=>180, "west"=>90, "east"=>270}
   
@@ -445,7 +758,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       z_origin = 0
       unless wall.elements["ExteriorAdjacentTo"].nil?
         if wall.elements["ExteriorAdjacentTo"].text == "attic"
-          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
         end
       end
     
@@ -526,12 +839,13 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       end
     end
     
-    return foundation_space
+    return foundation_space, foundation_zone
     
   end
   
   def add_foundation_floors(model, doc, event_types, living_space, foundation_space)
     
+    foundation_finished_floor_area = 0
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
       foundation.elements.each("Slab") do |slab|
@@ -555,10 +869,17 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
         else
           surface.setSpace(living_space)
         end
+        if foundation_space.nil?
+          foundation_finished_floor_area += slab.elements["Area"].text.to_f # is a slab foundation
+        elsif foundation_space.name.to_s == Constants.FinishedBasementSpace
+          foundation_finished_floor_area += slab.elements["Area"].text.to_f # is a finished basement foundation
+        end
         
       end
       
     end
+    
+    return foundation_finished_floor_area
       
   end
   
@@ -601,7 +922,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
   
   end
   
-  def add_foundation_ceilings(model, doc, event_types, foundation_space, living_space)
+  def add_foundation_ceilings(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area)
      
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
      
@@ -619,16 +940,53 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
         surface.setSurfaceType("RoofCeiling")
         surface.setSpace(foundation_space)
         surface.createAdjacentSurface(living_space)
+        
+        foundation_finished_floor_area += framefloor.elements["Area"].text.to_f
       
       end
     
     end
     
+    return foundation_finished_floor_area
+    
+  end
+  
+  def add_living_floors(model, doc, event_types, foundation_space, living_space, foundation_finished_floor_area)
+  
+    finished_floor_area = nil
+    if not doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/FinishedFloorArea"].nil?
+      finished_floor_area = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/FinishedFloorArea"].text.to_f
+      if finished_floor_area == 0 and not doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].nil?
+        finished_floor_area = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
+      end
+    elsif not doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].nil?
+      finished_floor_area = doc.elements["//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
+    end
+    if finished_floor_area.nil?
+      puts "Could not find finished floor area."
+    end
+    above_grade_finished_floor_area = finished_floor_area - foundation_finished_floor_area
+    return unless above_grade_finished_floor_area > 0
+    
+    finishedfloor_width = OpenStudio.convert(Math::sqrt(above_grade_finished_floor_area),"ft","m").get
+    finishedfloor_length = OpenStudio.convert(above_grade_finished_floor_area,"ft^2","m^2").get / finishedfloor_width
+    
+    surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model) # don't put it right on top of existing finished floor
+    surface.setName("inferred above grade finished floor")
+    surface.setSurfaceType("Floor")
+    surface.setSpace(living_space)
+    if foundation_space.nil?
+      surface.createAdjacentSurface(living_space)
+    else
+      surface.createAdjacentSurface(foundation_space)
+    end
+  
   end
   
   def build_attic_space(model, doc, event_types)
 
     attic_space = nil
+    attic_zone = nil
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
       next if attic.elements["Area"].nil?
@@ -645,11 +1003,11 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       
     end
     
-    return attic_space
+    return attic_space, attic_zone
     
   end
   
-  def add_attic_floors(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+  def add_attic_floors(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
   
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -659,7 +1017,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
     
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
      
       if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
       elsif ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text
@@ -676,14 +1034,14 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def add_attic_walls(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+  def add_attic_walls(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
   
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next unless wall.elements["InteriorAdjacentTo"].text == "attic"
       next if wall.elements["Area"].nil?
       
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
       
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
       wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
@@ -704,7 +1062,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, num_floors, attic_space, living_space)
+  def add_attic_ceilings(model, doc, event_types, avg_ceil_hgt, attic_space, living_space)
   
     doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -714,7 +1072,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
     
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * num_floors # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
      
       if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, z_origin), model)
@@ -736,7 +1094,7 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
       roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
       roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
     
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * (num_floors + 1) # TODO: is this a bad assumption?
+      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 2 # TODO: is this a bad assumption?
 
       surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, z_origin), model)
       surface.setName("#{roof.elements["SystemIdentifier"].attributes["id"]}")

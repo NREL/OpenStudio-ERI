@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_central_air_conditioner</name>
   <uid>7387af85-5ae2-422c-9488-d64b8682dd06</uid>
-  <version_id>50856f8b-13fa-48c6-886e-44a40995dad3</version_id>
-  <version_modified>20170428T153229Z</version_modified>
+  <version_id>fb4af63f-ffdd-43da-b1de-2dc3b85a1fb8</version_id>
+  <version_modified>20170502T222902Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessVariableSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Variable-Speed Central Air Conditioner</display_name>
@@ -443,12 +443,6 @@
       <checksum>D3BD80AC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -458,6 +452,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>237C80E1</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31FE0BE6</checksum>
     </file>
   </files>
 </measure>

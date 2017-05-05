@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_fuel</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>398b2fb7-2705-4d6a-84b1-a0341734dfe2</version_id>
-  <version_modified>20170427T163757Z</version_modified>
+  <version_id>36d654d0-4b57-494b-a214-d779bc68bafb</version_id>
+  <version_modified>20170502T222900Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankFuel</class_name>
   <display_name>Set Residential Fuel Tank Water Heater</display_name>
@@ -286,16 +286,16 @@
       <checksum>E74D68D0</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>E957CFBF</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31FE0BE6</checksum>
     </file>
   </files>
 </measure>
