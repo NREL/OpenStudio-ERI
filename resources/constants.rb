@@ -215,6 +215,15 @@ class Constants
   def self.EndUseMechVentFan
     return 'residential mech vent fan'
   end
+  def self.ERIRatedHome
+    return 'rated home'
+  end
+  def self.ERIReferenceHome
+    return 'reference home'
+  end
+  def self.ERIndexAdjustmentDesign
+    return 'index adjustment design'
+  end
   def self.FacadeFront
     return 'front'
   end

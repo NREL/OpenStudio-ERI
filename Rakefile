@@ -323,6 +323,7 @@ task :update_measures do
             FileUtils.rm_rf(item_path)
             puts "Dir deleted."
         else
+            next if item == 'measure-info.json'
             puts "Extra file #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
             input = STDIN.gets.strip.downcase
             next if input != "y"
@@ -422,22 +423,20 @@ def generate_example_osw_of_all_measures_in_order()
   workflowJSON.setWorkflowSteps(steps)
   workflowJSON.save
   
-  # Copy osw into HPXMLBuildModel/resources
-  json_path = "workflows/measure-info.json"
-  dest_resource = File.expand_path("measures/HPXMLBuildModel/resources/#{File.basename(json_path)}")
-  measure_resource_dir = File.dirname(dest_resource)  
-  if not File.file?(dest_resource)
-    FileUtils.cp(json_path, measure_resource_dir)
-    puts "Added #{File.basename(json_path)} to HPXMLBuildModel/resources."
-  elsif not FileUtils.compare_file(json_path, dest_resource)
-    FileUtils.cp(json_path, measure_resource_dir)
-    puts "Updated #{File.basename(json_path)} in HPXMLBuildModel/resources."
+  # Copy measure-info.json into [measures]/resources
+  measures = ['HPXMLBuildModel','301EnergyRatingIndexRuleset']
+  measures.each do |measure|
+      json_path = "workflows/measure-info.json"
+      dest_resource = File.expand_path("measures/#{measure}/resources/#{File.basename(json_path)}")
+      measure_resource_dir = File.dirname(dest_resource)  
+      if not File.file?(dest_resource)
+        FileUtils.cp(json_path, measure_resource_dir)
+        puts "Added #{File.basename(json_path)} to #{measure}/resources."
+      elsif not FileUtils.compare_file(json_path, dest_resource)
+        FileUtils.cp(json_path, measure_resource_dir)
+        puts "Updated #{File.basename(json_path)} in #{measure}/resources."
+      end
   end
-  
-  # Replace "\n" strings with newlines in the JSON
- # s = IO.read(osw_path)
- # s.gsub!("\\n", "\n")
- # File.write(osw_path, s)
   
   # Update README.md as well
   update_readme(data_hash)

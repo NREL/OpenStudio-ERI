@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>5351a24e-5e9f-4b7a-bf9f-316559133515</version_id>
-  <version_modified>20170505T172325Z</version_modified>
+  <version_id>67c67ab6-8f3b-4377-8bbc-4acbd265845e</version_id>
+  <version_modified>20170505T200214Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -142,12 +142,6 @@
       <checksum>33AFC81E</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8DCDCE57</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -160,10 +154,16 @@
       <checksum>AE1750C4</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>198467B2</checksum>
+    </file>
+    <file>
       <filename>hpxml_build_model_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>20C4360B</checksum>
+      <checksum>B1AEF3B1</checksum>
     </file>
     <file>
       <version>
@@ -174,13 +174,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>85CBA696</checksum>
+      <checksum>BE9988AC</checksum>
     </file>
     <file>
       <filename>measure-info.json</filename>
       <filetype>json</filetype>
       <usage_type>resource</usage_type>
-      <checksum>53727985</checksum>
+      <checksum>AC8B5380</checksum>
     </file>
   </files>
 </measure>
