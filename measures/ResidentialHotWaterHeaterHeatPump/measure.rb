@@ -8,7 +8,7 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/psychrometrics"
 
 #start the measure
-class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
+class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
 
     #define the name that a user will see, this method may be deprecated as
     #the display name in PAT comes from the name field in measure.xml
@@ -28,9 +28,9 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
     def arguments(model)
         ruleset = OpenStudio::Ruleset
     
-        osargument = ruleset::OSArgument
+        osargument = OpenStudio::Measure::OSArgument
     
-        args = ruleset::OSArgumentVector.new
+        args = OpenStudio::Measure::OSArgumentVector.new
 
         # make an argument for the storage tank volume
         storage_tank_volume = osargument::makeDoubleArgument("storage_tank_volume", true)
@@ -558,11 +558,11 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
             hpwh_top_element_sp.setName("HPWHTopElementSetpoint_#{unit_num}")
             
             if hpwh_param == 50
-                hpwh_bottom_element_sp.setValue(-60)
+                hpwh_bottom_element_sp.setValue(tset_C)
                 sp = (tset_C-2.89).round(2)
                 hpwh_top_element_sp.setValue(sp)
             else
-                hpwh_bottom_element_sp.setValue(tset_C)
+                hpwh_bottom_element_sp.setValue(-60)
                 sp = (tset_C-9.0001).round(4)
                 hpwh_top_element_sp.setValue(sp)
             end
@@ -940,9 +940,9 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 else
                     hpwh_ctrl_program.addLine("If (HPWH_amb_temp_#{unit_num} < #{OpenStudio.convert(min_temp,"F","C").get}) || (HPWH_amb_temp_#{unit_num} > #{OpenStudio.convert(max_temp,"F","C").get})")
                 end
-                hpwh_ctrl_program.addLine("Set LESchedOverride = #{tset_C}")
+                hpwh_ctrl_program.addLine("Set LESchedOverride_#{unit_num} = #{tset_C}")
                 hpwh_ctrl_program.addLine("Else")
-                hpwh_ctrl_program.addLine("Set LESchedOverride = 0")
+                hpwh_ctrl_program.addLine("Set LESchedOverride_#{unit_num} = 0")
                 hpwh_ctrl_program.addLine("EndIf")
                 
             else #hpwh_param == 50
@@ -960,7 +960,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 sensor.setKeyName("hpwh_tank_#{unit_num}")
                 
                 hpSchedOverride = OpenStudio::Model::ScheduleConstant.new(model)
-                hpSchedOverride.setName("HPOverride_#{unit_num}")
+                hpSchedOverride.setName("HPSchedOverride_#{unit_num}")
                 hpSchedOverride.setValue(tset_C)
                 
                 ueSchedOverride = OpenStudio::Model::ScheduleConstant.new(model)
@@ -968,7 +968,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Ruleset::ModelUserScript
                 ueSchedOverride.setValue(tset_C)
                 
                 leSchedOverride = OpenStudio::Model::ScheduleConstant.new(model)
-                leSchedOverride.setName("LESchedOverride")
+                leSchedOverride.setName("LESchedOverride_#{unit_num}")
                 leSchedOverride.setValue(tset_C)
                 
                 actuator =  OpenStudio::Model::EnergyManagementSystemActuator.new(hpSchedOverride,"Schedule:Constant", "Schedule Value")
