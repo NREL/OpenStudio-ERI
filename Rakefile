@@ -343,6 +343,21 @@ task :update_measures do
   # Generate example OSW
   generate_example_osw_of_all_measures_in_order
 
+  # Copy measure-info.json into certain [measures]/resources
+  measures = ['HPXMLBuildModel','301EnergyRatingIndexRuleset']
+  measures.each do |measure|
+      json_path = "workflows/measure-info.json"
+      dest_resource = File.expand_path("measures/#{measure}/resources/#{File.basename(json_path)}")
+      measure_resource_dir = File.dirname(dest_resource)  
+      if not File.file?(dest_resource)
+        FileUtils.cp(json_path, measure_resource_dir)
+        puts "Added #{File.basename(json_path)} to #{measure}/resources."
+      elsif not FileUtils.compare_file(json_path, dest_resource)
+        FileUtils.cp(json_path, measure_resource_dir)
+        puts "Updated #{File.basename(json_path)} in #{measure}/resources."
+      end
+  end
+
 end
 
 desc 'Copy resources from OpenStudio-ResStock repo'
@@ -353,11 +368,11 @@ task :copy_resstock_resources do
   extra_files.each do |extra_file|
       puts "Copying #{extra_file}..."
       resstock_file = File.join(File.dirname(__FILE__), "..", "OpenStudio-ResStock", extra_file)
-      hpxml_file = File.join(File.dirname(__FILE__), extra_file)
-      if File.exists?(hpxml_file)
-        FileUtils.rm(hpxml_file)
+      local_file = File.join(File.dirname(__FILE__), extra_file)
+      if File.exists?(local_file)
+        FileUtils.rm(local_file)
       end
-      FileUtils.cp(resstock_file, hpxml_file)
+      FileUtils.cp(resstock_file, local_file)
   end  
 end
 
@@ -422,21 +437,6 @@ def generate_example_osw_of_all_measures_in_order()
 
   workflowJSON.setWorkflowSteps(steps)
   workflowJSON.save
-  
-  # Copy measure-info.json into [measures]/resources
-  measures = ['HPXMLBuildModel','301EnergyRatingIndexRuleset']
-  measures.each do |measure|
-      json_path = "workflows/measure-info.json"
-      dest_resource = File.expand_path("measures/#{measure}/resources/#{File.basename(json_path)}")
-      measure_resource_dir = File.dirname(dest_resource)  
-      if not File.file?(dest_resource)
-        FileUtils.cp(json_path, measure_resource_dir)
-        puts "Added #{File.basename(json_path)} to #{measure}/resources."
-      elsif not FileUtils.compare_file(json_path, dest_resource)
-        FileUtils.cp(json_path, measure_resource_dir)
-        puts "Updated #{File.basename(json_path)} in #{measure}/resources."
-      end
-  end
   
   # Update README.md as well
   update_readme(data_hash)

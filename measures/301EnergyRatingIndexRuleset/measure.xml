@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>c57f542b-161b-460e-84de-173304880763</version_id>
-  <version_modified>20170505T223056Z</version_modified>
+  <version_id>b05ec6b4-ef48-4931-82fc-a25472bf5e8a</version_id>
+  <version_modified>20170506T132641Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>301 Energy Rating Index</display_name>
@@ -71,12 +71,6 @@
       <checksum>198467B2</checksum>
     </file>
     <file>
-      <filename>sample.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E148AE98</checksum>
-    </file>
-    <file>
       <filename>helper_methods.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -104,6 +98,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>AE3AE6B5</checksum>
+    </file>
+    <file>
+      <filename>sample.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>58072EE1</checksum>
     </file>
   </files>
 </measure>
