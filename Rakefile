@@ -360,14 +360,14 @@ task :update_measures do
 
 end
 
-desc 'Copy resources from OpenStudio-ResStock repo'
-task :copy_resstock_resources do  
+desc 'Copy resources from OpenStudio-BuildStock repo'
+task :copy_buildstock_resources do  
   extra_files = [
                  File.join("resources", "helper_methods.rb")
                 ]  
   extra_files.each do |extra_file|
       puts "Copying #{extra_file}..."
-      resstock_file = File.join(File.dirname(__FILE__), "..", "OpenStudio-ResStock", extra_file)
+      resstock_file = File.join(File.dirname(__FILE__), "..", "OpenStudio-BuildStock", extra_file)
       local_file = File.join(File.dirname(__FILE__), extra_file)
       if File.exists?(local_file)
         FileUtils.rm(local_file)
