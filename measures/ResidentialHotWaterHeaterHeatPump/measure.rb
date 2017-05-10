@@ -69,7 +69,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         element_capacity.setDisplayName("Input Capacity")
         element_capacity.setDescription("The capacity of the backup electric resistance elements in the tank.")
         element_capacity.setUnits("kW")
-        element_capacity.setDefaultValue("4.5")
+        element_capacity.setDefaultValue(4.5)
         args << element_capacity
         
         # make an argument for min_temp
@@ -77,7 +77,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         min_temp.setDisplayName("Minimum Abient Temperature")
         min_temp.setDescription("The minimum ambient air temperature at which the heat pump compressor will operate.")
         min_temp.setUnits("F")
-        min_temp.setDefaultValue("45")
+        min_temp.setDefaultValue(45)
         args << min_temp
         
         # make an argument for max_temp
@@ -85,7 +85,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         max_temp.setDisplayName("Maximum Ambient Temperature")
         max_temp.setDescription("The maximum ambient air temperature at which the heat pump compressor will operate.")
         max_temp.setUnits("F")
-        max_temp.setDefaultValue("120")
+        max_temp.setDefaultValue(120)
         args << max_temp
         
         # make an argument for cap
@@ -93,21 +93,21 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         cap.setDisplayName("Rated Capacity")
         cap.setDescription("The input power of the HPWH compressor at rated conditions.")
         cap.setUnits("kW")
-        cap.setDefaultValue("0.5")
+        cap.setDefaultValue(0.5)
         args << cap
         
         # make an argument for cop
         cop = osargument::makeDoubleArgument("cop", true)
         cop.setDisplayName("Rated COP")
         cop.setDescription("The coefficient of performance of the HPWH compressor at rated conditions.")
-        cop.setDefaultValue("2.8")
+        cop.setDefaultValue(2.8)
         args << cop
         
         # make an argument for shr
         shr = osargument::makeDoubleArgument("shr", true)
         shr.setDisplayName("Rated SHR")
         shr.setDescription("The sensible heat ratio of the HPWH's evaporator at rated conditions. This is the net SHR of the evaporator and includes the effects of fan heat.")
-        shr.setDefaultValue("0.88")
+        shr.setDefaultValue(0.88)
         args << shr
         
         # make an argument for airflow_rate
@@ -115,7 +115,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         airflow_rate.setDisplayName("Airflow Rate")
         airflow_rate.setDescription("Air flow rate of the HPWH.")
         airflow_rate.setUnits("cfm")
-        airflow_rate.setDefaultValue("181")
+        airflow_rate.setDefaultValue(181)
         args << airflow_rate
         
         # make an argument for fan_power
@@ -123,7 +123,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         fan_power.setDisplayName("Fan Power")
         fan_power.setDescription("Fan power (in W) per delivered airflow rate (in cfm).")
         fan_power.setUnits("W/cfm")
-        fan_power.setDefaultValue("0.0462")
+        fan_power.setDefaultValue(0.0462)
         args << fan_power
         
         # make an argument for parasitics
@@ -131,7 +131,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         parasitics.setDisplayName("Parasitics")
         parasitics.setDescription("Parasitic electricity consumption of the HPWH.")
         parasitics.setUnits("W")
-        parasitics.setDefaultValue("3")
+        parasitics.setDefaultValue(3)
         args << parasitics
         
         # make an argument for tank_ua
@@ -139,14 +139,14 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         tank_ua.setDisplayName("Tank UA")
         tank_ua.setDescription("The overall UA of the tank.")
         tank_ua.setUnits("Btu/h-R")
-        tank_ua.setDefaultValue("3.9")
+        tank_ua.setDefaultValue(3.9)
         args << tank_ua
         
         # make an argument for int_factor
         int_factor = osargument::makeDoubleArgument("int_factor", true)
         int_factor.setDisplayName("Interaction Factor")
         int_factor.setDescription("Specifies how much the HPWH space conditioning impact interacts with the building's HVAC equipment. This can be used to account for situations such as wehen a HPWH is in a closet and only a portion of the HPWH's space cooling affects the HVAC system.")
-        int_factor.setDefaultValue("1.0")
+        int_factor.setDefaultValue(1.0)
         args << int_factor
         
         # make an argument for temp_depress
@@ -154,7 +154,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         temp_depress.setDisplayName("Temperature Depression")
         temp_depress.setDescription("The reduction in ambient air temperature in the space where the water heater is located. This variable can be used to simulate the impact the HPWH has on its own performance when installing in a confined space suc as a utility closet.")
         temp_depress.setUnits("F")
-        temp_depress.setDefaultValue("0")
+        temp_depress.setDefaultValue(0)
         args << temp_depress
         
         # make an argument for ducting
