@@ -148,8 +148,8 @@ namespace :test do
   
     # Generate hash that maps osw's to measures
     osw_map = {}
-    #measures = ["ResidentialHVACSizing"] # Use this to specify individual measures (instead of all measures on the following line)
-    measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
+    measures = ["ResidentialApplianceClothesWasher"] # Use this to specify individual measures (instead of all measures on the following line)
+    #measures = Dir.entries(File.expand_path("../measures/", __FILE__)).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
     measures.each do |m|
         testrbs = Dir[File.expand_path("../measures/#{m}/tests/*.rb", __FILE__)]
         if testrbs.size == 1

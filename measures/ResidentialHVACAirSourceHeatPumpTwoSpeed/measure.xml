@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_air_source_heat_pump</name>
   <uid>e1fa8fdd-4940-4364-b3ea-3bc6b93ca9c4</uid>
-  <version_id>a74a769e-bea9-47ee-9a3a-6fe8b4953d1b</version_id>
-  <version_modified>20170505T195020Z</version_modified>
+  <version_id>4c295fbd-7db2-44fa-a315-36b1bd8f9ae6</version_id>
+  <version_modified>20170509T173129Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessTwoSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Two-Speed Air Source Heat Pump</display_name>
@@ -496,7 +496,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>198467B2</checksum>
+      <checksum>750BCD51</checksum>
     </file>
   </files>
 </measure>

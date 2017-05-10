@@ -479,19 +479,17 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
         measures = update_measure_args(cw, measures, "ResidentialApplianceClothesWasher", "cw_imef", "ModifiedEnergyFactor")
         break
       end
-    end
     
-    doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/ClothesDryer") do |cd|
-      if cd.elements["FuelType"].text == "electricity"
-        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceClothesDryerElectric", runner)
-      elsif ["natural gas", "fuel oil", "propane"].include? cd.elements["FuelType"].text
-        measures = add_measure(model, measures_dir, measures, "ResidentialApplianceClothesDryerFuel", runner)
-        measures["ResidentialApplianceClothesDryerFuel"]["cd_fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[cd.elements["FuelType"].text]
+      doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/ClothesDryer") do |cd|
+        if cd.elements["FuelType"].text == "electricity"
+          measures = add_measure(model, measures_dir, measures, "ResidentialApplianceClothesDryerElectric", runner)
+        elsif ["natural gas", "fuel oil", "propane"].include? cd.elements["FuelType"].text
+          measures = add_measure(model, measures_dir, measures, "ResidentialApplianceClothesDryerFuel", runner)
+          measures["ResidentialApplianceClothesDryerFuel"]["cd_fuel_type"] = {"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[cd.elements["FuelType"].text]
+        end
+        break
       end
-      break
-    end
-  
-    unless model.getPlantLoops.length == 0 # must have a water heater in the model
+
       doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Appliances/Dishwasher") do |dw|
         measures = add_measure(model, measures_dir, measures, "ResidentialApplianceDishwasher", runner)
         measures = update_measure_args(dw, measures, "ResidentialApplianceDishwasher", "cold_use", "RatedWaterGalPerCycle")

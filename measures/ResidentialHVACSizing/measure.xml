@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>dae4acb2-0510-4f46-8e50-3aed02c9e68a</version_id>
-  <version_modified>20170505T195027Z</version_modified>
+  <version_id>56ad1c7b-c2a5-4b1b-bc55-90b3ba2e3833</version_id>
+  <version_modified>20170509T173133Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -469,7 +469,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>198467B2</checksum>
+      <checksum>750BCD51</checksum>
     </file>
   </files>
 </measure>

@@ -46,7 +46,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
   def test_new_construction_standard
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleConstant"=>2}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -55,7 +55,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     args_hash = {}
     args_hash["location"] = Constants.LivingZone
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleConstant"=>2}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -64,7 +64,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     args_hash = {}
     args_hash["setpoint_temp"] = 130
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleConstant"=>2}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>130}
     _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -73,7 +73,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     args_hash = {}
     args_hash["cycling_derate"] = 0
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleConstant"=>2}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.99, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -81,62 +81,62 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
   def test_retrofit_replace
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleConstant"=>2}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     model = _test_measure(osm_geo_beds_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
     args_hash = {}
     args_hash["energy_factor"] = 0.999
     args_hash["setpoint_temp"] = 130
-    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.919, "Setpoint"=>130}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
   def test_retrofit_replace_tank_gas
     args_hash = {}
-    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc_tank_gas, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tank_oil
     args_hash = {}
-    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc_tank_oil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tank_propane
     args_hash = {}
-    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc_tank_propane, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tank_electric
     args_hash = {}
-    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc_tank_electric, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tankless_gas
     args_hash = {}
-    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc_tankless_gas, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
 
   def test_retrofit_replace_tankless_propane
     args_hash = {}
-    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleRuleset"=>1}
+    expected_num_del_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "ScheduleConstant"=>1}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure(osm_geo_beds_loc_tankless_propane, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
@@ -226,7 +226,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     num_units = 4
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleConstant"=>2*num_units}
     expected_values = {"InputCapacity"=>num_units*100000000.0, "ThermalEfficiency"=>num_units*0.911, "Setpoint"=>num_units*125}
     _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end
@@ -236,7 +236,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     args_hash = {}
     args_hash["location"] = Constants.LivingZone
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleRuleset"=>2}
+    expected_num_new_objects = {"WaterHeaterMixed"=>1, "PlantLoop"=>1, "PumpVariableSpeed"=>1, "ScheduleConstant"=>2}
     expected_values = {"InputCapacity"=>100000000.0, "ThermalEfficiency"=>0.911, "Setpoint"=>125}
     _test_measure("SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end  
@@ -245,7 +245,7 @@ class ResidentialHotWaterHeaterTanklessElectricTest < MiniTest::Test
     num_units = 8
     args_hash = {}
     expected_num_del_objects = {}
-    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleRuleset"=>2*num_units}
+    expected_num_new_objects = {"WaterHeaterMixed"=>num_units, "PlantLoop"=>num_units, "PumpVariableSpeed"=>num_units, "ScheduleConstant"=>2*num_units}
     expected_values = {"InputCapacity"=>num_units*100000000.0, "ThermalEfficiency"=>num_units*0.911, "Setpoint"=>num_units*125}
     _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
   end  
