@@ -1,9 +1,10 @@
 <measure>
   <schema_version>3.0</schema_version>
+  <error>cannot load such file -- C:/Users/shorowit/Documents/GitHub/OpenStudio-BEopt/measures/HPXMLBuildModel/resources/geometry</error>
   <name>hpxml_build_model</name>
   <uid>90f52d39-37a6-4ccf-9826-67acd7e44d86</uid>
-  <version_id>89254d59-43f0-416e-ac4d-f566771c2b28</version_id>
-  <version_modified>20170510T005316Z</version_modified>
+  <version_id>5280bd63-5616-4751-aa7a-c098a17564a4</version_id>
+  <version_modified>20170510T221915Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>HPXMLBuildModel</class_name>
   <display_name>HPXML Build Model</display_name>
@@ -63,12 +64,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>809DC08A</checksum>
-    </file>
     <file>
       <filename>lat_long_table.csv</filename>
       <filetype>csv</filetype>
@@ -142,12 +137,6 @@
       <checksum>33AFC81E</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
       <filename>CedarUtopian4.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
@@ -160,16 +149,16 @@
       <checksum>AC8B5380</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>helper_methods.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>750BCD51</checksum>
+      <checksum>E6F537A3</checksum>
     </file>
     <file>
       <filename>hpxml_build_model_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>B6668C10</checksum>
+      <checksum>429B3E96</checksum>
     </file>
     <file>
       <version>
@@ -180,7 +169,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>50BBBEBA</checksum>
+      <checksum>C72958EE</checksum>
+    </file>
+    <file>
+      <filename>valid.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>97CDB4BE</checksum>
+    </file>
+    <file>
+      <filename>hpxml.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B6D24559</checksum>
     </file>
   </files>
 </measure>

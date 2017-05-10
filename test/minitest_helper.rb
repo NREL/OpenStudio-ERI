@@ -97,3 +97,18 @@ def check_num_objects(objects, expected_num_objects, mode)
         assert_equal(list_of_expected_vs_actual[0][1], list_of_expected_vs_actual[0][2])
     end
 end
+
+def check_unused_ems_variable(model)
+    # check that all set variables are used somewhere (i.e., no typos)
+    (model.getEnergyManagementSystemPrograms + model.getEnergyManagementSystemSubroutines).each do |ems|
+      ems.to_s.each_line do |line|
+        next unless line.downcase.strip.start_with?("set ")
+        var = line.split("=")[0].strip.split(" ")[1]
+        count = 0      
+        (model.getEnergyManagementSystemSensors + model.getEnergyManagementSystemActuators + model.getEnergyManagementSystemPrograms + model.getEnergyManagementSystemOutputVariables + model.getEnergyManagementSystemSubroutines + model.getEnergyManagementSystemGlobalVariables).each do |ems|
+          count += ems.to_s.scan(/(?=#{var})/).count
+        end
+        assert(count > 1)
+      end
+    end
+end

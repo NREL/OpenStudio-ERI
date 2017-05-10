@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_fuel</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>a575763a-88e9-4fb8-837b-0c9ab2792cf7</version_id>
-  <version_modified>20170509T225141Z</version_modified>
+  <version_id>b7d9af54-a3e2-4fb1-9904-d82b61dc15de</version_id>
+  <version_modified>20170510T221919Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankFuel</class_name>
   <display_name>Set Residential Fuel Tank Water Heater</display_name>
@@ -223,79 +223,79 @@
       <filename>SFD_2000sqft_2story_FB_GRG_UA_1Beds_1Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>263E478C</checksum>
+      <checksum>5B80604B</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_2Beds_1Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D866E606</checksum>
+      <checksum>711B1B57</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_2Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F30323E3</checksum>
+      <checksum>F48815D8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7ABB9CBC</checksum>
+      <checksum>619BA1D0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_GasWHTankless.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EB67D15B</checksum>
+      <checksum>8515E8DA</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_PropaneWHTankless.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C5699282</checksum>
+      <checksum>5DBA0317</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_5Beds_3Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>355A7C85</checksum>
+      <checksum>DBA17E7F</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>30609B7C</checksum>
+      <checksum>37F6B36C</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7AE295FD</checksum>
+      <checksum>BA137D3B</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0FC0B217</checksum>
+      <checksum>4F5E31EE</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C6F1EC40</checksum>
+      <checksum>7FD51F33</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>10393352</checksum>
+      <checksum>0435122C</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTankless.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A89FD994</checksum>
+      <checksum>BAC0A2BA</checksum>
     </file>
   </files>
 </measure>

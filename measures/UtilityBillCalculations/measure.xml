@@ -1,11 +1,11 @@
 <measure>
   <schema_version>3.0</schema_version>
   <error>Could not find 'rest-client' (>= 0) - did find: [rest-client-2.0.1-x64-mingw32]
-Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ruby/2.2.0;:/ruby/2.2.0/gems/;:/ruby/2.2.0/bundler/gems/', execute `gem env` for more information</error>
+Checked in 'GEM_PATH=c:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ruby/2.2.0;:/ruby/2.2.0/gems/;:/ruby/2.2.0/bundler/gems/', execute `gem env` for more information</error>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>40ef04b2-dc89-4ba3-a4bb-8d15a4a957be</version_id>
-  <version_modified>20170419T215221Z</version_modified>
+  <version_id>81f925e8-9520-4cbb-a82f-75c7a3218a15</version_id>
+  <version_modified>20170510T221927Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
@@ -69,12 +69,6 @@ Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ru
       <checksum>14339B8F</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C7C92EA5</checksum>
-    </file>
-    <file>
       <filename>enduse_timeseries.csv</filename>
       <filetype>csv</filetype>
       <usage_type>test</usage_type>
@@ -108,6 +102,12 @@ Checked in 'GEM_PATH=C:/Ruby22-x64/lib/ruby/gems/2.2.0;C:/Users/shorowit/.gem/ru
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>589197D3</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B0CB6D68</checksum>
     </file>
   </files>
 </measure>

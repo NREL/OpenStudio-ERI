@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer_fuel</name>
   <uid>0ed6fb35-c3e0-4a33-a397-ce4cec92d96e</uid>
-  <version_id>973922f8-612c-4377-9d0a-5c21231c6e13</version_id>
-  <version_modified>20170509T182138Z</version_modified>
+  <version_id>ed881503-0c58-408e-97f3-efce1df0cf66</version_id>
+  <version_modified>20170510T221915Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialClothesDryerFuel</class_name>
   <display_name>Set Residential Fuel Clothes Dryer</display_name>
@@ -161,46 +161,46 @@
       <checksum>750BCD51</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4EA51320</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8F49FA7A</checksum>
-    </file>
-    <file>
       <filename>ResidentialClothesDryerFuel_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>0FAC377E</checksum>
     </file>
     <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AD531B32</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>619BA1D0</checksum>
+    </file>
+    <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_ElecWHTank_ClothesWasher.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B1B76A9C</checksum>
+      <checksum>FC27349A</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver_ElecWHTank_ClothesWasher.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>56C6ABB1</checksum>
+      <checksum>CA5C18EF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank_ClothesWasher.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C6670A5D</checksum>
+      <checksum>C25715D5</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths_Denver_ElecWHTank_ClothesWasher_ElecClothesDryer.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>22F02501</checksum>
+      <checksum>5E9F7E71</checksum>
     </file>
   </files>
 </measure>

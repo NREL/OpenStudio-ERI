@@ -29,7 +29,7 @@ class ResidentialAirflowTest < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "Surface"=>6, "EnergyManagementSystemSubroutine"=>1, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>21, "EnergyManagementSystemActuator"=>17, "EnergyManagementSystemGlobalVariable"=>23, "AirLoopHVACReturnPlenum"=>1, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "ThermalZone"=>1, "ZoneMixing"=>2, "OutputVariable"=>14, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "Construction"=>1, "Space"=>1, "Material"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "SurfacePropertyConvectionCoefficients"=>6, "EnergyManagementSystemOutputVariable"=>1}
     expected_values = {"erv_priority"=>nil, "terrain_type"=>"Suburbs", "duct_location"=>"unfinished attic zone", "infiltration_c"=>0.0696580370384, "infiltration_cs"=>0.0862380821416, "infiltration_cw"=>0.128435824905, "natvent_cs"=>0.000179260407789, "natvent_cw"=>0.000282172823794, "duct_leak_supply"=>0.136963386963, "duct_leak_return"=>0.1000999001, "f_oa"=>0.0368634868631, "faneff_wh"=>0.47194744, "fan_frac_to_space"=>0, "ra_duct_volume"=>90}
-    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_ClothesDryer.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_measure("SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_ElecWHTank_ClothesWasher_ClothesDryer.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
     
   def test_neighbors
@@ -483,19 +483,8 @@ class ResidentialAirflowTest < MiniTest::Test
       assert(line.length <= 100)
     end
     
-    # check that all set variables are used somewhere (i.e., no typos)
-    model.to_s.each_line do |line|
-      next unless line.strip.start_with?("Set")
-      var = line.split(" = ")[0].split(" ")[1]
-      count = 0      
-      (model.getEnergyManagementSystemSensors + model.getEnergyManagementSystemActuators + model.getEnergyManagementSystemPrograms + model.getEnergyManagementSystemOutputVariables + model.getEnergyManagementSystemSubroutines + model.getEnergyManagementSystemGlobalVariables).each do |ems|
-        count += ems.to_s.scan(/(?=#{var})/).count
-      end
-      assert(count > 1)
-    end
-    
     #show_output(result)
-
+    
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
     assert(result.info.size == num_infos)
@@ -512,6 +501,7 @@ class ResidentialAirflowTest < MiniTest::Test
     # check we have the expected number of new/deleted objects
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
+    check_unused_ems_variable(model)
 
     all_new_objects.each do |obj_type, new_objects|
         new_objects.each do |new_object|
