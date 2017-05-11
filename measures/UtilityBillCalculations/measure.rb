@@ -4,7 +4,6 @@
 require 'erb'
 require 'csv'
 require 'matrix'
-require 'rest-client'
 
 #start the measure
 class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
@@ -133,9 +132,10 @@ class UtilityBillCalculations < OpenStudio::Measure::ReportingMeasure
       end
       getpage = cols[3][utility_ix]
       runner.registerInfo("Processing api request on getpage=#{getpage}.")
+      uri = URI('http://api.openei.org/utility_rates?')
       params = {'version':3, 'format':'json', 'detail':'full', 'getpage':getpage, 'api_key':api_key}
-      request = RestClient::Resource.new('http://api.openei.org/utility_rates?')
-      response = request.get(params: params)
+      uri.query = URI.encode_www_form(params)
+      response = Net::HTTP.get_response(uri)
       tariff = JSON.parse(response.body, :symbolize_names=>true)[:items][0]
       
       # File.open('result.json', 'w') do |f|
