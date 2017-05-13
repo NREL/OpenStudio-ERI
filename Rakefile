@@ -344,7 +344,7 @@ task :update_measures do
   generate_example_osw_of_all_measures_in_order
 
   # Copy measure-info.json into certain [measures]/resources
-  measures = ['HPXMLBuildModel','301EnergyRatingIndexRuleset']
+  measures = ['HPXMLBuildModel']
   measures.each do |measure|
       json_path = "workflows/measure-info.json"
       dest_resource = File.expand_path("measures/#{measure}/resources/#{File.basename(json_path)}")
