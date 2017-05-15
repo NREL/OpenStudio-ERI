@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>5128fc26-29ed-4688-bbd9-f19fb6c5b5bb</version_id>
-  <version_modified>20170510T221920Z</version_modified>
+  <version_id>cd9d6e93-6e31-438d-a654-12641d3093d7</version_id>
+  <version_modified>20170515T170519Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
@@ -205,7 +205,7 @@
       <filename>process_ceiling_fan_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>F9410CC7</checksum>
+      <checksum>58EC7B74</checksum>
     </file>
     <file>
       <version>
@@ -216,7 +216,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>70B3E89F</checksum>
+      <checksum>37288338</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC_VarTstat.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7731BF53</checksum>
     </file>
   </files>
 </measure>

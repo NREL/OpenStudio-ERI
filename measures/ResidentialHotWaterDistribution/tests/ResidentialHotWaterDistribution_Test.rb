@@ -566,17 +566,17 @@ class ResidentialHotWaterDistributionTest < MiniTest::Test
     final_objects.each do |obj_type, final_object|
         next if not final_object.respond_to?("to_#{obj_type}")
         final_object = final_object.public_send("to_#{obj_type}").get
-            if obj_type == "WaterUseEquipment"
-                full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, final_object.flowRateFractionSchedule.get)
-                actual_hw_gpd = OpenStudio.convert(full_load_hrs * final_object.waterUseEquipmentDefinition.peakFlowRate * final_object.multiplier, "m^3/s", "gal/min").get * 60.0 / 365.0
-                if final_object.name.to_s.start_with?(Constants.ObjectNameShower)
-                    actual_values["ShowerDailyWater_gpd"] += actual_hw_gpd
-                elsif final_object.name.to_s.start_with?(Constants.ObjectNameSink)
-                    actual_values["SinkDailyWater_gpd"] += actual_hw_gpd
-                elsif final_object.name.to_s.start_with?(Constants.ObjectNameBath)
-                    actual_values["BathDailyWater_gpd"] += actual_hw_gpd
-                end
+        if obj_type == "WaterUseEquipment"
+            full_load_hrs = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, final_object.flowRateFractionSchedule.get)
+            actual_hw_gpd = OpenStudio.convert(full_load_hrs * final_object.waterUseEquipmentDefinition.peakFlowRate * final_object.multiplier, "m^3/s", "gal/min").get * 60.0 / 365.0
+            if final_object.name.to_s.start_with?(Constants.ObjectNameShower)
+                actual_values["ShowerDailyWater_gpd"] += actual_hw_gpd
+            elsif final_object.name.to_s.start_with?(Constants.ObjectNameSink)
+                actual_values["SinkDailyWater_gpd"] += actual_hw_gpd
+            elsif final_object.name.to_s.start_with?(Constants.ObjectNameBath)
+                actual_values["BathDailyWater_gpd"] += actual_hw_gpd
             end
+        end
     end
     assert_in_epsilon(expected_values["ShowerDailyWater_gpd"], actual_values["ShowerDailyWater_gpd"], 0.01)
     assert_in_epsilon(expected_values["SinkDailyWater_gpd"], actual_values["SinkDailyWater_gpd"], 0.01)

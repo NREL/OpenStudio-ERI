@@ -34,6 +34,35 @@ class ProcessCeilingFanTest < MiniTest::Test
     _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end   
   
+  def test_coverage_cooling_offset
+    args_hash = {}
+    args_hash["coverage"] = "0.5"
+    args_hash["specified_num"] = "NA"
+    args_hash["use_benchmark_energy"] = "false"
+    args_hash["cooling_setpoint_offset"] = "4.0"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRuleset"=>1, "ScheduleRule"=>12, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1}
+    expected_values_clg_wkday_setpoints = [80]*24
+    expected_values_clg_wked_setpoints = [80]*24
+    expected_values = {"ceiling_fans_design_level"=>49.5, "clg_wkday_setpoints"=>expected_values_clg_wkday_setpoints, "clg_wked_setpoints"=>expected_values_clg_wked_setpoints}
+    model = _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    File.open("out.osm", 'w') { |file| file.write(model.to_s) }
+  end   
+  
+  def test_coverage_cooling_offset_var_tstat
+    args_hash = {}
+    args_hash["coverage"] = "0.5"
+    args_hash["specified_num"] = "NA"
+    args_hash["use_benchmark_energy"] = "false"
+    args_hash["cooling_setpoint_offset"] = "4.0"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ScheduleRuleset"=>1, "ScheduleRule"=>24, "EnergyManagementSystemProgram"=>1, "EnergyManagementSystemActuator"=>1, "EnergyManagementSystemSensor"=>2, "EnergyManagementSystemProgramCallingManager"=>1, "OutputVariable"=>2, "ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1}
+    expected_values_clg_wkday_setpoints = [80,79,78,78,79,80,80,79,78,78,79,80,80,79,78,78,79,80,80,79,78,78,79,80]
+    expected_values_clg_wked_setpoints = [81,82,83,83,82,81,81,82,83,83,82,81,81,82,83,83,82,81,81,82,83,83,82,81]
+    expected_values = {"ceiling_fans_design_level"=>49.5, "clg_wkday_setpoints"=>expected_values_clg_wkday_setpoints, "clg_wked_setpoints"=>expected_values_clg_wked_setpoints}
+    _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC_VarTstat.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end   
+  
   def test_smart_control
     args_hash = {}
     args_hash["control"] = Constants.CeilingFanControlSmart
@@ -185,6 +214,32 @@ class ProcessCeilingFanTest < MiniTest::Test
                 if new_object.name.to_s.start_with? Constants.ObjectNameCeilingFan + " benchmark"
                     assert_in_epsilon(expected_values["misc_elec_load_design_level"], new_object.designLevel.get, 0.01)                
                 end
+            end
+        end
+    end
+    
+    final_objects.each do |obj_type, final_object|
+        next if not final_object.respond_to?("to_#{obj_type}")
+        final_object = final_object.public_send("to_#{obj_type}").get
+        if obj_type == "ScheduleDay" and final_object.name.to_s.start_with?(Constants.ObjectNameCoolingSetpoint)
+            if final_object.name.to_s.include?("allday")
+                for i in 1..24
+                    next if final_object.values[i-1] > 999
+                    assert_in_epsilon(expected_values["clg_wkday_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                    assert_in_epsilon(expected_values["clg_wked_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                end
+            elsif final_object.name.to_s.include?("weekday")
+                for i in 1..24
+                    next if final_object.values[i-1] > 999
+                    assert_in_epsilon(expected_values["clg_wkday_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                end
+            elsif final_object.name.to_s.include?("weekend")
+                for i in 1..24
+                    next if final_object.values[i-1] > 999
+                    assert_in_epsilon(expected_values["clg_wked_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                end
+            else
+                flunk("Unexpected schedule.")
             end
         end
     end
