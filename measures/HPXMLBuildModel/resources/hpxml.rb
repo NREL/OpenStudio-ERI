@@ -6,7 +6,7 @@ require "#{File.dirname(__FILE__)}/geometry"
     
 def build_measure_args_from_hpxml(hpxml_file_path, weather_file_path)
 
-	doc = REXML::Document.new(File.read(hpxml_file_path))
+  doc = REXML::Document.new(File.read(hpxml_file_path))
 
   event_types = []
   doc.elements.each("*/*/ProjectStatus/EventType") do |el|
@@ -45,8 +45,55 @@ def build_measure_args_from_hpxml(hpxml_file_path, weather_file_path)
   get_hvac_sizing(doc, event_types, measures, errors)
   get_photovoltaics(doc, event_types, measures, errors)
 
-	return errors, measures, doc, event_types
+  return errors, measures, doc, event_types
 
+end
+    
+def average_across_elements(doc, parent_path, child_path, value_path, weight_path=nil, criteria=nil)
+
+  numerator = 0
+  denominator = 0
+  doc.elements.each(parent_path) do |parent|
+    criteria_fulfilled = true
+    if not criteria.nil?
+      criteria.each do |element, enumerations|
+        if not enumerations.is_a? String
+          if not parent.elements[element].nil?
+            if not enumerations.include? parent.elements[element].text
+              criteria_fulfilled = false
+            end
+          else
+            criteria_fulfilled = false
+          end
+        else
+          if not element_exists(parent.elements["#{element}/#{enumerations}"])
+            criteria_fulfilled = false
+          end
+        end
+      end
+    end
+    if criteria_fulfilled
+      parent.elements.each(child_path) do |child|
+        if not weight_path.nil?
+          if not child.elements[value_path].nil? and not parent.elements[weight_path].nil?
+            numerator += child.elements[value_path].text.to_f * parent.elements[weight_path].text.to_f
+            denominator += parent.elements[weight_path].text.to_f
+          end
+        else
+          if not child.elements[value_path].nil?
+            numerator += child.elements[value_path].text.to_f
+            denominator += 1.0
+          end
+        end
+      end
+    end
+  end
+
+  if denominator == 0
+    return nil
+  end
+  return (numerator / denominator).to_s
+  
 end
     
 def element_exists(element)
@@ -144,9 +191,14 @@ end
 
 def get_ceiling_constructions(doc, event_types, measures, errors)
 
+  ceil_r = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic", "AtticFloorInsulation/Layer", "NominalRValue", "Area", {"AtticType"=>["vented attic", "venting unknown attic"]})
+  if ceil_r.nil?
+    ceil_r = "30"
+  end  
+
   measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
   args = {
-          "ceil_r"=>"30",
+          "ceil_r"=>ceil_r,
           "ceil_grade"=>"I",
           "ceil_ins_thick_in"=>"8.55",
           "ceil_ff"=>"0.07",
@@ -156,7 +208,7 @@ def get_ceiling_constructions(doc, event_types, measures, errors)
           "roof_cavity_ins_thick_in"=>"0",
           "roof_ff"=>"0.07",
           "roof_fram_thick_in"=>"7.25"
-         }  
+         }
   measures[measure_subdir] = args
 
   measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
@@ -240,12 +292,24 @@ end
 def get_wall_constructions(doc, event_types, measures, errors)
 
   measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
+  cavity_r = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall", "Insulation/Layer", "NominalRValue", "Area", {"WallType"=>"WoodStud", "ExteriorAdjacentTo"=>["ambient"], "InteriorAdjacentTo"=>["living space"]})
+  if cavity_r.nil?
+    cavity_r = "13"
+  end
+  cavity_depth = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall", "Insulation/Layer", "Thickness", "Area", {"WallType"=>"WoodStud", "ExteriorAdjacentTo"=>["ambient"], "InteriorAdjacentTo"=>["living space"]})
+  if cavity_depth.nil?
+    cavity_depth = "3.5"
+  end
+  framing_factor = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Walls/Wall", "Studs", "FramingFactor", "Area", {"WallType"=>"WoodStud", "ExteriorAdjacentTo"=>["ambient"], "InteriorAdjacentTo"=>["living space"]})
+  if framing_factor.nil?
+    framing_factor = "0.13"
+  end
   args = {
-          "cavity_r"=>"13",
+          "cavity_r"=>cavity_r,
           "install_grade"=>"I",
-          "cavity_depth"=>"3.5",
+          "cavity_depth"=>cavity_depth,
           "ins_fills_cavity"=>"true",
-          "framing_factor"=>"0.13"
+          "framing_factor"=>framing_factor
          }
   measures[measure_subdir] = args
 
@@ -272,9 +336,17 @@ end
 def get_window_constructions(doc, event_types, measures, errors)
 
   measure_subdir = "ResidentialConstructionsWindows"
+  ufactor = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window", "", "UFactor", "Area")
+  if ufactor.nil?
+    ufactor = "0.37"
+  end
+  shgc = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Windows/Window", "", "SHGC", "Area")
+  if shgc.nil?
+    shgc = "0.3"
+  end  
   args = {
-          "ufactor"=>"0.37",
-          "shgc"=>"0.3",
+          "ufactor"=>ufactor,
+          "shgc"=>shgc,
           "heating_shade_mult"=>"0.7",
           "cooling_shade_mult"=>"0.7"
          }  
@@ -285,8 +357,12 @@ end
 def get_door_constructions(doc, event_types, measures, errors)
 
   measure_subdir = "ResidentialConstructionsDoors"
+  door_rvalue = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Enclosure/Doors/Door", "", "RValue", "Area")
+  if door_rvalue.nil?
+    door_rvalue = (1.0 / 0.2).to_s
+  end
   args = {
-          "door_uvalue"=>"0.2"
+          "door_uvalue"=>(1.0 / door_rvalue.to_f).to_s
          }  
   measures[measure_subdir] = args
 
@@ -748,37 +824,39 @@ end
 
 def get_heating_setpoint(doc, event_types, measures, errors) 
 
-  doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl") do |cont|
-    measure_subdir = "ResidentialHVACHeatingSetpoints"
-    htg_wkdy = cont.elements["SetpointTempHeatingSeason"]
-    htg_wked = cont.elements["SetpointTempHeatingSeason"]
-    if not htg_wkdy.nil? and not htg_wked.nil?
-      args = {
-              "htg_wkdy"=>htg_wkdy.text,
-              "htg_wked"=>htg_wked.text
-             }  
-      measures[measure_subdir] = args
-    end
-    break
+  measure_subdir = "ResidentialHVACHeatingSetpoints"
+  htg_wkdy = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl", "", "SetpointTempHeatingSeason")
+  if htg_wkdy.nil?
+    htg_wkdy = "71"
   end
+  htg_wked = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl", "", "SetpointTempHeatingSeason")
+  if htg_wked.nil?
+    htg_wked = "71"
+  end
+  args = {
+          "htg_wkdy"=>htg_wkdy,
+          "htg_wked"=>htg_wked
+         }  
+  measures[measure_subdir] = args
   
 end
 
 def get_cooling_setpoint(doc, event_types, measures, errors)
 
-  doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl") do |cont|
-    measure_subdir = "ResidentialHVACCoolingSetpoints"
-    clg_wkdy = cont.elements["SetupTempCoolingSeason"]
-    clg_wked = cont.elements["SetupTempCoolingSeason"]
-    if not clg_wkdy.nil? and not clg_wked.nil?
-      args = {
-              "clg_wkdy"=>clg_wkdy.text,
-              "clg_wked"=>clg_wked.text
-             }  
-      measures[measure_subdir] = args
-    end
-    break
+  measure_subdir = "ResidentialHVACCoolingSetpoints"
+  clg_wkdy = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl", "", "SetupTempCoolingSeason")
+  if clg_wkdy.nil?
+    clg_wkdy = "76"
   end
+  clg_wked = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/HVAC/HVACControl", "", "SetupTempCoolingSeason")
+  if clg_wked.nil?
+    clg_wked = "76"
+  end
+  args = {
+          "clg_wkdy"=>clg_wkdy,
+          "clg_wked"=>clg_wked
+         }  
+  measures[measure_subdir] = args
 
 end
 
@@ -803,8 +881,6 @@ def get_ceiling_fan(doc, event_types, measures, errors)
   end  
 
 end
-
-
 
 def get_refrigerator(doc, event_types, measures, errors)
 
@@ -1052,20 +1128,21 @@ end
 
 def get_photovoltaics(doc, event_types, measures, errors)
 
-  doc.elements.each("//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/Photovoltaics") do |pv|
-    measure_subdir = "ResidentialPhotovoltaics"
-    args = {
-            "size"=>"2.5",
-            "module_type"=>"standard",
-            "system_losses"=>"0.14",
-            "inverter_efficiency"=>"0.96",
-            "azimuth_type"=>"relative",
-            "azimuth"=>"180",
-            "tile_type"=>"pitch",
-            "tilt"=>"0"
-           }  
-    measures[measure_subdir] = args
-    break
-  end  
+  inverter_efficiency = average_across_elements(doc, "//Building[ProjectStatus/EventType='#{event_types[0]}']/BuildingDetails/Systems/Photovoltaics/PVSystem", "", "InverterEfficiency", "CollectorArea")
+  if inverter_efficiency.nil?
+    inverter_efficiency = "96"
+  end
+  measure_subdir = "ResidentialPhotovoltaics"
+  args = {
+          "size"=>"2.5",
+          "module_type"=>"standard",
+          "system_losses"=>"0.14",
+          "inverter_efficiency"=>(inverter_efficiency.to_f * 0.01).to_s,
+          "azimuth_type"=>"relative",
+          "azimuth"=>"180",
+          "tile_type"=>"pitch",
+          "tilt"=>"0"
+         }  
+  measures[measure_subdir] = args
 
 end
