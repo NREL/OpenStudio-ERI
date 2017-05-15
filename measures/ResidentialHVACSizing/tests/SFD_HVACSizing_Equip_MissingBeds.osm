@@ -1,3 +1,4 @@
+!- NOTE: Auto-generated from /test/osw_files/SFD_HVACSizing_Equip_MSHP_MissingBeds.osw
 
 OS:Version,
   {305e0cc5-22e4-4c52-9a2a-9fe5c501315a}, !- Handle
@@ -95,7 +96,7 @@ OS:WeatherFile,
   -104.65,                                !- Longitude {deg}
   -7,                                     !- Time Zone {hr}
   1650,                                   !- Elevation {m}
-  file:///C:/Users/shorowit/Documents/GitHub/OpenStudio-BEopt/measures/ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw, !- Url
+  file:../tests/USA_CO_Denver_Intl_AP_725650_TMY3.epw, !- Url
   E23378AA;                               !- Checksum
 
 OS:ClimateZones,
