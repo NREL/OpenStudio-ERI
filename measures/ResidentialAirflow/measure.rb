@@ -1893,7 +1893,6 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       end
       unless building.unfinished_attic_zone.nil?
         building_unit.setFeature(Constants.SizingInfoZoneInfiltrationCFM(building.unfinished_attic_zone), building.unfinished_attic.inf_flow)
-        building_unit.setFeature(Constants.SizingInfoZoneIsVented(building.unfinished_attic_zone), (building.unfinished_attic.SLA > 0.001)) # The minimum SLA at which an attic is assumed to be vented
       end
     end
 

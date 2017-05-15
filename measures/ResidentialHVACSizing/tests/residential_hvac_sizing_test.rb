@@ -3515,6 +3515,30 @@ class ProcessHVACSizingTest < MiniTest::Test
     _test_measure("SFD_HVACSizing_Equip_Dehumidifier_Fixed_Atlanta.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, true)
   end
   
+  def test_error_missing_geometry
+    args_hash = {}
+    result = _test_error(nil, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "No building geometry has been defined.")
+  end
+  
+  def test_error_missing_weather
+    args_hash = {}
+    result = _test_error("SFD_2000sqft_2story_FB_UA.osm", args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Model has not been assigned a weather file.")
+  end
+  
+  def test_error_missing_construction
+    args_hash = {}
+    result = _test_error("SFD_2000sqft_2story_FB_UA_Denver.osm", args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Construction not assigned to 'Surface 13'.")
+  end
+  
+  def test_error_missing_beds
+    args_hash = {}
+    result = _test_error("SFD_HVACSizing_Equip_MissingBeds.osm", args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Could not determine number of bedrooms or bathrooms. Run the 'Add Residential Bedrooms And Bathrooms' measure first.")
+  end
+  
   private
   
   def _test_error(osm_file_or_model, args_hash)
