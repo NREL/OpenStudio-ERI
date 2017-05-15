@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>8b895d11-a5c8-4ac3-8e23-a607789f8dd2</version_id>
-  <version_modified>20170510T221921Z</version_modified>
+  <version_id>5bce0e00-799d-4f36-9116-9b5314060705</version_id>
+  <version_modified>20170515T175116Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
@@ -113,12 +113,6 @@
       <checksum>31FE0BE6</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>750BCD51</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -225,6 +219,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>39CBC752</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E9B60C1</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_solar</name>
   <uid>b969f216-f3c0-4301-9b85-34ce2b45f551</uid>
-  <version_id>f419182d-0e7c-4fcc-9b9e-0d383d316f77</version_id>
-  <version_modified>20170510T221920Z</version_modified>
+  <version_id>77b3c77e-89fa-451a-9083-ab46cd5dc379</version_id>
+  <version_modified>20170515T175114Z</version_modified>
   <xml_checksum>F33F6E26</xml_checksum>
   <class_name>ResidentialHotWaterSolar</class_name>
   <display_name>Set Residential Solar Water Heating</display_name>
@@ -236,22 +236,10 @@
       <checksum>36B7CAC2</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>750BCD51</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
@@ -306,6 +294,18 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>A79CB016</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E4C6BC93</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E9B60C1</checksum>
     </file>
   </files>
 </measure>

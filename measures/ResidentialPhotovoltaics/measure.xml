@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>36aeec35-0f20-40e8-bf6a-6f699f2a0aa7</version_id>
-  <version_modified>20170510T221926Z</version_modified>
+  <version_id>ab03bccb-10c0-4908-ac3a-c496acb003e1</version_id>
+  <version_modified>20170515T175121Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -232,12 +232,6 @@
       <checksum>31FE0BE6</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>750BCD51</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -272,6 +266,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>22FA6FF4</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E9B60C1</checksum>
     </file>
   </files>
 </measure>

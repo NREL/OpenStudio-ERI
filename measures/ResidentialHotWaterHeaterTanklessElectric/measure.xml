@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_electric</name>
   <uid>48b6c5e9-ed87-4761-afec-8aca2d6c372e</uid>
-  <version_id>1c921237-e87b-4513-842d-715b54efbd9e</version_id>
-  <version_modified>20170510T221919Z</version_modified>
+  <version_id>8a0de1eb-8ed8-4d3f-97b1-69005a2472ee</version_id>
+  <version_modified>20170515T175114Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessElectric</class_name>
   <display_name>Set Residential Electric Tankless Water Heater</display_name>
@@ -137,22 +137,10 @@
       <checksum>36B7CAC2</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E957CFBF</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>750BCD51</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
@@ -231,6 +219,18 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>1FE621AE</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E4C6BC93</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0E9B60C1</checksum>
     </file>
   </files>
 </measure>

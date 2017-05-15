@@ -216,29 +216,31 @@ class ProcessCeilingFanTest < MiniTest::Test
             end
         end
     end
-    
-    final_objects.each do |obj_type, final_object|
-        next if not final_object.respond_to?("to_#{obj_type}")
-        final_object = final_object.public_send("to_#{obj_type}").get
-        if obj_type == "ScheduleDay" and final_object.name.to_s.start_with?(Constants.ObjectNameCoolingSetpoint)
-            if final_object.name.to_s.include?("allday")
-                for i in 1..24
-                    next if final_object.values[i-1] > 999
-                    assert_in_epsilon(expected_values["clg_wkday_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
-                    assert_in_epsilon(expected_values["clg_wked_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+
+    if expected_values.include?("clg_wkday_setpoints") and expected_values.include?("clg_wked_setpoints")
+        final_objects.each do |obj_type, final_object|
+            next if not final_object.respond_to?("to_#{obj_type}")
+            final_object = final_object.public_send("to_#{obj_type}").get
+            if obj_type == "ScheduleDay" and final_object.name.to_s.start_with?(Constants.ObjectNameCoolingSetpoint)
+                if final_object.name.to_s.include?(Schedule.allday_name)
+                    for i in 1..24
+                        next if final_object.values[i-1] > 999
+                        assert_in_epsilon(expected_values["clg_wkday_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                        assert_in_epsilon(expected_values["clg_wked_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                    end
+                elsif final_object.name.to_s.include?(Schedule.weekday_name)
+                    for i in 1..24
+                        next if final_object.values[i-1] > 999
+                        assert_in_epsilon(expected_values["clg_wkday_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                    end
+                elsif final_object.name.to_s.include?(Schedule.weekend_name)
+                    for i in 1..24
+                        next if final_object.values[i-1] > 999
+                        assert_in_epsilon(expected_values["clg_wked_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
+                    end
+                else
+                    flunk("Unexpected schedule.")
                 end
-            elsif final_object.name.to_s.include?("weekday")
-                for i in 1..24
-                    next if final_object.values[i-1] > 999
-                    assert_in_epsilon(expected_values["clg_wkday_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
-                end
-            elsif final_object.name.to_s.include?("weekend")
-                for i in 1..24
-                    next if final_object.values[i-1] > 999
-                    assert_in_epsilon(expected_values["clg_wked_setpoints"][i-1], OpenStudio::convert(final_object.values[i-1],"C","F").get)
-                end
-            else
-                flunk("Unexpected schedule.")
             end
         end
     end
