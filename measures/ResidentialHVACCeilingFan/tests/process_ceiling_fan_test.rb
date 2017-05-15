@@ -45,8 +45,7 @@ class ProcessCeilingFanTest < MiniTest::Test
     expected_values_clg_wkday_setpoints = [80]*24
     expected_values_clg_wked_setpoints = [80]*24
     expected_values = {"ceiling_fans_design_level"=>49.5, "clg_wkday_setpoints"=>expected_values_clg_wkday_setpoints, "clg_wked_setpoints"=>expected_values_clg_wked_setpoints}
-    model = _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    File.open("out.osm", 'w') { |file| file.write(model.to_s) }
+    _test_measure("SFD_2000sqft_2story_FB_UA_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end   
   
   def test_coverage_cooling_offset_var_tstat

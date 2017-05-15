@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ceiling_fan</name>
   <uid>f65edfd9-ff4f-4f08-a245-ea48b3b3c88e</uid>
-  <version_id>cd9d6e93-6e31-438d-a654-12641d3093d7</version_id>
-  <version_modified>20170515T170519Z</version_modified>
+  <version_id>255a2cdc-5bb6-4724-8ff2-a992180132ac</version_id>
+  <version_modified>20170515T170847Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessCeilingFan</class_name>
   <display_name>Set Residential Ceiling Fan</display_name>
@@ -202,12 +202,6 @@
       <checksum>AB7CE682</checksum>
     </file>
     <file>
-      <filename>process_ceiling_fan_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>58EC7B74</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.2</identifier>
@@ -223,6 +217,12 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>7731BF53</checksum>
+    </file>
+    <file>
+      <filename>process_ceiling_fan_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DD7938C4</checksum>
     </file>
   </files>
 </measure>
