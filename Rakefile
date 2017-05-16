@@ -343,21 +343,6 @@ task :update_measures do
   # Generate example OSW
   generate_example_osw_of_all_measures_in_order
 
-  # Copy measure-info.json into certain [measures]/resources
-  measures = ['HPXMLBuildModel']
-  measures.each do |measure|
-      json_path = "workflows/measure-info.json"
-      dest_resource = File.expand_path("measures/#{measure}/resources/#{File.basename(json_path)}")
-      measure_resource_dir = File.dirname(dest_resource)  
-      if not File.file?(dest_resource)
-        FileUtils.cp(json_path, measure_resource_dir)
-        puts "Added #{File.basename(json_path)} to #{measure}/resources."
-      elsif not FileUtils.compare_file(json_path, dest_resource)
-        FileUtils.cp(json_path, measure_resource_dir)
-        puts "Updated #{File.basename(json_path)} in #{measure}/resources."
-      end
-  end
-
 end
 
 desc 'Copy resources from OpenStudio-BuildStock repo'
