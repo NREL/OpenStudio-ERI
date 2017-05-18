@@ -1,0 +1,65 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>hpxml_export</name>
+  <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
+  <version_id>056672d0-020d-4093-b99d-1435db25b8ec</version_id>
+  <version_modified>20170518T145244Z</version_modified>
+  <xml_checksum>2C38F48B</xml_checksum>
+  <class_name>HPXMLExport</class_name>
+  <display_name>HPXML Export</display_name>
+  <description>E+ RESNET</description>
+  <modeler_description>E+ RESNET</modeler_description>
+  <arguments>
+    <argument>
+      <name>osm_file_path</name>
+      <display_name>OSM File Path</display_name>
+      <description>Absolute (or relative) path of the OSM file.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+  </arguments>
+  <outputs/>
+  <provenances/>
+  <tags>
+    <tag>Whole Building.Space Types</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>hpxml_export_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>545F82AD</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FADCB3B8</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>A836791C</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>750BCD51</checksum>
+    </file>
+  </files>
+</measure>

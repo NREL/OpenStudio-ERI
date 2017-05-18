@@ -868,60 +868,6 @@ class HPXMLBuildModel < OpenStudio::Measure::ModelMeasure
     end
     return args_hash
   end
-
-  def get_lat_lng_from_address(runner, resources_dir, city_municipality, state_code, zip_code)
-    postalcodes = CSV.read(File.expand_path(File.join(resources_dir, "postalcodes.csv")))
-    postalcodes.each do |row|
-      if not zip_code.nil?
-        if not zip_code.text.nil? and postalcodes.transpose[0].include? zip_code.text
-          if zip_code.text == row[0]
-            return row[4], row[5]
-          end
-        elsif not city_municipality.nil? and not state_code.nil?
-          if city_municipality.text.downcase == row[1].downcase and state_code.text.downcase == row[3].downcase
-            return row[4], row[5]
-          end
-        end
-      elsif not city_municipality.nil? and not state_code.nil?
-        if city_municipality.text.downcase == row[1].downcase and state_code.text.downcase == row[3].downcase
-          return row[4], row[5]
-        end
-      else
-        runner.registerError("Could not find lat, lng from address.")
-        return nil, nil
-      end
-    end
-  end
-
-  def get_epw_from_lat_lng(runner, resources_dir, lat, lng)
-    lat_lng_table = CSV.read(File.expand_path(File.join(resources_dir, "lat_long_table.csv")))
-    meters = []
-    lat_lng_table.each do |row|
-      meters << haversine(lat.to_f, lng.to_f, row[1].to_f, row[2].to_f)
-    end
-    row = lat_lng_table[meters.each_with_index.min[1]]
-    return "USA_CO_Denver_Intl_AP_725650_TMY3.epw" # TODO: Remove
-    return row[0]  
-  end
-
-  def haversine(lat1, long1, lat2, long2)
-    dtor = Math::PI/180
-    r = 6378.14*1000
-
-    rlat1 = lat1 * dtor 
-    rlong1 = long1 * dtor 
-    rlat2 = lat2 * dtor 
-    rlong2 = long2 * dtor 
-
-    dlon = rlong1 - rlong2
-    dlat = rlat1 - rlat2
-
-    a = Math::sin(dlat/2) ** 2 + Math::cos(rlat1) * Math::cos(rlat2) * Math::sin(dlon/2) ** 2
-    c = 2 * Math::atan2(Math::sqrt(a), Math::sqrt(1-a))
-    d = r * c
-
-    return d
-  end    
   
 end
 
