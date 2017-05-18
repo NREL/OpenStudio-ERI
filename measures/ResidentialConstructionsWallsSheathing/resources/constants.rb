@@ -176,6 +176,18 @@ class Constants
   def self.BuildingUnitTypeResidential
     return 'Residential'
   end
+  def self.CalcTypeERIRatedHome
+    return 'HERS Rated Home'
+  end
+  def self.CalcTypeERIReferenceHome
+    return 'HERS Reference Home'
+  end
+  def self.CalcTypeERIIndexAdjustmentDesign
+    return 'HERS Index Adjustment Design'
+  end
+  def self.CalcTypeStandard
+    return 'Standard'
+  end
   def self.CeilingFanControlTypical
     return 'typical'
   end
@@ -229,15 +241,6 @@ class Constants
   end
   def self.EndUseMechVentFan
     return 'residential mech vent fan'
-  end
-  def self.ERIRatedHome
-    return 'rated home'
-  end
-  def self.ERIReferenceHome
-    return 'reference home'
-  end
-  def self.ERIndexAdjustmentDesign
-    return 'index adjustment design'
   end
   def self.FacadeFront
     return 'front'

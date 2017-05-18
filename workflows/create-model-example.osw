@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170515T175123Z",
+   "created_at" : "20170518T204743Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -495,19 +495,20 @@
       },
       {
          "arguments" : {
-            "cw_annual_cost" : "24",
-            "cw_cold_cycle" : "false",
-            "cw_drum_volume" : "3.5",
-            "cw_fill_sensor" : "false",
-            "cw_imef" : "0.95",
-            "cw_internal_heater" : "false",
-            "cw_mult_e" : "1",
-            "cw_mult_hw" : "1",
-            "cw_rated_annual_energy" : "387",
-            "cw_test_date" : "2007",
-            "cw_thermostatic_control" : "true",
+            "annual_cost" : "24",
+            "calc_type" : "Standard",
+            "cold_cycle" : "false",
+            "drum_volume" : "3.5",
+            "fill_sensor" : "false",
+            "imef" : "0.95",
+            "internal_heater" : "false",
+            "mult_e" : "1",
+            "mult_hw" : "1",
             "plant_loop" : "auto",
-            "space" : "auto"
+            "rated_annual_energy" : "387",
+            "space" : "auto",
+            "test_date" : "2007",
+            "thermostatic_control" : "true"
          },
          "description" : "Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule. For multifamily buildings, the clothes washer can be set for all units of the building.",
          "measure_dir_name" : "ResidentialApplianceClothesWasher",
@@ -795,5 +796,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170515T175125Z"
+   "updated_at" : "20170518T204745Z"
 }
