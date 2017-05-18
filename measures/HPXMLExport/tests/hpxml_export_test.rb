@@ -9,7 +9,8 @@ class HPXMLExportTest < MiniTest::Test
 
   def test_test1
     args_hash = {}
-    args_hash["osm_file_path"] = "./tests/SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm"
+    args_hash["osm_file_path"] = "./tests/valid.osm"
+    args_hash["schemas_dir"] = "./tests/schemas"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}

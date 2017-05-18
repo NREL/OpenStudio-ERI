@@ -339,6 +339,23 @@ class Geometry
       return floor_area      
     end    
     
+    def self.get_finished_volume_from_spaces(spaces, apply_multipliers=false, runner=nil)
+      volume = 0
+      spaces.each do |space|
+        next if not self.space_is_finished(space)
+        mult = 1.0
+        if apply_multipliers
+            mult = space.multiplier.to_f
+        end
+        volume += OpenStudio.convert(space.volume * mult,"m^3","ft^3").get
+      end
+      if volume == 0 and not runner.nil?
+          runner.registerError("Could not find any finished volume.")
+          return nil
+      end
+      return volume    
+    end    
+    
     def self.get_above_grade_finished_volume_from_spaces(spaces, apply_multipliers=false, runner=nil)
       volume = 0
       spaces.each do |space|
