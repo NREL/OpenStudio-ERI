@@ -113,6 +113,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
+    hpxml_out_path = File.join(File.dirname(__FILE__), "301.xml")
+    
     hpxml_doc = REXML::Document.new(File.read(hpxml_file_path))
     
     # Validate input HPXML
@@ -127,15 +129,14 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     # Apply 301 ruleset on HPXML object
     errors, building = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type)
+    errors.each do |error|
+      runner.registerError(error)
+    end
+    unless errors.empty?
+      return false
+    end
     
-    # Write HPXML file
-    formatter = REXML::Formatters::Pretty.new(2)
-    formatter.compact = true
-    formatter.width = 1000
-    hpxml_path = File.join(File.dirname(__FILE__), "301.xml")
-    #File.open(hpxml_path, 'w') do |f|
-    #  formatter.write(hpxml_doc, f)
-    #end
+    write_file(hpxml_doc, hpxml_out_path)
     
     # Validate new HPXML
     has_errors = false
@@ -149,11 +150,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     # Obtain list of OpenStudio measures (and arguments)
     errors, measures = OSMeasures.build_measure_args_from_hpxml(building, weather_file_path, calc_type)
-	
     errors.each do |error|
       runner.registerError(error)
     end
-
     unless errors.empty?
       return false
     end
@@ -175,6 +174,16 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     xsd = Nokogiri::XML::Schema(File.open(xsd_path))
     doc = Nokogiri::XML(doc)
     xsd.validate(doc)
+  end
+  
+  def write_file(hpxml_doc, hpxml_out_path)
+    # Write HPXML file
+    formatter = REXML::Formatters::Pretty.new(2)
+    formatter.compact = true
+    formatter.width = 1000
+    File.open(hpxml_out_path, 'w') do |f|
+      formatter.write(hpxml_doc, f)
+    end
   end
   
 end
