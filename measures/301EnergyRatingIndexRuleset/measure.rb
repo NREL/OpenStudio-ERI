@@ -30,6 +30,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
     #make a choice argument for design type
     calc_types = []
+    #calc_types << Constants.CalcTypeStandard
     calc_types << Constants.CalcTypeERIReferenceHome
     calc_types << Constants.CalcTypeERIRatedHome
     #calc_types << Constants.CalcTypeERIIndexAdjustmentDesign

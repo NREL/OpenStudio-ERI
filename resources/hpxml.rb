@@ -1064,10 +1064,10 @@ class OSModel
     foundation_space, foundation_zone = build_foundation_space(model, building)
     living_space = build_living_space(model, building)
     attic_space, attic_zone = build_attic_space(model, building)
-    foundation_finished_floor_area = add_foundation_floors(model, building, living_space, foundation_space)
+    add_foundation_floors(model, building, living_space, foundation_space)
     add_foundation_walls(model, building, living_space, foundation_space)
-    foundation_finished_floor_area = add_foundation_ceilings(model, building, foundation_space, living_space, foundation_finished_floor_area)
-    add_living_floors(model, building, geometry_errors, foundation_space, living_space, foundation_finished_floor_area) # TODO: need these assumptions for airflow measure
+    foundation_ceiling_area = add_foundation_ceilings(model, building, foundation_space, living_space)
+    add_living_floors(model, building, geometry_errors, living_space, foundation_ceiling_area)
     add_living_walls(model, building, geometry_errors, avg_ceil_hgt, living_space, attic_space)
     add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
     add_attic_walls(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
@@ -1323,7 +1323,6 @@ class OSModel
 
   def self.add_foundation_floors(model, building, living_space, foundation_space)
       
-    foundation_finished_floor_area = 0
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
       foundation.elements.each("Slab") do |slab|
@@ -1347,18 +1346,11 @@ class OSModel
         else
           surface.setSpace(living_space)
         end
-        if foundation_space.nil?
-          foundation_finished_floor_area += slab.elements["Area"].text.to_f # is a slab foundation
-        elsif foundation_space.name.to_s == Constants.FinishedBasementSpace
-          foundation_finished_floor_area += slab.elements["Area"].text.to_f # is a finished basement foundation
-        end
         
       end
       
     end
-    
-    return foundation_finished_floor_area
-        
+
   end
 
   def self.add_foundation_walls(model, building, living_space, foundation_space)
@@ -1400,8 +1392,9 @@ class OSModel
 
   end
 
-  def self.add_foundation_ceilings(model, building, foundation_space, living_space, foundation_finished_floor_area)
+  def self.add_foundation_ceilings(model, building, foundation_space, living_space)
        
+    foundation_ceiling_area = 0
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
      
       foundation.elements.each("FrameFloor") do |framefloor|
@@ -1419,17 +1412,17 @@ class OSModel
         surface.setSpace(foundation_space)
         surface.createAdjacentSurface(living_space)
         
-        foundation_finished_floor_area += framefloor.elements["Area"].text.to_f
+        foundation_ceiling_area += framefloor.elements["Area"].text.to_f
       
       end
     
     end
     
-    return foundation_finished_floor_area
+    return foundation_ceiling_area
       
   end
 
-  def self.add_living_floors(model, building, errors, foundation_space, living_space, foundation_finished_floor_area)
+  def self.add_living_floors(model, building, errors, living_space, foundation_ceiling_area)
 
     finished_floor_area = nil
     if not building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/FinishedFloorArea"].nil?
@@ -1443,7 +1436,7 @@ class OSModel
     if finished_floor_area.nil?
       errors << "Could not find finished floor area."
     end
-    above_grade_finished_floor_area = finished_floor_area - foundation_finished_floor_area
+    above_grade_finished_floor_area = finished_floor_area - foundation_ceiling_area
     return unless above_grade_finished_floor_area > 0
     
     finishedfloor_width = OpenStudio.convert(Math::sqrt(above_grade_finished_floor_area),"ft","m").get
@@ -1453,11 +1446,7 @@ class OSModel
     surface.setName("inferred above grade finished floor")
     surface.setSurfaceType("Floor")
     surface.setSpace(living_space)
-    if foundation_space.nil?
-      surface.createAdjacentSurface(living_space)
-    else
-      surface.createAdjacentSurface(foundation_space)
-    end
+    surface.setOutsideBoundaryCondition("Adiabatic")
 
   end
 
