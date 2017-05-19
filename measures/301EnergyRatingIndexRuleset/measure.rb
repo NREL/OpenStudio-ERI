@@ -54,9 +54,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute path of the residential measures.")
     args << arg
     
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_api_key", false)
-    arg.setDisplayName("HPXML API Key")
-    arg.setDescription("The API key is needed to validate HPXML files and can be obtained at https://hpxml.nrel.gov/. Alternatively, you can set an environment variable on your system called HPXML_API_KEY.")
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", true)
+    arg.setDisplayName("HPXML Schemas Directory")
+    arg.setDescription("Absolute path of the hpxml schemas.")
     args << arg
     
     return args
@@ -76,7 +76,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     hpxml_file_path = runner.getStringArgumentValue("hpxml_file_path", user_arguments)
     weather_file_path = runner.getStringArgumentValue("weather_file_path", user_arguments)
     measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
-    hpxml_api_key = runner.getOptionalStringArgumentValue("hpxml_api_key", user_arguments)
+    schemas_dir = runner.getStringArgumentValue("schemas_dir", user_arguments)
 
     unless (Pathname.new hpxml_file_path).absolute?
       hpxml_file_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_file_path))
@@ -104,21 +104,24 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    if hpxml_api_key.is_initialized
-        hpxml_api_key = hpxml_api_key.get
-    else
-        # Try HPXML_API_KEY environment variable
-        hpxml_api_key = ENV['HPXML_API_KEY']
-        if hpxml_api_key.nil?
-            runner.registerWarning("HPXML API key not found. Will proceed with validation.")
-        end
+    unless (Pathname.new schemas_dir).absolute?
+      schemas_dir = File.expand_path(File.join(File.dirname(__FILE__), schemas_dir))
+    end
+    unless Dir.exists?(schemas_dir)
+      runner.registerError("'#{schemas_dir}' does not exist.")
+      return false
     end
     
     hpxml_doc = REXML::Document.new(File.read(hpxml_file_path))
     
     # Validate input HPXML
-    if not validate_hpxml(runner, hpxml_doc.to_s, hpxml_api_key, true)
-        return false
+    has_errors = false
+    validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
+      runner.registerError(error.to_s)
+      has_errors = true
+    end
+    if has_errors
+      return false
     end
     
     # Apply 301 ruleset on HPXML object
@@ -134,8 +137,13 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     #end
     
     # Validate new HPXML
-    if not validate_hpxml(runner, hpxml_doc.to_s, hpxml_api_key, false)
-        return false
+    has_errors = false
+    validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
+      runner.registerError(error.to_s)
+      has_errors = true
+    end
+    if has_errors
+      return false
     end
     
     # Obtain list of OpenStudio measures (and arguments)
@@ -161,32 +169,11 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
   end
   
-  def validate_hpxml(runner, hpxml_str, hpxml_api_key, is_input)
-  
-    return true if hpxml_api_key.nil?
-  
-    uri = URI.parse("https://hpxml.nrel.gov/api/#{hpxml_api_key}/")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    
-    request = Net::HTTP::Post.new(uri)
-    request.content_type = 'text/xml'
-    request.body = hpxml_str
-    
-    response = http.request(request)
-    response_json = JSON.parse(response.body)
-    
-    if not response_json['HPXMLSchema']['valid']
-        str = "Invalid HPXML file provided."
-        if !is_input
-            str = "Invalid HPXML file produced. Please report this to the development team."
-        end
-        runner.registerError("#{str} #{response_json['HPXMLSchema']['errors'].join('\n')}")
-        return false
-    end
-    
-    return true
+  def validate(doc, xsd_path)
+    require 'nokogiri'
+    xsd = Nokogiri::XML::Schema(File.open(xsd_path))
+    doc = Nokogiri::XML(doc)
+    xsd.validate(doc)
   end
   
 end

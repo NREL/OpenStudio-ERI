@@ -30,7 +30,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
   def test_new_construction_none
     # Using energy multiplier
     args_hash = {}
-    args_hash[""] = 0.0
+    args_hash["mult"] = 0.0
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {"Annual_kwh"=>0, "Annual_therm"=>0, "Space"=>args_hash["space"]}
@@ -67,7 +67,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
   def test_new_construction_mult_0_80
     args_hash = {}
     args_hash["cef"] = 3.1 / 1.15
-    args_hash[""] = 0.8
+    args_hash["mult"] = 0.8
     expected_num_del_objects = {}
     expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
     expected_values = {"Annual_kwh"=>821.1, "Annual_therm"=>0, "Space"=>args_hash["space"]}
@@ -147,7 +147,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
     expected_values = {"Annual_kwh"=>1026.4, "Annual_therm"=>0, "Space"=>args_hash["space"]}
     model = _test_measure(osm_geo_beds_loc_wh_cw, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
-    args_hash[""] = 0.0
+    args_hash["mult"] = 0.0
     expected_num_del_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {}
     expected_values = {"Annual_kwh"=>0, "Annual_therm"=>0, "Space"=>args_hash["space"]}
@@ -170,7 +170,7 @@ class ResidentialClothesDryerTest < MiniTest::Test
 
   def test_argument_error_cd_mult_negative
     args_hash = {}
-    args_hash[""] = -1
+    args_hash["mult"] = -1
     result = _test_error(osm_geo_beds_loc_wh_cw, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Occupancy energy multiplier must be greater than or equal to 0.0.")
   end

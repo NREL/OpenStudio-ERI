@@ -13,6 +13,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     args_hash["calc_type"] = "HERS Reference Home"
     args_hash["measures_dir"] = ".."
+    args_hash["schemas_dir"] = "./tests/schemas"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
@@ -25,6 +26,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     args_hash["calc_type"] = "HERS Rated Home"
     args_hash["measures_dir"] = ".."
+    args_hash["schemas_dir"] = "./tests/schemas"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
