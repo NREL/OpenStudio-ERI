@@ -77,7 +77,7 @@ class EnergyRatingIndex301Ruleset
     # Systems
     new_systems = XMLHelper.add_element(new_details, "Systems")
     set_systems_hvac_reference(new_systems, orig_details)
-    set_systems_mechanical_ventilation_reference(new_systems)
+    set_systems_mechanical_ventilation_reference(new_systems, orig_details)
     set_systems_water_heating_reference(new_systems, orig_details, nbeds)
     
     # Appliances
@@ -591,21 +591,21 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
     XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
     
-    new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
-    
     '''
-    TODO
+    Table 4.2.2(1) - Thermal distribution systems
+    Thermal distribution system efficiency (DSE) of 0.80 shall be applied to both the heating and 
+    cooling system efficiencies
     '''
 
+    new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
     sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACDistribution")
-    # FIXME
+    XMLHelper.add_element(new_hvac_dist, "AnnualHeatingDistributionSystemEfficiency", 0.8)
+    XMLHelper.add_element(new_hvac_dist, "AnnualCoolingDistributionSystemEfficiency", 0.8)
     
   end
   
-  def self.set_systems_mechanical_ventilation_reference(new_systems)
-  
-    new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
+  def self.set_systems_mechanical_ventilation_reference(new_systems, orig_details)
   
     '''
     Table 4.2.2(1) - Whole-House Mechanical ventilation
@@ -620,8 +620,50 @@ class EnergyRatingIndex301Ruleset
     continuous Whole-House Ventilation System.
     '''
     
-    # FIXME
+    # Init
+    fan_type = nil
+    fan_cfm = nil
     
+    whole_house_fans = []
+    orig_details.elements.each("Systems/MechanicalVentilation/VentilationFans/VentilationFan") do |whole_house_fan|
+      if not XMLHelper.has_element(whole_house_fan, "UsedForWholeBuildingVentilation")
+        puts "missing element"
+        return false # FIXME
+      end
+      whole_house_fans << whole_house_fan
+    end
+    
+    if whole_house_fans.size > 1
+      puts "too many mech vent systems"
+      return false # FIXME
+    end
+    
+    if whole_house_fans.size == 1
+      fan_type = XMLHelper.get_value(whole_house_fans[0], "FanType")
+      fan_cfm = XMLHelper.get_value(whole_house_fans[0], "RatedFlowRate").to_f
+      
+      fan_power = nil
+      if fan_type == 'supply only' or fan_type == 'exhaust only'
+        fan_power = 0.35 * fan_cfm
+      elsif fan_type == 'balanced' # FIXME: Not available in HPXML
+        fan_power = 0.70 * fan_cfm
+      elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
+        fan_power = 1.00 * fan_cfm
+      end
+      
+      new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
+      new_vent_fans = XMLHelper.add_element(new_mech_vent, "VentilationFans")
+      new_vent_fan = XMLHelper.add_element(new_vent_fans, "VentilationFan")
+      sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
+      XMLHelper.add_element(new_vent_fan, "FanType", fan_type)
+      XMLHelper.add_element(new_vent_fan, "RatedFlowRate", 0.0) # FIXME: Is this right? Fan energy but no cfm?
+      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
+      XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
+      XMLHelper.add_element(new_vent_fan, "FanPower", fan_power)
+      
+    end
+      
   end
   
   def self.set_systems_water_heating_reference(new_systems, orig_details, nbeds)
@@ -914,6 +956,10 @@ class EnergyRatingIndex301Ruleset
     
     # Residual MELs
     residual_mels_kwh = 0.0 + 0.91 * cfa + 0.0 * nbeds
+    residual_mels_load_sens = 7.27 * cfa
+    residual_mels_load_lat = 0.38 * cfa
+    residual_mels_sens = residual_mels_load_sens/(residual_mels_load_sens + residual_mels_load_lat)
+    residual_mels_lat = 1.0 - residual_mels_sens
     residual_mels = XMLHelper.add_element(new_misc_loads, "PlugLoad")
     sys_id = XMLHelper.add_element(residual_mels, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Residual_MELs")
@@ -921,7 +967,9 @@ class EnergyRatingIndex301Ruleset
     residual_mels_load = XMLHelper.add_element(residual_mels, "Load")
     XMLHelper.add_element(residual_mels_load, "Units", "kWh/year")
     XMLHelper.add_element(residual_mels_load, "Value", residual_mels_kwh)
-    # TODO: Sens/lat frac
+    extension = XMLHelper.add_element(residual_mels, "extension")
+    XMLHelper.add_element(extension, "FracSensible", residual_mels_sens)
+    XMLHelper.add_element(extension, "FracLatent", residual_mels_lat)
     
     # Televisions
     televisions_kwh = 413.0 + 0.0 * cfa + 69.0 * nbeds

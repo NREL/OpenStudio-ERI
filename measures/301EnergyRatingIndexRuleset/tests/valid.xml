@@ -414,6 +414,7 @@
               <FanType>energy recovery ventilator</FanType>
               <RatedFlowRate>247</RatedFlowRate>
               <HoursInOperation>24</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
