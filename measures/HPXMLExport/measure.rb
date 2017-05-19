@@ -72,16 +72,18 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
     translator = OpenStudio::OSVersion::VersionTranslator.new
     path = OpenStudio::Path.new(osm_file_path)
     model = translator.loadModel(path)
-    model = model.get    
+    model = model.get
     
     doc = REXML::Document.new
 
-    root = doc.add_element "HPXML"
+    root = doc.add_element "HPXML", {"schemaVersion"=>"2.2"}
+    root.add_namespace("http://hpxmlonline.com/2014/6")
+    # root.add_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
     
     xml_transaction_header_information = root.add_element "XMLTransactionHeaderInformation"
-    xml_transaction_header_information.add_element("XMLType").add_text("HPXML")
+    xml_transaction_header_information.add_element("XMLType")
     xml_transaction_header_information.add_element("XMLGeneratedBy").add_text(File.basename(File.dirname(__FILE__)))
-    xml_transaction_header_information.add_element("CreatedDateAndTime").add_text("Test")
+    xml_transaction_header_information.add_element("CreatedDateAndTime").add_text(Time.now.strftime('%Y-%m-%dT%H:%M:%S'))
     xml_transaction_header_information.add_element("Transaction").add_text("create")
     
     software_info = root.add_element "SoftwareInfo"
@@ -94,65 +96,109 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
     project_status.add_element("EventType").add_text("audit")
     building_details = building.add_element "BuildingDetails"
     building_summary = building_details.add_element "BuildingSummary"
+    building_occupancy = building_summary.add_element "BuildingOccupancy"
+    num_people = 0
+    model.getPeopleDefinitions.each do |people_def|
+      num_people += people_def.numberofPeople.get
+    end
+    building_occupancy.add_element("NumberofResidents").add_text(num_people.round.to_s)    
     building_construction = building_summary.add_element "BuildingConstruction"
     building_construction.add_element("ResidentialFacilityType").add_text({Constants.BuildingTypeSingleFamilyDetached=>"single-family detached"}[model.getBuilding.standardsBuildingType.to_s])
     building_construction.add_element("NumberofUnits").add_text(model.getBuilding.standardsNumberOfLivingUnits.to_s)
     model.getBuildingUnits.each do |unit|
       if unit.getFeatureAsInteger("NumberOfBedrooms").is_initialized
-        building_construction.add_element("NumberOfBedrooms").add_text(unit.getFeatureAsInteger("NumberOfBedrooms").get.to_s)
+        building_construction.add_element("NumberofBedrooms").add_text(unit.getFeatureAsInteger("NumberOfBedrooms").get.to_s)
       end
       if unit.getFeatureAsDouble("NumberOfBathrooms").is_initialized
-        building_construction.add_element("NumberOfBathrooms").add_text(unit.getFeatureAsDouble("NumberOfBathrooms").get.to_i.to_s)
+        building_construction.add_element("NumberofBathrooms").add_text(unit.getFeatureAsDouble("NumberOfBathrooms").get.to_i.to_s)
       end
       building_construction.add_element("ConditionedFloorArea").add_text(Geometry.get_above_grade_finished_floor_area_from_spaces(unit.spaces).round.to_s)
       building_construction.add_element("FinishedFloorArea").add_text(Geometry.get_above_grade_finished_floor_area_from_spaces(unit.spaces).round.to_s)
       # NumberofStoriesAboveGrade
       building_construction.add_element("ConditionedBuildingVolume").add_text(Geometry.get_finished_volume_from_spaces(unit.spaces).round.to_s)
     end
-    building_occupancy = building_summary.add_element "BuildingOccupancy"
-    num_people = 0
-    model.getPeopleDefinitions.each do |people_def|
-      num_people += people_def.numberofPeople.get
-    end
-    building_occupancy.add_element("NumberofResidents").add_text(num_people.round.to_s)
     
     # Enclosure
     enclosure = building_details.add_element "Enclosure"    
     
+    # Roofs
+    attic_and_roof = enclosure.add_element "AtticAndRoof"
+    roofs = attic_and_roof.add_element "Roofs"
+    model.getSurfaces.each do |surface|
+      next unless surface.surfaceType.downcase == "roofceiling"
+      next unless surface.outsideBoundaryCondition.downcase == "outdoors"
+      roof = roofs.add_element "Roof"
+      roof.add_element "SystemIdentifier", {"id"=>make_id_valid(surface.name)}
+      # RoofColor
+      roof.add_element("RoofArea").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+      # RadiantBarrier
+    end    
+    
     # Foundations
     foundations = enclosure.add_element "Foundations"
+    
+    # Slab
+    model.getSpaces.each do |space|
+      if Geometry.space_is_above_grade(space) and Geometry.space_is_finished(space)
+        slab_on_grade = nil
+        space.surfaces.each do |surface|
+          next unless surface.surfaceType.downcase == "floor"
+          next unless surface.outsideBoundaryCondition.downcase == "ground"
+          if slab_on_grade.nil?
+            foundation = foundations.add_element "Foundation"
+            foundation.add_element "SystemIdentifier", {"id"=>make_id_valid(space.name)}          
+            foundation_type = foundation.add_element "FoundationType"
+            slab_on_grade = foundation_type.add_element "SlabOnGrade"
+          end
+          slab = foundation.add_element "Slab"
+          slab.add_element "SystemIdentifier", {"id"=>make_id_valid(surface.name)}
+          slab.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+          # Perimeter
+          # ExposedPerimeter
+          # PerimeterInsulationDepth
+          # UnderSlabInsulationWidth
+        end
+      end
+    end
+    
+    # Conditioned Basement
     model.getSpaces.each do |space|
       if Geometry.space_is_below_grade(space) and Geometry.space_is_finished(space)
         foundation = foundations.add_element "Foundation"
-        # foundation.add_element "SystemIdentifier", {"id"=>}
+        foundation.add_element "SystemIdentifier", {"id"=>make_id_valid(space.name)}
         foundation_type = foundation.add_element "FoundationType"
         basement = foundation_type.add_element "Basement"
-        basement.add_element("Conditioned").add_text("true")      
+        basement.add_element("Conditioned").add_text("true")
         space.surfaces.each do |surface|
-          # next unless surface.outsideBoundaryCondition.downcase == "ground"
+          if surface.surfaceType.downcase == "roofceiling"
+            frame_floor = foundation.add_element "FrameFloor"
+            frame_floor.add_element "SystemIdentifier", {"id"=>make_id_valid(surface.name)}
+            # FloorJoists
+            frame_floor.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+            # Insulation
+          end
+        end
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "wall"
+            foundation_wall = foundation.add_element "FoundationWall"
+            foundation_wall.add_element "SystemIdentifier", {"id"=>make_id_valid(surface.name)}
+            # Length
+            # Height
+            foundation_wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+            # Thickness
+            # BelowGradeDepth
+          end
+        end
+        space.surfaces.each do |surface|
           if surface.surfaceType.downcase == "floor"
             slab = foundation.add_element "Slab"
-            slab.add_element "SystemIdentifier", {"id"=>surface.name}
+            slab.add_element "SystemIdentifier", {"id"=>make_id_valid(surface.name)}
             slab.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
             # Perimeter
             # ExposedPerimeter
             # PerimeterInsulationDepth
             # UnderSlabInsulationWidth
             # DepthBelowGrade
-          elsif surface.surfaceType.downcase == "wall"
-            foundation_wall = foundation.add_element "FoundationWall"
-            foundation_wall.add_element "SystemIdentifier", {"id"=>surface.name}
-            # Length
-            # Height
-            foundation_wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-            # Thickness
-            # BelowGradeDepth
-          elsif surface.surfaceType.downcase == "roofceiling"
-            frame_floor = foundation.add_element "FrameFloor"
-            frame_floor.add_element "SystemIdentifier", {"id"=>surface.name}
-            # FloorJoists
-            frame_floor.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-            # Insulation
           end
         end
       end
@@ -166,7 +212,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
         next unless surface.surfaceType.downcase == "wall"
         next unless surface.outsideBoundaryCondition.downcase == "outdoors"
         wall = walls.add_element "Wall"
-        wall.add_element "SystemIdentifier", {"id"=>surface.name}
+        wall.add_element "SystemIdentifier", {"id"=>make_id_valid(surface.name)}
         wall.add_element("ExteriorAdjacentTo").add_text("ambient")
         wall.add_element("InteriorAdjacentTo").add_text("living space")
         # WallType
@@ -188,25 +234,12 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       end
     end
     
-    # Roofs
-    attics_and_roof = enclosure.add_element "AtticsAndRoof"
-    roofs = attics_and_roof.add_element "Roofs"
-    model.getSurfaces.each do |surface|
-      next unless surface.surfaceType.downcase == "roofceiling"
-      next unless surface.outsideBoundaryCondition.downcase == "outdoors"
-      roof = roofs.add_element "Roof"
-      roof.add_element "SystemIdentifier", {"id"=>surface.name}
-      # RoofColor
-      roof.add_element("RoofArea").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-      # RadiantBarrier
-    end
-    
     # Windows
     windows = enclosure.add_element "Windows"
     model.getSubSurfaces.each do |subsurface|
       next unless subsurface.subSurfaceType.downcase == "fixedwindow"
       window = windows.add_element "Window"
-      window.add_element "SystemIdentifier", {"id"=>subsurface.name}
+      window.add_element "SystemIdentifier", {"id"=>make_id_valid(subsurface.name)}
       window.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
       subsurface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
         next unless layer.name.to_s.downcase.include? "glazingmaterial"
@@ -215,14 +248,27 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
         window.add_element("SHGC").add_text(layer.solarHeatGainCoefficient.round(2).to_s)
       end
       # Overhangs
-      window.add_element "AttachedToWall", {"idref"=>subsurface.surface.get.name.to_s}
+      window.add_element "AttachedToWall", {"idref"=>make_id_valid(subsurface.surface.get.name)}
     end
     
-    # doc = REXML::Document.new(File.read(File.join("measures", "HPXMLBuildModel", "tests", "CasaElena.xml")))
+    # Doors
+    doors = enclosure.add_element "Doors"
+    model.getSubSurfaces.each do |subsurface|
+      next unless subsurface.subSurfaceType.downcase == "door"
+      door = doors.add_element "Door"
+      door.add_element "SystemIdentifier", {"id"=>make_id_valid(subsurface.name)}
+      door.add_element "AttachedToWall", {"idref"=>make_id_valid(subsurface.surface.get.name)}
+      door.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
+      subsurface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+        next unless layer.name.to_s.downcase.include? "doormaterial"
+        layer = layer.to_StandardOpaqueMaterial.get
+        door.add_element("RValue").add_text(OpenStudio.convert(OpenStudio.convert(layer.thickness,"m","in").get / layer.conductivity,"W/m^2*K","Btu/hr*ft^2*R").get.round(1).to_s)
+      end
+    end
     
     errors = []
     validate(doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
-      # runner.registerError(error.to_s)
+      runner.registerError(error.to_s)
       errors << error.to_s
       puts error
     end
@@ -231,7 +277,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       # return false
     end
     
-    formatter = REXML::Formatters::Pretty.new(2)
+    formatter = REXML::Formatters::Pretty.new(4)
     formatter.compact = true
     formatter.write(doc, File.open(File.join(File.dirname(__FILE__), "tests", "#{File.basename osm_file_path, ".*"}.xml"), "w"))
     
@@ -251,6 +297,13 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
     xsd = Nokogiri::XML::Schema(File.open(xsd_path))
     doc = Nokogiri::XML(doc)
     xsd.validate(doc)
+  end
+  
+  def make_id_valid(id)
+    id = id.to_s
+    id = id.gsub(" ", "_")
+    id = id.gsub("|", "_")
+    return id
   end
   
 end

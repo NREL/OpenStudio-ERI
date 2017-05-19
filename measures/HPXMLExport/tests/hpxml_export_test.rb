@@ -7,9 +7,9 @@ require 'fileutils'
 
 class HPXMLExportTest < MiniTest::Test
 
-  def test_test1
+  def test_valid_xml
     args_hash = {}
-    args_hash["osm_file_path"] = "./tests/valid.osm"
+    args_hash["osm_file_path"] = "./tests/create-model-example.osm"
     args_hash["schemas_dir"] = "./tests/schemas"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
