@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_central_air_conditioner</name>
   <uid>7387af85-5ae2-422c-9488-d64b8682dd06</uid>
-  <version_id>54617558-7b26-4603-8f46-33c3c104a43c</version_id>
-  <version_modified>20170518T194325Z</version_modified>
+  <version_id>485ff65b-bb50-437e-bb7c-c49184c2565b</version_id>
+  <version_modified>20170518T232549Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessVariableSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Variable-Speed Central Air Conditioner</display_name>
@@ -340,12 +340,6 @@
       <checksum>237C80E1</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -458,6 +452,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2E8E12E9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
     </file>
   </files>
 </measure>

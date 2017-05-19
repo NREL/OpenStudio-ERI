@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>5f6c3250-6eb6-4c96-901a-3246ab3c6717</version_id>
-  <version_modified>20170518T194323Z</version_modified>
+  <version_id>43cef676-a9f9-4c19-88d5-25869ba83659</version_id>
+  <version_modified>20170518T232547Z</version_modified>
   <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -117,12 +117,6 @@
       <checksum>6773DCAB</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -163,6 +157,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2E8E12E9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
     </file>
   </files>
 </measure>

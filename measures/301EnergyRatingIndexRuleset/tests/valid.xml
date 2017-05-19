@@ -388,7 +388,7 @@
               <SystemIdentifier id='SpaceCool_ID1'/>
               <UnitLocation>conditioned space</UnitLocation>
               <PerformanceAdjustment>1</PerformanceAdjustment>
-              <CoolingSystemType>other</CoolingSystemType>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>48000</CoolingCapacity>
               <AnnualCoolingEfficiency>
@@ -401,7 +401,7 @@
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <SetpointTempHeatingSeason>67</SetpointTempHeatingSeason>
-            <SetupTempCoolingSeason>80</SetupTempCoolingSeason>
+            <SetpointTempCoolingSeason>80</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>

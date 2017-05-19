@@ -26,14 +26,14 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a choice argument for design type
     calc_types = []
     calc_types << Constants.CalcTypeERIReferenceHome
     calc_types << Constants.CalcTypeERIRatedHome
     #calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
-    calc_type = OpenStudio::Ruleset::OSArgument.makeChoiceArgument("calc_type", calc_types, true)
+    calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument("calc_type", calc_types, true)
     calc_type.setDisplayName("Calculation Type")
     calc_type.setDescription("'#{Constants.CalcTypeStandard}' will use the DOE Building America Simulation Protocols. HERS options will use the ANSI/RESNET 301-2014 Standard.")
     calc_type.setDefaultValue(Constants.CalcTypeStandard)
@@ -125,10 +125,10 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     errors, building = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type)
     
     # Write HPXML file
-    #formatter = REXML::Formatters::Pretty.new(2)
-    #formatter.compact = true
-    #formatter.width = 1000
-    #hpxml_path = File.join(File.dirname(__FILE__), "301.xml")
+    formatter = REXML::Formatters::Pretty.new(2)
+    formatter.compact = true
+    formatter.width = 1000
+    hpxml_path = File.join(File.dirname(__FILE__), "301.xml")
     #File.open(hpxml_path, 'w') do |f|
     #  formatter.write(hpxml_doc, f)
     #end
@@ -139,21 +139,21 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Obtain list of OpenStudio measures (and arguments)
-    errors, measures = OSMeasures.build_measure_args_from_hpxml(building, weather_file_path)
+    errors, measures = OSMeasures.build_measure_args_from_hpxml(building, weather_file_path, calc_type)
 	
     errors.each do |error|
       runner.registerError(error)
     end
 
-    #unless errors.empty?
-    #  return false
-    #end
+    unless errors.empty?
+      return false
+    end
     
     # Create OpenStudio model
     if not OSModel.create_geometry(building, runner, model)
       return false
     end
-    if not OSModel.apply_measures(measure_subdir, measures, runner, model)
+    if not OSModel.apply_measures(measures_dir, measures, runner, model)
       return false
     end
     

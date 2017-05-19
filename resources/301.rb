@@ -327,8 +327,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_wall, orig_wall, "InteriorAdjacentTo")
       XMLHelper.set_element(new_wall, "WallType/WoodStud")
       XMLHelper.copy_element(new_wall, orig_wall, "Area")
-      XMLHelper.copy_element(new_wall, orig_wall, "Orientation")
-      XMLHelper.copy_element(new_wall, orig_wall, "Azimuth")
       insulation = XMLHelper.set_element(new_wall, "Insulation")
       XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")
       XMLHelper.set_element(insulation, "InsulationGrade", 1)
@@ -381,14 +379,14 @@ class EnergyRatingIndex301Ruleset
     windows = building.elements["BuildingDetails/Enclosure/Windows"]
     XMLHelper.delete_elements(windows, "Window")
     
-    for orientation in ["north","south","east","west"]
+    for orientation, azimuth in {"north"=>0,"south"=>180,"east"=>90,"west"=>180}
     
       # Create new window
       new_window = XMLHelper.add_element(windows, "Window")
       sys_id = XMLHelper.set_element(new_window, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "Window_#{orientation}")
       XMLHelper.set_element(new_window, "Area", 0.18 * 0.25 * cfa) # FIXME: Adjustment for conditioned basements
-      XMLHelper.set_element(new_window, "Quantity", 1)
+      XMLHelper.set_element(new_window, "Azimuth", azimuth)
       XMLHelper.set_element(new_window, "Orientation", orientation)
       XMLHelper.set_element(new_window, "UFactor", ufactor)
       XMLHelper.set_element(new_window, "SHGC", shgc)
@@ -432,8 +430,8 @@ class EnergyRatingIndex301Ruleset
     new_door = XMLHelper.add_element(doors, "Door")
     sys_id = XMLHelper.set_element(new_door, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Door")
-    XMLHelper.set_element(new_door, "Quantity", 1)
     XMLHelper.set_element(new_door, "Area", 40)
+    XMLHelper.set_element(new_door, "Azimuth", 0)
     XMLHelper.set_element(new_door, "Orientation", "north")
     XMLHelper.set_element(new_door, "DoorType", "exterior")
     XMLHelper.set_element(new_door, "RValue", 1.0/ufactor)

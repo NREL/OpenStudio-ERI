@@ -45,7 +45,7 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for shw collector area
     arg = OpenStudio::Measure::OSArgument::makeDoubleArgument("collector_area", true)

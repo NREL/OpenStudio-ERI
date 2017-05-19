@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>283cdbd1-74b9-4712-94d3-68ba952d0522</version_id>
-  <version_modified>20170518T204736Z</version_modified>
+  <version_id>3979754e-43e4-425b-a952-ca886639b764</version_id>
+  <version_modified>20170519T003742Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -90,28 +90,10 @@
   </attributes>
   <files>
     <file>
-      <filename>helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E6F537A3</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2E8E12E9</checksum>
-    </file>
-    <file>
-      <filename>valid.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>150F0D49</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
     </file>
     <file>
       <filename>measure-info.json</filename>
@@ -120,10 +102,16 @@
       <checksum>AC8B5380</checksum>
     </file>
     <file>
-      <filename>hpxml.rb</filename>
+      <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>66E3B2BA</checksum>
+      <checksum>3719AC71</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
     </file>
     <file>
       <version>
@@ -134,19 +122,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>781401D2</checksum>
+      <checksum>45E1F385</checksum>
     </file>
     <file>
-      <filename>301.rb</filename>
+      <filename>helper_methods.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2AFC2027</checksum>
+      <checksum>8E91E02F</checksum>
+    </file>
+    <file>
+      <filename>valid.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>519EBCE7</checksum>
     </file>
     <file>
       <filename>energy_rating_index_301_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>166268E8</checksum>
+      <checksum>0E239498</checksum>
+    </file>
+    <file>
+      <filename>hpxml.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>AA12E19A</checksum>
     </file>
   </files>
 </measure>

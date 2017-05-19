@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_dryer</name>
   <uid>0b112141-4e2e-4dad-b2fd-2d1f629391f0</uid>
-  <version_id>1926b64c-49bc-44b4-be51-b47a6b76ddce</version_id>
-  <version_modified>20170518T194319Z</version_modified>
+  <version_id>7cc9af6e-b6e3-4b8b-89ee-db2fad18bdfa</version_id>
+  <version_modified>20170518T232927Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesDryer</class_name>
   <display_name>Set Residential Electric Clothes Dryer</display_name>
@@ -11,7 +11,7 @@
   <modeler_description>Since there is no Clothes Dryer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment or OtherEquipment object with the name that denotes it is a residential clothes dryer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.</modeler_description>
   <arguments>
     <argument>
-      <name>cd_cef</name>
+      <name>cef</name>
       <display_name>Combined Energy Factor</display_name>
       <description>The Combined Energy Factor (CEF) measures the pounds of clothing that can be dried per kWh of electricity, including energy consumed during Stand-by and Off modes. If only an Energy Factor (EF) is available, convert using the equation: CEF = EF / 1.15.</description>
       <type>Double</type>
@@ -21,7 +21,7 @@
       <default_value>2.7</default_value>
     </argument>
     <argument>
-      <name>cd_mult</name>
+      <name>mult</name>
       <display_name>Occupancy Energy Multiplier</display_name>
       <description>Appliance energy use is multiplied by this factor to account for occupancy usage that differs from the national average.</description>
       <type>Double</type>
@@ -30,7 +30,7 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>cd_weekday_sch</name>
+      <name>weekday_sch</name>
       <display_name>Weekday schedule</display_name>
       <description>Specify the 24-hour weekday schedule.</description>
       <type>String</type>
@@ -39,7 +39,7 @@
       <default_value>0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024</default_value>
     </argument>
     <argument>
-      <name>cd_weekend_sch</name>
+      <name>weekend_sch</name>
       <display_name>Weekend schedule</display_name>
       <description>Specify the 24-hour weekend schedule.</description>
       <type>String</type>
@@ -48,7 +48,7 @@
       <default_value>0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024</default_value>
     </argument>
     <argument>
-      <name>cd_monthly_sch</name>
+      <name>monthly_sch</name>
       <display_name>Month schedule</display_name>
       <description>Specify the 12-month schedule.</description>
       <type>String</type>
@@ -90,29 +90,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>31FE0BE6</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>238F5A50</checksum>
-    </file>
-    <file>
-      <filename>ResidentialClothesDryer_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A8861EB2</checksum>
-    </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
@@ -166,6 +143,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2E8E12E9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8DC5011D</checksum>
+    </file>
+    <file>
+      <filename>ResidentialClothesDryer_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>48A4FE08</checksum>
     </file>
   </files>
 </measure>

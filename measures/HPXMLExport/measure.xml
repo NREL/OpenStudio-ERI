@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>35e382c1-08e5-4fa3-9ec3-38e856ab78b4</version_id>
-  <version_modified>20170518T194319Z</version_modified>
+  <version_id>c2b1f38d-7af4-4c3e-a74a-6f9f8d9c4315</version_id>
+  <version_modified>20170519T001650Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>HPXMLExport</class_name>
   <display_name>HPXML Export</display_name>
@@ -14,6 +14,14 @@
       <name>osm_file_path</name>
       <display_name>OSM File Path</display_name>
       <description>Absolute (or relative) path of the OSM file.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>schemas_dir</name>
+      <display_name>HPXML Schemas Directory</display_name>
+      <description>Absolute path of the hpxml schemas.</description>
       <type>String</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
@@ -33,16 +41,28 @@
   </attributes>
   <files>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2E8E12E9</checksum>
+    </file>
+    <file>
       <filename>hpxml_export_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>545F82AD</checksum>
+      <checksum>3FDE17E4</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
+      <filename>valid.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>FADCB3B8</checksum>
+      <checksum>8D93A142</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
     </file>
     <file>
       <version>
@@ -53,13 +73,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A836791C</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
+      <checksum>8C5A95DA</checksum>
     </file>
   </files>
 </measure>

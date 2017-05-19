@@ -26,7 +26,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
 
     #define the arguments that the user will input
     def arguments(model)
-        ruleset = OpenStudio::Ruleset
+        ruleset = OpenStudio::Measure
     
         osargument = OpenStudio::Measure::OSArgument
     
@@ -58,7 +58,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         spaces.each do |space|
             space_args << space.name.to_s
         end
-        space = OpenStudio::Ruleset::OSArgument::makeChoiceArgument("space", space_args, true)
+        space = OpenStudio::Measure::OSArgument::makeChoiceArgument("space", space_args, true)
         space.setDisplayName("Location")
         space.setDescription("Select the space where the water heater is located. #{Constants.Auto} will locate the water heater according the BA House Simulation Protocols: A garage (if available) or the living space in hot-dry and hot-humid climates, a basement (finished or unfinished, if available) or living space in all other climates.")
         space.setDefaultValue(Constants.Auto)

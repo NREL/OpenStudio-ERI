@@ -26,7 +26,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
 
   # define the arguments that the user will input
   def arguments(model)
-    args = OpenStudio::Ruleset::OSArgumentVector.new
+    args = OpenStudio::Measure::OSArgumentVector.new
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("osm_file_path", true)
     arg.setDisplayName("OSM File Path")

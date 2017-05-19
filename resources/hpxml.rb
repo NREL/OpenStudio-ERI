@@ -1,9 +1,10 @@
   
 require "#{File.dirname(__FILE__)}/geometry"
+require "#{File.dirname(__FILE__)}/helper_methods"
 
 class OSMeasures    
 
-  def self.build_measure_args_from_hpxml(building, weather_file_path)
+  def self.build_measure_args_from_hpxml(building, weather_file_path, calc_type)
 
     errors = []
     measures = {}
@@ -27,7 +28,7 @@ class OSMeasures
     get_cooling_setpoint(building, measures, errors)
     get_ceiling_fan(building, measures, errors)
     get_refrigerator(building, measures, errors)
-    get_clothes_washer(building, measures, errors)
+    get_clothes_washer(building, measures, errors, calc_type)
     get_clothes_dryer(building, measures, errors)
     get_dishwasher(building, measures, errors)
     get_cooking_range(building, measures, errors)
@@ -43,12 +44,8 @@ class OSMeasures
   def self.element_exists(element)
     if element.nil?
       return false
-    else
-      if element.text
-        return true
-      end
     end
-    return false
+    return true
   end
       
   def self.get_facility_type(building, errors)
@@ -377,10 +374,10 @@ class OSMeasures
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htgsys|
     
-      next if htgsys.elements["FractionHeatLoadServed"].nil?
-      next unless htgsys.elements["FractionHeatLoadServed"].text == "1"
+      #next if htgsys.elements["FractionHeatLoadServed"].nil?
+      #next unless htgsys.elements["FractionHeatLoadServed"].text == "1"
       next if htgsys.elements["HeatingSystemType"].nil?
-    
+      
       if element_exists(htgsys.elements["HeatingSystemType/Furnace"])
         if htgsys.elements["HeatingSystemFuel"].text == "electricity"
           measure_subdir = "ResidentialHVACFurnaceElectric"
@@ -455,8 +452,8 @@ class OSMeasures
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
     
-      next if clgsys.elements["FractionCoolLoadServed"].nil?
-      next unless clgsys.elements["FractionCoolLoadServed"].text == "1"      
+      #next if clgsys.elements["FractionCoolLoadServed"].nil?
+      #next unless clgsys.elements["FractionCoolLoadServed"].text == "1"      
       next if clgsys.elements["CoolingSystemType"].nil?
     
       if clgsys.elements["CoolingSystemType"].text == "central air conditioning"
@@ -584,8 +581,8 @@ class OSMeasures
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
     
-      next if hp.elements["FractionHeatLoadServed"].nil?
-      next unless hp.elements["FractionHeatLoadServed"].text == "1"      
+      #next if hp.elements["FractionHeatLoadServed"].nil?
+      #next unless hp.elements["FractionHeatLoadServed"].text == "1"      
       next if hp.elements["HeatPumpType"].nil?
     
       if hp.elements["HeatPumpType"].text == "air-to-air"        
@@ -741,12 +738,11 @@ class OSMeasures
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACControl") do |cont|
       measure_subdir = "ResidentialHVACHeatingSetpoints"
-      htg_wkdy = cont.elements["SetpointTempHeatingSeason"]
-      htg_wked = cont.elements["SetpointTempHeatingSeason"]
-      if not htg_wkdy.nil? and not htg_wked.nil?
+      htg_sp = cont.elements["SetpointTempHeatingSeason"]
+      if not htg_sp.nil?
         args = {
-                "htg_wkdy"=>htg_wkdy.text,
-                "htg_wked"=>htg_wked.text
+                "htg_wkdy"=>htg_sp.text,
+                "htg_wked"=>htg_sp.text
                }  
         measures[measure_subdir] = args
       end
@@ -759,12 +755,11 @@ class OSMeasures
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACControl") do |cont|
       measure_subdir = "ResidentialHVACCoolingSetpoints"
-      clg_wkdy = cont.elements["SetupTempCoolingSeason"]
-      clg_wked = cont.elements["SetupTempCoolingSeason"]
-      if not clg_wkdy.nil? and not clg_wked.nil?
+      clg_sp = cont.elements["SetpointTempCoolingSeason"]
+      if not clg_sp.nil?
         args = {
-                "clg_wkdy"=>clg_wkdy.text,
-                "clg_wked"=>clg_wked.text
+                "clg_wkdy"=>clg_sp.text,
+                "clg_wked"=>clg_sp.text
                }  
         measures[measure_subdir] = args
       end
@@ -799,50 +794,41 @@ class OSMeasures
 
     building.elements.each("BuildingDetails/Appliances/Refrigerator") do |ref|
       measure_subdir = "ResidentialApplianceRefrigerator"  
-      fridge_E = ref.elements["RatedAnnualkWh"]
-      if not fridge_E.nil?
-        args = {
-                "fridge_E"=>fridge_E.text,
-                "mult"=>"1",
-                "weekday_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
-                "weekend_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
-                "monthly_sch"=>"0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
-                "space"=>"auto"
-               }  
-        measures[measure_subdir] = args
-      else
-        errors << "Refrigerator does not have rated annual kWh."
-      end
+      args = {
+              "fridge_E"=>"400",
+              "mult"=>"1",
+              "weekday_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
+              "weekend_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
+              "monthly_sch"=>"0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
+              "space"=>"auto"
+             }  
+      measures[measure_subdir] = args
       break
     end
     
   end
 
-  def self.get_clothes_washer(building, measures, errors)
+  def self.get_clothes_washer(building, measures, errors, calc_type)
 
     building.elements.each("BuildingDetails/Appliances/ClothesWasher") do |cw|
       measure_subdir = "ResidentialApplianceClothesWasher"  
-      cw_imef = cw.elements["ModifiedEnergyFactor"]
-      if not cw_imef.nil?
-        args = {
-                "cw_imef"=>cw_imef.text,
-                "cw_rated_annual_energy"=>"387",
-                "cw_annual_cost"=>"24",
-                "cw_test_date"=>"2007",
-                "cw_drum_volume"=>"3.5",
-                "cw_cold_cycle"=>"false",
-                "cw_thermostatic_control"=>"true",
-                "cw_internal_heater"=>"false",
-                "cw_fill_sensor"=>"false",
-                "cw_mult_e"=>"1",
-                "cw_mult_hw"=>"1",
-                "space"=>"auto",
-                "plant_loop"=>"auto"
-               }  
-        measures[measure_subdir] = args
-      else
-        errors << "Clothes washer does not have modified energy factor."
-      end
+      args = {
+              "imef"=>"0.95",
+              "rated_annual_energy"=>"387",
+              "annual_cost"=>"24",
+              "test_date"=>"2007",
+              "drum_volume"=>"3.5",
+              "cold_cycle"=>"false",
+              "thermostatic_control"=>"true",
+              "internal_heater"=>"false",
+              "fill_sensor"=>"false",
+              "mult_e"=>"1",
+              "mult_hw"=>"1",
+              "space"=>"auto",
+              "plant_loop"=>"auto",
+              "calc_type"=>calc_type
+             }  
+      measures[measure_subdir] = args
       break
     end
     
@@ -857,24 +843,24 @@ class OSMeasures
       if cd.elements["FuelType"].text == "electricity"
         measure_subdir = "ResidentialApplianceClothesDryerElectric"
         args = {
-                "cd_cef"=>"2.7",
-                "cd_mult"=>"1",
-                "cd_weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-                "cd_weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-                "cd_monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
+                "cef"=>"2.7",
+                "mult"=>"1",
+                "weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
+                "weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
+                "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
                 "space"=>"auto"
                }
         break
       elsif ["natural gas", "fuel oil", "propane"].include? cd.elements["FuelType"].text
         measure_subdir = "ResidentialApplianceClothesDryerFuel"
         args = {
-                "cd_fuel_type"=>{"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[cd.elements["FuelType"].text],
-                "cd_cef"=>"2.4",
-                "cd_fuel_split"=>"0.07",
-                "cd_mult"=>"1",
-                "cd_weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-                "cd_weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-                "cd_monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
+                "fuel_type"=>{"natural gas"=>Constants.FuelTypeGas, "fuel oil"=>Constants.FuelTypeOil, "propane"=>Constants.FuelTypePropane}[cd.elements["FuelType"].text],
+                "cef"=>"2.4",
+                "fuel_split"=>"0.07",
+                "mult"=>"1",
+                "weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
+                "weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
+                "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
                 "space"=>"auto"
                }
         break
@@ -1082,12 +1068,10 @@ class OSModel
     add_foundation_walls(model, building, living_space, foundation_space)
     foundation_finished_floor_area = add_foundation_ceilings(model, building, foundation_space, living_space, foundation_finished_floor_area)
     add_living_floors(model, building, geometry_errors, foundation_space, living_space, foundation_finished_floor_area) # TODO: need these assumptions for airflow measure
-    wall_fractions, window_areas = get_wall_orientation_fractions(building)
-    surface_window_area = add_living_walls(model, building, geometry_errors, avg_ceil_hgt, living_space, attic_space, wall_fractions, window_areas)
+    add_living_walls(model, building, geometry_errors, avg_ceil_hgt, living_space, attic_space)
     add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
     add_attic_walls(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
     add_attic_ceilings(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
-    add_windows(model, building, runner, surface_window_area)
     
     geometry_errors.each do |error|
       runner.registerError(error)
@@ -1172,7 +1156,7 @@ class OSModel
     end
     
     # Store building name
-    model.getBuilding.setName(File.basename(hpxml_file_path))
+    model.getBuilding.setName("FIXME")
         
     # Store building unit information
     unit = OpenStudio::Model::BuildingUnit.new(model)
@@ -1271,57 +1255,8 @@ class OSModel
       
   end
 
-  def self.get_wall_orientation_fractions(building)
+  def self.add_living_walls(model, building, errors, avg_ceil_hgt, living_space, attic_space)
 
-    wall_fractions = {}
-    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
-      orientation = window.elements["Orientation"].text
-      if orientation == "southwest"
-        orientation = "south"
-      elsif orientation == "northwest"
-        orientation = "west"
-      elsif orientation == "southeast"
-        orientation = "east"
-      elsif orientation == "northeast"
-        orientation = "north"
-      end
-      if wall_fractions.keys.include? window.elements["AttachedToWall"].attributes["idref"]      
-        if wall_fractions[window.elements["AttachedToWall"].attributes["idref"]].keys.include? orientation
-          wall_fractions[window.elements["AttachedToWall"].attributes["idref"]][orientation] += window.elements["Area"].text.to_f
-        else
-          wall_fractions[window.elements["AttachedToWall"].attributes["idref"]][orientation] = window.elements["Area"].text.to_f
-        end
-      else      
-        wall_fractions[window.elements["AttachedToWall"].attributes["idref"]] = {}
-        wall_fractions[window.elements["AttachedToWall"].attributes["idref"]][orientation] = window.elements["Area"].text.to_f        
-      end
-    end
-
-    window_areas = {}
-    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
-      if window_areas.keys.include? window.elements["AttachedToWall"].attributes["idref"]
-        window_areas[window.elements["AttachedToWall"].attributes["idref"]] += window.elements["Area"].text.to_f        
-      else
-        window_areas[window.elements["AttachedToWall"].attributes["idref"]] = {}
-        window_areas[window.elements["AttachedToWall"].attributes["idref"]] = window.elements["Area"].text.to_f        
-      end
-    end
-
-    wall_fractions.each do |wall_id, orientations|    
-      orientations.each do |orientation, area|
-        wall_fractions[wall_id][orientation] /= window_areas[wall_id]
-      end    
-    end
-    
-    return wall_fractions, window_areas
-
-  end  
-
-  def self.add_living_walls(model, building, errors, avg_ceil_hgt, living_space, attic_space, wall_fractions, window_areas)
-
-    rotate = {"north"=>0, "south"=>180, "west"=>90, "east"=>270}
-
-    surface_window_area = {}
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next unless wall.elements["InteriorAdjacentTo"].text == "living space"
@@ -1334,52 +1269,23 @@ class OSModel
         end
       end
     
-      if not wall_fractions.keys.include? wall.elements["SystemIdentifier"].attributes["id"]
-      
-        wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-        wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
+      wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
+      wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
 
-        surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
-        surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
-        surface.setSurfaceType("Wall") 
-        surface.setSpace(living_space)
-        if wall.elements["ExteriorAdjacentTo"].text == "attic"
-          surface.createAdjacentSurface(attic_space)
-        elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
-          surface.setOutsideBoundaryCondition("Outdoors")
-        else
-          errors << "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
-        end      
-      
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
+      surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
+      surface.setSurfaceType("Wall") 
+      surface.setSpace(living_space)
+      if wall.elements["ExteriorAdjacentTo"].text == "attic"
+        surface.createAdjacentSurface(attic_space)
+      elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
+        surface.setOutsideBoundaryCondition("Outdoors")
       else
-      
-        wall_fractions[wall.elements["SystemIdentifier"].attributes["id"]].each do |orientation, frac|
-        
-          wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-          wall_length = frac * OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
-
-          surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin, orientation), model)
-          surface.setName("#{wall.elements["SystemIdentifier"].attributes["id"]} #{orientation}")
-          surface.setSurfaceType("Wall") 
-          surface.setSpace(living_space)
-          if wall.elements["ExteriorAdjacentTo"].text == "attic"
-            surface.createAdjacentSurface(attic_space)
-          elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
-            surface.setOutsideBoundaryCondition("Outdoors")
-          else
-            errors << "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
-          end
-          
-          surface_window_area["#{wall.elements["SystemIdentifier"].attributes["id"]} #{orientation}"] = frac * window_areas[wall.elements["SystemIdentifier"].attributes["id"]]      
-        
-        end
-        
-      end
+        errors << "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
+      end      
       
     end
     
-    return surface_window_area
-
   end
 
   def self.build_foundation_space(model, building)
@@ -1677,124 +1583,12 @@ class OSModel
     end
         
   end
-
-  def self.add_windows(model, building, runner, surface_window_area)
-      
-    max_single_window_area = 12.0 # sqft
-    window_gap_y = 1.0 # ft; distance from top of wall
-    window_gap_x = 0.2 # ft; distance between windows in a two-window group
-    aspect_ratio = 1.333
-    facades = {"south"=>Constants.FacadeFront, "north"=>Constants.FacadeBack, "west"=>Constants.FacadeLeft, "east"=>Constants.FacadeRight}
-    model.getSurfaces.each do |surface|
-      next unless surface_window_area.keys.include? surface.name.to_s
-      next if surface.outsideBoundaryCondition.downcase == "ground" # TODO: can't have windows on surfaces adjacent to ground in energyplus
-      add_windows_to_wall(surface, surface_window_area[surface.name.to_s], window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facades[surface.name.to_s.split(' ')[1]], model, runner)      
-    end
-      
-  end
-
-  def self.add_windows_to_wall(surface, window_area, window_gap_y, window_gap_x, aspect_ratio, max_single_window_area, facade, model, runner)
-
-    wall_width = Geometry.get_surface_length(surface)
-    wall_height = Geometry.get_surface_height(surface)
-    
-    # Calculate number of windows needed
-    num_windows = (window_area / max_single_window_area).ceil
-    num_window_groups = (num_windows / 2.0).ceil
-    num_window_gaps = num_window_groups
-    if num_windows % 2 == 1
-        num_window_gaps -= 1
-    end
-    window_width = Math.sqrt((window_area / num_windows.to_f) / aspect_ratio)
-    window_height = (window_area / num_windows.to_f) / window_width
-    width_for_windows = window_width * num_windows.to_f + window_gap_x * num_window_gaps.to_f
-    if width_for_windows > wall_width
-        runner.registerError("Could not fit windows on #{surface.name.to_s}.")
-        return false
-    end
-    
-    # Position window from top of surface
-    win_top = wall_height - window_gap_y
-    if Geometry.is_gable_wall(surface)
-        # For gable surfaces, position windows from bottom of surface so they fit
-        win_top = window_height + window_gap_y
-    end
-    
-    # Groups of two windows
-    win_num = 0
-    for i in (1..num_window_groups)
-        
-        # Center vertex for group
-        group_cx = wall_width * i / (num_window_groups+1).to_f
-        group_cy = win_top - window_height / 2.0
-        
-        if not (i == num_window_groups and num_windows % 2 == 1)
-            # Two windows in group
-            win_num += 1
-            add_window_to_wall(surface, window_width, window_height, group_cx - window_width/2.0 - window_gap_x/2.0, group_cy, win_num, facade, model, runner)
-            win_num += 1
-            add_window_to_wall(surface, window_width, window_height, group_cx + window_width/2.0 + window_gap_x/2.0, group_cy, win_num, facade, model, runner)
-        else
-            # One window in group
-            win_num += 1
-            add_window_to_wall(surface, window_width, window_height, group_cx, group_cy, win_num, facade, model, runner)
-        end
-    end
-    runner.registerInfo("Added #{num_windows.to_s} window(s), totaling #{window_area.round(1).to_s} ft^2, to #{surface.name}.")
-    return true
-    
-  end
-
-  def self.add_window_to_wall(surface, win_width, win_height, win_center_x, win_center_y, win_num, facade, model, runner)
-      
-    # Create window vertices in relative coordinates, ft
-    upperleft = [win_center_x - win_width/2.0, win_center_y + win_height/2.0]
-    upperright = [win_center_x + win_width/2.0, win_center_y + win_height/2.0]
-    lowerright = [win_center_x + win_width/2.0, win_center_y - win_height/2.0]
-    lowerleft = [win_center_x - win_width/2.0, win_center_y - win_height/2.0]
-    
-    # Convert to 3D geometry; assign to surface
-    window_polygon = OpenStudio::Point3dVector.new
-    if facade == Constants.FacadeFront
-        multx = 1
-        multy = 0
-    elsif facade == Constants.FacadeBack
-        multx = -1
-        multy = 0
-    elsif facade == Constants.FacadeLeft
-        multx = 0
-        multy = -1
-    elsif facade == Constants.FacadeRight
-        multx = 0
-        multy = 1
-    end
-    if facade == Constants.FacadeBack or facade == Constants.FacadeLeft
-        leftx = Geometry.getSurfaceXValues([surface]).max
-        lefty = Geometry.getSurfaceYValues([surface]).max
-    else
-        leftx = Geometry.getSurfaceXValues([surface]).min
-        lefty = Geometry.getSurfaceYValues([surface]).min
-    end
-    bottomz = Geometry.getSurfaceZValues([surface]).min
-    [upperleft, lowerleft, lowerright, upperright ].each do |coord|
-        newx = OpenStudio.convert(leftx + multx * coord[0], "ft", "m").get
-        newy = OpenStudio.convert(lefty + multy * coord[0], "ft", "m").get
-        newz = OpenStudio.convert(bottomz + coord[1], "ft", "m").get
-        window_vertex = OpenStudio::Point3d.new(newx, newy, newz)
-        window_polygon << window_vertex
-    end
-    sub_surface = OpenStudio::Model::SubSurface.new(window_polygon, model)
-    sub_surface.setName("#{surface.name} - Window #{win_num.to_s}")
-    sub_surface.setSurface(surface)
-    sub_surface.setSubSurfaceType("FixedWindow")
-      
-  end
   
-  def self.apply_measures(measure_subdir, measures, runner, model)
+  def self.apply_measures(measures_dir, measures, runner, model)
   
     # Get workflow order of measures
     workflow_order = []
-    workflow_json = JSON.parse(File.read(File.join(File.dirname(__FILE__), "resources", "measure-info.json")), :symbolize_names=>true)
+    workflow_json = JSON.parse(File.read(File.join(File.dirname(__FILE__), "measure-info.json")), :symbolize_names=>true)
     
     workflow_json.each do |group|
       group[:group_steps].each do |step|
