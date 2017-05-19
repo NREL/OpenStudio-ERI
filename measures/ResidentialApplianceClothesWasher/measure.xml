@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_clothes_washer</name>
   <uid>640bfdca-ba67-461e-b517-1a7291c22b22</uid>
-  <version_id>c0e8473b-cbd6-49fc-a50c-baaf5d59725a</version_id>
-  <version_modified>20170519T001651Z</version_modified>
+  <version_id>0bbc6909-ce08-4a98-b759-08e47faf4631</version_id>
+  <version_modified>20170519T220047Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialClothesWasher</class_name>
   <display_name>Set Residential Clothes Washer</display_name>
@@ -180,29 +180,6 @@
         <choice>
           <value>auto</value>
           <display_name>auto</display_name>
-        </choice>
-      </choices>
-    </argument>
-    <argument>
-      <name>calc_type</name>
-      <display_name>Calculation Type</display_name>
-      <description>'Standard' will use the DOE Building America Simulation Protocols. HERS options will use the ANSI/RESNET 301-2014 Standard.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>Standard</default_value>
-      <choices>
-        <choice>
-          <value>Standard</value>
-          <display_name>Standard</display_name>
-        </choice>
-        <choice>
-          <value>HERS Reference Home</value>
-          <display_name>HERS Reference Home</display_name>
-        </choice>
-        <choice>
-          <value>HERS Rated Home</value>
-          <display_name>HERS Rated Home</display_name>
         </choice>
       </choices>
     </argument>
@@ -625,13 +602,7 @@
       <filename>ResidentialClothesWasher_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>DD5347A5</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
+      <checksum>7ECC0C41</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -648,7 +619,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4C4A47FE</checksum>
+      <checksum>541096E9</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2E8E12E9</checksum>
     </file>
   </files>
 </measure>

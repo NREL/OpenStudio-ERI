@@ -178,84 +178,84 @@ class ResidentialClothesWasherTest < MiniTest::Test
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
   end
   
-  def test_argument_error_imef_negative
+  def test_argument_error_cw_imef_negative
     args_hash = {}
     args_hash["imef"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Integrated modified energy factor must be greater than 0.0.")
   end
   
-  def test_argument_error_imef_zero
+  def test_argument_error_cw_imef_zero
     args_hash = {}
     args_hash["imef"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Integrated modified energy factor must be greater than 0.0.")
   end
 
-  def test_argument_error_rated_annual_energy_negative
+  def test_argument_error_cw_rated_annual_energy_negative
     args_hash = {}
     args_hash["rated_annual_energy"] = -1.0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated annual consumption must be greater than 0.0.")
   end
   
-  def test_argument_error_rated_annual_energy_zero
+  def test_argument_error_cw_rated_annual_energy_zero
     args_hash = {}
     args_hash["rated_annual_energy"] = 0.0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Rated annual consumption must be greater than 0.0.")
   end
 
-  def test_argument_error_test_date_negative
+  def test_argument_error_cw_test_date_negative
     args_hash = {}
     args_hash["test_date"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Test date must be greater than or equal to 1900.")
   end
 
-  def test_argument_error_test_date_zero
+  def test_argument_error_cw_test_date_zero
     args_hash = {}
     args_hash["test_date"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Test date must be greater than or equal to 1900.")
   end
 
-  def test_argument_error_annual_cost_negative
+  def test_argument_error_cw_annual_cost_negative
     args_hash = {}
     args_hash["annual_cost"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Annual cost with gas DHW must be greater than 0.0.")
   end
 
-  def test_argument_error_annual_cost_zero
+  def test_argument_error_cw_annual_cost_zero
     args_hash = {}
     args_hash["annual_cost"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Annual cost with gas DHW must be greater than 0.0.")
   end
   
-  def test_argument_error_drum_volume_negative
+  def test_argument_error_cw_drum_volume_negative
     args_hash = {}
     args_hash["drum_volume"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Drum volume must be greater than 0.0.")
   end
 
-  def test_argument_error_drum_volume_zero
+  def test_argument_error_cw_drum_volume_zero
     args_hash = {}
     args_hash["drum_volume"] = 0
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Drum volume must be greater than 0.0.")
   end
 
-  def test_argument_error_mult_e_negative
+  def test_argument_error_cw_mult_e_negative
     args_hash = {}
     args_hash["mult_e"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Occupancy energy multiplier must be greater than or equal to 0.0.")
   end
 
-  def test_argument_error_mult_hw_negative
+  def test_argument_error_cw_mult_hw_negative
     args_hash = {}
     args_hash["mult_hw"] = -1
     result = _test_error(osm_geo_beds_loc_tankwh, args_hash)
@@ -312,25 +312,6 @@ class ResidentialClothesWasherTest < MiniTest::Test
     expected_num_new_objects = {"ElectricEquipment"=>num_units, "ElectricEquipmentDefinition"=>num_units, "ScheduleConstant"=>num_units, "ScheduleFixedInterval"=>num_units, "WaterUseEquipment"=>num_units, "WaterUseEquipmentDefinition"=>num_units}
     expected_values = {"Annual_kwh"=>343.54, "HotWater_gpd"=>79.99, "Space"=>args_hash["space"]}
     _test_measure("MF_8units_1story_SL_3Beds_2Baths_Denver_ElecWHTank.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_units)
-  end
-  
-  def test_eri_rated
-    args_hash = {}
-    args_hash["calc_type"] = Constants.CalcTypeERIRatedHome
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
-    expected_values = {"Annual_kwh"=>36.05, "HotWater_gpd"=>1.815}
-    _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-  
-  def test_eri_reference
-    args_hash = {}
-    args_hash["calc_type"] = Constants.CalcTypeERIReferenceHome
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"ElectricEquipmentDefinition"=>1, "ElectricEquipment"=>1, "WaterUseEquipmentDefinition"=>1, "WaterUseEquipment"=>1, "ScheduleFixedInterval"=>1, "ScheduleConstant"=>1}
-    expected_values = {}
-    expected_values = {"Annual_kwh"=>68.00, "HotWater_gpd"=>3.889}
-    _test_measure(osm_geo_beds_loc_tankwh, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   private

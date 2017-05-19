@@ -149,7 +149,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Obtain list of OpenStudio measures (and arguments)
-    errors, measures = OSMeasures.build_measure_args_from_hpxml(building, weather_file_path, calc_type)
+    errors, measures = OSMeasures.build_measure_args_from_hpxml(building, weather_file_path)
     errors.each do |error|
       runner.registerError(error)
     end

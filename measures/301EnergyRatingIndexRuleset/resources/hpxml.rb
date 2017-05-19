@@ -4,7 +4,7 @@ require "#{File.dirname(__FILE__)}/helper_methods"
 
 class OSMeasures    
 
-  def self.build_measure_args_from_hpxml(building, weather_file_path, calc_type)
+  def self.build_measure_args_from_hpxml(building, weather_file_path)
 
     errors = []
     measures = {}
@@ -28,7 +28,7 @@ class OSMeasures
     get_cooling_setpoint(building, measures, errors)
     get_ceiling_fan(building, measures, errors)
     get_refrigerator(building, measures, errors)
-    get_clothes_washer(building, measures, errors, calc_type)
+    get_clothes_washer(building, measures, errors)
     get_clothes_dryer(building, measures, errors)
     get_dishwasher(building, measures, errors)
     get_cooking_range(building, measures, errors)
@@ -808,7 +808,7 @@ class OSMeasures
     
   end
 
-  def self.get_clothes_washer(building, measures, errors, calc_type)
+  def self.get_clothes_washer(building, measures, errors)
 
     building.elements.each("BuildingDetails/Appliances/ClothesWasher") do |cw|
       measure_subdir = "ResidentialApplianceClothesWasher"  
@@ -825,8 +825,7 @@ class OSMeasures
               "mult_e"=>"1",
               "mult_hw"=>"1",
               "space"=>"auto",
-              "plant_loop"=>"auto",
-              "calc_type"=>calc_type
+              "plant_loop"=>"auto"
              }  
       measures[measure_subdir] = args
       break

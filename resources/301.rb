@@ -49,15 +49,25 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.apply_reference_home_ruleset(building, cfa, nbeds, climate_zone)
+  
+    # TODO:
+    # - Year-round heating/cooling
+    # - Spot ventilation
+    # - HVAC aux fan power (function of capacity...)
+    # - Water heater conversion efficiency
+    # - Boiler pump motor efficiency
+    # - Ceiling fans
+  
+    # Create new BuildingDetails element
     # FIXME: Add code to preserve building position above Project, Utility, etc.
     orig_details = XMLHelper.delete_element(building, "BuildingDetails")
     new_details = XMLHelper.add_element(building, "BuildingDetails")
     
-    # Building Summary
+    # BuildingSummary
     new_summary = XMLHelper.add_element(new_details, "BuildingSummary")
     set_summary_reference(new_summary, orig_details)
     
-    # Climate And Risk Zones
+    # ClimateAndRiskZones
     XMLHelper.copy_element(new_details, orig_details, "ClimateandRiskZones")
     
     # Zones
@@ -93,13 +103,63 @@ class EnergyRatingIndex301Ruleset
     set_lighting_reference(new_lighting, orig_details, cfa, nbeds)
     set_lighting_ceiling_fans_reference(new_lighting)
     
-    # Misc Loads
+    # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
     set_misc_loads_reference(new_misc_loads, cfa, nbeds)
     
   end
   
   def self.apply_rated_home_ruleset(building)
+  
+    # Create new BuildingDetails element
+    # FIXME: Add code to preserve building position above Project, Utility, etc.
+    #orig_details = XMLHelper.delete_element(building, "BuildingDetails")
+    #new_details = XMLHelper.add_element(building, "BuildingDetails")
+    
+    # BuildingSummary
+    #new_summary = XMLHelper.add_element(new_details, "BuildingSummary")
+    #set_summary_reference(new_summary, orig_details)
+    
+    # ClimateAndRiskZones
+    #XMLHelper.copy_element(new_details, orig_details, "ClimateandRiskZones")
+    
+    # Zones
+    #XMLHelper.copy_element(new_details, orig_details, "Zones")
+    
+    # Enclosure
+    #new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
+    #set_enclosure_air_infiltration_reference(new_enclosure)
+    #set_enclosure_attics_roofs_reference(new_enclosure, orig_details, climate_zone)
+    #set_enclosure_foundations_reference(new_enclosure, orig_details, climate_zone)
+    #set_enclosure_rim_joists_reference(new_enclosure)
+    #set_enclosure_walls_reference(new_enclosure, orig_details, climate_zone)
+    #set_enclosure_windows_reference(new_enclosure, cfa, climate_zone)
+    #set_enclosure_skylights_reference(new_enclosure)
+    #set_enclosure_doors_reference(new_enclosure, climate_zone)
+    
+    # Systems
+    #new_systems = XMLHelper.add_element(new_details, "Systems")
+    #set_systems_hvac_reference(new_systems, orig_details)
+    #set_systems_mechanical_ventilation_reference(new_systems, orig_details)
+    #set_systems_water_heating_reference(new_systems, orig_details, nbeds)
+    
+    # Appliances
+    #new_appliances = XMLHelper.add_element(new_details, "Appliances")
+    #set_appliances_clothes_washer_reference(new_appliances, cfa, nbeds)
+    #set_appliances_clothes_dryer_reference(new_appliances, orig_details, cfa, nbeds)
+    #set_appliances_dishwasher_reference(new_appliances, cfa, nbeds)
+    #set_appliances_refrigerator_reference(new_appliances, cfa, nbeds)
+    #set_appliances_cooking_range_oven_reference(new_appliances, orig_details, cfa, nbeds)
+    
+    # Lighting
+    #new_lighting = XMLHelper.add_element(new_details, "Lighting")
+    #set_lighting_reference(new_lighting, orig_details, cfa, nbeds)
+    #set_lighting_ceiling_fans_reference(new_lighting)
+    
+    # MiscLoads
+    #new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
+    #set_misc_loads_reference(new_misc_loads, cfa, nbeds)
+    
   end
   
   def self.apply_index_adjustment_design_ruleset(building)
@@ -107,6 +167,22 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_summary_reference(new_summary, orig_details)
+  
+    '''
+    Either hourly calculations using the procedures given in the 2013 ASHRAE Handbook
+    of Fundamentals (IP version), Chapter 16, page 16.25, Equation 51 using Shelter
+    Class 4 or calculations yielding equivalent results shall be used to determine the
+    energy loads resulting from infiltration in combination with Whole-House Mechanical
+    Ventilation systems.
+    '''
+  
+    new_site = XMLHelper.add_element(new_summary, "Site")
+    orig_site = orig_details.elements["BuildingSummary/Site"]
+    XMLHelper.add_element(new_site, "OrientationOfFrontOfHome", "north")
+    XMLHelper.add_element(new_site, "AzimuthOfFrontOfHome", 0)
+    extension = XMLHelper.add_element(new_site, "extension")
+    XMLHelper.add_element(extension, "ShelterCoefficient", 0.5)
+    
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
     XMLHelper.copy_element(new_occupancy, orig_occupancy, "NumberofResidents")
@@ -486,6 +562,17 @@ class EnergyRatingIndex301Ruleset
     
     (m) For a Rated Home without a cooling system, an electric air conditioner with the efficiency provided in 
     Table 4.2.2(1a) shall be assumed for both the HERS Reference Home and the Rated Home.
+    
+    4.3.4. Air Source Heat Pumps. For heat pumps and air conditioners where
+    a detailed, hourly HVAC simulation is used to separately model the 
+    compressor and evaporator energy (including part-load performance), the 
+    back-up heating energy, the distribution fan or blower energy and crank 
+    case heating energy, the Manufacturers Equipment Performance Rating 
+    (HSPF and SEER) shall be modified as follows to represent the performance
+     of the compressor and evaporator components alone: HSPF, corr = HSPF, mfg / 0.582
+     and SEER, corr = SEER, mfg / 0.941. The energy uses of all components 
+    (i.e. compressor and distribution fan/blower; and crank case heater) shall 
+    then be added together to obtain the total energy uses for heating and cooling.
     '''
     
     hvac_plant = orig_details.elements["Systems/HVAC/HVACPlant"]
@@ -534,6 +621,9 @@ class EnergyRatingIndex301Ruleset
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", 7.7)
+      extension = XMLHelper.add_element(heat_pump, "extension")
+      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941)
+      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582)
       
     else
     
@@ -575,7 +665,9 @@ class EnergyRatingIndex301Ruleset
       cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", 13.0)
-      
+      extension = XMLHelper.add_element(cool_sys, "extension")
+      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941)
+
     end
     
     '''

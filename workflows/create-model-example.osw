@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170519T145301Z",
+   "created_at" : "20170519T220059Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -496,7 +496,6 @@
       {
          "arguments" : {
             "annual_cost" : "24",
-            "calc_type" : "Standard",
             "cold_cycle" : "false",
             "drum_volume" : "3.5",
             "fill_sensor" : "false",
@@ -796,5 +795,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170519T145304Z"
+   "updated_at" : "20170519T220103Z"
 }
