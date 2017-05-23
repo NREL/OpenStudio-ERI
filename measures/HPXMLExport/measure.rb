@@ -3,7 +3,7 @@
 
 require 'rexml/document'
 
-require "#{File.dirname(__FILE__)}/resources/hpxml"
+require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/hvac"

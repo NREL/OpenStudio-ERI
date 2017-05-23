@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>48e8fb47-6a39-44f6-9135-68aa93e8cb06</version_id>
-  <version_modified>20170523T153954Z</version_modified>
+  <version_id>635a7d26-df1e-4f0c-ac54-28cd21f3ccb9</version_id>
+  <version_modified>20170523T165909Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>HPXMLExport</class_name>
   <display_name>HPXML Export</display_name>
@@ -65,28 +65,16 @@
       <checksum>EB1BFE71</checksum>
     </file>
     <file>
-      <filename>helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E91E02F</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EB0DBEE2</checksum>
     </file>
     <file>
-      <filename>hpxml.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F80599CC</checksum>
-    </file>
-    <file>
       <filename>create-model-example.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>FFF6B902</checksum>
+      <checksum>CEDB1AA5</checksum>
     </file>
     <file>
       <version>
@@ -97,7 +85,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CCD4FB7D</checksum>
+      <checksum>D0440FAA</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>45D09A33</checksum>
     </file>
   </files>
 </measure>

@@ -5,6 +5,7 @@ require 'openstudio'
 require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/hpxml"
 require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
