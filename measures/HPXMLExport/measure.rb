@@ -122,13 +122,13 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
     
     # ClimateandRiskZones
     if model.getSite.weatherFile.is_initialized
-      climate_and_risk_zones = building_details.add_element "ClimateandRiskZones"
-      weather_station = climate_and_risk_zones.add_element "WeatherStation"
-      XMLHelper.add_attribute(weather_station.add_element("SystemIdentifiersInfo"), "id", "weather_station")
-      XMLHelper.add_element(weather_station, "Name", File.basename(model.getSite.weatherFile.get.file.get.path.to_s))
-      XMLHelper.add_element(weather_station, "City", model.getSite.weatherFile.get.city.to_s)
-      XMLHelper.add_element(weather_station, "State", model.getSite.weatherFile.get.stateProvinceRegion.to_s)
-      XMLHelper.add_element(weather_station, "WBAN", model.getSite.weatherFile.get.file.get.wmoNumber.to_s)
+      # climate_and_risk_zones = building_details.add_element "ClimateandRiskZones"
+      # weather_station = climate_and_risk_zones.add_element "WeatherStation"
+      # XMLHelper.add_attribute(weather_station.add_element("SystemIdentifiersInfo"), "id", "weather_station")
+      # XMLHelper.add_element(weather_station, "Name", File.basename(model.getSite.weatherFile.get.file.get.path.to_s))
+      # XMLHelper.add_element(weather_station, "City", model.getSite.weatherFile.get.city.to_s)
+      # XMLHelper.add_element(weather_station, "State", model.getSite.weatherFile.get.stateProvinceRegion.to_s)
+      # XMLHelper.add_element(weather_station, "WBAN", model.getSite.weatherFile.get.file.get.wmoNumber.to_s)
     end
     
     # Zones
@@ -540,7 +540,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       # return false
     end
     
-    XMLHelper.write_file(doc, File.open(File.join(File.dirname(__FILE__), "tests", "#{File.basename osm_file_path, ".*"}.xml")))
+    XMLHelper.write_file(doc, File.join(File.dirname(__FILE__), "tests", "#{File.basename osm_file_path, ".*"}.xml"))
     
     return true
 
