@@ -1,12 +1,21 @@
-require 'rexml/document'
-require 'rexml/xpath'
 require "#{File.dirname(__FILE__)}/constants"
+require "#{File.dirname(__FILE__)}/xmlhelper"
 
 class EnergyRatingIndex301Ruleset
 
   def self.apply_ruleset(hpxml_doc, calc_type)
   
     errors = []
+    building = nil
+    
+    # Check for required inputs, etc.
+    run_validator(hpxml_doc, errors)
+    if errors.size > 0
+      return errors, building
+    end
+    
+    # Get the building element
+    building = hpxml_doc.elements["//Building"]
     
     # Update XML type
     header = hpxml_doc.elements["//XMLTransactionHeaderInformation"]
@@ -16,20 +25,6 @@ class EnergyRatingIndex301Ruleset
       header.elements["XMLType"].text += calc_type
     end
     
-    # Get the building element
-    building = []
-    hpxml_doc.elements.each("//Building") do |bldg|
-      building << bldg
-    end
-    if building.size == 0
-      errors << "Building not found."
-      return errors, nil
-    elsif building.size > 1
-      errors << "Multiple buildings found."
-      return errors, nil
-    end
-    building = building[0]
-  
     # Get high-level inputs needed by multiple methods
     cfa = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea").to_f
     nbeds = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms").to_i
@@ -45,6 +40,148 @@ class EnergyRatingIndex301Ruleset
     end
     
     return errors, building
+    
+  end
+
+  def self.run_validator(hpxml_doc, errors)
+  
+    # TODO: Check for 1 whole house vent fan
+   
+    # Every file must have this number of elements
+    unconditional_counts = {
+            '//Building' => [1],
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant[HeatingSystem|CoolingSystem|HeatPump]' => [0,1],
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemType/*' => [0,1],
+            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [0,1],
+            '//Building/BuildingDetails/Appliances/ClothesDryer' => [1],
+            '//Building/BuildingDetails/Appliances/CookingRange' => [1],
+    }
+    
+    # Every file must have these elements
+    unconditional_has = [
+            # BuildingOccupancy
+            '//Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents',
+            
+            # BuildingConstruction
+            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea',
+            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent',
+            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms',
+            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType',
+            
+            # ClimateandRiskZones
+            '//Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC/ClimateZone',
+            
+            # Enclosure
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Roofs',
+            '//Building/BuildingDetails/Enclosure/Foundations',
+            '//Building/BuildingDetails/Enclosure/Walls',
+    ]
+    
+    # If the key exists, the file must have these child elements
+    conditional_has = {
+            # Roofs
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof' => [
+                'RoofArea'
+            ],
+            
+            # Attics
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => [
+                #'AtticFloorInsulation/AssemblyEffectiveRValue',
+                #'AtticRoofInsulation/AssemblyEffectiveRValue',
+                'Area',
+            ],
+            
+            # FrameFloor
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor' => [
+                'Area',
+                #'Insulation/AssemblyEffectiveRValue',
+            ],
+            
+            # FoundationWalls
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall' => [
+                'Area',
+                #'Insulation/AssemblyEffectiveRValue',
+            ],
+            
+            # Slab
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => [
+                'Area',
+                #'[[PerimeterInsulationDepth and PerimeterInsulation[AssemblyEffectiveRValue and InsulationGrade]]|[not(PerimeterInsulationDepth) and not(PerimeterInsulation)]]',
+                #'[[UnderSlabInsulationWidth and UnderSlabInsulation[AssemblyEffectiveRValue and InsulationGrade]]|[not(UnderSlabInsulationWidth) and not(UnderSlabInsulation)]]',
+            ],
+                      
+            # HeatingSystem
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => [
+                'HeatingSystemType/*',
+                'HeatingSystemFuel',
+                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason',
+            ],
+            
+            # CoolingSystem
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => [
+                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason',
+            ],
+            
+            # HeatPump
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [
+                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason',
+                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason',
+            ],
+            
+            # WaterHeatingSystem
+            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [
+                'WaterHeaterType',
+                'TankVolume',
+                'FuelType'
+            ],
+            
+            # VentilationFan
+            '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan' => [
+                'UsedForWholeBuildingVentilation',
+                'FanType',
+                'RatedFlowRate',
+            ],
+            
+            # ClothesDryer
+            '//Building/BuildingDetails/Appliances/ClothesDryer' => [
+                'FuelType',
+            ],
+            
+            # CookingRange
+            '//Building/BuildingDetails/Appliances/CookingRange' => [
+                'FuelType',
+            ],
+                        
+    }
+    
+    # Check each unconditional "count"
+    unconditional_counts.each do |p, n|
+      elements = hpxml_doc.elements.to_a(p)
+      next if n.include?(elements.size)
+      errors << "Expected #{n.to_s} element(s) but found #{elements.size.to_s} element(s) for xpath: #{p}"
+    end
+    
+    # Check each unconditional "has"
+    unconditional_has.each do |e|
+      next if not hpxml_doc.elements[e].nil?
+      errors << "Cannot find xpath: #{e}"
+    end
+    
+    # Check each conditional "has"
+    conditional_has.keys.each do |p|
+      next if hpxml_doc.elements[p].nil?
+      # Check each child element
+      hpxml_doc.elements.each(p) do |c_el|
+        conditional_has[p].each do |c|
+          next if not c_el.elements[c].nil?
+          xpath = [p, c].join('/')
+          if c.start_with?("[")
+            xpath = [c, v].join('')
+          end
+          errors << "Has #{p} but cannot find xpath: #{xpath}"
+        end
+      end
+    end
     
   end
 
@@ -575,34 +712,18 @@ class EnergyRatingIndex301Ruleset
     then be added together to obtain the total energy uses for heating and cooling.
     '''
     
-    hvac_plant = orig_details.elements["Systems/HVAC/HVACPlant"]
-    heating_systems = []
-    hvac_plant.elements.each("HeatingSystem") do |sys|
-      heating_systems << sys
-    end
-    cooling_systems = []
-    hvac_plant.elements.each("CoolingSystem") do |sys|
-      cooling_systems << sys
-    end
-    heat_pumps = []
-    hvac_plant.elements.each("HeatPump") do |sys|
-      heat_pumps << sys
-    end
-    
-    if (heating_systems.size + heat_pumps.size) > 1 or (cooling_systems.size + heat_pumps.size) > 1
-      puts "too many hvac systems"
-      return false # FIXME
-    end
-    
     # Init
     has_boiler = false
     fuel_type = nil
     has_fuel_hookup_or_delivery = true # FIXME
     
-    # Obtain input values
-    heating_systems.each do |sys|
-      fuel_type = XMLHelper.get_value(sys, "HeatingSystemFuel")
-      has_boiler = XMLHelper.has_element(sys, "HeatingSystemType/Boiler")
+    heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
+    heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
+    if not heating_system.nil?
+      has_boiler = XMLHelper.has_element(heating_system, "HeatingSystemType/Boiler")
+      fuel_type = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
+    elsif not heat_pump_system.nil?
+      fuel_type = 'electricity'
     end
     
     # FIXME: Add PrimarySystems
@@ -718,16 +839,8 @@ class EnergyRatingIndex301Ruleset
     
     whole_house_fans = []
     orig_details.elements.each("Systems/MechanicalVentilation/VentilationFans/VentilationFan") do |whole_house_fan|
-      if not XMLHelper.has_element(whole_house_fan, "UsedForWholeBuildingVentilation")
-        puts "missing element"
-        return false # FIXME
-      end
+      next if XMLHelper.get_value(whole_house_fan, "UsedForWholeBuildingVentilation") == "false"
       whole_house_fans << whole_house_fan
-    end
-    
-    if whole_house_fans.size > 1
-      puts "too many mech vent systems"
-      return false # FIXME
     end
     
     if whole_house_fans.size == 1
@@ -749,7 +862,7 @@ class EnergyRatingIndex301Ruleset
       sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
       XMLHelper.add_element(new_vent_fan, "FanType", fan_type)
-      XMLHelper.add_element(new_vent_fan, "RatedFlowRate", 0.0) # FIXME: Is this right? Fan energy but no cfm?
+      XMLHelper.add_element(new_vent_fan, "RatedFlowRate", fan_cfm)
       XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.add_element(new_vent_fan, "FanPower", fan_power)
@@ -782,30 +895,22 @@ class EnergyRatingIndex301Ruleset
     2001 for water heaters manufactured after January 20, 2004.
     '''
     
-    water_heaters = []
-    orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |sys|
-      water_heaters << sys
-    end
-    
-    if water_heaters.size > 1
-      puts "too many water heating systems"
-      return false # FIXME
-    end
-    
     # Init
     wh_type = nil
     wh_tank_vol = nil
     wh_fuel_type = nil
 
+    water_heating_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
+
     # Obtain input values
-    water_heaters.each do |sys|
-      wh_type = XMLHelper.get_value(sys, "WaterHeaterType")
-      wh_tank_vol = XMLHelper.get_value(sys, "TankVolume").to_f
-      wh_fuel_type = XMLHelper.get_value(sys, "FuelType")
+    if not water_heating_sys.nil?
+      wh_type = XMLHelper.get_value(water_heating_sys, "WaterHeaterType")
+      wh_tank_vol = XMLHelper.get_value(water_heating_sys, "TankVolume").to_f
+      wh_fuel_type = XMLHelper.get_value(water_heating_sys, "FuelType")
     end
 
     # 301 Logic
-    if wh_type.nil?
+    if water_heating_sys.nil?
       wh_type = 'storage water heater'
       wh_tank_vol = 40.0
       wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
@@ -900,7 +1005,7 @@ class EnergyRatingIndex301Ruleset
     Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
     '''
   
-    dryer_fuel = get_fuel_type(orig_details, ["Appliances/ClothesDryer"])
+    dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
     clothes_dryer_kwh = 524.0 + 0.0 * cfa + 149.0 * nbeds # default to electric
     clothes_dryer_therm = 0.0 # default to electric
     if dryer_fuel != 'electricity'
@@ -969,7 +1074,7 @@ class EnergyRatingIndex301Ruleset
     Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
     '''
     
-    cooking_fuel = get_fuel_type(orig_details, ["Appliances/CookingRange","Appliances/Oven"])
+    cooking_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
     cooking_range_kwh = 331.0 + 0.0 * cfa + 39.0 * nbeds # default to electric
     cooking_range_therm = 0.0 # default to electric
     cooking_range_sens = 0.8 * 0.9 # default to electric
@@ -1153,18 +1258,5 @@ class EnergyRatingIndex301Ruleset
     end
   end
   
-  def self.get_fuel_type(building, elements)
-    fuels = []
-    elements.each do |element|
-      building.elements.each(element) do |el|
-        fuels << XMLHelper.get_value(el, "FuelType")
-      end
-    end
-    fuels.uniq!
-    if fuels.size != 1
-      return nil # FIXME
-    end
-    return fuels[0]
-  end
-  
 end
+  

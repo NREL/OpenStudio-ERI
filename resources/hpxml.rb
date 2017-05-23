@@ -1,4 +1,5 @@
-  
+require 'rexml/document'
+require 'rexml/xpath'
 require "#{File.dirname(__FILE__)}/geometry"
 require "#{File.dirname(__FILE__)}/helper_methods"
 

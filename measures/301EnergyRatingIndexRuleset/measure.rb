@@ -120,8 +120,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     # Validate input HPXML
     has_errors = false
-    validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
-      runner.registerError(error.to_s)
+    XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
+      runner.registerError("Input HPXML: #{error.to_s}")
       has_errors = true
     end
     if has_errors
@@ -137,12 +137,12 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    write_file(hpxml_doc, hpxml_out_path)
+    XMLHelper.write_file(hpxml_doc, hpxml_out_path)
     
     # Validate new HPXML
     has_errors = false
-    validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
-      runner.registerError(error.to_s)
+    XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
+      runner.registerError("Generated HPXML: #{error.to_s}")
       has_errors = true
     end
     if has_errors
@@ -168,23 +168,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     return true
 
-  end
-  
-  def validate(doc, xsd_path)
-    require 'nokogiri'
-    xsd = Nokogiri::XML::Schema(File.open(xsd_path))
-    doc = Nokogiri::XML(doc)
-    xsd.validate(doc)
-  end
-  
-  def write_file(hpxml_doc, hpxml_out_path)
-    # Write HPXML file
-    formatter = REXML::Formatters::Pretty.new(2)
-    formatter.compact = true
-    formatter.width = 1000
-    File.open(hpxml_out_path, 'w') do |f|
-      formatter.write(hpxml_doc, f)
-    end
   end
   
 end

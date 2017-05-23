@@ -176,12 +176,14 @@
               <PerimeterInsulation>
                 <SystemIdentifier id='Slab_Per_Ins_ID1'/>
                 <InsulationGrade>1</InsulationGrade>
+                <AssemblyEffectiveRValue>7</AssemblyEffectiveRValue>
                 <Layer>
                   <NominalRValue>7</NominalRValue>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
                 <SystemIdentifier id='Slab_Under_Ins_ID1'/>
+                <AssemblyEffectiveRValue>7</AssemblyEffectiveRValue>
                 <Layer>
                   <NominalRValue>0</NominalRValue>
                 </Layer>
@@ -373,9 +375,7 @@
               <UnitLocation>conditioned space</UnitLocation>
               <PerformanceAdjustment>1</PerformanceAdjustment>
               <HeatingSystemType>
-                <Furnace>
-                  <extension></extension>
-                </Furnace>
+                <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
               <HeatingCapacity>64000</HeatingCapacity>
@@ -480,10 +480,10 @@
           <Location>kitchen</Location>
           <RatedAnnualkWh>609</RatedAnnualkWh>
         </Refrigerator>
-        <Oven>
+        <CookingRange>
           <SystemIdentifier id='Oven_ID1'/>
           <FuelType>electricity</FuelType>
-        </Oven>
+        </CookingRange>
       </Appliances>
       <Lighting>
         <LightingFractions>

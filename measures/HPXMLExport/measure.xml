@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>635a7d26-df1e-4f0c-ac54-28cd21f3ccb9</version_id>
-  <version_modified>20170523T165909Z</version_modified>
+  <version_id>e8951d56-e9ea-4a9e-8cd9-abf1edb1a6ef</version_id>
+  <version_modified>20170523T194835Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>HPXMLExport</class_name>
   <display_name>HPXML Export</display_name>
@@ -59,22 +59,22 @@
       <checksum>31D926A1</checksum>
     </file>
     <file>
-      <filename>create-model-example.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EB1BFE71</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EB0DBEE2</checksum>
     </file>
     <file>
-      <filename>create-model-example.xml</filename>
-      <filetype>xml</filetype>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>45D09A33</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.osm</filename>
+      <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CEDB1AA5</checksum>
+      <checksum>5A864DAF</checksum>
     </file>
     <file>
       <version>
@@ -85,13 +85,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D0440FAA</checksum>
+      <checksum>0FE3A198</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45D09A33</checksum>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
+      <filetype>ddy</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB253570</checksum>
+    </file>
+    <file>
+      <filename>USA_CO_Denver_Intl_AP_725650_TMY3.epw</filename>
+      <filetype>epw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E23378AA</checksum>
     </file>
   </files>
 </measure>
