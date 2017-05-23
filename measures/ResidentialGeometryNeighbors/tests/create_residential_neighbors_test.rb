@@ -48,7 +48,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     surfaces_per_neighbor = 12
     num_neighbors = 2  
     args_hash = {}
-    expected_num_del_objects = {"ShadingSurface"=>0, "ShadingSurfaceGroup"=>0}
+    expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Overhangs.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors) 
@@ -58,7 +58,7 @@ class CreateResidentialNeighborsTest < MiniTest::Test
     surfaces_per_neighbor = 12
     num_neighbors = 2
     args_hash = {}
-    expected_num_del_objects = {"ShadingSurface"=>0, "ShadingSurfaceGroup"=>0}
+    expected_num_del_objects = {}
     expected_num_new_objects = {"ShadingSurface"=>surfaces_per_neighbor*num_neighbors+6*num_neighbors, "ShadingSurfaceGroup"=>1}
     expected_values = {}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Eaves.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, surfaces_per_neighbor*num_neighbors+6*num_neighbors)
