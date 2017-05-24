@@ -162,7 +162,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     if not OSModel.create_geometry(building, runner, model)
       return false
     end
-    if not OSModel.apply_measures(measures_dir, measures, runner, model)
+    if not OSModel.apply_measures(measures_dir, measures, runner, model, show_measure_calls=false)
       return false
     end
     

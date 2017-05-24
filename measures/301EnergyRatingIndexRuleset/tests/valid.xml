@@ -47,6 +47,9 @@
           </FoundationType>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
+        <extension>
+          <HasNaturalGasAccessOrFuelDelivery>true</HasNaturalGasAccessOrFuelDelivery>
+        </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
@@ -60,6 +63,7 @@
             <SystemIdentifier id='InfiltMeas64'/>
             <TypeOfInfiltrationMeasurement>blower door</TypeOfInfiltrationMeasurement>
             <BuildingAirLeakage>
+              <UnitofMeasure>ACHnatural</UnitofMeasure>
               <AirLeakage>0.02</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
@@ -307,7 +311,7 @@
           <Window>
             <SystemIdentifier id='Window_ID1'/>
             <Area>240</Area>
-            <Orientation>south</Orientation>
+            <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <Overhangs>
@@ -315,12 +319,13 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
+            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID2'/>
             <Area>120</Area>
-            <Orientation>north</Orientation>
+            <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <Overhangs>
@@ -328,12 +333,13 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
+            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID3'/>
             <Area>120</Area>
-            <Orientation>east</Orientation>
+            <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <Overhangs>
@@ -341,12 +347,13 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
+            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID4'/>
             <Area>120</Area>
-            <Orientation>west</Orientation>
+            <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <Overhangs>
@@ -354,6 +361,7 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
+            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
         </Windows>
@@ -400,6 +408,7 @@
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
+            <ControlType>programmable thermostat</ControlType>
             <SetpointTempHeatingSeason>67</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>80</SetpointTempCoolingSeason>
           </HVACControl>
@@ -463,17 +472,31 @@
           <SystemIdentifier id='ClothesWasher_ID1'/>
           <Location>living space</Location>
           <ModifiedEnergyFactor>1.2</ModifiedEnergyFactor>
+          <extension>
+            <EnergyRating>387.0</EnergyRating>
+            <ElectricRate>0.127</ElectricRate>
+            <GasRate>1.003</GasRate>
+            <AnnualGasCost>24.0</AnnualGasCost>
+            <Capacity>3.5</Capacity>
+          </extension>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer_ID1'/>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
+          <extension>
+            <EfficiencyFactor>3.01</EfficiencyFactor>
+            <HasTimerControl>true</HasTimerControl>
+          </extension>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher_ID1'/>
           <RatedAnnualkWh>100</RatedAnnualkWh>
           <EnergyFactor>0.68</EnergyFactor>
           <RatedWaterGalPerCycle>12</RatedWaterGalPerCycle>
+          <extension>
+            <Capacity>12</Capacity>
+          </extension>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator_ID1'/>
@@ -481,15 +504,30 @@
           <RatedAnnualkWh>609</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
+          <SystemIdentifier id='Range_ID1'/>
+          <FuelType>electricity</FuelType>
+          <extension>
+            <IsInduction>true</IsInduction>
+          </extension>
+        </CookingRange>
+        <Oven>
           <SystemIdentifier id='Oven_ID1'/>
           <FuelType>electricity</FuelType>
-        </CookingRange>
+          <extension>
+            <IsConvection>true</IsConvection>
+          </extension>
+        </Oven>
       </Appliances>
       <Lighting>
         <LightingFractions>
           <FractionIncandescent>0</FractionIncandescent>
           <FractionCFL>1</FractionCFL>
           <FractionLFL>0</FractionLFL>
+          <extension>
+            <QualifyingLightFixturesInterior>0.5</QualifyingLightFixturesInterior>
+            <QualifyingLightFixturesExterior>0.5</QualifyingLightFixturesExterior>
+            <QualifyingLightFixturesGarage>0.5</QualifyingLightFixturesGarage>
+          </extension>
         </LightingFractions>
         <CeilingFan>
           <SystemIdentifier id='CeilingFan_ID1'/>

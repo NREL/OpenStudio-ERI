@@ -1573,7 +1573,7 @@ class OSModel
         
   end
   
-  def self.apply_measures(measures_dir, measures, runner, model)
+  def self.apply_measures(measures_dir, measures, runner, model, show_measure_calls=true)
   
     # Get workflow order of measures
     workflow_order = []
@@ -1595,7 +1595,9 @@ class OSModel
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
       measure_instance = get_measure_instance(full_measure_path)
       argument_map = get_argument_map(model, measure_instance, measures[measure_subdir], measure_subdir, runner)
-      print_measure_call(measures[measure_subdir], measure_subdir, runner)
+      if show_measure_calls
+        print_measure_call(measures[measure_subdir], measure_subdir, runner)
+      end
 
       if not run_measure(model, measure_instance, argument_map, runner)
         return false
