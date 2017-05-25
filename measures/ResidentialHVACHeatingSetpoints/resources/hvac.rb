@@ -1,5 +1,6 @@
 require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/geometry"
+require "#{File.dirname(__FILE__)}/util"
 
 class HVAC
 
@@ -576,7 +577,11 @@ class HVAC
             air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
             next unless air_loop_unitary.coolingCoil.is_initialized
             clg_coil = air_loop_unitary.coolingCoil.get
-            next unless clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized or clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
+            next unless clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized or clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized       
+            if air_loop_unitary.heatingCoil.is_initialized
+              htg_coil = air_loop_unitary.heatingCoil.get
+              next if htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized or htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
+            end            
             if remove
               runner.registerInfo("Removed '#{clg_coil.name}' from '#{air_loop.name}'.")
               air_loop_unitary.resetCoolingCoil

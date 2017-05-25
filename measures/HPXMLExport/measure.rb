@@ -161,9 +161,9 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       control_zone = control_slave_zones_hash.keys[0]
       air_infiltration_measurement = air_infiltration.add_element "AirInfiltrationMeasurement"    
       XMLHelper.add_attribute(air_infiltration_measurement.add_element("SystemIdentifier"), "id", "air_infiltration")
-      puts unit.getFeatureAsDouble("NumberofBathrooms")
-      puts unit.getFeatureAsDouble("SizingInfoZoneInfiltrationELA")
-      XMLHelper.add_element(air_infiltration_measurement, "EffectiveLeakageArea", unit.getFeatureAsDouble(Constants.SizingInfoZoneInfiltrationELA(control_zone)).get.round(5).to_s)
+      if unit.getFeatureAsDouble(Constants.SizingInfoZoneInfiltrationELA(control_zone)).is_initialized
+        XMLHelper.add_element(air_infiltration_measurement, "EffectiveLeakageArea", unit.getFeatureAsDouble(Constants.SizingInfoZoneInfiltrationELA(control_zone)).get.round(5).to_s)
+      end
     end
     
     # Roofs
@@ -174,9 +174,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       next unless surface.outsideBoundaryCondition.downcase == "outdoors"
       roof = roofs.add_element "Roof"
       XMLHelper.add_attribute(roof.add_element("SystemIdentifier"), "id", surface.name)
-      # RoofColor
       roof.add_element("RoofArea").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-      # RadiantBarrier
     end    
     
     # Foundations
@@ -198,45 +196,49 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
           slab = foundation.add_element "Slab"
           XMLHelper.add_attribute(slab.add_element("SystemIdentifier"), "id", surface.name)
           slab.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-          surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
-            next unless layer.name.to_s.downcase.include? "slabmass"
-            # PerimeterInsulationDepth
-            # UnderSlabInsulationWidth
+          if surface.construction.is_initialized
+            surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+              next unless layer.name.to_s.downcase.include? "slabmass"
+            end
           end
           l, w, h = Geometry.get_surface_dimensions(surface)
           slab.add_element("ExposedPerimeter").add_text(OpenStudio.convert(2*w+2*l,"m","ft").get.round(1).to_s)
-          # Perimeter
-          # ExposedPerimeter
         end
       end
     end
     
-    # Conditioned Basement
+    # Finished Basement
     model.getSpaces.each do |space|
-      if Geometry.space_is_below_grade(space) and Geometry.space_is_finished(space)
+      if Geometry.is_finished_basement(space)
         foundation = foundations.add_element "Foundation"
-        XMLHelper.add_attribute(foundation.add_element("SystemIdentifier"), "id", space.name)
+        XMLHelper.add_attribute(foundation.add_element("SystemIdentifier"), "id", "foundaiton #{space.name}")
         foundation_type = foundation.add_element "FoundationType"
         basement = foundation_type.add_element "Basement"
-        basement.add_element("Conditioned").add_text("true")
+        basement.add_element("Finished").add_text("true")
         space.surfaces.each do |surface|
           if surface.surfaceType.downcase == "roofceiling"
             frame_floor = foundation.add_element "FrameFloor"
             XMLHelper.add_attribute(frame_floor.add_element("SystemIdentifier"), "id", surface.name)
-            # FloorJoists
             frame_floor.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-            # Insulation
           end
         end
         space.surfaces.each do |surface|
           if surface.surfaceType.downcase == "wall"
             foundation_wall = foundation.add_element "FoundationWall"
             XMLHelper.add_attribute(foundation_wall.add_element("SystemIdentifier"), "id", surface.name)
-            # Length
-            # Height
+            l, w, h = Geometry.get_surface_dimensions(surface)
+            foundation_wall.add_element("Length").add_text(OpenStudio.convert([l, w].max,"m","ft").get.round(1).to_s)
+            foundation_wall.add_element("Height").add_text(OpenStudio.convert(h,"m","ft").get.round(1).to_s)
             foundation_wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-            # Thickness
-            # BelowGradeDepth
+            if surface.construction.is_initialized
+              thickness = 0
+              surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+                next if layer.name.to_s.downcase.include? "soil"
+                thickness += OpenStudio.convert(layer.thickness,"m","in").get
+              end
+              foundation_wall.add_element("Thickness").add_text(thickness.round(1).to_s)
+            end
+            foundation_wall.add_element("BelowGradeDepth").add_text((Geometry.getSurfaceZValues([surface]).min + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1).to_s)
           end
         end
         space.surfaces.each do |surface|
@@ -244,50 +246,170 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
             slab = foundation.add_element "Slab"
             XMLHelper.add_attribute(slab.add_element("SystemIdentifier"), "id", surface.name)
             slab.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-            # Perimeter
-            # ExposedPerimeter
-            # PerimeterInsulationDepth
-            # UnderSlabInsulationWidth
-            # DepthBelowGrade
+            l, w, h = Geometry.get_surface_dimensions(surface)
+            slab.add_element("ExposedPerimeter").add_text(OpenStudio.convert(2*w+2*l,"m","ft").get.round(1).to_s)
+            slab.add_element("DepthBelowGrade").add_text((Geometry.get_space_floor_z(space) + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1).to_s)
+          end
+        end
+      end
+    end
+    
+    # Unfinished Basement
+    model.getSpaces.each do |space|
+      if Geometry.is_unfinished_basement(space)
+        foundation = foundations.add_element "Foundation"
+        XMLHelper.add_attribute(foundation.add_element("SystemIdentifier"), "id", "foundation #{space.name}")
+        foundation_type = foundation.add_element "FoundationType"
+        basement = foundation_type.add_element "Basement"
+        basement.add_element("Finished").add_text("false")
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "roofceiling"
+            frame_floor = foundation.add_element "FrameFloor"
+            XMLHelper.add_attribute(frame_floor.add_element("SystemIdentifier"), "id", surface.name)
+            frame_floor.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+          end
+        end
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "wall"
+            foundation_wall = foundation.add_element "FoundationWall"
+            XMLHelper.add_attribute(foundation_wall.add_element("SystemIdentifier"), "id", surface.name)
+            l, w, h = Geometry.get_surface_dimensions(surface)
+            foundation_wall.add_element("Length").add_text(OpenStudio.convert([l, w].max,"m","ft").get.round(1).to_s)
+            foundation_wall.add_element("Height").add_text(OpenStudio.convert(h,"m","ft").get.round(1).to_s)
+            foundation_wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+            if surface.construction.is_initialized
+              thickness = 0
+              surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+                next if layer.name.to_s.downcase.include? "soil"
+                thickness += OpenStudio.convert(layer.thickness,"m","in").get
+              end
+              foundation_wall.add_element("Thickness").add_text(thickness.round(1).to_s)
+            end
+            foundation_wall.add_element("BelowGradeDepth").add_text((Geometry.getSurfaceZValues([surface]).min + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1).to_s)
+          end
+        end
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "floor"
+            slab = foundation.add_element "Slab"
+            XMLHelper.add_attribute(slab.add_element("SystemIdentifier"), "id", surface.name)
+            slab.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+            l, w, h = Geometry.get_surface_dimensions(surface)
+            slab.add_element("ExposedPerimeter").add_text(OpenStudio.convert(2*w+2*l,"m","ft").get.round(1).to_s)
+            slab.add_element("DepthBelowGrade").add_text((Geometry.get_space_floor_z(space) + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1).to_s)
           end
         end
       end
     end
 
+    # Crawlspace
+    model.getSpaces.each do |space|
+      if Geometry.is_crawl(space)
+        foundation = foundations.add_element "Foundation"
+        XMLHelper.add_attribute(foundation.add_element("SystemIdentifier"), "id", "foundation #{space.name}")
+        foundation_type = foundation.add_element "FoundationType"
+        crawl = foundation_type.add_element "Crawlspace"
+        model.getBuildingUnits.each do |unit|
+          if unit.getFeatureAsDouble(Constants.SizingInfoZoneInfiltrationCFM(space.thermalZone.get)).get.to_f == 0
+            crawl.add_element("Vented").add_text("false")
+          else
+            crawl.add_element("Vented").add_text("true")
+          end
+        end
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "roofceiling"
+            frame_floor = foundation.add_element "FrameFloor"
+            XMLHelper.add_attribute(frame_floor.add_element("SystemIdentifier"), "id", surface.name)
+            frame_floor.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+          end
+        end
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "wall"
+            foundation_wall = foundation.add_element "FoundationWall"
+            XMLHelper.add_attribute(foundation_wall.add_element("SystemIdentifier"), "id", surface.name)
+            l, w, h = Geometry.get_surface_dimensions(surface)
+            foundation_wall.add_element("Length").add_text(OpenStudio.convert([l, w].max,"m","ft").get.round(1).to_s)
+            foundation_wall.add_element("Height").add_text(OpenStudio.convert(h,"m","ft").get.round(1).to_s)
+            foundation_wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+            if surface.construction.is_initialized
+              thickness = 0
+              surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+                next if layer.name.to_s.downcase.include? "soil"
+                thickness += OpenStudio.convert(layer.thickness,"m","in").get
+              end
+              foundation_wall.add_element("Thickness").add_text(thickness.round(1).to_s)
+            end
+            foundation_wall.add_element("BelowGradeDepth").add_text((Geometry.getSurfaceZValues([surface]).min + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1).to_s)
+          end
+        end
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "floor"
+            slab = foundation.add_element "Slab"
+            XMLHelper.add_attribute(slab.add_element("SystemIdentifier"), "id", surface.name)
+            slab.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+            l, w, h = Geometry.get_surface_dimensions(surface)
+            slab.add_element("ExposedPerimeter").add_text(OpenStudio.convert(2*w+2*l,"m","ft").get.round(1).to_s)
+            slab.add_element("DepthBelowGrade").add_text((Geometry.get_space_floor_z(space) + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1).to_s)
+          end
+        end
+      end
+    end
+    
     # Walls
     walls = enclosure.add_element "Walls"
     model.getSpaces.each do |space|
       next unless ( Geometry.space_is_above_grade(space) and Geometry.space_is_finished(space) )
       space.surfaces.each do |surface|
         next unless surface.surfaceType.downcase == "wall"
-        next unless surface.outsideBoundaryCondition.downcase == "outdoors"
         wall = walls.add_element "Wall"
         XMLHelper.add_attribute(wall.add_element("SystemIdentifier"), "id", surface.name)
-        wall.add_element("ExteriorAdjacentTo").add_text("ambient")
-        wall.add_element("InteriorAdjacentTo").add_text("living space")
-        # WallType
-        wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-        surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
-          next unless layer.name.to_s.downcase.include? "studandcavity"
-          studs = wall.add_element "Studs"
-          studs.add_element("Size").add_text(get_studs_size_from_thickness(layer.thickness))
-          # Spacing
-          # FramingFactor
+        if surface.outsideBoundaryCondition.downcase == "outdoors"
+           exterior_adjacent_to = "ambient"
+        elsif surface.adjacentSurface.is_initialized
+          if Geometry.is_living(surface.adjacentSurface.get.space.get)
+            exterior_adjacent_to = "living space"
+          elsif Geometry.is_unfinished_attic(surface.adjacentSurface.get.space.get)
+            exterior_adjacent_to = "attic"
+          elsif Geometry.is_finished_attic(surface.adjacentSurface.get.space.get)
+            exterior_adjacent_to = "living space"
+          elsif Geometry.is_garage(surface.adjacentSurface.get.space.get)
+            exterior_adjacent_to = "garage"
+          end
         end
-        # Color
-        # Insulation
-        # InsulationGrade
-        # Layer
-        # InstallationType
-        # NominalRValue
-        # Thickness
+        wall.add_element("ExteriorAdjacentTo").add_text(exterior_adjacent_to)
+        wall.add_element("InteriorAdjacentTo").add_text("living space")
+        model.getBuildingUnits.each do |unit|
+          if unit.getFeatureAsString(Constants.SizingInfoWallType(surface)).is_initialized
+            if unit.getFeatureAsString(Constants.SizingInfoWallType(surface)).get == "WoodStud"
+              wall_type = wall.add_element("WallType")
+              wall_type.add_element("WoodStud")
+            end
+          end
+        end
+        if surface.construction.is_initialized
+          thickness = 0
+          surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+            thickness += OpenStudio.convert(layer.thickness,"m","in").get
+          end
+          wall.add_element("Thickness").add_text(thickness.round(1).to_s)
+        end
+        wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+        if surface.construction.is_initialized
+          surface.construction.get.to_LayeredConstruction.get.layers.each do |layer|
+            next unless layer.name.to_s.downcase.include? "studandcavity"
+            studs = wall.add_element "Studs"
+            studs.add_element("Size").add_text(get_studs_size_from_thickness(layer.thickness))
+          end
+        end
       end
     end
     
     # Windows
-    windows = enclosure.add_element "Windows"
+    windows = nil
     model.getSubSurfaces.each do |subsurface|
       next unless subsurface.subSurfaceType.downcase == "fixedwindow"
+      if enclosure.elements["Windows"].nil?
+        windows = enclosure.add_element "Windows"
+      end
       window = windows.add_element "Window"
       XMLHelper.add_attribute(window.add_element("SystemIdentifier"), "id", subsurface.name)
       window.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
@@ -302,9 +424,12 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
     end
     
     # Doors
-    doors = enclosure.add_element "Doors"
+    doors = nil
     model.getSubSurfaces.each do |subsurface|
       next unless subsurface.subSurfaceType.downcase == "door"
+      if enclosure.elements["Doors"].nil?
+        doors = enclosure.add_element "Doors"
+      end      
       door = doors.add_element "Door"
       XMLHelper.add_attribute(door.add_element("SystemIdentifier"), "id", subsurface.name)
       XMLHelper.add_attribute(door.add_element("AttachedToWall"), "idref", subsurface.surface.get.name)
@@ -337,6 +462,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       end
       
       control_zone = control_slave_zones_hash.keys[0]
+      next unless control_zone.thermostatSetpointDualSetpoint.is_initialized
       thermostat = control_zone.thermostatSetpointDualSetpoint.get
       hvac_control = hvac.add_element "HVACControl"
       XMLHelper.add_attribute(hvac_control.add_element("SystemIdentifier"), "id", thermostat.name)
@@ -356,63 +482,197 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
         htg_equips << htg_equip
       end
       
-      if htg_equips == clg_equips      
-      
+      next if clg_equips.empty? and htg_equips.empty?
+
+      if HVAC.has_air_source_heat_pump(model, runner, control_zone) or HVAC.has_mini_split_heat_pump(model, runner, control_zone) or HVAC.has_gshp_vert_bore(model, runner, control_zone)
+
+        name = nil
+        type = nil
+        clg_cap = nil
+        htg_cap = nil
+        clg_cop = nil
+        htg_cop = nil
+        supp_temp = nil
+        supp_afue = nil
+        supp_cap = nil
+        
         htg_equips.each do |htg_equip|
-          heat_pump = hvac_plant.add_element "HeatPump"
-          if HVAC.has_air_source_heat_pump(model, runner, control_zone)            
+
+          if HVAC.has_air_source_heat_pump(model, runner, control_zone)
+            name = htg_equip.name
             type = "air-to-air"
             clg_coil = HVAC.get_coil_from_hvac_component(htg_equip.coolingCoil.get)
             htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
             supp_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
-            clg_cop = clg_coil.ratedCOP.get
-            htg_cop = htg_coil.ratedCOP
-            clg_cap = OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
-            htg_cap = OpenStudio.convert(htg_coil.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
-            supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
+            unless clg_coil.isRatedTotalCoolingCapacityAutosized
+              clg_cap = OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
+            end
+            unless htg_coil.isRatedTotalHeatingCapacityAutosized
+              htg_cap = OpenStudio.convert(htg_coil.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
+            end
+            unless supp_coil.isNominalCapacityAutosized 
+              supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
+            end
             supp_temp = OpenStudio.convert(htg_equip.maximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation,"C","F").get.round(1).to_s
+            supp_afue = supp_coil.efficiency.to_s
+            clg_cop = clg_coil.ratedCOP.get.round(2).to_s
+            htg_cop = htg_coil.ratedCOP.round(2).to_s
           elsif HVAC.has_mini_split_heat_pump(model, runner, control_zone)
+            name = htg_equip.name
             type = "mini-split"
+            if htg_equip.to_ZoneHVACTerminalUnitVariableRefrigerantFlow.is_initialized
+              model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+                unless vrf.isRatedTotalCoolingCapacityAutosized
+                  clg_cap = OpenStudio.convert(vrf.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
+                end
+                unless vrf.isRatedTotalHeatingCapacityAutosized
+                  htg_cap = OpenStudio.convert(vrf.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
+                end
+                supp_temp = OpenStudio.convert(vrf.maximumOutdoorTemperatureinHeatingMode,"C","F").get.round(1).to_s
+                clg_cop = vrf.ratedCoolingCOP.round(2).to_s
+                htg_cop = vrf.ratedHeatingCOP.round(2).to_s
+              end
+            elsif htg_equip.to_ZoneHVACBaseboardConvectiveElectric.is_initialized
+              supp_afue = htg_equip.efficiency.to_s
+              unless htg_equip.isNominalCapacityAutosized
+                supp_cap = OpenStudio.convert(htg_equip.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
+              end
+            end            
           elsif HVAC.has_gshp_vert_bore(model, runner, control_zone)
+            name = htg_equip.name
             type = "ground-to-air"
+            clg_coil = HVAC.get_coil_from_hvac_component(htg_equip.coolingCoil.get)
+            htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
+            supp_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
+            unless supp_coil.isNominalCapacityAutosized 
+              supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
+            end
+            supp_temp = OpenStudio.convert(htg_equip.maximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation,"C","F").get.round(1).to_s
+            supp_afue = supp_coil.efficiency.to_s
+            clg_cop = clg_coil.ratedCoolingCoefficientofPerformance.round(2).to_s
+            htg_cop = htg_coil.ratedHeatingCoefficientofPerformance.round(2).to_s
+            
           end
-          XMLHelper.add_attribute(heat_pump.add_element("SystemIdentifier"), "id", htg_equip.name)
-          XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heat_pump.elements["SystemIdentifier"].attributes["id"])
-          XMLHelper.add_element(heat_pump, "UnitLocation", loc)
-          XMLHelper.add_element(heat_pump, "HeatPumpType", type)
+          
+        end
+        
+        heat_pump = hvac_plant.add_element "HeatPump"
+        XMLHelper.add_attribute(heat_pump.add_element("SystemIdentifier"), "id", name)
+        XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heat_pump.elements["SystemIdentifier"].attributes["id"])
+        XMLHelper.add_element(heat_pump, "UnitLocation", loc)
+        XMLHelper.add_element(heat_pump, "HeatPumpType", type)
+        unless htg_cap.nil?
           XMLHelper.add_element(heat_pump, "HeatingCapacity", htg_cap)
+        end 
+        unless clg_cap.nil?
           XMLHelper.add_element(heat_pump, "CoolingCapacity", clg_cap)
-          XMLHelper.add_element(heat_pump, "BackupSystemFuel", "electricity")
+        end
+        XMLHelper.add_element(heat_pump, "BackupSystemFuel", "electricity")
+        XMLHelper.add_element(heat_pump, "BackupAFUE", supp_afue)
+        unless supp_cap.nil?
           XMLHelper.add_element(heat_pump, "BackupHeatingCapacity", supp_cap)
-          XMLHelper.add_element(heat_pump, "BackupHeatingSwitchoverTemperature", supp_temp)
-          XMLHelper.add_element(heat_pump, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round.to_s)
-          annual_cool_efficiency = heat_pump.add_element "AnnualCoolEfficiency"
-          XMLHelper.add_element(annual_cool_efficiency, "Units", "COP")
-          XMLHelper.add_element(annual_cool_efficiency, "Value", clg_cop)
-          annual_heat_efficiency = heat_pump.add_element "AnnualHeatEfficiency"
-          XMLHelper.add_element(annual_heat_efficiency, "Units", "COP")
-          XMLHelper.add_element(annual_heat_efficiency, "Value", htg_cop)
+        end
+        XMLHelper.add_element(heat_pump, "BackupHeatingSwitchoverTemperature", supp_temp)
+        XMLHelper.add_element(heat_pump, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round.to_s)
+        annual_cool_efficiency = heat_pump.add_element "AnnualCoolEfficiency"
+        XMLHelper.add_element(annual_cool_efficiency, "Units", "COP")
+        XMLHelper.add_element(annual_cool_efficiency, "Value", clg_cop)
+        annual_heat_efficiency = heat_pump.add_element "AnnualHeatEfficiency"
+        XMLHelper.add_element(annual_heat_efficiency, "Units", "COP")
+        XMLHelper.add_element(annual_heat_efficiency, "Value", htg_cop)
+
+      end
+
+      if HVAC.has_furnace(model, runner, control_zone, false, false)
+      
+        htg_equips.each do |htg_equip|
+          heating_system = hvac_plant.add_element "HeatingSystem"
+          htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
+          XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_coil.name)
+          XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_element(heating_system, "UnitLocation", loc)
+          XMLHelper.add_element(heating_system.add_element("HeatingSystemType"), "Furnace")
+          XMLHelper.add_element(heating_system, "HeatingSystemFuel", osm_to_hpxml_fuel_map(htg_coil.fuelType))
+          unless htg_coil.isNominalCapacityAutosized
+            XMLHelper.add_element(heating_system, "HeatingCapacity", OpenStudio.convert(htg_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s)
+          end
+          annual_heat_efficiency = heating_system.add_element "AnnualHeatingEfficiency"
+          XMLHelper.add_element(annual_heat_efficiency, "Units", "AFUE")
+          XMLHelper.add_element(annual_heat_efficiency, "Value", htg_coil.gasBurnerEfficiency.round(2).to_s)
+          XMLHelper.add_element(heating_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round.to_s)
         end
 
-      else
+      end
+      
+      if HVAC.has_boiler(model, runner, control_zone)
+      
+        htg_equips.each do |htg_equip|
+          heating_system = hvac_plant.add_element "HeatingSystem"
+          htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
+          XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_coil.name)
+          XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_element(heating_system, "UnitLocation", loc)
+          XMLHelper.add_element(heating_system.add_element("HeatingSystemType"), "Boiler")
+        end
+
+      end
+      
+      if HVAC.has_electric_baseboard(model, runner, control_zone)
+      
+        htg_equips.each do |htg_equip|
+          heating_system = hvac_plant.add_element "HeatingSystem"
+          XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_equip.name)
+          XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_element(heating_system, "UnitLocation", loc)
+          XMLHelper.add_element(heating_system.add_element("HeatingSystemType"), "ElectricResistance")
+        end
+
+      end     
+
+      if HVAC.has_central_air_conditioner(model, runner, control_zone, false, false)
       
         clg_equips.each do |clg_equip|
           cooling_system = hvac_plant.add_element "CoolingSystem"
+          clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
+          XMLHelper.add_attribute(cooling_system.add_element("SystemIdentifier"), "id", clg_coil.name)
+          XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", cooling_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_element(cooling_system, "UnitLocation", loc)
+          XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
+          unless clg_coil.isRatedTotalCoolingCapacityAutosized
+            XMLHelper.add_element(cooling_system, "CoolingCapacity", OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s)
+          end
+          XMLHelper.add_element(cooling_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round.to_s)
+          annual_cool_efficiency = cooling_system.add_element "AnnualCoolingEfficiency"
+          XMLHelper.add_element(annual_cool_efficiency, "Units", "COP")
+          XMLHelper.add_element(annual_cool_efficiency, "Value", clg_coil.ratedCOP.get.round(2).to_s)
+          XMLHelper.add_element(cooling_system, "SensibleHeatFraction", clg_coil.ratedSensibleHeatRatio.get.round(2).to_s)
         end
         
-        htg_equips.each do |htg_equip|
-          heating_system = hvac_plant.add_element "HeatingSystem"
-        end
-      
       end
+      
+      if HVAC.has_room_air_conditioner(model, runner, control_zone)
+      
+        clg_equips.each do |clg_equip|
+          cooling_system = hvac_plant.add_element "CoolingSystem"
+          clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
+          XMLHelper.add_attribute(cooling_system.add_element("SystemIdentifier"), "id", clg_coil.name)
+          XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", cooling_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_element(cooling_system, "UnitLocation", loc)
+          XMLHelper.add_element(cooling_system, "CoolingSystemType", "room air conditioner")
+        end
+        
+      end      
 
     end
     
     # WaterHeating
-    water_heating = systems.add_element "WaterHeating"    
+    water_heating = nil
     model.getBuildingUnits.each do |unit|
       model.getPlantLoops.each do |pl|
         next if pl.name.to_s != Constants.PlantLoopDomesticWater(unit.name.to_s)
+        if systems.elements["WaterHeating"].nil?
+          water_heating = systems.add_element "WaterHeating"
+        end
         water_heating_system = water_heating.add_element "WaterHeatingSystem"
         
         pl.supplyComponents.each do |wh|
@@ -432,7 +692,23 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
             elsif wh.heaterControlType == "Modulate"
               type = "instantaneous water heater"
             end
-            if Geometry.zone_is_finished(wh.ambientTemperatureThermalZone.get)
+            if Geometry.is_pier_beam(wh.ambientTemperatureThermalZone.get)
+              loc = "other exterior"
+            elsif Geometry.is_crawl(wh.ambientTemperatureThermalZone.get)
+              loc = "crawlspace - vented"
+            elsif Geometry.is_finished_basement(wh.ambientTemperatureThermalZone.get)
+              loc = "basement - conditioned"
+            elsif Geometry.is_unfinished_basement(wh.ambientTemperatureThermalZone.get)
+              loc = "basement - unconditioned"              
+            elsif Geometry.is_unfinished_attic(wh.ambientTemperatureThermalZone.get)
+              loc = "attic - unconditioned"
+            elsif Geometry.is_finished_attic(wh.ambientTemperatureThermalZone.get)
+              loc = "conditioned space"
+            elsif Geometry.is_garage(wh.ambientTemperatureThermalZone.get)
+              loc = "garage - unconditioned"
+            elsif Geometry.is_living(wh.ambientTemperatureThermalZone.get)
+              loc = "conditioned space"            
+            elsif Geometry.zone_is_finished(wh.ambientTemperatureThermalZone.get)
               loc = "conditioned space"
             end
             if wh.setpointTemperatureSchedule.is_initialized

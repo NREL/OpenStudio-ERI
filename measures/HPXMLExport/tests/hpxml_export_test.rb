@@ -93,7 +93,7 @@ class HPXMLExportTest < MiniTest::Test
     final_objects = get_objects(model)
     
     # get new and deleted objects
-    obj_type_exclusions = ["ClimateZones", "Site", "YearDescription", "ScheduleDay", "ScheduleRuleset", "ScheduleRule", "ScheduleTypeLimits", "ScheduleConstant", "ZoneHVACEquipmentList", "SizingSystem", "SizingZone", "Node", "Building", "PortList", "CurveExponent", "CurveCubic", "EnergyManagementSystemSubroutine", "EnergyManagementSystemProgramCallingManager", "EnergyManagementSystemProgram", "EnergyManagementSystemSensor", "EnergyManagementSystemActuator", "EnergyManagementSystemGlobalVariable", "SpaceInfiltrationDesignFlowRate", "SpaceInfiltrationEffectiveLeakageArea", "EnergyManagementSystemOutputVariable", "OutputVariable", "OtherEquipment", "OtherEquipmentDefinition", "SurfacePropertyConvectionCoefficients", "ConnectorSplitter", "ConnectorMixer", "PipeAdiabatic", "ZoneMixing", "AirLoopHVACZoneSplitter", "AirLoopHVACZoneMixer", "AirLoopHVACReturnPlenum", "SizingPlant", "Timestep", "WaterUseConnections", "ScheduleFixedInterval"]
+    obj_type_exclusions = []
     all_new_objects = get_object_additions(initial_objects, final_objects, obj_type_exclusions)
     all_del_objects = get_object_additions(final_objects, initial_objects, obj_type_exclusions)
     
