@@ -1,12 +1,12 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>hpxml_export</name>
+  <name>os_mto_hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>b2116c7c-9dbc-4f57-8482-c5737c0efbb1</version_id>
-  <version_modified>20170526T161017Z</version_modified>
+  <version_id>9203749a-a1c9-4a6c-9d7f-5faf4799ec9c</version_id>
+  <version_modified>20170526T210431Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
-  <class_name>HPXMLExport</class_name>
-  <display_name>HPXML Export</display_name>
+  <class_name>OSMtoHPXMLExport</class_name>
+  <display_name>OSM to HPXML Export</display_name>
   <description>E+ RESNET</description>
   <modeler_description>E+ RESNET</modeler_description>
   <arguments>
@@ -77,10 +77,10 @@
       <checksum>D3BD80AC</checksum>
     </file>
     <file>
-      <filename>hpxml_export_test.rb</filename>
+      <filename>xmlhelper.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3BF189D7</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>F513E45F</checksum>
     </file>
     <file>
       <version>
@@ -91,25 +91,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6245A823</checksum>
+      <checksum>9A6CC7C5</checksum>
     </file>
     <file>
       <filename>create-model-example.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>552E34AD</checksum>
+      <checksum>99FB7A57</checksum>
+    </file>
+    <file>
+      <filename>osm_to_hpxml_export_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EA91EAEA</checksum>
     </file>
     <file>
       <filename>create-model-example.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>C3B82FA0</checksum>
-    </file>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F513E45F</checksum>
+      <checksum>3F7A8203</checksum>
     </file>
   </files>
 </measure>

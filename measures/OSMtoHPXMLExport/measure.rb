@@ -9,11 +9,11 @@ require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 
 # start the measure
-class HPXMLExport < OpenStudio::Measure::ModelMeasure
+class OSMtoHPXMLExport < OpenStudio::Measure::ModelMeasure
 
   # human readable name
   def name
-    return "HPXML Export"
+    return "OSM to HPXML Export"
   end
 
   # human readable description
@@ -93,7 +93,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
     software_info.add_element("SoftwareProgramVersion").add_text(model.getVersion.versionIdentifier)
     
     building = root.add_element "Building"
-    building.add_element "BuildingID", {"id"=>model.getBuilding.name}
+    XMLHelper.add_attribute(building.add_element("BuildingID"), "id", model.getBuilding.name)
     project_status = building.add_element "ProjectStatus"
     project_status.add_element("EventType").add_text("audit")
     building_details = building.add_element "BuildingDetails"
@@ -977,4 +977,4 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
 end
 
 # register the measure to be used by the application
-HPXMLExport.new.registerWithApplication
+OSMtoHPXMLExport.new.registerWithApplication
