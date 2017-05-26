@@ -74,7 +74,7 @@ class SetResidentialWindowArea < OpenStudio::Measure::ModelMeasure
     end
 
     facades = [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight]
-	
+
     wwr = {}
     wwr[Constants.FacadeFront] = runner.getDoubleArgumentValue("front_wwr",user_arguments)
     wwr[Constants.FacadeBack] = runner.getDoubleArgumentValue("back_wwr",user_arguments)

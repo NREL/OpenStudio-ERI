@@ -474,7 +474,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
             #end
 
             #remove the HPWH fan
-            #model.getFanOnOffs.each do |fan|	
+            #model.getFanOnOffs.each do |fan|    
             #    if fan.name.to_s.start_with? "hpwh_fan"
             #        fan.remove
             #        break
@@ -1142,7 +1142,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
         return true
     end
     
-	def validate_parasitics(parasitics, runner)
+    def validate_parasitics(parasitics, runner)
         if parasitics < 0.0
             runner.registerError("Parasitics must be greater than 0.")
             return nil

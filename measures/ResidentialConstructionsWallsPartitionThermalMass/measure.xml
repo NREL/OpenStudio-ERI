@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_partition_thermal_mass</name>
   <uid>7bf22221-1930-4c89-baf9-02a6878c9ad4</uid>
-  <version_id>ec7663f1-721a-4aa6-8ca8-e193a3732416</version_id>
-  <version_modified>20170518T232546Z</version_modified>
+  <version_id>7d893cc1-6f17-405f-bc9c-f4ea857be533</version_id>
+  <version_modified>20170526T161018Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsPartitionThermalMass</class_name>
   <display_name>Set Residential Walls - Partition Thermal Mass</display_name>
@@ -121,17 +121,6 @@
       <checksum>DB3BCEC7</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>E0FF1D84</checksum>
-    </file>
-    <file>
       <filename>WallsPartitionThermalMass_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -160,6 +149,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>7B617277</checksum>
     </file>
   </files>
 </measure>

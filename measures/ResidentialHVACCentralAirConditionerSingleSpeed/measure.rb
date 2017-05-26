@@ -137,7 +137,7 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasur
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-	  
+  
     acCoolingInstalledSEER = runner.getDoubleArgumentValue("seer",user_arguments)
     acCoolingEER = [runner.getDoubleArgumentValue("eer",user_arguments)]
     acSHRRated = [runner.getDoubleArgumentValue("shr",user_arguments)]
@@ -321,7 +321,7 @@ class ProcessSingleSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeasur
       unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cFM_TON_Rated.join(","))
       
     end # unit
-	
+
     return true
  
   end #end the run method

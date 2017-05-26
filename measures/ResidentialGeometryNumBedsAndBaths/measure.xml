@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_bedrooms_and_bathrooms</name>
   <uid>fbcd41af-eace-4695-a5a4-b017acfe1f99</uid>
-  <version_id>2e7f6898-0b23-4be0-acba-1afe9cd7b7aa</version_id>
-  <version_modified>20170518T232546Z</version_modified>
+  <version_id>1dcce5e7-1514-4572-92d8-9b69bd7c9ef7</version_id>
+  <version_modified>20170526T161958Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>AddResidentialBedroomsAndBathrooms</class_name>
   <display_name>Set Residential Number of Beds and Baths</display_name>
@@ -58,17 +58,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>D234AACE</checksum>
-    </file>
-    <file>
       <filename>process_beds_and_baths_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -109,6 +98,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>ABC2BA8C</checksum>
     </file>
   </files>
 </measure>

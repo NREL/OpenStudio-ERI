@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>914a072a-4fc7-43e4-a116-9820fd87e6b0</version_id>
-  <version_modified>20170524T231957Z</version_modified>
+  <version_id>1ccc08d9-6e50-4317-bf26-73303e29b64a</version_id>
+  <version_modified>20170526T161017Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -114,22 +114,22 @@
       <checksum>8E91E02F</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45D09A33</checksum>
-    </file>
-    <file>
       <filename>energy_rating_index_301_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>1E5594D0</checksum>
     </file>
     <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F513E45F</checksum>
+    </file>
+    <file>
       <filename>valid.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>B31FCC27</checksum>
+      <checksum>7CCB2BFA</checksum>
     </file>
     <file>
       <version>
@@ -140,19 +140,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3AD1FC11</checksum>
+      <checksum>B1F39B35</checksum>
     </file>
     <file>
       <filename>hpxml.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BF82E7D9</checksum>
+      <checksum>D765211E</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>687DF1EA</checksum>
+      <checksum>C38F4DC7</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D3BD80AC</checksum>
     </file>
   </files>
 </measure>

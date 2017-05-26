@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>e4bf61e4-b4bf-4971-85fc-0966d43730c5</version_id>
-  <version_modified>20170518T232546Z</version_modified>
+  <version_id>793c841d-624b-4816-a809-d890b3941159</version_id>
+  <version_modified>20170526T161958Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -49,17 +49,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>8E720ABD</checksum>
-    </file>
     <file>
       <filename>DoorArea_Test.rb</filename>
       <filetype>rb</filetype>
@@ -107,6 +96,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>F476EF6D</checksum>
     </file>
   </files>
 </measure>

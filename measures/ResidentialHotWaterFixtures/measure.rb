@@ -81,19 +81,19 @@ class ResidentialHotWaterFixtures < OpenStudio::Measure::ModelMeasure
         plant_loop.setDefaultValue(Constants.Auto)
         args << plant_loop
 
-		return args
-	end #end the arguments method
+        return args
+    end #end the arguments method
 
-	#define what happens when the measure is run
-	def run(model, runner, user_arguments)
-		super(model, runner, user_arguments)
+    #define what happens when the measure is run
+    def run(model, runner, user_arguments)
+        super(model, runner, user_arguments)
 
-		#use the built-in error checking 
-		if not runner.validateUserArguments(arguments(model), user_arguments)
-			return false
-		end
+        #use the built-in error checking 
+        if not runner.validateUserArguments(arguments(model), user_arguments)
+            return false
+        end
 
-		#assign the user inputs to variables
+        #assign the user inputs to variables
         sh_mult = runner.getDoubleArgumentValue("shower_mult",user_arguments)
         s_mult = runner.getDoubleArgumentValue("sink_mult", user_arguments)
         b_mult = runner.getDoubleArgumentValue("bath_mult", user_arguments)
@@ -138,9 +138,9 @@ class ResidentialHotWaterFixtures < OpenStudio::Measure::ModelMeasure
             # Get space
             space = Geometry.get_space_from_string(unit.spaces, space_r)
             next if space.nil?
-			
-			#Get unit number
-			unit_num = Geometry.get_unit_number(model, unit, runner)
+            
+            #Get unit number
+            unit_num = Geometry.get_unit_number(model, unit, runner)
 
             #Get plant loop
             plant_loop = Waterheater.get_plant_loop_from_string(model.getPlantLoops, plant_loop_s, unit.spaces,  unit_num, runner)
@@ -360,7 +360,7 @@ class ResidentialHotWaterFixtures < OpenStudio::Measure::ModelMeasure
         else
             runner.registerFinalCondition("No shower, sink, or bath fixtures have been assigned.")
         end
-	
+    
         return true
         
     end

@@ -213,7 +213,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     finished_basement_ach.setDescription("Constant air exchange rate, in Air Changes per Hour (ACH), for the finished basement.")
     finished_basement_ach.setDefaultValue(0.0)
     args << finished_basement_ach
-	
+    
     #make a double argument for infiltration of unfinished basement
     unfinished_basement_ach = OpenStudio::Measure::OSArgument::makeDoubleArgument("unfinished_basement_ach", false)
     unfinished_basement_ach.setDisplayName("Unfinished Basement: Constant ACH")
@@ -221,7 +221,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     unfinished_basement_ach.setDescription("Constant air exchange rate, in Air Changes per Hour (ACH), for the unfinished basement. A value of 0.10 ACH or greater is recommended for modeling Heat Pump Water Heaters in unfinished basements.")
     unfinished_basement_ach.setDefaultValue(0.1)
     args << unfinished_basement_ach
-	
+    
     #make a double argument for infiltration of crawlspace
     crawl_ach = OpenStudio::Measure::OSArgument::makeDoubleArgument("crawl_ach", false)
     crawl_ach.setDisplayName("Crawlspace: Constant ACH")
@@ -332,13 +332,13 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     standard_types_names = OpenStudio::StringVector.new
     standard_types_names << "2010"
     standard_types_names << "2013"
-	
+    
     #make a double argument for ashrae standard
     mech_vent_ashrae_std = OpenStudio::Measure::OSArgument::makeChoiceArgument("mech_vent_ashrae_std", standard_types_names, false)
     mech_vent_ashrae_std.setDisplayName("Mechanical Ventilation: ASHRAE 62.2 Standard")
     mech_vent_ashrae_std.setDescription("Specifies which version (year) of the ASHRAE 62.2 Standard should be used.")
     mech_vent_ashrae_std.setDefaultValue("2010")
-    args << mech_vent_ashrae_std	
+    args << mech_vent_ashrae_std    
 
     #make a bool argument for infiltration credit
     mech_vent_infil_credit = OpenStudio::Measure::OSArgument::makeBoolArgument("mech_vent_infil_credit",false)
@@ -452,7 +452,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     nat_vent_max_oa_rh.setDescription("Outdoor air relative humidity (0-1) above which windows will not open for natural ventilation.")
     nat_vent_max_oa_rh.setDefaultValue(0.7)
     args << nat_vent_max_oa_rh
-	
+    
     #make a choice arguments for duct location
     duct_locations = OpenStudio::StringVector.new
     duct_locations << "none"

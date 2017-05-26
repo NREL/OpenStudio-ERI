@@ -28,8 +28,8 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Measure::Model
     #make a double argument for finished roof insulation R-value
     cavity_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("cavity_r", true)
     cavity_r.setDisplayName("Cavity Insulation Installed R-value")
-	cavity_r.setUnits("hr-ft^2-R/Btu")
-	cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g., R19 in a 5.5\" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).")
+    cavity_r.setUnits("hr-ft^2-R/Btu")
+    cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly. If batt insulation must be compressed to fit within the cavity (e.g., R19 in a 5.5\" 2x6 cavity), use an R-value that accounts for this effect (see HUD Mobile Home Construction and Safety Standards 3280.509 for reference).")
     cavity_r.setDefaultValue(30.0)
     args << cavity_r
     
@@ -54,18 +54,18 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Measure::Model
     cavity_depth.setDefaultValue(9.25)
     args << cavity_depth
     
-	#make a bool argument for whether the cavity insulation fills the cavity
-	ins_fills_cavity = OpenStudio::Measure::OSArgument::makeBoolArgument("ins_fills_cavity", true)
-	ins_fills_cavity.setDisplayName("Insulation Fills Cavity")
-	ins_fills_cavity.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
+    #make a bool argument for whether the cavity insulation fills the cavity
+    ins_fills_cavity = OpenStudio::Measure::OSArgument::makeBoolArgument("ins_fills_cavity", true)
+    ins_fills_cavity.setDisplayName("Insulation Fills Cavity")
+    ins_fills_cavity.setDescription("When the insulation does not completely fill the depth of the cavity, air film resistances are added to the insulation R-value.")
     ins_fills_cavity.setDefaultValue(false)
-	args << ins_fills_cavity
+    args << ins_fills_cavity
     
     #make a choice argument for finished roof framing factor
     framing_factor = OpenStudio::Measure::OSArgument::makeDoubleArgument("framing_factor", false)
     framing_factor.setDisplayName("Framing Factor")
-	framing_factor.setUnits("frac")
-	framing_factor.setDescription("The framing factor of the finished roof.")
+    framing_factor.setUnits("frac")
+    framing_factor.setDescription("The framing factor of the finished roof.")
     framing_factor.setDefaultValue(0.07)
     args << framing_factor
     

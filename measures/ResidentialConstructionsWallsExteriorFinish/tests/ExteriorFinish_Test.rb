@@ -297,7 +297,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
                 actual_values["LayerConductivity"] += new_object.conductivity
                 actual_values["LayerDensity"] += new_object.density
                 actual_values["LayerSpecificHeat"] += new_object.specificHeat
-                actual_values["LayerThermalAbs"] += new_object.	thermalAbsorptance
+                actual_values["LayerThermalAbs"] += new_object.thermalAbsorptance
                 actual_values["LayerSolarAbs"] += new_object.solarAbsorptance
                 actual_values["LayerVisibleAbs"] += new_object.visibleAbsorptance
             elsif obj_type == "Construction"

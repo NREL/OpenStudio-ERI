@@ -95,7 +95,7 @@ class ProcessBoilerFuel < OpenStudio::Measure::ModelMeasure
     args << boilerOATLowHWST        
     
     #make an argument for entering boiler design temp
-    boilerDesignTemp = OpenStudio::Measure::OSArgument::makeDoubleArgument("design_temp",false)
+    boilerDesignTemp = OpenStudio::Measure::OSArgument::makeDoubleArgument("design_temp",true)
     boilerDesignTemp.setDisplayName("Design Temperature")
     boilerDesignTemp.setUnits("degrees F")
     boilerDesignTemp.setDescription("Temperature of the outlet water.")

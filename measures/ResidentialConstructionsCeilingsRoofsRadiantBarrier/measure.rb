@@ -27,11 +27,11 @@ class ProcessConstructionsCeilingsRoofsRadiantBarrier < OpenStudio::Measure::Mod
     args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a boolean argument for Has Radiant Barrier
-	has_rb = OpenStudio::Measure::OSArgument::makeBoolArgument("has_rb",true)
+    has_rb = OpenStudio::Measure::OSArgument::makeBoolArgument("has_rb",true)
     has_rb.setDescription("Specifies whether the attic has a radiant barrier.")
-	has_rb.setDisplayName("Has Radiant Barrier")
-	has_rb.setDefaultValue(false)
-	args << has_rb
+    has_rb.setDisplayName("Has Radiant Barrier")
+    has_rb.setDefaultValue(false)
+    args << has_rb
     
     return args
   end

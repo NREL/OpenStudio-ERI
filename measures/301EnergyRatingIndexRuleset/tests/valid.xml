@@ -34,8 +34,8 @@
           <YearBuilt>2009</YearBuilt>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofUnits>1</NumberofUnits>
+          <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofBedrooms>4</NumberofBedrooms>
-          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
           <FinishedFloorArea>7000</FinishedFloorArea>
           <NumberofStoriesAboveGrade>2</NumberofStoriesAboveGrade>
@@ -158,6 +158,7 @@
               <Area>2160</Area>
               <Thickness>6</Thickness>
               <BelowGradeDepth>7</BelowGradeDepth>
+              <AdjacentTo>ground</AdjacentTo>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <InsulationGrade>1</InsulationGrade>
@@ -443,6 +444,25 @@
               </Jacket>
             </WaterHeaterInsulation>
           </WaterHeatingSystem>
+          <HotWaterDistribution>
+            <SystemIdentifier id='HWDist_ID1'/>
+            <SystemType>
+              <Recirculation/>
+            </SystemType>
+            <extension>
+              <LongestPipeLength>30</LongestPipeLength>
+            </extension>
+          </HotWaterDistribution>
+          <WaterFixture>
+            <SystemIdentifier id='WF_ID1'/>
+            <WaterFixtureType>shower head</WaterFixtureType>
+            <FlowRate>1.5</FlowRate>
+          </WaterFixture>
+          <WaterFixture>
+            <SystemIdentifier id='WF_ID2'/>
+            <WaterFixtureType>faucet</WaterFixtureType>
+            <FlowRate>2.5</FlowRate>
+          </WaterFixture>
         </WaterHeating>
         <SolarThermal>
           <SolarThermalSystem>

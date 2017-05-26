@@ -29,61 +29,61 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
     #make a double argument for wall continuous insulation R-value
     wall_rigid_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_rigid_r", true)
     wall_rigid_r.setDisplayName("Wall Continuous Insulation Nominal R-value")
-	wall_rigid_r.setUnits("hr-ft^2-R/Btu")
-	wall_rigid_r.setDescription("The R-value of the continuous insulation.")
+    wall_rigid_r.setUnits("hr-ft^2-R/Btu")
+    wall_rigid_r.setDescription("The R-value of the continuous insulation.")
     wall_rigid_r.setDefaultValue(10.0)
     args << wall_rigid_r
 
     #make a double argument for wall continuous insulation thickness
     wall_rigid_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_rigid_thick_in", true)
     wall_rigid_thick_in.setDisplayName("Wall Continuous Insulation Thickness")
-	wall_rigid_thick_in.setUnits("in")
-	wall_rigid_thick_in.setDescription("The thickness of the continuous insulation.")
+    wall_rigid_thick_in.setUnits("in")
+    wall_rigid_thick_in.setDescription("The thickness of the continuous insulation.")
     wall_rigid_thick_in.setDefaultValue(2.0)
     args << wall_rigid_thick_in
 
     #make a double argument for ceiling cavity R-value
     ceil_cavity_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_cavity_r", true)
     ceil_cavity_r.setDisplayName("Ceiling Cavity Insulation Nominal R-value")
-	ceil_cavity_r.setUnits("h-ft^2-R/Btu")
-	ceil_cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
+    ceil_cavity_r.setUnits("h-ft^2-R/Btu")
+    ceil_cavity_r.setDescription("Refers to the R-value of the cavity insulation and not the overall R-value of the assembly.")
     ceil_cavity_r.setDefaultValue(0)
     args << ceil_cavity_r
 
-	#make a choice argument for ceiling cavity insulation installation grade
+    #make a choice argument for ceiling cavity insulation installation grade
     installgrade_display_names = OpenStudio::StringVector.new
     installgrade_display_names << "I"
     installgrade_display_names << "II"
     installgrade_display_names << "III"
-	ceil_cavity_grade = OpenStudio::Measure::OSArgument::makeChoiceArgument("ceil_cavity_grade", installgrade_display_names, true)
-	ceil_cavity_grade.setDisplayName("Ceiling Cavity Install Grade")
-	ceil_cavity_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
+    ceil_cavity_grade = OpenStudio::Measure::OSArgument::makeChoiceArgument("ceil_cavity_grade", installgrade_display_names, true)
+    ceil_cavity_grade.setDisplayName("Ceiling Cavity Install Grade")
+    ceil_cavity_grade.setDescription("Installation grade as defined by RESNET standard. 5% of the cavity is considered missing insulation for Grade 3, 2% for Grade 2, and 0% for Grade 1.")
     ceil_cavity_grade.setDefaultValue("I")
-	args << ceil_cavity_grade
+    args << ceil_cavity_grade
 
-	#make a choice argument for ceiling framing factor
-	ceil_ff = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_ff", true)
+    #make a choice argument for ceiling framing factor
+    ceil_ff = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_ff", true)
     ceil_ff.setDisplayName("Ceiling Framing Factor")
-	ceil_ff.setUnits("frac")
-	ceil_ff.setDescription("Fraction of ceiling that is framing.")
+    ceil_ff.setUnits("frac")
+    ceil_ff.setDescription("Fraction of ceiling that is framing.")
     ceil_ff.setDefaultValue(0.13)
-	args << ceil_ff
+    args << ceil_ff
 
-	#make a choice argument for ceiling joist height
-	ceil_joist_height = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_joist_height", true)
-	ceil_joist_height.setDisplayName("Ceiling Joist Height")
-	ceil_joist_height.setUnits("in")
-	ceil_joist_height.setDescription("Height of the joist member.")
-	ceil_joist_height.setDefaultValue(9.25)
-	args << ceil_joist_height	
+    #make a choice argument for ceiling joist height
+    ceil_joist_height = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_joist_height", true)
+    ceil_joist_height.setDisplayName("Ceiling Joist Height")
+    ceil_joist_height.setUnits("in")
+    ceil_joist_height.setDescription("Height of the joist member.")
+    ceil_joist_height.setDefaultValue(9.25)
+    args << ceil_joist_height    
     
     #make a string argument for exposed perimeter
     exposed_perim = OpenStudio::Measure::OSArgument::makeStringArgument("exposed_perim", true)
-	exposed_perim.setDisplayName("Exposed Perimeter")
-	exposed_perim.setUnits("ft")
-	exposed_perim.setDescription("Total length of the crawlspace's perimeter that is on the exterior of the building's footprint.")
-	exposed_perim.setDefaultValue(Constants.Auto)
-	args << exposed_perim	
+    exposed_perim.setDisplayName("Exposed Perimeter")
+    exposed_perim.setUnits("ft")
+    exposed_perim.setDescription("Total length of the crawlspace's perimeter that is on the exterior of the building's footprint.")
+    exposed_perim.setDefaultValue(Constants.Auto)
+    args << exposed_perim    
     
     return args
   end #end the arguments method

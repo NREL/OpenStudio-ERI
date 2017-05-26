@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>a46a440e-16d5-455e-8999-e32978c4abfb</version_id>
-  <version_modified>20170525T225331Z</version_modified>
+  <version_id>b2116c7c-9dbc-4f57-8482-c5737c0efbb1</version_id>
+  <version_modified>20170526T161017Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>HPXMLExport</class_name>
   <display_name>HPXML Export</display_name>
@@ -51,12 +51,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>45D09A33</checksum>
     </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
@@ -110,6 +104,12 @@
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
       <checksum>C3B82FA0</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F513E45F</checksum>
     </file>
   </files>
 </measure>

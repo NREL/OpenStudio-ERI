@@ -33,7 +33,7 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
-	
+    
     #make an argument for entering furnace installed afue
     afue = OpenStudio::Measure::OSArgument::makeDoubleArgument("afue",true)
     afue.setDisplayName("Installed AFUE")
@@ -48,8 +48,8 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
     fanpower.setUnits("W/cfm")
     fanpower.setDescription("Fan power (in W) per delivered airflow rate (in cfm) of the indoor fan for the maximum fan speed under actual operating conditions.")
     fanpower.setDefaultValue(0.5)
-    args << fanpower	
-	
+    args << fanpower    
+    
     #make a string argument for furnace heating output capacity
     furnacecap = OpenStudio::Measure::OSArgument::makeStringArgument("capacity", true)
     furnacecap.setDisplayName("Heating Capacity")
@@ -69,7 +69,7 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-	
+    
     furnaceInstalledAFUE = runner.getDoubleArgumentValue("afue",user_arguments)
     furnaceOutputCapacity = runner.getStringArgumentValue("capacity",user_arguments)
     if not furnaceOutputCapacity == Constants.SizingAuto
@@ -211,7 +211,7 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
       end
       
     end
-	
+    
     return true
  
   end #end the run method  

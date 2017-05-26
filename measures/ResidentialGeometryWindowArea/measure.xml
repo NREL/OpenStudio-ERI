@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>43cef676-a9f9-4c19-88d5-25869ba83659</version_id>
-  <version_modified>20170518T232547Z</version_modified>
+  <version_id>d456cd2a-aa63-4851-b28f-2c1a85b7c20c</version_id>
+  <version_modified>20170526T161958Z</version_modified>
   <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -100,17 +100,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>636728F8</checksum>
-    </file>
-    <file>
       <filename>WindowArea_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -163,6 +152,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>E2A9C0B3</checksum>
     </file>
   </files>
 </measure>

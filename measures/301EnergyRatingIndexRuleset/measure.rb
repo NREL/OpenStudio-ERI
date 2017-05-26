@@ -150,13 +150,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Obtain list of OpenStudio measures (and arguments)
-    errors, measures = OSMeasures.build_measure_args_from_hpxml(building, weather_file_path)
-    errors.each do |error|
-      runner.registerError(error)
-    end
-    unless errors.empty?
-      return false
-    end
+    measures = OSMeasures.build_measures_from_hpxml(building, weather_file_path)
+    
+    #puts "measures #{measures.to_s}"
     
     # Create OpenStudio model
     if not OSModel.create_geometry(building, runner, model)

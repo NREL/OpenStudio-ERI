@@ -26,19 +26,19 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterial < OpenStudio::Measure::Mo
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-	#make a double argument for solar absorptivity
-	solar_abs = OpenStudio::Measure::OSArgument::makeDoubleArgument("solar_abs", true)
-	solar_abs.setDisplayName("Solar Absorptivity")
-	solar_abs.setDescription("Fraction of the incident radiation that is absorbed.")
-	solar_abs.setDefaultValue(0.85)
-	args << solar_abs
+    #make a double argument for solar absorptivity
+    solar_abs = OpenStudio::Measure::OSArgument::makeDoubleArgument("solar_abs", true)
+    solar_abs.setDisplayName("Solar Absorptivity")
+    solar_abs.setDescription("Fraction of the incident radiation that is absorbed.")
+    solar_abs.setDefaultValue(0.85)
+    args << solar_abs
 
     #make a double argument for emissivity
-	emiss = OpenStudio::Measure::OSArgument::makeDoubleArgument("emissivity", true)
-	emiss.setDisplayName("Emissivity")
-	emiss.setDescription("Measure of the material's ability to emit infrared energy.")
-	emiss.setDefaultValue(0.91)
-	args << emiss
+    emiss = OpenStudio::Measure::OSArgument::makeDoubleArgument("emissivity", true)
+    emiss.setDisplayName("Emissivity")
+    emiss.setDescription("Measure of the material's ability to emit infrared energy.")
+    emiss.setDefaultValue(0.91)
+    args << emiss
     
     #make a choice argument for material
     choices = OpenStudio::StringVector.new

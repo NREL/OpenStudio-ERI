@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>361aa417-4386-4ec8-893c-3181e43517ce</version_id>
-  <version_modified>20170518T232544Z</version_modified>
+  <version_id>287ad4b8-560e-4e34-a771-97d8b2cc9b0c</version_id>
+  <version_modified>20170526T161957Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Set Residential Electric Cooking Range</display_name>
@@ -99,17 +99,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>1E269774</checksum>
-    </file>
-    <file>
       <filename>ResidentialCookingRange_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -180,6 +169,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>40614EAF</checksum>
     </file>
   </files>
 </measure>

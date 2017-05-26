@@ -28,28 +28,28 @@ class ProcessConstructionsWallsSheathing < OpenStudio::Measure::ModelMeasure
     args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a double argument for OSB/Plywood Thickness
-	osb_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("osb_thick_in",true)
-	osb_thick_in.setDisplayName("OSB/Plywood Thickness")
+    osb_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("osb_thick_in",true)
+    osb_thick_in.setDisplayName("OSB/Plywood Thickness")
     osb_thick_in.setUnits("in")
-	osb_thick_in.setDescription("Specifies the thickness of the walls' OSB/plywood sheathing. Enter 0 for no sheathing (if the wall has other means to handle the shear load on the wall such as cross-bracing).")
-	osb_thick_in.setDefaultValue(0.5)
-	args << osb_thick_in
+    osb_thick_in.setDescription("Specifies the thickness of the walls' OSB/plywood sheathing. Enter 0 for no sheathing (if the wall has other means to handle the shear load on the wall such as cross-bracing).")
+    osb_thick_in.setDefaultValue(0.5)
+    args << osb_thick_in
     
-	#make a double argument for Rigid Insulation R-value
-	rigid_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("rigid_r",true)
-	rigid_r.setDisplayName("Continuous Insulation Nominal R-value")
+    #make a double argument for Rigid Insulation R-value
+    rigid_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("rigid_r",true)
+    rigid_r.setDisplayName("Continuous Insulation Nominal R-value")
     rigid_r.setUnits("h-ft^2-R/Btu")
     rigid_r.setDescription("The R-value of the continuous insulation.")
-	rigid_r.setDefaultValue(0.0)
-	args << rigid_r
+    rigid_r.setDefaultValue(0.0)
+    args << rigid_r
 
-	#make a double argument for Rigid Insulation Thickness
-	rigid_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("rigid_thick_in",true)
-	rigid_thick_in.setDisplayName("Continuous Insulation Thickness")
+    #make a double argument for Rigid Insulation Thickness
+    rigid_thick_in = OpenStudio::Measure::OSArgument::makeDoubleArgument("rigid_thick_in",true)
+    rigid_thick_in.setDisplayName("Continuous Insulation Thickness")
     rigid_thick_in.setUnits("in")
     rigid_thick_in.setDescription("The thickness of the continuous insulation.")
-	rigid_thick_in.setDefaultValue(0.0)
-	args << rigid_thick_in
+    rigid_thick_in.setDefaultValue(0.0)
+    args << rigid_thick_in
 
     return args
   end

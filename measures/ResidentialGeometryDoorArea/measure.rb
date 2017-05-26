@@ -45,7 +45,7 @@ class CreateResidentialDoorArea < OpenStudio::Measure::ModelMeasure
     if !runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-	
+
     door_area = runner.getDoubleArgumentValue("door_area",user_arguments)
     
     model.getSubSurfaces.each do |sub_surface|

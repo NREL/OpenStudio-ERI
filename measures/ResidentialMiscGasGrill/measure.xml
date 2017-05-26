@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>bd6f51a4-b870-4215-892b-77aa7d31a120</version_id>
-  <version_modified>20170518T232553Z</version_modified>
+  <version_id>9c6f3c38-69eb-4b35-9bec-e8a6a748cecd</version_id>
+  <version_modified>20170526T162005Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
@@ -95,17 +95,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>ABEB013F</checksum>
-    </file>
-    <file>
       <filename>ResidentialGasGrill_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -152,6 +141,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>0DE7DDD5</checksum>
     </file>
   </files>
 </measure>

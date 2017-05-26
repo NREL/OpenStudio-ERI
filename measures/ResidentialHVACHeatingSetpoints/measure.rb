@@ -34,7 +34,7 @@ class ProcessHeatingSetpoints < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-   	#Make a string argument for 24 weekday heating set point values
+   #Make a string argument for 24 weekday heating set point values
     htg_wkdy = OpenStudio::Measure::OSArgument::makeStringArgument("htg_wkdy", false)
     htg_wkdy.setDisplayName("Weekday Setpoint")
     htg_wkdy.setDescription("Specify a single heating setpoint or a 24-hour comma-separated heating schedule for the weekdays.")
@@ -42,14 +42,14 @@ class ProcessHeatingSetpoints < OpenStudio::Measure::ModelMeasure
     htg_wkdy.setDefaultValue("71")
     args << htg_wkdy
 
-   	#Make a string argument for 24 weekend heating set point values
+    #Make a string argument for 24 weekend heating set point values
     htg_wked = OpenStudio::Measure::OSArgument::makeStringArgument("htg_wked", false)
     htg_wked.setDisplayName("Weekend Setpoint")
     htg_wked.setDescription("Specify a single heating setpoint or a 24-hour comma-separated heating schedule for the weekend.")
     htg_wked.setUnits("degrees F")
     htg_wked.setDefaultValue("71")
     args << htg_wked
-	
+
     return args
   end #end the arguments method
 
