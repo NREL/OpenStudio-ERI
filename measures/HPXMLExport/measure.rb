@@ -514,7 +514,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
               supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
             end
             supp_temp = OpenStudio.convert(htg_equip.maximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation,"C","F").get.round(1).to_s
-            supp_afue = supp_coil.efficiency.to_s
+            supp_afue = supp_coil.efficiency.round(2).to_s
             clg_cop = clg_coil.ratedCOP.get.round(2).to_s
             htg_cop = htg_coil.ratedCOP.round(2).to_s
           elsif HVAC.has_mini_split_heat_pump(model, runner, control_zone)
@@ -533,7 +533,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
                 htg_cop = vrf.ratedHeatingCOP.round(2).to_s
               end
             elsif htg_equip.to_ZoneHVACBaseboardConvectiveElectric.is_initialized
-              supp_afue = htg_equip.efficiency.to_s
+              supp_afue = htg_equip.efficiency.round(2).to_s
               unless htg_equip.isNominalCapacityAutosized
                 supp_cap = OpenStudio.convert(htg_equip.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
               end
@@ -548,10 +548,9 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
               supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
             end
             supp_temp = OpenStudio.convert(htg_equip.maximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation,"C","F").get.round(1).to_s
-            supp_afue = supp_coil.efficiency.to_s
+            supp_afue = supp_coil.efficiency.round(2).to_s
             clg_cop = clg_coil.ratedCoolingCoefficientofPerformance.round(2).to_s
-            htg_cop = htg_coil.ratedHeatingCoefficientofPerformance.round(2).to_s
-            
+            htg_cop = htg_coil.ratedHeatingCoefficientofPerformance.round(2).to_s            
           end
           
         end
@@ -559,6 +558,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
         heat_pump = hvac_plant.add_element "HeatPump"
         XMLHelper.add_attribute(heat_pump.add_element("SystemIdentifier"), "id", name)
         XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heat_pump.elements["SystemIdentifier"].attributes["id"])
+        XMLHelper.add_attribute(heat_pump.add_element("AttachedToZone"), "idref", control_zone.name)        
         XMLHelper.add_element(heat_pump, "UnitLocation", loc)
         XMLHelper.add_element(heat_pump, "HeatPumpType", type)
         unless htg_cap.nil?
@@ -590,6 +590,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
           htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
           XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_coil.name)
           XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_attribute(heating_system.add_element("AttachedToZone"), "idref", control_zone.name)
           XMLHelper.add_element(heating_system, "UnitLocation", loc)
           XMLHelper.add_element(heating_system.add_element("HeatingSystemType"), "Furnace")
           XMLHelper.add_element(heating_system, "HeatingSystemFuel", osm_to_hpxml_fuel_map(htg_coil.fuelType))
@@ -607,12 +608,26 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       if HVAC.has_boiler(model, runner, control_zone)
       
         htg_equips.each do |htg_equip|
-          heating_system = hvac_plant.add_element "HeatingSystem"
           htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
-          XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_coil.name)
-          XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
-          XMLHelper.add_element(heating_system, "UnitLocation", loc)
-          XMLHelper.add_element(heating_system.add_element("HeatingSystemType"), "Boiler")
+          htg_coil.plantLoop.get.supplyComponents.each do |supply_component|
+            next unless supply_component.to_BoilerHotWater.is_initialized
+            boiler = supply_component.to_BoilerHotWater.get
+            heating_system = hvac_plant.add_element "HeatingSystem"
+            XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_coil.name)
+            XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
+            XMLHelper.add_attribute(heating_system.add_element("AttachedToZone"), "idref", control_zone.name)
+            XMLHelper.add_element(heating_system, "UnitLocation", loc)
+            heating_system_type = heating_system.add_element "HeatingSystemType"
+            XMLHelper.add_element(heating_system_type.add_element("Boiler"), "BoilerType", "hot water")
+            XMLHelper.add_element(heating_system, "HeatingSystemFuel", osm_to_hpxml_fuel_map(boiler.fuelType))
+            unless boiler.isNominalCapacityAutosized
+              XMLHelper.add_element(heating_system, "HeatingCapacity", OpenStudio.convert(boiler.nominalCapacity.get,"W","Btu/h").get.round(1).to_s)
+            end
+            annual_heat_efficiency = heating_system.add_element "AnnualHeatingEfficiency"
+            XMLHelper.add_element(annual_heat_efficiency, "Units", "AFUE")
+            XMLHelper.add_element(annual_heat_efficiency, "Value", boiler.nominalThermalEfficiency.round(2).to_s)
+            XMLHelper.add_element(heating_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round.to_s)
+          end
         end
 
       end
@@ -623,8 +638,18 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
           heating_system = hvac_plant.add_element "HeatingSystem"
           XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_equip.name)
           XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_attribute(heating_system.add_element("AttachedToZone"), "idref", control_zone.name)
           XMLHelper.add_element(heating_system, "UnitLocation", loc)
-          XMLHelper.add_element(heating_system.add_element("HeatingSystemType"), "ElectricResistance")
+          heating_system_type = heating_system.add_element "HeatingSystemType"
+          XMLHelper.add_element(heating_system_type.add_element("ElectricResistance"), "ElectricDistribution", "baseboard")          
+          XMLHelper.add_element(heating_system, "HeatingSystemFuel", "electricity")
+          unless htg_equip.isNominalCapacityAutosized
+            XMLHelper.add_element(heating_system, "HeatingCapacity", OpenStudio.convert(htg_equip.nominalCapacity.get,"W","Btu/h").get.round(1).to_s)
+          end
+          annual_heat_efficiency = heating_system.add_element "AnnualHeatingEfficiency"
+          XMLHelper.add_element(annual_heat_efficiency, "Units", "AFUE")
+          XMLHelper.add_element(annual_heat_efficiency, "Value", htg_equip.efficiency.round(2).to_s)
+          XMLHelper.add_element(heating_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round.to_s)
         end
 
       end     
@@ -636,6 +661,7 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
           clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
           XMLHelper.add_attribute(cooling_system.add_element("SystemIdentifier"), "id", clg_coil.name)
           XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", cooling_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_attribute(cooling_system.add_element("AttachedToZone"), "idref", control_zone.name)
           XMLHelper.add_element(cooling_system, "UnitLocation", loc)
           XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
           unless clg_coil.isRatedTotalCoolingCapacityAutosized
@@ -657,8 +683,17 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
           clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
           XMLHelper.add_attribute(cooling_system.add_element("SystemIdentifier"), "id", clg_coil.name)
           XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", cooling_system.elements["SystemIdentifier"].attributes["id"])
+          XMLHelper.add_attribute(cooling_system.add_element("AttachedToZone"), "idref", control_zone.name)
           XMLHelper.add_element(cooling_system, "UnitLocation", loc)
           XMLHelper.add_element(cooling_system, "CoolingSystemType", "room air conditioner")
+          unless clg_coil.isRatedTotalCoolingCapacityAutosized
+            XMLHelper.add_element(cooling_system, "CoolingCapacity", OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s)
+          end
+          XMLHelper.add_element(cooling_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round.to_s)
+          annual_cool_efficiency = cooling_system.add_element "AnnualCoolingEfficiency"
+          XMLHelper.add_element(annual_cool_efficiency, "Units", "COP")
+          XMLHelper.add_element(annual_cool_efficiency, "Value", clg_coil.ratedCOP.get.round(2).to_s)
+          XMLHelper.add_element(cooling_system, "SensibleHeatFraction", clg_coil.ratedSensibleHeatRatio.get.round(2).to_s)          
         end
         
       end      
@@ -714,12 +749,14 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
             if wh.setpointTemperatureSchedule.is_initialized
               temp = OpenStudio.convert(wh.setpointTemperatureSchedule.get.to_ScheduleConstant.get.value,"C","F").get.round(1).to_s
             end
+            control_zone = wh.ambientTemperatureThermalZone.get
           elsif wh.to_WaterHeaterStratified.is_initialized
             wh = wh.to_WaterHeaterStratified.get
           elsif wh.to_WaterHeaterHeatPump.is_initialized
             wh = wh.to_WaterHeaterHeatPump.get
           end
           XMLHelper.add_attribute(water_heating_system.add_element("SystemIdentifier"), "id", pl.name)
+          XMLHelper.add_attribute(water_heating_system.add_element("AttachedToZone"), "idref", control_zone.name)
           XMLHelper.add_element(water_heating_system, "FuelType", fuel)
           XMLHelper.add_element(water_heating_system, "WaterHeaterType", type)
           XMLHelper.add_element(water_heating_system, "Location", loc)
@@ -767,42 +804,144 @@ class HPXMLExport < OpenStudio::Measure::ModelMeasure
       space.electricEquipment.each do |ee|
         next unless ee.name.to_s.downcase.include? "clothes washer"
         clothes_washer = appliances.add_element "ClothesWasher"
-        XMLHelper.add_attribute(clothes_washer.add_element("SystemIdentifier"), "id", "appliance #{ee.name}")
+        XMLHelper.add_attribute(clothes_washer.add_element("SystemIdentifier"), "id", "#{ee.name}")
         XMLHelper.add_element(clothes_washer, "Location", loc)
       end
       space.electricEquipment.each do |ee|
         next unless ee.name.to_s.downcase.include? "clothes dryer"
         clothes_dryer = appliances.add_element "ClothesDryer"
-        XMLHelper.add_attribute(clothes_dryer.add_element("SystemIdentifier"), "id", "appliance #{ee.name}")
+        XMLHelper.add_attribute(clothes_dryer.add_element("SystemIdentifier"), "id", "#{ee.name}")
         XMLHelper.add_element(clothes_dryer, "Location", loc)
+        XMLHelper.add_element(clothes_dryer, "FuelType", "electricity")
       end
+      space.otherEquipment.each do |oe|
+        next unless oe.name.to_s.downcase.include? "clothes dryer"
+        clothes_dryer = appliances.add_element "ClothesDryer"
+        XMLHelper.add_attribute(clothes_dryer.add_element("SystemIdentifier"), "id", "#{oe.name}")
+        XMLHelper.add_element(clothes_dryer, "Location", loc)
+        XMLHelper.add_element(clothes_dryer, "FuelType", osm_to_hpxml_fuel_map(oe.fuelType))
+      end      
       space.electricEquipment.each do |ee|
         next unless ee.name.to_s.downcase.include? "dishwasher"
         dishwasher = appliances.add_element "Dishwasher"
-        XMLHelper.add_attribute(dishwasher.add_element("SystemIdentifier"), "id", "appliance #{ee.name}")
+        XMLHelper.add_attribute(dishwasher.add_element("SystemIdentifier"), "id", "#{ee.name}")
       end      
       space.electricEquipment.each do |ee|
         next unless ee.name.to_s.downcase.include? "refrigerator"
         refrigerator = appliances.add_element "Refrigerator"
-        XMLHelper.add_attribute(refrigerator.add_element("SystemIdentifier"), "id", "appliance #{ee.name}")
+        XMLHelper.add_attribute(refrigerator.add_element("SystemIdentifier"), "id", "#{ee.name}")
         XMLHelper.add_element(refrigerator, "Location", loc)
         XMLHelper.add_element(refrigerator, "RatedAnnualkWh", ee.electricEquipmentDefinition.designLevel.get)
       end
       space.electricEquipment.each do |ee|
         next unless ee.name.to_s.downcase.include? "cooking range"
         cooking_range = appliances.add_element "CookingRange"
-        XMLHelper.add_attribute(cooking_range.add_element("SystemIdentifier"), "id", "appliance #{ee.name}")
+        XMLHelper.add_attribute(cooking_range.add_element("SystemIdentifier"), "id", "#{ee.name}")
         XMLHelper.add_element(cooking_range, "Location", loc)
-      end      
+      end
+      space.otherEquipment.each do |oe|
+        next unless oe.name.to_s.downcase.include? "cooking range"
+        cooking_range = appliances.add_element "CookingRange"
+        XMLHelper.add_attribute(cooking_range.add_element("SystemIdentifier"), "id", "#{oe.name}")
+        XMLHelper.add_element(cooking_range, "Location", loc)
+        XMLHelper.add_element(cooking_range, "FuelType", osm_to_hpxml_fuel_map(oe.fuelType))
+      end
+      space.electricEquipment.each do |ee|
+        next unless ee.name.to_s.downcase.include? "freezer"
+        freezer = appliances.add_element "Freezer"
+        XMLHelper.add_attribute(freezer.add_element("SystemIdentifier"), "id", "#{ee.name}")
+        XMLHelper.add_element(freezer, "Location", loc)
+        XMLHelper.add_element(freezer, "RatedAnnualkWh", ee.electricEquipmentDefinition.designLevel.get)
+      end
     end
     
     # Lighting
     lighting = building_details.add_element "Lighting"
     
+    model.getLightss.each do |l|
+      next unless l.name.to_s.downcase.include? "lighting"
+      lighting_group = lighting.add_element "LightingGroup"
+      XMLHelper.add_attribute(lighting_group.add_element("SystemIdentifier"), "id", l.name)
+      XMLHelper.add_attribute(lighting_group.add_element("AttachedToSpace"), "idref", l.space.get.name)
+      XMLHelper.add_element(lighting_group, "Location", "interior")
+      XMLHelper.add_element(lighting_group, "FloorAreaServed", OpenStudio.convert(l.space.get.floorArea,"m^2","ft^2").get.round.to_s)
+    end    
+    
     model.getElectricEquipments.each do |ee|
       next unless ee.name.to_s.downcase.include? "ceiling fan"
       ceiling_fan = lighting.add_element "CeilingFan"
-      XMLHelper.add_attribute(ceiling_fan.add_element("SystemIdentifier"), "id", ee.name)
+      XMLHelper.add_attribute(ceiling_fan.add_element("SystemIdentifier"), "id", ee.name)    
+    end
+    
+    # Pools
+    pools = building_details.add_element "Pools"
+    
+    model.getElectricEquipments.each do |ee|
+      next unless ee.name.to_s.downcase.include? "pool heater"
+      pool = pools.add_element "Pool"
+      XMLHelper.add_attribute(pool.add_element("SystemIdentifier"), "id", ee.name)
+      heater = pool.add_element "Heater"
+      XMLHelper.add_attribute(heater.add_element("SystemIdentifier"), "id", "heater #{ee.name}")
+      XMLHelper.add_element(heater, "Type", "electric resistance")
+    end
+    
+    model.getGasEquipments.each do |ge|
+      next unless ge.name.to_s.downcase.include? "pool heater"
+      pool = pools.add_element "Pool"
+      XMLHelper.add_attribute(pool.add_element("SystemIdentifier"), "id", ge.name)
+      heater = pool.add_element "Heater"
+      XMLHelper.add_attribute(heater.add_element("SystemIdentifier"), "id", "heater #{ge.name}")
+      XMLHelper.add_element(heater, "Type", "gas fired")
+    end
+    
+    model.getElectricEquipments.each do |ee|
+      next unless ee.name.to_s.downcase.include? "pool pump"
+      pool = pools.add_element "Pool"
+      XMLHelper.add_attribute(pool.add_element("SystemIdentifier"), "id", ee.name)
+      pool_pumps = pool.add_element "PoolPumps"
+      pool_pump = pool_pumps.add_element "PoolPump"
+      XMLHelper.add_attribute(pool_pump.add_element("SystemIdentifier"), "id", "pump #{ee.name}")
+    end
+    
+    model.getElectricEquipments.each do |ee|
+      next unless ee.name.to_s.downcase.include? "hot tub heater"
+      pool = pools.add_element "Pool"
+      XMLHelper.add_attribute(pool.add_element("SystemIdentifier"), "id", ee.name)
+      heater = pool.add_element "Heater"
+      XMLHelper.add_attribute(heater.add_element("SystemIdentifier"), "id", "heater #{ee.name}")
+      XMLHelper.add_element(heater, "Type", "electric resistance")
+    end
+    
+    model.getGasEquipments.each do |ge|
+      next unless ge.name.to_s.downcase.include? "hot tub heater"
+      pool = pools.add_element "Pool"
+      XMLHelper.add_attribute(pool.add_element("SystemIdentifier"), "id", ge.name)
+      heater = pool.add_element "Heater"
+      XMLHelper.add_attribute(heater.add_element("SystemIdentifier"), "id", "heater #{ge.name}")
+      XMLHelper.add_element(heater, "Type", "gas fired")
+    end
+    
+    model.getElectricEquipments.each do |ee|
+      next unless ee.name.to_s.downcase.include? "hot tub pump"
+      pool = pools.add_element "Pool"
+      XMLHelper.add_attribute(pool.add_element("SystemIdentifier"), "id", ee.name)
+      pool_pumps = pool.add_element "PoolPumps"
+      pool_pump = pool_pumps.add_element "PoolPump"
+      XMLHelper.add_attribute(pool_pump.add_element("SystemIdentifier"), "id", "pump #{ee.name}")
+    end    
+    
+    # MiscLoads
+    misc_loads = building_details.add_element "MiscLoads"
+    
+    model.getElectricEquipments.each do |ee|
+      next unless ee.name.to_s.downcase.include? "plug loads"
+      plug_load = misc_loads.add_element "PlugLoad"
+      XMLHelper.add_attribute(plug_load.add_element("SystemIdentifier"), "id", ee.name)
+      XMLHelper.add_attribute(plug_load.add_element("AttachedToSpace"), "idref", ee.space.get.name)
+      XMLHelper.add_element(plug_load, "Location", "interior")
+      load = plug_load.add_element "Load"
+      XMLHelper.add_element(load, "Units", "W")
+      XMLHelper.add_element(load, "Value", ee.electricEquipmentDefinition.designLevel.get.round(1))
     end
     
     errors = []
