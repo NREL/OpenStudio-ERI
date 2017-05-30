@@ -166,7 +166,15 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     end
     
     # Enclosure
-    enclosure = building_details.add_element "Enclosure"    
+    enclosure = building_details.add_element "Enclosure"
+    
+    # AirInfiltration
+    air_infiltration = enclosure.add_element "AirInfiltration"
+    air_infiltration_measurement = air_infiltration.add_element "AirInfiltrationMeasurement"
+    XMLHelper.add_attribute(air_infiltration_measurement.add_element("SystemIdentifier"), "id", "air infiltration measurement")
+    building_air_leakage = air_infiltration_measurement.add_element "BuildingAirLeakage"
+    XMLHelper.add_element(building_air_leakage, "UnitofMeasure", "ACH")
+    XMLHelper.add_element(building_air_leakage, "AirLeakage", options["ResidentialAirflow"]["living_ach50"])    
     
     # Roofs
     attic_and_roof = enclosure.add_element "AtticAndRoof"
@@ -350,15 +358,29 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         end
         wall.add_element("ExteriorAdjacentTo").add_text(exterior_adjacent_to)
         wall.add_element("InteriorAdjacentTo").add_text("living space")
-        model.getBuildingUnits.each do |unit|
-          if unit.getFeatureAsString(Constants.SizingInfoWallType(surface)).is_initialized
-            if unit.getFeatureAsString(Constants.SizingInfoWallType(surface)).get == "WoodStud"
-              wall_type = wall.add_element("WallType")
-              wall_type.add_element("WoodStud")
-            end
-          end
+        wall_type = wall.add_element("WallType")
+        if options.keys.include? "ResidentialConstructionsWallsExteriorWoodStud"
+          wall_type.add_element("WoodStud")
+        elsif options.keys.include? "ResidentialConstructionsWallsExteriorDoubleWoodStud"
+          wall_type.add_element("DoubleWoodStud")
+        elsif options.keys.include? "ResidentialConstructionsWallsExteriorSteelStud"
+          wall_type.add_element("SteelFrame")
+        elsif options.keys.include? "ResidentialConstructionsWallsExteriorICF"
+          wall_type.add_element("InsulatedConcreteForms")
+        elsif options.keys.include? "ResidentialConstructionsWallsExteriorSIP"
+          wall_type.add_element("StructurallyInsulatedPanel")
+        elsif options.keys.include? "ResidentialConstructionsWallsExteriorCMU"
+          wall_type.add_element("ConcreteMasonryUnit")
         end
         wall.add_element("Area").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
+        studs = wall.add_element "Studs"
+        XMLHelper.add_element(studs, "Size", get_studs_size_from_thickness(options["ResidentialConstructionsWallsExteriorWoodStud"]["cavity_depth"].to_f))
+        XMLHelper.add_element(studs, "FramingFactor", options["ResidentialConstructionsWallsExteriorWoodStud"]["framing_factor"])
+        insulation = wall.add_element "Insulation"
+        XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
+        XMLHelper.add_element(insulation, "InsulationGrade", insulation_grade(options["ResidentialConstructionsWallsExteriorWoodStud"]["install_grade"]))
+        layer = insulation.add_element "Layer"
+        XMLHelper.add_element(layer, "NominalRValue", options["ResidentialConstructionsWallsExteriorWoodStud"]["cavity_r"])        
       end
     end    
     
@@ -372,6 +394,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       window = windows.add_element "Window"
       XMLHelper.add_attribute(window.add_element("SystemIdentifier"), "id", subsurface.name)
       window.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
+      XMLHelper.add_element(window, "UFactor", options["ResidentialConstructionsWindows"]["ufactor"])
+      XMLHelper.add_element(window, "SHGC", options["ResidentialConstructionsWindows"]["shgc"])      
       XMLHelper.add_attribute(window.add_element("AttachedToWall"), "idref", subsurface.surface.get.name)
     end
     
@@ -386,10 +410,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_attribute(door.add_element("SystemIdentifier"), "id", subsurface.name)
       XMLHelper.add_attribute(door.add_element("AttachedToWall"), "idref", subsurface.surface.get.name)
       door.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
+      XMLHelper.add_element(door, "RValue", 1.0 / options["ResidentialConstructionsDoors"]["door_uvalue"].to_f)
     end
-    
-    # Non-geometry
-    # TODO
     
     errors = []
     XMLHelper.validate(doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
@@ -406,6 +428,19 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     
     return true
 
+  end
+  
+  def get_studs_size_from_thickness(th)
+    if (th - 3.5).abs < 0.1
+      return "2x4"
+    elsif (th - 5.5).abs < 0.1
+      return "2x6"
+    end
+  end
+  
+  def insulation_grade(gr)
+    map = {"I"=>1, "II"=>2, "III"=>3}
+    return map[gr]
   end
   
 end
