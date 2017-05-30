@@ -26,7 +26,7 @@ class WindowAreaTest < MiniTest::Test
     result = _test_error(osm_geo, args_hash)
     assert(result.errors.size == 0)
     assert_equal("Success", result.value.valueName)
-    assert_equal(result.finalCondition.get.logMessage, "No windows added because all window-to-wall ratios were set to 0.")  
+    assert_equal(result.finalCondition.get.logMessage, "No windows added.")
   end
 
   def test_sfd_new_construction_rotated
@@ -124,11 +124,65 @@ class WindowAreaTest < MiniTest::Test
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Window Aspect Ratio must be greater than 0.")
   end  
   
+  def test_argument_error_both_front
+    args_hash = {}
+    args_hash["front_wwr"] = 0.5
+    args_hash["front_area"] = 50
+    result = _test_error(osm_geo, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Both front window-to-wall ratio and front window area are specified.")
+  end
+  
+  def test_argument_error_both_back
+    args_hash = {}
+    args_hash["back_wwr"] = 0.5
+    args_hash["back_area"] = 50
+    result = _test_error(osm_geo, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Both back window-to-wall ratio and back window area are specified.")
+  end
+  
+  def test_argument_error_both_left
+    args_hash = {}
+    args_hash["left_wwr"] = 0.5
+    args_hash["left_area"] = 50
+    result = _test_error(osm_geo, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Both left window-to-wall ratio and left window area are specified.")
+  end
+  
+  def test_argument_error_both_right
+    args_hash = {}
+    args_hash["right_wwr"] = 0.5
+    args_hash["right_area"] = 50
+    result = _test_error(osm_geo, args_hash)
+    assert(result.errors.size == 1)
+    assert_equal("Fail", result.value.valueName)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Both right window-to-wall ratio and right window area are specified.")
+  end
+  
   def test_single_family_attached_new_construction
     num_units = 4
     args_hash = {}
     args_hash["back_wwr"] = 0.12
     args_hash["right_wwr"] = 0.12    
+    _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, [0, 0, 0, 0, 0], [86.4, 57.6, 43.2, 28.8])
+  end
+  
+  def test_single_family_attached_new_construction_areas
+    num_units = 4
+    args_hash = {}
+    args_hash["front_wwr"] = 0.0
+    args_hash["back_wwr"] = 0.0
+    args_hash["left_wwr"] = 0.0
+    args_hash["right_wwr"] = 0.0
+    args_hash["front_area"] = 86.4
+    args_hash["back_area"] = 57.6
+    args_hash["left_area"] = 43.2
+    args_hash["right_area"] = 28.8
     _test_measure("SFA_4units_1story_FB_UA_Denver.osm", args_hash, [0, 0, 0, 0, 0], [86.4, 57.6, 43.2, 28.8])
   end
   

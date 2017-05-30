@@ -6,6 +6,7 @@ require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/hpxml"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/xmlhelper"
+require "#{File.dirname(__FILE__)}/resources/helper_methods"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -158,7 +159,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     if not OSModel.create_geometry(building, runner, model)
       return false
     end
-    if not OSModel.apply_measures(measures_dir, measures, runner, model, show_measure_calls=false)
+    if not apply_measures(measures_dir, measures, runner, model, show_measure_calls=false)
       return false
     end
     

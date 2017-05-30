@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170526T210923Z",
+   "created_at" : "20170530T212126Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -48,8 +48,10 @@
       },
       {
          "arguments" : {
+            "lat_frac" : "0.427",
             "monthly_sch" : "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
             "num_occ" : "auto",
+            "occ_gain" : "384",
             "weekday_sch" : "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
             "weekend_sch" : "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
          },
@@ -89,9 +91,13 @@
       {
          "arguments" : {
             "aspect_ratio" : "1.333",
+            "back_area" : "0",
             "back_wwr" : "0.18",
+            "front_area" : "0",
             "front_wwr" : "0.18",
+            "left_area" : "0",
             "left_wwr" : "0.18",
+            "right_area" : "0",
             "right_wwr" : "0.18"
          },
          "description" : "Sets the window area for the building. Doors with glazing should be set as window area.",
@@ -795,5 +801,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170526T210926Z"
+   "updated_at" : "20170530T212128Z"
 }

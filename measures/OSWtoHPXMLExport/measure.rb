@@ -4,7 +4,8 @@
 require 'rexml/document'
 
 require "#{File.dirname(__FILE__)}/resources/xmlhelper"
-require "#{File.dirname(__FILE__)}/resources/hpxml"
+require "#{File.dirname(__FILE__)}/resources/constants"
+require "#{File.dirname(__FILE__)}/resources/helper_methods"
 
 # start the measure
 class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
@@ -114,7 +115,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     software_info.add_element("SoftwareProgramVersion").add_text(model.getVersion.versionIdentifier)
     
     # Geometry
-    if not OSModel.apply_measures(measures_dir, geometry, runner, model, show_measure_calls=false)
+    if not apply_measures(measures_dir, geometry, runner, model, show_measure_calls=false)
       return false
     end    
     

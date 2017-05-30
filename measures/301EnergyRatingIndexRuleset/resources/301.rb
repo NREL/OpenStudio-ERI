@@ -1,5 +1,6 @@
 require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/xmlhelper"
+require "#{File.dirname(__FILE__)}/waterheater"
 
 class EnergyRatingIndex301Ruleset
 
@@ -14,9 +15,6 @@ class EnergyRatingIndex301Ruleset
       return errors, building
     end
     
-    # Get the building element
-    building = hpxml_doc.elements["//Building"]
-    
     # Update XML type
     header = hpxml_doc.elements["//XMLTransactionHeaderInformation"]
     if header.elements["XMLType"].nil?
@@ -25,16 +23,16 @@ class EnergyRatingIndex301Ruleset
       header.elements["XMLType"].text += calc_type
     end
     
-    # Get high-level inputs needed by multiple methods
-    cfa = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea").to_f
-    nbeds = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms").to_i
-    climate_zone = XMLHelper.get_value(building, "BuildingDetails/ClimateandRiskZones/ClimateZoneIECC/ClimateZone")
+    # Get the building element
+    building = hpxml_doc.elements["//Building"]
     
+    cfa, nbeds, nbaths, climate_zone = get_high_level_inputs(building)
+        
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
-        apply_reference_home_ruleset(building, cfa, nbeds, climate_zone)
+        apply_reference_home_ruleset(building, cfa, nbeds, nbaths, climate_zone)
     elsif calc_type == Constants.CalcTypeERIRatedHome
-        apply_rated_home_ruleset(building, cfa, nbeds)
+        apply_rated_home_ruleset(building, cfa, nbeds, nbaths)
     elsif calc_type == Constants.CalcTypeERIndexAdjustmentDesign
         apply_index_adjustment_design_ruleset(building)
     end
@@ -71,6 +69,7 @@ class EnergyRatingIndex301Ruleset
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms',
+            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType',
             '//Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC/ClimateZone',
             '//Building/BuildingDetails/Enclosure/AtticAndRoof/Roofs',
@@ -148,11 +147,27 @@ class EnergyRatingIndex301Ruleset
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
             ],
+            # HeatingSystem (Furnace/Boiler)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace or HeatingSystemType/Boiler]' => [
+                'AnnualHeatingEfficiency[Units="AFUE"]/Value',
+            ],
+            # HeatingSystem (ElectricResistance)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/ElectricResistance]' => [
+                'AnnualHeatingEfficiency[Units="Percent"]/Value',
+            ],
             # CoolingSystem
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => [
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
                 '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]',
+            ],
+            # CoolingSystem (CentralAC)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => [
+                'AnnualCoolingEfficiency[Units="SEER"]/Value',
+            ],
+            # CoolingSystem (RoomAC)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioner"]' => [
+                'AnnualCoolingEfficiency[Units="EER"]/Value',
             ],
             # HeatPump
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [
@@ -161,11 +176,26 @@ class EnergyRatingIndex301Ruleset
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
                 '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]',
             ],
+            # HeatPump (AirSource/MiniSplit)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air" or HeatPumpType="mini-split"]' => [
+                'AnnualCoolingEfficiency[Units="SEER"]/Value',
+                'AnnualCoolingEfficiency[Units="HSPF"]/Value',
+            ],
+            # HeatPump (GroundSource)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => [
+                'AnnualCoolingEfficiency[Units="EER"]/Value',
+                'AnnualCoolingEfficiency[Units="COP"]/Value',
+            ],
             # WaterHeatingSystem
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [
                 '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]',
                 'TankVolume',
+                'HeatingCapacity',
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
+            ],
+            # WaterHeatingSystem (FuelStorage)
+            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" and FuelType!="electricity"]' => [
+                'RecoveryEfficiency',
             ],
             # HotWaterDistribution
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [
@@ -257,8 +287,18 @@ class EnergyRatingIndex301Ruleset
     end
     
   end
+  
+  def self.get_high_level_inputs(building)
+  
+    cfa = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea").to_f
+    nbeds = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms").to_i
+    nbaths = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms").to_i
+    climate_zone = XMLHelper.get_value(building, "BuildingDetails/ClimateandRiskZones/ClimateZoneIECC/ClimateZone")
+    
+    return cfa, nbeds, nbaths, climate_zone
+  end
 
-  def self.apply_reference_home_ruleset(building, cfa, nbeds, climate_zone)
+  def self.apply_reference_home_ruleset(building, cfa, nbeds, nbaths, climate_zone)
   
     # Create new BuildingDetails element
     orig_details = XMLHelper.delete_element(building, "BuildingDetails")
@@ -291,7 +331,7 @@ class EnergyRatingIndex301Ruleset
     new_systems = XMLHelper.add_element(new_details, "Systems")
     set_systems_hvac_reference(new_systems, orig_details)
     set_systems_mechanical_ventilation_reference(new_systems, orig_details)
-    set_systems_water_heating_reference(new_systems, orig_details, nbeds)
+    set_systems_water_heating_reference(new_systems, orig_details, nbeds, nbaths)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -312,7 +352,7 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.apply_rated_home_ruleset(building, cfa, nbeds)
+  def self.apply_rated_home_ruleset(building, cfa, nbeds, nbaths)
   
     # Create new BuildingDetails element
     orig_details = XMLHelper.delete_element(building, "BuildingDetails")
@@ -344,7 +384,7 @@ class EnergyRatingIndex301Ruleset
     new_systems = XMLHelper.add_element(new_details, "Systems")
     set_systems_hvac_rated(new_systems, orig_details)
     set_systems_mechanical_ventilation_rated(new_systems, orig_details)
-    set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds)
+    set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds, nbaths)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -848,7 +888,7 @@ class EnergyRatingIndex301Ruleset
       new_window = XMLHelper.add_element(new_windows, "Window")
       sys_id = XMLHelper.add_element(new_window, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "Window_#{orientation}")
-      XMLHelper.add_element(new_window, "Area", 0.18 * 0.25 * cfa * fa * f) # FIXME: Adjustment for conditioned basements
+      XMLHelper.add_element(new_window, "Area", 0.18 * 0.25 * cfa * fa * f)
       XMLHelper.add_element(new_window, "Azimuth", azimuth)
       XMLHelper.add_element(new_window, "UFactor", ufactor)
       XMLHelper.add_element(new_window, "SHGC", shgc)
@@ -1365,7 +1405,7 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.set_systems_water_heating_reference(new_systems, orig_details, nbeds)
+  def self.set_systems_water_heating_reference(new_systems, orig_details, nbeds, nbaths)
   
     new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
   
@@ -1409,7 +1449,8 @@ class EnergyRatingIndex301Ruleset
       wh_tank_vol = 40.0
     end
     
-    wh_ef = get_wh_ef(wh_fuel_type, wh_tank_vol)
+    wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), nbeds, nbaths) * 1000.0 # Btuh
     
     # New water heater
     new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1418,8 +1459,14 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
     XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
     XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
+    XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
     XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
+    if not wh_re.nil?
+      XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
+    end
     XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", 125)
+    extension = XMLHelper.add_element(new_wh_sys, "extension")
+    XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
     
     '''
     ANSI/RESNET 301-2014 Addendum A-2015
@@ -1460,14 +1507,7 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.get_wh_ef(wh_fuel_type, wh_tank_vol)
-    if wh_fuel_type == 'electricity'
-      return 0.97 - (0.00132 * wh_tank_vol)
-    end
-    return 0.67 - (0.0019 * wh_tank_vol)
-  end
-  
-  def self.set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds)
+  def self.set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds, nbaths)
   
     new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
   
@@ -1492,25 +1532,34 @@ class EnergyRatingIndex301Ruleset
     
     if not orig_wh_sys.nil?
       
+      wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
+      wh_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/WaterHeaterType")
+      wh_ef = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/EnergyFactor")
+      
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "SystemIdentifier")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FuelType")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "WaterHeaterType")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "TankVolume")
-      if XMLHelper.get_value(new_wh_sys, "WaterHeaterType") == 'instantaneous water heater'
-        XMLHelper.add_element(new_wh_sys, "EnergyFactor", XMLHelper.get_value(new_wh_sys, "EnergyFactor").to_f * 0.92)
-      else
-        XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "EnergyFactor")
-      end
+      XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "HeatingCapacity")
+      XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "EnergyFactor")
+      XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
       XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", 125)
+      extension = XMLHelper.add_element(new_wh_sys, "extension")
+      if XMLHelper.get_value(new_wh_sys, "WaterHeaterType") == 'instantaneous water heater'
+        XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 0.92)
+      else
+        XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
+      end
       
     else
     
       wh_type = 'storage water heater'
       wh_tank_vol = 40.0
       wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
-      wh_ef = get_wh_ef(wh_fuel_type, wh_tank_vol)
+      wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+      wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), nbeds, nbaths) * 1000.0 # Btuh
     
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1519,8 +1568,14 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
       XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
       XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
+      XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
       XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
+      if not wh_re.nil?
+        XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
+      end
       XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", 125)
+      extension = XMLHelper.add_element(new_wh_sys, "extension")
+      XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
       
     end
     
@@ -2287,6 +2342,30 @@ class EnergyRatingIndex301Ruleset
   
   def self.get_televisions_kwh(cfa, nbeds)
     return 413.0 + 0.0 * cfa + 69.0 * nbeds
+  end
+  
+  def self.get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    ef = nil
+    re = nil
+    if wh_fuel_type == 'electricity'
+      ef = 0.97 - (0.00132 * wh_tank_vol)
+    else
+      ef = 0.67 - (0.0019 * wh_tank_vol)
+      if wh_fuel_type == 'natural gas' or wh_fuel_type == 'propane'
+        re = 0.76
+      elsif wh_fuel_type == 'fuel oil'
+        re = 0.78
+      end
+    end
+    return ef, re
+  end
+  
+  def self.to_beopt_fuel(fuel)
+    conv = {"natural gas"=>Constants.FuelTypeGas, 
+            "fuel oil"=>Constants.FuelTypeOil, 
+            "propane"=>Constants.FuelTypePropane, 
+            "electricity"=>Constants.FuelTypeElectric}
+    return conv[fuel]
   end
   
 end

@@ -36,6 +36,7 @@
           <NumberofUnits>1</NumberofUnits>
           <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofBedrooms>4</NumberofBedrooms>
+          <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
           <FinishedFloorArea>7000</FinishedFloorArea>
           <NumberofStoriesAboveGrade>2</NumberofStoriesAboveGrade>
@@ -436,6 +437,7 @@
             <Location>conditioned space</Location>
             <TankVolume>80</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
+            <HeatingCapacity>15354</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
             <RecoveryEfficiency>0.98</RecoveryEfficiency>
             <WaterHeaterInsulation>

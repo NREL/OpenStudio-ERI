@@ -1,6 +1,8 @@
 require 'csv'
 require 'openstudio'
 
+# TODO: Move some methods below into a MetaMeasure class
+
 class TsvFile
 
     def initialize(full_path, runner)
@@ -310,14 +312,18 @@ end
 
 def validate_measure_args(measure_args, provided_args, lookup_file, measure_name, runner=nil)
     measure_arg_names = measure_args.map { |arg| arg.name }
+    lookup_file_str = ""
+    if not lookup_file.nil?
+      lookup_file_str = " in #{lookup_file.to_s}"
+    end
     # Verify all arguments have been provided
     measure_args.each do |arg|
         next if provided_args.keys.include?(arg.name)
-        register_error("Argument '#{arg.name}' not provided in #{lookup_file.to_s} for measure '#{measure_name.to_s}'.", runner)
+        register_error("Argument '#{arg.name}' not provided#{lookup_file_str} for measure '#{measure_name.to_s}'.", runner)
     end
     provided_args.keys.each do |k|
         next if measure_arg_names.include?(k)
-        register_error("Extra argument '#{k}' specified in #{lookup_file.to_s} for measure '#{measure_name.to_s}'.", runner)
+        register_error("Extra argument '#{k}' specified#{lookup_file_str} for measure '#{measure_name.to_s}'.", runner)
     end
     # Check for valid argument values
     measure_args.each do |arg|
@@ -414,6 +420,43 @@ def run_measure(model, measure, argument_map, runner)
     end
     return true
 end
+
+def apply_measures(measures_dir, measures, runner, model, show_measure_calls=true)
+  
+    # Get workflow order of measures
+    workflow_order = []
+    workflow_json = JSON.parse(File.read(File.join(File.dirname(__FILE__), "measure-info.json")), :symbolize_names=>true)
+    
+    workflow_json.each do |group|
+      group[:group_steps].each do |step|
+        step[:measures].each do |measure|
+          workflow_order << measure
+        end
+      end
+    end
+    
+    # Call each measure for sample to build up model
+    workflow_order.each do |measure_subdir|
+      next unless measures.keys.include? measure_subdir
+
+      # Gather measure arguments and call measure
+      full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
+      measure_instance = get_measure_instance(full_measure_path)
+      argument_map = get_argument_map(model, measure_instance, measures[measure_subdir], nil, measure_subdir, runner)
+      if show_measure_calls
+        print_measure_call(measures[measure_subdir], measure_subdir, runner)
+      end
+
+      if not run_measure(model, measure_instance, argument_map, runner)
+        return false
+      end
+
+    end
+    
+    return true
+
+end
+
   
 def hash_to_string(hash, delim="=", separator=",")
     hash_s = ""

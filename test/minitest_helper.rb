@@ -10,8 +10,26 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
 
 # Ignore some of the code in coverage testing
 SimpleCov.start do
-  add_filter '/measures/.*/resources/'
-  add_filter '/measures/.*/tests/'
+  add_filter do |src_file|
+    exclude_file(src_file.filename)
+  end
+end
+
+def exclude_file(f)
+  exclude = false
+  if f.include?('tests')
+    exclude = true
+  elsif f.include?('resources')
+    allowances = {
+                  '301EnergyRatingIndexRuleset'=>['301.rb','hpxml.rb']
+                 }
+    exclude = true
+    allowances.keys.each do |m|
+      next if not (f.include?(m) and allowances[m].include?(File.basename(f)))
+      exclude = false
+    end
+  end
+  return exclude
 end
 
 require 'minitest/autorun'

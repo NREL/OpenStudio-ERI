@@ -256,6 +256,11 @@ end
 desc 'update all measures (resources, xmls, workflows, README)'
 task :update_measures do
 
+  # For these measures, the resources are not to be copied from the top-level resources dir
+  resource_excludes = {
+                       '301EnergyRatingIndexRuleset'=>['301.rb','hpxml.rb'],
+                      }
+
   puts "Updating measure resources..."
   measures_dir = File.expand_path("../measures/", __FILE__)
   
@@ -264,7 +269,7 @@ task :update_measures do
     measurerb = File.expand_path("../measures/#{m}/measure.rb", __FILE__)
     
     # Get recursive list of resources required based on looking for 'require FOO' in rb files
-    resources = get_requires_from_file(measurerb)
+    resources = get_requires_from_file(measurerb, m, resource_excludes)
 
     # Add any additional resources specified in resource_to_measure_mapping.csv
     subdir_resources = {} # Handle resources in subdirs
@@ -324,6 +329,7 @@ task :update_measures do
             puts "Dir deleted."
         else
             next if item == 'measure-info.json'
+            next if resource_excludes.keys.include?(m) and resource_excludes[m].include?(item)
             puts "Extra file #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
             input = STDIN.gets.strip.downcase
             next if input != "y"
@@ -529,7 +535,7 @@ def get_and_proof_measure_order_json()
   return data_hash
 end
 
-def get_requires_from_file(filerb)
+def get_requires_from_file(filerb, measure_dir_name, resource_excludes)
   requires = []
   if not File.exists?(filerb)
     return requires
@@ -542,12 +548,15 @@ def get_requires_from_file(filerb)
       line.chomp!("\"")
       d = line.split("/")
       requirerb = File.expand_path("../resources/#{d[-1].to_s}.rb", __FILE__)
+      if resource_excludes.keys.include?(measure_dir_name) and resource_excludes[measure_dir_name].include?(File.basename(requirerb))
+        requirerb = File.expand_path("#{File.dirname(filerb)}/resources/#{d[-1].to_s}.rb", __FILE__)
+      end
       requires << requirerb
     end   
   end
   # Recursively look for additional requirements
   requires.each do |requirerb|
-    get_requires_from_file(requirerb).each do |rb|
+    get_requires_from_file(requirerb, measure_dir_name, resource_excludes).each do |rb|
       next if requires.include?(rb)
       requires << rb
     end

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_mto_hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>9203749a-a1c9-4a6c-9d7f-5faf4799ec9c</version_id>
-  <version_modified>20170526T210431Z</version_modified>
+  <version_id>aac146f5-9912-4f21-a74a-9a30c858ba25</version_id>
+  <version_modified>20170530T210742Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSMtoHPXMLExport</class_name>
   <display_name>OSM to HPXML Export</display_name>
@@ -83,17 +83,6 @@
       <checksum>F513E45F</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9A6CC7C5</checksum>
-    </file>
-    <file>
       <filename>create-model-example.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -106,10 +95,15 @@
       <checksum>EA91EAEA</checksum>
     </file>
     <file>
-      <filename>create-model-example.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3F7A8203</checksum>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>1C9750D2</checksum>
     </file>
   </files>
 </measure>
