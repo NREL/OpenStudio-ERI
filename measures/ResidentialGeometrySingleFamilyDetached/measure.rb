@@ -753,7 +753,6 @@ class CreateResidentialSingleFamilyDetachedGeometry < OpenStudio::Measure::Model
     model.getSpaces.each do |space|
       space.setBuildingUnit(unit)
     end
-
     
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(1)

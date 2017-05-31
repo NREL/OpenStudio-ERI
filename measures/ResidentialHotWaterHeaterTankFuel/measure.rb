@@ -66,7 +66,6 @@ class ResidentialHotWaterHeaterTankFuel < OpenStudio::Measure::ModelMeasure
         water_heater_location.setDefaultValue(Constants.Auto)
         water_heater_location.setDisplayName("Location")
         water_heater_location.setDescription("Thermal zone where the water heater is located. #{Constants.Auto} will locate the water heater according the BA House Simulation Protocols: A garage (if available) or the living space in hot-dry and hot-humid climates, a basement (finished or unfinished, if available) or living space in all other climates.")
-    
         args << water_heater_location
 
         # make an argument for water_heater_capacity

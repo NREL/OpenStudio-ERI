@@ -319,7 +319,8 @@ def validate_measure_args(measure_args, provided_args, lookup_file, measure_name
     # Verify all arguments have been provided
     measure_args.each do |arg|
         next if provided_args.keys.include?(arg.name)
-        register_error("Argument '#{arg.name}' not provided#{lookup_file_str} for measure '#{measure_name.to_s}'.", runner)
+        next if not arg.required
+        register_error("Required argument '#{arg.name}' not provided#{lookup_file_str} for measure '#{measure_name.to_s}'.", runner)
     end
     provided_args.keys.each do |k|
         next if measure_arg_names.include?(k)
@@ -331,7 +332,7 @@ def validate_measure_args(measure_args, provided_args, lookup_file, measure_name
         provided_val = provided_args[arg.name]
         if provided_val.nil?
             if arg.required
-                register_error("Argument '#{arg.name.to_s}' for measure '#{measure_name.to_s}' must have a value provided.", runner)
+                register_error("Required argument '#{arg.name.to_s}' for measure '#{measure_name.to_s}' must have a value provided.", runner)
             else
                 next
             end

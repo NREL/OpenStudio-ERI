@@ -558,7 +558,7 @@ class OSMtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         heat_pump = hvac_plant.add_element "HeatPump"
         XMLHelper.add_attribute(heat_pump.add_element("SystemIdentifier"), "id", name)
         XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heat_pump.elements["SystemIdentifier"].attributes["id"])
-        XMLHelper.add_attribute(heat_pump.add_element("AttachedToZone"), "idref", control_zone.name)        
+        XMLHelper.add_attribute(heat_pump.add_element("AttachedToZone"), "idref", control_zone.name)
         XMLHelper.add_element(heat_pump, "UnitLocation", loc)
         XMLHelper.add_element(heat_pump, "HeatPumpType", type)
         unless htg_cap.nil?
