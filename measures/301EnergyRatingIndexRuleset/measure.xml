@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>82fae402-d6b6-4121-9e0a-0aa2824957b3</version_id>
-  <version_modified>20170531T215952Z</version_modified>
+  <version_id>f230e15d-07c0-423a-8c9d-30b9aa735ae3</version_id>
+  <version_modified>20170601T230935Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -60,6 +60,14 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
     </argument>
+    <argument>
+      <name>output_file_path</name>
+      <display_name>HPXML Output File Path</display_name>
+      <description>Absolute (or relative) path of the output HPXML file.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
   </arguments>
   <outputs/>
   <provenances/>
@@ -90,22 +98,10 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
-    </file>
-    <file>
       <filename>energy_rating_index_301_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>1E5594D0</checksum>
-    </file>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F513E45F</checksum>
     </file>
     <file>
       <filename>valid.xml</filename>
@@ -168,6 +164,24 @@
       <checksum>36B7CAC2</checksum>
     </file>
     <file>
+      <filename>helper_methods.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>77B8414D</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BADCA92E</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52ED8627</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -176,19 +190,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DCE3A590</checksum>
+      <checksum>702AB4EA</checksum>
     </file>
     <file>
       <filename>hpxml.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>5016884A</checksum>
-    </file>
-    <file>
-      <filename>helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>77B8414D</checksum>
+      <checksum>0AE955B5</checksum>
     </file>
   </files>
 </measure>

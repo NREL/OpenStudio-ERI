@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>bbdebde2-1e83-4237-bb00-14bac110939e</version_id>
-  <version_modified>20170526T161020Z</version_modified>
+  <version_id>4acf2d4d-3157-4bb7-b8a0-c663fcb7afdb</version_id>
+  <version_modified>20170601T230941Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
@@ -316,12 +316,6 @@
       <checksum>39CBC752</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -343,6 +337,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>953A9BB0</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BADCA92E</checksum>
     </file>
   </files>
 </measure>

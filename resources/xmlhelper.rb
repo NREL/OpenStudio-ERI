@@ -1,3 +1,6 @@
+require 'rexml/document'
+require 'rexml/xpath'
+
 class XMLHelper
 
   # Adds the child element with 'element_name' and sets its value. Returns the

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>2f97c24a-c423-4e87-b1a8-aaff538cc402</version_id>
-  <version_modified>20170531T215952Z</version_modified>
+  <version_id>a241252e-e672-4bfb-acad-322a186c33c5</version_id>
+  <version_modified>20170601T230935Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -49,22 +49,10 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
-    </file>
-    <file>
       <filename>measure-info.json</filename>
       <filetype>json</filetype>
       <usage_type>resource</usage_type>
       <checksum>AC8B5380</checksum>
-    </file>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F513E45F</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -112,6 +100,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>CCA689AD</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BADCA92E</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52ED8627</checksum>
     </file>
   </files>
 </measure>

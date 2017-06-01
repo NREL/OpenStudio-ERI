@@ -7,3 +7,6 @@ coverage
 /test/osw_files/out.osw
 /test/osw_files/run
 /measures/*/tests/output
+/workflows/energy_rating_index/HERSRatedHome
+/workflows/energy_rating_index/HERSReferenceHome
+/workflows/energy_rating_index/results

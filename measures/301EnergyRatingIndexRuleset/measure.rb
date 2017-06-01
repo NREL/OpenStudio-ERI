@@ -2,6 +2,7 @@
 # http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require 'openstudio'
+require "pathname"
 require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/hpxml"
 require "#{File.dirname(__FILE__)}/resources/constants"
@@ -62,6 +63,11 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute path of the hpxml schemas.")
     args << arg
     
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("output_file_path", true)
+    arg.setDisplayName("HPXML Output File Path")
+    arg.setDescription("Absolute (or relative) path of the output HPXML file.")
+    args << arg
+    
     return args
   end
 
@@ -80,6 +86,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     weather_file_path = runner.getStringArgumentValue("weather_file_path", user_arguments)
     measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
     schemas_dir = runner.getStringArgumentValue("schemas_dir", user_arguments)
+    output_file_path = runner.getStringArgumentValue("output_file_path", user_arguments)
 
     unless (Pathname.new hpxml_file_path).absolute?
       hpxml_file_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_file_path))
@@ -89,14 +96,12 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    unless weather_file_path.nil?
-      unless (Pathname.new weather_file_path).absolute?
-        weather_file_path = File.expand_path(File.join(File.dirname(__FILE__), weather_file_path))
-      end
-      unless File.exists?(weather_file_path) and weather_file_path.downcase.end_with? ".epw"
-        runner.registerError("'#{weather_file_path}' does not exist or is not an .epw file.")
-        return false
-      end
+    unless (Pathname.new weather_file_path).absolute?
+      weather_file_path = File.expand_path(File.join(File.dirname(__FILE__), weather_file_path))
+    end
+    unless File.exists?(weather_file_path) and weather_file_path.downcase.end_with? ".epw"
+      runner.registerError("'#{weather_file_path}' does not exist or is not an .epw file.")
+      return false
     end
     
     unless (Pathname.new measures_dir).absolute?
@@ -114,8 +119,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       runner.registerError("'#{schemas_dir}' does not exist.")
       return false
     end
-    
-    hpxml_out_path = File.join(File.dirname(__FILE__), "301.xml")
     
     hpxml_doc = REXML::Document.new(File.read(hpxml_file_path))
     
@@ -138,7 +141,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    XMLHelper.write_file(hpxml_doc, hpxml_out_path)
+    XMLHelper.write_file(hpxml_doc, output_file_path)
     
     # Validate new HPXML
     has_errors = false

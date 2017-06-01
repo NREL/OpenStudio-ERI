@@ -17,7 +17,6 @@ class OSMeasures
     # ResidentialGeometryOverhangs
     # ResidentialGeometryNeighbors
     # ResidentialHVACDehumidifier
-    # ResidentialMiscPlugLoads
     
     get_location(building, measures, weather_file_path)
     get_beds_and_baths(building, measures)
@@ -43,6 +42,7 @@ class OSMeasures
     get_dishwasher(building, measures)
     get_cooking_range(building, measures)
     get_lighting(building, measures)
+    get_mels(building, measures)
     get_airflow(building, measures)
     get_hvac_sizing(building, measures)
     get_photovoltaics(building, measures)
@@ -1084,7 +1084,9 @@ class OSMeasures
   def self.get_clothes_dryer(building, measures)
     
     cd = building.elements["BuildingDetails/Appliances/ClothesDryer"]
-    if cd.elements["FuelType"].text == "electricity"
+    cd_fuel = XMLHelper.get_value(cd, "FuelType")
+    
+    if cd_fuel == "electricity"
       measure_subdir = "ResidentialApplianceClothesDryerElectric"
       args = {
               "cef"=>"2.7",
@@ -1098,7 +1100,7 @@ class OSMeasures
     else
       measure_subdir = "ResidentialApplianceClothesDryerFuel"
       args = {
-              "fuel_type"=>to_beopt_fuel(XMLHelper.get_value(cd, "FuelType")),
+              "fuel_type"=>to_beopt_fuel(cd_fuel),
               "cef"=>"2.4",
               "fuel_split"=>"0.07",
               "mult"=>"1",
@@ -1137,10 +1139,9 @@ class OSMeasures
     
     crange = building.elements["BuildingDetails/Appliances/CookingRange"]
     ov = building.elements["BuildingDetails/Appliances/Oven"] # TODO
+    crange_fuel = XMLHelper.get_value(crange, "FuelType")
     
-    return if crange.nil?
-    
-    if crange.elements["FuelType"].text == "electricity"
+    if crange_fuel == "electricity"
       measure_subdir = "ResidentialApplianceCookingRangeElectric"
       args = {
               "c_ef"=>"0.74",
@@ -1155,10 +1156,10 @@ class OSMeasures
     else
       measure_subdir = "ResidentialApplianceCookingRangeFuel"
       args = {
-              "fuel_type"=>to_beopt_fuel(XMLHelper.get_value(crange, "FuelType")),
+              "fuel_type"=>to_beopt_fuel(crange_fuel),
               "c_ef"=>"0.4",
               "o_ef"=>"0.058",
-              "e_ignition"=>true,
+              "e_ignition"=>"true",
               "mult"=>"1",
               "weekday_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
               "weekend_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
@@ -1173,25 +1174,33 @@ class OSMeasures
   def self.get_lighting(building, measures)
 
     measure_subdir = "ResidentialLighting"
-    cfl = building.elements["BuildingDetails/Lighting/LightingFractions/FractionCFL"]
-    led = building.elements["BuildingDetails/Lighting/LightingFractions/FractionLED"]
-    lfl = building.elements["BuildingDetails/Lighting/LightingFractions/FractionLFL"]
-    if not cfl.nil? and not led.nil? and not lfl.nil?
-      args = {
-              "hw_cfl"=>cfl.text,
-              "hw_led"=>led.text,
-              "hw_lfl"=>lfl.text,
-              "pg_cfl"=>cfl.text,
-              "pg_led"=>led.text,
-              "pg_lfl"=>lfl.text,
-              "in_eff"=>"15",
-              "cfl_eff"=>"55",
-              "led_eff"=>"80",
-              "lfl_eff"=>"88"
-             }  
-      measures[measure_subdir] = args  
-    end
+    args = {
+            "hw_cfl"=>"0",
+            "hw_led"=>"0",
+            "hw_lfl"=>"0",
+            "pg_cfl"=>"0",
+            "pg_led"=>"0",
+            "pg_lfl"=>"0",
+            "in_eff"=>"15",
+            "cfl_eff"=>"55",
+            "led_eff"=>"80",
+            "lfl_eff"=>"88"
+           }  
+    measures[measure_subdir] = args  
 
+  end
+  
+  def self.get_mels(building, measures)
+  
+    measure_subdir = "ResidentialMiscPlugLoads"
+    args = {
+            "mult"=>"1",
+            "weekday_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
+            "weekend_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
+            "monthly_sch"=>"1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248",
+           }  
+    measures[measure_subdir] = args  
+  
   end
 
   def self.get_airflow(building, measures)

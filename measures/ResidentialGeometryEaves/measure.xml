@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>17d1f643-fbfc-43a8-9014-08b9e0dadeb7</version_id>
-  <version_modified>20170526T161958Z</version_modified>
+  <version_id>e976359b-e0f9-4699-b459-c5e613bd6d0e</version_id>
+  <version_modified>20170601T230939Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -189,12 +189,6 @@
       <checksum>A84F29D7</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -210,6 +204,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>63EDA69F</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BADCA92E</checksum>
     </file>
   </files>
 </measure>

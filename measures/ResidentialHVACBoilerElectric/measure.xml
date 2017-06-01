@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_electric</name>
   <uid>a0f299ce-b90b-43f6-8794-03ef3ba24f0e</uid>
-  <version_id>2df9a1ec-61a3-4412-9de2-e801d44f5f33</version_id>
-  <version_modified>20170525T222559Z</version_modified>
+  <version_id>b01db4de-b45f-4541-aea9-76a20962de74</version_id>
+  <version_modified>20170601T230941Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerElectric</class_name>
   <display_name>Set Residential Boiler Electric</display_name>
@@ -289,12 +289,6 @@
       <checksum>39CBC752</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -305,6 +299,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>66A91A4B</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BADCA92E</checksum>
     </file>
   </files>
 </measure>

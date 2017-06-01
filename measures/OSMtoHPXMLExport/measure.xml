@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_mto_hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>a851f5b8-7008-4c33-abef-5c759a46427b</version_id>
-  <version_modified>20170531T215952Z</version_modified>
+  <version_id>fcb8da2d-4995-4a23-a5d7-8640550b5a61</version_id>
+  <version_modified>20170601T230935Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSMtoHPXMLExport</class_name>
   <display_name>OSM to HPXML Export</display_name>
@@ -41,12 +41,6 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2E8E12E9</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -77,12 +71,6 @@
       <checksum>D3BD80AC</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F513E45F</checksum>
-    </file>
-    <file>
       <filename>create-model-example.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -104,6 +92,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>463EB7EE</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>BADCA92E</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>52ED8627</checksum>
     </file>
   </files>
 </measure>
