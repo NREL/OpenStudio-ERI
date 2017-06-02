@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_interzonal_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>872dbe28-a79a-44b8-ba5b-1161d2b57d18</version_id>
-  <version_modified>20170601T230937Z</version_modified>
+  <version_id>b76414fc-9716-4e07-a74c-df4cc221f5d5</version_id>
+  <version_modified>20170602T192144Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsInterzonalFloors</class_name>
   <display_name>Set Residential Foundations/Floors - Interzonal Floor Construction</display_name>
@@ -99,7 +99,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

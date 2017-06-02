@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_heater_elec</name>
   <uid>05dab71a-88e0-4c98-84c4-232e380b9944</uid>
-  <version_id>2184145f-a639-421d-8f75-977b0276f49d</version_id>
-  <version_modified>20170601T230946Z</version_modified>
+  <version_id>de0c62ed-c831-4269-b936-a52b48036565</version_id>
+  <version_modified>20170602T192153Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialHotTubHeaterElec</class_name>
   <display_name>Set Residential Hot Tub Electric Heater</display_name>
@@ -137,12 +137,6 @@
       <checksum>E4C6BC93</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -154,10 +148,16 @@
       <checksum>5A9D7671</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

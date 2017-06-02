@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tankless_fuel</name>
   <uid>caf92375-4c0c-47d1-9fe1-7aa5d3b1a734</uid>
-  <version_id>18538f31-4a0e-478b-8e08-e61246bf6568</version_id>
-  <version_modified>20170601T230940Z</version_modified>
+  <version_id>a9416fdb-a13f-47e8-8308-79138a941373</version_id>
+  <version_modified>20170602T192147Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTanklessFuel</class_name>
   <display_name>Set Residential Fuel Tankless Water Heater</display_name>
@@ -237,12 +237,6 @@
       <checksum>E4C6BC93</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -260,10 +254,16 @@
       <checksum>48FB4C1B</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

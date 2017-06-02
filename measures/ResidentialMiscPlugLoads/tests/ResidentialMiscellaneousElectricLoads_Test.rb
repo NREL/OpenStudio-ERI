@@ -24,6 +24,16 @@ class ResidentialMiscellaneousElectricLoadsTest < MiniTest::Test
     _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
+  def test_new_construction_energy_use
+    num_fin_spaces = 3
+    args_hash = {}
+    args_hash["option_type"] = Constants.OptionTypePlugLoadsEnergyUse
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ElectricEquipmentDefinition"=>num_fin_spaces, "ElectricEquipment"=>num_fin_spaces, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>2000}
+    _test_measure(osm_geo_beds, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, num_fin_spaces)
+  end
+  
   def test_new_construction_mult_1_0
     num_fin_spaces = 3
     args_hash = {}

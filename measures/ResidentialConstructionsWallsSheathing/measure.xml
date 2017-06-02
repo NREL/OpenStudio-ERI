@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>630f3353-e9af-4e04-895c-666121a2b6de</version_id>
-  <version_modified>20170601T230938Z</version_modified>
+  <version_id>e08d485a-7340-4712-9027-57917e5987ef</version_id>
+  <version_modified>20170602T192145Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
@@ -94,12 +94,6 @@
       <checksum>6AAFFE37</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.10.0</identifier>
@@ -111,10 +105,16 @@
       <checksum>7C22DEE3</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

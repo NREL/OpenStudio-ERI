@@ -808,6 +808,18 @@ class Constants
   def self.ObjectNameWindowShading
     return 'residential window shading'
   end
+  def self.OptionTypeLightingFractions
+    return 'Lamp Fractions'
+  end
+  def self.OptionTypeLightingEnergyUses
+    return 'Annual Energy Uses'
+  end
+  def self.OptionTypePlugLoadsMultiplier
+    return 'Multiplier'
+  end
+  def self.OptionTypePlugLoadsEnergyUse
+    return 'Annual Energy Use'
+  end
   def self.PierBeamFoundationType
     return "pier and beam"
   end

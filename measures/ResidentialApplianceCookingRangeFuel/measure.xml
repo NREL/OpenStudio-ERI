@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range_fuel</name>
   <uid>68bdcee3-c301-4fe9-a99f-c7d8b5930c89</uid>
-  <version_id>134ed9c1-3888-4778-9b94-3edaaedf3c70</version_id>
-  <version_modified>20170601T230936Z</version_modified>
+  <version_id>9a8006ed-e573-4402-9427-da258ab24c35</version_id>
+  <version_modified>20170602T192143Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialCookingRangeFuel</class_name>
   <display_name>Set Residential Fuel Cooking Range</display_name>
@@ -185,12 +185,6 @@
       <checksum>E4C6BC93</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -208,10 +202,16 @@
       <checksum>050860BE</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

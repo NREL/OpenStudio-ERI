@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_solar</name>
   <uid>b969f216-f3c0-4301-9b85-34ce2b45f551</uid>
-  <version_id>b6a8dc93-e9e5-47a7-b520-606e13fbcc3b</version_id>
-  <version_modified>20170601T230941Z</version_modified>
+  <version_id>f307d053-1ec9-4423-81a1-f2711b6dd00f</version_id>
+  <version_modified>20170602T192147Z</version_modified>
   <xml_checksum>F33F6E26</xml_checksum>
   <class_name>ResidentialHotWaterSolar</class_name>
   <display_name>Set Residential Solar Water Heating</display_name>
@@ -273,12 +273,6 @@
       <checksum>E4C6BC93</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.0</identifier>
@@ -302,10 +296,16 @@
       <checksum>6BA22437</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_single_speed_central_air_conditioner</name>
   <uid>62ef17da-be70-43a1-99ec-b000e016ba4a</uid>
-  <version_id>963a90fa-885d-4436-b372-5fb1d06110f9</version_id>
-  <version_modified>20170601T230941Z</version_modified>
+  <version_id>14e97d8f-97da-43bb-9467-9cf592765b97</version_id>
+  <version_modified>20170602T192148Z</version_modified>
   <xml_checksum>9E2537CD</xml_checksum>
   <class_name>ProcessSingleSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Single-Speed Central Air Conditioner</display_name>
@@ -286,12 +286,6 @@
       <checksum>39CBC752</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -315,10 +309,16 @@
       <checksum>8BFA3144</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

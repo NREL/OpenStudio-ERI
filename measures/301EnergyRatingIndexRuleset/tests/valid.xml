@@ -27,9 +27,9 @@
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
-        <BuildingOccupancy>
-          <NumberofResidents>5</NumberofResidents>
-        </BuildingOccupancy>
+        <Site>
+          <AzimuthOfFrontOfHome>90</AzimuthOfFrontOfHome>
+        </Site>
         <BuildingConstruction>
           <YearBuilt>2009</YearBuilt>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>

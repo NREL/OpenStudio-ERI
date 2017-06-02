@@ -64,7 +64,7 @@ class EnergyRatingIndex301Ruleset
     
     # Every file must have 1 (or more) of these elements
     unconditional_has = [
-            '//Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents',
+            '//Building/BuildingDetails/BuildingSummary/Site/AzimuthOfFrontOfHome',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent',
@@ -308,7 +308,7 @@ class EnergyRatingIndex301Ruleset
     
     # BuildingSummary
     new_summary = XMLHelper.add_element(new_details, "BuildingSummary")
-    set_summary_reference(new_summary, orig_details)
+    set_summary_reference(new_summary, orig_details, nbeds)
     
     # ClimateAndRiskZones
     XMLHelper.copy_element(new_details, orig_details, "ClimateandRiskZones")
@@ -361,7 +361,8 @@ class EnergyRatingIndex301Ruleset
     new_details = XMLHelper.add_element(building, "BuildingDetails")
     
     # BuildingSummary
-    XMLHelper.copy_element(new_details, orig_details, "BuildingSummary")
+    new_summary = XMLHelper.add_element(new_details, "BuildingSummary")
+    set_summary_rated(new_summary, orig_details, nbeds)
     
     # ClimateAndRiskZones
     XMLHelper.copy_element(new_details, orig_details, "ClimateandRiskZones")
@@ -409,26 +410,62 @@ class EnergyRatingIndex301Ruleset
   
   end
   
-  def self.set_summary_reference(new_summary, orig_details)
-  
-    '''
-    Either hourly calculations using the procedures given in the 2013 ASHRAE Handbook
-    of Fundamentals (IP version), Chapter 16, page 16.25, Equation 51 using Shelter
-    Class 4 or calculations yielding equivalent results shall be used to determine the
-    energy loads resulting from infiltration in combination with Whole-House Mechanical
-    Ventilation systems.
-    '''
+  def self.set_summary_reference(new_summary, orig_details, nbeds)
   
     new_site = XMLHelper.add_element(new_summary, "Site")
     orig_site = orig_details.elements["BuildingSummary/Site"]
-    XMLHelper.add_element(new_site, "OrientationOfFrontOfHome", "north")
     XMLHelper.add_element(new_site, "AzimuthOfFrontOfHome", 0)
     extension = XMLHelper.add_element(new_site, "extension")
-    XMLHelper.add_element(extension, "ShelterCoefficient", 0.5)
+    XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
     
+    num_occ, heat_gain, sens, lat = get_occupants_heat_gain_sens_lat(nbeds)
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
-    XMLHelper.copy_element(new_occupancy, orig_occupancy, "NumberofResidents")
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", num_occ)
+    extension = XMLHelper.add_element(new_occupancy, "extension")
+    XMLHelper.add_element(extension, "HeatGainPerPerson", heat_gain)
+    XMLHelper.add_element(extension, "FracSensible", sens)
+    XMLHelper.add_element(extension, "FracLatent", lat)
+    
+    new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
+    orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
+    XMLHelper.copy_element(new_construction, orig_construction, "ResidentialFacilityType")
+    XMLHelper.copy_element(new_construction, orig_construction, "BuildingHeight")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofFloors")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloors")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsFloorsAboveGrade")
+    XMLHelper.copy_element(new_construction, orig_construction, "AverageCeilingHeight")
+    XMLHelper.copy_element(new_construction, orig_construction, "FloorToFloorHeight ")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofBathrooms")
+    XMLHelper.copy_element(new_construction, orig_construction, "ConditionedFloorArea")
+    XMLHelper.copy_element(new_construction, orig_construction, "FinishedFloorArea")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofStoriesAboveGrade")
+    XMLHelper.copy_element(new_construction, orig_construction, "BuildingVolume")
+    XMLHelper.copy_element(new_construction, orig_construction, "ConditionedBuildingVolume")
+    XMLHelper.copy_element(new_construction, orig_construction, "FoundationType")
+    XMLHelper.copy_element(new_construction, orig_construction, "AtticType")
+    XMLHelper.copy_element(new_construction, orig_construction, "GaragePresent")
+    XMLHelper.copy_element(new_construction, orig_construction, "GarageLocation")
+    XMLHelper.copy_element(new_construction, orig_construction, "SpaceAboveGarage")
+  end
+  
+  def self.set_summary_rated(new_summary, orig_details, nbeds)
+  
+    new_site = XMLHelper.add_element(new_summary, "Site")
+    orig_site = orig_details.elements["BuildingSummary/Site"]
+    XMLHelper.copy_element(new_site, orig_site, "AzimuthOfFrontOfHome")
+    extension = XMLHelper.add_element(new_site, "extension")
+    XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
+    
+    num_occ, heat_gain, sens, lat = get_occupants_heat_gain_sens_lat(nbeds)
+    new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
+    orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", num_occ)
+    extension = XMLHelper.add_element(new_occupancy, "extension")
+    XMLHelper.add_element(extension, "HeatGainPerPerson", heat_gain)
+    XMLHelper.add_element(extension, "FracSensible", sens)
+    XMLHelper.add_element(extension, "FracLatent", lat)
     
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
@@ -1943,8 +1980,7 @@ class EnergyRatingIndex301Ruleset
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
-    extension = XMLHelper.add_element(new_fridge, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", refrigerator_kwh)
+    XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
     
   end
   
@@ -1955,13 +1991,12 @@ class EnergyRatingIndex301Ruleset
     4.2.2.5.2.5(1).
     '''
     
-    refrigerator_kwh = XMLHelper.get_value(orig_details, "Appliances/Refrigerator/AnnualkWh").to_f
+    refrigerator_kwh = XMLHelper.get_value(orig_details, "Appliances/Refrigerator/RatedAnnualkWh").to_f
     
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
-    extension = XMLHelper.add_element(new_fridge, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", refrigerator_kwh)
+    XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
     
   end
 
@@ -2358,6 +2393,40 @@ class EnergyRatingIndex301Ruleset
       end
     end
     return ef, re
+  end
+  
+  def self.get_occupants_heat_gain_sens_lat(nbeds)
+    '''
+    Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    Occupants
+    Sensible Gains (Btu/day) - 3716
+    Latent Gains (Btu/day) - 2884
+    
+    Software tools shall use either the occupant gains provided above or similar temperature dependent values 
+    generated by the software where the number of occupants equals the number of Bedrooms and occupants are 
+    present in the home 16.5 hours per day.
+    '''
+    
+    sens_gains = 3716
+    lat_gains = 2884
+    tot_gains = sens_gains + lat_gains
+    
+    num_occ = nbeds
+    heat_gain = tot_gains/16.5 # Btu/person
+    sens = sens_gains/tot_gains
+    lat = lat_gains/tot_gains
+    return num_occ, heat_gain, sens, lat
+  end
+  
+  def self.get_shelter_coefficient()
+    '''
+    Either hourly calculations using the procedures given in the 2013 ASHRAE Handbook
+    of Fundamentals (IP version), Chapter 16, page 16.25, Equation 51 using Shelter
+    Class 4 or calculations yielding equivalent results shall be used to determine the
+    energy loads resulting from infiltration in combination with Whole-House Mechanical
+    Ventilation systems.
+    '''
+    return 0.5
   end
   
   def self.to_beopt_fuel(fuel)

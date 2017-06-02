@@ -19,6 +19,15 @@ class ResidentialLightingTest < MiniTest::Test
     return "SFD_2000sqft_2story_FB_GRG_UA_Anchorage.osm"
   end
 
+  def test_new_construction_annual_energy_uses
+    args_hash = {}
+    args_hash["option_type"] = Constants.OptionTypeLightingEnergyUses
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"LightsDefinition"=>4, "Lights"=>4, "ExteriorLightsDefinition"=>1, "ExteriorLights"=>1, "ScheduleRuleset"=>1}
+    expected_values = {"Annual_kwh"=>1300}
+    _test_measure(osm_geo_loc, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 5)
+  end
+  
   def test_new_construction_100_incandescent
     args_hash = {}
     args_hash["hw_cfl"] = 0.0

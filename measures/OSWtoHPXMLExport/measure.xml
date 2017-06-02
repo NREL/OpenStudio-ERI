@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>a241252e-e672-4bfb-acad-322a186c33c5</version_id>
-  <version_modified>20170601T230935Z</version_modified>
+  <version_id>f28660e0-aee0-4b0e-a1a4-94ff191fc0de</version_id>
+  <version_modified>20170602T202908Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -55,12 +55,6 @@
       <checksum>AC8B5380</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -85,12 +79,6 @@
       <checksum>77B8414D</checksum>
     </file>
     <file>
-      <filename>create-model-example.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C749E23C</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -102,16 +90,28 @@
       <checksum>CCA689AD</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
-    </file>
-    <file>
       <filename>xmlhelper.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>52ED8627</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F78518CC</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BE49F200</checksum>
     </file>
   </files>
 </measure>

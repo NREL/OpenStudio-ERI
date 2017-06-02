@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_basement_finished</name>
   <uid>4b37c726-d6c4-473b-990a-0923c302ed36</uid>
-  <version_id>c355a157-dbba-4486-a990-1e08cfa197c0</version_id>
-  <version_modified>20170601T230937Z</version_modified>
+  <version_id>1a9ebb72-937c-46bc-9fe3-31c87ea5bc78</version_id>
+  <version_modified>20170602T192144Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsBasementFinished</class_name>
   <display_name>Set Residential Foundations/Floors - Finished Basement Constructions</display_name>
@@ -228,12 +228,6 @@
       <checksum>39FFFE07</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -245,10 +239,16 @@
       <checksum>2B9522E1</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

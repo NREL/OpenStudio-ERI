@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>8819e26b-4a68-42f7-85e4-bf5256db8d06</version_id>
-  <version_modified>20170601T230938Z</version_modified>
+  <version_id>0166778a-3801-44d9-8069-7d0cdb67997b</version_id>
+  <version_modified>20170602T192145Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -147,7 +147,7 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>F78518CC</checksum>
     </file>
   </files>
 </measure>

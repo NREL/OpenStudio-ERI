@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_mto_hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>fcb8da2d-4995-4a23-a5d7-8640550b5a61</version_id>
-  <version_modified>20170601T230935Z</version_modified>
+  <version_id>93cc5985-c6e5-4e48-91b7-7d9fbe4cc863</version_id>
+  <version_modified>20170602T202346Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSMtoHPXMLExport</class_name>
   <display_name>OSM to HPXML Export</display_name>
@@ -40,12 +40,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
     <file>
       <filename>USA_CO_Denver_Intl_AP_725650_TMY3.ddy</filename>
       <filetype>ddy</filetype>
@@ -94,16 +88,28 @@
       <checksum>463EB7EE</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
-    </file>
-    <file>
       <filename>xmlhelper.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>52ED8627</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E2ADBBC</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F78518CC</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>46A2043D</checksum>
     </file>
   </files>
 </measure>

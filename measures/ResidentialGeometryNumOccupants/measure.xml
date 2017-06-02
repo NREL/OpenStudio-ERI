@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>9e348e33-0787-480c-86b3-c4cc7ef2ae89</version_id>
-  <version_modified>20170601T230939Z</version_modified>
+  <version_id>011979d8-80d9-41a5-9577-5bce779e3b10</version_id>
+  <version_modified>20170602T192459Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -15,7 +15,7 @@
       <display_name>Number of Occupants</display_name>
       <description>Specify the number of occupants. For a multifamily building, specify one value for all units or a comma-separated set of values (in the correct order) for each unit. A value of 'auto' will calculate the average number of occupants from the number of bedrooms. Used to specify the internal gains from people only.</description>
       <type>String</type>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>auto</default_value>
     </argument>
@@ -25,16 +25,25 @@
       <description>Occupant heat gain, both sensible and latent.</description>
       <type>Double</type>
       <units>Btu/person/hr</units>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>384</default_value>
     </argument>
     <argument>
+      <name>sens_frac</name>
+      <display_name>Sensible Fraction</display_name>
+      <description>Fraction of internal gains that are sensible.</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>0.573</default_value>
+    </argument>
+    <argument>
       <name>lat_frac</name>
       <display_name>Latent Fraction</display_name>
-      <description>Fraction of internal gains that are latent, with the residual internal gains as sensible.</description>
+      <description>Fraction of internal gains that are latent.</description>
       <type>Double</type>
-      <required>false</required>
+      <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0.427</default_value>
     </argument>
@@ -143,6 +152,12 @@
       <checksum>8E2ADBBC</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F78518CC</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -151,13 +166,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4BB133E6</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>BADCA92E</checksum>
+      <checksum>A98C5DED</checksum>
     </file>
   </files>
 </measure>

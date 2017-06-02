@@ -29,24 +29,31 @@ class AddResidentialOccupants < OpenStudio::Measure::ModelMeasure
     args = OpenStudio::Measure::OSArgumentVector.new        
 
     #Make a string argument for occupants (auto or number)
-    num_occ = OpenStudio::Measure::OSArgument::makeStringArgument("num_occ", false)
+    num_occ = OpenStudio::Measure::OSArgument::makeStringArgument("num_occ", true)
     num_occ.setDisplayName("Number of Occupants")
     num_occ.setDescription("Specify the number of occupants. For a multifamily building, specify one value for all units or a comma-separated set of values (in the correct order) for each unit. A value of '#{Constants.Auto}' will calculate the average number of occupants from the number of bedrooms. Used to specify the internal gains from people only.")
     num_occ.setDefaultValue(Constants.Auto)
     args << num_occ
     
     # Make a double argument for occupant gains
-    occ_gain = OpenStudio::Measure::OSArgument::makeDoubleArgument("occ_gain", false)
+    occ_gain = OpenStudio::Measure::OSArgument::makeDoubleArgument("occ_gain", true)
     occ_gain.setDisplayName("Internal Gains")
     occ_gain.setDescription("Occupant heat gain, both sensible and latent.")
     occ_gain.setUnits("Btu/person/hr")
     occ_gain.setDefaultValue(384.0)
     args << occ_gain
 
+    # Make a double argument for sensible fraction
+    sens_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("sens_frac", true)
+    sens_frac.setDisplayName("Sensible Fraction")
+    sens_frac.setDescription("Fraction of internal gains that are sensible.")
+    sens_frac.setDefaultValue(0.573)
+    args << sens_frac
+
     # Make a double argument for latent fraction
-    lat_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("lat_frac", false)
+    lat_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("lat_frac", true)
     lat_frac.setDisplayName("Latent Fraction")
-    lat_frac.setDescription("Fraction of internal gains that are latent, with the residual internal gains as sensible.")
+    lat_frac.setDescription("Fraction of internal gains that are latent.")
     lat_frac.setDefaultValue(0.427)
     args << lat_frac
 
@@ -84,11 +91,12 @@ class AddResidentialOccupants < OpenStudio::Measure::ModelMeasure
     end
     
     num_occ = runner.getStringArgumentValue("num_occ",user_arguments)
+    occ_gain = runner.getDoubleArgumentValue("occ_gain",user_arguments)
+    sens_frac = runner.getDoubleArgumentValue("lat_frac",user_arguments)
+    lat_frac = runner.getDoubleArgumentValue("lat_frac",user_arguments)
     weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
     weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)
     monthly_sch = runner.getStringArgumentValue("monthly_sch",user_arguments)
-    occ_gain = runner.getDoubleArgumentValue("occ_gain",user_arguments)
-    lat_frac = runner.getDoubleArgumentValue("lat_frac",user_arguments)
     
     # Get building units
     units = Geometry.get_building_units(model, runner)
@@ -113,8 +121,16 @@ class AddResidentialOccupants < OpenStudio::Measure::ModelMeasure
       return false
     end
     
+    if sens_frac < 0 or sens_frac > 1
+      runner.registerError("Sensible fraction must be greater than or equal to 0 and less than or equal to 1.")
+      return false
+    end
     if lat_frac < 0 or lat_frac > 1
       runner.registerError("Latent fraction must be greater than or equal to 0 and less than or equal to 1.")
+      return false
+    end
+    if lat_frac + sens_frac > 1
+      runner.registerError("Sum of sensible and latent fractions must be less than or equal to 1.")
       return false
     end
     
@@ -122,7 +138,7 @@ class AddResidentialOccupants < OpenStudio::Measure::ModelMeasure
 
     #hard coded convective, radiative, latent, and lost fractions
     occ_lat = lat_frac
-    occ_sens = 1 - occ_lat
+    occ_sens = sens_frac
     occ_conv = 0.442*occ_sens
     occ_rad = 0.558*occ_sens
     occ_lost = 1 - occ_lat - occ_conv - occ_rad

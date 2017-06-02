@@ -363,7 +363,7 @@ task :update_measures do
         puts "Updated #{File.basename(json_path)} in #{measure}/resources."
       end
   end
-
+  
 end
 
 desc 'Copy resources from OpenStudio-BuildStock repo'
@@ -447,6 +447,13 @@ def generate_example_osw_of_all_measures_in_order()
   # Update README.md as well
   update_readme(data_hash)
   
+  # Copy create-model-example.osw to OSWtoHPXMLExport measure
+  dest = "measures/OSWtoHPXMLExport/tests"
+  if not FileUtils.compare_file(osw_path, File.join(dest, File.basename(osw_path)))
+    FileUtils.cp(osw_path, dest)
+    puts "Copied example OSW to #{dest}."
+  end
+
 end
 
 # This method updates the "Measure Order" table in the README.md
