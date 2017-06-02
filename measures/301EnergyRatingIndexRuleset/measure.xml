@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>f230e15d-07c0-423a-8c9d-30b9aa735ae3</version_id>
-  <version_modified>20170601T230935Z</version_modified>
+  <version_id>24851d45-8e63-41e8-9deb-c1a7de68b2ae</version_id>
+  <version_modified>20170602T005230Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -65,7 +65,7 @@
       <display_name>HPXML Output File Path</display_name>
       <description>Absolute (or relative) path of the output HPXML file.</description>
       <type>String</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
   </arguments>
@@ -182,6 +182,12 @@
       <checksum>52ED8627</checksum>
     </file>
     <file>
+      <filename>hpxml.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0AE955B5</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -190,13 +196,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>702AB4EA</checksum>
-    </file>
-    <file>
-      <filename>hpxml.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>0AE955B5</checksum>
+      <checksum>777C94AF</checksum>
     </file>
   </files>
 </measure>

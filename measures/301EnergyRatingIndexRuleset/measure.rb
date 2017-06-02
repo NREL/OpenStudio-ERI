@@ -63,7 +63,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute path of the hpxml schemas.")
     args << arg
     
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("output_file_path", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("output_file_path", false)
     arg.setDisplayName("HPXML Output File Path")
     arg.setDescription("Absolute (or relative) path of the output HPXML file.")
     args << arg
@@ -86,7 +86,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     weather_file_path = runner.getStringArgumentValue("weather_file_path", user_arguments)
     measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
     schemas_dir = runner.getStringArgumentValue("schemas_dir", user_arguments)
-    output_file_path = runner.getStringArgumentValue("output_file_path", user_arguments)
+    output_file_path = runner.getOptionalStringArgumentValue("output_file_path", user_arguments)
 
     unless (Pathname.new hpxml_file_path).absolute?
       hpxml_file_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_file_path))
@@ -141,7 +141,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    XMLHelper.write_file(hpxml_doc, output_file_path)
+    if output_file_path.is_initialized
+      XMLHelper.write_file(hpxml_doc, output_file_path.get)
+    end
     
     # Validate new HPXML
     has_errors = false
