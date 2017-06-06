@@ -618,15 +618,15 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       
       if HVAC.has_air_source_heat_pump(model, runner, control_zone) or HVAC.has_mini_split_heat_pump(model, runner, control_zone) or HVAC.has_gshp_vert_bore(model, runner, control_zone)
 
-        # name = nil
-        # type = nil
-        # clg_cap = nil
-        # htg_cap = nil
-        # clg_eff = nil
-        # htg_eff = nil
-        # supp_temp = nil
-        # supp_afue = nil
-        # supp_cap = nil
+        name = nil
+        type = nil
+        clg_cap = nil
+        htg_cap = nil
+        clg_eff = nil
+        htg_eff = nil
+        supp_temp = nil
+        supp_afue = nil
+        supp_cap = nil
         
         HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
 
@@ -872,6 +872,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         end
         water_heating_system = water_heating.add_element "WaterHeatingSystem"
         
+        ef = nil
+        recov_ef = nil
+        
         pl.supplyComponents.each do |wh|
           next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized and !wh.to_WaterHeaterHeatPumpWrappedCondenser.is_initialized
           if wh.to_WaterHeaterMixed.is_initialized
@@ -885,8 +888,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
               type = "instantaneous water heater"
             end
             loc = wh.ambientTemperatureThermalZone.get
-            XMLHelper.add_element(water_heating_system, "EnergyFactor", measures[get_measure_match(measures, "HotWaterHeater")]["energy_factor"])
-            XMLHelper.add_element(water_heating_system, "RecoveryEfficiency", measures[get_measure_match(measures, "HotWaterHeater")]["recovery_efficiency"])            
+            ef = measures[get_measure_match(measures, "HotWaterHeater")]["energy_factor"]
+            recov_ef = measures[get_measure_match(measures, "HotWaterHeater")]["recovery_efficiency"]          
           elsif wh.to_WaterHeaterStratified.is_initialized
             wh = wh.to_WaterHeaterStratified.get
             type = "heat pump water heater"            
@@ -930,6 +933,12 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_element(water_heating_system, "Location", loc)
           XMLHelper.add_element(water_heating_system, "TankVolume", vol)
           XMLHelper.add_element(water_heating_system, "HeatingCapacity", cap)
+          unless ef.nil?
+            XMLHelper.add_element(water_heating_system, "EnergyFactor", ef)
+          end
+          unless recov_ef.nil?
+            XMLHelper.add_element(water_heating_system, "RecoveryEfficiency", recov_ef)
+          end
           XMLHelper.add_element(water_heating_system, "ThermalEfficiency", eff)
           XMLHelper.add_element(water_heating_system, "HotWaterTemperature", measures[get_measure_match(measures, "HotWaterHeater")]["setpoint_temp"])
         end

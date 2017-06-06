@@ -218,14 +218,14 @@ class ResidentialHotWaterHeaterHeatPumpTest < MiniTest::Test
 
     def test_argument_error_setpoint_lt_0
         args_hash = {}
-        args_hash["dhw_setpoint_temperature"] = -10
+        args_hash["setpoint_temp"] = -10
         result = _test_error(osm_geo_beds_loc, args_hash)
         assert_equal(result.errors.map{ |x| x.logMessage }[0], "Hot water temperature must be greater than 0 and less than 212.")
     end
 
     def test_argument_error_setpoint_lg_300
         args_hash = {}
-        args_hash["dhw_setpoint_temperature"] = 300
+        args_hash["setpoint_temp"] = 300
         result = _test_error(osm_geo_beds_loc, args_hash)
         assert_equal(result.errors.map{ |x| x.logMessage }[0], "Hot water temperature must be greater than 0 and less than 212.")
     end
