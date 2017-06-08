@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>b0a35f44-e4ad-433b-980d-051513b60786</version_id>
-  <version_modified>20170602T192145Z</version_modified>
+  <version_id>cbfea35b-0af1-4619-9abb-c3b282d7a3ce</version_id>
+  <version_modified>20170608T203833Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>
@@ -102,12 +102,6 @@
   </attributes>
   <files>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D3BD80AC</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.0</identifier>
@@ -129,6 +123,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F78518CC</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8B340DE</checksum>
     </file>
   </files>
 </measure>

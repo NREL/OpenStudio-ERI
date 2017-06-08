@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>b329ae54-4044-4f46-a0f6-ba9527bafb50</version_id>
-  <version_modified>20170608T172719Z</version_modified>
+  <version_id>40d0a300-a486-42ed-8fee-399099ee515b</version_id>
+  <version_modified>20170608T203830Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -128,12 +128,6 @@
       <checksum>6BA22437</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D3BD80AC</checksum>
-    </file>
-    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -193,10 +187,16 @@
       <checksum>C6565818</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8B340DE</checksum>
+    </file>
+    <file>
       <filename>hpxml.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7CFF6CCC</checksum>
+      <checksum>69EDF9A7</checksum>
     </file>
   </files>
 </measure>

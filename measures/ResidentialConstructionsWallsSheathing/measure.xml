@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_sheathing</name>
   <uid>bd808843-e931-49e4-86cb-cc3bfba520b8</uid>
-  <version_id>e08d485a-7340-4712-9027-57917e5987ef</version_id>
-  <version_modified>20170602T192145Z</version_modified>
+  <version_id>9b0e08d9-7cb7-4693-85ff-c259277fe89a</version_id>
+  <version_modified>20170608T203833Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsSheathing</class_name>
   <display_name>Set Residential Walls - Wall Sheathing</display_name>
@@ -76,12 +76,6 @@
       <checksum>0E7051A6</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D3BD80AC</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -115,6 +109,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F78518CC</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8B340DE</checksum>
     </file>
   </files>
 </measure>
