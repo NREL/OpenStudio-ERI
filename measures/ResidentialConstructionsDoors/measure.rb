@@ -31,13 +31,13 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    #make a string argument for wood stud size of wall cavity
-    door_uvalue = OpenStudio::Measure::OSArgument::makeDoubleArgument("door_uvalue", true)
-    door_uvalue.setDisplayName("U-Value for Finished Space Doors")
-    door_uvalue.setUnits("Btu/hr-ft^2-R")
-    door_uvalue.setDescription("The heat transfer coefficient of the doors adjacent to finished space.")
-    door_uvalue.setDefaultValue(0.2)
-    args << door_uvalue   
+    #make a string argument for door u-factor
+    door_ufactor = OpenStudio::Measure::OSArgument::makeDoubleArgument("door_ufactor", true)
+    door_ufactor.setDisplayName("U-Factor")
+    door_ufactor.setUnits("Btu/hr-ft^2-R")
+    door_ufactor.setDescription("The heat transfer coefficient of the doors adjacent to finished space.")
+    door_ufactor.setDefaultValue(0.2)
+    args << door_ufactor   
 
     return args
   end #end the arguments method
@@ -51,9 +51,9 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    doorUvalue = runner.getDoubleArgumentValue("door_uvalue",user_arguments)
-    if doorUvalue <= 0.0
-        runner.registerError("U-Value must be greater than 0.")
+    doorUfactor = runner.getDoubleArgumentValue("door_ufactor",user_arguments)
+    if doorUfactor <= 0.0
+        runner.registerError("U-Factor must be greater than 0.")
         return false
     end
 
@@ -90,8 +90,8 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
     
     if not finished_sub_surfaces.empty?
         # Define materials
-        door_Uvalue_air_to_air = doorUvalue
-        door_Rvalue_air_to_air = 1.0 / door_Uvalue_air_to_air
+        door_Ufactor_air_to_air = doorUfactor
+        door_Rvalue_air_to_air = 1.0 / door_Ufactor_air_to_air
         door_Rvalue = door_Rvalue_air_to_air - Material.AirFilmOutside.rvalue - Material.AirFilmVertical.rvalue
         door_thickness = 1.75 # in
         fin_door_mat = Material.new(name="DoorMaterial", thick_in=door_thickness, mat_base=BaseMaterial.Wood, k_in=1.0 / door_Rvalue * door_thickness)
@@ -111,8 +111,8 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
 
     if not unfinished_sub_surfaces.empty?
         # Define materials
-        garage_door_Uvalue_air_to_air = 0.2 # Btu/hr*ft^2*F, R-values typically vary from R5 to R10, from the Home Depot website
-        garage_door_Rvalue_air_to_air = 1.0 / garage_door_Uvalue_air_to_air
+        garage_door_Ufactor_air_to_air = 0.2 # Btu/hr*ft^2*F, R-values typically vary from R5 to R10, from the Home Depot website
+        garage_door_Rvalue_air_to_air = 1.0 / garage_door_Ufactor_air_to_air
         garage_door_Rvalue = garage_door_Rvalue_air_to_air - Material.AirFilmOutside.rvalue - Material.AirFilmVertical.rvalue
         garage_door_thickness = 2.5 # in
         unfin_door_mat = Material.new(name="GarageDoorMaterial", thick_in=garage_door_thickness, mat_base=BaseMaterial.Wood, k_in=1.0 / garage_door_Rvalue * garage_door_thickness)

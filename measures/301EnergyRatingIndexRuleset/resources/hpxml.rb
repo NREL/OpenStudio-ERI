@@ -21,14 +21,12 @@ class OSMeasures
     get_location(building, measures, weather_file_path)
     get_beds_and_baths(building, measures)
     get_num_occupants(building, measures)
-    get_window_area(building, measures)
-    get_door_area(building, measures)
+    get_windows(building, measures)
+    get_doors(building, measures)
     get_ceiling_roof_constructions(building, measures)
     get_floor_constructions(building, measures)
     get_wall_constructions(building, measures)
     get_other_constructions(building, measures)
-    get_window_constructions(building, measures)
-    get_door_constructions(building, measures)
     get_water_heating(building, measures)
     get_heating_system(building, measures)
     get_cooling_system(building, measures)
@@ -106,7 +104,10 @@ class OSMeasures
     
   end
       
-  def self.get_window_area(building, measures)
+  def self.get_windows(building, measures)
+  
+    # TODO: Better preserve actual window azimuths?
+    # FIXME: Double-check use of ResidentialGeometryWindowArea measure; add facade wall area as needed
   
     facades = [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight]
     
@@ -116,11 +117,24 @@ class OSMeasures
     azimuths[Constants.FacadeLeft] = normalize_azimuth(azimuths[Constants.FacadeFront] + 90)
     azimuths[Constants.FacadeRight] = normalize_azimuth(azimuths[Constants.FacadeFront] + 270)
     
-    window_areas = {Constants.FacadeFront=>0.0,
-                    Constants.FacadeBack=>0.0,
-                    Constants.FacadeLeft=>0.0,
-                    Constants.FacadeRight=>0.0
-                   }
+    areas = {
+             Constants.FacadeFront=>0.0,
+             Constants.FacadeBack=>0.0,
+             Constants.FacadeLeft=>0.0,
+             Constants.FacadeRight=>0.0
+            }
+    ufactor_times_areas = {
+                           Constants.FacadeFront=>0.0,
+                           Constants.FacadeBack=>0.0,
+                           Constants.FacadeLeft=>0.0,
+                           Constants.FacadeRight=>0.0
+                          }
+    shgc_times_areas = {
+                        Constants.FacadeFront=>0.0,
+                        Constants.FacadeBack=>0.0,
+                        Constants.FacadeLeft=>0.0,
+                        Constants.FacadeRight=>0.0
+                       }
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
       window_az = Float(XMLHelper.get_value(window, "Azimuth"))
       window_area = Float(XMLHelper.get_value(window, "Area"))
@@ -137,7 +151,9 @@ class OSMeasures
         best_facade = facade
       end
       
-      window_areas[best_facade] += window_area
+      areas[best_facade] += window_area
+      ufactor_times_areas[best_facade] += Float(XMLHelper.get_value(window, "UFactor"))*window_area
+      shgc_times_areas[best_facade] += Float(XMLHelper.get_value(window, "SHGC"))*window_area
       
     end
     
@@ -147,14 +163,29 @@ class OSMeasures
             "back_wwr"=>"0",
             "left_wwr"=>"0",
             "right_wwr"=>"0",
-            "front_area"=>window_areas[Constants.FacadeFront].to_s,
-            "back_area"=>window_areas[Constants.FacadeBack].to_s,
-            "left_area"=>window_areas[Constants.FacadeLeft].to_s,
-            "right_area"=>window_areas[Constants.FacadeRight].to_s,
+            "front_area"=>areas[Constants.FacadeFront].to_s,
+            "back_area"=>areas[Constants.FacadeBack].to_s,
+            "left_area"=>areas[Constants.FacadeLeft].to_s,
+            "right_area"=>areas[Constants.FacadeRight].to_s,
             "aspect_ratio"=>"1.333"
            }  
     measures[measure_subdir] = args
     
+    measure_subdir = "ResidentialConstructionsWindows"
+    args = {
+            "ufactor_front"=>(ufactor_times_areas[Constants.FacadeFront]/areas[Constants.FacadeFront]).to_s,
+            "ufactor_back"=>(ufactor_times_areas[Constants.FacadeBack]/areas[Constants.FacadeBack]).to_s,
+            "ufactor_left"=>(ufactor_times_areas[Constants.FacadeLeft]/areas[Constants.FacadeLeft]).to_s,
+            "ufactor_right"=>(ufactor_times_areas[Constants.FacadeRight]/areas[Constants.FacadeRight]).to_s,
+            "shgc_front"=>(shgc_times_areas[Constants.FacadeFront]/areas[Constants.FacadeFront]).to_s,
+            "shgc_back"=>(shgc_times_areas[Constants.FacadeBack]/areas[Constants.FacadeBack]).to_s,
+            "shgc_left"=>(shgc_times_areas[Constants.FacadeLeft]/areas[Constants.FacadeLeft]).to_s,
+            "shgc_right"=>(shgc_times_areas[Constants.FacadeRight]/areas[Constants.FacadeRight]).to_s,
+            "heating_shade_mult"=>"0.7",
+            "cooling_shade_mult"=>"0.7"
+           }  
+    measures[measure_subdir] = args
+
   end
   
   def self.normalize_azimuth(az)
@@ -167,16 +198,27 @@ class OSMeasures
     return az
   end
       
-  def self.get_door_area(building, measures)
+  def self.get_doors(building, measures)
 
-    measure_subdir = "ResidentialGeometryDoorArea"  
-    door_area = 0.0
-    building.elements.each("BuildingDetails/Enclosure/Doors/Door/Area") do |area|
-      door_area += Float(area.text)
+    tot_area = 0.0
+    tot_ua = 0.0
+    building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
+      area = Float(XMLHelper.get_value(door, "Area"))
+      ua = area/Float(XMLHelper.get_value(door, "RValue"))
+      tot_area += area
+      tot_ua += ua
     end
-    if door_area > 0
+
+    if tot_area > 0
+      measure_subdir = "ResidentialGeometryDoorArea"  
       args = {
-              "door_area"=>door_area.to_s
+              "door_area"=>tot_area.to_s
+             }  
+      measures[measure_subdir] = args
+      
+      measure_subdir = "ResidentialConstructionsDoors"
+      args = {
+              "door_ufactor"=>(tot_ua/tot_area).to_s
              }  
       measures[measure_subdir] = args
     end
@@ -184,6 +226,8 @@ class OSMeasures
   end
 
   def self.get_ceiling_roof_constructions(building, measures)
+  
+    # FIXME
 
     measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
     args = {
@@ -249,6 +293,8 @@ class OSMeasures
   end
 
   def self.get_floor_constructions(building, measures)
+  
+    # FIXME
 
     exposed_perim = 0
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
@@ -364,6 +410,8 @@ class OSMeasures
   end
 
   def self.get_wall_constructions(building, measures)
+  
+    # FIXME
 
     measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
     args = {
@@ -434,6 +482,8 @@ class OSMeasures
   end
 
   def self.get_other_constructions(building, measures)
+  
+    # FIXME
 
     measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
     args = {}
@@ -450,29 +500,6 @@ class OSMeasures
            }
     measures[measure_subdir] = args
     
-  end
-
-  def self.get_window_constructions(building, measures)
-
-    measure_subdir = "ResidentialConstructionsWindows"
-    args = {
-            "ufactor"=>"0.37",
-            "shgc"=>"0.3",
-            "heating_shade_mult"=>"0.7",
-            "cooling_shade_mult"=>"0.7"
-           }  
-    measures[measure_subdir] = args
-    
-  end
-
-  def self.get_door_constructions(building, measures)
-
-    measure_subdir = "ResidentialConstructionsDoors"
-    args = {
-            "door_uvalue"=>"0.2"
-           }  
-    measures[measure_subdir] = args
-
   end
 
   def self.get_water_heating(building, measures)

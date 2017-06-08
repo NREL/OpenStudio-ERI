@@ -546,11 +546,12 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       if enclosure.elements["Windows"].nil?
         windows = enclosure.add_element "Windows"
       end
+      facade = Geometry.get_facade_for_surface(subsurface.surface.get)
       window = windows.add_element "Window"
       XMLHelper.add_attribute(window.add_element("SystemIdentifier"), "id", subsurface.name)
       window.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
-      XMLHelper.add_element(window, "UFactor", measures["ResidentialConstructionsWindows"]["ufactor"])
-      XMLHelper.add_element(window, "SHGC", measures["ResidentialConstructionsWindows"]["shgc"])
+      XMLHelper.add_element(window, "UFactor", measures["ResidentialConstructionsWindows"]["ufactor_#{facade}"])
+      XMLHelper.add_element(window, "SHGC", measures["ResidentialConstructionsWindows"]["shgc_#{facade}"])
       if measures.keys.include? "ResidentialGeometryOverhangs"
         overhangs = window.add_element "Overhangs"
         XMLHelper.add_element(overhangs, "Depth", OpenStudio.convert(measures["ResidentialGeometryOverhangs"]["depth"].to_f,"ft","in").get.round(1))
@@ -570,7 +571,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_attribute(door.add_element("SystemIdentifier"), "id", subsurface.name)
       XMLHelper.add_attribute(door.add_element("AttachedToWall"), "idref", subsurface.surface.get.name)
       door.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
-      XMLHelper.add_element(door, "RValue", 1.0 / measures["ResidentialConstructionsDoors"]["door_uvalue"].to_f)
+      XMLHelper.add_element(door, "RValue", 1.0 / measures["ResidentialConstructionsDoors"]["door_ufactor"].to_f)
     end
     
     # Systems

@@ -13,7 +13,7 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
   class SHWSystem
     def initialize
     end
-    attr_accessor(:collector_area, :pump_power, :storage_vol, :test_flow, :coll_flow, :storage_diam, :storage_ht, :tank_a, :storage_Uvalue)
+    attr_accessor(:collector_area, :pump_power, :storage_vol, :test_flow, :coll_flow, :storage_diam, :storage_ht, :tank_a, :storage_Ufactor)
   end  
   
   class SHWAzimuth
@@ -215,7 +215,7 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
     shw_system.storage_diam = (4.0 * shw_system.storage_vol / 3 / Math::PI) ** (1.0 / 3.0) # ft
     shw_system.storage_ht = 3.0 * shw_system.storage_diam # ft
     shw_system.tank_a = shw_system.storage_ht * Math::PI * shw_system.storage_diam + 2.0 * Math::PI * shw_system.storage_diam ** 2.0 / 4.0 # ft^2
-    shw_system.storage_Uvalue = 1.0 / tank_r # Btu/hr-ft^2-R
+    shw_system.storage_Ufactor = 1.0 / tank_r # Btu/hr-ft^2-R
     
     units.each do |unit|
     
@@ -381,7 +381,7 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
         storage_tank.ambientTemperatureSchedule.get.remove
         storage_tank.setAmbientTemperatureThermalZone(control_zone)
         storage_tank.setAmbientTemperatureIndicator('ThermalZone')
-        storage_tank.setUniformSkinLossCoefficientperUnitAreatoAmbientTemperature(OpenStudio.convert(shw_system.storage_Uvalue,"Btu/hr*ft^2*R","W/m^2*K").get)
+        storage_tank.setUniformSkinLossCoefficientperUnitAreatoAmbientTemperature(OpenStudio.convert(shw_system.storage_Ufactor,"Btu/hr*ft^2*R","W/m^2*K").get)
         storage_tank.setSkinLossFractiontoZone(1)
         storage_tank.setOffCycleFlueLossFractiontoZone(1)
         storage_tank.setUseSideEffectiveness(1)
