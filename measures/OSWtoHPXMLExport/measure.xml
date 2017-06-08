@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>1fd19a72-6606-4cb1-ad7a-bf1f2f43ac22</version_id>
-  <version_modified>20170605T222426Z</version_modified>
+  <version_id>edb7630f-3c44-4ce4-afd1-ff192c9b1e59</version_id>
+  <version_modified>20170608T172720Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -79,12 +79,6 @@
       <checksum>77B8414D</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>52ED8627</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -97,6 +91,12 @@
       <checksum>F78518CC</checksum>
     </file>
     <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EC173CA6</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -105,25 +105,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>E9A04846</checksum>
+      <checksum>66F402AF</checksum>
     </file>
     <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>80690FCD</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A7F28394</checksum>
+      <checksum>63D541A4</checksum>
     </file>
     <file>
       <filename>create-model-example.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>73CBDEB9</checksum>
+      <checksum>214268A7</checksum>
     </file>
   </files>
 </measure>

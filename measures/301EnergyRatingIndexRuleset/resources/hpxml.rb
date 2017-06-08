@@ -75,11 +75,11 @@ class OSMeasures
   def self.get_beds_and_baths(building, measures)
 
     measure_subdir = "ResidentialGeometryNumBedsAndBaths"  
-    num_bedrooms = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
-    num_bathrooms = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
+    num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     args = {
-            "num_bedrooms"=>num_bedrooms,
-            "num_bathrooms"=>num_bathrooms
+            "num_bedrooms"=>num_bedrooms.to_s,
+            "num_bathrooms"=>num_bathrooms.to_s
            }  
     measures[measure_subdir] = args
     
@@ -87,17 +87,17 @@ class OSMeasures
       
   def self.get_num_occupants(building, measures)
 
-    num_occ = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")
-    occ_gain = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainPerPerson")
-    sens_frac = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible")
-    lat_frac = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent")
+    num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
+    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainPerPerson"))
+    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
+    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
     
     measure_subdir = "ResidentialGeometryNumOccupants"  
     args = {
-            "num_occ"=>num_occ,
-            "occ_gain"=>occ_gain,
-            "sens_frac"=>sens_frac,
-            "lat_frac"=>lat_frac,
+            "num_occ"=>num_occ.to_s,
+            "occ_gain"=>occ_gain.to_s,
+            "sens_frac"=>sens_frac.to_s,
+            "lat_frac"=>lat_frac.to_s,
             "weekday_sch"=>"1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
             "weekend_sch"=>"1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
             "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
@@ -111,7 +111,7 @@ class OSMeasures
     facades = [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight]
     
     azimuths = {}
-    azimuths[Constants.FacadeFront] = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/Site/AzimuthOfFrontOfHome").to_f
+    azimuths[Constants.FacadeFront] = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/Site/AzimuthOfFrontOfHome"))
     azimuths[Constants.FacadeBack] = normalize_azimuth(azimuths[Constants.FacadeFront] + 180)
     azimuths[Constants.FacadeLeft] = normalize_azimuth(azimuths[Constants.FacadeFront] + 90)
     azimuths[Constants.FacadeRight] = normalize_azimuth(azimuths[Constants.FacadeFront] + 270)
@@ -122,8 +122,8 @@ class OSMeasures
                     Constants.FacadeRight=>0.0
                    }
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
-      window_az = XMLHelper.get_value(window, "Azimuth").to_f
-      window_area = XMLHelper.get_value(window, "Area").to_f
+      window_az = Float(XMLHelper.get_value(window, "Azimuth"))
+      window_area = Float(XMLHelper.get_value(window, "Area"))
       
       # Find closest facade
       best_min_delta = 99999
@@ -172,7 +172,7 @@ class OSMeasures
     measure_subdir = "ResidentialGeometryDoorArea"  
     door_area = 0.0
     building.elements.each("BuildingDetails/Enclosure/Doors/Door/Area") do |area|
-      door_area += area.text.to_f
+      door_area += Float(area.text)
     end
     if door_area > 0
       args = {
@@ -254,7 +254,7 @@ class OSMeasures
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       foundation.elements.each("Slab") do |slab|        
         unless slab.elements["ExposedPerimeter"].nil?
-          exposed_perim += slab.elements["ExposedPerimeter"].text.to_f
+          exposed_perim += Float(slab.elements["ExposedPerimeter"].text)
         end
       end
     end
@@ -481,41 +481,41 @@ class OSMeasures
     
     return if dhw.nil?
     
-    setpoint_temp = XMLHelper.get_value(dhw, "HotWaterTemperature")
-    tank_vol = XMLHelper.get_value(dhw, "TankVolume")
+    setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
+    tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
     fuel = XMLHelper.get_value(dhw, "FuelType")
     
     if wh_type == "storage water heater"
     
-      ef = XMLHelper.get_value(dhw, "EnergyFactor")
-      cap_btuh = XMLHelper.get_value(dhw, "HeatingCapacity")
+      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
+      cap_btuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity"))
       
       if fuel == "electricity"
       
         measure_subdir = "ResidentialHotWaterHeaterTankElectric"
         args = {
-                "tank_volume"=>tank_vol,
-                "setpoint_temp"=>setpoint_temp,
+                "tank_volume"=>tank_vol.to_s,
+                "setpoint_temp"=>setpoint_temp.to_s,
                 "location"=>Constants.Auto,
-                "capacity"=>OpenStudio::convert(cap_btuh.to_f,"Btu/h","kW").get.to_s,
-                "energy_factor"=>ef
+                "capacity"=>OpenStudio::convert(cap_btuh,"Btu/h","kW").get.to_s,
+                "energy_factor"=>ef.to_s
                }
         measures[measure_subdir] = args
         
       elsif ["natural gas", "fuel oil", "propane"].include? fuel
       
-        re = XMLHelper.get_value(dhw, "RecoveryEfficiency")
+        re = Float(XMLHelper.get_value(dhw, "RecoveryEfficiency"))
         
         measure_subdir = "ResidentialHotWaterHeaterTankFuel"
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
-                "tank_volume"=>tank_vol,
-                "setpoint_temp"=>setpoint_temp,
+                "tank_volume"=>tank_vol.to_s,
+                "setpoint_temp"=>setpoint_temp.to_s,
                 "location"=>Constants.Auto,
-                "capacity"=>(cap_btuh.to_f/1000.0).to_s,
-                "energy_factor"=>ef,
-                "recovery_efficiency"=>re,
+                "capacity"=>(cap_btuh/1000.0).to_s,
+                "energy_factor"=>ef.to_s,
+                "recovery_efficiency"=>re.to_s,
                 "offcyc_power"=>"0",
                 "oncyc_power"=>"0"
                }
@@ -525,8 +525,8 @@ class OSMeasures
       
     elsif wh_type == "instantaneous water heater"
     
-      ef = XMLHelper.get_value(dhw, "EnergyFactor")
-      ef_adj = XMLHelper.get_value(dhw, "extension/PerformanceAdjustmentEnergyFactor")
+      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
+      ef_adj = Float(XMLHelper.get_value(dhw, "extension/PerformanceAdjustmentEnergyFactor"))
       
       if fuel == "electricity"
       
@@ -535,8 +535,8 @@ class OSMeasures
                 "setpoint_temp"=>setpoint_temp,
                 "location"=>Constants.Auto,
                 "capacity"=>"100000000.0",
-                "energy_factor"=>ef,
-                "cycling_derate"=>ef_adj
+                "energy_factor"=>ef.to_s,
+                "cycling_derate"=>ef_adj.to_s
                }
         measures[measure_subdir] = args
         
@@ -547,8 +547,8 @@ class OSMeasures
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "location"=>Constants.Auto,
                 "capacity"=>"100000000.0",
-                "energy_factor"=>ef,
-                "cycling_derate"=>ef_adj,
+                "energy_factor"=>ef.to_s,
+                "cycling_derate"=>ef_adj.to_s,
                 "offcyc_power"=>"0",
                 "oncyc_power"=>"0",
                }
@@ -596,13 +596,13 @@ class OSMeasures
     
     if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
     
-      afue = XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value")
+      afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
     
       if fuel == "electricity"
       
         measure_subdir = "ResidentialHVACFurnaceElectric"
         args = {
-                "afue"=>afue,
+                "afue"=>afue.to_s,
                 "fan_power_installed"=>"0.5", # FIXME
                 "capacity"=>Constants.SizingAuto
                }
@@ -613,7 +613,7 @@ class OSMeasures
         measure_subdir = "ResidentialHVACFurnaceFuel"
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
-                "afue"=>afue,
+                "afue"=>afue.to_s,
                 "fan_power_installed"=>"0.5", # FIXME
                 "capacity"=>Constants.SizingAuto
                }
@@ -623,14 +623,14 @@ class OSMeasures
       
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
     
-      afue = XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value")
+      afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
     
       if fuel == "electricity"
       
         measure_subdir = "ResidentialHVACBoilerElectric"
         args = {
                 "system_type"=>Constants.BoilerTypeForcedDraft,
-                "afue"=>afue,
+                "afue"=>afue.to_s,
                 "oat_reset_enabled"=>"false",
                 "capacity"=>Constants.SizingAuto
                }
@@ -642,7 +642,7 @@ class OSMeasures
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "system_type"=>Constants.BoilerTypeForcedDraft,
-                "afue"=>afue,
+                "afue"=>afue.to_s,
                 "oat_reset_enabled"=>"false", # FIXME?
                 "oat_high"=>nil,
                 "oat_low"=>nil,
@@ -658,11 +658,11 @@ class OSMeasures
       
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
     
-      percent = XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value")
+      percent = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
     
       measure_subdir = "ResidentialHVACElectricBaseboard"
       args = {
-              "efficiency"=>percent,
+              "efficiency"=>percent.to_s,
               "capacity"=>Constants.SizingAuto
              }
       measures[measure_subdir] = args
@@ -681,15 +681,15 @@ class OSMeasures
     
     if clg_type == "central air conditioning"
     
-      seer_nom = XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value").to_f
-      seer_adj = XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER").to_f
-      seer = (seer_nom * seer_adj).to_s
+      seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
+      seer = seer_nom * seer_adj
     
       if seer_nom < 16
       
         measure_subdir = "ResidentialHVACCentralAirConditionerSingleSpeed"
         args = {
-                "seer"=>seer,
+                "seer"=>seer.to_s,
                 "eer"=>"11.1",
                 "shr"=>"0.73",
                 "fan_power_rated"=>"0.365",
@@ -709,7 +709,7 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACCentralAirConditionerTwoSpeed"
         args = {
-                "seer"=>seer,
+                "seer"=>seer.to_s,
                 "eer"=>"13.5",
                 "eer2"=>"12.4",
                 "shr"=>"0.71",
@@ -735,7 +735,7 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACCentralAirConditionerVariableSpeed"
         args = {
-                "seer"=>seer,
+                "seer"=>seer.to_s,
                 "eer"=>"19.2",
                 "eer2"=>"18.3",
                 "eer3"=>"16.5",
@@ -769,11 +769,11 @@ class OSMeasures
       
     elsif clg_type == "room air conditioner"
     
-      eer = XMLHelper.get_value(htgsys, "AnnualCoolingEfficiency[Units='EER']/Value")
+      eer = Float(XMLHelper.get_value(htgsys, "AnnualCoolingEfficiency[Units='EER']/Value"))
 
       measure_subdir = "ResidentialHVACRoomAirConditioner"
       args = {
-              "eer"=>eer,
+              "eer"=>eer.to_s,
               "shr"=>"0.65",
               "airflow_rate"=>"350",
               "capacity"=>Constants.SizingAuto
@@ -794,19 +794,19 @@ class OSMeasures
     
     if hp_type == "air-to-air"        
     
-      seer_nom = XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value").to_f
-      seer_adj = XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER").to_f
-      seer = (seer_nom * seer_adj).to_s
-      hspf_nom = XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value").to_f
-      hspf_adj = XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF").to_f
-      hspf = (hspf_nom * hspf_adj).to_s
+      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
+      seer = seer_nom * seer_adj
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+      hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
+      hspf = hspf_nom * hspf_adj
       
       if seer_nom < 16
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpSingleSpeed"
         args = {
-                "seer"=>seer,
-                "hspf"=>hspf,
+                "seer"=>seer.to_s,
+                "hspf"=>hspf.to_s,
                 "eer"=>"11.4",
                 "cop"=>"3.05",
                 "shr"=>"0.73",
@@ -834,8 +834,8 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpTwoSpeed"
         args = {
-                "seer"=>seer,
-                "hspf"=>hspf,
+                "seer"=>seer.to_s,
+                "hspf"=>hspf.to_s,
                 "eer"=>"13.1",
                 "eer2"=>"11.7",
                 "cop"=>"3.8",
@@ -872,8 +872,8 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpVariableSpeed"
         args = {
-                "seer"=>seer,
-                "hspf"=>hspf,
+                "seer"=>seer.to_s,
+                "hspf"=>hspf.to_s,
                 "eer"=>"17.4",
                 "eer2"=>"16.8",
                 "eer3"=>"14.3",
@@ -922,22 +922,22 @@ class OSMeasures
       
     elsif hp_type == "mini-split"
       
-      seer_nom = XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value").to_f
-      seer_adj = XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER").to_f
-      seer = (seer_nom * seer_adj).to_s
-      hspf_nom = XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value").to_f
-      hspf_adj = XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF").to_f
-      hspf = (hspf_nom * hspf_adj).to_s
+      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
+      seer = seer_nom * seer_adj
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+      hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
+      hspf = hspf_nom * hspf_adj
       
       measure_subdir = "ResidentialHVACMiniSplitHeatPump"
       args = {
-              "seer"=>seer,
+              "seer"=>seer.to_s,
               "min_cooling_capacity"=>"0.4",
               "max_cooling_capacity"=>"1.2",
               "shr"=>"0.73",
               "min_cooling_airflow_rate"=>"200",
               "max_cooling_airflow_rate"=>"425",
-              "hspf"=>hpsf,
+              "hspf"=>hpsf.to_s,
               "heating_capacity_offset"=>"2300",
               "min_heating_capacity"=>"0.3",
               "max_heating_capacity"=>"1.2",
@@ -955,13 +955,13 @@ class OSMeasures
              
     elsif hp_type == "ground-to-air"
     
-      eer = XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='EER']/Value")
-      cop = XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='COP']/Value")
+      eer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='EER']/Value"))
+      cop = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='COP']/Value"))
     
       measure_subdir = "ResidentialHVACGroundSourceHeatPumpVerticalBore"
       args = {
-              "cop"=>cop,
-              "eer"=>eer,
+              "cop"=>cop.to_s,
+              "eer"=>eer.to_s,
               "ground_conductivity"=>"0.6",
               "grout_conductivity"=>"0.4",
               "bore_config"=>Constants.SizingAuto,
@@ -990,29 +990,25 @@ class OSMeasures
 
   def self.get_heating_setpoint(building, measures) 
 
-    htg_sp = building.elements["BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason"]
+    htg_sp = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason"))
     measure_subdir = "ResidentialHVACHeatingSetpoints"
-    if not htg_sp.nil?
-      args = {
-              "htg_wkdy"=>htg_sp.text,
-              "htg_wked"=>htg_sp.text
-             }  
-      measures[measure_subdir] = args
-    end
+    args = {
+            "htg_wkdy"=>htg_sp.to_s,
+            "htg_wked"=>htg_sp.to_s
+           }  
+    measures[measure_subdir] = args
     
   end
 
   def self.get_cooling_setpoint(building, measures)
 
-    clg_sp = building.elements["BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason"]
+    clg_sp = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason"))
     measure_subdir = "ResidentialHVACCoolingSetpoints"
-    if not clg_sp.nil?
-      args = {
-              "clg_wkdy"=>clg_sp.text,
-              "clg_wked"=>clg_sp.text
-             }  
-      measures[measure_subdir] = args
-    end
+    args = {
+            "clg_wkdy"=>clg_sp.to_s,
+            "clg_wked"=>clg_sp.to_s
+           }  
+    measures[measure_subdir] = args
 
   end
 
@@ -1038,10 +1034,10 @@ class OSMeasures
 
   def self.get_refrigerator(building, measures)
 
-    kWhs = XMLHelper.get_value(building, "BuildingDetails/Appliances/Refrigerator/RatedAnnualkWh")
+    kWhs = Float(XMLHelper.get_value(building, "BuildingDetails/Appliances/Refrigerator/RatedAnnualkWh"))
     measure_subdir = "ResidentialApplianceRefrigerator"  
     args = {
-            "fridge_E"=>kWhs,
+            "fridge_E"=>kWhs.to_s,
             "mult"=>"1",
             "weekday_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
             "weekend_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
@@ -1167,9 +1163,9 @@ class OSMeasures
 
   def self.get_lighting(building, measures)
   
-    annual_kwh_interior = XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualInteriorkWh")
-    annual_kwh_exterior = XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualExteriorkWh")
-    annual_kwh_garage = XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualGaragekWh")
+    annual_kwh_interior = Float(XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualInteriorkWh"))
+    annual_kwh_exterior = Float(XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualExteriorkWh"))
+    annual_kwh_garage = Float(XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualGaragekWh"))
 
     measure_subdir = "ResidentialLighting"
     args = {
@@ -1184,9 +1180,9 @@ class OSMeasures
             "cfl_eff"=>"55", # not used
             "led_eff"=>"80", # not used
             "lfl_eff"=>"88", # not used
-            "energy_use_interior"=>annual_kwh_interior,
-            "energy_use_exterior"=>annual_kwh_exterior,
-            "energy_use_garage"=>annual_kwh_garage
+            "energy_use_interior"=>annual_kwh_interior.to_s,
+            "energy_use_exterior"=>annual_kwh_exterior.to_s,
+            "energy_use_garage"=>annual_kwh_garage.to_s
            }  
     measures[measure_subdir] = args  
 
@@ -1199,10 +1195,10 @@ class OSMeasures
     sens_kWhs = 0
     lat_kWhs = 0
     building.elements.each("BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other' or PlugLoadType='TV other']") do |pl|
-      kWhs = XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value").to_f
+      kWhs = Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value"))
       if XMLHelper.has_element(pl, "extension/FracSensible") and XMLHelper.has_element(pl, "extension/FracLatent")
-        sens_kWhs += kWhs * XMLHelper.get_value(pl, "extension/FracSensible").to_f
-        lat_kWhs += kWhs * XMLHelper.get_value(pl, "extension/FracLatent").to_f
+        sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
+        lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
       else # No fractions; all sensible
         sens_kWhs += kWhs
       end

@@ -82,3 +82,10 @@ class XMLHelper
   end  
   
 end
+
+def Boolean(val)
+  if val.nil?
+    raise TypeError.new("can't convert nil into Boolean")
+  end
+  return val.downcase.to_s == "true"
+end
