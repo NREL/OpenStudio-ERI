@@ -7,7 +7,7 @@ require 'fileutils'
 
 class UtilityBillCalculationsTest < MiniTest::Test
   
-  def test_invalid_json_file_path
+  def test_json_path_invalid
     args_hash = {}
     args_hash["run_dir"] = "."    
     args_hash["json_file_path"] = "./tests/result.txt"
@@ -15,60 +15,37 @@ class UtilityBillCalculationsTest < MiniTest::Test
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_includes(result.errors.map{ |x| x.logMessage }, "'#{File.expand_path(File.join(File.dirname(__FILE__), '..', args_hash["json_file_path"]))}' does not exist or is not a .json file.")
-  end  
-  
-  def test_error_api_but_eiaid_not_found
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "00000"
-    result = _test_error_or_NA("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, __method__)
-    assert(result.errors.size == 1)
-    assert_equal("Fail", result.value.valueName)
-    assert_includes(result.errors.map{ |x| x.logMessage }, "Could not find EIA Utility ID: #{args_hash["eia_id"]}.")    
   end
   
   def test_error_no_api_key_or_json_file_path
     args_hash = {}
     args_hash["run_dir"] = "."
-    args_hash["eia_id"] = "00000"
     result = _test_error_or_NA("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, __method__)
     assert(result.errors.size == 1)
     assert_equal("Fail", result.value.valueName)
     assert_includes(result.errors.map{ |x| x.logMessage }, "Did not supply an API Key or a JSON File Path.")    
-  end
+  end  
   
-  def test_api_eiaid_10000
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    args_hash["eia_id"] = "10000"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 6)  
-  end
-  
-  def test_api_but_no_eiaid
-    args_hash = {}
-    args_hash["run_dir"] = "."
-    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 7)  
-  end
-  
-  def test_json_eiaid_17609
+  def test_json_path_valid
     args_hash = {}
     args_hash["run_dir"] = "."
     args_hash["json_file_path"] = "./tests/result.json"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 5)
-  end
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__)
+  end  
   
+  def test_api_key_valid
+    args_hash = {}
+    args_hash["run_dir"] = "."
+    args_hash["api_key"] = "eY6hepGi6hrIt7yg1Ds8Mt7A9GlnsWC1kg8M1n8n"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Denver.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, __method__, 14, 2)  
+  end
+
   private
 
   def model_in_path_default
@@ -147,6 +124,7 @@ class UtilityBillCalculationsTest < MiniTest::Test
       FileUtils.mkdir_p("#{resources_dir(test_name)}")
     end
     FileUtils.cp("#{File.dirname(__FILE__)}/../resources/utilities.csv", "#{resources_dir(test_name)}")
+    FileUtils.cp("#{File.dirname(__FILE__)}/../resources/by_nsrdb.csv", "#{resources_dir(test_name)}")
     FileUtils.cp("#{File.dirname(__FILE__)}/result.json", "#{resources_dir(test_name)}")
     
     return model
