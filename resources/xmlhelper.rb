@@ -71,13 +71,13 @@ class XMLHelper
     xsd.validate(doc)
   end
   
-  def self.write_file(hpxml_doc, hpxml_out_path)
-    # Write HPXML file
+  def self.write_file(doc, out_path)
+    # Write XML file
     formatter = REXML::Formatters::Pretty.new(2)
     formatter.compact = true
     formatter.width = 1000
-    File.open(hpxml_out_path, 'w') do |f|
-      formatter.write(hpxml_doc, f)
+    File.open(out_path, 'w') do |f|
+      formatter.write(doc, f)
     end
   end  
   

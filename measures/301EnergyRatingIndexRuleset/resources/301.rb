@@ -1,10 +1,11 @@
 require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/xmlhelper"
 require "#{File.dirname(__FILE__)}/waterheater"
+require "#{File.dirname(__FILE__)}/airflow"
 
 class EnergyRatingIndex301Ruleset
 
-  def self.apply_ruleset(hpxml_doc, calc_type)
+  def self.apply_ruleset(hpxml_doc, calc_type, weather)
   
     errors = []
     building = nil
@@ -26,15 +27,15 @@ class EnergyRatingIndex301Ruleset
     # Get the building element
     building = hpxml_doc.elements["//Building"]
     
-    cfa, nbeds, nbaths, climate_zone = get_high_level_inputs(building)
+    cfa, nbeds, nbaths, climate_zone, nstories, cvolume = get_high_level_inputs(building)
         
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
-        apply_reference_home_ruleset(building, cfa, nbeds, nbaths, climate_zone)
+        apply_reference_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
     elsif calc_type == Constants.CalcTypeERIRatedHome
-        apply_rated_home_ruleset(building, cfa, nbeds, nbaths)
+        apply_rated_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
     elsif calc_type == Constants.CalcTypeERIndexAdjustmentDesign
-        apply_index_adjustment_design_ruleset(building)
+        apply_index_adjustment_design_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
     end
     
     return errors, building
@@ -47,12 +48,13 @@ class EnergyRatingIndex301Ruleset
     unconditional_counts = {
             '//Building' => [1],
             '//Building/BuildingDetails/BuildingSummary/extension/HasNaturalGasAccessOrFuelDelivery' => [1],
-            '//Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]' => [1],
+            '//Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]' => [1], # TODO: Allow ACH50, ELA, and/or SLA?
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant[HeatingSystem|CoolingSystem|HeatPump]' => [0,1],
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl/ControlType' => [0,1],
             '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [0,1],
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [1],
+            '//Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => [0,1],
             '//Building/BuildingDetails/Appliances/ClothesWasher' => [1],
             '//Building/BuildingDetails/Appliances/ClothesDryer' => [1],
             '//Building/BuildingDetails/Appliances/Dishwasher' => [1],
@@ -62,11 +64,13 @@ class EnergyRatingIndex301Ruleset
             '//Building/BuildingDetails/Lighting/LightingFractions' => [1],
     }
     
-    # Every file must have 1 (or more) of these elements
+    # Every file must have 1 or more of these elements
     unconditional_has = [
             '//Building/BuildingDetails/BuildingSummary/Site/AzimuthOfFrontOfHome',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors',
+            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea',
+            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms',
@@ -123,7 +127,6 @@ class EnergyRatingIndex301Ruleset
                 'Azimuth',
                 'UFactor',
                 'SHGC',
-                'Operable',
             ],
             # Skylight
             '//Building/BuildingDetails/Enclosure/Skylights/Skylight' => [
@@ -131,7 +134,6 @@ class EnergyRatingIndex301Ruleset
                 'Azimuth',
                 'UFactor',
                 'SHGC',
-                'Operable',
                 'Pitch',
             ],
             # Slab
@@ -212,8 +214,25 @@ class EnergyRatingIndex301Ruleset
             '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan' => [
                 'UsedForWholeBuildingVentilation',
                 'FanType',
-                'RatedFlowRate',
                 'HoursInOperation',
+                'FanPower',
+                'RatedFlowRate',
+            ],
+            # ERV
+            '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="energy recovery ventilator"]' => [
+                'TotalRecoveryEfficiency',
+                'SensibleRecoveryEfficiency'
+            ],
+            # HRV
+            '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="heat recovery ventilator"]' => [
+                'SensibleRecoveryEfficiency',
+            ],
+            # PV
+            '//Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => [
+                'ArrayAzimuth',
+                'ArrayTilt',
+                'InverterEfficiency',
+                'MaxPowerOutput',
             ],
             # ClothesWasher
             '//Building/BuildingDetails/Appliances/ClothesWasher' => [
@@ -296,11 +315,13 @@ class EnergyRatingIndex301Ruleset
     nbeds = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     nbaths = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms"))
     climate_zone = XMLHelper.get_value(building, "BuildingDetails/ClimateandRiskZones/ClimateZoneIECC/ClimateZone")
+    nstories = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
+    cvolume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
     
-    return cfa, nbeds, nbaths, climate_zone
+    return cfa, nbeds, nbaths, climate_zone, nstories, cvolume
   end
 
-  def self.apply_reference_home_ruleset(building, cfa, nbeds, nbaths, climate_zone)
+  def self.apply_reference_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
   
     # Create new BuildingDetails element
     orig_details = XMLHelper.delete_element(building, "BuildingDetails")
@@ -320,7 +341,7 @@ class EnergyRatingIndex301Ruleset
     
     # Enclosure
     new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
-    set_enclosure_air_infiltration_reference(new_enclosure, orig_details)
+    set_enclosure_air_infiltration_reference(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
     set_enclosure_attics_roofs_reference(new_enclosure, orig_details, climate_zone)
     set_enclosure_foundations_reference(new_enclosure, orig_details, climate_zone)
     set_enclosure_rim_joists_reference(new_enclosure)
@@ -354,7 +375,7 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.apply_rated_home_ruleset(building, cfa, nbeds, nbaths)
+  def self.apply_rated_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
   
     # Create new BuildingDetails element
     orig_details = XMLHelper.delete_element(building, "BuildingDetails")
@@ -374,7 +395,7 @@ class EnergyRatingIndex301Ruleset
     
     # Enclosure
     new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
-    set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
+    set_enclosure_air_infiltration_rated(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
     set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
     set_enclosure_foundations_rated(new_enclosure, orig_details)
     set_enclosure_rim_joists_rated(new_enclosure)
@@ -408,7 +429,7 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.apply_index_adjustment_design_ruleset(building)
+  def self.apply_index_adjustment_design_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
   
   end
   
@@ -435,7 +456,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.copy_element(new_construction, orig_construction, "BuildingHeight")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloors")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsFloorsAboveGrade")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
     XMLHelper.copy_element(new_construction, orig_construction, "AverageCeilingHeight")
     XMLHelper.copy_element(new_construction, orig_construction, "FloorToFloorHeight ")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
@@ -475,7 +496,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.copy_element(new_construction, orig_construction, "BuildingHeight")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloors")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsFloorsAboveGrade")
+    XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
     XMLHelper.copy_element(new_construction, orig_construction, "AverageCeilingHeight")
     XMLHelper.copy_element(new_construction, orig_construction, "FloorToFloorHeight ")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
@@ -492,10 +513,9 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.copy_element(new_construction, orig_construction, "SpaceAboveGarage")
   end
   
-  def self.set_enclosure_air_infiltration_reference(new_enclosure, orig_details)
+  def self.set_enclosure_air_infiltration_reference(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
     
     new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
-    extension = XMLHelper.add_element(new_infil, "extension")
     
     '''
     Table 4.2.2(1) - Air exchange rate
@@ -503,7 +523,38 @@ class EnergyRatingIndex301Ruleset
     quadrature
     '''
     
-    XMLHelper.add_element(extension, "BuildingSpecificLeakageArea", 0.00036)
+    sla = 0.00036
+    
+    # Convert to other forms
+    ela = sla * cfa
+    nach = Airflow.get_infiltration_ACH_from_SLA(sla, nstories, weather)
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, cfa, cvolume)
+    
+    # nACH
+    new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
+    sys_id = XMLHelper.add_element(new_infil_meas, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Infiltration_ACHnatural")
+    new_bldg_air_lkg = XMLHelper.add_element(new_infil_meas, "BuildingAirLeakage")
+    XMLHelper.add_element(new_bldg_air_lkg, "UnitofMeasure", "ACHnatural")
+    XMLHelper.add_element(new_bldg_air_lkg, "AirLeakage", nach)
+    
+    # ACH50
+    new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
+    sys_id = XMLHelper.add_element(new_infil_meas, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Infiltration_ACH50")
+    XMLHelper.add_element(new_infil_meas, "HousePressure", 50)
+    new_bldg_air_lkg = XMLHelper.add_element(new_infil_meas, "BuildingAirLeakage")
+    XMLHelper.add_element(new_bldg_air_lkg, "UnitofMeasure", "ACH")
+    XMLHelper.add_element(new_bldg_air_lkg, "AirLeakage", ach50)
+    
+    # ELA/SLA
+    new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
+    sys_id = XMLHelper.add_element(new_infil_meas, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Infiltration_ELA_SLA")
+    XMLHelper.add_element(new_infil_meas, "EffectiveLeakageArea", ela)
+    extension = XMLHelper.add_element(new_infil, "extension")
+    XMLHelper.add_element(extension, "BuildingSpecificLeakageArea", sla)
+    
     
     '''
     Table 4.2.2(1) - Attics
@@ -524,7 +575,7 @@ class EnergyRatingIndex301Ruleset
 
   end
   
-  def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
+  def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
     '''
     Table 4.2.2(1) - Air exchange rate
     For residences , without Whole-House Mechanical Ventilation Systems, the measured infiltration rate but 
@@ -534,16 +585,45 @@ class EnergyRatingIndex301Ruleset
     0.03 x CFA + 7.5 x (Nbr+1) cfm and with energy loads calculated in quadrature
     '''
     
-    new_infil = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/AirInfiltration")
+    new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
+    orig_infil = orig_details.elements["Enclosure/AirInfiltration"]
+    orig_mv = orig_details.elements["Systems/MechanicalVentilation"]
     
-    whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    if whole_house_fan.nil?
-      building_air_leakage = new_infil.elements["AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']"]
-      nach = Float(XMLHelper.get_value(building_air_leakage, "AirLeakage"))
-      if nach < 0.30
-        building_air_leakage.elements["AirLeakage"].text = 0.30
-      end
+    whole_house_fan = orig_mv.elements["VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    nach = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
+    if whole_house_fan.nil? and nach < 0.30
+      nach = 0.30
     end
+    
+    # Convert to other forms
+    sla = Airflow.get_infiltration_SLA_from_ACH(nach, nstories, weather)
+    ela = sla * cfa
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, cfa, cvolume)
+    
+    # nACH
+    new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
+    sys_id = XMLHelper.add_element(new_infil_meas, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Infiltration_ACHnatural")
+    new_bldg_air_lkg = XMLHelper.add_element(new_infil_meas, "BuildingAirLeakage")
+    XMLHelper.add_element(new_bldg_air_lkg, "UnitofMeasure", "ACHnatural")
+    XMLHelper.add_element(new_bldg_air_lkg, "AirLeakage", nach)
+    
+    # ACH50
+    new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
+    sys_id = XMLHelper.add_element(new_infil_meas, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Infiltration_ACH50")
+    XMLHelper.add_element(new_infil_meas, "HousePressure", 50)
+    new_bldg_air_lkg = XMLHelper.add_element(new_infil_meas, "BuildingAirLeakage")
+    XMLHelper.add_element(new_bldg_air_lkg, "UnitofMeasure", "ACH")
+    XMLHelper.add_element(new_bldg_air_lkg, "AirLeakage", ach50)
+    
+    # ELA/SLA
+    new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
+    sys_id = XMLHelper.add_element(new_infil_meas, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Infiltration_ELA_SLA")
+    XMLHelper.add_element(new_infil_meas, "EffectiveLeakageArea", ela)
+    extension = XMLHelper.add_element(new_infil, "extension")
+    XMLHelper.add_element(extension, "BuildingSpecificLeakageArea", sla)
     
     '''
     Table 4.2.2(1) - Attics
@@ -933,7 +1013,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_window, "SHGC", shgc)
       XMLHelper.add_element(new_window, "NFRCCertified", true)
       XMLHelper.add_element(new_window, "ExteriorShading", "none")
-      XMLHelper.add_element(new_window, "Operable", true)
       set_window_interior_shading_reference(new_window)
     end
 
@@ -974,7 +1053,6 @@ class EnergyRatingIndex301Ruleset
     '''
     
     new_windows.elements.each("Window") do |new_window|
-      new_window.elements["Operable"].text = true
       set_window_interior_shading_reference(new_window)
     end
     
@@ -1384,28 +1462,28 @@ class EnergyRatingIndex301Ruleset
     
     # Init
     fan_type = nil
-    fan_cfm = nil
     
-    whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    orig_whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     
-    if not whole_house_fan.nil?
+    if not orig_whole_house_fan.nil?
       
       # FIXME: Review these interpretations:
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
       
-      fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
-      fan_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
+      fan_type = XMLHelper.get_value(orig_whole_house_fan, "FanType")
       
-      fan_power = nil
+      fan_power_w_per_cfm = nil
+      tre = 0.0
+      sre = 0.0
       if fan_type == 'supply only' or fan_type == 'exhaust only'
-        fan_power = 0.35 * fan_cfm
+        fan_power_w_per_cfm = 0.35
       elsif fan_type == 'balanced' # FIXME: Not available in HPXML
-        fan_power = 0.70 * fan_cfm
+        fan_power_w_per_cfm = 0.70
       elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
-        fan_power = 1.00 * fan_cfm
-        # FIXME: Uncomment below when HPXML allows balanced
-        #fan_type = 'balanced' # Table 4.2.2(1) - Air exchange rate: "assuming no energy recovery"
+        fan_power_w_per_cfm = 1.00
+        fan_type = 'heat recovery ventilator'
+        sre = 0.0001 # Table 4.2.2(1) - Air exchange rate: "assuming no energy recovery"
       end
       
       new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
@@ -1414,10 +1492,13 @@ class EnergyRatingIndex301Ruleset
       sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
       XMLHelper.add_element(new_vent_fan, "FanType", fan_type)
-      XMLHelper.add_element(new_vent_fan, "RatedFlowRate", fan_cfm)
       XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
-      XMLHelper.add_element(new_vent_fan, "FanPower", fan_power)
+      XMLHelper.add_element(new_vent_fan, "TotalRecoveryEfficiency", tre)
+      XMLHelper.add_element(new_vent_fan, "SensibleRecoveryEfficiency", sre)
+      extension = XMLHelper.add_element(new_vent_fan, "extension")
+      XMLHelper.add_element(extension, "FanPowerWperCFM", fan_power_w_per_cfm)
+      XMLHelper.add_element(extension, "Frac2013ASHRAE622", 1.0)
       
     end
       
@@ -1434,12 +1515,28 @@ class EnergyRatingIndex301Ruleset
     0.03 x CFA + 7.5 x (Nbr+1) cfm and with energy loads calculated in quadrature
     '''
     
-    new_mech_vent = XMLHelper.copy_element(new_systems, orig_details, "Systems/MechanicalVentilation")
+    orig_vent_fan = orig_details.elements["System/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
-    if not new_mech_vent.elements["VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-      fan_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
-      new_mech_vent.elements["HoursInOperation"].text = 24
-      # TODO
+    if not orig_vent_fan.nil?
+      
+      fan_cfm = Float(XMLHelper.get_value(orig_vent_fan, "RatedFlowRate"))
+      fan_power_w = Float(XMLHelper.get_value(orig_vent_fan, "FanPower"))
+      fan_power_w_per_cfm = fan_power_w / fan_cfm
+      
+      new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
+      new_vent_fans = XMLHelper.add_element(new_mech_vent, "VentilationFans")
+      new_vent_fan = XMLHelper.add_element(new_vent_fans, "VentilationFan")
+      sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "FanType")
+      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
+      XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "TotalRecoveryEfficiency")
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "SensibleRecoveryEfficiency")
+      extension = XMLHelper.add_element(new_vent_fan, "extension")
+      XMLHelper.add_element(extension, "FanPowerWperCFM", fan_power_w_per_cfm)
+      XMLHelper.add_element(extension, "Frac2013ASHRAE622", 1.0) # FIXME: This is the minimum, not specified, value
+
     end
     
   end

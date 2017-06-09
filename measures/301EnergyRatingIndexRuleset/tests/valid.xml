@@ -35,11 +35,11 @@
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofUnits>1</NumberofUnits>
           <NumberofConditionedFloors>3</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
           <FinishedFloorArea>7000</FinishedFloorArea>
-          <NumberofStoriesAboveGrade>2</NumberofStoriesAboveGrade>
           <ConditionedBuildingVolume>67575</ConditionedBuildingVolume>
           <FoundationType>
             <Basement>
@@ -321,7 +321,6 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -335,7 +334,6 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -349,7 +347,6 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -363,7 +360,6 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <Operable>false</Operable>
             <AttachedToWall idref='agwall-1'/>
           </Window>
         </Windows>
@@ -426,6 +422,9 @@
               <RatedFlowRate>247</RatedFlowRate>
               <HoursInOperation>24</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <TotalRecoveryEfficiency>0.48</TotalRecoveryEfficiency>
+              <SensibleRecoveryEfficiency>0.72</SensibleRecoveryEfficiency>
+              <FanPower>123.5</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
@@ -485,7 +484,7 @@
         <Photovoltaics>
           <PVSystem>
             <SystemIdentifier id='Photovoltaic_ID1'/>
-            <ArrayOrientation>south</ArrayOrientation>
+            <ArrayAzimuth>180</ArrayAzimuth>
             <ArrayTilt>41</ArrayTilt>
             <MaxPowerOutput>215</MaxPowerOutput>
             <CollectorArea>800</CollectorArea>

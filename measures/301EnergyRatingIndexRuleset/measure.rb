@@ -122,6 +122,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     hpxml_doc = REXML::Document.new(File.read(hpxml_file_path))
     
+    show_measure_calls=false
+    
     # Validate input HPXML
     has_errors = false
     XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
@@ -132,8 +134,26 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
+    # Apply Location measure to obtain weather data
+    measures = {}
+    measure_subdir = "ResidentialLocation"
+    args = {
+            "weather_directory"=>File.dirname(weather_file_path),
+            "weather_file_name"=>File.basename(weather_file_path),
+            "dst_start_date"=>"NA",
+            "dst_end_date"=>"NA"
+           }
+    measures[measure_subdir] = args
+    if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
+      return false
+    end
+    weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
+    if weather.error?
+      return false
+    end
+    
     # Apply 301 ruleset on HPXML object
-    errors, building = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type)
+    errors, building = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
     errors.each do |error|
       runner.registerError(error)
     end
@@ -164,7 +184,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     if not OSModel.create_geometry(building, runner, model)
       return false
     end
-    if not apply_measures(measures_dir, measures, runner, model, show_measure_calls=false)
+    if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
     end
     

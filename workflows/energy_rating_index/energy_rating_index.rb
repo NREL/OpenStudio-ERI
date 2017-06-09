@@ -581,6 +581,7 @@ def write_results(results, resultsdir, sim_outputs)
                    "Total Loads TnML"=>results[:tnml],
                    "Total Loads TRL"=>results[:trl],
                    "HERS Index"=>results[:hers_index],
+                   ""=>"",
                    "Home CFA"=>results[:cfa],
                    "Home Nbr"=>results[:nbr],
                    "L&A resMELs"=>ref_output[:elecMELs],
@@ -647,7 +648,7 @@ recreate_path(resultsdir)
 # Run simulations
 sim_outputs = {}
 Parallel.map(designs, in_threads: designs.size) do |design|
-  # Use print instead of puts in here (https://stackoverflow.com/a/5044669)
+  # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   
   print "[#{design}] Creating workflow...\n"
   osw_path, output_hpxml_path = create_osw(design, basedir, resultsdir, options)

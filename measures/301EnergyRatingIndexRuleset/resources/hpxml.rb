@@ -18,22 +18,28 @@ class OSMeasures
     # ResidentialGeometryNeighbors
     # ResidentialHVACDehumidifier
     
-    get_location(building, measures, weather_file_path)
     get_beds_and_baths(building, measures)
     get_num_occupants(building, measures)
+    
+    # Envelope
     get_windows(building, measures)
     get_doors(building, measures)
     get_ceiling_roof_constructions(building, measures)
     get_floor_constructions(building, measures)
     get_wall_constructions(building, measures)
     get_other_constructions(building, measures)
+    
+    # Water Heating
     get_water_heating(building, measures)
+    
+    # HVAC
     get_heating_system(building, measures)
     get_cooling_system(building, measures)
     get_heat_pump(building, measures)
-    get_heating_setpoint(building, measures)
-    get_cooling_setpoint(building, measures)
+    get_setpoints(building, measures)
     get_ceiling_fan(building, measures)
+    
+    # Appliances, Plug Loads, and Lighting
     get_refrigerator(building, measures)
     get_clothes_washer(building, measures)
     get_clothes_dryer(building, measures)
@@ -41,6 +47,8 @@ class OSMeasures
     get_cooking_range(building, measures)
     get_lighting(building, measures)
     get_mels(building, measures)
+    
+    # Other
     get_airflow(building, measures)
     get_hvac_sizing(building, measures)
     get_photovoltaics(building, measures)
@@ -55,19 +63,6 @@ class OSMeasures
             "propane"=>Constants.FuelTypePropane, 
             "electricity"=>Constants.FuelTypeElectric}
     return conv[fuel]
-  end
-      
-  def self.get_location(building, measures, weather_file_path)
-
-    measure_subdir = "ResidentialLocation"
-    args = {
-            "weather_directory"=>File.dirname(weather_file_path),
-            "weather_file_name"=>File.basename(weather_file_path),
-            "dst_start_date"=>"NA",
-            "dst_end_date"=>"NA"
-           }
-    measures[measure_subdir] = args
-
   end
       
   def self.get_beds_and_baths(building, measures)
@@ -107,7 +102,7 @@ class OSMeasures
   def self.get_windows(building, measures)
   
     # TODO: Better preserve actual window azimuths?
-    # FIXME: Double-check use of ResidentialGeometryWindowArea measure; add facade wall area as needed
+    # FIXME: Double-check use of ResidentialGeometryWindowArea measure; add facade wall area as needed to fit window area
   
     facades = [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight]
     
@@ -1015,9 +1010,13 @@ class OSMeasures
 
   end
 
-  def self.get_heating_setpoint(building, measures) 
+  def self.get_setpoints(building, measures) 
 
-    htg_sp = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason"))
+    control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
+  
+    htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
+    clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
+    
     measure_subdir = "ResidentialHVACHeatingSetpoints"
     args = {
             "htg_wkdy"=>htg_sp.to_s,
@@ -1025,11 +1024,6 @@ class OSMeasures
            }  
     measures[measure_subdir] = args
     
-  end
-
-  def self.get_cooling_setpoint(building, measures)
-
-    clg_sp = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason"))
     measure_subdir = "ResidentialHVACCoolingSetpoints"
     args = {
             "clg_wkdy"=>clg_sp.to_s,
@@ -1041,7 +1035,9 @@ class OSMeasures
 
   def self.get_ceiling_fan(building, measures)
 
+    # FIXME
     cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
+    
     measure_subdir = "ResidentialHVACCeilingFan"
     args = {
             "coverage"=>"NA",
@@ -1061,7 +1057,10 @@ class OSMeasures
 
   def self.get_refrigerator(building, measures)
 
-    kWhs = Float(XMLHelper.get_value(building, "BuildingDetails/Appliances/Refrigerator/RatedAnnualkWh"))
+    fridge = building.elements["BuildingDetails/Appliances/Refrigerator"]
+    
+    kWhs = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
+    
     measure_subdir = "ResidentialApplianceRefrigerator"  
     args = {
             "fridge_E"=>kWhs.to_s,
@@ -1077,7 +1076,9 @@ class OSMeasures
 
   def self.get_clothes_washer(building, measures)
 
+    # FIXME
     cw = building.elements["BuildingDetails/Appliances/ClothesWasher"]
+    
     measure_subdir = "ResidentialApplianceClothesWasher"  
     args = {
             "imef"=>"0.95",
@@ -1100,7 +1101,9 @@ class OSMeasures
 
   def self.get_clothes_dryer(building, measures)
     
+    # FIXME
     cd = building.elements["BuildingDetails/Appliances/ClothesDryer"]
+    
     cd_fuel = XMLHelper.get_value(cd, "FuelType")
     
     if cd_fuel == "electricity"
@@ -1133,7 +1136,9 @@ class OSMeasures
 
   def self.get_dishwasher(building, measures)
 
+    # FIXME
     dw = building.elements["BuildingDetails/Appliances/Dishwasher"]
+    
     measure_subdir = "ResidentialApplianceDishwasher"
     args = {
             "num_settings"=>"12",
@@ -1154,8 +1159,10 @@ class OSMeasures
 
   def self.get_cooking_range(building, measures)
     
+    # FIXME
     crange = building.elements["BuildingDetails/Appliances/CookingRange"]
     ov = building.elements["BuildingDetails/Appliances/Oven"] # TODO
+    
     crange_fuel = XMLHelper.get_value(crange, "FuelType")
     
     if crange_fuel == "electricity"
@@ -1190,9 +1197,11 @@ class OSMeasures
 
   def self.get_lighting(building, measures)
   
-    annual_kwh_interior = Float(XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualInteriorkWh"))
-    annual_kwh_exterior = Float(XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualExteriorkWh"))
-    annual_kwh_garage = Float(XMLHelper.get_value(building, "BuildingDetails/Lighting/extension/AnnualGaragekWh"))
+    lighting = building.elements["BuildingDetails/Lighting"]
+  
+    annual_kwh_interior = Float(XMLHelper.get_value(lighting, "extension/AnnualInteriorkWh"))
+    annual_kwh_exterior = Float(XMLHelper.get_value(lighting, "extension/AnnualExteriorkWh"))
+    annual_kwh_garage = Float(XMLHelper.get_value(lighting, "extension/AnnualGaragekWh"))
 
     measure_subdir = "ResidentialLighting"
     args = {
@@ -1248,53 +1257,87 @@ class OSMeasures
   end
 
   def self.get_airflow(building, measures)
+  
+    infil = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
+    whole_house_fan = building.elements["BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    
+    infil_ach50 = Float(XMLHelper.get_value(infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+    attic_sla = XMLHelper.get_value(infil, "extension/AtticSpecificLeakageArea").to_f
+    crawl_sla = XMLHelper.get_value(infil, "extension/CrawlspaceSpecificLeakageArea").to_f
 
+    if whole_house_fan.nil?
+      mech_vent_type = Constants.VentTypeNone
+      mech_vent_total_efficiency = 0
+      mech_vent_sensible_efficiency = 0
+      mech_vent_fan_power = 0
+      mech_vent_frac_62_2 = 0
+    else
+      fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
+      if fan_type == "supply only"
+        mech_vent_type = Constants.VentTypeSupply
+      elsif fan_type == "exhaust only"
+        mech_vent_type = Constants.VentTypeExhaust
+      else
+        mech_vent_type = Constants.VentTypeBalanced
+      end
+      mech_vent_total_efficiency = 0
+      mech_vent_sensible_efficiency = 0
+      if fan_type == "energy recovery ventilator" or fan_type == "heat recovery ventilator"
+        mech_vent_sensible_efficiency = Float(XMLHelper.get_value(whole_house_fan, "SensibleRecoveryEfficiency"))
+      end
+      if fan_type == "energy recovery ventilator"
+        mech_vent_total_efficiency = Float(XMLHelper.get_value(whole_house_fan, "TotalRecoveryEfficiency"))
+      end
+      mech_vent_fan_power = Float(XMLHelper.get_value(whole_house_fan, "extension/FanPowerWperCFM"))
+      mech_vent_frac_62_2 = Float(XMLHelper.get_value(whole_house_fan, "extension/Frac2013ASHRAE622"))
+    end
+  
     measure_subdir = "ResidentialAirflow"
     args = {
-            "living_ach50"=>"7",
-            "garage_ach50"=>"7",
-            "finished_basement_ach"=>"0",
-            "unfinished_basement_ach"=>"0.1",
-            "crawl_ach"=>"0",
+            "living_ach50"=>infil_ach50.to_s,
+            "garage_ach50"=>infil_ach50.to_s,
+            "finished_basement_ach"=>"0", # TODO: Need to handle above-grade basement
+            "unfinished_basement_ach"=>"0.1", # TODO: Need to handle above-grade basement
+            "crawl_ach"=>crawl_sla.to_s,
             "pier_beam_ach"=>"100",
-            "unfinished_attic_sla"=>"0.00333",
+            "unfinished_attic_sla"=>attic_sla.to_s,
             "shelter_coef"=>Constants.Auto,
-            "has_hvac_flue"=>"false",
-            "has_water_heater_flue"=>"false",
-            "has_fireplace_chimney"=>"false",
+            "has_hvac_flue"=>"false", # FIXME
+            "has_water_heater_flue"=>"false", # FIXME
+            "has_fireplace_chimney"=>"false", # FIXME
             "terrain"=>"suburban",
-            "mech_vent_type"=>"exhaust",
-            "mech_vent_total_efficiency"=>"0",
-            "mech_vent_sensible_efficiency"=>"0",
-            "mech_vent_fan_power"=>"0.3",
-            "mech_vent_frac_62_2"=>"1.0",
-            "mech_vent_ashrae_std"=>"2010",
+            "mech_vent_type"=>mech_vent_type.to_s,
+            "mech_vent_total_efficiency"=>mech_vent_total_efficiency.to_s,
+            "mech_vent_sensible_efficiency"=>mech_vent_sensible_efficiency.to_s,
+            "mech_vent_fan_power"=>mech_vent_fan_power.to_s,
+            "mech_vent_frac_62_2"=>mech_vent_frac_62_2.to_s,
+            "mech_vent_ashrae_std"=>"2013",
             "mech_vent_infil_credit"=>"true",
-            "is_existing_home"=>"false",
-            "clothes_dryer_exhaust"=>"1",
+            "is_existing_home"=>"false", # FIXME
+            "clothes_dryer_exhaust"=>"0",
             "nat_vent_htg_offset"=>"1",
             "nat_vent_clg_offset"=>"1",
             "nat_vent_ovlp_offset"=>"1",
             "nat_vent_htg_season"=>"true",
             "nat_vent_clg_season"=>"true",
             "nat_vent_ovlp_season"=>"true",
-            "nat_vent_num_weekdays"=>"3",
-            "nat_vent_num_weekends"=>"0",
+            "nat_vent_num_weekdays"=>"5",
+            "nat_vent_num_weekends"=>"2",
             "nat_vent_frac_windows_open"=>"0.33",
             "nat_vent_frac_window_area_openable"=>"0.2",
             "nat_vent_max_oa_hr"=>"0.0115",
             "nat_vent_max_oa_rh"=>"0.7",
-            "duct_location"=>Constants.Auto,
-            "duct_total_leakage"=>"0.3",
-            "duct_supply_frac"=>"0.6",
-            "duct_return_frac"=>"0.067",
-            "duct_ah_supply_frac"=>"0.067",
-            "duct_ah_return_frac"=>"0.267",
-            "duct_location_frac"=>Constants.Auto,
-            "duct_num_returns"=>Constants.Auto,
-            "duct_supply_area_mult"=>"1",
-            "duct_return_area_mult"=>"1",
-            "duct_unconditioned_r"=>"0"
+            "duct_location"=>Constants.Auto, # FIXME
+            "duct_total_leakage"=>"0.3", # FIXME
+            "duct_supply_frac"=>"0.6", # FIXME
+            "duct_return_frac"=>"0.067", # FIXME
+            "duct_ah_supply_frac"=>"0.067", # FIXME
+            "duct_ah_return_frac"=>"0.267", # FIXME
+            "duct_location_frac"=>Constants.Auto, # FIXME
+            "duct_num_returns"=>Constants.Auto, # FIXME
+            "duct_supply_area_mult"=>"1", # FIXME
+            "duct_return_area_mult"=>"1", # FIXME
+            "duct_unconditioned_r"=>"0" # FIXME
            }  
     measures[measure_subdir] = args
 
@@ -1312,21 +1355,29 @@ class OSMeasures
 
   def self.get_photovoltaics(building, measures)
 
-    building.elements.each("BuildingDetails/Systems/Photovoltaics") do |pv|
+    pvsys = building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"]
+    
+    if not pvsys.nil?
+    
+      az = Float(XMLHelper.get_value(pvsys, "ArrayAzimuth"))
+      tilt = Float(XMLHelper.get_value(pvsys, "ArrayTilt"))
+      inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
+      power_kw = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))/1000.0
+      
       measure_subdir = "ResidentialPhotovoltaics"
       args = {
-              "size"=>"2.5",
-              "module_type"=>"standard",
+              "size"=>power_kw.to_s,
+              "module_type"=>Constants.PVModuleTypeStandard,
               "system_losses"=>"0.14",
-              "inverter_efficiency"=>"0.96",
-              "azimuth_type"=>"relative",
-              "azimuth"=>"180",
-              "tile_type"=>"pitch",
-              "tilt"=>"0"
+              "inverter_efficiency"=>inv_eff.to_s,
+              "azimuth_type"=>Constants.CoordAbsolute,
+              "azimuth"=>az.to_s, # TODO: Double-check
+              "tilt_type"=>Constants.CoordAbsolute,
+              "tilt"=>tilt.to_s # TODO: Double-check
              }  
       measures[measure_subdir] = args
-      break
-    end  
+      
+    end
 
   end
   

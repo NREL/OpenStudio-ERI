@@ -9,6 +9,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/psychrometrics"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/hvac"
+require "#{File.dirname(__FILE__)}/resources/airflow"
 
 # start the measure
 class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
@@ -1997,8 +1998,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       building.garage.inf_method = @infMethodSG
       building.garage.hor_lk_frac = 0.4 # DOE-2 Default
       building.garage.neutral_level = 0.5 # DOE-2 Default
-      building.garage.SLA = get_infiltration_SLA_from_ACH50(infil.InfiltrationGarageACH50, 0.67, building.garage.area, building.garage.volume)
-      building.garage.ACH = get_infiltration_ACH_from_SLA(building.garage.SLA, 1.0)
+      building.garage.SLA = Airflow.get_infiltration_SLA_from_ACH50(infil.InfiltrationGarageACH50, 0.67, building.garage.area, building.garage.volume)
+      building.garage.ACH = Airflow.get_infiltration_ACH_from_SLA(building.garage.SLA, 1.0, @weather)
       building.garage.inf_flow = building.garage.ACH / OpenStudio.convert(1.0,"hr","min").get * building.garage.volume # cfm          
     end
 
@@ -2021,7 +2022,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       building.unfinished_attic.inf_method = @infMethodSG
       building.unfinished_attic.hor_lk_frac = 0.75 # Same as Energy Gauge USA Attic Model
       building.unfinished_attic.neutral_level = 0.5 # DOE-2 Default
-      building.unfinished_attic.ACH = get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0)
+      building.unfinished_attic.ACH = Airflow.get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0, @weather)
       building.unfinished_attic.inf_flow = building.unfinished_attic.ACH / OpenStudio.convert(1.0,"hr","min").get * building.unfinished_attic.volume
     end
   
@@ -2080,7 +2081,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           infil.n_i = 0.67
           
           # Calculate SLA for above-grade portion of the building
-          building.SLA = get_infiltration_SLA_from_ACH50(infil.InfiltrationLivingSpaceACH50, infil.n_i, building.above_grade_finished_floor_area, building.above_grade_volume)
+          building.SLA = Airflow.get_infiltration_SLA_from_ACH50(infil.InfiltrationLivingSpaceACH50, infil.n_i, building.above_grade_finished_floor_area, building.above_grade_volume)
 
           # Effective Leakage Area (ft^2)
           infil.A_o = building.SLA * building.above_grade_finished_floor_area * (unit.above_grade_exterior_wall_area/building.above_grade_exterior_wall_area)
@@ -2189,7 +2190,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
           infil.wind_coef = infil.f_w * UnitConversion.lbm_ft32inH2O_mph2(outside_air_density / 2.0) ** infil.n_i # inH2O^n/mph^2n
 
-          unit.living.ACH = get_infiltration_ACH_from_SLA(unit.living.SLA, building.stories)
+          unit.living.ACH = Airflow.get_infiltration_ACH_from_SLA(unit.living.SLA, building.stories, @weather)
 
           # Convert living space ACH to cfm:
           unit.living.inf_flow = unit.living.ACH / OpenStudio.convert(1.0,"hr","min").get * unit.living.volume # cfm
@@ -2231,7 +2232,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     # Mechanical Ventilation
 
     # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
-    ashrae_mv_without_infil_credit = get_mech_vent_whole_house_cfm(1, unit.num_bedrooms, unit.finished_floor_area, mech_vent.MechVentASHRAEStandard) 
+    ashrae_mv_without_infil_credit = Airflow.get_mech_vent_whole_house_cfm(1, unit.num_bedrooms, unit.finished_floor_area, mech_vent.MechVentASHRAEStandard) 
     
     # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2)
     infil.rate_credit = 0 # default to no credit
@@ -2622,15 +2623,15 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end    
         
     ducts.DuctLocationFracConduction = ducts.DuctLocationFracLeakage
-    ducts.DuctNumReturns = get_duct_num_returns(ducts.DuctNumReturns, ducts.num_stories)
-    ducts.supply_duct_surface_area = get_duct_supply_surface_area(ducts.DuctSupplySurfaceAreaMultiplier, unit, ducts.num_stories)
-    ducts.return_duct_surface_area = get_duct_return_surface_area(ducts.DuctReturnSurfaceAreaMultiplier, unit, ducts.num_stories, ducts.DuctNumReturns)
+    ducts.DuctNumReturns = Airflow.get_duct_num_returns(ducts.DuctNumReturns, ducts.num_stories)
+    ducts.supply_duct_surface_area = Airflow.get_duct_supply_surface_area(ducts.DuctSupplySurfaceAreaMultiplier, unit.finished_floor_area, ducts.num_stories)
+    ducts.return_duct_surface_area = Airflow.get_duct_return_surface_area(ducts.DuctReturnSurfaceAreaMultiplier, unit.finished_floor_area, ducts.num_stories, ducts.DuctNumReturns)
     
     # Calculate Duct UA value
     if ducts.ducts_not_in_living
       ducts.unconditioned_duct_area = ducts.supply_duct_surface_area * ducts.DuctLocationFracConduction
-      ducts.supply_duct_r = get_duct_insulation_rvalue(ducts.DuctUnconditionedRvalue, true)
-      ducts.return_duct_r = get_duct_insulation_rvalue(ducts.DuctUnconditionedRvalue, false)
+      ducts.supply_duct_r = Airflow.get_duct_insulation_rvalue(ducts.DuctUnconditionedRvalue, true)
+      ducts.return_duct_r = Airflow.get_duct_insulation_rvalue(ducts.DuctUnconditionedRvalue, false)
       ducts.unconditioned_duct_ua = ducts.unconditioned_duct_area / ducts.supply_duct_r
       ducts.return_duct_ua = ducts.return_duct_surface_area / ducts.return_duct_r
     else
@@ -2715,46 +2716,6 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     return ducts
   
   end
-  
-  def calc_infiltration_w_factor
-    # Returns a w factor for infiltration calculations; see ticket #852 for derivation.
-    hdd65f = @weather.data.HDD65F
-    ws = @weather.data.AnnualAvgWindspeed
-    a = 0.36250748
-    b = 0.365317169
-    c = 0.028902855
-    d = 0.050181043
-    e = 0.009596674
-    f = -0.041567541
-    # in ACH
-    w = (a + b * hdd65f / 10000.0 + c * (hdd65f / 10000.0) ** 2.0 + d * ws + e * ws ** 2 + f * hdd65f / 10000.0 * ws)
-    return w
-  end
-
-  def get_infiltration_ACH_from_SLA(sla, numStories)
-    # Returns the infiltration annual average ACH given a SLA.
-    w = calc_infiltration_w_factor
-
-    # Equation from ASHRAE 119-1998 (using numStories for simplification)
-    norm_lkage = 1000.0 * sla * numStories ** 0.3
-
-    # Equation from ASHRAE 136-1993
-    return norm_lkage * w
-  end  
-  
-  def get_infiltration_SLA_from_ACH50(ach50, n_i, livingSpaceFloorArea, livingSpaceVolume)
-    # Pressure difference between indoors and outdoors, such as during a pressurization test.
-    pressure_difference = 50.0 # Pa
-    return ((ach50 * 0.2835 * 4.0 ** n_i * livingSpaceVolume) / (livingSpaceFloorArea * OpenStudio.convert(1.0,"ft^2","in^2").get * pressure_difference ** n_i * 60.0))
-  end  
-  
-  def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
-    # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
-    if std == '2013'
-      return frac622 * ((num_beds + 1.0) * 7.5 + 0.03 * ffa)
-    end
-    return frac622 * ((num_beds + 1.0) * 7.5 + 0.01 * ffa)
-  end  
   
   def get_duct_location(runner, duct_location, building, unit)
     # FIXME: Need to improve this
@@ -2849,57 +2810,6 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     return duct_location_zone, duct_location_name
   end  
   
-  def get_duct_num_returns(duct_num_returns, num_stories)
-    if duct_num_returns.nil?
-      return 0
-    elsif duct_num_returns == Constants.Auto
-      # Duct Number Returns per 2010 BA Benchmark Addendum
-      return 1 + num_stories
-    end
-    return duct_num_returns.to_i
-  end  
-  
-  def get_duct_supply_surface_area(mult, unit, num_stories)
-    # Duct Surface Areas per 2010 BA Benchmark
-    ffa = unit.finished_floor_area
-    if num_stories == 1
-      return 0.27 * ffa * mult # ft^2
-    else
-      return 0.2 * ffa * mult
-    end
-  end
-  
-  def get_duct_return_surface_area(mult, unit, num_stories, duct_num_returns)
-    # Duct Surface Areas per 2010 BA Benchmark
-    ffa = unit.finished_floor_area
-    if num_stories == 1
-      return [0.05 * duct_num_returns * ffa, 0.25 * ffa].min * mult
-    else
-      return [0.04 * duct_num_returns * ffa, 0.19 * ffa].min * mult
-    end
-  end
-  
-  def get_duct_insulation_rvalue(nominalR, isSupply)
-    # Insulated duct values based on "True R-Values of Round Residential Ductwork" 
-    # by Palmiter & Kruse 2006. Linear extrapolation from SEEM's "DuctTrueRValues"
-    # worksheet in, e.g., ExistingResidentialSingleFamily_SEEMRuns_v05.xlsm.
-    #
-    # Nominal | 4.2 | 6.0 | 8.0 | 11.0
-    # --------|-----|-----|-----|----
-    # Supply  | 4.5 | 5.7 | 6.8 | 8.4
-    # Return  | 4.9 | 6.3 | 7.8 | 9.7
-    #
-    # Uninsulated ducts are set to R-1.7 based on ASHRAE HOF and the above paper.
-    if nominalR <=  0
-      return 1.7
-    end
-    if isSupply
-      return 2.2438 + 0.5619*nominalR
-    else
-      return 2.0388 + 0.7053*nominalR
-    end
-  end
-  
   def calc_duct_lkage_from_test(ducts, ffa, fan_AirFlowRate)
     '''
     Calculates duct leakage inputs based on duct blaster type lkage measurements (cfm @ 25 Pa per 100 ft2 conditioned floor area).
@@ -2922,10 +2832,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     supply_lk_cfm25 = [cfm25 * supply_duct_lkage_frac - ah_supply_lk_cfm25, 0].max
     return_lk_cfm25 = [cfm25 * return_duct_lkage_frac - ah_return_lk_cfm25, 0].max
     
-    ducts.supply_lk_oper = calc_duct_lkage_at_diff_pressure(supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
-    ducts.return_lk_oper = calc_duct_lkage_at_diff_pressure(return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
-    ducts.ah_supply_lk_oper = calc_duct_lkage_at_diff_pressure(ah_supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
-    ducts.ah_return_lk_oper = calc_duct_lkage_at_diff_pressure(ah_return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
+    ducts.supply_lk_oper = Airflow.calc_duct_lkage_at_diff_pressure(supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
+    ducts.return_lk_oper = Airflow.calc_duct_lkage_at_diff_pressure(return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
+    ducts.ah_supply_lk_oper = Airflow.calc_duct_lkage_at_diff_pressure(ah_supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
+    ducts.ah_return_lk_oper = Airflow.calc_duct_lkage_at_diff_pressure(ah_return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
     
     if fan_AirFlowRate == 0
         ducts.DuctSupplyLeakage = 0
@@ -2946,10 +2856,6 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     ducts.DuctLocationFracLeakage = 1
     
     return ducts
-  end
-  
-  def calc_duct_lkage_at_diff_pressure(q_old, p_old, p_new)
-    return q_old * (p_new / p_old) ** 0.6 # Derived from Equation C-1 (Annex C), p34, ASHRAE Standard 152-2004.
   end
   
 end
