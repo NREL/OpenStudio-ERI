@@ -7,6 +7,7 @@ require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/helper_methods"
 require "#{File.dirname(__FILE__)}/resources/hvac"
+require "#{File.dirname(__FILE__)}/resources/301validator"
 
 # start the measure
 class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
@@ -1132,8 +1133,14 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     
     errors = []
     XMLHelper.validate(doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
-      runner.registerError(error.to_s)
       errors << error.to_s
+    end
+    
+    # Uncomment to validate against the 301 RESNET HPXML use case
+    #EnergyRatingIndex301Validator.run_validator(doc, errors)
+    
+    errors.each do |error|
+      runner.registerError(error.to_s)
       puts error
     end
     

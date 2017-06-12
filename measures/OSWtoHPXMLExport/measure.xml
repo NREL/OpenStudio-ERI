@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>7aa7ea67-5ad3-469f-92b9-3251daa7e1e1</version_id>
-  <version_modified>20170609T181416Z</version_modified>
+  <version_id>89eade8d-018f-4ea2-a2eb-05fae317ef33</version_id>
+  <version_modified>20170612T165855Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -91,6 +91,12 @@
       <checksum>B8B340DE</checksum>
     </file>
     <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>722C955D</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -99,25 +105,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>733F395D</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FD23B0A0</checksum>
-    </file>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>722C955D</checksum>
+      <checksum>5C7FB395</checksum>
     </file>
     <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>3DB3FAD2</checksum>
+      <checksum>D60E6AE1</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>741B4679</checksum>
     </file>
   </files>
 </measure>
