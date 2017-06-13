@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_mto_hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>76b87804-2e05-495e-90d6-8081fa1ed395</version_id>
-  <version_modified>20170612T165615Z</version_modified>
+  <version_id>b4e92c4a-a40e-48a5-a82e-eb6796924624</version_id>
+  <version_modified>20170613T153113Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSMtoHPXMLExport</class_name>
   <display_name>OSM to HPXML Export</display_name>
@@ -103,7 +103,7 @@
       <filename>xmlhelper.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>722C955D</checksum>
+      <checksum>07122777</checksum>
     </file>
   </files>
 </measure>

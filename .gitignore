@@ -10,3 +10,5 @@ coverage
 /workflows/energy_rating_index/HERSRatedHome
 /workflows/energy_rating_index/HERSReferenceHome
 /workflows/energy_rating_index/results
+/measures/301EnergyRatingIndexRuleset/tests/valid-rated.xml
+/measures/301EnergyRatingIndexRuleset/tests/valid-ref.xml

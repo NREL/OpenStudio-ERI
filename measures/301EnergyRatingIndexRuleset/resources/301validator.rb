@@ -33,7 +33,7 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType',
-            '//Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC/ClimateZone',
+            '//Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2006"]',
             '//Building/BuildingDetails/Enclosure/AtticAndRoof/Roofs',
             '//Building/BuildingDetails/Enclosure/Foundations',
             '//Building/BuildingDetails/Enclosure/Walls',
@@ -47,6 +47,7 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof' => [
                 'RoofArea',
                 'RoofColor',
+                'RadiantBarrier',
             ],
             # Attics
             '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => [
@@ -76,8 +77,20 @@ class EnergyRatingIndex301Validator
                 'Area',
                 'InteriorAdjacentTo',
                 'ExteriorAdjacentTo',
-                #'Insulation[AssemblyEffectiveRValue and InsulationGrade]',
-                
+                'WallType/WoodStud',
+                '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]',
+                'Color',
+            ],
+            # Wall Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Walls/Wall/Insulation/Layer' => [
+                'NominalRValue',
+                'Thickness',
+            ],
+            # WoodStud Wall FIXME: Ensure [1] cavity layer and [0,1] continuous layer
+            '//Building/BuildingDetails/Enclosure/Walls/Wall[WallType/WoodStud]' => [
+                'Studs/FramingFactor',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
             ],
             # Window
             '//Building/BuildingDetails/Enclosure/Windows/Window' => [
@@ -103,31 +116,37 @@ class EnergyRatingIndex301Validator
             # HeatingSystem
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => [
                 'HeatingSystemType[Furnace|Boiler|ElectricResistance]',
-                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
+                '[FractionHeatLoadServed=1.0]',
             ],
             # HeatingSystem (Furnace/Boiler)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace or HeatingSystemType/Boiler]' => [
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value',
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
             ],
             # HeatingSystem (ElectricResistance)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/ElectricResistance]' => [
                 'AnnualHeatingEfficiency[Units="Percent"]/Value',
+                '[HeatingSystemFuel="electricity"]',
             ],
             # CoolingSystem
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => [
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
                 '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]',
+                '[FractionCoolLoadServed=1.0]',
+                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
             ],
             # CoolingSystem (CentralAC)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => [
                 'AnnualCoolingEfficiency[Units="SEER"]/Value',
+                '[CoolingSystemFuel="electricity"]',
             ],
             # CoolingSystem (RoomAC)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioner"]' => [
                 'AnnualCoolingEfficiency[Units="EER"]/Value',
+                '[CoolingSystemFuel="electricity"]',
             ],
             # HeatPump
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [
@@ -135,23 +154,31 @@ class EnergyRatingIndex301Validator
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
                 '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]',
+                '[FractionHeatLoadServed=1.0]',
+                '[FractionCoolLoadServed=1.0]',
+                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
             ],
             # HeatPump (AirSource/MiniSplit)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air" or HeatPumpType="mini-split"]' => [
                 'AnnualCoolingEfficiency[Units="SEER"]/Value',
                 'AnnualCoolingEfficiency[Units="HSPF"]/Value',
+                '[BackupSystemFuel="electricity"]',
             ],
             # HeatPump (GroundSource)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => [
                 'AnnualCoolingEfficiency[Units="EER"]/Value',
                 'AnnualCoolingEfficiency[Units="COP"]/Value',
+                '[BackupSystemFuel="electricity"]',
             ],
             # WaterHeatingSystem
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [
                 '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]',
-                'TankVolume',
                 'HeatingCapacity',
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
+            ],
+            # Tank WaterHeatingSystem
+            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" or WaterHeaterType="heat pump water heater"]' => [
+                'TankVolume',
             ],
             # WaterHeatingSystem (FuelStorage)
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" and FuelType!="electricity"]' => [

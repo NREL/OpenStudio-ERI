@@ -450,12 +450,6 @@ class OSMeasures
            }  
     measures[measure_subdir] = args
     
-    measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
-    args = {
-            "has_rb"=>"false"
-           }
-    measures[measure_subdir] = args
-    
     measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
     args = {
             "osb_thick_in"=>"0.75",
@@ -477,6 +471,21 @@ class OSMeasures
            }
     measures[measure_subdir] = args
 
+    has_rb = false
+    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
+      if Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))
+        has_rb = true
+      end
+    end
+
+    if has_rb
+      measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
+      args = {
+              "has_rb"=>"true"
+             }
+      measures[measure_subdir] = args
+    end
+    
   end
 
   def self.get_floor_constructions(building, measures)
@@ -595,51 +604,213 @@ class OSMeasures
     measures[measure_subdir] = args
     
   end
+  
+  def self.get_siding_material(siding, color)
+    
+    if siding == "stucco"
+    
+      k_in = 4.5
+      rho = 80.0
+      cp = 0.21
+      thick_in = 1.0
+      sAbs = 0.75
+      tAbs = 0.9
+      
+    elsif siding == "brick veneer"
+    
+      k_in = 5.5
+      rho = 110.0
+      cp = 0.19
+      thick_in = 4.0
+      if ["reflective","light"].include? color
+        sAbs = 0.55
+        tAbs = 0.93
+      elsif ["medium","dark"].include? color
+        sAbs = 0.88
+        tAbs = 0.96
+      end
+      
+    elsif siding == "wood siding"
+    
+      k_in = 0.71
+      rho = 34.0
+      cp = 0.28
+      thick_in = 1.0
+      if ["reflective","light"].include? color
+        sAbs = 0.3
+        tAbs = 0.82
+      elsif ["medium","dark"].include? color
+        sAbs = 0.75
+        tAbs = 0.92
+      end
+      
+    elsif siding == "aluminum siding"
+    
+      k_in = 0.61
+      rho = 10.9
+      cp = 0.29
+      thick_in = 0.375
+      if ["reflective","light"].include? color
+        sAbs = 0.3
+        tAbs = 0.9
+      elsif ["medium","dark"].include? color
+        sAbs = 0.75
+        tAbs = 0.94
+      end
+      
+    elsif siding == "vinyl siding"
+    
+      k_in = 0.62
+      rho = 11.1
+      cp = 0.25
+      thick_in = 0.375
+      if ["reflective","light"].include? color
+        sAbs = 0.3
+        tAbs = 0.9
+      elsif ["medium","dark"].include? color
+        sAbs = 0.75
+        tAbs = 0.9
+      end
+      
+    elsif siding == "fiber cement siding"
+    
+      k_in = 1.79
+      rho = 21.7
+      cp = 0.24
+      thick_in = 0.375
+      if ["reflective","light"].include? color
+        sAbs = 0.3
+        tAbs = 0.9
+      elsif ["medium","dark"].include? color
+        sAbs = 0.75
+        tAbs = 0.9
+      end
+      
+    else
+    
+      fail "Unexpected siding type: #{siding}."
+    
+    end
+    
+    return Material.new(name="Siding", thick_in=thick_in, mat_base=nil, k_in=k_in, rho=rho, cp=cp, tAbs=tAbs, sAbs=sAbs, vAbs=sAbs)
+    
+  end
 
   def self.get_wall_constructions(building, measures)
   
-    # FIXME
-
-    measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
-    args = {
-            "cavity_r"=>"13",
-            "install_grade"=>"I",
-            "cavity_depth"=>"3.5",
-            "ins_fills_cavity"=>"true",
-            "framing_factor"=>"0.13"
-           }
-    measures[measure_subdir] = args
-
-    measure_subdir = "ResidentialConstructionsWallsInterzonal"
-    args = {
-            "cavity_r"=>"10",
-            "install_grade"=>"I",
-            "cavity_depth"=>"3.5",
-            "ins_fills_cavity"=>"true",
-            "framing_factor"=>"0.25"
-           }  
-    measures[measure_subdir] = args
+    mat_mass = Material.DefaultWallMass
+    mat_sheath = Material.DefaultWallSheathing
+  
+    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
-    measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
-    args = {
-            "solar_abs"=>"0.3",
-            "conductivity"=>"0.62",
-            "density"=>"11.1",
-            "specific_heat"=>"0.25",
-            "thick_in"=>"0.375",
-            "emissivity"=>"0.9"
-           }
-    measures[measure_subdir] = args
+      siding = XMLHelper.get_value(wall, "Siding")
+      color = XMLHelper.get_value(wall, "Color")
+      mat_siding = get_siding_material(siding, color)
+        
+      if XMLHelper.has_element(wall, "WallType/WoodStud")
+      
+        if XMLHelper.has_element(wall, "Insulation/AssemblyEffectiveRValue") # Reference Home
+        
+          wall_R = Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
+          layer_R = wall_R - mat_mass.rvalue - mat_sheath.rvalue - mat_siding.rvalue - Material.AirFilmVertical.rvalue - Material.AirFilmOutside.rvalue
+          layer_t = 3.5 #inches, corresponding to a 2x4 wood stud wall
+          layer_k = layer_t/layer_R #Btu-in/hr-ft^2-F
+          framing_factor = 0.23
+          mat_ins = BaseMaterial.InsulationGenericDensepack
+          mat_wood = BaseMaterial.Wood
+          rho = (1.0 - framing_factor) * mat_ins.rho + framing_factor * mat_wood.rho
+          cp = (1.0 - framing_factor) * mat_ins.cp + framing_factor * mat_wood.cp
+          cont_r = 0.0
+          cont_depth = 0.0
+    
+          measure_subdir = "ResidentialConstructionsWallsExteriorGeneric"
+          args = {
+                  "thick_in_1"=>layer_t.to_s,
+                  "conductivity_1"=>layer_k.to_s,
+                  "density_1"=>rho.to_s,
+                  "specific_heat_1"=>cp.to_s
+                 }
+          measures[measure_subdir] = args
+          
+          measure_subdir = "ResidentialConstructionsWallsSheathing"
+          args = {
+                  "osb_thick_in"=>mat_sheath.thick_in.to_s,
+                  "rigid_r"=>"0.0",
+                  "rigid_thick_in"=>"0.0"
+                 }
+          measures[measure_subdir] = args
+          
+        else # Rated Home
+      
+          cavity_r = Float(XMLHelper.get_value(wall, "Insulation/Layer[InstallationType='cavity']/NominalRValue"))
+          install_grade = Integer(XMLHelper.get_value(wall, "Insulation/InsulationGrade"))
+          cavity_depth = Float(XMLHelper.get_value(wall, "Insulation/Layer[InstallationType='cavity']/Thickness"))
+          framing_factor = Float(XMLHelper.get_value(wall, "Studs/FramingFactor"))
+          ins_fills_cavity = true # FIXME
+          cont_r = Float(XMLHelper.get_value(wall, "Insulation/Layer[InstallationType='continuous']/NominalRValue"))
+          cont_depth = Float(XMLHelper.get_value(wall, "Insulation/Layer[InstallationType='continuous']/Thickness"))
+        
+          measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
+          args = {
+                  "cavity_r"=>cavity_r.to_s,
+                  "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
+                  "cavity_depth"=>cavity_depth.to_s,
+                  "ins_fills_cavity"=>ins_fills_cavity.to_s,
+                  "framing_factor"=>framing_factor.to_s
+                 }
+          measures[measure_subdir] = args
+          
+          measure_subdir = "ResidentialConstructionsWallsInterzonal"
+          args = {
+                  "cavity_r"=>cavity_r.to_s,
+                  "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
+                  "cavity_depth"=>cavity_depth.to_s,
+                  "ins_fills_cavity"=>ins_fills_cavity.to_s,
+                  "framing_factor"=>framing_factor.to_s
+                 }  
+          measures[measure_subdir] = args
+          
+        end
+        
+        measure_subdir = "ResidentialConstructionsWallsSheathing"
+        args = {
+                "osb_thick_in"=>mat_sheath.thick_in.to_s,
+                "rigid_r"=>cont_r.to_s,
+                "rigid_thick_in"=>cont_depth.to_s
+               }
+        measures[measure_subdir] = args
+
+        measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
+        args = {
+                "solar_abs"=>mat_siding.sAbs.to_s,
+                "conductivity"=>mat_siding.k_in.to_s,
+                "density"=>mat_siding.rho.to_s,
+                "specific_heat"=>mat_siding.cp.to_s,
+                "thick_in"=>mat_siding.thick_in.to_s,
+                "emissivity"=>mat_siding.tAbs.to_s
+               }
+        measures[measure_subdir] = args
+
+      
+      else
+      
+        fail "Unexpected wall type."
+        
+      end
+      
+      break # FIXME: Add surface argument to construction measures
+    
+    end
     
     measure_subdir = "ResidentialConstructionsWallsExteriorThermalMass"
     args = {
-            "thick_in1"=>"0.5",
+            "thick_in1"=>mat_mass.thick_in.to_s,
             "thick_in2"=>nil,
-            "cond1"=>"1.1112",
+            "cond1"=>mat_mass.k_in.to_s,
             "cond2"=>nil,
-            "dens1"=>"50.0",
+            "dens1"=>mat_mass.rho.to_s,
             "dens2"=>nil,
-            "specheat1"=>"0.2",
+            "specheat1"=>mat_mass.cp.to_s,
             "specheat2"=>nil
            }
     measures[measure_subdir] = args
@@ -647,22 +818,14 @@ class OSMeasures
     measure_subdir = "ResidentialConstructionsWallsPartitionThermalMass"
     args = {
             "frac"=>"1.0",
-            "thick_in1"=>"0.5",
+            "thick_in1"=>mat_mass.thick_in.to_s,
             "thick_in2"=>nil,
-            "cond1"=>"1.1112",
+            "cond1"=>mat_mass.k_in.to_s,
             "cond2"=>nil,
-            "dens1"=>"50.0",
+            "dens1"=>mat_mass.rho.to_s,
             "dens2"=>nil,
-            "specheat1"=>"0.2",
+            "specheat1"=>mat_mass.cp.to_s,
             "specheat2"=>nil
-           }
-    measures[measure_subdir] = args
-    
-    measure_subdir = "ResidentialConstructionsWallsSheathing"
-    args = {
-            "osb_thick_in"=>"0.5",
-            "rigid_r"=>"0.0",
-            "rigid_thick_in"=>"0.0"
            }
     measures[measure_subdir] = args
 
@@ -808,6 +971,13 @@ class OSMeasures
     
     fuel = XMLHelper.get_value(htgsys, "HeatingSystemFuel")
     
+    heat_capacity_btuh = XMLHelper.get_value(htgsys, "HeatingCapacity")
+    if heat_capacity_btuh.nil?
+      heat_capacity_kbtuh = Constants.SizingAuto
+    else
+      heat_capacity_kbtuh = OpenStudio.convert(heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr").get
+    end
+    
     if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
     
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
@@ -817,8 +987,8 @@ class OSMeasures
         measure_subdir = "ResidentialHVACFurnaceElectric"
         args = {
                 "afue"=>afue.to_s,
-                "fan_power_installed"=>"0.5", # FIXME
-                "capacity"=>Constants.SizingAuto
+                "fan_power_installed"=>"0.5",
+                "capacity"=>heat_capacity_kbtuh.to_s
                }
         measures[measure_subdir] = args
         
@@ -828,8 +998,8 @@ class OSMeasures
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "afue"=>afue.to_s,
-                "fan_power_installed"=>"0.5", # FIXME
-                "capacity"=>Constants.SizingAuto
+                "fan_power_installed"=>"0.5",
+                "capacity"=>heat_capacity_kbtuh.to_s
                }
         measures[measure_subdir] = args
         
@@ -846,7 +1016,7 @@ class OSMeasures
                 "system_type"=>Constants.BoilerTypeForcedDraft,
                 "afue"=>afue.to_s,
                 "oat_reset_enabled"=>"false",
-                "capacity"=>Constants.SizingAuto
+                "capacity"=>heat_capacity_kbtuh.to_s
                }
         measures[measure_subdir] = args
         
@@ -857,14 +1027,14 @@ class OSMeasures
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "system_type"=>Constants.BoilerTypeForcedDraft,
                 "afue"=>afue.to_s,
-                "oat_reset_enabled"=>"false", # FIXME?
-                "oat_high"=>nil,
-                "oat_low"=>nil,
-                "oat_hwst_high"=>nil,
-                "oat_hwst_low"=>nil,
+                "oat_reset_enabled"=>"false", # FIXME
+                "oat_high"=>nil, # FIXME
+                "oat_low"=>nil, # FIXME
+                "oat_hwst_high"=>nil, # FIXME
+                "oat_hwst_low"=>nil, # FIXME
                 "design_temp"=>nil,
                 "modulation"=>"false",
-                "capacity"=>Constants.SizingAuto
+                "capacity"=>heat_capacity_kbtuh.to_s
                }
         measures[measure_subdir] = args
         
@@ -877,7 +1047,7 @@ class OSMeasures
       measure_subdir = "ResidentialHVACElectricBaseboard"
       args = {
               "efficiency"=>percent.to_s,
-              "capacity"=>Constants.SizingAuto
+              "capacity"=>heat_capacity_kbtuh.to_s
              }
       measures[measure_subdir] = args
              
@@ -886,98 +1056,112 @@ class OSMeasures
   end
 
   def self.get_cooling_system(building, measures)
-
+  
     clgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
     
     return if clgsys.nil?
     
     clg_type = XMLHelper.get_value(clgsys, "CoolingSystemType")
     
+    cool_capacity_btuh = XMLHelper.get_value(clgsys, "CoolingCapacity")
+    if cool_capacity_btuh.nil?
+      cool_capacity_tons = Constants.SizingAuto
+    else
+      cool_capacity_tons = OpenStudio.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton").get
+    end
+    
     if clg_type == "central air conditioning"
     
       seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
+      num_speeds = XMLHelper.get_value(clgsys, "extension/NumberSpeeds")
+      crankcase_kw = 0.0
+      crankcase_temp = 55.0
     
-      if seer_nom < 16
+      if num_speeds == "1-Speed"
       
         measure_subdir = "ResidentialHVACCentralAirConditionerSingleSpeed"
         args = {
                 "seer"=>seer.to_s,
-                "eer"=>"11.1",
+                "eer"=>(0.82 * seer_nom + 0.64).to_s,       
                 "shr"=>"0.73",
                 "fan_power_rated"=>"0.365",
                 "fan_power_installed"=>"0.5",
-                "crankcase_capacity"=>"0",
-                "crankcase_max_temp"=>"55",
+                "crankcase_capacity"=>crankcase_kw.to_s,
+                "crankcase_max_temp"=>crankcase_temp.to_s,
                 "eer_capacity_derate_1ton"=>"1",
                 "eer_capacity_derate_2ton"=>"1",
                 "eer_capacity_derate_3ton"=>"1",
                 "eer_capacity_derate_4ton"=>"1",
                 "eer_capacity_derate_5ton"=>"1",
-                "capacity"=>Constants.SizingAuto
+                "capacity"=>cool_capacity_tons.to_s
                }
         measures[measure_subdir] = args
         
-      elsif seer_nom <= 21
+      elsif num_speeds == "2-Speed"
       
         measure_subdir = "ResidentialHVACCentralAirConditionerTwoSpeed"
         args = {
                 "seer"=>seer.to_s,
-                "eer"=>"13.5",
-                "eer2"=>"12.4",
+                "eer"=>(0.83 * seer_nom + 0.15).to_s,
+                "eer2"=>(0.56 * seer_nom + 3.57).to_s,
                 "shr"=>"0.71",
                 "shr2"=>"0.73",
                 "capacity_ratio"=>"0.72",
                 "capacity_ratio2"=>"1",
                 "fan_speed_ratio"=>"0.86",
-                "fan_speed_ratio2"=>"1",                  
+                "fan_speed_ratio2"=>"1",
                 "fan_power_rated"=>"0.14",
                 "fan_power_installed"=>"0.3",
-                "crankcase_capacity"=>"0",
-                "crankcase_max_temp"=>"55",
+                "crankcase_capacity"=>crankcase_kw.to_s,
+                "crankcase_max_temp"=>crankcase_temp.to_s,
                 "eer_capacity_derate_1ton"=>"1",
                 "eer_capacity_derate_2ton"=>"1",
                 "eer_capacity_derate_3ton"=>"1",
                 "eer_capacity_derate_4ton"=>"1",
                 "eer_capacity_derate_5ton"=>"1",
-                "capacity"=>Constants.SizingAuto
+                "capacity"=>cool_capacity_tons.to_s
+               }
+        measures[measure_subdir] = args
+        
+      elsif num_speeds == "Variable-Speed"
+      
+        measure_subdir = "ResidentialHVACCentralAirConditionerVariableSpeed"
+        args = {
+                "seer"=>seer.to_s,
+                "eer"=>(0.80 * seer_nom).to_s,
+                "eer2"=>(0.75 * seer_nom).to_s,
+                "eer3"=>(0.65 * seer_nom).to_s,
+                "eer4"=>(0.60 * seer_nom).to_s,
+                "shr"=>"0.98",
+                "shr2"=>"0.82",
+                "shr3"=>"0.745",
+                "shr4"=>"0.77",
+                "capacity_ratio"=>"0.36",
+                "capacity_ratio2"=>"0.64",
+                "capacity_ratio3"=>"1",
+                "capacity_ratio4"=>"1.16",
+                "fan_speed_ratio"=>"0.51",
+                "fan_speed_ratio2"=>"84",
+                "fan_speed_ratio3"=>"1",
+                "fan_speed_ratio4"=>"1.19",
+                "fan_power_rated"=>"0.14",
+                "fan_power_installed"=>"0.3",
+                "crankcase_capacity"=>crankcase_kw.to_s,
+                "crankcase_max_temp"=>crankcase_temp.to_s,
+                "eer_capacity_derate_1ton"=>"1",
+                "eer_capacity_derate_2ton"=>"1",
+                "eer_capacity_derate_3ton"=>"1",
+                "eer_capacity_derate_4ton"=>"1",
+                "eer_capacity_derate_5ton"=>"1",
+                "capacity"=>cool_capacity_tons.to_s
                }
         measures[measure_subdir] = args
         
       else
       
-        measure_subdir = "ResidentialHVACCentralAirConditionerVariableSpeed"
-        args = {
-                "seer"=>seer.to_s,
-                "eer"=>"19.2",
-                "eer2"=>"18.3",
-                "eer3"=>"16.5",
-                "eer4"=>"14.6",                  
-                "shr"=>"0.98",
-                "shr2"=>"0.82",
-                "shr3"=>"0.745",
-                "shr4"=>"0.77",                  
-                "capacity_ratio"=>"0.36",
-                "capacity_ratio2"=>"0.64",
-                "capacity_ratio3"=>"1",
-                "capacity_ratio4"=>"1.16",                  
-                "fan_speed_ratio"=>"0.51",
-                "fan_speed_ratio2"=>"84",
-                "fan_speed_ratio3"=>"1",
-                "fan_speed_ratio4"=>"1.19",                  
-                "fan_power_rated"=>"0.14",
-                "fan_power_installed"=>"0.3",
-                "crankcase_capacity"=>"0",
-                "crankcase_max_temp"=>"55",
-                "eer_capacity_derate_1ton"=>"1",
-                "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"0.89",
-                "eer_capacity_derate_4ton"=>"0.89",
-                "eer_capacity_derate_5ton"=>"0.89",
-                "capacity"=>Constants.SizingAuto
-               }
-        measures[measure_subdir] = args
+        fail "Unexpected number of speeds (#{num_speeds}) for cooling system."
         
       end
       
@@ -987,10 +1171,10 @@ class OSMeasures
 
       measure_subdir = "ResidentialHVACRoomAirConditioner"
       args = {
-              "eer"=>eer.to_s,
-              "shr"=>"0.65",
+              "eer"=>eer1.to_s,
+              "shr"=>shr1.to_s,
               "airflow_rate"=>"350",
-              "capacity"=>Constants.SizingAuto
+              "capacity"=>cool_capacity_tons.to_s
              }
       measures[measure_subdir] = args
       
@@ -1005,6 +1189,21 @@ class OSMeasures
     return if hp.nil?
     
     hp_type = XMLHelper.get_value(hp, "HeatPumpType")
+    num_speeds = XMLHelper.get_value(clgsys, "extension/NumberSpeeds")
+    
+    cool_capacity_btuh = XMLHelper.get_value(hp, "CoolingCapacity")
+    if cool_capacity_btuh.nil?
+      cool_capacity_tons = Constants.SizingAuto
+    else
+      cool_capacity_tons = OpenStudio.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton").get
+    end
+    
+    backup_heat_capacity_btuh = XMLHelper.get_value(hp, "BackupHeatingCapacity")
+    if backup_heat_capacity_btuh.nil?
+      backup_heat_capacity_kbtuh = Constants.SizingAuto
+    else
+      backup_heat_capacity_kbtuh = OpenStudio.convert(backup_heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr").get
+    end
     
     if hp_type == "air-to-air"        
     
@@ -1015,20 +1214,23 @@ class OSMeasures
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       
-      if seer_nom < 16
+      crankcase_kw = 0.02
+      crankcase_temp = 55.0
+      
+      if num_speeds == "1-Speed"
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpSingleSpeed"
         args = {
                 "seer"=>seer.to_s,
                 "hspf"=>hspf.to_s,
-                "eer"=>"11.4",
-                "cop"=>"3.05",
+                "eer"=>(0.80 * seer_nom + 1.0).to_s,
+                "cop"=>(0.45 * seer_nom - 0.34).to_s,
                 "shr"=>"0.73",
                 "fan_power_rated"=>"0.365",
                 "fan_power_installed"=>"0.5",
                 "min_temp"=>"0",
-                "crankcase_capacity"=>"0.02",
-                "crankcase_max_temp"=>"55",
+                "crankcase_capacity"=>crankcase_kw.to_s,
+                "crankcase_max_temp"=>crankcase_temp.to_s,
                 "eer_capacity_derate_1ton"=>"1",
                 "eer_capacity_derate_2ton"=>"1",
                 "eer_capacity_derate_3ton"=>"1",
@@ -1039,23 +1241,23 @@ class OSMeasures
                 "cop_capacity_derate_3ton"=>"1",
                 "cop_capacity_derate_4ton"=>"1",
                 "cop_capacity_derate_5ton"=>"1",
-                "heat_pump_capacity"=>Constants.SizingAuto,
-                "supplemental_capacity"=>Constants.SizingAuto
+                "heat_pump_capacity"=>cool_capacity_tons.to_s,
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
                }
         measures[measure_subdir] = args
         
-      elsif seer_nom <= 21
+      elsif num_speeds == "2-Speed"
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpTwoSpeed"
         args = {
                 "seer"=>seer.to_s,
                 "hspf"=>hspf.to_s,
-                "eer"=>"13.1",
-                "eer2"=>"11.7",
-                "cop"=>"3.8",
-                "cop2"=>"3.3",
+                "eer"=>(0.78 * seer_nom + 0.6).to_s,
+                "eer2"=>(0.68 * seer_nom + 1.0).to_s,
+                "cop"=>(0.60 * seer_nom - 1.40).to_s,
+                "cop2"=>(0.50 * seer_nom - 0.94).to_s,
                 "shr"=>"0.71",
-                "shr2"=>"0.723",
+                "shr2"=>"0.724",
                 "capacity_ratio"=>"0.72",
                 "capacity_ratio2"=>"1",
                 "fan_speed_ratio_cooling"=>"0.86",
@@ -1065,8 +1267,8 @@ class OSMeasures
                 "fan_power_rated"=>"0.14",
                 "fan_power_installed"=>"0.3",
                 "min_temp"=>"0",
-                "crankcase_capacity"=>"0.02",
-                "crankcase_max_temp"=>"55",
+                "crankcase_capacity"=>crankcase_kw.to_s,
+                "crankcase_max_temp"=>crankcase_temp.to_s,
                 "eer_capacity_derate_1ton"=>"1",
                 "eer_capacity_derate_2ton"=>"1",
                 "eer_capacity_derate_3ton"=>"1",
@@ -1077,25 +1279,25 @@ class OSMeasures
                 "cop_capacity_derate_3ton"=>"1",
                 "cop_capacity_derate_4ton"=>"1",
                 "cop_capacity_derate_5ton"=>"1",
-                "heat_pump_capacity"=>Constants.SizingAuto,
-                "supplemental_capacity"=>Constants.SizingAuto
+                "heat_pump_capacity"=>cool_capacity_tons.to_s,
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
                }
         measures[measure_subdir] = args
         
-      else
+      elsif num_speeds == "Variable-Speed"
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpVariableSpeed"
         args = {
                 "seer"=>seer.to_s,
                 "hspf"=>hspf.to_s,
-                "eer"=>"17.4",
-                "eer2"=>"16.8",
-                "eer3"=>"14.3",
-                "eer4"=>"13",                  
-                "cop"=>"4.82",
-                "cop2"=>"4.56",
-                "cop3"=>"3.89",
-                "cop4"=>"3.92",                  
+                "eer"=>(0.80 * seer_nom).to_s,
+                "eer2"=>(0.75 * seer_nom).to_s,
+                "eer3"=>(0.65 * seer_nom).to_s,
+                "eer4"=>(0.60 * seer_nom).to_s,
+                "cop"=>(0.48 * seer_nom).to_s,
+                "cop2"=>(0.45 * seer_nom).to_s,
+                "cop3"=>(0.39 * seer_nom).to_s,
+                "cop4"=>(0.39 * seer_nom).to_s,                  
                 "shr"=>"0.84",
                 "shr2"=>"0.79",
                 "shr3"=>"0.76",
@@ -1115,22 +1317,26 @@ class OSMeasures
                 "fan_power_rated"=>"0.14",
                 "fan_power_installed"=>"0.3",
                 "min_temp"=>"0",
-                "crankcase_capacity"=>"0.02",
-                "crankcase_max_temp"=>"55",
+                "crankcase_capacity"=>crankcase_kw.to_s,
+                "crankcase_max_temp"=>crankcase_temp.to_s,
                 "eer_capacity_derate_1ton"=>"1",
                 "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"0.95",
-                "eer_capacity_derate_4ton"=>"0.95",
-                "eer_capacity_derate_5ton"=>"0.95",
+                "eer_capacity_derate_3ton"=>"1",
+                "eer_capacity_derate_4ton"=>"1",
+                "eer_capacity_derate_5ton"=>"1",
                 "cop_capacity_derate_1ton"=>"1",
                 "cop_capacity_derate_2ton"=>"1",
                 "cop_capacity_derate_3ton"=>"1",
                 "cop_capacity_derate_4ton"=>"1",
                 "cop_capacity_derate_5ton"=>"1",
-                "heat_pump_capacity"=>Constants.SizingAuto,
-                "supplemental_capacity"=>Constants.SizingAuto
+                "heat_pump_capacity"=>cool_capacity_tons.to_s,
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
                }
         measures[measure_subdir] = args
+        
+      else
+      
+        fail "Unexpected number of speeds (#{num_speeds}) for heat pump system."
         
       end
       
@@ -1161,9 +1367,9 @@ class OSMeasures
               "cap_retention_temp"=>"-5",
               "pan_heater_power"=>"0",
               "fan_power"=>"0.07",
-              "heat_pump_capacity"=>Constants.SizingAuto,
+              "heat_pump_capacity"=>cool_capacity_tons.to_s,
               "supplemental_efficiency"=>"1",
-              "supplemental_capacity"=>Constants.SizingAuto
+              "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
              }
       measures[measure_subdir] = args
              
@@ -1193,8 +1399,8 @@ class OSMeasures
               "u_tube_spacing_type"=>"b",
               "rated_shr"=>"0.732",
               "fan_power"=>"0.5",
-              "heat_pump_capacity"=>Constants.SizingAuto,
-              "supplemental_capacity"=>Constants.SizingAuto
+              "heat_pump_capacity"=>cool_capacity_tons.to_s,
+              "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
              }
       measures[measure_subdir] = args
              
@@ -1952,18 +2158,7 @@ class OSModel
 
   def self.add_living_floors(model, building, errors, living_space, foundation_ceiling_area)
 
-    finished_floor_area = nil
-    if not building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/FinishedFloorArea"].nil?
-      finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/FinishedFloorArea"].text.to_f
-      if finished_floor_area == 0 and not building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].nil?
-        finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
-      end
-    elsif not building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].nil?
-      finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
-    end
-    if finished_floor_area.nil?
-      errors << "Could not find finished floor area."
-    end
+    finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
     above_grade_finished_floor_area = finished_floor_area - foundation_ceiling_area
     return unless above_grade_finished_floor_area > 0
     

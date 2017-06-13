@@ -14,6 +14,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     args_hash["calc_type"] = "HERS Reference Home"
     args_hash["measures_dir"] = ".."
     args_hash["schemas_dir"] = "./tests/schemas"
+    args_hash["output_file_path"] = File.join(File.dirname(__FILE__), "valid-ref.xml")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
@@ -27,6 +28,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     args_hash["calc_type"] = "HERS Rated Home"
     args_hash["measures_dir"] = ".."
     args_hash["schemas_dir"] = "./tests/schemas"
+    args_hash["output_file_path"] = File.join(File.dirname(__FILE__), "valid-rated.xml")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}

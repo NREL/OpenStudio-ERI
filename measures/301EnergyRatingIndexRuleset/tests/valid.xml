@@ -2,26 +2,15 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6 N:/Groups/REM/XML/BPI HPXML Standard/schemas/HPXML.xsd' schemaVersion='2.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Altova MapForce</XMLGeneratedBy>
+    <XMLGeneratedBy>Hand</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
-  <SoftwareInfo>
-    <SoftwareProgramUsed>REM/Rate</SoftwareProgramUsed>
-  </SoftwareInfo>
+  <SoftwareInfo/>
   <Building>
     <BuildingID id='Diamonds_and_Rust64'>
       <SendingSystemIdentifierType>SendSysIdType</SendingSystemIdentifierType>
     </BuildingID>
-    <Site>
-      <SiteID id='Bldg64'/>
-      <Address>
-        <Address1>2697 Pirates Way</Address1>
-        <CityMunicipality>Evergreen</CityMunicipality>
-        <StateCode>CO</StateCode>
-        <ZipCode>80579</ZipCode>
-      </Address>
-    </Site>
     <ProjectStatus>
       <EventType>audit</EventType>
     </ProjectStatus>
@@ -31,15 +20,12 @@
           <AzimuthOfFrontOfHome>90</AzimuthOfFrontOfHome>
         </Site>
         <BuildingConstruction>
-          <YearBuilt>2009</YearBuilt>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
-          <NumberofUnits>1</NumberofUnits>
           <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
-          <FinishedFloorArea>7000</FinishedFloorArea>
           <ConditionedBuildingVolume>67575</ConditionedBuildingVolume>
           <FoundationType>
             <Basement>
@@ -54,7 +40,7 @@
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
-          <Year>2012</Year>
+          <Year>2006</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
       </ClimateandRiskZones>
@@ -249,6 +235,7 @@
               <Spacing>24</Spacing>
               <FramingFactor>0.1988</FramingFactor>
             </Studs>
+            <Siding>stucco</Siding>
             <Color>medium</Color>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
@@ -257,6 +244,11 @@
                 <InstallationType>cavity</InstallationType>
                 <NominalRValue>30</NominalRValue>
                 <Thickness>5.5</Thickness>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>10</NominalRValue>
+                <Thickness>2</Thickness>
               </Layer>
             </Insulation>
           </Wall>
@@ -273,7 +265,8 @@
               <Spacing>24</Spacing>
               <FramingFactor>0.1988</FramingFactor>
             </Studs>
-            <Color>medium</Color>
+            <Siding>vinyl siding</Siding>
+            <Color>light</Color>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID2'/>
               <InsulationGrade>1</InsulationGrade>
@@ -297,7 +290,8 @@
               <Spacing>24</Spacing>
               <FramingFactor>0.1988</FramingFactor>
             </Studs>
-            <Color>medium</Color>
+            <Siding>brick veneer</Siding>
+            <Color>dark</Color>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID3'/>
               <InsulationGrade>1</InsulationGrade>
@@ -378,8 +372,6 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
-              <UnitLocation>conditioned space</UnitLocation>
-              <PerformanceAdjustment>1</PerformanceAdjustment>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
@@ -389,19 +381,21 @@
                 <Units>AFUE</Units>
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1</FractionHeatLoadServed>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='SpaceCool_ID1'/>
-              <UnitLocation>conditioned space</UnitLocation>
-              <PerformanceAdjustment>1</PerformanceAdjustment>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>48000</CoolingCapacity>
+              <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>16</Value>
               </AnnualCoolingEfficiency>
-              <SensibleHeatFraction>0.7</SensibleHeatFraction>
+              <extension>
+                <NumberSpeeds>2-Speed</NumberSpeeds>
+              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
