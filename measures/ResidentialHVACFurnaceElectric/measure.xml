@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_furnace_electric</name>
   <uid>18ba60d7-82a7-45c7-a0ed-bafb828ca0e2</uid>
-  <version_id>b22df8a7-3a9d-4491-a0e7-213ecd1034cd</version_id>
-  <version_modified>20170608T203837Z</version_modified>
+  <version_id>5690e6b2-6420-49de-ad03-6fac9e1c02a1</version_id>
+  <version_modified>20170612T201449Z</version_modified>
   <xml_checksum>0DA5C9E6</xml_checksum>
   <class_name>ProcessFurnaceElectric</class_name>
   <display_name>Set Residential Furnace Electric</display_name>
@@ -209,12 +209,6 @@
       <checksum>EEFE4DE8</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -225,6 +219,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B8B340DE</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>32CCC7D8</checksum>
     </file>
   </files>
 </measure>

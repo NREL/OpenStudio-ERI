@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>66b3bdf5-be16-4594-b18d-2f3c4c45ffcf</version_id>
-  <version_modified>20170613T174502Z</version_modified>
+  <version_id>03628d47-8219-45e3-8cbf-e421ca6713d8</version_id>
+  <version_modified>20170613T180230Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -61,22 +61,10 @@
       <checksum>66A91A4B</checksum>
     </file>
     <file>
-      <filename>osw_to_hpxml_export_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E161B2C9</checksum>
-    </file>
-    <file>
       <filename>helper_methods.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>77B8414D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8E2ADBBC</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -91,6 +79,24 @@
       <checksum>B8B340DE</checksum>
     </file>
     <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>07122777</checksum>
+    </file>
+    <file>
+      <filename>osw_to_hpxml_export_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6F131576</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>32CCC7D8</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -99,31 +105,211 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>6EE4CCB2</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>226EA584</checksum>
-    </file>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07122777</checksum>
+      <checksum>40514F68</checksum>
     </file>
     <file>
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>29BED7F2</checksum>
+      <checksum>3D9436EB</checksum>
     </file>
     <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>EF9C3888</checksum>
+      <checksum>7463C13A</checksum>
+    </file>
+    <file>
+      <filename>ResidentialApplianceClothesDryerFuel.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>194D4739</checksum>
+    </file>
+    <file>
+      <filename>ResidentialApplianceCookingRangeFuel.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>73DE7C95</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsCeilingsRoofsFinishedRoof.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>78840586</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsBasementFinished.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>295B04AF</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsBasementUnfinished.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>855F8A8F</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsCrawlspace.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>147B5CFB</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsPierBeam.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2B08AD52</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsWallsExteriorCMU.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8BE42D97</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsWallsExteriorDoubleWoodStud.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>75206E4E</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsWallsExteriorGeneric.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>67A5206B</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsWallsExteriorICF.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AAF79BE1</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsWallsExteriorSIP.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FDB7727B</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsWallsExteriorSteelStud.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AF785BD1</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterHeatPump.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3E101ED7</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTankElectric.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DCB7B62E</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTanklessElectric.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0655B48F</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTanklessFuel.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FE1E5D5A</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACAirSourceHeatPumpTwoSpeed.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>433C2DA8</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACAirSourceHeatPumpVariableSpeed.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E44674F2</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACBoilerElectric.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>18054D15</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACBoilerFuel.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F4CAB028</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACCentralAirConditionerSingleSpeed.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F68E7062</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACCentralAirConditionerTwoSpeed.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1FB3E082</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACCentralAirConditionerVariableSpeed.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C519D5B1</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACDehumidifier.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F605045A</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACElectricBaseboard.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>46D04542</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACFurnaceElectric.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2F14E2A6</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACFurnaceFuel.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4CF7DAC4</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACMiniSplitHeatPump.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D8D5FB81</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACRoomAirConditioner.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>22A341C2</checksum>
+    </file>
+    <file>
+      <filename>ResidentialMiscHotTubHeaterGas.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A7A58F42</checksum>
+    </file>
+    <file>
+      <filename>ResidentialMiscPoolHeaterGas.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1305D2CD</checksum>
     </file>
   </files>
 </measure>

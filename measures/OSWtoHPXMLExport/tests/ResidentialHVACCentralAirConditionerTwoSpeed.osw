@@ -1,0 +1,817 @@
+{
+   "created_at" : "20170613T145348Z",
+   "measure_paths" : [ "../measures" ],
+   "seed_file" : "../seeds/EmptySeedModel.osm",
+   "steps" : [
+      {
+         "arguments" : {
+            "dst_end_date" : "October 26",
+            "dst_start_date" : "April 7",
+            "weather_directory" : "./resources",
+            "weather_file_name" : "USA_CO_Denver_Intl_AP_725650_TMY3.epw"
+         },
+         "description" : "Sets the EPW weather file (EPW), supplemental data specific to the location, and daylight saving time start/end dates.",
+         "measure_dir_name" : "ResidentialLocation",
+         "modeler_description" : "Sets the weather file, Building America climate zone, site information (e.g., latitude, longitude, elevation, timezone), design day information (from the DDY file), the mains water temperature using the correlation method, and the daylight saving time start/end dates.",
+         "name" : "Set Residential Location"
+      },
+      {
+         "arguments" : {
+            "aspect_ratio" : "2",
+            "attic_type" : "unfinished attic",
+            "foundation_height" : "3",
+            "foundation_type" : "slab",
+            "garage_depth" : "20",
+            "garage_pos" : "Right",
+            "garage_protrusion" : "0",
+            "garage_width" : "0",
+            "living_height" : "8",
+            "num_floors" : "2",
+            "roof_pitch" : "6:12",
+            "roof_type" : "gable",
+            "total_ffa" : "2000"
+         },
+         "description" : "Sets the basic geometry for the building. Building is limited to one foundation type. Garage is tucked within the building, on the front left or front right corners of the building.",
+         "measure_dir_name" : "ResidentialGeometrySingleFamilyDetached",
+         "modeler_description" : "Gathers living space area, wall height per floor, number of floors, aspect ratio, garage width and depth, garage position, foundation type and wall height, attic and roof type, and roof pitch. Constructs building by calculating footprint and performing a series of affine transformations into living, foundation, and attic spaces.",
+         "name" : "Create Residential Single-Family Detached Geometry"
+      },
+      {
+         "arguments" : {
+            "num_bathrooms" : "2",
+            "num_bedrooms" : "3"
+         },
+         "description" : "Sets the number of bedrooms and bathrooms in the building. For multifamily buildings, the bedrooms/bathrooms can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialGeometryNumBedsAndBaths",
+         "modeler_description" : "Sets (or replaces) dummy ElectricEquipment objects that store the number of bedrooms and bathrooms associated with the model.",
+         "name" : "Set Residential Number of Beds and Baths"
+      },
+      {
+         "arguments" : {
+            "lat_frac" : "0.427",
+            "monthly_sch" : "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
+            "num_occ" : "auto",
+            "occ_gain" : "384",
+            "sens_frac" : "0.573",
+            "weekday_sch" : "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
+            "weekend_sch" : "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+         },
+         "description" : "Sets the number of occupants in the building. For multifamily buildings, the people can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialGeometryNumOccupants",
+         "modeler_description" : "Sets (or replaces) the People object for each finished space in the model.",
+         "name" : "Set Residential Number of Occupants"
+      },
+      {
+         "arguments" : {
+            "orientation" : "180"
+         },
+         "description" : "Sets the fixed orientation of the building.",
+         "measure_dir_name" : "ResidentialGeometryOrientation",
+         "modeler_description" : "Modifies the North axis of the building.",
+         "name" : "Set Residential Orientation"
+      },
+      {
+         "arguments" : {
+            "eaves_depth" : "2",
+            "roof_structure" : "truss, cantilever"
+         },
+         "description" : "Sets the eaves for the building.",
+         "measure_dir_name" : "ResidentialGeometryEaves",
+         "modeler_description" : "Performs a series of affine transformations on the roof decks into shading surfaces.",
+         "name" : "Set Residential Eaves"
+      },
+      {
+         "arguments" : {
+            "door_area" : "20"
+         },
+         "description" : "Sets the opaque door area for the building. Doors with glazing should be set as window area. For multifamily buildings, door area can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialGeometryDoorArea",
+         "modeler_description" : "Sets the opaque door area for the lowest above-grade front surface attached to living space. Any existing doors are removed. For multifamily buildings, doors are placed on corridor walls if available.",
+         "name" : "Set Residential Door Area"
+      },
+      {
+         "arguments" : {
+            "aspect_ratio" : "1.333",
+            "back_area" : "0",
+            "back_wwr" : "0.18",
+            "front_area" : "0",
+            "front_wwr" : "0.18",
+            "left_area" : "0",
+            "left_wwr" : "0.18",
+            "right_area" : "0",
+            "right_wwr" : "0.18"
+         },
+         "description" : "Sets the window area for the building. Doors with glazing should be set as window area.",
+         "measure_dir_name" : "ResidentialGeometryWindowArea",
+         "modeler_description" : "Automatically creates and positions standard residential windows based on the specified window area on each building facade. Windows are only added to surfaces between finished space and outside. Any existing windows are removed.",
+         "name" : "Set Residential Window Area"
+      },
+      {
+         "arguments" : {
+            "back_facade" : "true",
+            "depth" : "2",
+            "front_facade" : "true",
+            "left_facade" : "true",
+            "offset" : "0.5",
+            "right_facade" : "true"
+         },
+         "description" : "Sets presence/dimensions of overhangs for windows on the specified building facade(s).",
+         "measure_dir_name" : "ResidentialGeometryOverhangs",
+         "modeler_description" : "Creates overhang shading surfaces for windows on the specified building facade(s) and specified depth/offset. Any existing overhang shading surfaces are removed.",
+         "name" : "Set Residential Overhangs"
+      },
+      {
+         "arguments" : {
+            "back_offset" : "0",
+            "front_offset" : "0",
+            "left_offset" : "10",
+            "right_offset" : "10"
+         },
+         "description" : "Sets the neighbors (front, back, left, and/or right) of the building for shading purposes. Neighboring buildings will have the same geometry as the model building.",
+         "measure_dir_name" : "ResidentialGeometryNeighbors",
+         "modeler_description" : "Creates shading surfaces by shifting the building's exterior surfaces in the specified directions (front, back, left, and/or right).",
+         "name" : "Set Residential Neighbors"
+      },
+      {
+         "arguments" : {
+            "ceil_ff" : "0.07",
+            "ceil_grade" : "I",
+            "ceil_ins_thick_in" : "8.55",
+            "ceil_joist_height" : "3.5",
+            "ceil_r" : "30",
+            "roof_cavity_grade" : "I",
+            "roof_cavity_ins_thick_in" : "0",
+            "roof_cavity_r" : "0",
+            "roof_ff" : "0.07",
+            "roof_fram_thick_in" : "7.25"
+         },
+         "description" : "This measure assigns constructions to unfinished attic floors and ceilings.",
+         "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
+         "modeler_description" : "Calculates and assigns material layer properties of constructions for 1) floors between unfinished space under a roof and finished space and 2) roofs of unfinished space.",
+         "name" : "Set Residential Ceilings/Roofs - Unfinished Attic Constructions"
+      },
+      {
+         "arguments" : {
+            "osb_thick_in" : "0.75",
+            "rigid_r" : "0",
+            "rigid_thick_in" : "0"
+         },
+         "description" : "This measure assigns roof sheathing to all attic roofs.",
+         "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsSheathing",
+         "modeler_description" : "Assigns material layer properties for all attic roofs.",
+         "name" : "Set Residential Ceilings/Roofs - Roof Sheathing"
+      },
+      {
+         "arguments" : {
+            "color" : "medium",
+            "emissivity" : "0.91",
+            "material" : "asphalt shingles",
+            "solar_abs" : "0.85"
+         },
+         "description" : "This measure assigns the roofing material to all roof surfaces.",
+         "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsRoofingMaterial",
+         "modeler_description" : "Assigns material layer properties for all roofceiling surfaces adjacent to outside.",
+         "name" : "Set Residential Ceilings/Roofs - Roofing Material"
+      },
+      {
+         "arguments" : {
+            "has_rb" : "false"
+         },
+         "description" : "This measure assigns the radiant barrier material to all roof surfaces attached to unfinished space.",
+         "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsRadiantBarrier",
+         "modeler_description" : "Assigns material layer properties for all roofceiling surfaces adjacent to outside that are not attached to unfinished space.",
+         "name" : "Set Residential Ceilings/Roofs - Radiant Barrier"
+      },
+      {
+         "arguments" : {
+            "cond1" : "1.1112",
+            "dens1" : "50",
+            "specheat1" : "0.2",
+            "thick_in1" : "0.5"
+         },
+         "description" : "This measure assigns thermal mass to ceilings adjacent to finished space.",
+         "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsThermalMass",
+         "modeler_description" : "Assigns material layer properties for ceilings adjacent to finished space.",
+         "name" : "Set Residential Ceilings/Roofs - Ceiling Thermal Mass"
+      },
+      {
+         "arguments" : {
+            "exposed_perim" : "auto",
+            "ext_depth" : "0",
+            "ext_r" : "0",
+            "gap_r" : "0",
+            "mass_conductivity" : "9.1",
+            "mass_density" : "140",
+            "mass_specific_heat" : "0.2",
+            "mass_thick_in" : "4",
+            "perim_r" : "0",
+            "perim_width" : "0",
+            "whole_r" : "0"
+         },
+         "description" : "This measure assigns a construction to slabs-on-grade.",
+         "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsSlab",
+         "modeler_description" : "Calculates and assigns material layer properties of slab constructions for floors between above-grade finished space and the ground.",
+         "name" : "Set Residential Foundations/Floors - Slab Construction"
+      },
+      {
+         "arguments" : {
+            "cavity_r" : "19",
+            "framing_factor" : "0.13",
+            "install_grade" : "I"
+         },
+         "description" : "This measure assigns a wood stud construction to floors between finished space and unfinished space or floors below cantilevered finished space.",
+         "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsInterzonalFloors",
+         "modeler_description" : "Calculates and assigns material layer properties of wood stud constructions for floors 1) between finished and unfinished spaces or 2) between finished spaces and outside. If the floors have an existing construction, the layers (other than floor covering and floor mass) are replaced. This measure is intended to be used in conjunction with Floor Covering and Floor Mass measures.",
+         "name" : "Set Residential Foundations/Floors - Interzonal Floor Construction"
+      },
+      {
+         "arguments" : {
+            "covering_frac" : "0.8",
+            "covering_r" : "2.08"
+         },
+         "description" : "This measure assigns a covering to floors of above-grade finished spaces.",
+         "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsCovering",
+         "modeler_description" : "Assigns material layer properties for floors of above-grade finished spaces.",
+         "name" : "Set Residential Foundations/Floors - Floor Covering"
+      },
+      {
+         "arguments" : {
+            "osb_thick_in" : "0.75",
+            "rigid_r" : "0",
+            "rigid_thick_in" : "0"
+         },
+         "description" : "This measure assigns floor sheathing to floors of finished spaces, with the exception of foundation slabs.",
+         "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsSheathing",
+         "modeler_description" : "Assigns material layer properties for floors of finished spaces that are not adjacent to the ground.",
+         "name" : "Set Residential Foundations/Floors - Floor Sheathing"
+      },
+      {
+         "arguments" : {
+            "cond" : "0.8004",
+            "dens" : "34",
+            "specheat" : "0.29",
+            "thick_in" : "0.625"
+         },
+         "description" : "This measure assigns floor mass to floors of finished spaces, with the exception of foundation slabs.",
+         "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsThermalMass",
+         "modeler_description" : "Assigns material layer properties for floors of finished spaces that are not adjacent to the ground.",
+         "name" : "Set Residential Foundations/Floors - Floor Thermal Mass"
+      },
+      {
+         "arguments" : {
+            "cavity_depth" : "3.5",
+            "cavity_r" : "13",
+            "framing_factor" : "0.25",
+            "ins_fills_cavity" : "true",
+            "install_grade" : "I"
+         },
+         "description" : "This measure assigns a wood stud construction to above-grade exterior walls adjacent to finished space or attic walls under insulated roofs.",
+         "measure_dir_name" : "ResidentialConstructionsWallsExteriorWoodStud",
+         "modeler_description" : "Calculates and assigns material layer properties of wood stud constructions for 1) above-grade walls between finished space and outside, and 2) above-grade walls between attics under insulated roofs and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures.",
+         "name" : "Set Residential Walls - Wood Stud Construction"
+      },
+      {
+         "arguments" : {
+            "cavity_depth" : "3.5",
+            "cavity_r" : "13",
+            "framing_factor" : "0.25",
+            "ins_fills_cavity" : "true",
+            "install_grade" : "I"
+         },
+         "description" : "This measure assigns a wood stud construction to walls between finished space and unfinished space.",
+         "measure_dir_name" : "ResidentialConstructionsWallsInterzonal",
+         "modeler_description" : "Calculates and assigns material layer properties of wood stud constructions for walls between finished and unfinished spaces. If the walls have an existing construction, the layers (other than wall sheathing and partition wall mass) are replaced. This measure is intended to be used in conjunction with Wall Sheathing and Partition Wall Mass measures.",
+         "name" : "Set Residential Walls - Interzonal Construction"
+      },
+      {
+         "arguments" : {
+            "osb_thick_in" : "0.5",
+            "rigid_r" : "0",
+            "rigid_thick_in" : "0"
+         },
+         "description" : "This measure assigns wall sheathing to all above-grade walls adjacent to finished space.",
+         "measure_dir_name" : "ResidentialConstructionsWallsSheathing",
+         "modeler_description" : "Assigns material layer properties for all above-grade walls between finished space and outside or between finished space and unfinished space.",
+         "name" : "Set Residential Walls - Wall Sheathing"
+      },
+      {
+         "arguments" : {
+            "conductivity" : "0.62",
+            "density" : "11.1",
+            "emissivity" : "0.9",
+            "solar_abs" : "0.3",
+            "specific_heat" : "0.25",
+            "thick_in" : "0.375"
+         },
+         "description" : "This measure assigns the exterior finish to all above-grade exterior walls.",
+         "measure_dir_name" : "ResidentialConstructionsWallsExteriorFinish",
+         "modeler_description" : "Assigns material layer properties for all above-grade walls adjacent to outside.",
+         "name" : "Set Residential Walls - Exterior Finish"
+      },
+      {
+         "arguments" : {
+            "cond1" : "1.1112",
+            "dens1" : "50",
+            "specheat1" : "0.2",
+            "thick_in1" : "0.5"
+         },
+         "description" : "This measure assigns wall mass to above-grade exterior walls adjacent to finished space.",
+         "measure_dir_name" : "ResidentialConstructionsWallsExteriorThermalMass",
+         "modeler_description" : "Assigns material layer properties for above-grade walls between finished space and outside.",
+         "name" : "Set Residential Walls - Exterior Thermal Mass"
+      },
+      {
+         "arguments" : {
+            "cond1" : "1.1112",
+            "dens1" : "50",
+            "frac" : "1",
+            "specheat1" : "0.2",
+            "thick_in1" : "0.5"
+         },
+         "description" : "This measure assigns partition wall mass to finished spaces.",
+         "measure_dir_name" : "ResidentialConstructionsWallsPartitionThermalMass",
+         "modeler_description" : "This measure creates constructions representing the internal mass of partition walls for finished spaces. The constructions are set to define the internal mass objects of their respective spaces.",
+         "name" : "Set Residential Walls - Partition Thermal Mass"
+      },
+      {
+         "arguments" : {},
+         "description" : "This measure assigns an uninsulated constructions to 1) exterior surfaces adjacent to unfinished space, 2) surfaces between two unfinished (or two finished) spaces, or 3) adiabatic surfaces.",
+         "measure_dir_name" : "ResidentialConstructionsUninsulatedSurfaces",
+         "modeler_description" : "Calculates and assigns material layer properties of uninsulated constructions for surfaces that are not typically insulated.",
+         "name" : "Set Residential Uninsulated Surfaces"
+      },
+      {
+         "arguments" : {
+            "cooling_shade_mult" : "0.7",
+            "heating_shade_mult" : "0.7",
+            "shgc_back" : "0.3",
+            "shgc_front" : "0.3",
+            "shgc_left" : "0.3",
+            "shgc_right" : "0.3",
+            "ufactor_back" : "0.37",
+            "ufactor_front" : "0.37",
+            "ufactor_left" : "0.37",
+            "ufactor_right" : "0.37"
+         },
+         "description" : "This measure assigns a construction to windows. This measure also creates the interior shading schedule, which is based on shade multipliers and the heating and cooling season logic defined in the Building America House Simulation Protocols.",
+         "measure_dir_name" : "ResidentialConstructionsWindows",
+         "modeler_description" : "Calculates material layer properties of constructions for windows. Finds sub surfaces and sets applicable constructions. Using interior heating and cooling shading multipliers and the Building America heating and cooling season logic, creates schedule rulesets for window shade and shading control.",
+         "name" : "Set Residential Window Construction"
+      },
+      {
+         "arguments" : {
+            "door_ufactor" : "0.2"
+         },
+         "description" : "This measure assigns a construction to exterior doors adjacent to finished or unfinished space.",
+         "measure_dir_name" : "ResidentialConstructionsDoors",
+         "modeler_description" : "Calculates material layer properties of constructions for exterior door sub-surfaces adjacent to 1) finished space or 2) unfinished space.",
+         "name" : "Set Residential Door Construction"
+      },
+      {
+         "arguments" : {
+            "area_fraction" : "0.4",
+            "conductivity" : "0.8004",
+            "density" : "40",
+            "mass" : "8",
+            "solar_abs" : "0.6",
+            "specific_heat" : "0.29"
+         },
+         "description" : "Adds (or replaces) furniture mass to finished and unfinished spaces.",
+         "measure_dir_name" : "ResidentialConstructionsFurnitureThermalMass",
+         "modeler_description" : "This measure creates constructions representing the internal mass of furniture in finished and unfinished spaces. If existing furniture mass objects are found, they are removed.",
+         "name" : "Set Residential Furniture Thermal Mass"
+      },
+      {
+         "arguments" : {
+            "capacity" : "40.0",
+            "energy_factor" : "0.59",
+            "fuel_type" : "gas",
+            "location" : "auto",
+            "offcyc_power" : "0",
+            "oncyc_power" : "0",
+            "recovery_efficiency" : "0.76",
+            "setpoint_temp" : "125",
+            "tank_volume" : "auto"
+         },
+         "description" : "This measure adds a new residential fuel storage water heater to the model based on user inputs. If there is already an existing residential water heater in the model, it is replaced. For multifamily buildings, the water heater can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialHotWaterHeaterTankFuel",
+         "modeler_description" : "The measure will create a new instance of the OS:WaterHeater:Mixed object representing a fuel storage water heater. The water heater will be placed on the plant loop 'Domestic Hot Water Loop'. If this loop already exists, any water heater on that loop will be removed and replaced with a water heater consistent with this measure. If it doesn't exist, it will be created.",
+         "name" : "Set Residential Fuel Tank Water Heater"
+      },
+      {
+         "arguments" : {
+            "bath_mult" : "1",
+            "plant_loop" : "auto",
+            "shower_mult" : "1",
+            "sink_mult" : "1",
+            "space" : "auto"
+         },
+         "description" : "Adds (or replaces) residential hot water fixtures -- showers, sinks, and baths. For multifamily buildings, the hot water fixtures can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialHotWaterFixtures",
+         "modeler_description" : "Creates three new WaterUse:Equipment objects to represent showers, sinks, and baths in a home. OtherEquipment objects are also added to take into account the heat gain in the space due to hot water use.",
+         "name" : "Set Residential Hot Water Fixtures"
+      },
+      {
+         "arguments" : {
+            "dist_ins" : "0",
+            "dist_layout" : "trunk and branch",
+            "pipe_mat" : "copper",
+            "recirc_type" : "none",
+            "space" : "interior"
+         },
+         "description" : "Adds a hot water distribution system, including pipes and any recirculation pumps, into the home. This measure must be run after hot water fixtures have been added to the home. For multifamily buildings, the hot water fixtures can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialHotWaterDistribution",
+         "modeler_description" : "Modifies the existing HotWater:Equipment Objects for showers, sinks, and baths to take into account the additional water drawn due to distribution system inefficiencies. Also adds an internal gain to the space due to heat loss from the pipes and an ElectricEquipment object for the pump if recirculation is included.",
+         "name" : "Set Residential Hot Water Distribution"
+      },
+      {
+         "arguments" : {
+            "capacity" : "autosize",
+            "capacity_ratio" : "0.72",
+            "capacity_ratio2" : "1",
+            "crankcase_capacity" : "0",
+            "crankcase_max_temp" : "55",
+            "eer" : "13.5",
+            "eer2" : "12.4",
+            "eer_capacity_derate_1ton" : "1",
+            "eer_capacity_derate_2ton" : "1",
+            "eer_capacity_derate_3ton" : "1",
+            "eer_capacity_derate_4ton" : "1",
+            "eer_capacity_derate_5ton" : "1",
+            "fan_power_installed" : "0.3",
+            "fan_power_rated" : "0.14",
+            "fan_speed_ratio" : "0.86",
+            "fan_speed_ratio2" : "1",
+            "seer" : "16",
+            "shr" : "0.71",
+            "shr2" : "0.73"
+         },
+         "description" : "This measure removes any existing HVAC cooling components from the building and adds a two-speed central air conditioner along with an on/off supply fan to a unitary air loop. For multifamily buildings, the two-speed central air conditioner can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialHVACCentralAirConditionerTwoSpeed",
+         "modeler_description" : "Any cooling components are removed from any existing air loops or zones. Any existing air loops are also removed. A cooling DX coil and an on/off supply fan are added to a unitary air loop. The unitary air loop is added to the supply inlet node of the air loop. This air loop is added to a branch for the living zone. A diffuser is added to the branch for the living zone as well as for the finished basement if it exists.",
+         "name" : "Set Residential Two-Speed Central Air Conditioner"
+      },
+      {
+         "arguments" : {
+            "htg_wkdy" : "71",
+            "htg_wked" : "71"
+         },
+         "description" : "This measure creates the heating season schedules based on weather data, and the heating setpoint schedules.",
+         "measure_dir_name" : "ResidentialHVACHeatingSetpoints",
+         "modeler_description" : "This measure creates residential heating season ruleset objects. Schedule values are populated based on information contained in the EPW file. This measure also creates residential heating setpoint ruleset objects. Schedule values are populated based on information input by the user as well as contained in the residential heating season. The heating setpoint schedules are added to the living zone's thermostat.",
+         "name" : "Set Residential Heating Setpoints and Schedules"
+      },
+      {
+         "arguments" : {
+            "clg_wkdy" : "76",
+            "clg_wked" : "76"
+         },
+         "description" : "This measure creates the cooling season schedules based on weather data, and the cooling setpoint schedules.",
+         "measure_dir_name" : "ResidentialHVACCoolingSetpoints",
+         "modeler_description" : "This measure creates residential cooling season ruleset objects. Schedule values are populated based on information contained in the EPW file. This measure also creates residential cooling setpoint ruleset objects. Schedule values are populated based on information input by the user as well as contained in the residential cooling season. The cooling setpoint schedules are added to the living zone's thermostat.",
+         "name" : "Set Residential Cooling Setpoints and Schedules"
+      },
+      {
+         "arguments" : {
+            "control" : "typical",
+            "cooling_setpoint_offset" : "0",
+            "coverage" : "NA",
+            "monthly_sch" : "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248",
+            "mult" : "1",
+            "power" : "45",
+            "specified_num" : "1",
+            "use_benchmark_energy" : "true",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
+            "weekend_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
+         },
+         "description" : "Adds (or replaces) residential ceiling fan(s) and schedule in all finished spaces. For multifamily buildings, the ceiling fan(s) can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialHVACCeilingFan",
+         "modeler_description" : "Since there is no Ceiling Fan object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is residential ceiling fan. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Ceiling Fan"
+      },
+      {
+         "arguments" : {
+            "fridge_E" : "434",
+            "monthly_sch" : "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
+            "mult" : "1",
+            "space" : "auto",
+            "weekday_sch" : "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
+            "weekend_sch" : "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041"
+         },
+         "description" : "Adds (or replaces) a residential refrigerator with the specified efficiency, operation, and schedule. For multifamily buildings, the refrigerator can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialApplianceRefrigerator",
+         "modeler_description" : "Since there is no Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.",
+         "name" : "Set Residential Refrigerator"
+      },
+      {
+         "arguments" : {
+            "annual_cost" : "24",
+            "cold_cycle" : "false",
+            "drum_volume" : "3.5",
+            "fill_sensor" : "false",
+            "imef" : "0.95",
+            "internal_heater" : "false",
+            "mult_e" : "1",
+            "mult_hw" : "1",
+            "plant_loop" : "auto",
+            "rated_annual_energy" : "387",
+            "space" : "auto",
+            "test_date" : "2007",
+            "thermostatic_control" : "true"
+         },
+         "description" : "Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule. For multifamily buildings, the clothes washer can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialApplianceClothesWasher",
+         "modeler_description" : "Since there is no Clothes Washer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential clothes washer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Clothes Washer"
+      },
+      {
+         "arguments" : {
+            "cef" : "2.7",
+            "monthly_sch" : "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
+            "mult" : "1",
+            "space" : "auto",
+            "weekday_sch" : "0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
+            "weekend_sch" : "0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024"
+         },
+         "description" : "Adds (or replaces) a residential clothes dryer with the specified efficiency, operation, and schedule. For multifamily buildings, the clothes dryer can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialApplianceClothesDryerElectric",
+         "modeler_description" : "Since there is no Clothes Dryer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment or OtherEquipment object with the name that denotes it is a residential clothes dryer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Electric Clothes Dryer"
+      },
+      {
+         "arguments" : {
+            "cold_inlet" : "false",
+            "cold_use" : "0",
+            "dw_E" : "290",
+            "eg_date" : "2007",
+            "eg_gas_cost" : "23",
+            "int_htr" : "true",
+            "mult_e" : "1",
+            "mult_hw" : "1",
+            "num_settings" : "12",
+            "plant_loop" : "auto",
+            "space" : "auto"
+         },
+         "description" : "Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule. For multifamily buildings, the dishwasher can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialApplianceDishwasher",
+         "modeler_description" : "Since there is no Dishwasher object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential dishwasher. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Dishwasher"
+      },
+      {
+         "arguments" : {
+            "c_ef" : "0.74",
+            "monthly_sch" : "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
+            "mult" : "1",
+            "o_ef" : "0.11",
+            "space" : "auto",
+            "weekday_sch" : "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
+            "weekend_sch" : "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011"
+         },
+         "description" : "Adds (or replaces) a residential cooking range with the specified efficiency, operation, and schedule. For multifamily buildings, the cooking range can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialApplianceCookingRangeElectric",
+         "modeler_description" : "Since there is no Cooking Range object in OpenStudio/EnergyPlus, we look for an ElectricEquipment or OtherEquipment object with the name that denotes it is a residential cooking range. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Electric Cooking Range"
+      },
+      {
+         "arguments" : {
+            "cfl_eff" : "55",
+            "energy_use_exterior" : "300",
+            "energy_use_garage" : "100",
+            "energy_use_interior" : "900",
+            "hw_cfl" : "0.34",
+            "hw_led" : "0",
+            "hw_lfl" : "0",
+            "in_eff" : "15",
+            "led_eff" : "80",
+            "lfl_eff" : "88",
+            "option_type" : "Lamp Fractions",
+            "pg_cfl" : "0.34",
+            "pg_led" : "0",
+            "pg_lfl" : "0"
+         },
+         "description" : "Sets (or replaces) the lighting energy use, based on fractions of CFLs, LFLs, and LEDs, for finished spaces, the garage, and outside. For multifamily buildings, the lighting can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialLighting",
+         "modeler_description" : "Assigns a lighting energy use and schedule to finished spaces, the garage, and outside. The lighting schedule is calculated for the latitude/longitude of the weather location specified in the model.",
+         "name" : "Set Residential Lighting"
+      },
+      {
+         "arguments" : {
+            "energy_use" : "2000",
+            "lat_frac" : "0.021",
+            "monthly_sch" : "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248",
+            "mult" : "1",
+            "option_type" : "Multiplier",
+            "sens_frac" : "0.093",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
+            "weekend_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
+         },
+         "description" : "Adds (or replaces) residential plug loads with the specified efficiency and schedule in all finished spaces. For multifamily buildings, the plug loads can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscPlugLoads",
+         "modeler_description" : "Since there is no Plug Loads object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is residential plug loads. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Plug Loads"
+      },
+      {
+         "arguments" : {
+            "fridge_E" : "1102",
+            "monthly_sch" : "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
+            "mult" : "1",
+            "space" : "auto",
+            "weekday_sch" : "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
+            "weekend_sch" : "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041"
+         },
+         "description" : "Adds (or replaces) a residential extra refrigerator with the specified efficiency, operation, and schedule. For multifamily buildings, the extra refrigerator can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscExtraRefrigerator",
+         "modeler_description" : "Since there is no Extra Refrigerator object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential extra refrigerator. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.",
+         "name" : "Set Residential Extra Refrigerator"
+      },
+      {
+         "arguments" : {
+            "freezer_E" : "935",
+            "monthly_sch" : "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
+            "mult" : "1",
+            "space" : "auto",
+            "weekday_sch" : "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
+            "weekend_sch" : "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041"
+         },
+         "description" : "Adds (or replaces) a residential freezer with the specified efficiency, operation, and schedule. For multifamily buildings, the freezer can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscFreezer",
+         "modeler_description" : "Since there is no Freezer object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential freezer. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model.",
+         "name" : "Set Residential Freezer"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "1027.3",
+            "monthly_sch" : "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "weekday_sch" : "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024",
+            "weekend_sch" : "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024"
+         },
+         "description" : "Adds (or replaces) a residential hot tub heater with the specified efficiency and schedule. The hot tub is assumed to be outdoors. For multifamily buildings, the hot tub heater is set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscHotTubHeaterElectric",
+         "modeler_description" : "Since there is no Hot Tub Heater object in OpenStudio/EnergyPlus, we look for an ElectricEquipment or GasEquipment object with the name that denotes it is a residential hot tub heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Hot Tub Electric Heater"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "1014.1",
+            "monthly_sch" : "0.921, 0.928, 0.921, 0.915, 0.921, 1.160, 1.158, 1.158, 1.160, 0.921, 0.915, 0.921",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "weekday_sch" : "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024",
+            "weekend_sch" : "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024"
+         },
+         "description" : "Adds (or replaces) a residential hot tub pump with the specified efficiency and schedule. The hot tub is assumed to be outdoors. For multifamily buildings, the hot tub pump is set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscHotTubPump",
+         "modeler_description" : "Since there is no Hot Tub Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential hot tub pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Hot Tub Pump"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "2300",
+            "monthly_sch" : "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "weekday_sch" : "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003",
+            "weekend_sch" : "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003"
+         },
+         "description" : "Adds (or replaces) a residential pool heater with the specified efficiency and schedule. The pool is assumed to be outdoors. For multifamily buildings, the pool heater is set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscPoolHeaterElectric",
+         "modeler_description" : "Since there is no Pool Heater object in OpenStudio/EnergyPlus, we look for an ElectricEquipment or GasEquipment object with the name that denotes it is a residential pool heater. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Pool Electric Heater"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "2250",
+            "monthly_sch" : "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "weekday_sch" : "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003",
+            "weekend_sch" : "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003"
+         },
+         "description" : "Adds (or replaces) a residential pool pump with the specified efficiency and schedule. The pool is assumed to be outdoors. For multifamily buildings, the pool pump is set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscPoolPump",
+         "modeler_description" : "Since there is no Pool Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential pool pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Pool Pump"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "400",
+            "monthly_sch" : "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "weekday_sch" : "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065",
+            "weekend_sch" : "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065"
+         },
+         "description" : "Adds (or replaces) a residential well pump with the specified efficiency and schedule. The well is assumed to be outdoors. For multifamily buildings, the well pump is set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscWellPump",
+         "modeler_description" : "Since there is no Well Pump object in OpenStudio/EnergyPlus, we look for an ElectricEquipment object with the name that denotes it is a residential well pump. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Well Pump"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "60",
+            "monthly_sch" : "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "space" : "auto",
+            "weekday_sch" : "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065",
+            "weekend_sch" : "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065"
+         },
+         "description" : "Adds (or replaces) a residential gas fireplace with the specified efficiency and schedule. For multifamily buildings, the fireplace can be set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscGasFireplace",
+         "modeler_description" : "Since there is no Gas Fireplace object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas fireplace. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Gas Fireplace"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "30",
+            "monthly_sch" : "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "weekday_sch" : "0.004, 0.001, 0.001, 0.002, 0.007, 0.012, 0.029, 0.046, 0.044, 0.041, 0.044, 0.046, 0.042, 0.038, 0.049, 0.059, 0.110, 0.161, 0.115, 0.070, 0.044, 0.019, 0.013, 0.007",
+            "weekend_sch" : "0.004, 0.001, 0.001, 0.002, 0.007, 0.012, 0.029, 0.046, 0.044, 0.041, 0.044, 0.046, 0.042, 0.038, 0.049, 0.059, 0.110, 0.161, 0.115, 0.070, 0.044, 0.019, 0.013, 0.007"
+         },
+         "description" : "Adds (or replaces) a residential gas grill with the specified efficiency and schedule. The grill is assumed to be outdoors. For multifamily buildings, the grill is set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscGasGrill",
+         "modeler_description" : "Since there is no Gas Grill object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is a residential gas grill. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Gas Grill"
+      },
+      {
+         "arguments" : {
+            "base_energy" : "19",
+            "monthly_sch" : "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154",
+            "mult" : "1",
+            "scale_energy" : "true",
+            "weekday_sch" : "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065",
+            "weekend_sch" : "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065"
+         },
+         "description" : "Adds (or replaces) residential gas lighting with the specified efficiency and schedule. The lighting is assumed to be outdoors. For multifamily buildings, the lighting is set for all units of the building.",
+         "measure_dir_name" : "ResidentialMiscGasLighting",
+         "modeler_description" : "Since there is no Gas Lighting object in OpenStudio/EnergyPlus, we look for a GasEquipment object with the name that denotes it is residential gas lighting. If one is found, it is replaced with the specified properties. Otherwise, a new such object is added to the model. Note: This measure requires the number of bedrooms/bathrooms to have already been assigned.",
+         "name" : "Set Residential Gas Lighting"
+      },
+      {
+         "arguments" : {
+            "clothes_dryer_exhaust" : "100",
+            "crawl_ach" : "0",
+            "duct_ah_return_frac" : "0.267",
+            "duct_ah_supply_frac" : "0.067",
+            "duct_location" : "auto",
+            "duct_location_frac" : "auto",
+            "duct_num_returns" : "auto",
+            "duct_return_area_mult" : "1",
+            "duct_return_frac" : "0.067",
+            "duct_supply_area_mult" : "1",
+            "duct_supply_frac" : "0.6",
+            "duct_total_leakage" : "0.3",
+            "duct_unconditioned_r" : "0",
+            "finished_basement_ach" : "0",
+            "garage_ach50" : "7",
+            "has_fireplace_chimney" : "false",
+            "has_hvac_flue" : "false",
+            "has_water_heater_flue" : "false",
+            "is_existing_home" : "false",
+            "living_ach50" : "7",
+            "mech_vent_ashrae_std" : "2010",
+            "mech_vent_fan_power" : "0.3",
+            "mech_vent_frac_62_2" : "1",
+            "mech_vent_infil_credit" : "true",
+            "mech_vent_sensible_efficiency" : "0",
+            "mech_vent_total_efficiency" : "0",
+            "mech_vent_type" : "exhaust",
+            "nat_vent_clg_offset" : "1",
+            "nat_vent_clg_season" : "true",
+            "nat_vent_frac_window_area_openable" : "0.2",
+            "nat_vent_frac_windows_open" : "0.33",
+            "nat_vent_htg_offset" : "1",
+            "nat_vent_htg_season" : "true",
+            "nat_vent_max_oa_hr" : "0.0115",
+            "nat_vent_max_oa_rh" : "0.7",
+            "nat_vent_num_weekdays" : "3",
+            "nat_vent_num_weekends" : "0",
+            "nat_vent_ovlp_offset" : "1",
+            "nat_vent_ovlp_season" : "true",
+            "pier_beam_ach" : "100",
+            "shelter_coef" : "auto",
+            "terrain" : "suburban",
+            "unfinished_attic_sla" : "0.00333",
+            "unfinished_basement_ach" : "0.1"
+         },
+         "description" : "Adds (or replaces) all building components related to airflow: infiltration, mechanical ventilation, natural ventilation, and ducts.",
+         "measure_dir_name" : "ResidentialAirflow",
+         "modeler_description" : "Uses EMS to model the building airflow.",
+         "name" : "Set Residential Airflow"
+      },
+      {
+         "arguments" : {
+            "show_debug_info" : "false"
+         },
+         "description" : "This measure performs HVAC sizing calculations via ACCA Manual J/S, as well as sizing calculations for ground source heat pumps and dehumidifiers.",
+         "measure_dir_name" : "ResidentialHVACSizing",
+         "modeler_description" : "This measure assigns HVAC heating/cooling capacities, airflow rates, etc.",
+         "name" : "Set Residential HVAC Sizing"
+      }
+   ],
+   "updated_at" : "20170613T145351Z"
+}

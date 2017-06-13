@@ -144,13 +144,37 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     building_construction = building_summary.add_element "BuildingConstruction"
     XMLHelper.add_element(building_construction, "ResidentialFacilityType", {Constants.BuildingTypeSingleFamilyDetached=>"single-family detached"}[model.getBuilding.standardsBuildingType.to_s])
     XMLHelper.add_element(building_construction, "NumberofUnits", model.getBuilding.standardsNumberOfLivingUnits)
+    model.getBuildingUnits.each do |unit|
+      XMLHelper.add_element(building_construction, "NumberofConditionedFloors", Geometry.get_building_stories(unit.spaces))
+      XMLHelper.add_element(building_construction, "NumberofConditionedFloorsAboveGrade", Geometry.get_above_grade_building_stories(unit.spaces))    
+    end
     XMLHelper.add_element(building_construction, "NumberofBedrooms", measures["ResidentialGeometryNumBedsAndBaths"]["num_bedrooms"])
     XMLHelper.add_element(building_construction, "NumberofBathrooms", measures["ResidentialGeometryNumBedsAndBaths"]["num_bathrooms"])
     model.getBuildingUnits.each do |unit|
       XMLHelper.add_element(building_construction, "ConditionedFloorArea", Geometry.get_above_grade_finished_floor_area_from_spaces(unit.spaces).round)
-      XMLHelper.add_element(building_construction, "FinishedFloorArea", Geometry.get_above_grade_finished_floor_area_from_spaces(unit.spaces).round)
-      XMLHelper.add_element(building_construction, "NumberofStoriesAboveGrade", Geometry.get_building_stories(unit.spaces))
       XMLHelper.add_element(building_construction, "ConditionedBuildingVolume", Geometry.get_finished_volume_from_spaces(unit.spaces).round)
+    end
+    XMLHelper.add_element(building_construction, "GaragePresent", false) # TODO: how to determine this?
+
+    arg_vals = []
+    measures.values.each do |h|
+      h.each do |k, v|
+        arg_vals << v
+      end
+    end
+    if arg_vals.include? Constants.FuelTypeGas
+      XMLHelper.add_element(building_summary.add_element("extension"), "HasNaturalGasAccessOrFuelDelivery", true)
+    else
+      XMLHelper.add_element(building_summary.add_element("extension"), "HasNaturalGasAccessOrFuelDelivery", false)
+    end
+    
+    # ClimateandRiskZones
+    if measures.keys.include? "ResidentialLocation"
+      climate_and_risk_zones = building_details.add_element "ClimateandRiskZones"
+      climate_zone_iecc = climate_and_risk_zones.add_element "ClimateZoneIECC"
+      XMLHelper.add_element(climate_zone_iecc, "Year", 2006)
+      # XMLHelper.add_element(climate_zone_iecc, "ClimateZone", epw_to_climate_zone())
+      XMLHelper.add_element(climate_zone_iecc, "ClimateZone", 7)
     end
     
     # Zones
@@ -180,8 +204,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     air_infiltration_measurement = air_infiltration.add_element "AirInfiltrationMeasurement"
     XMLHelper.add_attribute(air_infiltration_measurement.add_element("SystemIdentifier"), "id", Constants.ObjectNameInfiltration)
     building_air_leakage = air_infiltration_measurement.add_element "BuildingAirLeakage"
-    XMLHelper.add_element(building_air_leakage, "UnitofMeasure", "ACH")
-    XMLHelper.add_element(building_air_leakage, "AirLeakage", measures["ResidentialAirflow"]["living_ach50"])    
+    XMLHelper.add_element(building_air_leakage, "UnitofMeasure", "ACHnatural")
+    XMLHelper.add_element(building_air_leakage, "AirLeakage", measures["ResidentialAirflow"]["living_ach50"]) # TODO: how to convert to ACHnatural? what is the N factor?
     
     # AtticAndRoof
     attic_and_roof = enclosure.add_element "AtticAndRoof"
@@ -202,27 +226,43 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     
     attics = attic_and_roof.add_element "Attics"
     model.getSpaces.each do |space|
-      next unless Geometry.is_unfinished_attic(space)
-      attic = attics.add_element "Attic"
-      XMLHelper.add_attribute(attic.add_element("SystemIdentifier"), "id", "#{space.name} attic")
-      XMLHelper.add_element(attic, "AtticType", "venting unknown attic")
-      attic_floor_insulation = attic.add_element "AtticFloorInsulation"
-      XMLHelper.add_attribute(attic_floor_insulation.add_element("SystemIdentifier"), "id", "#{space.name} floor ins")
-      XMLHelper.add_element(attic_floor_insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["ceil_grade"]))
-      layer = attic_floor_insulation.add_element "Layer"
-      XMLHelper.add_element(layer, "InstallationType", "cavity")
-      XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["ceil_r"])
-      XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["ceil_ins_thick_in"])
-      attic_roof_insulation = attic.add_element "AtticRoofInsulation"
-      XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} roof ins")
-      XMLHelper.add_element(attic_roof_insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_cavity_grade"]))
-      layer = attic_roof_insulation.add_element "Layer"
-      XMLHelper.add_element(layer, "InstallationType", "cavity")
-      XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_cavity_r"])
-      XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_cavity_ins_thick_in"])      
-      rafters = attic.add_element "Rafters"
-      XMLHelper.add_element(rafters, "Size", get_studs_size_from_thickness(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_fram_thick_in"]))
-      XMLHelper.add_element(rafters, "FramingFactor", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_ff"])
+      if Geometry.is_unfinished_attic(space)
+        attic = attics.add_element "Attic"
+        XMLHelper.add_attribute(attic.add_element("SystemIdentifier"), "id", "#{space.name} attic")
+        XMLHelper.add_element(attic, "AtticType", "venting unknown attic")
+        attic_floor_insulation = attic.add_element "AtticFloorInsulation"
+        XMLHelper.add_attribute(attic_floor_insulation.add_element("SystemIdentifier"), "id", "#{space.name} floor ins")
+        XMLHelper.add_element(attic_floor_insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["ceil_grade"]))
+        layer = attic_floor_insulation.add_element "Layer"
+        XMLHelper.add_element(layer, "InstallationType", "cavity")
+        XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["ceil_r"])
+        XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["ceil_ins_thick_in"])
+        attic_roof_insulation = attic.add_element "AtticRoofInsulation"
+        XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} roof ins")
+        XMLHelper.add_element(attic_roof_insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_cavity_grade"]))
+        layer = attic_roof_insulation.add_element "Layer"
+        XMLHelper.add_element(layer, "InstallationType", "cavity")
+        XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_cavity_r"])
+        XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_cavity_ins_thick_in"])
+        XMLHelper.add_element(attic, "Area", OpenStudio.convert(space.floorArea,"m^2","ft^2"))
+        rafters = attic.add_element "Rafters"
+        XMLHelper.add_element(rafters, "Size", get_studs_size_from_thickness(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_fram_thick_in"]))
+        XMLHelper.add_element(rafters, "FramingFactor", measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"]["roof_ff"])
+      elsif Geometry.is_finished_attic(space)
+        attic = attics.add_element "Attic"
+        XMLHelper.add_attribute(attic.add_element("SystemIdentifier"), "id", "#{space.name} attic")
+        XMLHelper.add_element(attic, "AtticType", "cape cod")        
+        attic_roof_insulation = attic.add_element "AtticRoofInsulation"
+        XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} roof ins")
+        XMLHelper.add_element(attic_roof_insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsFinishedRoof"]["install_grade"]))
+        layer = attic_roof_insulation.add_element "Layer"
+        XMLHelper.add_element(layer, "InstallationType", "cavity")
+        XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsCeilingsRoofsFinishedRoof"]["cavity_r"])
+        XMLHelper.add_element(attic, "Area", OpenStudio.convert(space.floorArea,"m^2","ft^2"))
+        rafters = attic.add_element "Rafters"
+        XMLHelper.add_element(rafters, "Size", get_studs_size_from_thickness(measures["ResidentialConstructionsCeilingsRoofsFinishedRoof"]["cavity_depth"]))
+        XMLHelper.add_element(rafters, "FramingFactor", measures["ResidentialConstructionsCeilingsRoofsFinishedRoof"]["framing_factor"])        
+      end
     end
     
     # Foundations
@@ -267,7 +307,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         XMLHelper.add_attribute(foundation.add_element("SystemIdentifier"), "id", "foundaiton #{space.name}")
         foundation_type = foundation.add_element "FoundationType"
         basement = foundation_type.add_element "Basement"
-        basement.add_element("Finished").add_text("true")
+        basement.add_element("Conditioned").add_text("true")
         space.surfaces.each do |surface|
           if surface.surfaceType.downcase == "roofceiling"
             frame_floor = foundation.add_element "FrameFloor"
@@ -287,6 +327,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(foundation_wall, "Height", OpenStudio.convert(h,"m","ft").get.round(1))
             XMLHelper.add_element(foundation_wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
             XMLHelper.add_element(foundation_wall, "BelowGradeDepth", (Geometry.getSurfaceZValues([surface]).min + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1))
+            XMLHelper.add_element(foundation_wall, "AdjacentTo", "ground")
             insulation = foundation_wall.add_element "Insulation"
             XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "#{surface.name} wall ins")
             if measures["ResidentialConstructionsFoundationsFloorsBasementFinished"]["wall_cavity_depth"].to_f > 0
@@ -324,7 +365,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         XMLHelper.add_attribute(foundation.add_element("SystemIdentifier"), "id", "foundation #{space.name}")
         foundation_type = foundation.add_element "FoundationType"
         basement = foundation_type.add_element "Basement"
-        basement.add_element("Finished").add_text("false")
+        basement.add_element("Conditioned").add_text("false")
         space.surfaces.each do |surface|
           if surface.surfaceType.downcase == "roofceiling"
             frame_floor = foundation.add_element "FrameFloor"
@@ -350,6 +391,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(foundation_wall, "Height", OpenStudio.convert(h,"m","ft").get.round(1))
             XMLHelper.add_element(foundation_wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
             XMLHelper.add_element(foundation_wall, "BelowGradeDepth", (Geometry.getSurfaceZValues([surface]).min + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1))
+            XMLHelper.add_element(foundation_wall, "AdjacentTo", "ground")
             insulation = foundation_wall.add_element "Insulation"
             XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "#{surface.name} wall ins")
             if measures["ResidentialConstructionsFoundationsFloorsBasementUnfinished"]["wall_cavity_depth"].to_f > 0
@@ -417,6 +459,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(foundation_wall, "Height", OpenStudio.convert(h,"m","ft").get.round(1))
             XMLHelper.add_element(foundation_wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
             XMLHelper.add_element(foundation_wall, "BelowGradeDepth", (Geometry.getSurfaceZValues([surface]).min + Geometry.get_z_origin_for_zone(space.thermalZone.get)).abs.round(1))
+            XMLHelper.add_element(foundation_wall, "AdjacentTo", "ground")
             insulation = foundation_wall.add_element "Insulation"
             XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "#{surface.name} wall ins")
             layer = insulation.add_element "Layer"
@@ -427,6 +470,31 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         end
       end
     end
+    
+    # PierAndBeam
+    model.getSpaces.each do |space|
+      if Geometry.is_pier_beam(space)
+        foundation = foundations.add_element "Foundation"
+        XMLHelper.add_attribute(foundation.add_element("SystemIdentifier"), "id", "foundation #{space.name}")
+        foundation_type = foundation.add_element "FoundationType"
+        crawl = foundation_type.add_element "Ambient"
+        space.surfaces.each do |surface|
+          if surface.surfaceType.downcase == "roofceiling"
+            frame_floor = foundation.add_element "FrameFloor"
+            XMLHelper.add_attribute(frame_floor.add_element("SystemIdentifier"), "id", surface.name)
+            floor_joists = frame_floor.add_element "FloorJoists"
+            XMLHelper.add_element(floor_joists, "FramingFactor", measures["ResidentialConstructionsFoundationsFloorsPierBeam"]["framing_factor"])
+            XMLHelper.add_element(frame_floor, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
+            insulation = frame_floor.add_element "Insulation"
+            XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "#{surface.name} ceil ins")
+            XMLHelper.add_element(insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsFoundationsFloorsPierBeam"]["install_grade"]))
+            layer = insulation.add_element "Layer"
+            XMLHelper.add_element(layer, "InstallationType", "cavity")
+            XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsPierBeam"]["cavity_r"])            
+          end
+        end
+      end
+    end    
     
     # Walls
     walls = enclosure.add_element "Walls"
@@ -456,52 +524,65 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           wall_type.add_element("WoodStud")
         elsif measures.keys.include? "ResidentialConstructionsWallsExteriorDoubleWoodStud"
           XMLHelper.add_element(wall_type.add_element("DoubleWoodStud"), "Staggered", measures["ResidentialConstructionsWallsExteriorDoubleWoodStud"]["is_staggered"])
-        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorSteelStud"
+        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorSteelStud"        
           wall_type.add_element("SteelFrame")
-        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorICF"
+        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorICF"        
           wall_type.add_element("InsulatedConcreteForms")
-        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorSIP"
+        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorSIP"     
           wall_type.add_element("StructurallyInsulatedPanel")
-        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorCMU"
+        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorCMU"         
           wall_type.add_element("ConcreteMasonryUnit")
+        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorGeneric"         
+          wall_type.add_element("Other")
         end
         if measures.keys.include? "ResidentialConstructionsWallsExteriorWoodStud"
           XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
           studs = wall.add_element "Studs"
           XMLHelper.add_element(studs, "Size", get_studs_size_from_thickness(measures["ResidentialConstructionsWallsExteriorWoodStud"]["cavity_depth"]))
           XMLHelper.add_element(studs, "FramingFactor", measures["ResidentialConstructionsWallsExteriorWoodStud"]["framing_factor"])
+          XMLHelper.add_element(wall, "Siding", "wood siding")
+          XMLHelper.add_element(wall, "Color", "medium")
           insulation = wall.add_element "Insulation"
           XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
           XMLHelper.add_element(insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsWallsExteriorWoodStud"]["install_grade"]))
           layer = insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")
           XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsWallsExteriorWoodStud"]["cavity_r"])
+          XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsWallsExteriorWoodStud"]["cavity_depth"])
         elsif measures.keys.include? "ResidentialConstructionsWallsExteriorDoubleWoodStud"
           XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
           studs = wall.add_element "Studs"
           XMLHelper.add_element(studs, "Size", get_studs_size_from_thickness(measures["ResidentialConstructionsWallsExteriorDoubleWoodStud"]["stud_depth"]))
           XMLHelper.add_element(studs, "Spacing", measures[ "ResidentialConstructionsWallsExteriorDoubleWoodStud"]["framing_spacing"])
           XMLHelper.add_element(studs, "FramingFactor", measures["ResidentialConstructionsWallsExteriorDoubleWoodStud"]["framing_factor"])
+          XMLHelper.add_element(wall, "Siding", "wood siding")
+          XMLHelper.add_element(wall, "Color", "medium")
           insulation = wall.add_element "Insulation"
           XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
           XMLHelper.add_element(insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsWallsExteriorDoubleWoodStud"]["install_grade"]))
           layer = insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")        
           XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsWallsExteriorDoubleWoodStud"]["cavity_r"])
+          XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsWallsExteriorDoubleWoodStud"]["stud_depth"])
         elsif measures.keys.include? "ResidentialConstructionsWallsExteriorSteelStud"
           XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
           studs = wall.add_element "Studs"
           XMLHelper.add_element(studs, "Size", get_studs_size_from_thickness(measures["ResidentialConstructionsWallsExteriorSteelStud"]["cavity_depth"]))
           XMLHelper.add_element(studs, "FramingFactor", measures["ResidentialConstructionsWallsExteriorSteelStud"]["framing_factor"])
+          XMLHelper.add_element(wall, "Siding", "wood siding")
+          XMLHelper.add_element(wall, "Color", "medium")
           insulation = wall.add_element "Insulation"
           XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
           XMLHelper.add_element(insulation, "InsulationGrade", osw_to_hpxml_ins_grade(measures["ResidentialConstructionsWallsExteriorSteelStud"]["install_grade"]))
           layer = insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")        
           XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsWallsExteriorSteelStud"]["cavity_r"])
+          XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsWallsExteriorDoubleWoodStud"]["cavity_depth"])
         elsif measures.keys.include? "ResidentialConstructionsWallsExteriorICF"
           XMLHelper.add_element(wall, "Thickness", measures["ResidentialConstructionsWallsExteriorICF"]["concrete_thick_in"])
           XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
+          XMLHelper.add_element(wall, "Siding", "wood siding")
+          XMLHelper.add_element(wall, "Color", "medium")
           insulation = wall.add_element "Insulation"
           XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
           layer = insulation.add_element "Layer"
@@ -510,6 +591,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsWallsExteriorICF"]["ins_thick_in"])
         elsif measures.keys.include? "ResidentialConstructionsWallsExteriorSIP"
           XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
+          XMLHelper.add_element(wall, "Siding", "wood siding")
+          XMLHelper.add_element(wall, "Color", "medium")
           insulation = wall.add_element "Insulation"
           XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
           layer = insulation.add_element "Layer"
@@ -523,14 +606,25 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         elsif measures.keys.include? "ResidentialConstructionsWallsExteriorCMU"
           XMLHelper.add_element(wall, "Thickness", measures["ResidentialConstructionsWallsExteriorCMU"]["thickness"])
           XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
+          XMLHelper.add_element(wall, "Siding", "wood siding")
+          XMLHelper.add_element(wall, "Color", "medium")
           insulation = wall.add_element "Insulation"
           XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
           layer = insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")
           XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsWallsExteriorCMU"]["furring_r"])
           XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsWallsExteriorCMU"]["furring_cavity_depth"])
+        elsif measures.keys.include? "ResidentialConstructionsWallsExteriorGeneric"
+          XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round)
+          XMLHelper.add_element(wall, "Siding", "wood siding")
+          XMLHelper.add_element(wall, "Color", "medium")
+          # TODO: fill in properties of this type of wall
         end
         if measures.keys.include? "ResidentialConstructionsWallsSheathing"
+          if insulation.nil?
+            insulation = wall.add_element "Insulation"
+            XMLHelper.add_attribute(insulation.add_element("SystemIdentifier"), "id", "insulation #{wall.elements["SystemIdentifier"].attributes["id"]}")
+          end
           layer = insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "continuous")
           XMLHelper.add_element(layer.add_element("InsulationMaterial"), "Other", Constants.MaterialOSB)
@@ -550,7 +644,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       facade = Geometry.get_facade_for_surface(subsurface.surface.get)
       window = windows.add_element "Window"
       XMLHelper.add_attribute(window.add_element("SystemIdentifier"), "id", subsurface.name)
-      window.add_element("Area").add_text(OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round.to_s)
+      XMLHelper.add_element(window, "Area", OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round)
+      XMLHelper.add_element(window, "Azimuth", OpenStudio.convert(subsurface.azimuth,"rad","deg").get.round)
       XMLHelper.add_element(window, "UFactor", measures["ResidentialConstructionsWindows"]["ufactor_#{facade}"])
       XMLHelper.add_element(window, "SHGC", measures["ResidentialConstructionsWindows"]["shgc_#{facade}"])
       if measures.keys.include? "ResidentialGeometryOverhangs"
@@ -597,6 +692,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       hvac_control = hvac.add_element "HVACControl"
       XMLHelper.add_attribute(hvac_control.add_element("SystemIdentifier"), "id", thermostat.name)
       XMLHelper.add_attribute(hvac_control.add_element("AttachedToZone"), "idref", control_zone.name)
+      XMLHelper.add_element(hvac_control, "ControlType", "programmable thermostat")
       XMLHelper.add_element(hvac_control, "SetpointTempHeatingSeason", measures["ResidentialHVACHeatingSetpoints"]["htg_wkdy"])
       XMLHelper.add_element(hvac_control, "SetpointTempCoolingSeason", measures["ResidentialHVACCoolingSetpoints"]["clg_wkdy"])
       
@@ -616,105 +712,6 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         loc = "garage - unconditioned"
       elsif Geometry.is_living(control_zone) or Geometry.zone_is_finished(control_zone)
         loc = "conditioned space"
-      end      
-      
-      if HVAC.has_air_source_heat_pump(model, runner, control_zone) or HVAC.has_mini_split_heat_pump(model, runner, control_zone) or HVAC.has_gshp_vert_bore(model, runner, control_zone)
-
-        name = nil
-        type = nil
-        clg_cap = nil
-        htg_cap = nil
-        clg_eff = nil
-        htg_eff = nil
-        supp_temp = nil
-        supp_afue = nil
-        supp_cap = nil
-        
-        HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
-
-          name = htg_equip.name
-          if HVAC.has_air_source_heat_pump(model, runner, control_zone)
-            type = "air-to-air"
-            clg_coil = HVAC.get_coil_from_hvac_component(htg_equip.coolingCoil.get)
-            htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
-            supp_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
-            unless clg_coil.isRatedTotalCoolingCapacityAutosized
-              clg_cap = OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
-            end
-            unless htg_coil.isRatedTotalHeatingCapacityAutosized
-              htg_cap = OpenStudio.convert(htg_coil.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
-            end
-            unless supp_coil.isNominalCapacityAutosized 
-              supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
-            end
-            supp_afue = supp_coil.efficiency.round(2).to_s
-            clg_eff = measures[get_measure_match(measures, "AirSourceHeatPump")]["seer"]
-            htg_eff = measures[get_measure_match(measures, "AirSourceHeatPump")]["hspf"]
-          elsif HVAC.has_mini_split_heat_pump(model, runner, control_zone)
-            type = "mini-split"
-            if htg_equip.to_ZoneHVACTerminalUnitVariableRefrigerantFlow.is_initialized
-              model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
-                unless vrf.isRatedTotalCoolingCapacityAutosized
-                  clg_cap = OpenStudio.convert(vrf.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
-                end
-                unless vrf.isRatedTotalHeatingCapacityAutosized
-                  htg_cap = OpenStudio.convert(vrf.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
-                end
-              end
-            elsif htg_equip.to_ZoneHVACBaseboardConvectiveElectric.is_initialized
-              supp_afue = htg_equip.efficiency.round(2).to_s
-              unless htg_equip.isNominalCapacityAutosized
-                supp_cap = OpenStudio.convert(htg_equip.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
-              end
-            end
-            clg_eff = measures[get_measure_match(measures, "AirSourceHeatPump")]["seer"]
-            htg_eff = measures[get_measure_match(measures, "AirSourceHeatPump")]["hspf"]            
-          elsif HVAC.has_gshp_vert_bore(model, runner, control_zone)
-            type = "ground-to-air"
-            clg_coil = HVAC.get_coil_from_hvac_component(htg_equip.coolingCoil.get)
-            htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)            
-            supp_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
-            unless clg_coil.isRatedTotalCoolingCapacityAutosized
-              clg_cap = OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
-            end
-            unless htg_coil.isRatedTotalHeatingCapacityAutosized
-              htg_cap = OpenStudio.convert(htg_coil.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
-            end            
-            unless supp_coil.isNominalCapacityAutosized 
-              supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
-            end
-            supp_afue = supp_coil.efficiency.round(2).to_s
-            clg_eff = measures[get_measure_match(measures, "HeatPump")]["eer"]
-            htg_eff = measures[get_measure_match(measures, "HeatPump")]["cop"]            
-          end
-          
-        end
-        
-        heat_pump = hvac_plant.add_element "HeatPump"
-        XMLHelper.add_attribute(heat_pump.add_element("SystemIdentifier"), "id", name)
-        XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heat_pump.elements["SystemIdentifier"].attributes["id"])
-        XMLHelper.add_attribute(heat_pump.add_element("AttachedToZone"), "idref", control_zone.name)
-        XMLHelper.add_element(heat_pump, "UnitLocation", loc)
-        XMLHelper.add_element(heat_pump, "HeatPumpType", type)
-        unless htg_cap.nil?
-          XMLHelper.add_element(heat_pump, "HeatingCapacity", htg_cap)
-        end 
-        unless clg_cap.nil?
-          XMLHelper.add_element(heat_pump, "CoolingCapacity", clg_cap)
-        end
-        XMLHelper.add_element(heat_pump, "BackupSystemFuel", "electricity")
-        XMLHelper.add_element(heat_pump, "BackupAFUE", supp_afue)
-        unless supp_cap.nil?
-          XMLHelper.add_element(heat_pump, "BackupHeatingCapacity", supp_cap)
-        end
-        XMLHelper.add_element(heat_pump, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round)
-        annual_cool_efficiency = heat_pump.add_element "AnnualCoolEfficiency"
-        XMLHelper.add_element(annual_cool_efficiency, "Units", "SEER")
-        XMLHelper.add_element(annual_cool_efficiency, "Value", clg_eff)
-        annual_heat_efficiency = heat_pump.add_element "AnnualHeatEfficiency"
-        XMLHelper.add_element(annual_heat_efficiency, "Units", "HSPF")
-        XMLHelper.add_element(annual_heat_efficiency, "Value", htg_eff)
-
       end
 
       if HVAC.has_furnace(model, runner, control_zone, false, false)
@@ -739,6 +736,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           annual_heat_efficiency = heating_system.add_element "AnnualHeatingEfficiency"
           XMLHelper.add_element(annual_heat_efficiency, "Units", "AFUE")
           XMLHelper.add_element(annual_heat_efficiency, "Value", measures[get_measure_match(measures, "Furnace")]["afue"])
+          XMLHelper.add_element(heating_system, "FractionHeatLoadServed", 1)
           XMLHelper.add_element(heating_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round)
         end
 
@@ -778,6 +776,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             annual_heat_efficiency = heating_system.add_element "AnnualHeatingEfficiency"
             XMLHelper.add_element(annual_heat_efficiency, "Units", "AFUE")
             XMLHelper.add_element(annual_heat_efficiency, "Value", boiler.nominalThermalEfficiency.round(2))
+            XMLHelper.add_element(heating_system, "FractionHeatLoadServed", 1)
             XMLHelper.add_element(heating_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round)
           end
         end
@@ -787,6 +786,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       if HVAC.has_electric_baseboard(model, runner, control_zone)
       
         HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
+          next unless htg_equip.to_ZoneHVACBaseboardConvectiveElectric.is_initialized
           heating_system = hvac_plant.add_element "HeatingSystem"
           XMLHelper.add_attribute(heating_system.add_element("SystemIdentifier"), "id", htg_equip.name)
           XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heating_system.elements["SystemIdentifier"].attributes["id"])
@@ -799,8 +799,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(heating_system, "HeatingCapacity", OpenStudio.convert(htg_equip.nominalCapacity.get,"W","Btu/h").get.round(1))
           end
           annual_heat_efficiency = heating_system.add_element "AnnualHeatingEfficiency"
-          XMLHelper.add_element(annual_heat_efficiency, "Units", "AFUE")
+          XMLHelper.add_element(annual_heat_efficiency, "Units", "Percent")
           XMLHelper.add_element(annual_heat_efficiency, "Value", htg_equip.efficiency.round(2))
+          XMLHelper.add_element(heating_system, "FractionHeatLoadServed", 1)
           XMLHelper.add_element(heating_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round)
         end
 
@@ -816,14 +817,31 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_attribute(cooling_system.add_element("AttachedToZone"), "idref", control_zone.name)
           XMLHelper.add_element(cooling_system, "UnitLocation", loc)
           XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
-          unless clg_coil.isRatedTotalCoolingCapacityAutosized
-            XMLHelper.add_element(cooling_system, "CoolingCapacity", OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1))
+          XMLHelper.add_element(cooling_system, "CoolingSystemFuel", "electricity")
+          if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
+            unless clg_coil.isRatedTotalCoolingCapacityAutosized
+              XMLHelper.add_element(cooling_system, "CoolingCapacity", OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1))
+            end
+            num_sp = "1-Speed"
+          elsif clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
+            if clg_coil.stages.length == 2
+              num_sp = "2-Speed"
+            elsif clg_coil.stages.length == 4
+              num_sp = "Variable-Speed"
+            end
+            # TODO
           end
+          XMLHelper.add_element(cooling_system, "FractionCoolLoadServed", 1)
           XMLHelper.add_element(cooling_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round)
           annual_cool_efficiency = cooling_system.add_element "AnnualCoolingEfficiency"
-          XMLHelper.add_element(annual_cool_efficiency, "Units", "COP")
+          XMLHelper.add_element(annual_cool_efficiency, "Units", "SEER")
           XMLHelper.add_element(annual_cool_efficiency, "Value", measures[get_measure_match(measures, "CentralAirConditioner")]["seer"])
-          XMLHelper.add_element(cooling_system, "SensibleHeatFraction", clg_coil.ratedSensibleHeatRatio.get.round(2))
+          if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
+            XMLHelper.add_element(cooling_system, "SensibleHeatFraction", clg_coil.ratedSensibleHeatRatio.get.round(2))
+          elsif clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
+            # TODO
+          end
+          XMLHelper.add_element(cooling_system.add_element("extension"), "NumberSpeeds", num_sp)
         end
         
       end
@@ -838,16 +856,137 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_attribute(cooling_system.add_element("AttachedToZone"), "idref", control_zone.name)
           XMLHelper.add_element(cooling_system, "UnitLocation", loc)
           XMLHelper.add_element(cooling_system, "CoolingSystemType", "room air conditioner")
+          XMLHelper.add_element(cooling_system, "CoolingSystemFuel", "electricity")
           unless clg_coil.isRatedTotalCoolingCapacityAutosized
             XMLHelper.add_element(cooling_system, "CoolingCapacity", OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1))
           end
+          XMLHelper.add_element(cooling_system, "FractionCoolLoadServed", 1)
           XMLHelper.add_element(cooling_system, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round)
           annual_cool_efficiency = cooling_system.add_element "AnnualCoolingEfficiency"
-          XMLHelper.add_element(annual_cool_efficiency, "Units", "COP")
-          XMLHelper.add_element(annual_cool_efficiency, "Value", clg_coil.ratedCOP.get.round(2))
-          XMLHelper.add_element(cooling_system, "SensibleHeatFraction", clg_coil.ratedSensibleHeatRatio.get.round(2))          
+          XMLHelper.add_element(annual_cool_efficiency, "Units", "EER")
+          XMLHelper.add_element(annual_cool_efficiency, "Value", measures["ResidentialHVACRoomAirConditioner"]["eer"])
+          XMLHelper.add_element(cooling_system, "SensibleHeatFraction", measures["ResidentialHVACRoomAirConditioner"]["shr"])
+          XMLHelper.add_element(cooling_system.add_element("extension"), "NumberSpeeds", "1-Speed")
         end
         
+      end
+      
+      if HVAC.has_air_source_heat_pump(model, runner, control_zone) or HVAC.has_mini_split_heat_pump(model, runner, control_zone) or HVAC.has_gshp_vert_bore(model, runner, control_zone)
+
+        name = nil
+        type = nil
+        clg_cap = nil
+        htg_cap = nil
+        clg_eff = nil
+        htg_eff = nil
+        supp_temp = nil
+        supp_afue = nil
+        supp_cap = nil
+        num_sp = "1-Speed"
+        
+        HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
+
+          name = htg_equip.name
+          if HVAC.has_air_source_heat_pump(model, runner, control_zone)
+            type = "air-to-air"
+            clg_coil = HVAC.get_coil_from_hvac_component(htg_equip.coolingCoil.get)
+            htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
+            supp_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
+            if clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized
+              unless clg_coil.isRatedTotalCoolingCapacityAutosized
+                clg_cap = OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
+              end
+            elsif clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized
+              if clg_coil.stages.length == 2
+                num_sp = "2-Speed"
+              elsif clg_coil.stages.length == 4
+                num_sp = "Variable-Speed"
+              end
+              # TODO
+            end
+            if htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized
+              unless htg_coil.isRatedTotalHeatingCapacityAutosized
+                htg_cap = OpenStudio.convert(htg_coil.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
+              end
+            elsif htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized
+              # TODO
+            end
+            unless supp_coil.isNominalCapacityAutosized 
+              supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
+            end
+            supp_afue = supp_coil.efficiency.round(2).to_s
+            clg_eff = measures[get_measure_match(measures, "AirSourceHeatPump")]["seer"]
+            htg_eff = measures[get_measure_match(measures, "AirSourceHeatPump")]["hspf"]
+          elsif HVAC.has_mini_split_heat_pump(model, runner, control_zone)
+            type = "mini-split"
+            if htg_equip.to_ZoneHVACTerminalUnitVariableRefrigerantFlow.is_initialized
+              model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+                unless vrf.isRatedTotalCoolingCapacityAutosized
+                  clg_cap = OpenStudio.convert(vrf.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
+                end
+                unless vrf.isRatedTotalHeatingCapacityAutosized
+                  htg_cap = OpenStudio.convert(vrf.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
+                end
+              end
+            elsif htg_equip.to_ZoneHVACBaseboardConvectiveElectric.is_initialized
+              supp_afue = htg_equip.efficiency.round(2).to_s
+              unless htg_equip.isNominalCapacityAutosized
+                supp_cap = OpenStudio.convert(htg_equip.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
+              end
+            end
+            clg_eff = measures["ResidentialHVACMiniSplitHeatPump"]["seer"]
+            htg_eff = measures["ResidentialHVACMiniSplitHeatPump"]["hspf"]
+            num_sp = "Variable-Speed"
+          elsif HVAC.has_gshp_vert_bore(model, runner, control_zone)
+            type = "ground-to-air"
+            clg_coil = HVAC.get_coil_from_hvac_component(htg_equip.coolingCoil.get)
+            htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)            
+            supp_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
+            unless clg_coil.isRatedTotalCoolingCapacityAutosized
+              clg_cap = OpenStudio.convert(clg_coil.ratedTotalCoolingCapacity.get,"W","Btu/h").get.round(1).to_s
+            end
+            unless htg_coil.isRatedTotalHeatingCapacityAutosized
+              htg_cap = OpenStudio.convert(htg_coil.ratedTotalHeatingCapacity.get,"W","Btu/h").get.round(1).to_s
+            end            
+            unless supp_coil.isNominalCapacityAutosized 
+              supp_cap = OpenStudio.convert(supp_coil.nominalCapacity.get,"W","Btu/h").get.round(1).to_s
+            end
+            supp_afue = supp_coil.efficiency.round(2).to_s
+            clg_eff = measures[get_measure_match(measures, "HeatPump")]["eer"]
+            htg_eff = measures[get_measure_match(measures, "HeatPump")]["cop"]
+            num_sp = "Variable-Speed"
+          end
+          
+        end
+        
+        heat_pump = hvac_plant.add_element "HeatPump"
+        XMLHelper.add_attribute(heat_pump.add_element("SystemIdentifier"), "id", name)
+        XMLHelper.add_attribute(hvac_control.add_element("HVACSystemsServed"), "idref", heat_pump.elements["SystemIdentifier"].attributes["id"])
+        XMLHelper.add_attribute(heat_pump.add_element("AttachedToZone"), "idref", control_zone.name)
+        XMLHelper.add_element(heat_pump, "UnitLocation", loc)
+        XMLHelper.add_element(heat_pump, "HeatPumpType", type)
+        unless htg_cap.nil?
+          XMLHelper.add_element(heat_pump, "HeatingCapacity", htg_cap)
+        end 
+        unless clg_cap.nil?
+          XMLHelper.add_element(heat_pump, "CoolingCapacity", clg_cap)
+        end
+        XMLHelper.add_element(heat_pump, "BackupSystemFuel", "electricity")
+        XMLHelper.add_element(heat_pump, "BackupAFUE", supp_afue)
+        unless supp_cap.nil?
+          XMLHelper.add_element(heat_pump, "BackupHeatingCapacity", supp_cap)
+        end
+        XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1)
+        XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1)
+        XMLHelper.add_element(heat_pump, "FloorAreaServed", OpenStudio.convert(control_zone.floorArea,"m^2","ft^2").get.round)
+        annual_cool_efficiency = heat_pump.add_element "AnnualCoolEfficiency"
+        XMLHelper.add_element(annual_cool_efficiency, "Units", "SEER")
+        XMLHelper.add_element(annual_cool_efficiency, "Value", clg_eff)
+        annual_heat_efficiency = heat_pump.add_element "AnnualHeatEfficiency"
+        XMLHelper.add_element(annual_heat_efficiency, "Units", "HSPF")
+        XMLHelper.add_element(annual_heat_efficiency, "Value", htg_eff)
+        XMLHelper.add_element(heat_pump.add_element("extension"), "NumberSpeeds", num_sp)
+
       end
 
     end
@@ -859,6 +998,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       ventilation_fan = ventilation_fans.add_element "VentilationFan"
       XMLHelper.add_attribute(ventilation_fan.add_element("SystemIdentifier"), "id", Constants.ObjectNameMechanicalVentilation)
       XMLHelper.add_element(ventilation_fan, "FanType", osw_to_hpxml_mech_vent(measures["ResidentialAirflow"]["mech_vent_type"]))
+      XMLHelper.add_element(ventilation_fan, "RatedFlowRate", 247)
+      XMLHelper.add_element(ventilation_fan, "HoursInOperation", 24)
+      XMLHelper.add_element(ventilation_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.add_element(ventilation_fan, "TotalRecoveryEfficiency", measures["ResidentialAirflow"]["mech_vent_total_efficiency"])
       XMLHelper.add_element(ventilation_fan, "SensibleRecoveryEfficiency", measures["ResidentialAirflow"]["mech_vent_sensible_efficiency"])
       XMLHelper.add_element(ventilation_fan, "FanPower", measures["ResidentialAirflow"]["mech_vent_fan_power"])
@@ -876,6 +1018,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         
         ef = nil
         recov_ef = nil
+        vol = nil
         
         pl.supplyComponents.each do |wh|
           next if !wh.to_WaterHeaterMixed.is_initialized and !wh.to_WaterHeaterStratified.is_initialized and !wh.to_WaterHeaterHeatPumpWrappedCondenser.is_initialized
@@ -933,7 +1076,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             loc = "conditioned space"
           end
           XMLHelper.add_element(water_heating_system, "Location", loc)
-          XMLHelper.add_element(water_heating_system, "TankVolume", vol)
+          unless vol.nil?
+            XMLHelper.add_element(water_heating_system, "TankVolume", vol)
+          end
           XMLHelper.add_element(water_heating_system, "HeatingCapacity", cap)
           unless ef.nil?
             XMLHelper.add_element(water_heating_system, "EnergyFactor", ef)
@@ -949,13 +1094,20 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           hot_water_distribution = water_heating.add_element "HotWaterDistribution"
           XMLHelper.add_attribute(hot_water_distribution.add_element("SystemIdentifier"), "id", Constants.ObjectNameHotWaterDistribution)
           XMLHelper.add_attribute(hot_water_distribution.add_element("AttachedToWaterHeatingSystem"), "idref", water_heating_system.elements["SystemIdentifier"].attributes["id"])
-          unless measures["ResidentialHotWaterDistribution"]["recirc_type"] == Constants.RecircTypeNone
-            system_type = hot_water_distribution.add_element "SystemType"
-            recirculation = system_type.add_element "Recirculation"
-            XMLHelper.add_element(recirculation, "ControlType", osw_to_hpxml_recirc(measures["ResidentialHotWaterDistribution"]["recirc_type"]))
+          system_type = hot_water_distribution.add_element "SystemType"
+          if not measures["ResidentialHotWaterDistribution"]["recirc_type"] == Constants.RecircTypeNone
+            XMLHelper.add_element(system_type.add_element "Recirculation", "ControlType", osw_to_hpxml_recirc(measures["ResidentialHotWaterDistribution"]["recirc_type"]))
+          else
+            system_type.add_element "Standard"
           end
           pipe_insulation = hot_water_distribution.add_element "PipeInsulation"
           XMLHelper.add_element(pipe_insulation, "PipeRValue", measures["ResidentialHotWaterDistribution"]["dist_ins"])
+          if measures["ResidentialHotWaterDistribution"]["dist_ins"].to_f > 0
+            XMLHelper.add_element(pipe_insulation, "FractionPipeInsulation", 1)
+          else
+            XMLHelper.add_element(pipe_insulation, "FractionPipeInsulation", 0)
+          end
+          XMLHelper.add_element(hot_water_distribution.add_element("extension"), "LongestPipeLength", 30) # TODO: where to get this value?
         end
         
         pl.demandComponents.each do |component|
@@ -990,24 +1142,38 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_attribute(clothes_washer.add_element("SystemIdentifier"), "id", Constants.ObjectNameClothesWasher)
       XMLHelper.add_element(clothes_washer, "Location", get_appliance_location(model, Constants.ObjectNameClothesWasher))
       XMLHelper.add_element(clothes_washer, "ModifiedEnergyFactor", measures["ResidentialApplianceClothesWasher"]["imef"])
+      extension = clothes_washer.add_element "extension"
+      XMLHelper.add_element(extension, "EnergyRating", measures["ResidentialApplianceClothesWasher"]["rated_annual_energy"])
+      XMLHelper.add_element(extension, "ElectricRate", 0.127)
+      XMLHelper.add_element(extension, "GasRate", 1.003)
+      XMLHelper.add_element(extension, "AnnualGasCost", 24.0)
+      XMLHelper.add_element(extension, "Capacity", measures["ResidentialApplianceClothesWasher"]["drum_volume"])
     end
 
     if measures.keys.include? "ResidentialApplianceClothesDryerElectric"
       clothes_dryer = appliances.add_element "ClothesDryer"
       XMLHelper.add_attribute(clothes_dryer.add_element("SystemIdentifier"), "id", Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric))
       XMLHelper.add_element(clothes_dryer, "Location", get_appliance_location(model, Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric)))
-      XMLHelper.add_element(clothes_dryer, "FuelType", osw_to_hpxml_fuel_map(Constants.FuelTypeElectric))
+      XMLHelper.add_element(clothes_dryer, "FuelType", osw_to_hpxml_fuel_map(Constants.FuelTypeElectric))      
+      extension = clothes_dryer.add_element "extension"
+      XMLHelper.add_element(extension, "EfficiencyFactor", measures["ResidentialApplianceClothesDryerElectric"]["cef"])
+      XMLHelper.add_element(extension, "HasTimerControl", true)      
     elsif measures.keys.include? "ResidentialApplianceClothesDryerFuel"
       clothes_dryer = appliances.add_element "ClothesDryer"
       XMLHelper.add_attribute(clothes_dryer.add_element("SystemIdentifier"), "id", Constants.ObjectNameClothesDryer(measures["ResidentialApplianceClothesDryerFuel"]["fuel_type"]))
       XMLHelper.add_element(clothes_dryer, "Location", get_appliance_location(model, Constants.ObjectNameClothesDryer(measures["ResidentialApplianceClothesDryerFuel"]["fuel_type"])))
       XMLHelper.add_element(clothes_dryer, "FuelType", osw_to_hpxml_fuel_map(measures["ResidentialApplianceClothesDryerFuel"]["fuel_type"]))
+      extension = clothes_dryer.add_element "extension"
+      XMLHelper.add_element(extension, "EfficiencyFactor", measures["ResidentialApplianceClothesDryerFuel"]["cef"])
+      XMLHelper.add_element(extension, "HasTimerControl", true)      
     end
 
     if measures.keys.include? "ResidentialApplianceDishwasher"
       dishwasher = appliances.add_element "Dishwasher"
       XMLHelper.add_attribute(dishwasher.add_element("SystemIdentifier"), "id", "dishwasher")
       XMLHelper.add_element(dishwasher, "RatedAnnualkWh", measures["ResidentialApplianceDishwasher"]["dw_E"])
+      extension = dishwasher.add_element "extension"
+      XMLHelper.add_element(extension, "Capacity", measures["ResidentialApplianceDishwasher"]["num_settings"])      
     end
 
     if measures.keys.include? "ResidentialApplianceRefrigerator"
@@ -1015,13 +1181,6 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_attribute(refrigerator.add_element("SystemIdentifier"), "id", Constants.ObjectNameRefrigerator)
       XMLHelper.add_element(refrigerator, "Location", get_appliance_location(model, Constants.ObjectNameRefrigerator))
       XMLHelper.add_element(refrigerator, "RatedAnnualkWh", measures["ResidentialApplianceRefrigerator"]["fridge_E"])
-    end
-    
-    if measures.keys.include? "ResidentialMiscExtraRefrigerator"
-      refrigerator = appliances.add_element "Refrigerator"
-      XMLHelper.add_attribute(refrigerator.add_element("SystemIdentifier"), "id", Constants.ObjectNameExtraRefrigerator)
-      XMLHelper.add_element(refrigerator, "Location", get_appliance_location(model, Constants.ObjectNameExtraRefrigerator))
-      XMLHelper.add_element(refrigerator, "RatedAnnualkWh", measures["ResidentialMiscExtraRefrigerator"]["fridge_E"])
     end
     
     if measures.keys.include? "ResidentialMiscFreezer"
@@ -1035,10 +1194,24 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       cooking_range = appliances.add_element "CookingRange"
       XMLHelper.add_attribute(cooking_range.add_element("SystemIdentifier"), "id", Constants.ObjectNameCookingRange(Constants.FuelTypeElectric))
       XMLHelper.add_element(cooking_range, "FuelType", osw_to_hpxml_fuel_map(Constants.FuelTypeElectric))
+      extension = cooking_range.add_element "extension"
+      XMLHelper.add_element(extension, "IsInduction", true)
+      oven = appliances.add_element "Oven"
+      XMLHelper.add_attribute(oven.add_element("SystemIdentifier"), "id", "#{Constants.ObjectNameCookingRange(Constants.FuelTypeElectric)} oven")
+      XMLHelper.add_element(oven, "FuelType", osw_to_hpxml_fuel_map(Constants.FuelTypeElectric))
+      extension = oven.add_element "extension"
+      XMLHelper.add_element(extension, "IsConvection", true)
     elsif measures.keys.include? "ResidentialApplianceCookingRangeFuel"
       cooking_range = appliances.add_element "CookingRange"
       XMLHelper.add_attribute(cooking_range.add_element("SystemIdentifier"), "id", Constants.ObjectNameCookingRange(measures["ResidentialApplianceCookingRangeFuel"]["fuel_type"]))
       XMLHelper.add_element(cooking_range, "FuelType", osw_to_hpxml_fuel_map(measures["ResidentialApplianceCookingRangeFuel"]["fuel_type"]))
+      extension = cooking_range.add_element "extension"
+      XMLHelper.add_element(extension, "IsInduction", true)      
+      oven = appliances.add_element "Oven"
+      XMLHelper.add_attribute(oven.add_element("SystemIdentifier"), "id", "#{Constants.ObjectNameCookingRange(Constants.FuelTypeElectric)} oven")
+      XMLHelper.add_element(oven, "FuelType", osw_to_hpxml_fuel_map(measures["ResidentialApplianceCookingRangeFuel"]["fuel_type"]))
+      extension = oven.add_element "extension"
+      XMLHelper.add_element(extension, "IsConvection", true)
     end
     
     # Lighting
@@ -1060,6 +1233,10 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     XMLHelper.add_element(lighting_fractions, "FractionCFL", frac_cfl)
     XMLHelper.add_element(lighting_fractions, "FractionLFL", frac_lfl)
     XMLHelper.add_element(lighting_fractions, "FractionLED", frac_led)
+    extension = lighting_fractions.add_element "extension"
+    XMLHelper.add_element(extension, "QualifyingLightFixturesInterior", 0.5)
+    XMLHelper.add_element(extension, "QualifyingLightFixturesExterior", 0.5)
+    XMLHelper.add_element(extension, "QualifyingLightFixturesGarage", 0.5)
     
     if measures.keys.include? "ResidentialHVACCeilingFan"
       ceiling_fan = lighting.add_element "CeilingFan"
@@ -1108,7 +1285,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_attribute(heater.add_element("SystemIdentifier"), "id", "#{Constants.ObjectNameHotTubHeater(Constants.FuelTypeGas)} heater")
       XMLHelper.add_element(heater, "Type", "gas fired")
     end
-    
+
     if measures.keys.include? "ResidentialMiscHotTubPump"
       pool = pools.add_element "Pool"
       XMLHelper.add_attribute(pool.add_element("SystemIdentifier"), "id", Constants.ObjectNameHotTubPump)
@@ -1120,16 +1297,21 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     # MiscLoads
     misc_loads = building_details.add_element "MiscLoads"
     
-    model.getElectricEquipments.each do |ee|
-      next unless ee.name.to_s.downcase.include? Constants.ObjectNameMiscPlugLoads
+    if measures.keys.include? "ResidentialMiscPlugLoads"
       plug_load = misc_loads.add_element "PlugLoad"
-      XMLHelper.add_attribute(plug_load.add_element("SystemIdentifier"), "id", ee.name)
-      XMLHelper.add_attribute(plug_load.add_element("AttachedToSpace"), "idref", ee.space.get.name)
-      XMLHelper.add_element(plug_load, "Location", "interior")
+      XMLHelper.add_attribute(plug_load.add_element("SystemIdentifier"), "id", Constants.ObjectNameMiscPlugLoads)
       load = plug_load.add_element "Load"
-      XMLHelper.add_element(load, "Units", "W")
-      XMLHelper.add_element(load, "Value", ee.electricEquipmentDefinition.designLevel.get.round(1)) # TODO: needs to be converted
-    end    
+      XMLHelper.add_element(load, "Units", "kWh/year")
+      XMLHelper.add_element(load, "Value", measures["ResidentialMiscPlugLoads"]["energy_use"])
+    end
+    
+    if measures.keys.include? "ResidentialMiscExtraRefrigerator"
+      plug_load = misc_loads.add_element "PlugLoad"
+      XMLHelper.add_attribute(plug_load.add_element("SystemIdentifier"), "id", Constants.ObjectNameExtraRefrigerator)
+      load = plug_load.add_element "Load"
+      XMLHelper.add_element(load, "Units", "kWh/year")
+      XMLHelper.add_element(load, "Value", measures["ResidentialMiscExtraRefrigerator"]["fridge_E"])      
+    end
     
     errors = []
     XMLHelper.validate(doc.to_s, File.join(schemas_dir, "HPXML.xsd")).each do |error|
@@ -1137,11 +1319,11 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     end
     
     # Uncomment to validate against the 301 RESNET HPXML use case
-    #EnergyRatingIndex301Validator.run_validator(doc, errors)
+    EnergyRatingIndex301Validator.run_validator(doc, errors)
     
     errors.each do |error|
-      runner.registerError(error.to_s)
       puts error
+      runner.registerError(error.to_s)      
     end
     
     unless errors.empty?
@@ -1210,9 +1392,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
   end
   
   def get_appliance_location(model, name)
-    model.getElectricEquipments.each do |ee|
-      next unless ee.name.to_s.downcase.include? name
-      return osw_to_hpxml_location(ee.space.get)
+    (model.getElectricEquipments + model.getOtherEquipments).each do |e|
+      next unless e.name.to_s.downcase.include? name
+      return osw_to_hpxml_location(e.space.get)
     end
   end
   

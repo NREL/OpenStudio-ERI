@@ -9,13 +9,15 @@ class OSWtoHPXMLExportTest < MiniTest::Test
 
   def test_valid_xml
     args_hash = {}
-    args_hash["osw_file_path"] = "./tests/create-model-example.osw"
     args_hash["schemas_dir"] = "./tests/schemas"
     args_hash["measures_dir"] = ".."
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    Dir[File.join(File.dirname(__FILE__), "*.osw")].each do |osw_file_path|
+      args_hash["osw_file_path"] = File.join(".", File.join(File.basename(File.dirname(__FILE__)), File.basename(osw_file_path)))
+      expected_num_del_objects = {}
+      expected_num_new_objects = {}
+      expected_values = {}
+      result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)      
+    end
   end
   
   private

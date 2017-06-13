@@ -160,15 +160,13 @@ class EnergyRatingIndex301Validator
             ],
             # HeatPump (AirSource/MiniSplit)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air" or HeatPumpType="mini-split"]' => [
-                'AnnualCoolingEfficiency[Units="SEER"]/Value',
-                'AnnualCoolingEfficiency[Units="HSPF"]/Value',
-                '[BackupSystemFuel="electricity"]',
+                'AnnualCoolEfficiency[Units="SEER"]/Value',
+                'AnnualHeatEfficiency[Units="HSPF"]/Value',
             ],
             # HeatPump (GroundSource)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => [
-                'AnnualCoolingEfficiency[Units="EER"]/Value',
-                'AnnualCoolingEfficiency[Units="COP"]/Value',
-                '[BackupSystemFuel="electricity"]',
+                'AnnualCoolEfficiency[Units="EER"]/Value',
+                'AnnualHeatEfficiency[Units="COP"]/Value',
             ],
             # WaterHeatingSystem
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [
