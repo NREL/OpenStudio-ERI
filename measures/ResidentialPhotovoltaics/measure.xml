@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_photovoltaics</name>
   <uid>3ed7d5e0-4441-43d9-a47e-ae4560a6db92</uid>
-  <version_id>b456eda5-d67e-4148-ba1f-1062699cfe68</version_id>
-  <version_modified>20170612T201457Z</version_modified>
+  <version_id>21912ef5-995f-4566-936e-2333f205fbea</version_id>
+  <version_modified>20170614T175340Z</version_modified>
   <xml_checksum>1BFC8ABF</xml_checksum>
   <class_name>ResidentialPhotovoltaics</class_name>
   <display_name>Set Residential Photovoltaics</display_name>
@@ -244,22 +244,10 @@
       <checksum>22FA6FF4</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66A91A4B</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6BA22437</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F78518CC</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -272,6 +260,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>32CCC7D8</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F78518CC</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C27A8C79</checksum>
     </file>
   </files>
 </measure>

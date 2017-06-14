@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>557970e6-17f6-4be0-881d-6fc54dd510b9</version_id>
-  <version_modified>20170511T232727Z</version_modified>
+  <version_id>e6fd16ac-40a8-4663-8662-1edcfadd4b17</version_id>
+  <version_modified>20170614T175341Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
@@ -22,13 +22,7 @@
     <argument>
       <name>api_key</name>
       <display_name>EIA API Key</display_name>
-      <type>String</type>
-      <required>false</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>eia_id</name>
-      <display_name>EIA Utility ID</display_name>
+      <description>Call the API and find EIA ID(s) matching the epw.</description>
       <type>String</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -36,6 +30,7 @@
     <argument>
       <name>json_file_path</name>
       <display_name>JSON File Path</display_name>
+      <description>Provide this instead of calling the API.</description>
       <type>String</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -106,16 +101,22 @@
       <checksum>EF682B2D</checksum>
     </file>
     <file>
-      <filename>utility_bill_calculations_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EA3C9E90</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>B0CB6D68</checksum>
+    </file>
+    <file>
+      <filename>by_nsrdb.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D33BD8DE</checksum>
+    </file>
+    <file>
+      <filename>utility_bill_calculations_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C9421C27</checksum>
     </file>
     <file>
       <version>
@@ -126,7 +127,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7C827627</checksum>
+      <checksum>9904DBB5</checksum>
     </file>
   </files>
 </measure>

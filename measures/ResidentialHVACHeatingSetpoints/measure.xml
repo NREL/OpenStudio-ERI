@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_heating_setpoints</name>
   <uid>2b167665-f760-462d-8c9d-1d909da7b628</uid>
-  <version_id>a30cbd5d-905b-49e7-969c-66fd033a9d91</version_id>
-  <version_modified>20170612T201450Z</version_modified>
+  <version_id>a4982e8e-c6f0-4afa-b5d8-13d178c407ec</version_id>
+  <version_modified>20170614T175336Z</version_modified>
   <xml_checksum>2C877DEB</xml_checksum>
   <class_name>ProcessHeatingSetpoints</class_name>
   <display_name>Set Residential Heating Setpoints and Schedules</display_name>
@@ -152,16 +152,22 @@
       <checksum>6AC8A55E</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66A91A4B</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6BA22437</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8B340DE</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>32CCC7D8</checksum>
     </file>
     <file>
       <version>
@@ -181,16 +187,10 @@
       <checksum>F78518CC</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B8B340DE</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32CCC7D8</checksum>
+      <checksum>C27A8C79</checksum>
     </file>
   </files>
 </measure>

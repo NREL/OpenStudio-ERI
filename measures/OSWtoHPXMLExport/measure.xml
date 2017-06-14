@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>05398b77-147d-4a75-b8ad-716ff0c140fa</version_id>
-  <version_modified>20170614T175005Z</version_modified>
+  <version_id>f8b7594e-cc12-47e2-9192-53c22337dc64</version_id>
+  <version_modified>20170614T175332Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -53,12 +53,6 @@
       <filetype>json</filetype>
       <usage_type>resource</usage_type>
       <checksum>AC8B5380</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66A91A4B</checksum>
     </file>
     <file>
       <filename>helper_methods.rb</filename>
@@ -270,10 +264,16 @@
       <checksum>C6C1F0B1</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C27A8C79</checksum>
+    </file>
+    <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>A8BF72EC</checksum>
+      <checksum>EA2534ED</checksum>
     </file>
   </files>
 </measure>

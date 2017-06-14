@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>ff5b83e2-7759-4454-9119-c3680f8ce029</version_id>
-  <version_modified>20170612T201448Z</version_modified>
+  <version_id>9c5c7d23-f133-4a82-a6de-3a35a93926e3</version_id>
+  <version_modified>20170614T175335Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
@@ -345,16 +345,16 @@
       <checksum>39CBC752</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66A91A4B</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6BA22437</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8B340DE</checksum>
     </file>
     <file>
       <version>
@@ -368,22 +368,22 @@
       <checksum>8B6B4480</checksum>
     </file>
     <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>32CCC7D8</checksum>
+    </file>
+    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F78518CC</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B8B340DE</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32CCC7D8</checksum>
+      <checksum>C27A8C79</checksum>
     </file>
   </files>
 </measure>

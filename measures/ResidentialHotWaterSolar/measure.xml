@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_solar</name>
   <uid>b969f216-f3c0-4301-9b85-34ce2b45f551</uid>
-  <version_id>18c24ab7-c3df-4c06-aecd-15208e84087c</version_id>
-  <version_modified>20170612T201446Z</version_modified>
+  <version_id>45e69331-80ae-445e-a702-93302e9f56ca</version_id>
+  <version_modified>20170614T175334Z</version_modified>
   <xml_checksum>F33F6E26</xml_checksum>
   <class_name>ResidentialHotWaterSolar</class_name>
   <display_name>Set Residential Solar Water Heating</display_name>
@@ -267,16 +267,22 @@
       <checksum>E4C6BC93</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>66A91A4B</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6BA22437</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B8B340DE</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>32CCC7D8</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -285,10 +291,10 @@
       <checksum>F78518CC</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B8B340DE</checksum>
+      <checksum>C27A8C79</checksum>
     </file>
     <file>
       <version>
@@ -299,13 +305,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CDE7A0A5</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32CCC7D8</checksum>
+      <checksum>B3E4D3E5</checksum>
     </file>
   </files>
 </measure>
