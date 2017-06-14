@@ -124,6 +124,7 @@
               <FloorJoists>
                 <Size>2x12</Size>
                 <Spacing>16</Spacing>
+                <FramingFactor>0.2</FramingFactor>
               </FloorJoists>
               <FloorCovering>carpet</FloorCovering>
               <Area>3500</Area>
@@ -131,9 +132,9 @@
                 <SystemIdentifier id='Floor_Ins_ID1'/>
                 <InsulationGrade>1</InsulationGrade>
                 <Layer>
-                  <InstallationType>continuous</InstallationType>
+                  <InstallationType>cavity</InstallationType>
                   <NominalRValue>21</NominalRValue>
-                  <Thickness>10</Thickness>
+                  <Thickness>5.5</Thickness>
                 </Layer>
               </Insulation>
             </FrameFloor>
@@ -146,12 +147,21 @@
               <Thickness>6</Thickness>
               <BelowGradeDepth>7</BelowGradeDepth>
               <AdjacentTo>ground</AdjacentTo>
+              <InteriorStuds>
+                <FramingFactor>0</FramingFactor>
+              </InteriorStuds>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <InsulationGrade>1</InsulationGrade>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>19</NominalRValue>
+                  <Thickness>5</Thickness>
+                </Layer>
+                <Layer>
+                  <InstallationType>cavity</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
                 </Layer>
               </Insulation>
             </FoundationWall>
@@ -170,14 +180,18 @@
                 <InsulationGrade>1</InsulationGrade>
                 <AssemblyEffectiveRValue>7</AssemblyEffectiveRValue>
                 <Layer>
+                  <InstallationType>continuous</InstallationType>
                   <NominalRValue>7</NominalRValue>
+                  <Thickness>1</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
                 <SystemIdentifier id='Slab_Under_Ins_ID1'/>
                 <AssemblyEffectiveRValue>7</AssemblyEffectiveRValue>
                 <Layer>
+                  <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
                 </Layer>
               </UnderSlabInsulation>
             </Slab>
@@ -275,6 +289,11 @@
                 <NominalRValue>22</NominalRValue>
                 <Thickness>5.5</Thickness>
               </Layer>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>0</NominalRValue>
+                <Thickness>0</Thickness>
+              </Layer>
             </Insulation>
           </Wall>
           <Wall>
@@ -299,6 +318,11 @@
                 <InstallationType>cavity</InstallationType>
                 <NominalRValue>22</NominalRValue>
                 <Thickness>5.5</Thickness>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>0</NominalRValue>
+                <Thickness>0</Thickness>
               </Layer>
             </Insulation>
           </Wall>

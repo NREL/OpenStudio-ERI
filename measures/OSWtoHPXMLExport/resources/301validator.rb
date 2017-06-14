@@ -55,14 +55,42 @@ class EnergyRatingIndex301Validator
                 #'AtticRoofInsulation[AssemblyEffectiveRValue and InsulationGrade]',
                 'Area',
             ],
-            # Basement
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationType/Basement' => [
-                'Conditioned',
+            # Foundation
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation' => [
+                '[FoundationType/Basement|FoundationType/Crawlspace|FoundationType/SlabOnGrade|FoudationType/Ambient]',
+            ],
+            # Basement Foundation
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]' => [
+                'FoundationType/Basement/Conditioned',
+                'FrameFloor',
+                'FoundationWall',
+            ],
+            # Crawlspace Foundation
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace]' => [
+                'FoundationType/Crawlspace/Vented',
+                'FrameFloor',
+                'FoundationWall',
+            ],
+            # SlabOnGrade Foundation
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/SlabOnGrade]' => [
+                'Slab',
+            ],
+            # Ambient Foundation
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient]' => [
+                'FrameFloor',
             ],
             # FrameFloor
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor' => [
                 'Area',
-                #'Insulation[AssemblyEffectiveRValue and InsulationGrade]',
+                'FloorJoists/FramingFactor',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+            ],
+            # FrameFloor Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor/Insulation/Layer' => [
+                'InstallationType',
+                'NominalRValue',
+                'Thickness',
             ],
             # FoundationWall
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall' => [
@@ -70,7 +98,36 @@ class EnergyRatingIndex301Validator
                 'Height',
                 'BelowGradeDepth',
                 'AdjacentTo',
-                #'Insulation[AssemblyEffectiveRValue and InsulationGrade]',
+                'InteriorStuds/FramingFactor',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
+            ],
+            # FoundationWall Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall/Insulation/Layer' => [
+                'InstallationType',
+                'NominalRValue',
+                'Thickness',
+            ],
+            # Slab
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => [
+                'Area',
+                'PerimeterInsulationDepth',
+                'PerimeterInsulation/Layer[InstallationType="continuous"]',
+                'UnderSlabInsulationWidth',
+                'UnderSlabInsulation/Layer[InstallationType="continuous"]',
+            ],
+            # Slab Perimeter Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab/PerimeterInsulation/Layer' => [
+                'InstallationType',
+                'NominalRValue',
+                'Thickness',
+            ],
+            # Slab UnderSlab Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab/UnderSlabInsulation/Layer' => [
+                'InstallationType',
+                'NominalRValue',
+                'Thickness',
             ],
             # Wall
             '//Building/BuildingDetails/Enclosure/Walls/Wall' => [
@@ -83,14 +140,16 @@ class EnergyRatingIndex301Validator
             ],
             # Wall Insulation Layer
             '//Building/BuildingDetails/Enclosure/Walls/Wall/Insulation/Layer' => [
+                'InstallationType',
                 'NominalRValue',
                 'Thickness',
             ],
-            # WoodStud Wall FIXME: Ensure [1] cavity layer and [0,1] continuous layer
+            # WoodStud Wall
             '//Building/BuildingDetails/Enclosure/Walls/Wall[WallType/WoodStud]' => [
                 'Studs/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
             ],
             # Window
             '//Building/BuildingDetails/Enclosure/Windows/Window' => [
@@ -106,12 +165,6 @@ class EnergyRatingIndex301Validator
                 'UFactor',
                 'SHGC',
                 'Pitch',
-            ],
-            # Slab
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => [
-                'Area',
-                #'[[PerimeterInsulationDepth and PerimeterInsulation[AssemblyEffectiveRValue and InsulationGrade]]|[not(PerimeterInsulationDepth) and not(PerimeterInsulation)]]',
-                #'[[UnderSlabInsulationWidth and UnderSlabInsulation[AssemblyEffectiveRValue and InsulationGrade]]|[not(UnderSlabInsulationWidth) and not(UnderSlabInsulation)]]',
             ],
             # HeatingSystem
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => [

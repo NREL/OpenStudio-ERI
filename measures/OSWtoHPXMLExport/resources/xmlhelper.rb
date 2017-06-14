@@ -67,11 +67,18 @@ class XMLHelper
     end
   end  
   
-  def self.validate(doc, xsd_path)
-    require 'nokogiri'
-    xsd = Nokogiri::XML::Schema(File.open(xsd_path))
-    doc = Nokogiri::XML(doc)
-    xsd.validate(doc)
+  def self.validate(doc, xsd_path, runner=nil)
+    begin
+      require 'nokogiri'
+      xsd = Nokogiri::XML::Schema(File.open(xsd_path))
+      doc = Nokogiri::XML(doc)
+      return xsd.validate(doc)
+    rescue LoadError
+      if not runner.nil?
+        runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
+      end
+      return []
+    end
   end
   
   def self.write_file(doc, out_path)

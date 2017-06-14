@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>a0c5d6bc-d3dc-4ceb-9c30-3a5953457bd6</version_id>
-  <version_modified>20170613T180230Z</version_modified>
+  <version_id>dc455b78-b0e9-4b66-a5f5-18568689c93b</version_id>
+  <version_modified>20170614T175005Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -164,22 +164,46 @@
       <checksum>58F3CCD2</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>07122777</checksum>
+      <checksum>32CCC7D8</checksum>
     </file>
     <file>
       <filename>valid.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>E25CC34D</checksum>
+      <checksum>7BC6F35B</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0BC6EA2E</checksum>
+      <checksum>B09F5004</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1A7B17D1</checksum>
+    </file>
+    <file>
+      <filename>valid-rated.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6167718E</checksum>
+    </file>
+    <file>
+      <filename>valid-ref.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B58F6E21</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C6C1F0B1</checksum>
     </file>
     <file>
       <version>
@@ -190,19 +214,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F6A9002A</checksum>
-    </file>
-    <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D9436EB</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32CCC7D8</checksum>
+      <checksum>2850AB0B</checksum>
     </file>
   </files>
 </measure>

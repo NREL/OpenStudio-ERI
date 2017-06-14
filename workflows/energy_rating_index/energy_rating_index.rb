@@ -2,7 +2,7 @@ start_time = Time.now
 
 require 'optparse'
 require 'csv'
-require "pathname"
+require 'pathname'
 require 'fileutils'
 require 'parallel'
 require 'openstudio'
@@ -48,8 +48,8 @@ def create_osw(design, basedir, resultsdir, options)
   osw.setSeedFile("../../../seeds/EmptySeedModel.osm") # FIXME
   
   # Add measures (w/args) to OSW
-  measures_dir = File.join(basedir, "..", "..", "measures") # FIXME
-  schemas_dir = File.join(basedir, "..", "..", "measures", "301EnergyRatingIndexRuleset", "tests", "schemas")
+  measures_dir = File.absolute_path(File.join(basedir, "..", "..", "measures")) # FIXME
+  schemas_dir = File.absolute_path(File.join(basedir, "..", "..", "measures", "301EnergyRatingIndexRuleset", "tests", "schemas"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
   measures = {
               '301EnergyRatingIndexRuleset'=>{

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>03628d47-8219-45e3-8cbf-e421ca6713d8</version_id>
-  <version_modified>20170613T180230Z</version_modified>
+  <version_id>05398b77-147d-4a75-b8ad-716ff0c140fa</version_id>
+  <version_modified>20170614T175005Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -79,12 +79,6 @@
       <checksum>B8B340DE</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07122777</checksum>
-    </file>
-    <file>
       <filename>osw_to_hpxml_export_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -95,29 +89,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>32CCC7D8</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>40514F68</checksum>
-    </file>
-    <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>3D9436EB</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7463C13A</checksum>
     </file>
     <file>
       <filename>ResidentialApplianceClothesDryerFuel.osw</filename>
@@ -160,42 +131,6 @@
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>2B08AD52</checksum>
-    </file>
-    <file>
-      <filename>ResidentialConstructionsWallsExteriorCMU.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8BE42D97</checksum>
-    </file>
-    <file>
-      <filename>ResidentialConstructionsWallsExteriorDoubleWoodStud.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>75206E4E</checksum>
-    </file>
-    <file>
-      <filename>ResidentialConstructionsWallsExteriorGeneric.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>67A5206B</checksum>
-    </file>
-    <file>
-      <filename>ResidentialConstructionsWallsExteriorICF.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AAF79BE1</checksum>
-    </file>
-    <file>
-      <filename>ResidentialConstructionsWallsExteriorSIP.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDB7727B</checksum>
-    </file>
-    <file>
-      <filename>ResidentialConstructionsWallsExteriorSteelStud.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AF785BD1</checksum>
     </file>
     <file>
       <filename>ResidentialHotWaterHeaterHeatPump.osw</filename>
@@ -310,6 +245,35 @@
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>1305D2CD</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>CD2B91F2</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1A7B17D1</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C6C1F0B1</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A8BF72EC</checksum>
     </file>
   </files>
 </measure>
