@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>f8b7594e-cc12-47e2-9192-53c22337dc64</version_id>
-  <version_modified>20170614T175332Z</version_modified>
+  <version_id>7279ca6f-1cd7-4b94-8c3a-6c3ced5314cf</version_id>
+  <version_modified>20170614T193227Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -273,7 +273,7 @@
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>EA2534ED</checksum>
+      <checksum>F53122E9</checksum>
     </file>
   </files>
 </measure>

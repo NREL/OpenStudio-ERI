@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>dc455b78-b0e9-4b66-a5f5-18568689c93b</version_id>
-  <version_modified>20170614T175005Z</version_modified>
+  <version_id>66639fac-a623-400b-80ec-b440bfbdf9c0</version_id>
+  <version_modified>20170614T193227Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -57,7 +57,7 @@
       <display_name>HPXML Schemas Directory</display_name>
       <description>Absolute path of the hpxml schemas.</description>
       <type>String</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
@@ -214,7 +214,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>2850AB0B</checksum>
+      <checksum>5988D843</checksum>
     </file>
   </files>
 </measure>

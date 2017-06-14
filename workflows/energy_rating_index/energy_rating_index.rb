@@ -51,16 +51,16 @@ def create_osw(design, basedir, resultsdir, options)
   measures_dir = File.absolute_path(File.join(basedir, "..", "..", "measures")) # FIXME
   schemas_dir = File.absolute_path(File.join(basedir, "..", "..", "measures", "301EnergyRatingIndexRuleset", "tests", "schemas"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
-  measures = {
-              '301EnergyRatingIndexRuleset'=>{
-                                              "calc_type"=>design,
-                                              "hpxml_file_path"=>options[:hpxml],
-                                              "weather_file_path"=>options[:epw],
-                                              "measures_dir"=>measures_dir,
-                                              "schemas_dir"=>schemas_dir,
-                                              "output_file_path"=>output_hpxml_path,
-                                             },
-             }
+  measures = {}
+  measures['301EnergyRatingIndexRuleset'] = {}
+  measures['301EnergyRatingIndexRuleset']['calc_type'] = design
+  measures['301EnergyRatingIndexRuleset']['hpxml_file_path'] = options[:hpxml]
+  measures['301EnergyRatingIndexRuleset']['weather_file_path'] = options[:epw]
+  measures['301EnergyRatingIndexRuleset']['measures_dir'] = measures_dir
+  if not options[:skipxsd]
+    measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir
+  end
+  measures['301EnergyRatingIndexRuleset']['output_file_path'] = output_hpxml_path
   steps = OpenStudio::WorkflowStepVector.new
   measures.keys.each do |measure|
     step = OpenStudio::MeasureStep.new(measure)
@@ -609,6 +609,11 @@ OptionParser.new do |opts|
 
   opts.on('-e', '--epw <FILE>', 'EPW weather file') do |t|
     options[:epw] = t
+  end
+  
+  options[:skipxsd] = false
+  opts.on('-k', '--skipxsd', 'Skip HPXML schema validation (not recommended)') do |t|
+    options[:skipxsd] = true
   end
   
   opts.on_tail('-h', '--help', 'Display help') do

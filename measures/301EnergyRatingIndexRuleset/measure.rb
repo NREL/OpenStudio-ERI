@@ -61,7 +61,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute path of the residential measures.")
     args << arg
     
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", false)
     arg.setDisplayName("HPXML Schemas Directory")
     arg.setDescription("Absolute path of the hpxml schemas.")
     args << arg
@@ -88,7 +88,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     hpxml_file_path = runner.getStringArgumentValue("hpxml_file_path", user_arguments)
     weather_file_path = runner.getStringArgumentValue("weather_file_path", user_arguments)
     measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
-    schemas_dir = runner.getStringArgumentValue("schemas_dir", user_arguments)
+    schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     output_file_path = runner.getOptionalStringArgumentValue("output_file_path", user_arguments)
 
     unless (Pathname.new hpxml_file_path).absolute?
@@ -115,12 +115,17 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    unless (Pathname.new schemas_dir).absolute?
-      schemas_dir = File.expand_path(File.join(File.dirname(__FILE__), schemas_dir))
-    end
-    unless Dir.exists?(schemas_dir)
-      runner.registerError("'#{schemas_dir}' does not exist.")
-      return false
+    if schemas_dir.is_initialized
+      schemas_dir = schemas_dir.get
+      unless (Pathname.new schemas_dir).absolute?
+        schemas_dir = File.expand_path(File.join(File.dirname(__FILE__), schemas_dir))
+      end
+      unless Dir.exists?(schemas_dir)
+        runner.registerError("'#{schemas_dir}' does not exist.")
+        return false
+      end
+    else
+      schemas_dir = nil
     end
     
     hpxml_doc = REXML::Document.new(File.read(hpxml_file_path))
@@ -128,13 +133,17 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     show_measure_calls=false
     
     # Validate input HPXML
-    has_errors = false
-    XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-      runner.registerError("Input HPXML: #{error.to_s}")
-      has_errors = true
-    end
-    if has_errors
-      return false
+    if not schemas_dir.nil?
+      has_errors = false
+      XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
+        runner.registerError("Input HPXML: #{error.to_s}")
+        has_errors = true
+      end
+      if has_errors
+        return false
+      end
+    else
+      runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
     end
     
     # Apply Location measure to obtain weather data
@@ -169,13 +178,17 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Validate new HPXML
-    has_errors = false
-    XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-      runner.registerError("Generated HPXML: #{error.to_s}")
-      has_errors = true
-    end
-    if has_errors
-      return false
+    if not schemas_dir.nil?
+      has_errors = false
+      XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
+        runner.registerError("Generated HPXML: #{error.to_s}")
+        has_errors = true
+      end
+      if has_errors
+        return false
+      end
+    else
+      runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
     end
     
     # Obtain list of OpenStudio measures (and arguments)
