@@ -12,7 +12,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     os_cli = os_clis[-1]
     
     parent_dir = File.join(File.dirname(__FILE__), "..")
-    command = "cd #{parent_dir} && \"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x valid.xml -e denver.epw --skipxsd"
+    command = "cd #{parent_dir} && \"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x valid.xml -e denver.epw"
     system(command)
     
     # Output files exist?
