@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_air_source_heat_pump</name>
   <uid>8d15f4f7-8bbb-4b2e-b6d0-aa861f22b697</uid>
-  <version_id>7b5df092-2dc0-46ae-bc89-2f87e1f2afe2</version_id>
-  <version_modified>20170526T180650Z</version_modified>
+  <version_id>65305980-fe75-4ca3-9b68-ca800b6e459a</version_id>
+  <version_modified>20170615T212814Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessVariableSpeedAirSourceHeatPump</class_name>
   <display_name>Set Residential Variable-Speed Air Source Heat Pump</display_name>
@@ -468,12 +468,6 @@
       <checksum>B7F1E26B</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D3BD80AC</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -609,6 +603,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>BB1957EF</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2F718B18</checksum>
     </file>
   </files>
 </measure>

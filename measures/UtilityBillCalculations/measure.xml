@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>54705d35-f857-4b39-9125-974407852759</version_id>
-  <version_modified>20170608T191144Z</version_modified>
+  <version_id>efe910c8-6bc0-47c3-9e64-366f79581937</version_id>
+  <version_modified>20170615T212820Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
@@ -107,10 +107,16 @@
       <checksum>B0CB6D68</checksum>
     </file>
     <file>
+      <filename>by_nsrdb.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D33BD8DE</checksum>
+    </file>
+    <file>
       <filename>utility_bill_calculations_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>8308673B</checksum>
+      <checksum>C9421C27</checksum>
     </file>
     <file>
       <version>
@@ -121,13 +127,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8240CA98</checksum>
-    </file>
-    <file>
-      <filename>by_nsrdb.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D33BD8DE</checksum>
+      <checksum>9904DBB5</checksum>
     </file>
   </files>
 </measure>
