@@ -529,7 +529,11 @@ class OSMeasures
         wall_ff = Float(XMLHelper.get_value(fnd_wall, "InteriorStuds/FramingFactor"))
         
         fnd_wall_cont = fnd_wall.elements["Insulation/Layer[InstallationType='continuous']"]
-        wall_cont_height = Float(XMLHelper.get_value(fnd_wall_cont, "extension/InsulationHeight"))
+        if XMLHelper.has_element(fnd_wall_cont, "extension/InsulationHeight")
+          wall_cont_height = Float(XMLHelper.get_value(fnd_wall_cont, "extension/InsulationHeight")) # For basement
+        else
+          wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height")) # For crawlspace, doesn't matter
+        end
         wall_cont_r = Float(XMLHelper.get_value(fnd_wall_cont, "NominalRValue"))
         wall_cont_depth = Float(XMLHelper.get_value(fnd_wall_cont, "Thickness"))
         
@@ -589,10 +593,18 @@ class OSMeasures
       fnd_slab_perim = fnd_slab.elements["PerimeterInsulation/Layer[InstallationType='continuous']"]
       ext_r = Float(XMLHelper.get_value(fnd_slab_perim, "NominalRValue"))
       ext_depth = Float(XMLHelper.get_value(fnd_slab, "PerimeterInsulationDepth"))
+      if ext_r == 0 or ext_depth == 0
+        ext_r = 0
+        ext_depth = 0
+      end
       
       fnd_slab_under = fnd_slab.elements["PerimeterInsulation/Layer[InstallationType='continuous']"]
-      perim_r = Float(XMLHelper.get_value(fnd_slab_perim, "NominalRValue"))
+      perim_r = Float(XMLHelper.get_value(fnd_slab_under, "NominalRValue"))
       perim_width = Float(XMLHelper.get_value(fnd_slab, "UnderSlabInsulationWidth"))
+      if perim_r == 0 or perim_width == 0
+        perim_r = 0
+        perim_width = 0
+      end
       
       # FIXME
       return ext_r, ext_depth, perim_r, perim_width, carpet_frac, carpet_r

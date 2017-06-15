@@ -7,28 +7,75 @@ require 'fileutils'
 
 class EnergyRatingIndex301Test < MiniTest::Test
 
-  def test_rem_based_hpxml_1_reference_home
+  def get_args_hash(hpxml_filename, calc_type)
     args_hash = {}
-    args_hash["hpxml_file_path"] = "./tests/valid.xml"
+    args_hash["hpxml_file_path"] = "./tests/#{hpxml_filename}"
     args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
-    args_hash["calc_type"] = "HERS Reference Home"
+    args_hash["calc_type"] = calc_type
     args_hash["measures_dir"] = ".."
     args_hash["schemas_dir"] = "./tests/schemas"
-    args_hash["output_file_path"] = File.join(File.dirname(__FILE__), "valid-ref.xml")
+    #args_hash["output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename}")
+    return args_hash
+  end
+
+  def test_hpxml_reference_home
+    args_hash = get_args_hash("valid.xml", "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
-  def test_rem_based_hpxml_1_rated_home
-    args_hash = {}
-    args_hash["hpxml_file_path"] = "./tests/valid.xml"
-    args_hash["weather_file_path"] = "../ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
-    args_hash["calc_type"] = "HERS Rated Home"
-    args_hash["measures_dir"] = ".."
-    args_hash["schemas_dir"] = "./tests/schemas"
-    args_hash["output_file_path"] = File.join(File.dirname(__FILE__), "valid-rated.xml")
+  def test_hpxml_rated_home
+    args_hash = get_args_hash("valid.xml", "HERS Rated Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_reference_home_unconditioned_basement
+    args_hash = get_args_hash("valid-unconditioned-basement.xml", "HERS Reference Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_rated_home_unconditioned_basement
+    args_hash = get_args_hash("valid-unconditioned-basement.xml", "HERS Rated Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_reference_home_vented_crawlspace
+    args_hash = get_args_hash("valid-vented-crawlspace.xml", "HERS Reference Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_rated_home_vented_crawlspace
+    args_hash = get_args_hash("valid-vented-crawlspace.xml", "HERS Rated Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_reference_home_slab
+    args_hash = get_args_hash("valid-slab.xml", "HERS Reference Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_rated_home_slab
+    args_hash = get_args_hash("valid-slab.xml", "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}

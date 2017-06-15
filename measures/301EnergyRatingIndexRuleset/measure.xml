@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>deaa69a7-8145-454c-9d56-a66e2c5e9a14</version_id>
-  <version_modified>20170615T190235Z</version_modified>
+  <version_id>d91fc06c-2891-469f-9b86-9336c4d1f7a2</version_id>
+  <version_modified>20170615T214426Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -146,22 +146,10 @@
       <checksum>F78518CC</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B8B340DE</checksum>
-    </file>
-    <file>
       <filename>airflow.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1117217A</checksum>
-    </file>
-    <file>
-      <filename>energy_rating_index_301_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>58F3CCD2</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -176,18 +164,6 @@
       <checksum>C6C1F0B1</checksum>
     </file>
     <file>
-      <filename>301.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>37E12FD9</checksum>
-    </file>
-    <file>
-      <filename>valid-ref.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A48730FA</checksum>
-    </file>
-    <file>
       <filename>valid.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
@@ -200,10 +176,22 @@
       <checksum>32BD4E09</checksum>
     </file>
     <file>
-      <filename>valid-rated.xml</filename>
-      <filetype>xml</filetype>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>59364771</checksum>
+    </file>
+    <file>
+      <filename>energy_rating_index_301_test.rb</filename>
+      <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>164547BD</checksum>
+      <checksum>CD0CC194</checksum>
+    </file>
+    <file>
+      <filename>301.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>93EB47E4</checksum>
     </file>
     <file>
       <version>
@@ -214,7 +202,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>41045A27</checksum>
+      <checksum>C10DE740</checksum>
+    </file>
+    <file>
+      <filename>valid-slab.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>22AC8980</checksum>
+    </file>
+    <file>
+      <filename>valid-unconditioned-basement.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>79D62EF0</checksum>
+    </file>
+    <file>
+      <filename>valid-vented-crawlspace.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B31E5201</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>584d87f9-c087-4ad2-af44-d6a4d4d437c8</version_id>
-  <version_modified>20170615T190236Z</version_modified>
+  <version_id>9b2512a9-0ede-4e9c-800f-0af6354aafd4</version_id>
+  <version_modified>20170615T214427Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -65,12 +65,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F78518CC</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B8B340DE</checksum>
     </file>
     <file>
       <filename>osw_to_hpxml_export_test.rb</filename>
@@ -270,10 +264,16 @@
       <checksum>32BD4E09</checksum>
     </file>
     <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>59364771</checksum>
+    </file>
+    <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>B3EA7274</checksum>
+      <checksum>11E7F764</checksum>
     </file>
   </files>
 </measure>
