@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>66639fac-a623-400b-80ec-b440bfbdf9c0</version_id>
-  <version_modified>20170614T193227Z</version_modified>
+  <version_id>deaa69a7-8145-454c-9d56-a66e2c5e9a14</version_id>
+  <version_modified>20170615T190235Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -170,40 +170,40 @@
       <checksum>32CCC7D8</checksum>
     </file>
     <file>
-      <filename>valid.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7BC6F35B</checksum>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C6C1F0B1</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B09F5004</checksum>
-    </file>
-    <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1A7B17D1</checksum>
-    </file>
-    <file>
-      <filename>valid-rated.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6167718E</checksum>
+      <checksum>37E12FD9</checksum>
     </file>
     <file>
       <filename>valid-ref.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>B58F6E21</checksum>
+      <checksum>A48730FA</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
+      <filename>valid.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E100A7AF</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C6C1F0B1</checksum>
+      <checksum>32BD4E09</checksum>
+    </file>
+    <file>
+      <filename>valid-rated.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>164547BD</checksum>
     </file>
     <file>
       <version>
@@ -214,7 +214,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>5988D843</checksum>
+      <checksum>41045A27</checksum>
     </file>
   </files>
 </measure>

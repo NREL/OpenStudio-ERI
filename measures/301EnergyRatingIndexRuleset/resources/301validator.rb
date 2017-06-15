@@ -7,7 +7,8 @@ class EnergyRatingIndex301Validator
             '//Building' => [1],
             '//Building/BuildingDetails/BuildingSummary/extension/HasNaturalGasAccessOrFuelDelivery' => [1],
             '//Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]' => [1], # TODO: Allow ACH50, ELA, and/or SLA?
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant[HeatingSystem|CoolingSystem|HeatPump]' => [0,1],
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl/ControlType' => [0,1],
             '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [0,1],
@@ -57,7 +58,7 @@ class EnergyRatingIndex301Validator
             ],
             # Foundation
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation' => [
-                '[FoundationType/Basement|FoundationType/Crawlspace|FoundationType/SlabOnGrade|FoudationType/Ambient]',
+                '[FoundationType/Basement|FoundationType/Crawlspace|FoundationType/SlabOnGrade|FoundationType/Ambient]',
             ],
             # Basement Foundation
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]' => [
@@ -85,6 +86,9 @@ class EnergyRatingIndex301Validator
                 'FloorJoists/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
+                'extension/CarpetFraction',
+                'extension/CarpetRValue',
             ],
             # FrameFloor Insulation Layer
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor/Insulation/Layer' => [
@@ -109,6 +113,10 @@ class EnergyRatingIndex301Validator
                 'NominalRValue',
                 'Thickness',
             ],
+            # Basement FoundationWall Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/FoundationWall/Insulation/Layer[InstallationType="continuous"]' => [
+                'extension/InsulationHeight',
+            ],
             # Slab
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => [
                 'Area',
@@ -116,6 +124,8 @@ class EnergyRatingIndex301Validator
                 'PerimeterInsulation/Layer[InstallationType="continuous"]',
                 'UnderSlabInsulationWidth',
                 'UnderSlabInsulation/Layer[InstallationType="continuous"]',
+                'extension/CarpetFraction',
+                'extension/CarpetRValue',
             ],
             # Slab Perimeter Insulation Layer
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab/PerimeterInsulation/Layer' => [

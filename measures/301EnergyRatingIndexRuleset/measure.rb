@@ -516,7 +516,7 @@ class OSMeasures
         wall_grade = 1
         wall_ff = 0.0
         
-        wall_cont_height = 8.0 # FIXME
+        wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
         wall_cont_r = wall_R - Material.Concrete8in.rvalue - Material.DefaultWallSheathing.rvalue - Material.AirFilmVertical.rvalue
         wall_cont_depth = 1.0
       
@@ -529,7 +529,7 @@ class OSMeasures
         wall_ff = Float(XMLHelper.get_value(fnd_wall, "InteriorStuds/FramingFactor"))
         
         fnd_wall_cont = fnd_wall.elements["Insulation/Layer[InstallationType='continuous']"]
-        wall_cont_height = 8.0 # FIXME
+        wall_cont_height = Float(XMLHelper.get_value(fnd_wall_cont, "extension/InsulationHeight"))
         wall_cont_r = Float(XMLHelper.get_value(fnd_wall_cont, "NominalRValue"))
         wall_cont_depth = Float(XMLHelper.get_value(fnd_wall_cont, "Thickness"))
         
@@ -546,6 +546,9 @@ class OSMeasures
           
     foundation.elements.each("FrameFloor") do |fnd_floor|
     
+      carpet_frac = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetFraction"))
+      carpet_r = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetRValue"))
+
       if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue") # Reference Home
       
         # FIXME
@@ -553,6 +556,8 @@ class OSMeasures
         floor_cav_depth = 5.5
         floor_grade = 1
         floor_ff = 0.0
+        floor_cont_r = 0.0
+        floor_cont_depth = 0.0
       
       else # Rated Home
     
@@ -561,11 +566,14 @@ class OSMeasures
         floor_cav_depth = Float(XMLHelper.get_value(fnd_floor_cavity, "Thickness"))
         floor_grade = Integer(XMLHelper.get_value(fnd_floor, "Insulation/InsulationGrade"))
         floor_ff = Float(XMLHelper.get_value(fnd_floor, "FloorJoists/FramingFactor"))
+        fnd_floor_cont = fnd_floor.elements["Insulation/Layer[InstallationType='continuous']"]
+        floor_cont_r = Float(XMLHelper.get_value(fnd_floor_cont, "NominalRValue"))
+        floor_cont_depth = Float(XMLHelper.get_value(fnd_floor_cont, "Thickness"))
       
       end
       
       # FIXME
-      return floor_cav_r, floor_cav_depth, floor_grade, floor_ff
+      return floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r
       
     end
       
@@ -575,6 +583,9 @@ class OSMeasures
           
     foundation.elements.each("Slab") do |fnd_slab|
     
+      carpet_frac = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
+      carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
+      
       fnd_slab_perim = fnd_slab.elements["PerimeterInsulation/Layer[InstallationType='continuous']"]
       ext_r = Float(XMLHelper.get_value(fnd_slab_perim, "NominalRValue"))
       ext_depth = Float(XMLHelper.get_value(fnd_slab, "PerimeterInsulationDepth"))
@@ -584,7 +595,7 @@ class OSMeasures
       perim_width = Float(XMLHelper.get_value(fnd_slab, "UnderSlabInsulationWidth"))
       
       # FIXME
-      return ext_r, ext_depth, perim_r, perim_width
+      return ext_r, ext_depth, perim_r, perim_width, carpet_frac, carpet_r
       
     end
     
@@ -609,7 +620,7 @@ class OSMeasures
         is_cond = Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
         
         wall_cav_r, wall_cav_depth, wall_grade, wall_ff, wall_cont_height, wall_cont_r, wall_cont_depth = get_foundation_wall_properties(foundation)
-        floor_cav_r, floor_cav_depth, floor_grade, floor_ff = get_foundation_frame_floor_properties(foundation)
+        floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r = get_foundation_frame_floor_properties(foundation)
         
         if is_cond
         
@@ -651,12 +662,20 @@ class OSMeasures
     
         end
         
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
+        args = {
+                "osb_thick_in"=>"0.75",
+                "rigid_r"=>floor_cont_r.to_s,
+                "rigid_thick_in"=>floor_cont_depth.to_s
+               }
+        measures[measure_subdir] = args
+        
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
       
         is_vented = Boolean(XMLHelper.get_value(foundation, "FoundationType/Crawlspace/Vented"))
         
         wall_cav_r, wall_cav_depth, wall_grade, wall_ff, wall_cont_height, wall_cont_r, wall_cont_depth = get_foundation_wall_properties(foundation)
-        floor_cav_r, floor_cav_depth, floor_grade, floor_ff = get_foundation_frame_floor_properties(foundation)
+        floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r = get_foundation_frame_floor_properties(foundation)
         
         measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
         args = {
@@ -670,9 +689,17 @@ class OSMeasures
                }  
         measures[measure_subdir] = args
         
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
+        args = {
+                "osb_thick_in"=>"0.75",
+                "rigid_r"=>floor_cont_r.to_s,
+                "rigid_thick_in"=>floor_cont_depth.to_s
+               }
+        measures[measure_subdir] = args
+
       elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
       
-        ext_r, ext_depth, perim_r, perim_width = get_foundation_slab_properties(foundation)
+        ext_r, ext_depth, perim_r, perim_width, carpet_frac, carpet_r = get_foundation_slab_properties(foundation)
       
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSlab"
         args = {
@@ -690,9 +717,10 @@ class OSMeasures
                }  
         measures[measure_subdir] = args
         
+        
       elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
         
-        floor_cav_r, floor_cav_depth, floor_grade, floor_ff = get_foundation_frame_floor_properties(foundation)
+        floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r = get_foundation_frame_floor_properties(foundation)
 
         measure_subdir = "ResidentialConstructionsFoundationsFloorsPierBeam"
         args = {
@@ -702,32 +730,30 @@ class OSMeasures
                }
         measures[measure_subdir] = args
         
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
+        args = {
+                "osb_thick_in"=>"0.75",
+                "rigid_r"=>floor_cont_r.to_s,
+                "rigid_thick_in"=>floor_cont_depth.to_s
+               }
+        measures[measure_subdir] = args
+
       end
     
+      measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
+      args = {
+              "covering_frac"=>carpet_frac.to_s,
+              "covering_r"=>carpet_r.to_s
+             }
+      measures[measure_subdir] = args
+
     end
-
-
-    
-    measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
-    args = {
-            "covering_frac"=>"0.8",
-            "covering_r"=>"2.08"
-           }
-    measures[measure_subdir] = args
     
     measure_subdir = "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
     args = {
             "cavity_r"=>"19",
             "install_grade"=>"I",
             "framing_factor"=>"0.13"
-           }
-    measures[measure_subdir] = args
-    
-    measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
-    args = {
-            "osb_thick_in"=>"0.75",
-            "rigid_r"=>"0.0",
-            "rigid_thick_in"=>"0.0"
            }
     measures[measure_subdir] = args
     

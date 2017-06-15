@@ -492,9 +492,7 @@ class EnergyRatingIndex301Ruleset
     
       new_foundation = XMLHelper.add_element(new_foundations, "Foundation")
       XMLHelper.copy_element(new_foundation, orig_foundation, "SystemIdentifier")
-      XMLHelper.copy_element(new_foundation, orig_foundation, "AttachedToSpace")
       XMLHelper.copy_element(new_foundation, orig_foundation, "FoundationType")
-      XMLHelper.copy_element(new_foundation, orig_foundation, "ThermalBoundary")
         
       '''
       Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
@@ -516,6 +514,9 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.copy_element(insulation, orig_floor, "Insulation/SystemIdentifier")
         XMLHelper.add_element(insulation, "InsulationGrade", 1)
         XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/floor_ufactor)
+        extension = XMLHelper.add_element(new_floor, "extension")
+        XMLHelper.copy_element(extension, orig_floor, "extension/CarpetFraction", 0.0)
+        XMLHelper.copy_element(extension, orig_floor, "extension/CarpetRValue", 2.0)
       end
   
       '''
@@ -533,8 +534,6 @@ class EnergyRatingIndex301Ruleset
         # Create new wall
         new_wall = XMLHelper.add_element(new_foundation, "FoundationWall")
         XMLHelper.copy_element(new_wall, orig_wall, "SystemIdentifier")
-        XMLHelper.copy_element(new_wall, orig_wall, "Type")
-        XMLHelper.copy_element(new_wall, orig_wall, "Length")
         XMLHelper.copy_element(new_wall, orig_wall, "Height")
         XMLHelper.copy_element(new_wall, orig_wall, "Area")
         XMLHelper.copy_element(new_wall, orig_wall, "BelowGradeDepth")
@@ -561,12 +560,8 @@ class EnergyRatingIndex301Ruleset
         new_slab = XMLHelper.add_element(new_foundation, "Slab")
         XMLHelper.copy_element(new_slab, orig_slab, "SystemIdentifier")
         XMLHelper.copy_element(new_slab, orig_slab, "Area")
-        XMLHelper.copy_element(new_slab, orig_slab, "Perimeter")
-        XMLHelper.copy_element(new_slab, orig_slab, "ExposedPerimeter")
         XMLHelper.add_element(new_slab, "PerimeterInsulationDepth", slab_depth)
-        XMLHelper.copy_element(new_slab, orig_slab, "OnGradeExposedPerimeter")
         XMLHelper.copy_element(new_slab, orig_slab, "DepthBelowGrade")
-        XMLHelper.add_element(new_slab, "FloorCovering", "carpet")
         insulation = XMLHelper.add_element(new_slab, "PerimeterInsulation")
         XMLHelper.copy_element(insulation, orig_slab, "PerimeterInsulation/SystemIdentifier")
         XMLHelper.add_element(insulation, "InsulationGrade", 1)
@@ -574,8 +569,8 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(layer, "InstallationType", "continuous")
         XMLHelper.add_element(layer, "NominalRValue", slab_rvalue)
         extension = XMLHelper.add_element(new_slab, "extension")
-        XMLHelper.add_element(extension, "FloorCoveringFraction", 0.8)
-        XMLHelper.add_element(extension, "FloorCoveringRValue", 2.0)
+        XMLHelper.add_element(extension, "CarpetFraction", 0.8)
+        XMLHelper.add_element(extension, "CarpetRValue", 2.0)
       end
       
     end
