@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>3232aad3-470f-4c73-a853-b1deacb0934b</version_id>
-  <version_modified>20170612T201443Z</version_modified>
+  <version_id>2f941351-8767-41ba-8da7-a9a5fe55aa47</version_id>
+  <version_modified>20170615T212812Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -15,37 +15,9 @@
       <display_name>Number of Occupants</display_name>
       <description>Specify the number of occupants. For a multifamily building, specify one value for all units or a comma-separated set of values (in the correct order) for each unit. A value of 'auto' will calculate the average number of occupants from the number of bedrooms. Used to specify the internal gains from people only.</description>
       <type>String</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>auto</default_value>
-    </argument>
-    <argument>
-      <name>occ_gain</name>
-      <display_name>Internal Gains</display_name>
-      <description>Occupant heat gain, both sensible and latent.</description>
-      <type>Double</type>
-      <units>Btu/person/hr</units>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>384</default_value>
-    </argument>
-    <argument>
-      <name>sens_frac</name>
-      <display_name>Sensible Fraction</display_name>
-      <description>Fraction of internal gains that are sensible.</description>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.573</default_value>
-    </argument>
-    <argument>
-      <name>lat_frac</name>
-      <display_name>Latent Fraction</display_name>
-      <description>Fraction of internal gains that are latent.</description>
-      <type>Double</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>0.427</default_value>
     </argument>
     <argument>
       <name>weekday_sch</name>
@@ -104,10 +76,27 @@
   </attributes>
   <files>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>AB2A5F72</checksum>
+    </file>
+    <file>
       <filename>ResidentialOccupants_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>0E21958D</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31FE0BE6</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
@@ -143,30 +132,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F78518CC</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>A98C5DED</checksum>
+      <checksum>27544F71</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B8B340DE</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32CCC7D8</checksum>
+      <checksum>2F718B18</checksum>
     </file>
   </files>
 </measure>

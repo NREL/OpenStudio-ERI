@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>utility_bill_calculations</name>
   <uid>872cd20c-55df-459e-9ac9-f42c93ab665c</uid>
-  <version_id>e6fd16ac-40a8-4663-8662-1edcfadd4b17</version_id>
-  <version_modified>20170614T175341Z</version_modified>
+  <version_id>efe910c8-6bc0-47c3-9e64-366f79581937</version_id>
+  <version_modified>20170615T212820Z</version_modified>
   <xml_checksum>6159342E</xml_checksum>
   <class_name>UtilityBillCalculations</class_name>
   <display_name>Utility Bill Calculations</display_name>
