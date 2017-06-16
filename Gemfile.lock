@@ -78,6 +78,7 @@ GEM
       mini_portile2 (~> 2.1.0)
     nokogiri (1.6.8.1-x64-mingw32)
       mini_portile2 (~> 2.1.0)
+    parallel (1.11.2)
     parser (2.4.0.0)
       ast (~> 2.2)
     powerbar (1.0.18)
@@ -85,6 +86,10 @@ GEM
     powerpack (0.0.9)
     rainbow (2.2.1)
     rake (11.2.2)
+    rest-client (2.0.1)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     rest-client (2.0.1-x64-mingw32)
       ffi (~> 1.9)
       http-cookie (>= 1.0.2, < 2.0)
@@ -118,6 +123,7 @@ GEM
     tins (1.13.2)
     unf (0.1.4)
       unf_ext
+    unf_ext (0.0.7.2)
     unf_ext (0.0.7.2-x64-mingw32)
     uuid (2.3.8)
       macaddr (~> 1.0)
@@ -140,10 +146,12 @@ DEPENDENCIES
   minitest-ci!
   minitest-reporters
   nokogiri (~> 1.6, <= 1.6.8.1)
+  parallel
   rake (~> 11.2.2)
   rest-client (~> 2.0.1)
   rubocop (~> 0.26.0)
   rubocop-checkstyle_formatter (~> 0.1.1)
+  rubyzip
 
 BUNDLED WITH
    1.14.6

@@ -31,3 +31,6 @@ gem 'docker-api', require: 'docker'
 gem 'ffi', '~> 1.9.18'
 
 gem 'rest-client', '~> 2.0.1'
+
+gem 'parallel'
+gem 'rubyzip'

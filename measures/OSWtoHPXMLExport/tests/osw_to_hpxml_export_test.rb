@@ -4,6 +4,8 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
+require 'zip'
+require 'parallel'
 
 class OSWtoHPXMLExportTest < MiniTest::Test
 
@@ -11,16 +13,70 @@ class OSWtoHPXMLExportTest < MiniTest::Test
     args_hash = {}
     args_hash["schemas_dir"] = "./tests/schemas"
     args_hash["measures_dir"] = ".."
-    Dir[File.join(File.dirname(__FILE__), "*.osw")].each do |osw_file_path|
-      args_hash["osw_file_path"] = File.join(".", File.join(File.basename(File.dirname(__FILE__)), File.basename(osw_file_path)))
+    Parallel.each(Dir[File.join(File.dirname(__FILE__), "*.osw")], in_threads: 1) do |osw_file_path|
+      osw_file_path = File.join(".", File.join(File.basename(File.dirname(__FILE__)), File.basename(osw_file_path)))
+    # Parallel.each(get_resstock_osw_file_paths, in_threads: 3) do |osw_file_path|      
+      args_hash["osw_file_path"] = osw_file_path
+      next if File.exist? File.join(File.dirname(__FILE__), "#{File.basename osw_file_path, ".*"}.xml")
       expected_num_del_objects = {}
       expected_num_new_objects = {}
       expected_values = {}
-      result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)      
+      result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     end
   end
   
   private
+  
+  def get_resstock_osw_file_paths
+
+    Zip.warn_invalid_date = false
+    FileUtils.rm_rf(File.join(File.dirname(__FILE__), "data_point"))
+    osw_file_paths = []
+    Zip::File.open(File.join(File.dirname(__FILE__), "resstock_dsgrid_cr3_localResults.zip")) do |zip|
+      zip.each do |entry|
+        next unless entry.name.end_with? ".zip"
+        f_path = File.join(File.dirname(__FILE__), "data_point", entry.name)
+        FileUtils.mkdir_p(File.dirname(f_path))
+        entry.extract(f_path)
+        Zip::File.open(f_path) do |dp_zip|
+          dp_zip.each do |dp_entry|
+            next unless dp_entry.name.end_with? ".osw"
+            dp_path = File.join(File.dirname(__FILE__), "data_point", File.dirname(entry.name), dp_entry.name)
+            FileUtils.mkdir_p(File.dirname(dp_path))
+            FileUtils.rm_rf(dp_path)
+            dp_entry.extract(dp_path)
+            text = File.read(dp_path)
+            if text.include? "ResidentialApplianceClothesDryerElectric" or text.include? "ResidentialApplianceClothesDryerFuel"
+            else
+              next
+            end
+            new_contents = text.gsub(/weather_file_name.*epw/, 'weather_file_name" : "USA_CO_Denver_Intl_AP_725650_TMY3.epw')
+            new_contents = new_contents.gsub(/weather_directory.*weather/, 'weather_directory" : "./resources')
+            new_contents = new_contents.gsub('"num_occ" : "auto",', '"num_occ" : "auto",' + "\n" + '"occ_gain" : "384",' + "\n" + '"sens_frac" : "0.573",' + "\n" + '"lat_frac" : "0.427",')
+            new_contents = new_contents.gsub('"aspect_ratio" : "1.333",', '"aspect_ratio" : "1.333",' + "\n" + '"front_area" : "0",' + "\n" + '"back_area" : "0",' + "\n" + '"left_area" : "0",' + "\n" + '"right_area" : "0",')
+            new_contents = new_contents.gsub(/ufactor.*"/, 'ufactor_back" : "0.37",' + "\n" + '"ufactor_front" : "0.37",' + "\n" + '"ufactor_left" : "0.37",' + "\n" + '"ufactor_right" : "0.37"')
+            new_contents = new_contents.gsub(/shgc.*"/, 'shgc_back" : "0.3",' + "\n" + '"shgc_front" : "0.3",' + "\n" + '"shgc_left" : "0.3",' + "\n" + '"shgc_right" : "0.3"')
+            new_contents = new_contents.gsub('door_uvalue', 'door_ufactor')
+            new_contents = new_contents.gsub('cw_', '')
+            new_contents = new_contents.gsub('cd_', '')
+            new_contents = new_contents.gsub('"cfl_eff" : "55",', '"cfl_eff" : "55",' + "\n" + '"energy_use_exterior" : "300",' + "\n" + '"energy_use_garage" : "100",' + "\n" + '"energy_use_interior" : "900",' + "\n" + '"option_type" : "Lamp Fractions",')
+            new_contents = new_contents.gsub('"mult" : "0.5",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",', '"mult" : "0.5",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",' + "\n" + '"energy_use" : "2000",' + "\n" + '"lat_frac" : "0.021",' + "\n" + '"option_type" : "Multiplier",' + "\n" + '"sens_frac" : "0.093",')
+            new_contents = new_contents.gsub('"mult" : "1.0",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",', '"mult" : "1.0",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",' + "\n" + '"energy_use" : "2000",' + "\n" + '"lat_frac" : "0.021",' + "\n" + '"option_type" : "Multiplier",' + "\n" + '"sens_frac" : "0.093",')
+            new_contents = new_contents.gsub('"mult" : "2.0",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",', '"mult" : "2.0",
+            "weekday_sch" : "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",' + "\n" + '"energy_use" : "2000",' + "\n" + '"lat_frac" : "0.021",' + "\n" + '"option_type" : "Multiplier",' + "\n" + '"sens_frac" : "0.093",')
+            File.open(dp_path.gsub("measures.osw", File.basename(File.dirname(entry.name)) + ".osw"), "w") {|file| file.puts new_contents }
+            osw_file_paths << File.join(File.basename(File.dirname(__FILE__)), "data_point", File.dirname(entry.name), File.basename(File.dirname(entry.name)) + ".osw")
+          end
+        end
+      end
+    end
+    return osw_file_paths
+  end
   
   def _test_error_or_NA(osm_file_or_model, args_hash)
     # create an instance of the measure
