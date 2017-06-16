@@ -309,6 +309,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_element(layer, "InstallationType", "continuous")
           XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsSlab"]["perim_r"])
           XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsFoundationsFloorsSlab"]["perim_width"])
+          extension = slab.add_element "extension"
+          XMLHelper.add_element(extension, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_frac"])
+          XMLHelper.add_element(extension, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_r"])
         end
       end
     end
@@ -336,9 +339,16 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "cavity")
             XMLHelper.add_element(layer, "NominalRValue", 0)
             XMLHelper.add_element(layer, "Thickness", 0)
+            layer = insulation.add_element "Layer"
+            XMLHelper.add_element(layer, "InstallationType", "continuous")
+            XMLHelper.add_element(layer, "NominalRValue", 0)
+            XMLHelper.add_element(layer, "Thickness", 0)            
+            extension = frame_floor.add_element "extension"
+            XMLHelper.add_element(extension, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_frac"])
+            XMLHelper.add_element(extension, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_r"])
           end
         end
-        space.surfaces.each do |surface|
+        space.surfaces.each do |surface|          
           if surface.surfaceType.downcase == "wall"
             foundation_wall = foundation.add_element "FoundationWall"
             XMLHelper.add_attribute(foundation_wall.add_element("SystemIdentifier"), "id", surface.name)
@@ -364,9 +374,11 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "continuous")
             XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsBasementFinished"]["wall_rigid_r"])
             XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsFoundationsFloorsBasementFinished"]["wall_rigid_thick_in"])
+            extension = layer.add_element "extension"
+            XMLHelper.add_element(extension, "InsulationHeight", measures["ResidentialConstructionsFoundationsFloorsBasementFinished"]["wall_ins_height"])
           end
         end
-        space.surfaces.each do |surface|
+        space.surfaces.each do |surface|          
           if surface.surfaceType.downcase == "floor"
             slab = foundation.add_element "Slab"
             XMLHelper.add_attribute(slab.add_element("SystemIdentifier"), "id", surface.name)
@@ -388,6 +400,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "continuous")
             XMLHelper.add_element(layer, "NominalRValue", 0) # TODO
             XMLHelper.add_element(layer, "Thickness", 0) # TODO
+            extension = slab.add_element "extension"
+            XMLHelper.add_element(extension, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_frac"])
+            XMLHelper.add_element(extension, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_r"])
           end
         end
       end
@@ -416,9 +431,16 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "cavity")
             XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsBasementUnfinished"]["ceil_cavity_r"])
             XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsFoundationsFloorsBasementUnfinished"]["ceil_joist_height"])
+            layer = insulation.add_element "Layer"
+            XMLHelper.add_element(layer, "InstallationType", "continuous")
+            XMLHelper.add_element(layer, "NominalRValue", 0)
+            XMLHelper.add_element(layer, "Thickness", 0)            
+            extension = frame_floor.add_element "extension"
+            XMLHelper.add_element(extension, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_frac"])
+            XMLHelper.add_element(extension, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_r"])
           end
         end
-        space.surfaces.each do |surface|
+        space.surfaces.each do |surface|          
           if surface.surfaceType.downcase == "wall"
             foundation_wall = foundation.add_element "FoundationWall"
             XMLHelper.add_attribute(foundation_wall.add_element("SystemIdentifier"), "id", surface.name)
@@ -444,9 +466,11 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "continuous")
             XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsBasementUnfinished"]["wall_rigid_r"])
             XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsFoundationsFloorsBasementUnfinished"]["wall_rigid_thick_in"])
+            extension = layer.add_element "extension"
+            XMLHelper.add_element(extension, "InsulationHeight", measures["ResidentialConstructionsFoundationsFloorsBasementUnfinished"]["wall_ins_height"])
           end
         end
-        space.surfaces.each do |surface|
+        space.surfaces.each do |surface|          
           if surface.surfaceType.downcase == "floor"
             slab = foundation.add_element "Slab"
             XMLHelper.add_attribute(slab.add_element("SystemIdentifier"), "id", surface.name)
@@ -468,6 +492,9 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "continuous")
             XMLHelper.add_element(layer, "NominalRValue", 0) # TODO
             XMLHelper.add_element(layer, "Thickness", 0) # TODO
+            extension = slab.add_element "extension"
+            XMLHelper.add_element(extension, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_frac"])
+            XMLHelper.add_element(extension, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_r"])            
           end
         end
       end
@@ -500,6 +527,13 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "cavity")
             XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsCrawlspace"]["ceil_cavity_r"])
             XMLHelper.add_element(layer, "Thickness", measures["ResidentialConstructionsFoundationsFloorsCrawlspace"]["ceil_joist_height"])
+            layer = insulation.add_element "Layer"
+            XMLHelper.add_element(layer, "InstallationType", "continuous")
+            XMLHelper.add_element(layer, "NominalRValue", 0) # TODO
+            XMLHelper.add_element(layer, "Thickness", 0) # TODO
+            extension = frame_floor.add_element "extension"
+            XMLHelper.add_element(extension, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_frac"])
+            XMLHelper.add_element(extension, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_r"])
           end
         end
         space.surfaces.each do |surface|
@@ -551,6 +585,13 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             XMLHelper.add_element(layer, "InstallationType", "cavity")
             XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsPierBeam"]["cavity_r"])
             XMLHelper.add_element(layer, "Thickness", 0) # TODO
+            layer = insulation.add_element "Layer"
+            XMLHelper.add_element(layer, "InstallationType", "continuous")
+            XMLHelper.add_element(layer, "NominalRValue", 0)
+            XMLHelper.add_element(layer, "Thickness", 0)            
+            extension = frame_floor.add_element "extension"
+            XMLHelper.add_element(extension, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_frac"])
+            XMLHelper.add_element(extension, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"]["covering_r"])            
           end
         end
       end

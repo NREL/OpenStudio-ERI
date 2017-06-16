@@ -14,7 +14,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     args_hash["calc_type"] = calc_type
     args_hash["measures_dir"] = ".."
     args_hash["schemas_dir"] = "./tests/schemas"
-    #args_hash["output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename}")
+    #args_hash["hpxml_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename}")
+    #args_hash["osm_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename.gsub(".xml", ".osm")}")
     return args_hash
   end
 
@@ -148,7 +149,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
     
-    show_output(result)
+    # show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)

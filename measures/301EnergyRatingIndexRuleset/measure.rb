@@ -66,10 +66,15 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute path of the hpxml schemas.")
     args << arg
     
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("output_file_path", false)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_file_path", false)
     arg.setDisplayName("HPXML Output File Path")
     arg.setDescription("Absolute (or relative) path of the output HPXML file.")
     args << arg
+    
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("osm_output_file_path", false)
+    arg.setDisplayName("OSM Output File Path")
+    arg.setDescription("Absolute (or relative) path of the output OSM file.")
+    args << arg    
     
     return args
   end
@@ -89,7 +94,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     weather_file_path = runner.getStringArgumentValue("weather_file_path", user_arguments)
     measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
-    output_file_path = runner.getOptionalStringArgumentValue("output_file_path", user_arguments)
+    hpxml_output_file_path = runner.getOptionalStringArgumentValue("hpxml_output_file_path", user_arguments)
+    osm_output_file_path = runner.getOptionalStringArgumentValue("osm_output_file_path", user_arguments)
 
     unless (Pathname.new hpxml_file_path).absolute?
       hpxml_file_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_file_path))
@@ -173,8 +179,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    if output_file_path.is_initialized
-      XMLHelper.write_file(hpxml_doc, output_file_path.get)
+    if hpxml_output_file_path.is_initialized
+      XMLHelper.write_file(hpxml_doc, hpxml_output_file_path.get)
     end
     
     # Validate new HPXML
@@ -200,8 +206,13 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     if not OSModel.create_geometry(building, runner, model)
       return false
     end
+
     if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
+    end
+    
+    if osm_output_file_path.is_initialized
+      File.write(osm_output_file_path.get, model.to_s)
     end
     
     return true
@@ -1972,12 +1983,12 @@ class OSModel
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
 
-    foundation_space, foundation_zone = build_foundation_space(model, building)
+    foundation_spaces = {}
     living_space = build_living_space(model, building)
     attic_space, attic_zone = build_attic_space(model, building)
-    add_foundation_floors(model, building, living_space, foundation_space)
-    add_foundation_walls(model, building, living_space, foundation_space)
-    foundation_ceiling_area = add_foundation_ceilings(model, building, foundation_space, living_space)
+    add_foundation_floors(model, building, living_space, foundation_spaces)
+    add_foundation_walls(model, building, living_space, foundation_spaces)
+    foundation_ceiling_area = add_foundation_ceilings(model, building, living_space, foundation_spaces)
     add_living_floors(model, building, geometry_errors, living_space, foundation_ceiling_area)
     add_living_walls(model, building, geometry_errors, avg_ceil_hgt, living_space, attic_space)
     add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
@@ -2199,43 +2210,69 @@ class OSModel
     
   end
 
-  def self.build_foundation_space(model, building)
+  def self.build_foundation_spaces(model, foundation_type)
 
-    foundation_type = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/FoundationType"]
     unless foundation_type.nil?
       foundation_space_name = nil
-      foundation_zone_name = nil
       if foundation_type.elements["Basement/Conditioned/text()='true'"] or foundation_type.elements["Basement/Finished/text()='true'"]
-        foundation_zone_name = Constants.FinishedBasementZone
         foundation_space_name = Constants.FinishedBasementSpace
       elsif foundation_type.elements["Basement/Conditioned/text()='false'"] or foundation_type.elements["Basement/Finished/text()='false'"]
-        foundation_zone_name = Constants.UnfinishedBasementZone
         foundation_space_name = Constants.UnfinishedBasementSpace
       elsif foundation_type.elements["Crawlspace/Vented/text()='true'"] or foundation_type.elements["Crawlspace/Vented/text()='false'"] or foundation_type.elements["Crawlspace/Conditioned/text()='true'"] or foundation_type.elements["Crawlspace/Conditioned/text()='false'"]
-        foundation_zone_name = Constants.CrawlZone
         foundation_space_name = Constants.CrawlSpace
       elsif foundation_type.elements["Garage/Conditioned/text()='true'"] or foundation_type.elements["Garage/Conditioned/text()='false'"]
-        foundation_zone_name = Constants.GarageZone
         foundation_space_name = Constants.GarageSpace
-      elsif foundation_type.elements["SlabOnGrade"]     
       end
-      if not foundation_space_name.nil? and not foundation_zone_name.nil?
-        foundation_zone = OpenStudio::Model::ThermalZone.new(model)
-        foundation_zone.setName(foundation_zone_name)
+      if not foundation_space_name.nil?
         foundation_space = OpenStudio::Model::Space.new(model)
         foundation_space.setName(foundation_space_name)
-        foundation_space.setThermalZone(foundation_zone)
       end
     end
     
-    return foundation_space, foundation_zone
+    return foundation_space
       
   end
+  
+  def self.build_foundation_zones(model, foundation_spaces)
+  
+    foundation_spaces.each do |foundation_type, spaces|
+    
+      foundation_zone_name = nil
+      if foundation_type.elements["Basement/Conditioned/text()='true'"] or foundation_type.elements["Basement/Finished/text()='true'"]
+        foundation_zone_name = Constants.FinishedBasementZone
+      elsif foundation_type.elements["Basement/Conditioned/text()='false'"] or foundation_type.elements["Basement/Finished/text()='false'"]
+        foundation_zone_name = Constants.UnfinishedBasementZone
+      elsif foundation_type.elements["Crawlspace/Vented/text()='true'"] or foundation_type.elements["Crawlspace/Vented/text()='false'"] or foundation_type.elements["Crawlspace/Conditioned/text()='true'"] or foundation_type.elements["Crawlspace/Conditioned/text()='false'"]
+        foundation_zone_name = Constants.CrawlZone
+      elsif foundation_type.elements["Garage/Conditioned/text()='true'"] or foundation_type.elements["Garage/Conditioned/text()='false'"]
+        foundation_zone_name = Constants.GarageZone
+      end
 
-  def self.add_foundation_floors(model, building, living_space, foundation_space)
-      
+      if not foundation_zone_name.nil?
+        
+        foundation_zone = OpenStudio::Model::ThermalZone.new(model)
+        foundation_zone.setName(foundation_zone_name)
+        
+        spaces.each do |foundation_id, foundation_space|
+          foundation_space.setThermalZone(foundation_zone)
+        end
+        
+      end
+
+    end
+  
+  end
+
+  def self.add_foundation_floors(model, building, living_space, foundation_spaces)
+
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
+      if not foundation_spaces.keys.include? foundation.elements["FoundationType"]
+        foundation_spaces[foundation.elements["FoundationType"]] = {foundation.elements["SystemIdentifier"].attributes["id"]=>build_foundation_spaces(model, foundation.elements["FoundationType"])}
+      else
+        foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]] = build_foundation_spaces(model, foundation.elements["FoundationType"])
+      end
+
       foundation.elements.each("Slab") do |slab|
       
         next if slab.elements["Area"].nil?
@@ -2253,7 +2290,7 @@ class OSModel
         surface.setSurfaceType("Floor") 
         surface.setOutsideBoundaryCondition("Ground")
         if z_origin < 0
-          surface.setSpace(foundation_space)
+          surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]])
         else
           surface.setSpace(living_space)
         end
@@ -2261,10 +2298,12 @@ class OSModel
       end
       
     end
+    
+    build_foundation_zones(model, foundation_spaces)
 
   end
 
-  def self.add_foundation_walls(model, building, living_space, foundation_space)
+  def self.add_foundation_walls(model, building, living_space, foundation_spaces)
 
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       
@@ -2295,7 +2334,7 @@ class OSModel
         surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
         surface.setSurfaceType("Wall") 
         surface.setOutsideBoundaryCondition("Ground")
-        surface.setSpace(foundation_space)
+        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]])
         
       end
     
@@ -2303,7 +2342,7 @@ class OSModel
 
   end
 
-  def self.add_foundation_ceilings(model, building, foundation_space, living_space)
+  def self.add_foundation_ceilings(model, building, living_space, foundation_spaces)
        
     foundation_ceiling_area = 0
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
@@ -2320,7 +2359,7 @@ class OSModel
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(framefloor_length, framefloor_width, z_origin), model)
         surface.setName(framefloor.elements["SystemIdentifier"].attributes["id"])
         surface.setSurfaceType("RoofCeiling")
-        surface.setSpace(foundation_space)
+        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]])
         surface.createAdjacentSurface(living_space)
         
         foundation_ceiling_area += framefloor.elements["Area"].text.to_f

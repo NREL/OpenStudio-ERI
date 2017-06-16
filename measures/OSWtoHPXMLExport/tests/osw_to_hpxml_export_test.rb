@@ -13,9 +13,10 @@ class OSWtoHPXMLExportTest < MiniTest::Test
     args_hash = {}
     args_hash["schemas_dir"] = "./tests/schemas"
     args_hash["measures_dir"] = ".."
-    Parallel.each(Dir[File.join(File.dirname(__FILE__), "*.osw")], in_threads: 1) do |osw_file_path|
+    Dir[File.join(File.dirname(__FILE__), "*.osw")].each do |osw_file_path| # one osw file in tests directory at a time
+    # Parallel.each(Dir[File.join(File.dirname(__FILE__), "*.osw")], in_threads: 1) do |osw_file_path| # parallelized osw files in tests directory (doesn't work on ci machine?)
       osw_file_path = File.join(".", File.join(File.basename(File.dirname(__FILE__)), File.basename(osw_file_path)))
-    # Parallel.each(get_resstock_osw_file_paths, in_threads: 3) do |osw_file_path|      
+    # Parallel.each(get_resstock_osw_file_paths, in_threads: 3) do |osw_file_path| # parallelized osw files in resstock directory (doesn't work on ci machine?)
       args_hash["osw_file_path"] = osw_file_path
       next if File.exist? File.join(File.dirname(__FILE__), "#{File.basename osw_file_path, ".*"}.xml")
       expected_num_del_objects = {}
@@ -142,7 +143,7 @@ class OSWtoHPXMLExportTest < MiniTest::Test
     measure.run(model, runner, argument_map)
     result = runner.result
     
-    #show_output(result)
+    # show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
