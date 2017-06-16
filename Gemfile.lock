@@ -78,6 +78,7 @@ GEM
       mini_portile2 (~> 2.1.0)
     nokogiri (1.6.8.1-x64-mingw32)
       mini_portile2 (~> 2.1.0)
+    parallel (1.11.2)
     parser (2.4.0.0)
       ast (~> 2.2)
     powerbar (1.0.18)
@@ -145,6 +146,7 @@ DEPENDENCIES
   minitest-ci!
   minitest-reporters
   nokogiri (~> 1.6, <= 1.6.8.1)
+  parallel
   rake (~> 11.2.2)
   rest-client (~> 2.0.1)
   rubocop (~> 0.26.0)
