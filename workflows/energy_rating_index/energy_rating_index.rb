@@ -8,6 +8,7 @@ require 'parallel'
 require 'openstudio'
 require "#{File.dirname(__FILE__)}/../../resources/constants" # FIXME
 require "#{File.dirname(__FILE__)}/../../resources/xmlhelper" # FIXME
+require "#{File.dirname(__FILE__)}/../../resources/util" # FIXME
 
 # TODO: Rake task to package ERI
 # TODO: Add error-checking
@@ -25,7 +26,7 @@ def recreate_path(path)
   if Dir.exists?(path)
     FileUtils.rm_r(path)
   end
-  for retries in 1..10
+  for retries in 1..50
     break if not Dir.exists?(path)
     sleep(0.1)
   end
@@ -58,7 +59,7 @@ def create_osw(design, basedir, resultsdir, options)
   measures['301EnergyRatingIndexRuleset']['weather_file_path'] = options[:epw]
   measures['301EnergyRatingIndexRuleset']['measures_dir'] = measures_dir
   #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
-  measures['301EnergyRatingIndexRuleset']['output_file_path'] = output_hpxml_path
+  measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
   steps = OpenStudio::WorkflowStepVector.new
   measures.keys.each do |measure|
     step = OpenStudio::MeasureStep.new(measure)
