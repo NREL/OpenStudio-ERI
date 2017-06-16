@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_surfaces</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>95b50ad2-3f71-4b08-9b5b-d0d86a10b12f</version_id>
-  <version_modified>20170615T214429Z</version_modified>
+  <version_id>34ac69c8-4da5-4310-a0ad-c2a47c541996</version_id>
+  <version_modified>20170616T180403Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSurfaces</class_name>
   <display_name>Set Residential Uninsulated Surfaces</display_name>
@@ -55,7 +55,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>59364771</checksum>
+      <checksum>787EAB06</checksum>
     </file>
   </files>
 </measure>

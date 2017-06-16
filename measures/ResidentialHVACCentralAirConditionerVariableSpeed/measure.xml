@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_variable_speed_central_air_conditioner</name>
   <uid>7387af85-5ae2-422c-9488-d64b8682dd06</uid>
-  <version_id>f5831eac-1dda-4b9e-9ac2-eba41141338f</version_id>
-  <version_modified>20170615T214433Z</version_modified>
+  <version_id>a979976d-5e82-4c7e-bcee-87a48338b32e</version_id>
+  <version_modified>20170616T180407Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessVariableSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Variable-Speed Central Air Conditioner</display_name>
@@ -457,7 +457,7 @@
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>59364771</checksum>
+      <checksum>787EAB06</checksum>
     </file>
   </files>
 </measure>

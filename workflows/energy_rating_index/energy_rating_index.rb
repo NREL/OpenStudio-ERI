@@ -181,6 +181,21 @@ def parse_sql(design, sql_path, output_hpxml_path)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE 'VentFans%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   sim_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
   
+  # Other - Space Heating Load
+  vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  sim_output[:loadHeating] = get_sql_query_result(sqlFile, query)
+  
+  # Other - Space Cooling Load
+  vars = "'" + BuildingLoadVars.get_space_cooling_load_vars.join("','") + "'"
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  sim_output[:loadCooling] = get_sql_query_result(sqlFile, query)
+  
+  # Other - Water Heating Load
+  vars = "'" + BuildingLoadVars.get_water_heating_load_vars.join("','") + "'"
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  sim_output[:loadHotWater] = get_sql_query_result(sqlFile, query)
+  
   # Error Checking
   tolerance = 0.1 # MMBtu
   
@@ -279,6 +294,21 @@ def get_dhw_fuel(hpxml_doc)
   end
   
   return dhw_fuel
+end
+
+def get_dse_heat_cool(hpxml_doc)
+  
+  dse_heat = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
+  dse_cool = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
+  
+  if dse_heat.nil?
+    fail "ERROR: Heating distribution system efficiency not found."
+  elsif dse_cool.nil?
+    fail "ERROR: Cooling distribution system efficiency not found."
+  end
+  
+  return Float(dse_heat), Float(dse_cool)
+  
 end
 
 def get_eec_value_numerator(unit)
@@ -389,15 +419,17 @@ def calculate_eri(sim_outputs)
   
   # REUL = Reference Home End Use Loads (for heating, cooling or hot water) as computed using an Approved 
   # Software Rating Tool.
-  results[:reul_heat] = ref_output[:elecHeating] + ref_output[:fuelHeating] # FIXME
-  results[:reul_cool] = ref_output[:elecCooling] # FIXME
-  results[:reul_dhw] = ref_output[:elecHotWater] + ref_output[:fuelHotWater] # FIXME
+  # Heating/Cooling loads include effect of DSE, so we remove the effect below.
+  dse_heat, dse_cool = get_dse_heat_cool(ref_hpxml_doc)
+  results[:reul_heat] = ref_output[:loadHeating] * dse_heat
+  results[:reul_cool] = ref_output[:loadCooling] * dse_cool
+  results[:reul_dhw] = ref_output[:loadHotWater]
   
   # XEUL = Rated Home End Use Loads (for heating, cooling or hot water) as computed using an Approved 
   # Software Rating Tool.
-  results[:xeul_heat] = rated_output[:elecHeating] + rated_output[:fuelHeating] # FIXME
-  results[:xeul_cool] = rated_output[:elecCooling] # FIXME
-  results[:xeul_dhw] = rated_output[:elecHotWater] + rated_output[:fuelHotWater] # FIXME
+  results[:xeul_heat] = 0 # TODO
+  results[:xeul_cool] = 0 # TODO
+  results[:xeul_dhw] = 0 # TODO
   
   # Table 4.2.1(1) Coefficients ‘a’ and ‘b’
   results[:coeff_cool_a] = 3.8090
@@ -542,9 +574,9 @@ def write_results(results, resultsdir, sim_outputs)
                  "EC_r Heating (MBtu)"=>results[:ec_r_heat],
                  "EC_r Cooling (MBtu)"=>results[:ec_r_cool],
                  "EC_r Hot Water (MBtu)"=>results[:ec_r_dhw],
-                 "XEUL Heating (MBtu)"=>results[:xeul_heat],
-                 "XEUL Cooling (MBtu)"=>results[:xeul_cool],
-                 "XEUL Hot Water (MBtu)"=>results[:xeul_dhw],
+                 #"XEUL Heating (MBtu)"=>results[:xeul_heat],
+                 #"XEUL Cooling (MBtu)"=>results[:xeul_cool],
+                 #"XEUL Hot Water (MBtu)"=>results[:xeul_dhw],
                  "EC_x Heating (MBtu)"=>results[:ec_x_heat],
                  "EC_x Cooling (MBtu)"=>results[:ec_x_cool],
                  "EC_x Hot Water (MBtu)"=>results[:ec_x_dhw],

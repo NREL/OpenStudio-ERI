@@ -11,6 +11,7 @@ require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 require "#{File.dirname(__FILE__)}/resources/helper_methods"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/hvac"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -215,14 +216,74 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       File.write(osm_output_file_path.get, model.to_s)
     end
     
+    # Add output variables for RESNET building loads
+    if not generate_building_loads(model, runner)
+      return false
+    end
+
     return true
 
+  end
+  
+  def generate_building_loads(model, runner)
+    # Note: Duct losses are included the heating/cooling energy values. For the 
+    # RESNET Reference Home, the effect of DSE will be removed during post-processing.
+    
+    # FIXME: Are HW distribution losses included in the HW energy values?
+    # FIXME: Handle heating/cooling fan and pump energy (requires EMS?)
+    
+    clg_coils = []
+    htg_coils = []
+    model.getThermalZones.each do |zone|
+      HVAC.existing_cooling_equipment(model, runner, zone).each do |clg_equip|
+        if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
+          clg_coils << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get).name.to_s
+        elsif clg_equip.to_ZoneHVACComponent.is_initialized
+          clg_coils << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
+        end
+      end
+      HVAC.existing_heating_equipment(model, runner, zone).each do |htg_equip|
+        if htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
+          htg_coils << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get).name.to_s
+        elsif htg_equip.to_ZoneHVACComponent.is_initialized
+          htg_coils << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
+        end
+      end
+    end
+    
+    if clg_coils.size == 0
+      runner.registerError("Could not identify cooling coil.")
+      return false
+    elsif htg_coils.size == 0
+      runner.registerError("Could not identify heating coil.")
+      return false
+    end
+    
+    add_output_variables(model, BuildingLoadVars.get_space_heating_load_vars, htg_coils)
+    add_output_variables(model, BuildingLoadVars.get_space_cooling_load_vars, clg_coils)
+    add_output_variables(model, BuildingLoadVars.get_water_heating_load_vars)
+    
+    return true
+    
+  end
+  
+  def add_output_variables(model, vars, keys=['*'])
+  
+    vars.each do |var|
+      keys.each do |key|
+        outputVariable = OpenStudio::Model::OutputVariable.new(var, model)
+        outputVariable.setReportingFrequency('runperiod')
+        outputVariable.setKeyValue(key)
+      end
+    end
+    
   end
   
 end
 
 class OSMeasures    
 
+  # FIXME: Allow args to have non-string values; atuo-convert all args to strings later.
   # FIXME: Add surface argument to envelope construction measures
 
   def self.build_measures_from_hpxml(building, weather_file_path)
@@ -1097,7 +1158,7 @@ class OSMeasures
       
         measure_subdir = "ResidentialHotWaterHeaterTanklessElectric"
         args = {
-                "setpoint_temp"=>setpoint_temp,
+                "setpoint_temp"=>setpoint_temp.to_s,
                 "location"=>Constants.Auto,
                 "capacity"=>"100000000.0",
                 "energy_factor"=>ef.to_s,
@@ -1126,8 +1187,8 @@ class OSMeasures
       measure_subdir = "ResidentialHotWaterHeaterHeatPump"
       # FIXME
       args = {
-              "storage_tank_volume"=>tank_vol,
-              "dhw_setpoint_temperature"=>setpoint_temp,
+              "storage_tank_volume"=>tank_vol.to_s,
+              "setpoint_temp"=>setpoint_temp.to_s,
               "space"=>Constants.Auto,
               "element_capacity"=>"4.5",
               "min_temp"=>"45",
@@ -1139,7 +1200,8 @@ class OSMeasures
               "fan_power"=>"0.0462",
               "parasitics"=>"3",
               "tank_ua"=>"3.9",
-              "int_factor"=>"1.0"
+              "int_factor"=>"1.0",
+              "temp_depress"=>"0"
              }
       measures[measure_subdir] = args
       
