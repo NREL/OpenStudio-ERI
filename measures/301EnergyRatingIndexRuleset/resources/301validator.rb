@@ -167,6 +167,8 @@ class EnergyRatingIndex301Validator
                 'Azimuth',
                 'UFactor',
                 'SHGC',
+                'AttachedToWall',
+                #Quantity, # FIXME: Should we require/use?
             ],
             # Skylight
             '//Building/BuildingDetails/Enclosure/Skylights/Skylight' => [
@@ -175,6 +177,16 @@ class EnergyRatingIndex301Validator
                 'UFactor',
                 'SHGC',
                 'Pitch',
+                'AttachedToRoof',
+                #Quantity, # FIXME: Should we require/use?
+            ],
+            # Door
+            '//Building/BuildingDetails/Enclosure/Doors/Door' => [
+                'AttachedToWall',
+                'Area',
+                'Azimuth',
+                'RValue',
+                #Quantity, # FIXME: Should we require/use?
             ],
             # HeatingSystem
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => [

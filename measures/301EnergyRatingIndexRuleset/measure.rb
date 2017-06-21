@@ -230,7 +230,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # RESNET Reference Home, the effect of DSE will be removed during post-processing.
     
     # FIXME: Are HW distribution losses included in the HW energy values?
-    # FIXME: Handle heating/cooling fan and pump energy (requires EMS?)
+    # FIXME: Handle fan/pump energy (requires EMS or timeseries output to split apart heating/cooling)
     
     clg_coils = []
     htg_coils = []
@@ -350,8 +350,8 @@ class OSMeasures
     num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     args = {
-            "num_bedrooms"=>num_bedrooms.to_s,
-            "num_bathrooms"=>num_bathrooms.to_s
+            "num_bedrooms"=>num_bedrooms,
+            "num_bathrooms"=>num_bathrooms
            }  
     measures[measure_subdir] = args
     
@@ -366,10 +366,10 @@ class OSMeasures
     
     measure_subdir = "ResidentialGeometryNumOccupants"  
     args = {
-            "num_occ"=>num_occ.to_s,
-            "occ_gain"=>occ_gain.to_s,
-            "sens_frac"=>sens_frac.to_s,
-            "lat_frac"=>lat_frac.to_s,
+            "num_occ"=>num_occ,
+            "occ_gain"=>occ_gain,
+            "sens_frac"=>sens_frac,
+            "lat_frac"=>lat_frac,
             "weekday_sch"=>"1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
             "weekend_sch"=>"1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
             "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
@@ -379,100 +379,29 @@ class OSMeasures
   end
       
   def self.get_windows(building, measures)
+
+    # FIXME
   
-    # TODO: Better preserve actual window azimuths?
-    # FIXME: Double-check use of ResidentialGeometryWindowArea measure; add facade wall area as needed to fit window area
-  
-    facades = [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight]
-    
-    azimuths = {}
-    azimuths[Constants.FacadeFront] = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/Site/AzimuthOfFrontOfHome"))
-    azimuths[Constants.FacadeBack] = normalize_azimuth(azimuths[Constants.FacadeFront] + 180)
-    azimuths[Constants.FacadeLeft] = normalize_azimuth(azimuths[Constants.FacadeFront] + 90)
-    azimuths[Constants.FacadeRight] = normalize_azimuth(azimuths[Constants.FacadeFront] + 270)
-    
-    areas = {
-             Constants.FacadeFront=>0.0,
-             Constants.FacadeBack=>0.0,
-             Constants.FacadeLeft=>0.0,
-             Constants.FacadeRight=>0.0
-            }
-    ufactor_times_areas = {
-                           Constants.FacadeFront=>0.0,
-                           Constants.FacadeBack=>0.0,
-                           Constants.FacadeLeft=>0.0,
-                           Constants.FacadeRight=>0.0
-                          }
-    shgc_times_areas = {
-                        Constants.FacadeFront=>0.0,
-                        Constants.FacadeBack=>0.0,
-                        Constants.FacadeLeft=>0.0,
-                        Constants.FacadeRight=>0.0
-                       }
-    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
-      window_az = Float(XMLHelper.get_value(window, "Azimuth"))
-      window_area = Float(XMLHelper.get_value(window, "Area"))
-      
-      # Find closest facade
-      best_min_delta = 99999
-      best_facade = nil
-      facades.each do |facade|
-        min_delta = [(window_az - azimuths[facade]).abs, 
-                     ((window_az+360) - azimuths[facade]).abs,
-                     ((window_az-360) - azimuths[facade]).abs].min
-        next if min_delta > best_min_delta
-        best_min_delta = (window_az - azimuths[facade]).abs
-        best_facade = facade
-      end
-      
-      areas[best_facade] += window_area
-      ufactor_times_areas[best_facade] += Float(XMLHelper.get_value(window, "UFactor"))*window_area
-      shgc_times_areas[best_facade] += Float(XMLHelper.get_value(window, "SHGC"))*window_area
-      
-    end
-    
-    measure_subdir = "ResidentialGeometryWindowArea"  
-    args = {
-            "front_wwr"=>"0",
-            "back_wwr"=>"0",
-            "left_wwr"=>"0",
-            "right_wwr"=>"0",
-            "front_area"=>areas[Constants.FacadeFront].to_s,
-            "back_area"=>areas[Constants.FacadeBack].to_s,
-            "left_area"=>areas[Constants.FacadeLeft].to_s,
-            "right_area"=>areas[Constants.FacadeRight].to_s,
-            "aspect_ratio"=>"1.333"
-           }  
-    measures[measure_subdir] = args
-    
     measure_subdir = "ResidentialConstructionsWindows"
     args = {
-            "ufactor_front"=>(ufactor_times_areas[Constants.FacadeFront]/areas[Constants.FacadeFront]).to_s,
-            "ufactor_back"=>(ufactor_times_areas[Constants.FacadeBack]/areas[Constants.FacadeBack]).to_s,
-            "ufactor_left"=>(ufactor_times_areas[Constants.FacadeLeft]/areas[Constants.FacadeLeft]).to_s,
-            "ufactor_right"=>(ufactor_times_areas[Constants.FacadeRight]/areas[Constants.FacadeRight]).to_s,
-            "shgc_front"=>(shgc_times_areas[Constants.FacadeFront]/areas[Constants.FacadeFront]).to_s,
-            "shgc_back"=>(shgc_times_areas[Constants.FacadeBack]/areas[Constants.FacadeBack]).to_s,
-            "shgc_left"=>(shgc_times_areas[Constants.FacadeLeft]/areas[Constants.FacadeLeft]).to_s,
-            "shgc_right"=>(shgc_times_areas[Constants.FacadeRight]/areas[Constants.FacadeRight]).to_s,
-            "heating_shade_mult"=>"0.7",
-            "cooling_shade_mult"=>"0.7"
+            "ufactor_front"=>0.3,
+            "ufactor_back"=>0.3,
+            "ufactor_left"=>0.3,
+            "ufactor_right"=>0.3,
+            "shgc_front"=>0.3,
+            "shgc_back"=>0.3,
+            "shgc_left"=>0.3,
+            "shgc_right"=>0.3,
+            "heating_shade_mult"=>0.7,
+            "cooling_shade_mult"=>0.7
            }  
     measures[measure_subdir] = args
 
   end
   
-  def self.normalize_azimuth(az)
-    while az < 0.0
-      az += 360.0
-    end
-    while az >= 360.0
-      az -= 360.0
-    end
-    return az
-  end
-      
   def self.get_doors(building, measures)
+  
+    # FIXME
 
     tot_area = 0.0
     tot_ua = 0.0
@@ -484,15 +413,9 @@ class OSMeasures
     end
 
     if tot_area > 0
-      measure_subdir = "ResidentialGeometryDoorArea"  
-      args = {
-              "door_area"=>tot_area.to_s
-             }  
-      measures[measure_subdir] = args
-      
       measure_subdir = "ResidentialConstructionsDoors"
       args = {
-              "door_ufactor"=>(tot_ua/tot_area).to_s
+              "door_ufactor"=>tot_ua/tot_area
              }  
       measures[measure_subdir] = args
     end
@@ -505,33 +428,33 @@ class OSMeasures
 
     measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
     args = {
-            "ceil_r"=>"30",
+            "ceil_r"=>30,
             "ceil_grade"=>"I",
-            "ceil_ins_thick_in"=>"8.55",
-            "ceil_ff"=>"0.07",
-            "ceil_joist_height"=>"3.5",
-            "roof_cavity_r"=>"0",
+            "ceil_ins_thick_in"=>8.55,
+            "ceil_ff"=>0.07,
+            "ceil_joist_height"=>3.5,
+            "roof_cavity_r"=>0,
             "roof_cavity_grade"=>"I",
-            "roof_cavity_ins_thick_in"=>"0",
-            "roof_ff"=>"0.07",
-            "roof_fram_thick_in"=>"7.25"
+            "roof_cavity_ins_thick_in"=>0,
+            "roof_ff"=>0.07,
+            "roof_fram_thick_in"=>7.25
            }  
     measures[measure_subdir] = args
 
     measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
     args = {
-            "cavity_r"=>"30",
+            "cavity_r"=>30,
             "install_grade"=>"I",
-            "cavity_depth"=>"9.25",
+            "cavity_depth"=>9.25,
             "ins_fills_cavity"=>"false",
-            "framing_factor"=>"0.07"
+            "framing_factor"=>0.07
            }  
     measures[measure_subdir] = args
     
     measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
     args = {
-            "solar_abs"=>"0.85",
-            "emissivity"=>"0.91",
+            "solar_abs"=>0.85,
+            "emissivity"=>0.91,
             "material"=>Constants.RoofMaterialAsphaltShingles,
             "color"=>Constants.ColorMedium
            }  
@@ -539,21 +462,21 @@ class OSMeasures
     
     measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
     args = {
-            "osb_thick_in"=>"0.75",
-            "rigid_r"=>"0.0",
-            "rigid_thick_in"=>"0.0",
+            "osb_thick_in"=>0.75,
+            "rigid_r"=>0.0,
+            "rigid_thick_in"=>0.0,
            }
     measures[measure_subdir] = args
            
     measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
     args = {
-            "thick_in1"=>"0.5",
+            "thick_in1"=>0.5,
             "thick_in2"=>nil,
-            "cond1"=>"1.1112",
+            "cond1"=>1.1112,
             "cond2"=>nil,
-            "dens1"=>"50.0",
+            "dens1"=>50.0,
             "dens2"=>nil,
-            "specheat1"=>"0.2",
+            "specheat1"=>0.2,
             "specheat2"=>nil
            }
     measures[measure_subdir] = args
@@ -710,17 +633,17 @@ class OSMeasures
         
           measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementFinished"
           args = {
-                  "wall_ins_height"=>wall_cont_height.to_s,
-                  "wall_cavity_r"=>wall_cav_r.to_s,
+                  "wall_ins_height"=>wall_cont_height,
+                  "wall_cavity_r"=>wall_cav_r,
                   "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
-                  "wall_cavity_depth"=>wall_cav_depth.to_s,
+                  "wall_cavity_depth"=>wall_cav_depth,
                   "wall_cavity_insfills"=>"true", # FIXME
-                  "wall_ff"=>wall_ff.to_s,
-                  "wall_rigid_r"=>wall_cont_r.to_s,
-                  "wall_rigid_thick_in"=>wall_cont_depth.to_s,
-                  "ceil_ff"=>floor_ff.to_s,
-                  "ceil_joist_height"=>floor_cav_depth.to_s,
-                  "exposed_perim"=>exposed_perim.to_s
+                  "wall_ff"=>wall_ff,
+                  "wall_rigid_r"=>wall_cont_r,
+                  "wall_rigid_thick_in"=>wall_cont_depth,
+                  "ceil_ff"=>floor_ff,
+                  "ceil_joist_height"=>floor_cav_depth,
+                  "exposed_perim"=>exposed_perim
                  }  
           measures[measure_subdir] = args
           
@@ -728,19 +651,19 @@ class OSMeasures
           
           measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementUnfinished"
           args = {
-                  "wall_ins_height"=>wall_cont_height.to_s,
-                  "wall_cavity_r"=>wall_cav_r.to_s,
+                  "wall_ins_height"=>wall_cont_height,
+                  "wall_cavity_r"=>wall_cav_r,
                   "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
-                  "wall_cavity_depth"=>wall_cav_depth.to_s,
+                  "wall_cavity_depth"=>wall_cav_depth,
                   "wall_cavity_insfills"=>"true", # FIXME
-                  "wall_ff"=>wall_ff.to_s,
-                  "wall_rigid_r"=>wall_cont_r.to_s,
-                  "wall_rigid_thick_in"=>wall_cont_depth.to_s,
-                  "ceil_cavity_r"=>floor_cav_r.to_s,
+                  "wall_ff"=>wall_ff,
+                  "wall_rigid_r"=>wall_cont_r,
+                  "wall_rigid_thick_in"=>wall_cont_depth,
+                  "ceil_cavity_r"=>floor_cav_r,
                   "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                  "ceil_ff"=>floor_ff.to_s,
-                  "ceil_joist_height"=>floor_cav_depth.to_s,
-                  "exposed_perim"=>exposed_perim.to_s
+                  "ceil_ff"=>floor_ff,
+                  "ceil_joist_height"=>floor_cav_depth,
+                  "exposed_perim"=>exposed_perim
                  }
           measures[measure_subdir] = args
     
@@ -748,9 +671,9 @@ class OSMeasures
         
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
-                "osb_thick_in"=>"0.75",
-                "rigid_r"=>floor_cont_r.to_s,
-                "rigid_thick_in"=>floor_cont_depth.to_s
+                "osb_thick_in"=>0.75,
+                "rigid_r"=>floor_cont_r,
+                "rigid_thick_in"=>floor_cont_depth
                }
         measures[measure_subdir] = args
         
@@ -763,21 +686,21 @@ class OSMeasures
         
         measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
         args = {
-                "wall_rigid_r"=>wall_cont_r.to_s,
-                "wall_rigid_thick_in"=>wall_cont_depth.to_s,
-                "ceil_cavity_r"=>floor_cav_r.to_s,
+                "wall_rigid_r"=>wall_cont_r,
+                "wall_rigid_thick_in"=>wall_cont_depth,
+                "ceil_cavity_r"=>floor_cav_r,
                 "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                "ceil_ff"=>floor_ff.to_s,
-                "ceil_joist_height"=>floor_cav_depth.to_s,
-                "exposed_perim"=>exposed_perim.to_s
+                "ceil_ff"=>floor_ff,
+                "ceil_joist_height"=>floor_cav_depth,
+                "exposed_perim"=>exposed_perim
                }  
         measures[measure_subdir] = args
         
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
-                "osb_thick_in"=>"0.75",
-                "rigid_r"=>floor_cont_r.to_s,
-                "rigid_thick_in"=>floor_cont_depth.to_s
+                "osb_thick_in"=>0.75,
+                "rigid_r"=>floor_cont_r,
+                "rigid_thick_in"=>floor_cont_depth
                }
         measures[measure_subdir] = args
 
@@ -787,17 +710,17 @@ class OSMeasures
       
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSlab"
         args = {
-                "perim_r"=>perim_r.to_s,
-                "perim_width"=>perim_width.to_s,
-                "whole_r"=>"0", # FIXME
-                "gap_r"=>"0", # FIXME
-                "ext_r"=>ext_r.to_s,
-                "ext_depth"=>ext_depth.to_s,
-                "mass_thick_in"=>"4",
-                "mass_conductivity"=>"9.1",
-                "mass_density"=>"140",
-                "mass_specific_heat"=>"0.2",
-                "exposed_perim"=>exposed_perim.to_s
+                "perim_r"=>perim_r,
+                "perim_width"=>perim_width,
+                "whole_r"=>0, # FIXME
+                "gap_r"=>0, # FIXME
+                "ext_r"=>ext_r,
+                "ext_depth"=>ext_depth,
+                "mass_thick_in"=>4,
+                "mass_conductivity"=>9.1,
+                "mass_density"=>140,
+                "mass_specific_heat"=>0.2,
+                "exposed_perim"=>exposed_perim
                }  
         measures[measure_subdir] = args
         
@@ -808,17 +731,17 @@ class OSMeasures
 
         measure_subdir = "ResidentialConstructionsFoundationsFloorsPierBeam"
         args = {
-                "cavity_r"=>floor_cav_r.to_s,
+                "cavity_r"=>floor_cav_r,
                 "install_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                "framing_factor"=>floor_ff.to_s
+                "framing_factor"=>floor_ff
                }
         measures[measure_subdir] = args
         
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
-                "osb_thick_in"=>"0.75",
-                "rigid_r"=>floor_cont_r.to_s,
-                "rigid_thick_in"=>floor_cont_depth.to_s
+                "osb_thick_in"=>0.75,
+                "rigid_r"=>floor_cont_r,
+                "rigid_thick_in"=>floor_cont_depth
                }
         measures[measure_subdir] = args
 
@@ -826,8 +749,8 @@ class OSMeasures
     
       measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
       args = {
-              "covering_frac"=>carpet_frac.to_s,
-              "covering_r"=>carpet_r.to_s
+              "covering_frac"=>carpet_frac,
+              "covering_r"=>carpet_r
              }
       measures[measure_subdir] = args
 
@@ -835,18 +758,18 @@ class OSMeasures
     
     measure_subdir = "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
     args = {
-            "cavity_r"=>"19",
+            "cavity_r"=>19,
             "install_grade"=>"I",
-            "framing_factor"=>"0.13"
+            "framing_factor"=>0.13
            }
     measures[measure_subdir] = args
     
     measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
     args = {
-            "thick_in"=>"0.625",
-            "cond"=>"0.8004",
-            "dens"=>"34.0",
-            "specheat"=>"0.29"
+            "thick_in"=>0.625,
+            "cond"=>0.8004,
+            "dens"=>34.0,
+            "specheat"=>0.29
            }
     measures[measure_subdir] = args
     
@@ -973,18 +896,18 @@ class OSMeasures
     
           measure_subdir = "ResidentialConstructionsWallsExteriorGeneric"
           args = {
-                  "thick_in_1"=>layer_t.to_s,
-                  "conductivity_1"=>layer_k.to_s,
-                  "density_1"=>rho.to_s,
-                  "specific_heat_1"=>cp.to_s
+                  "thick_in_1"=>layer_t,
+                  "conductivity_1"=>layer_k,
+                  "density_1"=>rho,
+                  "specific_heat_1"=>cp
                  }
           measures[measure_subdir] = args
           
           measure_subdir = "ResidentialConstructionsWallsSheathing"
           args = {
-                  "osb_thick_in"=>mat_sheath.thick_in.to_s,
-                  "rigid_r"=>"0.0",
-                  "rigid_thick_in"=>"0.0"
+                  "osb_thick_in"=>mat_sheath.thick_in,
+                  "rigid_r"=>0.0,
+                  "rigid_thick_in"=>0.0
                  }
           measures[measure_subdir] = args
           
@@ -1002,21 +925,21 @@ class OSMeasures
         
           measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
           args = {
-                  "cavity_r"=>cavity_r.to_s,
+                  "cavity_r"=>cavity_r,
                   "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                  "cavity_depth"=>cavity_depth.to_s,
-                  "ins_fills_cavity"=>ins_fills_cavity.to_s,
-                  "framing_factor"=>framing_factor.to_s
+                  "cavity_depth"=>cavity_depth,
+                  "ins_fills_cavity"=>ins_fills_cavity,
+                  "framing_factor"=>framing_factor
                  }
           measures[measure_subdir] = args
           
           measure_subdir = "ResidentialConstructionsWallsInterzonal"
           args = {
-                  "cavity_r"=>cavity_r.to_s,
+                  "cavity_r"=>cavity_r,
                   "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                  "cavity_depth"=>cavity_depth.to_s,
-                  "ins_fills_cavity"=>ins_fills_cavity.to_s,
-                  "framing_factor"=>framing_factor.to_s
+                  "cavity_depth"=>cavity_depth,
+                  "ins_fills_cavity"=>ins_fills_cavity,
+                  "framing_factor"=>framing_factor
                  }  
           measures[measure_subdir] = args
           
@@ -1024,20 +947,20 @@ class OSMeasures
         
         measure_subdir = "ResidentialConstructionsWallsSheathing"
         args = {
-                "osb_thick_in"=>mat_sheath.thick_in.to_s,
-                "rigid_r"=>cont_r.to_s,
-                "rigid_thick_in"=>cont_depth.to_s
+                "osb_thick_in"=>mat_sheath.thick_in,
+                "rigid_r"=>cont_r,
+                "rigid_thick_in"=>cont_depth
                }
         measures[measure_subdir] = args
 
         measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
         args = {
-                "solar_abs"=>mat_siding.sAbs.to_s,
-                "conductivity"=>mat_siding.k_in.to_s,
-                "density"=>mat_siding.rho.to_s,
-                "specific_heat"=>mat_siding.cp.to_s,
-                "thick_in"=>mat_siding.thick_in.to_s,
-                "emissivity"=>mat_siding.tAbs.to_s
+                "solar_abs"=>mat_siding.sAbs,
+                "conductivity"=>mat_siding.k_in,
+                "density"=>mat_siding.rho,
+                "specific_heat"=>mat_siding.cp,
+                "thick_in"=>mat_siding.thick_in,
+                "emissivity"=>mat_siding.tAbs
                }
         measures[measure_subdir] = args
 
@@ -1053,13 +976,13 @@ class OSMeasures
     
     measure_subdir = "ResidentialConstructionsWallsExteriorThermalMass"
     args = {
-            "thick_in1"=>mat_mass.thick_in.to_s,
+            "thick_in1"=>mat_mass.thick_in,
             "thick_in2"=>nil,
-            "cond1"=>mat_mass.k_in.to_s,
+            "cond1"=>mat_mass.k_in,
             "cond2"=>nil,
-            "dens1"=>mat_mass.rho.to_s,
+            "dens1"=>mat_mass.rho,
             "dens2"=>nil,
-            "specheat1"=>mat_mass.cp.to_s,
+            "specheat1"=>mat_mass.cp,
             "specheat2"=>nil
            }
     measures[measure_subdir] = args
@@ -1067,13 +990,13 @@ class OSMeasures
     measure_subdir = "ResidentialConstructionsWallsPartitionThermalMass"
     args = {
             "frac"=>"1.0",
-            "thick_in1"=>mat_mass.thick_in.to_s,
+            "thick_in1"=>mat_mass.thick_in,
             "thick_in2"=>nil,
-            "cond1"=>mat_mass.k_in.to_s,
+            "cond1"=>mat_mass.k_in,
             "cond2"=>nil,
-            "dens1"=>mat_mass.rho.to_s,
+            "dens1"=>mat_mass.rho,
             "dens2"=>nil,
-            "specheat1"=>mat_mass.cp.to_s,
+            "specheat1"=>mat_mass.cp,
             "specheat2"=>nil
            }
     measures[measure_subdir] = args
@@ -1090,11 +1013,11 @@ class OSMeasures
 
     measure_subdir = "ResidentialConstructionsFurnitureThermalMass"
     args = {
-            "area_fraction"=>"0.4",
-            "mass"=>"8.0",
-            "solar_abs"=>"0.6",
+            "area_fraction"=>0.4,
+            "mass"=>8.0,
+            "solar_abs"=>0.6,
             "conductivity"=>BaseMaterial.Wood.k_in.to_s,
-            "density"=>"40.0",
+            "density"=>40.0,
             "specific_heat"=>BaseMaterial.Wood.cp.to_s,
            }
     measures[measure_subdir] = args
@@ -1121,11 +1044,11 @@ class OSMeasures
       
         measure_subdir = "ResidentialHotWaterHeaterTankElectric"
         args = {
-                "tank_volume"=>tank_vol.to_s,
-                "setpoint_temp"=>setpoint_temp.to_s,
+                "tank_volume"=>tank_vol,
+                "setpoint_temp"=>setpoint_temp,
                 "location"=>Constants.Auto,
-                "capacity"=>OpenStudio::convert(cap_btuh,"Btu/h","kW").get.to_s,
-                "energy_factor"=>ef.to_s
+                "capacity"=>OpenStudio::convert(cap_btuh,"Btu/h","kW").get,
+                "energy_factor"=>ef
                }
         measures[measure_subdir] = args
         
@@ -1136,14 +1059,14 @@ class OSMeasures
         measure_subdir = "ResidentialHotWaterHeaterTankFuel"
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
-                "tank_volume"=>tank_vol.to_s,
-                "setpoint_temp"=>setpoint_temp.to_s,
+                "tank_volume"=>tank_vol,
+                "setpoint_temp"=>setpoint_temp,
                 "location"=>Constants.Auto,
-                "capacity"=>(cap_btuh/1000.0).to_s,
-                "energy_factor"=>ef.to_s,
-                "recovery_efficiency"=>re.to_s,
-                "offcyc_power"=>"0",
-                "oncyc_power"=>"0"
+                "capacity"=>cap_btuh/1000.0,
+                "energy_factor"=>ef,
+                "recovery_efficiency"=>re,
+                "offcyc_power"=>0,
+                "oncyc_power"=>0
                }
         measures[measure_subdir] = args
         
@@ -1158,11 +1081,11 @@ class OSMeasures
       
         measure_subdir = "ResidentialHotWaterHeaterTanklessElectric"
         args = {
-                "setpoint_temp"=>setpoint_temp.to_s,
+                "setpoint_temp"=>setpoint_temp,
                 "location"=>Constants.Auto,
-                "capacity"=>"100000000.0",
-                "energy_factor"=>ef.to_s,
-                "cycling_derate"=>ef_adj.to_s
+                "capacity"=>100000000.0,
+                "energy_factor"=>ef,
+                "cycling_derate"=>ef_adj
                }
         measures[measure_subdir] = args
         
@@ -1172,11 +1095,11 @@ class OSMeasures
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "location"=>Constants.Auto,
-                "capacity"=>"100000000.0",
-                "energy_factor"=>ef.to_s,
-                "cycling_derate"=>ef_adj.to_s,
-                "offcyc_power"=>"0",
-                "oncyc_power"=>"0",
+                "capacity"=>100000000.0,
+                "energy_factor"=>ef,
+                "cycling_derate"=>ef_adj,
+                "offcyc_power"=>0,
+                "oncyc_power"=>0,
                }
         measures[measure_subdir] = args
         
@@ -1187,21 +1110,21 @@ class OSMeasures
       measure_subdir = "ResidentialHotWaterHeaterHeatPump"
       # FIXME
       args = {
-              "storage_tank_volume"=>tank_vol.to_s,
-              "setpoint_temp"=>setpoint_temp.to_s,
+              "storage_tank_volume"=>tank_vol,
+              "setpoint_temp"=>setpoint_temp,
               "space"=>Constants.Auto,
-              "element_capacity"=>"4.5",
-              "min_temp"=>"45",
-              "max_temp"=>"120",
-              "cap"=>"0.5",
-              "cop"=>"2.8",
-              "shr"=>"0.88",
-              "airflow_rate"=>"181",
-              "fan_power"=>"0.0462",
-              "parasitics"=>"3",
-              "tank_ua"=>"3.9",
-              "int_factor"=>"1.0",
-              "temp_depress"=>"0"
+              "element_capacity"=>4.5,
+              "min_temp"=>45,
+              "max_temp"=>120,
+              "cap"=>0.5,
+              "cop"=>2.8,
+              "shr"=>0.88,
+              "airflow_rate"=>181,
+              "fan_power"=>0.0462,
+              "parasitics"=>3,
+              "tank_ua"=>3.9,
+              "int_factor"=>1.0,
+              "temp_depress"=>0
              }
       measures[measure_subdir] = args
       
@@ -1236,9 +1159,9 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACFurnaceElectric"
         args = {
-                "afue"=>afue.to_s,
-                "fan_power_installed"=>"0.5",
-                "capacity"=>heat_capacity_kbtuh.to_s
+                "afue"=>afue,
+                "fan_power_installed"=>0.5,
+                "capacity"=>heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
         
@@ -1247,9 +1170,9 @@ class OSMeasures
         measure_subdir = "ResidentialHVACFurnaceFuel"
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
-                "afue"=>afue.to_s,
-                "fan_power_installed"=>"0.5",
-                "capacity"=>heat_capacity_kbtuh.to_s
+                "afue"=>afue,
+                "fan_power_installed"=>0.5,
+                "capacity"=>heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
         
@@ -1264,9 +1187,9 @@ class OSMeasures
         measure_subdir = "ResidentialHVACBoilerElectric"
         args = {
                 "system_type"=>Constants.BoilerTypeForcedDraft,
-                "afue"=>afue.to_s,
+                "afue"=>afue,
                 "oat_reset_enabled"=>"false",
-                "capacity"=>heat_capacity_kbtuh.to_s
+                "capacity"=>heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
         
@@ -1276,7 +1199,7 @@ class OSMeasures
         args = {
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "system_type"=>Constants.BoilerTypeForcedDraft,
-                "afue"=>afue.to_s,
+                "afue"=>afue,
                 "oat_reset_enabled"=>"false", # FIXME
                 "oat_high"=>nil, # FIXME
                 "oat_low"=>nil, # FIXME
@@ -1284,7 +1207,7 @@ class OSMeasures
                 "oat_hwst_low"=>nil, # FIXME
                 "design_temp"=>nil,
                 "modulation"=>"false",
-                "capacity"=>heat_capacity_kbtuh.to_s
+                "capacity"=>heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
         
@@ -1296,8 +1219,8 @@ class OSMeasures
     
       measure_subdir = "ResidentialHVACElectricBaseboard"
       args = {
-              "efficiency"=>percent.to_s,
-              "capacity"=>heat_capacity_kbtuh.to_s
+              "efficiency"=>percent,
+              "capacity"=>heat_capacity_kbtuh
              }
       measures[measure_subdir] = args
              
@@ -1333,19 +1256,19 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACCentralAirConditionerSingleSpeed"
         args = {
-                "seer"=>seer.to_s,
-                "eer"=>(0.82 * seer_nom + 0.64).to_s,       
-                "shr"=>"0.73",
-                "fan_power_rated"=>"0.365",
-                "fan_power_installed"=>"0.5",
-                "crankcase_capacity"=>crankcase_kw.to_s,
-                "crankcase_max_temp"=>crankcase_temp.to_s,
-                "eer_capacity_derate_1ton"=>"1",
-                "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"1",
-                "eer_capacity_derate_4ton"=>"1",
-                "eer_capacity_derate_5ton"=>"1",
-                "capacity"=>cool_capacity_tons.to_s
+                "seer"=>seer,
+                "eer"=>0.82 * seer_nom + 0.64,       
+                "shr"=>0.73,
+                "fan_power_rated"=>0.365,
+                "fan_power_installed"=>0.5,
+                "crankcase_capacity"=>crankcase_kw,
+                "crankcase_max_temp"=>crankcase_temp,
+                "eer_capacity_derate_1ton"=>1,
+                "eer_capacity_derate_2ton"=>1,
+                "eer_capacity_derate_3ton"=>1,
+                "eer_capacity_derate_4ton"=>1,
+                "eer_capacity_derate_5ton"=>1,
+                "capacity"=>cool_capacity_tons
                }
         measures[measure_subdir] = args
         
@@ -1353,25 +1276,25 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACCentralAirConditionerTwoSpeed"
         args = {
-                "seer"=>seer.to_s,
-                "eer"=>(0.83 * seer_nom + 0.15).to_s,
-                "eer2"=>(0.56 * seer_nom + 3.57).to_s,
-                "shr"=>"0.71",
-                "shr2"=>"0.73",
-                "capacity_ratio"=>"0.72",
-                "capacity_ratio2"=>"1",
-                "fan_speed_ratio"=>"0.86",
-                "fan_speed_ratio2"=>"1",
-                "fan_power_rated"=>"0.14",
-                "fan_power_installed"=>"0.3",
-                "crankcase_capacity"=>crankcase_kw.to_s,
-                "crankcase_max_temp"=>crankcase_temp.to_s,
-                "eer_capacity_derate_1ton"=>"1",
-                "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"1",
-                "eer_capacity_derate_4ton"=>"1",
-                "eer_capacity_derate_5ton"=>"1",
-                "capacity"=>cool_capacity_tons.to_s
+                "seer"=>seer,
+                "eer"=>0.83 * seer_nom + 0.15,
+                "eer2"=>0.56 * seer_nom + 3.57,
+                "shr"=>0.71,
+                "shr2"=>0.73,
+                "capacity_ratio"=>0.72,
+                "capacity_ratio2"=>1,
+                "fan_speed_ratio"=>0.86,
+                "fan_speed_ratio2"=>1,
+                "fan_power_rated"=>0.14,
+                "fan_power_installed"=>0.3,
+                "crankcase_capacity"=>crankcase_kw,
+                "crankcase_max_temp"=>crankcase_temp,
+                "eer_capacity_derate_1ton"=>1,
+                "eer_capacity_derate_2ton"=>1,
+                "eer_capacity_derate_3ton"=>1,
+                "eer_capacity_derate_4ton"=>1,
+                "eer_capacity_derate_5ton"=>1,
+                "capacity"=>cool_capacity_tons
                }
         measures[measure_subdir] = args
         
@@ -1379,33 +1302,33 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACCentralAirConditionerVariableSpeed"
         args = {
-                "seer"=>seer.to_s,
-                "eer"=>(0.80 * seer_nom).to_s,
-                "eer2"=>(0.75 * seer_nom).to_s,
-                "eer3"=>(0.65 * seer_nom).to_s,
-                "eer4"=>(0.60 * seer_nom).to_s,
-                "shr"=>"0.98",
-                "shr2"=>"0.82",
-                "shr3"=>"0.745",
-                "shr4"=>"0.77",
-                "capacity_ratio"=>"0.36",
-                "capacity_ratio2"=>"0.64",
-                "capacity_ratio3"=>"1",
-                "capacity_ratio4"=>"1.16",
-                "fan_speed_ratio"=>"0.51",
-                "fan_speed_ratio2"=>"84",
-                "fan_speed_ratio3"=>"1",
-                "fan_speed_ratio4"=>"1.19",
-                "fan_power_rated"=>"0.14",
-                "fan_power_installed"=>"0.3",
-                "crankcase_capacity"=>crankcase_kw.to_s,
-                "crankcase_max_temp"=>crankcase_temp.to_s,
-                "eer_capacity_derate_1ton"=>"1",
-                "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"1",
-                "eer_capacity_derate_4ton"=>"1",
-                "eer_capacity_derate_5ton"=>"1",
-                "capacity"=>cool_capacity_tons.to_s
+                "seer"=>seer,
+                "eer"=>0.80 * seer_nom,
+                "eer2"=>0.75 * seer_nom,
+                "eer3"=>0.65 * seer_nom,
+                "eer4"=>0.60 * seer_nom,
+                "shr"=>0.98,
+                "shr2"=>0.82,
+                "shr3"=>0.745,
+                "shr4"=>0.77,
+                "capacity_ratio"=>0.36,
+                "capacity_ratio2"=>0.64,
+                "capacity_ratio3"=>1,
+                "capacity_ratio4"=>1.16,
+                "fan_speed_ratio"=>0.51,
+                "fan_speed_ratio2"=>84,
+                "fan_speed_ratio3"=>1,
+                "fan_speed_ratio4"=>1.19,
+                "fan_power_rated"=>0.14,
+                "fan_power_installed"=>0.3,
+                "crankcase_capacity"=>crankcase_kw,
+                "crankcase_max_temp"=>crankcase_temp,
+                "eer_capacity_derate_1ton"=>1,
+                "eer_capacity_derate_2ton"=>1,
+                "eer_capacity_derate_3ton"=>1,
+                "eer_capacity_derate_4ton"=>1,
+                "eer_capacity_derate_5ton"=>1,
+                "capacity"=>cool_capacity_tons
                }
         measures[measure_subdir] = args
         
@@ -1421,10 +1344,10 @@ class OSMeasures
 
       measure_subdir = "ResidentialHVACRoomAirConditioner"
       args = {
-              "eer"=>eer1.to_s,
-              "shr"=>shr1.to_s,
-              "airflow_rate"=>"350",
-              "capacity"=>cool_capacity_tons.to_s
+              "eer"=>eer1,
+              "shr"=>shr1,
+              "airflow_rate"=>350,
+              "capacity"=>cool_capacity_tons
              }
       measures[measure_subdir] = args
       
@@ -1471,28 +1394,28 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpSingleSpeed"
         args = {
-                "seer"=>seer.to_s,
-                "hspf"=>hspf.to_s,
-                "eer"=>(0.80 * seer_nom + 1.0).to_s,
-                "cop"=>(0.45 * seer_nom - 0.34).to_s,
-                "shr"=>"0.73",
-                "fan_power_rated"=>"0.365",
-                "fan_power_installed"=>"0.5",
-                "min_temp"=>"0",
-                "crankcase_capacity"=>crankcase_kw.to_s,
-                "crankcase_max_temp"=>crankcase_temp.to_s,
-                "eer_capacity_derate_1ton"=>"1",
-                "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"1",
-                "eer_capacity_derate_4ton"=>"1",
-                "eer_capacity_derate_5ton"=>"1",
-                "cop_capacity_derate_1ton"=>"1",
-                "cop_capacity_derate_2ton"=>"1",
-                "cop_capacity_derate_3ton"=>"1",
-                "cop_capacity_derate_4ton"=>"1",
-                "cop_capacity_derate_5ton"=>"1",
-                "heat_pump_capacity"=>cool_capacity_tons.to_s,
-                "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
+                "seer"=>seer,
+                "hspf"=>hspf,
+                "eer"=>0.80 * seer_nom + 1.0,
+                "cop"=>0.45 * seer_nom - 0.34,
+                "shr"=>0.73,
+                "fan_power_rated"=>0.365,
+                "fan_power_installed"=>0.5,
+                "min_temp"=>0,
+                "crankcase_capacity"=>crankcase_kw,
+                "crankcase_max_temp"=>crankcase_temp,
+                "eer_capacity_derate_1ton"=>1,
+                "eer_capacity_derate_2ton"=>1,
+                "eer_capacity_derate_3ton"=>1,
+                "eer_capacity_derate_4ton"=>1,
+                "eer_capacity_derate_5ton"=>1,
+                "cop_capacity_derate_1ton"=>1,
+                "cop_capacity_derate_2ton"=>1,
+                "cop_capacity_derate_3ton"=>1,
+                "cop_capacity_derate_4ton"=>1,
+                "cop_capacity_derate_5ton"=>1,
+                "heat_pump_capacity"=>cool_capacity_tons,
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
         
@@ -1500,37 +1423,37 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpTwoSpeed"
         args = {
-                "seer"=>seer.to_s,
-                "hspf"=>hspf.to_s,
-                "eer"=>(0.78 * seer_nom + 0.6).to_s,
-                "eer2"=>(0.68 * seer_nom + 1.0).to_s,
-                "cop"=>(0.60 * seer_nom - 1.40).to_s,
-                "cop2"=>(0.50 * seer_nom - 0.94).to_s,
-                "shr"=>"0.71",
-                "shr2"=>"0.724",
-                "capacity_ratio"=>"0.72",
-                "capacity_ratio2"=>"1",
-                "fan_speed_ratio_cooling"=>"0.86",
-                "fan_speed_ratio_cooling2"=>"1",
-                "fan_speed_ratio_heating"=>"0.8",
-                "fan_speed_ratio_heating2"=>"1",
-                "fan_power_rated"=>"0.14",
-                "fan_power_installed"=>"0.3",
-                "min_temp"=>"0",
-                "crankcase_capacity"=>crankcase_kw.to_s,
-                "crankcase_max_temp"=>crankcase_temp.to_s,
-                "eer_capacity_derate_1ton"=>"1",
-                "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"1",
-                "eer_capacity_derate_4ton"=>"1",
-                "eer_capacity_derate_5ton"=>"1",
-                "cop_capacity_derate_1ton"=>"1",
-                "cop_capacity_derate_2ton"=>"1",
-                "cop_capacity_derate_3ton"=>"1",
-                "cop_capacity_derate_4ton"=>"1",
-                "cop_capacity_derate_5ton"=>"1",
-                "heat_pump_capacity"=>cool_capacity_tons.to_s,
-                "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
+                "seer"=>seer,
+                "hspf"=>hspf,
+                "eer"=>0.78 * seer_nom + 0.6,
+                "eer2"=>0.68 * seer_nom + 1.0,
+                "cop"=>0.60 * seer_nom - 1.40,
+                "cop2"=>0.50 * seer_nom - 0.94,
+                "shr"=>0.71,
+                "shr2"=>0.724,
+                "capacity_ratio"=>0.72,
+                "capacity_ratio2"=>1,
+                "fan_speed_ratio_cooling"=>0.86,
+                "fan_speed_ratio_cooling2"=>1,
+                "fan_speed_ratio_heating"=>0.8,
+                "fan_speed_ratio_heating2"=>1,
+                "fan_power_rated"=>0.14,
+                "fan_power_installed"=>0.3,
+                "min_temp"=>0,
+                "crankcase_capacity"=>crankcase_kw,
+                "crankcase_max_temp"=>crankcase_temp,
+                "eer_capacity_derate_1ton"=>1,
+                "eer_capacity_derate_2ton"=>1,
+                "eer_capacity_derate_3ton"=>1,
+                "eer_capacity_derate_4ton"=>1,
+                "eer_capacity_derate_5ton"=>1,
+                "cop_capacity_derate_1ton"=>1,
+                "cop_capacity_derate_2ton"=>1,
+                "cop_capacity_derate_3ton"=>1,
+                "cop_capacity_derate_4ton"=>1,
+                "cop_capacity_derate_5ton"=>1,
+                "heat_pump_capacity"=>cool_capacity_tons,
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
         
@@ -1538,49 +1461,49 @@ class OSMeasures
       
         measure_subdir = "ResidentialHVACAirSourceHeatPumpVariableSpeed"
         args = {
-                "seer"=>seer.to_s,
-                "hspf"=>hspf.to_s,
-                "eer"=>(0.80 * seer_nom).to_s,
-                "eer2"=>(0.75 * seer_nom).to_s,
-                "eer3"=>(0.65 * seer_nom).to_s,
-                "eer4"=>(0.60 * seer_nom).to_s,
-                "cop"=>(0.48 * seer_nom).to_s,
-                "cop2"=>(0.45 * seer_nom).to_s,
-                "cop3"=>(0.39 * seer_nom).to_s,
-                "cop4"=>(0.39 * seer_nom).to_s,                  
-                "shr"=>"0.84",
-                "shr2"=>"0.79",
-                "shr3"=>"0.76",
-                "shr4"=>"0.77",                  
-                "capacity_ratio"=>"0.49",
-                "capacity_ratio2"=>"0.67",
-                "capacity_ratio3"=>"0.1",
-                "capacity_ratio4"=>"1.2",                  
-                "fan_speed_ratio_cooling"=>"0.7",
-                "fan_speed_ratio_cooling2"=>"0.9",
-                "fan_speed_ratio_cooling3"=>"1",
-                "fan_speed_ratio_cooling4"=>"1.26",                  
-                "fan_speed_ratio_heating"=>"0.74",
-                "fan_speed_ratio_heating2"=>"0.92",
-                "fan_speed_ratio_heating3"=>"1",
-                "fan_speed_ratio_heating4"=>"1.22",                  
-                "fan_power_rated"=>"0.14",
-                "fan_power_installed"=>"0.3",
-                "min_temp"=>"0",
-                "crankcase_capacity"=>crankcase_kw.to_s,
-                "crankcase_max_temp"=>crankcase_temp.to_s,
-                "eer_capacity_derate_1ton"=>"1",
-                "eer_capacity_derate_2ton"=>"1",
-                "eer_capacity_derate_3ton"=>"1",
-                "eer_capacity_derate_4ton"=>"1",
-                "eer_capacity_derate_5ton"=>"1",
-                "cop_capacity_derate_1ton"=>"1",
-                "cop_capacity_derate_2ton"=>"1",
-                "cop_capacity_derate_3ton"=>"1",
-                "cop_capacity_derate_4ton"=>"1",
-                "cop_capacity_derate_5ton"=>"1",
-                "heat_pump_capacity"=>cool_capacity_tons.to_s,
-                "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
+                "seer"=>seer,
+                "hspf"=>hspf,
+                "eer"=>0.80 * seer_nom,
+                "eer2"=>0.75 * seer_nom,
+                "eer3"=>0.65 * seer_nom,
+                "eer4"=>0.60 * seer_nom,
+                "cop"=>0.48 * seer_nom,
+                "cop2"=>0.45 * seer_nom,
+                "cop3"=>0.39 * seer_nom,
+                "cop4"=>0.39 * seer_nom,                  
+                "shr"=>0.84,
+                "shr2"=>0.79,
+                "shr3"=>0.76,
+                "shr4"=>0.77,
+                "capacity_ratio"=>0.49,
+                "capacity_ratio2"=>0.67,
+                "capacity_ratio3"=>0.1,
+                "capacity_ratio4"=>1.2,
+                "fan_speed_ratio_cooling"=>0.7,
+                "fan_speed_ratio_cooling2"=>0.9,
+                "fan_speed_ratio_cooling3"=>1,
+                "fan_speed_ratio_cooling4"=>1.26,                  
+                "fan_speed_ratio_heating"=>0.74,
+                "fan_speed_ratio_heating2"=>0.92,
+                "fan_speed_ratio_heating3"=>1,
+                "fan_speed_ratio_heating4"=>1.22,                  
+                "fan_power_rated"=>0.14,
+                "fan_power_installed"=>0.3,
+                "min_temp"=>0,
+                "crankcase_capacity"=>crankcase_kw,
+                "crankcase_max_temp"=>crankcase_temp,
+                "eer_capacity_derate_1ton"=>1,
+                "eer_capacity_derate_2ton"=>1,
+                "eer_capacity_derate_3ton"=>1,
+                "eer_capacity_derate_4ton"=>1,
+                "eer_capacity_derate_5ton"=>1,
+                "cop_capacity_derate_1ton"=>1,
+                "cop_capacity_derate_2ton"=>1,
+                "cop_capacity_derate_3ton"=>1,
+                "cop_capacity_derate_4ton"=>1,
+                "cop_capacity_derate_5ton"=>1,
+                "heat_pump_capacity"=>cool_capacity_tons,
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
         
@@ -1601,25 +1524,25 @@ class OSMeasures
       
       measure_subdir = "ResidentialHVACMiniSplitHeatPump"
       args = {
-              "seer"=>seer.to_s,
-              "min_cooling_capacity"=>"0.4",
-              "max_cooling_capacity"=>"1.2",
-              "shr"=>"0.73",
-              "min_cooling_airflow_rate"=>"200",
-              "max_cooling_airflow_rate"=>"425",
-              "hspf"=>hpsf.to_s,
-              "heating_capacity_offset"=>"2300",
-              "min_heating_capacity"=>"0.3",
-              "max_heating_capacity"=>"1.2",
-              "min_heating_airflow_rate"=>"200",
-              "max_heating_airflow_rate"=>"400",
-              "cap_retention_frac"=>"0.25",
-              "cap_retention_temp"=>"-5",
-              "pan_heater_power"=>"0",
-              "fan_power"=>"0.07",
-              "heat_pump_capacity"=>cool_capacity_tons.to_s,
-              "supplemental_efficiency"=>"1",
-              "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
+              "seer"=>seer,
+              "min_cooling_capacity"=>0.4,
+              "max_cooling_capacity"=>1.2,
+              "shr"=>0.73,
+              "min_cooling_airflow_rate"=>200,
+              "max_cooling_airflow_rate"=>425,
+              "hspf"=>hpsf,
+              "heating_capacity_offset"=>2300,
+              "min_heating_capacity"=>0.3,
+              "max_heating_capacity"=>1.2,
+              "min_heating_airflow_rate"=>200,
+              "max_heating_airflow_rate"=>400,
+              "cap_retention_frac"=>0.25,
+              "cap_retention_temp"=>-5,
+              "pan_heater_power"=>0,
+              "fan_power"=>0.07,
+              "heat_pump_capacity"=>cool_capacity_tons,
+              "supplemental_efficiency"=>1,
+              "supplemental_capacity"=>backup_heat_capacity_kbtuh
              }
       measures[measure_subdir] = args
              

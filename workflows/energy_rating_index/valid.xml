@@ -368,7 +368,7 @@
             <SystemIdentifier id='Door_ID1'/>
             <AttachedToWall idref='agwall-1'/>
             <Area>80</Area>
-            <StormDoor>true</StormDoor>
+            <Azimuth>270</Azimuth>
             <RValue>4.4</RValue>
           </Door>
         </Doors>

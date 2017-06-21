@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>d0234425-688b-4390-8bc1-4c20e8682591</version_id>
-  <version_modified>20170616T221146Z</version_modified>
+  <version_id>7d747c9e-063a-4018-8f53-78be0f1e3cf0</version_id>
+  <version_modified>20170621T223015Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -53,12 +53,6 @@
       <filetype>json</filetype>
       <usage_type>resource</usage_type>
       <checksum>AC8B5380</checksum>
-    </file>
-    <file>
-      <filename>helper_methods.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>77B8414D</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -241,12 +235,6 @@
       <checksum>C27A8C79</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32BD4E09</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -270,10 +258,22 @@
       <checksum>1AA3758E</checksum>
     </file>
     <file>
+      <filename>helper_methods.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9D78B57E</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>115A983D</checksum>
+    </file>
+    <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>B8FE930E</checksum>
+      <checksum>77661D46</checksum>
     </file>
   </files>
 </measure>

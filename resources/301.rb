@@ -82,7 +82,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_walls_reference(new_enclosure, orig_details, climate_zone)
     set_enclosure_windows_reference(new_enclosure, orig_details, cfa, climate_zone)
     set_enclosure_skylights_reference(new_enclosure)
-    set_enclosure_doors_reference(new_enclosure, climate_zone)
+    set_enclosure_doors_reference(new_enclosure, orig_details, climate_zone)
     
     # Systems
     new_systems = XMLHelper.add_element(new_details, "Systems")
@@ -619,6 +619,20 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_rim_joists_rated(new_enclosure)
     # FIXME
   end
+  
+  def self.get_wall_subsurface_area(wall, details)
+    wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+    subsurface_area = 0.0
+    details.elements.each("Enclosure/Windows/Window") do |window|
+      next if window.elements["AttachedToWall"].attributes["idref"] != wall_id
+      subsurface_area += Float(XMLHelper.get_value(window, "Area"))
+    end
+    details.elements.each("Enclosure/Doors/Door") do |door|
+      next if door.elements["AttachedToWall"].attributes["idref"] != wall_id
+      subsurface_area += Float(XMLHelper.get_value(door, "Area"))
+    end
+    return subsurface_area
+  end
 
   def self.set_enclosure_walls_reference(new_enclosure, orig_details, climate_zone)
   
@@ -647,6 +661,11 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_wall, orig_wall, "InteriorAdjacentTo")
       XMLHelper.add_element(new_wall, "WallType/WoodStud") # FIXME?
       XMLHelper.copy_element(new_wall, orig_wall, "Area")
+      # Convert to net wall area; when windows/doors are added, we will convert back to gross wall area.
+      # This implies that we are preserving net wall area, not gross wall area, in the Reference Home. In theory,
+      # we'd prefer the opposite, but the opposite is not possible -- for example, a Reference Home with an inset attached
+      # garage that has no exterior wall on one side.
+      new_wall.elements["Area"].text = Float(new_wall.elements["Area"].text) - get_wall_subsurface_area(orig_wall, orig_details)
       XMLHelper.add_element(new_wall, "Siding", "vinyl siding")
       XMLHelper.add_element(new_wall, "Color", "medium")
       insulation = XMLHelper.add_element(new_wall, "Insulation")
@@ -755,22 +774,29 @@ class EnergyRatingIndex301Ruleset
     fa = ag_wall_area / (ag_wall_area + 0.5 * bg_wall_area)
     f = 1.0 # TODO
     
-    # Remove all windows
+    total_window_area = 0.18 * cfa * fa * f
+    
+    wall = orig_details.elements["Enclosure/Walls/Wall"] # Arbitrary wall
+    
+    # Create new windows
     new_windows = XMLHelper.add_element(new_enclosure, "Windows")
     for orientation, azimuth in {"north"=>0,"south"=>180,"east"=>90,"west"=>270}
-      # Create new window
       new_window = XMLHelper.add_element(new_windows, "Window")
       sys_id = XMLHelper.add_element(new_window, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "Window_#{orientation}")
-      XMLHelper.add_element(new_window, "Area", 0.18 * 0.25 * cfa * fa * f)
+      XMLHelper.add_element(new_window, "Area", 0.25 * total_window_area)
       XMLHelper.add_element(new_window, "Azimuth", azimuth)
       XMLHelper.add_element(new_window, "UFactor", ufactor)
       XMLHelper.add_element(new_window, "SHGC", shgc)
-      XMLHelper.add_element(new_window, "NFRCCertified", true)
       XMLHelper.add_element(new_window, "ExteriorShading", "none")
+      attwall = XMLHelper.add_element(new_window, "AttachedToWall")
+      attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
       set_window_interior_shading_reference(new_window)
     end
 
+    # Adjust wall gross area
+    wall.elements["Area"].text = Float(wall.elements["Area"].text) + total_window_area
+    
   end
   
   def self.set_window_interior_shading_reference(window)
@@ -792,7 +818,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_windows_rated(new_enclosure, orig_details)
   
-    new_windows = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Windows")
+    new_windows = XMLHelper.add_element(new_enclosure, "Windows")
   
     '''
     Table 4.2.2(1) - Glazing
@@ -807,7 +833,15 @@ class EnergyRatingIndex301Ruleset
     during hours when natural ventilation will reduce annual cooling energy use.
     '''
     
-    new_windows.elements.each("Window") do |new_window|
+    orig_details.elements.each("Enclosure/Windows/Window") do |orig_window|
+      new_window = XMLHelper.add_element(new_windows, "Window")
+      XMLHelper.copy_element(new_window, orig_window, "SystemIdentifier")
+      XMLHelper.copy_element(new_window, orig_window, "Area")
+      XMLHelper.copy_element(new_window, orig_window, "Azimuth")
+      XMLHelper.copy_element(new_window, orig_window, "UFactor")
+      XMLHelper.copy_element(new_window, orig_window, "SHGC")
+      XMLHelper.copy_element(new_window, orig_window, "ExteriorShading")
+      XMLHelper.copy_element(new_window, orig_window, "AttachedToWall")
       set_window_interior_shading_reference(new_window)
     end
     
@@ -835,7 +869,7 @@ class EnergyRatingIndex301Ruleset
     
   end
 
-  def self.set_enclosure_doors_reference(new_enclosure, climate_zone)
+  def self.set_enclosure_doors_reference(new_enclosure, orig_details, climate_zone)
 
     '''
     Table 4.2.2(1) - Doors
@@ -845,22 +879,29 @@ class EnergyRatingIndex301Ruleset
     '''
     
     ufactor, shgc = get_reference_component_characteristics(climate_zone, "door")
+    door_area = 40.0
+    
+    wall = orig_details.elements["Enclosure/Walls/Wall"] # Arbitrary wall
     
     # Create new door
     new_doors = XMLHelper.add_element(new_enclosure, "Doors")
     new_door = XMLHelper.add_element(new_doors, "Door")
     sys_id = XMLHelper.add_element(new_door, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Door")
-    XMLHelper.add_element(new_door, "Area", 40)
+    attwall = XMLHelper.add_element(new_door, "AttachedToWall")
+    attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
+    XMLHelper.add_element(new_door, "Area", door_area)
     XMLHelper.add_element(new_door, "Azimuth", 0)
-    XMLHelper.add_element(new_door, "DoorType", "exterior")
     XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
     
+    # Adjust wall gross area
+    wall.elements["Area"].text = Float(wall.elements["Area"].text) + door_area
+
   end
   
   def self.set_enclosure_doors_rated(new_enclosure, orig_details)
   
-    new_doors = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Doors")
+    new_doors = XMLHelper.add_element(new_enclosure, "Doors")
   
     '''
     Table 4.2.2(1) - Doors
@@ -868,7 +909,15 @@ class EnergyRatingIndex301Ruleset
     U-factor: Same as Rated Home
     Orientation: Same as Rated Home
     '''
-    # nop
+
+    orig_details.elements.each("Enclosure/Doors/Door") do |orig_door|
+      new_door = XMLHelper.add_element(new_doors, "Door")
+      XMLHelper.copy_element(new_door, orig_door, "SystemIdentifier")
+      XMLHelper.copy_element(new_door, orig_door, "AttachedToWall")
+      XMLHelper.copy_element(new_door, orig_door, "Area")
+      XMLHelper.copy_element(new_door, orig_door, "Azimuth")
+      XMLHelper.copy_element(new_door, orig_door, "RValue")
+    end
     
   end
   
