@@ -211,12 +211,12 @@ class EnergyRatingIndex301Validator
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
                 '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]',
                 '[FractionCoolLoadServed=1.0]',
-                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
             ],
             # CoolingSystem (CentralAC)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => [
                 'AnnualCoolingEfficiency[Units="SEER"]/Value',
                 '[CoolingSystemFuel="electricity"]',
+                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
             ],
             # CoolingSystem (RoomAC)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioner"]' => [

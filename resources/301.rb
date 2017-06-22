@@ -1135,33 +1135,32 @@ class EnergyRatingIndex301Ruleset
         # 7.7 HSPF air source heat pump
         seer = 13.0
         hspf = 7.7
-        heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
-        sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
+        heat_pump_system = XMLHelper.add_element(new_hvac_plant, "HeatPump")
+        sys_id = XMLHelper.add_element(heat_pump_system, "SystemIdentifier")
         XMLHelper.add_attribute(sys_id, "id", "HeatPump")
-        XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
-        cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolEfficiency")
+        XMLHelper.add_element(heat_pump_system, "HeatPumpType", "air-to-air")
+        cool_eff = XMLHelper.add_element(heat_pump_system, "AnnualCoolEfficiency")
         XMLHelper.add_element(cool_eff, "Units", "SEER")
         XMLHelper.add_element(cool_eff, "Value", seer)
-        heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatEfficiency")
+        heat_eff = XMLHelper.add_element(heat_pump_system, "AnnualHeatEfficiency")
         XMLHelper.add_element(heat_eff, "Units", "HSPF")
         XMLHelper.add_element(heat_eff, "Value", hspf)
-        extension = XMLHelper.add_element(heat_pump, "extension")
+        extension = XMLHelper.add_element(heat_pump_system, "extension")
         XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
         XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
         XMLHelper.add_element(extension, "NumberSpeeds", "1-Speed")
-        cooling_system = heat_pump
         
       else
         
         # 78% AFUE gas furnace
         afue = 0.78
-        heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
-        sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
+        heating_system = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
+        sys_id = XMLHelper.add_element(heating_system, "SystemIdentifier")
         XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
-        sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
+        sys_type = XMLHelper.add_element(heating_system, "HeatingSystemType")
         furnace = XMLHelper.add_element(sys_type, "Furnace")
-        XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
-        heat_eff = XMLHelper.add_element(heat_sys, "AnnualHeatingEfficiency")
+        XMLHelper.add_element(heating_system, "HeatingSystemFuel", "natural gas")
+        heat_eff = XMLHelper.add_element(heating_system, "AnnualHeatingEfficiency")
         XMLHelper.add_element(heat_eff, "Units", "AFUE")
         XMLHelper.add_element(heat_eff, "Value", afue)
         
@@ -1185,23 +1184,23 @@ class EnergyRatingIndex301Ruleset
       
     end
     
-    if cooling_system.nil?
+    if cooling_system.nil? and heat_pump_system.nil?
     
       # 13 SEER electric air conditioner
       seer = 13.0
-      cool_sys = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
-      sys_id = XMLHelper.add_element(cool_sys, "SystemIdentifier")
+      cooling_system = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
+      sys_id = XMLHelper.add_element(cooling_system, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
-      XMLHelper.add_element(cool_sys, "CoolingSystemType", "central air conditioning")
-      XMLHelper.add_element(cool_sys, "CoolingSystemFuel", "electricity")
-      cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
+      XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
+      XMLHelper.add_element(cooling_system, "CoolingSystemFuel", "electricity")
+      cool_eff = XMLHelper.add_element(cooling_system, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", seer)
-      extension = XMLHelper.add_element(cool_sys, "extension")
+      extension = XMLHelper.add_element(cooling_system, "extension")
       XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       XMLHelper.add_element(extension, "NumberSpeeds", "1-Speed")
     
-    else
+    elsif heat_pump_system.nil?
     
       # Retain cooling system
       cooling_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")

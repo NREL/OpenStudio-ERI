@@ -232,35 +232,39 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # FIXME: Are HW distribution losses included in the HW energy values?
     # FIXME: Handle fan/pump energy (requires EMS or timeseries output to split apart heating/cooling)
     
-    clg_coils = []
-    htg_coils = []
+    clg_objs = []
+    htg_objs = []
     model.getThermalZones.each do |zone|
       HVAC.existing_cooling_equipment(model, runner, zone).each do |clg_equip|
         if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-          clg_coils << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get).name.to_s
+          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get).name.to_s
         elsif clg_equip.to_ZoneHVACComponent.is_initialized
-          clg_coils << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
+          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
         end
       end
       HVAC.existing_heating_equipment(model, runner, zone).each do |htg_equip|
         if htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-          htg_coils << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get).name.to_s
+          htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get).name.to_s
         elsif htg_equip.to_ZoneHVACComponent.is_initialized
-          htg_coils << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
+          if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+            htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
+          else
+            htg_objs << htg_equip.name.to_s
+          end
         end
       end
     end
     
-    if clg_coils.size == 0
-      runner.registerError("Could not identify cooling coil.")
+    if clg_objs.size == 0
+      runner.registerError("Could not identify cooling object.")
       return false
-    elsif htg_coils.size == 0
+    elsif htg_objs.size == 0
       runner.registerError("Could not identify heating coil.")
       return false
     end
     
-    add_output_variables(model, BuildingLoadVars.get_space_heating_load_vars, htg_coils)
-    add_output_variables(model, BuildingLoadVars.get_space_cooling_load_vars, clg_coils)
+    add_output_variables(model, BuildingLoadVars.get_space_heating_load_vars, htg_objs)
+    add_output_variables(model, BuildingLoadVars.get_space_cooling_load_vars, clg_objs)
     add_output_variables(model, BuildingLoadVars.get_water_heating_load_vars)
     
     return true
@@ -1189,6 +1193,11 @@ class OSMeasures
                 "system_type"=>Constants.BoilerTypeForcedDraft,
                 "afue"=>afue,
                 "oat_reset_enabled"=>"false",
+                "oat_high"=>nil, # FIXME
+                "oat_low"=>nil, # FIXME
+                "oat_hwst_high"=>nil, # FIXME
+                "oat_hwst_low"=>nil, # FIXME
+                "design_temp"=>180, # FIXME
                 "capacity"=>heat_capacity_kbtuh
                }
         measures[measure_subdir] = args
@@ -1205,7 +1214,7 @@ class OSMeasures
                 "oat_low"=>nil, # FIXME
                 "oat_hwst_high"=>nil, # FIXME
                 "oat_hwst_low"=>nil, # FIXME
-                "design_temp"=>nil,
+                "design_temp"=>180, # FIXME
                 "modulation"=>"false",
                 "capacity"=>heat_capacity_kbtuh
                }
@@ -1340,12 +1349,12 @@ class OSMeasures
       
     elsif clg_type == "room air conditioner"
     
-      eer = Float(XMLHelper.get_value(htgsys, "AnnualCoolingEfficiency[Units='EER']/Value"))
+      eer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='EER']/Value"))
 
       measure_subdir = "ResidentialHVACRoomAirConditioner"
       args = {
-              "eer"=>eer1,
-              "shr"=>shr1,
+              "eer"=>eer,
+              "shr"=>0.65,
               "airflow_rate"=>350,
               "capacity"=>cool_capacity_tons
              }
@@ -1362,7 +1371,7 @@ class OSMeasures
     return if hp.nil?
     
     hp_type = XMLHelper.get_value(hp, "HeatPumpType")
-    num_speeds = XMLHelper.get_value(clgsys, "extension/NumberSpeeds")
+    num_speeds = XMLHelper.get_value(hp, "extension/NumberSpeeds")
     
     cool_capacity_btuh = XMLHelper.get_value(hp, "CoolingCapacity")
     if cool_capacity_btuh.nil?
@@ -1380,10 +1389,10 @@ class OSMeasures
     
     if hp_type == "air-to-air"        
     
-      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       
@@ -1515,10 +1524,10 @@ class OSMeasures
       
     elsif hp_type == "mini-split"
       
-      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       
@@ -1530,7 +1539,7 @@ class OSMeasures
               "shr"=>0.73,
               "min_cooling_airflow_rate"=>200,
               "max_cooling_airflow_rate"=>425,
-              "hspf"=>hpsf,
+              "hspf"=>hspf,
               "heating_capacity_offset"=>2300,
               "min_heating_capacity"=>0.3,
               "max_heating_capacity"=>1.2,
@@ -1548,8 +1557,8 @@ class OSMeasures
              
     elsif hp_type == "ground-to-air"
     
-      eer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='EER']/Value"))
-      cop = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='COP']/Value"))
+      eer = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='EER']/Value"))
+      cop = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='COP']/Value"))
     
       measure_subdir = "ResidentialHVACGroundSourceHeatPumpVerticalBore"
       args = {
