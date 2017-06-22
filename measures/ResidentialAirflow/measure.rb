@@ -2249,6 +2249,9 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
             # rate shall not be reduced as described in Section 4.1.3.").     
             ela = infil.A_o # Effective leakage area, ft^2
+            puts ela
+            puts unit.living.area
+            puts unit.living.height
             nl = 1000.0 * ela / unit.living.area * (unit.living.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
             qinf = nl * @weather.data.WSF * unit.living.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
             infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
@@ -2611,16 +2614,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end      
     
     # Fraction of ducts in primary duct location (remaining ducts are in above-grade conditioned space).
-    if ducts.DuctLocationFrac == Constants.Auto
-      # Duct location fraction per 2010 BA Benchmark
-      if ducts.num_stories == 1
-        ducts.DuctLocationFracLeakage = 1
-      else
-        ducts.DuctLocationFracLeakage = 0.65
-      end
-    else
-      ducts.DuctLocationFracLeakage = ducts.DuctLocationFrac.to_f
-    end    
+    ducts.DuctLocationFracLeakage = Airflow.get_duct_location_frac_leakage(ducts.DuctLocationFrac, ducts.num_stories)
         
     ducts.DuctLocationFracConduction = ducts.DuctLocationFracLeakage
     ducts.DuctNumReturns = Airflow.get_duct_num_returns(ducts.DuctNumReturns, ducts.num_stories)

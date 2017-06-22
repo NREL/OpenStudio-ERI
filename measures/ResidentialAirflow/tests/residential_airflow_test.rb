@@ -340,7 +340,7 @@ class ResidentialAirflowTest < MiniTest::Test
     args_hash["duct_location"] = Constants.AtticZone
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>12, "EnergyManagementSystemActuator"=>5, "EnergyManagementSystemGlobalVariable"=>2, "OutputVariable"=>14, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "Surface"=>6, "Construction"=>1, "AirLoopHVACReturnPlenum"=>1, "ThermalZone"=>1, "Space"=>1, "Material"=>1, "SurfacePropertyConvectionCoefficients"=>6, "EnergyManagementSystemOutputVariable"=>1}
-    expected_values = {"erv_priority"=>nil, "terrain_type"=>"Suburbs", "duct_location"=>"living zone", "infiltration_c"=>0.0494876816885, "infiltration_cs"=>0.0858215829169, "infiltration_cw"=>0.128435824905, "natvent_cs"=>0.00022967739748, "natvent_cw"=>0.000319397949371, "duct_leak_supply"=>0, "duct_leak_return"=>0, "f_oa"=>0, "faneff_wh"=>0.47194744, "fan_frac_to_space"=>0, "ra_duct_volume"=>0}
+    expected_values = {"erv_priority"=>nil, "terrain_type"=>"Suburbs", "duct_location"=>"living zone", "infiltration_c"=>0.05, "infiltration_cs"=>0.0858215829169, "infiltration_cw"=>0.128435824905, "natvent_cs"=>0.00022967739748, "natvent_cw"=>0.000319397949371, "duct_leak_supply"=>0, "duct_leak_return"=>0, "f_oa"=>0, "faneff_wh"=>0.47194744, "fan_frac_to_space"=>0, "ra_duct_volume"=>0}
     _test_measure("SFD_2000sqft_2story_SL_GRG_FR_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)      
   end
   
@@ -370,7 +370,7 @@ class ResidentialAirflowTest < MiniTest::Test
     args_hash["has_hvac_flue"] = "true"
     expected_num_del_objects = {}
     expected_num_new_objects = {"ScheduleRuleset"=>7, "ScheduleRule"=>84, "Surface"=>6, "EnergyManagementSystemSubroutine"=>1, "EnergyManagementSystemProgramCallingManager"=>2, "EnergyManagementSystemProgram"=>3, "EnergyManagementSystemSensor"=>21, "EnergyManagementSystemActuator"=>17, "EnergyManagementSystemGlobalVariable"=>23, "AirLoopHVACReturnPlenum"=>1, "OtherEquipmentDefinition"=>10, "OtherEquipment"=>10, "ThermalZone"=>1, "ZoneMixing"=>2, "OutputVariable"=>14, "SpaceInfiltrationDesignFlowRate"=>2, "SpaceInfiltrationEffectiveLeakageArea"=>1, "Construction"=>1, "Space"=>1, "Material"=>1, "ElectricEquipmentDefinition"=>3, "ElectricEquipment"=>3, "SurfacePropertyConvectionCoefficients"=>6, "EnergyManagementSystemOutputVariable"=>1}
-    expected_values = {"erv_priority"=>nil, "terrain_type"=>"Suburbs", "duct_location"=>"garage zone", "infiltration_c"=>0.0494876816885, "infiltration_cs"=>0.0858215829169, "infiltration_cw"=>0.128435824905, "natvent_cs"=>0.00022967739748, "natvent_cw"=>0.000319397949371, "duct_leak_supply"=>0.136963386963, "duct_leak_return"=>0.1000999001, "f_oa"=>0.0368634868631, "faneff_wh"=>0.47194744, "fan_frac_to_space"=>0, "ra_duct_volume"=>120}
+    expected_values = {"erv_priority"=>nil, "terrain_type"=>"Suburbs", "duct_location"=>"garage zone", "infiltration_c"=>0.05, "infiltration_cs"=>0.0858215829169, "infiltration_cw"=>0.128435824905, "natvent_cs"=>0.00022967739748, "natvent_cw"=>0.000319397949371, "duct_leak_supply"=>0.136963386963, "duct_leak_return"=>0.1000999001, "f_oa"=>0.0368634868631, "faneff_wh"=>0.47194744, "fan_frac_to_space"=>0, "ra_duct_volume"=>120}
     _test_measure("SFD_2000sqft_2story_SL_GRG_FR_3Beds_2Baths_Denver_Furnace_CentralAC.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 0, 1)    
   end
   
@@ -508,11 +508,11 @@ class ResidentialAirflowTest < MiniTest::Test
             next if not new_object.respond_to?("to_#{obj_type}")
             new_object = new_object.public_send("to_#{obj_type}").get
             if obj_type == "EnergyManagementSystemSensor"
-                next unless new_object.name.to_s == "#{Constants.ObjectNameDucts} ah t sens".gsub(" ","_")
+                next unless new_object.name.to_s == "#{Constants.ObjectNameDucts} u 1 ah t s".gsub(" ","_")
                 next if expected_values["duct_location"].nil?
                 assert_equal(expected_values["duct_location"], new_object.keyName)
             elsif obj_type == "EnergyManagementSystemProgram"
-                if new_object.name.to_s == "#{Constants.ObjectNameInfiltration} program".gsub(" ","_")
+                if new_object.name.to_s == "#{Constants.ObjectNameInfiltration}|u 1 program".gsub(" ","_")
                   new_object.lines.each do |line|
                       if line.start_with? "Set c ="
                         assert_in_epsilon(expected_values["infiltration_c"], line.split(" = ")[1].to_f, 0.01)
@@ -524,7 +524,7 @@ class ResidentialAirflowTest < MiniTest::Test
                         assert_in_epsilon(expected_values["faneff_wh"], line.split(" = ")[1].to_f, 0.01)                        
                       end
                   end
-                elsif new_object.name.to_s == "#{Constants.ObjectNameNaturalVentilation} program".gsub(" ","_")
+                elsif new_object.name.to_s == "#{Constants.ObjectNameNaturalVentilation}|u 1 program".gsub(" ","_")
                   new_object.lines.each do |line|
                       if line.start_with? "Set Cs ="
                         assert_in_epsilon(expected_values["natvent_cs"], line.split(" = ")[1].to_f, 0.01)
@@ -532,10 +532,10 @@ class ResidentialAirflowTest < MiniTest::Test
                         assert_in_epsilon(expected_values["natvent_cw"], line.split(" = ")[1].to_f, 0.01)
                       end
                   end
-                elsif new_object.name.to_s == "#{Constants.ObjectNameDucts} program".gsub(" ","_")
+                elsif new_object.name.to_s == "#{Constants.ObjectNameDucts}|u 1 program".gsub(" ","_")
                   new_object.lines.each do |line|
-                      duct_leak_supply_fan_equiv = "#{Constants.ObjectNameDucts} leak sup fan equiv".gsub("|","_").gsub(" ","_")
-                      duct_leak_return_fan_equiv = "#{Constants.ObjectNameDucts} leak sup fan equiv".gsub("|","_").gsub(" ","_")
+                      duct_leak_supply_fan_equiv = "#{Constants.ObjectNameDucts} u 1 lk sup fan equiv".gsub("|","_").gsub(" ","_")
+                      duct_leak_return_fan_equiv = "#{Constants.ObjectNameDucts} u 1 lk sup fan equiv".gsub("|","_").gsub(" ","_")
                       if line.start_with? "Set #{duct_leak_supply_fan_equiv} ="
                         assert_in_epsilon(expected_values["duct_leak_supply"], line.split(" = ")[1].to_f, 0.01)
                       elsif line.start_with? "Set #{duct_leak_return_fan_equiv} ="
@@ -544,7 +544,7 @@ class ResidentialAirflowTest < MiniTest::Test
                   end                  
                 end
             elsif obj_type == "EnergyManagementSystemSubroutine"
-                if new_object.name.to_s == "#{Constants.ObjectNameDucts} leak subrout".gsub("|","_").gsub(" ","_")
+                if new_object.name.to_s == "#{Constants.ObjectNameDucts} u 1 lk subrout".gsub("|","_").gsub(" ","_")
                   new_object.lines.each do |line|
                       if line.start_with? "Set f_sup ="
                         assert_in_epsilon(expected_values["duct_leak_supply"], line.split(" = ")[1].to_f, 0.01)
@@ -556,11 +556,11 @@ class ResidentialAirflowTest < MiniTest::Test
                   end
                 end
             elsif obj_type == "ElectricEquipmentDefinition"
-              if new_object.name.to_s == "#{Constants.ObjectNameInfiltration} house exh fan load equip"
+              if new_object.name.to_s == "#{Constants.ObjectNameInfiltration}|u 1 house exh fan load equip"
                   assert_in_epsilon(expected_values["fan_frac_to_space"], 1-new_object.fractionLost, 0.01)
               end
             elsif obj_type == "ThermalZone"
-              if new_object.name.to_s == "#{Constants.ObjectNameDucts} ret air zone"
+              if new_object.name.to_s == "#{Constants.ObjectNameDucts}|u 1 ret air zone"
                   assert_in_epsilon(expected_values["ra_duct_volume"], OpenStudio.convert(new_object.volume.get,"m^3","ft^3").get, 0.01)
               end
             elsif obj_type == "ZoneHVACEnergyRecoveryVentilator"

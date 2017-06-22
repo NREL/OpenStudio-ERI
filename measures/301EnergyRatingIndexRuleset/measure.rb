@@ -297,9 +297,8 @@ class OSMeasures
     # TODO
     # ResidentialGeometryOrientation
     # ResidentialGeometryEaves
-    # ResidentialGeometryOverhangs
+    get_overhangs(building, measures) # TODO
     # ResidentialGeometryNeighbors
-    # ResidentialHVACDehumidifier
     
     get_beds_and_baths(building, measures)
     get_num_occupants(building, measures)
@@ -321,6 +320,7 @@ class OSMeasures
     get_heat_pump(building, measures)
     get_setpoints(building, measures)
     get_ceiling_fan(building, measures)
+    get_dehumidifier(building, measures)
     
     # Appliances, Plug Loads, and Lighting
     get_refrigerator(building, measures)
@@ -346,6 +346,30 @@ class OSMeasures
             "propane"=>Constants.FuelTypePropane, 
             "electricity"=>Constants.FuelTypeElectric}
     return conv[fuel]
+  end
+      
+  def self.get_overhangs(building, measures)
+    
+    depth = 0
+    offset = 0
+    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
+      overhangs = window.elements["Overhangs"]
+      break if overhangs.nil?
+      depth = Float(XMLHelper.get_value(overhangs, "Depth"))
+      offset = Float(XMLHelper.get_value(overhangs, "DistanceToTopOfWindow"))
+      break
+    end
+    measure_subdir = "ResidentialGeometryOverhangs"
+    args = {
+            "depth"=>OpenStudio.convert(depth,"in","ft").get.to_s,
+            "offset"=>OpenStudio.convert(offset,"in","ft").get.to_s,
+            "front_facade"=>"true",
+            "back_facade"=>"true",
+            "left_facade"=>"true",
+            "right_facade"=>"true"
+           }
+    measures[measure_subdir] = args
+    
   end
       
   def self.get_beds_and_baths(building, measures)
@@ -1635,6 +1659,28 @@ class OSMeasures
 
   end
 
+  def self.get_dehumidifier(building, measures)
+  
+    dehumidifier = building.elements["BuildingDetails/Systems/HVAC/extension/dehumidifier"]
+    
+    return if dehumidifier.nil?
+    
+    air_flow_rate = XMLHelper.get_value(dehumidifier, "air_flow_rate")
+    energy_factor = XMLHelper.get_value(dehumidifier, "energy_factor")
+    humidity_setpoint = XMLHelper.get_value(dehumidifier, "humidity_setpoint")
+    water_removal_rate = XMLHelper.get_value(dehumidifier, "water_removal_rate")
+  
+    measure_subdir = "ResidentialHVACDehumidifier"
+    args = {
+            "air_flow_rate"=>air_flow_rate.to_s,
+            "energy_factor"=>energy_factor.to_s,
+            "humidity_setpoint"=>humidity_setpoint.to_s,
+            "water_removal_rate"=>water_removal_rate.to_s
+           }  
+    measures[measure_subdir] = args    
+  
+  end
+  
   def self.get_refrigerator(building, measures)
 
     fridge = building.elements["BuildingDetails/Appliances/Refrigerator"]
@@ -1871,6 +1917,64 @@ class OSMeasures
       mech_vent_fan_power = Float(XMLHelper.get_value(whole_house_fan, "extension/FanPowerWperCFM"))
       mech_vent_frac_62_2 = Float(XMLHelper.get_value(whole_house_fan, "extension/Frac2013ASHRAE622"))
     end
+    
+    natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
+    
+    if natural_ventilation.nil?
+      nat_vent_htg_offset = "1"
+      nat_vent_clg_offset = "1"
+      nat_vent_ovlp_offset = "1"
+      nat_vent_htg_season = "true"
+      nat_vent_clg_season = "true"
+      nat_vent_ovlp_season = "true"
+      nat_vent_num_weekdays = "5"
+      nat_vent_num_weekends = "2"
+      nat_vent_frac_windows_open = "0.33"
+      nat_vent_frac_window_area_openable = "0.2"
+      nat_vent_max_oa_hr = "0.0115"
+      nat_vent_max_oa_rh = "0.7"
+    else
+      nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_offset")
+      nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_offset")
+      nat_vent_ovlp_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_offset")
+      nat_vent_htg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_season")
+      nat_vent_clg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_season")
+      nat_vent_ovlp_season = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_season")
+      nat_vent_num_weekdays = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekdays")
+      nat_vent_num_weekends = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekends")
+      nat_vent_frac_windows_open = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_windows_open")
+      nat_vent_frac_window_area_openable = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_window_area_openable")
+      nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_hr")
+      nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_rh")
+    end
+  
+    air_distribution = building.elements["BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution"]
+    
+    if air_distribution.nil?
+      duct_location = Constants.Auto
+      duct_total_leakage = "0.3"
+      duct_supply_frac = "0.6"
+      duct_return_frac = "0.067"
+      duct_ah_supply_frac = "0.067"
+      duct_ah_return_frac = "0.267"
+      duct_location_frac = Constants.Auto
+      duct_num_returns = Constants.Auto
+      duct_supply_area_mult = "1"
+      duct_return_area_mult = "1"
+      duct_unconditioned_r = "0"
+    else
+      duct_location = Constants.Auto
+      duct_total_leakage = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_total_leakage")
+      duct_supply_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_supply_frac")
+      duct_return_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_return_frac")
+      duct_ah_supply_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_ah_supply_frac")
+      duct_ah_return_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_ah_return_frac")
+      duct_location_frac = Constants.Auto
+      duct_num_returns = XMLHelper.get_value(air_distribution, "NumberofReturnRegisters")
+      duct_supply_area_mult = "1"
+      duct_return_area_mult = "1"      
+      duct_unconditioned_r = XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue")
+    end
   
     measure_subdir = "ResidentialAirflow"
     args = {
@@ -1895,31 +1999,31 @@ class OSMeasures
             "mech_vent_infil_credit"=>"true",
             "is_existing_home"=>"false", # FIXME
             "clothes_dryer_exhaust"=>"0",
-            "nat_vent_htg_offset"=>"1",
-            "nat_vent_clg_offset"=>"1",
-            "nat_vent_ovlp_offset"=>"1",
-            "nat_vent_htg_season"=>"true",
-            "nat_vent_clg_season"=>"true",
-            "nat_vent_ovlp_season"=>"true",
-            "nat_vent_num_weekdays"=>"5",
-            "nat_vent_num_weekends"=>"2",
-            "nat_vent_frac_windows_open"=>"0.33",
-            "nat_vent_frac_window_area_openable"=>"0.2",
-            "nat_vent_max_oa_hr"=>"0.0115",
-            "nat_vent_max_oa_rh"=>"0.7",
-            "duct_location"=>Constants.Auto, # FIXME
-            "duct_total_leakage"=>"0.3", # FIXME
-            "duct_supply_frac"=>"0.6", # FIXME
-            "duct_return_frac"=>"0.067", # FIXME
-            "duct_ah_supply_frac"=>"0.067", # FIXME
-            "duct_ah_return_frac"=>"0.267", # FIXME
-            "duct_location_frac"=>Constants.Auto, # FIXME
-            "duct_num_returns"=>Constants.Auto, # FIXME
-            "duct_supply_area_mult"=>"1", # FIXME
-            "duct_return_area_mult"=>"1", # FIXME
-            "duct_unconditioned_r"=>"0" # FIXME
+            "nat_vent_htg_offset"=>nat_vent_htg_offset,
+            "nat_vent_clg_offset"=>nat_vent_clg_offset,
+            "nat_vent_ovlp_offset"=>nat_vent_ovlp_offset,
+            "nat_vent_htg_season"=>nat_vent_htg_season,
+            "nat_vent_clg_season"=>nat_vent_clg_season,
+            "nat_vent_ovlp_season"=>nat_vent_ovlp_season,
+            "nat_vent_num_weekdays"=>nat_vent_num_weekdays,
+            "nat_vent_num_weekends"=>nat_vent_num_weekends,
+            "nat_vent_frac_windows_open"=>nat_vent_frac_windows_open,
+            "nat_vent_frac_window_area_openable"=>nat_vent_frac_window_area_openable,
+            "nat_vent_max_oa_hr"=>nat_vent_max_oa_hr,
+            "nat_vent_max_oa_rh"=>nat_vent_max_oa_rh,
+            "duct_location"=>duct_location, # FIXME
+            "duct_total_leakage"=>duct_total_leakage, # FIXME
+            "duct_supply_frac"=>duct_supply_frac, # FIXME
+            "duct_return_frac"=>duct_return_frac, # FIXME
+            "duct_ah_supply_frac"=>duct_ah_supply_frac, # FIXME
+            "duct_ah_return_frac"=>duct_ah_return_frac, # FIXME
+            "duct_location_frac"=>duct_location_frac, # FIXME
+            "duct_num_returns"=>duct_num_returns, # FIXME
+            "duct_supply_area_mult"=>duct_supply_area_mult, # FIXME
+            "duct_return_area_mult"=>duct_return_area_mult, # FIXME
+            "duct_unconditioned_r"=>duct_unconditioned_r # FIXME
            }  
-    measures[measure_subdir] = args
+    # measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
 
   end
 
@@ -1929,7 +2033,7 @@ class OSMeasures
     args = {
             "show_debug_info"=>"false"
            }  
-    measures[measure_subdir] = args
+    # measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
 
   end
 
@@ -1976,18 +2080,21 @@ class OSModel
     else
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
-
+    
     foundation_spaces = {}
+    fenestration_areas = {}
     living_space = build_living_space(model, building)
     attic_space, attic_zone = build_attic_space(model, building)
+    add_windows(model, building, geometry_errors, living_space, fenestration_areas)
+    add_doors(model, building, geometry_errors, living_space, fenestration_areas)
     add_foundation_floors(model, building, living_space, foundation_spaces)
-    add_foundation_walls(model, building, living_space, foundation_spaces)
+    add_foundation_walls(model, building, living_space, foundation_spaces, fenestration_areas)
     foundation_ceiling_area = add_foundation_ceilings(model, building, living_space, foundation_spaces)
     add_living_floors(model, building, geometry_errors, living_space, foundation_ceiling_area)
-    add_living_walls(model, building, geometry_errors, avg_ceil_hgt, living_space, attic_space)
+    add_living_walls(model, building, geometry_errors, avg_ceil_hgt, living_space, attic_space, fenestration_areas)
     add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
-    add_attic_walls(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
-    add_attic_ceilings(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
+    add_attic_walls(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space, fenestration_areas)
+    add_attic_ceilings(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)    
     
     geometry_errors.each do |error|
       runner.registerError(error)
@@ -2016,59 +2123,78 @@ class OSModel
       end
       thermal_zone.setVolume(OpenStudio.convert(zone_volume,"ft^3","m^3").get)
     end
-   
-    # Explode wall surfaces out from origin, from top down
-    [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight].each do |facade|
     
-      wall_surfaces = {}
-      model.getSurfaces.each do |surface|
-        next unless Geometry.get_facade_for_surface(surface) == facade
-        next unless surface.surfaceType.downcase == "wall"
-        if surface.adjacentSurface.is_initialized
-          next if wall_surfaces.keys.include? surface or wall_surfaces.keys.include? surface.adjacentSurface.get
-        end
-        z_val = -10000
-        surface.vertices.each do |vertex|
-          if vertex.z > z_val
-            wall_surfaces[surface] = vertex.z.to_f
-            z_val = vertex.z
-          end
-        end
-      end
-          
-      offset = 30.0 # m
-      wall_surfaces.sort_by{|k, v| v}.reverse.to_h.keys.each do |surface|
+    # Explode the walls
+    wall_offset = 10.0
+    surfaces_moved = []
+    model.getSurfaces.each do |surface|
 
-        m = OpenStudio::Matrix.new(4, 4, 0)
-        m[0,0] = 1
-        m[1,1] = 1
-        m[2,2] = 1
-        m[3,3] = 1
-        if Geometry.get_facade_for_surface(surface) == Constants.FacadeFront
-          m[1,3] = -offset
-        elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeBack
-          m[1,3] = offset
-        elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeLeft
-          m[0,3] = -offset
-        elsif Geometry.get_facade_for_surface(surface) == Constants.FacadeRight
-          m[0,3] = offset
-        end
-     
-        transformation = OpenStudio::Transformation.new(m)      
-        
-        surface.subSurfaces.each do |subsurface|
-          next unless subsurface.subSurfaceType.downcase == "fixedwindow"
-          subsurface.setVertices(transformation * subsurface.vertices)
-        end
-        if surface.adjacentSurface.is_initialized
-          surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
-        end
-        surface.setVertices(transformation * surface.vertices)
-        
-        offset += 5.0 # m
-          
+      next unless surface.surfaceType.downcase == "wall"
+      next if surface.subSurfaces.any? { |subsurface| subsurface.subSurfaceType.downcase == "fixedwindow" }
+      
+      if surface.adjacentSurface.is_initialized
+        next if surfaces_moved.include? surface.adjacentSurface.get
       end
+      
+      transformation = get_surface_transformation(wall_offset, surface.outwardNormal.x, surface.outwardNormal.y, 0)   
+      
+      if surface.adjacentSurface.is_initialized
+        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+      end
+      surface.setVertices(transformation * surface.vertices)
+      
+      surface.subSurfaces.each do |subsurface|
+        next unless subsurface.subSurfaceType.downcase == "door"
+        subsurface.setVertices(transformation * subsurface.vertices)
+      end
+      
+      wall_offset += 2.5
+      
+      surfaces_moved << surface
+      
+    end
     
+    # Explode the floors
+    floor_offset = 0.0
+    surfaces_moved = []
+    model.getSurfaces.each do |surface|
+
+      next unless surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling"
+      
+      if surface.adjacentSurface.is_initialized
+        next if surfaces_moved.include? surface.adjacentSurface.get
+      end
+      
+      transformation = get_surface_transformation(floor_offset, 0, 0, surface.outwardNormal.z)
+
+      if surface.adjacentSurface.is_initialized
+        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+      end
+      surface.setVertices(transformation * surface.vertices)
+      
+      floor_offset += 2.5
+      
+      surfaces_moved << surface
+      
+    end
+    
+    # Explode the windows TODO: calculate window_offset dynamically
+    window_offset = 50.0
+    model.getSubSurfaces.each do |sub_surface|
+
+      next unless sub_surface.subSurfaceType.downcase == "fixedwindow"
+      
+      transformation = get_surface_transformation(window_offset, sub_surface.outwardNormal.x, sub_surface.outwardNormal.y, 0)
+
+      surface = sub_surface.surface.get
+      sub_surface.setVertices(transformation * sub_surface.vertices)      
+      if surface.adjacentSurface.is_initialized
+        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+      end
+      surface.setVertices(transformation * surface.vertices)
+      
+      window_offset += 2.5
+      
     end
     
     # Store building name
@@ -2081,7 +2207,7 @@ class OSModel
     model.getSpaces.each do |space|
       space.setBuildingUnit(unit)
     end
-    
+
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(1)    
     
@@ -2113,43 +2239,51 @@ class OSModel
     
   end
 
+  def self.get_surface_transformation(offset, x, y, z)
+  
+    m = OpenStudio::Matrix.new(4, 4, 0)
+    m[0,0] = 1
+    m[1,1] = 1
+    m[2,2] = 1
+    m[3,3] = 1
+    m[0,3] = x * offset
+    m[1,3] = y * offset
+    m[2,3] = z.abs * offset
+ 
+    return OpenStudio::Transformation.new(m)
+      
+  end
+  
   def self.add_floor_polygon(x, y, z)
       
     vertices = OpenStudio::Point3dVector.new
-    vertices << OpenStudio::Point3d.new(0, 0, z)
-    vertices << OpenStudio::Point3d.new(0, y, z)
-    vertices << OpenStudio::Point3d.new(x, y, z)
-    vertices << OpenStudio::Point3d.new(x, 0, z)
+    vertices << OpenStudio::Point3d.new(0-x/2, 0-y/2, z)
+    vertices << OpenStudio::Point3d.new(0-x/2, y/2, z)
+    vertices << OpenStudio::Point3d.new(x/2, y/2, z)
+    vertices << OpenStudio::Point3d.new(x/2, 0-y/2, z)
       
     return vertices
       
   end
 
-  def self.add_wall_polygon(x, y, z, orientation="south")
+  def self.add_wall_polygon(x, y, z, azimuth=0, offsets=[0]*4)
 
     vertices = OpenStudio::Point3dVector.new
-    if orientation == "north"      
-      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z)
-      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z + y)
-      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z + y)
-      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z)
-    elsif orientation == "south"
-      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z)
-      vertices << OpenStudio::Point3d.new(x-(x/2), 0, z + y)
-      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z + y)
-      vertices << OpenStudio::Point3d.new(0-(x/2), 0, z)
-    elsif orientation == "east"
-      vertices << OpenStudio::Point3d.new(0, x-(x/2), z)
-      vertices << OpenStudio::Point3d.new(0, x-(x/2), z + y)
-      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z + y)
-      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z)
-    elsif orientation == "west"
-      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z)
-      vertices << OpenStudio::Point3d.new(0, 0-(x/2), z + y)
-      vertices << OpenStudio::Point3d.new(0, x-(x/2), z + y)
-      vertices << OpenStudio::Point3d.new(0, x-(x/2), z)
-    end
-    return vertices
+    vertices << OpenStudio::Point3d.new(0-(x/2) - offsets[1], 0, z - offsets[0])
+    vertices << OpenStudio::Point3d.new(0-(x/2) - offsets[1], 0, z + y + offsets[2])
+    vertices << OpenStudio::Point3d.new(x-(x/2) + offsets[3], 0, z + y + offsets[2])
+    vertices << OpenStudio::Point3d.new(x-(x/2) + offsets[3], 0, z - offsets[0])
+    
+    m = OpenStudio::Matrix.new(4, 4, 0)
+    m[0,0] = Math::cos(-azimuth * Math::PI / 180.0)
+    m[1,1] = Math::cos(-azimuth * Math::PI / 180.0)
+    m[0,1] = -Math::sin(-azimuth * Math::PI / 180.0)
+    m[1,0] = Math::sin(-azimuth * Math::PI / 180.0)
+    m[2,2] = 1
+    m[3,3] = 1
+    transformation = OpenStudio::Transformation.new(m)
+  
+    return transformation * vertices
       
   end
 
@@ -2171,24 +2305,24 @@ class OSModel
       
   end
 
-  def self.add_living_walls(model, building, errors, avg_ceil_hgt, living_space, attic_space)
+  def self.net_wall_area(gross_wall_area, wall_fenestration_areas, wall_id)
+    if wall_fenestration_areas.keys.include? wall_id
+      return gross_wall_area - OpenStudio.convert(wall_fenestration_areas[wall_id],"ft^2","m^2").get
+    end    
+    return gross_wall_area
+  end
+  
+  def self.add_living_walls(model, building, errors, avg_ceil_hgt, living_space, attic_space, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next unless wall.elements["InteriorAdjacentTo"].text == "living space"
       next if wall.elements["Area"].nil?
-      
-      z_origin = 0
-      unless wall.elements["ExteriorAdjacentTo"].nil?
-        if wall.elements["ExteriorAdjacentTo"].text == "attic"
-          z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
-        end
-      end
     
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
+      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall.elements["SystemIdentifier"].attributes["id"]) / wall_height
 
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, 0), model)
       surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
       surface.setSurfaceType("Wall") 
       surface.setSpace(living_space)
@@ -2198,7 +2332,7 @@ class OSModel
         surface.setOutsideBoundaryCondition("Outdoors")
       else
         errors << "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
-      end      
+      end
       
     end
     
@@ -2297,27 +2431,14 @@ class OSModel
 
   end
 
-  def self.add_foundation_walls(model, building, living_space, foundation_spaces)
-
+  def self.add_foundation_walls(model, building, living_space, foundation_spaces, fenestration_areas)
+  
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       
       foundation.elements.each("FoundationWall") do |wall|
         
-        if not wall.elements["Length"].nil? and not wall.elements["Height"].nil?
-        
-          wall_length = OpenStudio.convert(wall.elements["Length"].text.to_f,"ft","m").get
-          wall_height = OpenStudio.convert(wall.elements["Height"].text.to_f,"ft","m").get
-        
-        elsif not wall.elements["Area"].nil?
-        
-          wall_length = OpenStudio.convert(Math::sqrt(wall.elements["Area"].text.to_f),"ft","m").get
-          wall_height = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_length
-        
-        else
-        
-          next
-        
-        end
+        wall_height = OpenStudio.convert(wall.elements["Height"].text.to_f,"ft","m").get
+        wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, foundation.elements["SystemIdentifier"].attributes["id"]) / wall_height
         
         z_origin = 0
         unless wall.elements["BelowGradeDepth"].nil?
@@ -2366,7 +2487,7 @@ class OSModel
       
   end
 
-  def self.add_living_floors(model, building, errors, living_space, foundation_ceiling_area)
+  def self.add_living_floors(model, building, errors, living_space, foundation_ceiling_area) # TODO: loop thru extension element other_floors instead of the following?
 
     finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
     above_grade_finished_floor_area = finished_floor_area - foundation_ceiling_area
@@ -2375,8 +2496,8 @@ class OSModel
     finishedfloor_width = OpenStudio.convert(Math::sqrt(above_grade_finished_floor_area),"ft","m").get
     finishedfloor_length = OpenStudio.convert(above_grade_finished_floor_area,"ft^2","m^2").get / finishedfloor_width
     
-    surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model) # don't put it right on top of existing finished floor
-    surface.setName("inferred above grade finished floor")
+    surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model)
+    surface.setName("inferred finished floor")
     surface.setSurfaceType("Floor")
     surface.setSpace(living_space)
     surface.setOutsideBoundaryCondition("Adiabatic")
@@ -2416,12 +2537,10 @@ class OSModel
     
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
-    
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
      
       if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
       elsif ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text
-        surface = OpenStudio::Model::Surface.new(add_floor_polygon(attic_length, attic_width, z_origin), model)
+        surface = OpenStudio::Model::Surface.new(add_floor_polygon(attic_length, attic_width, 0), model)
         surface.setName(attic.elements["SystemIdentifier"].attributes["id"])        
         surface.setSpace(attic_space)
         surface.setSurfaceType("Floor")
@@ -2434,19 +2553,17 @@ class OSModel
       
   end
 
-  def self.add_attic_walls(model, building, errors, avg_ceil_hgt, attic_space, living_space)
+  def self.add_attic_walls(model, building, errors, avg_ceil_hgt, attic_space, living_space, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next unless wall.elements["InteriorAdjacentTo"].text == "attic"
       next if wall.elements["Area"].nil?
       
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
-      
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get / wall_height
+      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall.elements["SystemIdentifier"].attributes["id"]) / wall_height
 
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_height, wall_length, z_origin), model)
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_height, wall_length, 0), model)
       surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
       surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
@@ -2471,11 +2588,9 @@ class OSModel
     
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
-    
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 1 # TODO: is this a bad assumption?
      
       if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
-        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, z_origin), model)
+        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, 0), model)
         surface.setName(attic.elements["SystemIdentifier"].attributes["id"])
         surface.setSpace(living_space)
         surface.setSurfaceType("RoofCeiling")
@@ -2493,10 +2608,8 @@ class OSModel
     
       roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
       roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
-    
-      z_origin = OpenStudio.convert(avg_ceil_hgt,"ft","m").get * 2 # TODO: is this a bad assumption?
 
-      surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, z_origin), model)
+      surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
       surface.setName("#{roof.elements["SystemIdentifier"].attributes["id"]}")
       surface.setSurfaceType("RoofCeiling")
       surface.setOutsideBoundaryCondition("Outdoors")
@@ -2505,6 +2618,62 @@ class OSModel
     end
         
   end
+  
+  def self.add_windows(model, building, errors, living_space, fenestration_areas)
+  
+    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
+
+      window_height = OpenStudio.convert(5.0,"ft","m").get
+      window_width = OpenStudio.convert(window.elements["Area"].text.to_f,"ft^2","m^2").get / window_height
+
+      if not fenestration_areas.keys.include? window.elements["AttachedToWall"].attributes["idref"]
+        fenestration_areas[window.elements["AttachedToWall"].attributes["idref"]] = window.elements["Area"].text.to_f
+      else
+        fenestration_areas[window.elements["AttachedToWall"].attributes["idref"]] += window.elements["Area"].text.to_f
+      end
+
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [0, 0.001, 0.001 * 2, 0.001]), model) # offsets B, L, T, R
+      surface.setName("surface #{window.elements["SystemIdentifier"].attributes["id"]}")
+      surface.setSurfaceType("Wall")
+      surface.setSpace(living_space)
+      surface.setOutsideBoundaryCondition("Outdoors")
+
+      sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
+      sub_surface.setName(window.elements["SystemIdentifier"].attributes["id"])
+      sub_surface.setSurface(surface)
+      sub_surface.setSubSurfaceType("FixedWindow")
+      
+    end
+   
+  end
+  
+  def self.add_doors(model, building, errors, living_space, fenestration_areas)
+  
+    building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
+
+      door_height = OpenStudio.convert(6.666,"ft","m").get
+      door_width = OpenStudio.convert(door.elements["Area"].text.to_f,"ft^2","m^2").get / door_height
+    
+      if not fenestration_areas.keys.include? door.elements["AttachedToWall"].attributes["idref"]
+        fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] = door.elements["Area"].text.to_f
+      else
+        fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] += door.elements["Area"].text.to_f
+      end
+      
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0.001, 0.001, 0.001]), model) # offsets B, L, T, R
+      surface.setName("surface #{door.elements["SystemIdentifier"].attributes["id"]}")
+      surface.setSurfaceType("Wall")
+      surface.setSpace(living_space)
+      surface.setOutsideBoundaryCondition("Outdoors")
+
+      sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0, 0, 0]), model) # offsets B, L, T, R
+      sub_surface.setName(door.elements["SystemIdentifier"].attributes["id"])
+      sub_surface.setSurface(surface)
+      sub_surface.setSubSurfaceType("Door")
+      
+    end
+   
+  end  
     
 end
 

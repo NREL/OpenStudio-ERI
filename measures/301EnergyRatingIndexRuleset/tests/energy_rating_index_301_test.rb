@@ -14,8 +14,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     args_hash["calc_type"] = calc_type
     args_hash["measures_dir"] = ".."
     args_hash["schemas_dir"] = "./tests/schemas"
-    #args_hash["hpxml_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename}")
-    #args_hash["osm_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename.gsub(".xml", ".osm")}")
+    args_hash["hpxml_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename}")
+    args_hash["osm_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename.gsub(".xml", ".osm")}")
     return args_hash
   end
 
@@ -200,7 +200,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
-  
+
   private
   
   def _test_error_or_NA(osm_file_or_model, args_hash)
@@ -270,6 +270,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     # show_output(result)
 
     # assert that it ran correctly
+    puts result.errors.map{ |x| x.logMessage }
     assert_equal("Success", result.value.valueName)
     #assert(result.info.size == num_infos)
     #assert(result.warnings.size == num_warnings)

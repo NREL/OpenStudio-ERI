@@ -2,6 +2,20 @@ require "#{File.dirname(__FILE__)}/constants"
 
 class Airflow
 
+  def self.get_duct_location_frac_leakage(duct_location_frac, stories)
+    if duct_location_frac == Constants.Auto
+      # Duct location fraction per 2010 BA Benchmark
+      if stories == 1
+        duct_location_frac_leakage = 1
+      else
+        duct_location_frac_leakage = 0.65
+      end
+    else
+      duct_location_frac_leakage = duct_location_frac.to_f
+    end
+    return duct_location_frac_leakage
+  end
+
   def self.get_infiltration_ACH_from_SLA(sla, numStories, weather)
     # Returns the infiltration annual average ACH given a SLA.
     w = calc_infiltration_w_factor(weather)
