@@ -109,6 +109,13 @@ def get_sql_query_result(sqlFile, query)
   return 0
 end
 
+def get_sql_result(sqlValue, design)
+  if sqlValue.is_initialized
+    return OpenStudio::convert(sqlValue.get, "GJ", "MBtu").get
+  end
+  fail "ERROR: Simulation unsuccessful for #{design}."
+end
+
 def parse_sql(design, sql_path, output_hpxml_path)
   if not File.exists?(sql_path)
     fail "ERROR: Simulation unsuccessful for #{design}."
@@ -118,24 +125,24 @@ def parse_sql(design, sql_path, output_hpxml_path)
   
   sim_output = {}
   sim_output[:hpxml] = output_hpxml_path
-  sim_output[:allTotal] = OpenStudio::convert(sqlFile.totalSiteEnergy.get, "GJ", "MBtu").get
+  sim_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design)
   
   # Electricity categories
-  sim_output[:elecTotal] = OpenStudio::convert(sqlFile.electricityTotalEndUses.get, "GJ", "MBtu").get
-  sim_output[:elecHeating] = OpenStudio::convert(sqlFile.electricityHeating.get, "GJ", "MBtu").get
-  sim_output[:elecCooling] = OpenStudio::convert(sqlFile.electricityCooling.get, "GJ", "MBtu").get
-  sim_output[:elecIntLighting] = OpenStudio::convert(sqlFile.electricityInteriorLighting.get, "GJ", "MBtu").get
-  sim_output[:elecExtLighting] = OpenStudio::convert(sqlFile.electricityExteriorLighting.get, "GJ", "MBtu").get
-  sim_output[:elecEquipment] = OpenStudio::convert(sqlFile.electricityInteriorEquipment.get, "GJ", "MBtu").get
-  sim_output[:elecFans] = OpenStudio::convert(sqlFile.electricityFans.get, "GJ", "MBtu").get
-  sim_output[:elecPumps] = OpenStudio::convert(sqlFile.electricityPumps.get, "GJ", "MBtu").get
-  sim_output[:elecHotWater] = OpenStudio::convert(sqlFile.electricityWaterSystems.get, "GJ", "MBtu").get
+  sim_output[:elecTotal] = get_sql_result(sqlFile.electricityTotalEndUses, design)
+  sim_output[:elecHeating] = get_sql_result(sqlFile.electricityHeating, design)
+  sim_output[:elecCooling] = get_sql_result(sqlFile.electricityCooling, design)
+  sim_output[:elecIntLighting] = get_sql_result(sqlFile.electricityInteriorLighting, design)
+  sim_output[:elecExtLighting] = get_sql_result(sqlFile.electricityExteriorLighting, design)
+  sim_output[:elecEquipment] = get_sql_result(sqlFile.electricityInteriorEquipment, design)
+  sim_output[:elecFans] = get_sql_result(sqlFile.electricityFans, design)
+  sim_output[:elecPumps] = get_sql_result(sqlFile.electricityPumps, design)
+  sim_output[:elecHotWater] = get_sql_result(sqlFile.electricityWaterSystems, design)
   
   # Fuel categories
-  sim_output[:fuelTotal] = OpenStudio::convert(sqlFile.naturalGasTotalEndUses.get, "GJ", "MBtu").get + OpenStudio::convert(sqlFile.otherFuelTotalEndUses.get, "GJ", "MBtu").get
-  sim_output[:fuelHeating] = OpenStudio::convert(sqlFile.naturalGasHeating.get, "GJ", "MBtu").get + OpenStudio::convert(sqlFile.otherFuelHeating.get, "GJ", "MBtu").get
-  sim_output[:fuelEquipment] = OpenStudio::convert(sqlFile.naturalGasInteriorEquipment.get, "GJ", "MBtu").get + OpenStudio::convert(sqlFile.otherFuelInteriorEquipment.get, "GJ", "MBtu").get
-  sim_output[:fuelHotWater] = OpenStudio::convert(sqlFile.naturalGasWaterSystems.get, "GJ", "MBtu").get + OpenStudio::convert(sqlFile.otherFuelWaterSystems.get, "GJ", "MBtu").get
+  sim_output[:fuelTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design) + get_sql_result(sqlFile.otherFuelTotalEndUses, design)
+  sim_output[:fuelHeating] = get_sql_result(sqlFile.naturalGasHeating, design) + get_sql_result(sqlFile.otherFuelHeating, design)
+  sim_output[:fuelEquipment] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design) + get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
+  sim_output[:fuelHotWater] = get_sql_result(sqlFile.naturalGasWaterSystems, design) + get_sql_result(sqlFile.otherFuelWaterSystems, design)
 
   # Other - PV
   query = "SELECT -1*Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
@@ -519,9 +526,18 @@ def calculate_eri(sim_outputs)
   # The normalized Modified End Use Loads (nMEUL) for space heating and cooling and domestic hot water use 
   # shall each be determined in accordance with Equation 4.1-1:
   # nMEUL = REUL * (nEC_x / EC_r) (Eq 4.1-1)
-  results[:nmeul_heat] = results[:reul_heat] * (results[:nec_x_heat] / results[:ec_r_heat])
-  results[:nmeul_cool] = results[:reul_cool] * (results[:nec_x_cool] / results[:ec_r_cool])
-  results[:nmeul_dhw] = results[:reul_dhw] * (results[:nec_x_dhw] / results[:ec_r_dhw])
+  results[:nmeul_heat] = 0
+  results[:nmeul_cool] = 0
+  results[:nmeul_dhw] = 0
+  if results[:ec_r_heat] > 0
+    results[:nmeul_heat] = results[:reul_heat] * (results[:nec_x_heat] / results[:ec_r_heat])
+  end
+  if results[:ec_r_cool] > 0
+    results[:nmeul_cool] = results[:reul_cool] * (results[:nec_x_cool] / results[:ec_r_cool])
+  end
+  if results[:ec_r_dhw] > 0
+    results[:nmeul_dhw] = results[:reul_dhw] * (results[:nec_x_dhw] / results[:ec_r_dhw])
+  end
       
   # TEU = Total energy use of the Rated Home including all rated and non-rated energy features where all 
   # fossil fuel site energy uses (Btufossil) are converted to equivalent electric energy use (kWheq) in 
