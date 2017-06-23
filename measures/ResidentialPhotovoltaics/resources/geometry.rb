@@ -313,9 +313,12 @@ class Geometry
         end
         volume += OpenStudio.convert(space.volume * mult,"m^3","ft^3").get
       end
+      if volume <= 0 # FIXME: until we figure out how to deal with volumes
+        return 0.001
+      end
       if volume == 0 and not runner.nil?
-          runner.registerError("Could not find any volume.")
-          return nil
+        runner.registerError("Could not find any volume.")
+        return nil
       end
       return volume    
     end
@@ -364,6 +367,9 @@ class Geometry
         end
         volume += OpenStudio.convert(space.volume * mult,"m^3","ft^3").get
       end
+      if volume <= 0 # FIXME: until we figure out how to deal with volumes
+        return 0.001
+      end      
       if volume == 0 and not runner.nil?
           runner.registerError("Could not find any finished volume.")
           return nil
@@ -381,6 +387,9 @@ class Geometry
         end
         volume += OpenStudio.convert(space.volume * mult,"m^3","ft^3").get
       end
+      if volume <= 0 # FIXME: until we figure out how to deal with volumes
+        return 0.001
+      end      
       if volume == 0 and not runner.nil?
           runner.registerError("Could not find any above-grade finished volume.")
           return nil

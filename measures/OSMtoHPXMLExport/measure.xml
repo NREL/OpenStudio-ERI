@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_mto_hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>8129a313-9a02-462f-9229-e56df7fd11b2</version_id>
-  <version_modified>20170616T180401Z</version_modified>
+  <version_id>7f189cd8-8ef2-483a-b910-c21a9c60772b</version_id>
+  <version_modified>20170623T213048Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSMtoHPXMLExport</class_name>
   <display_name>OSM to HPXML Export</display_name>
@@ -82,12 +82,6 @@
       <checksum>F78518CC</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32CCC7D8</checksum>
-    </file>
-    <file>
       <filename>xmlhelper.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -104,6 +98,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>787EAB06</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8A52CAE6</checksum>
     </file>
   </files>
 </measure>

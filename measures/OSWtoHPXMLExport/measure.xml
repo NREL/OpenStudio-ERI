@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>cc9b8843-2ca2-4b4e-b6ec-958c5f5b13a5</version_id>
-  <version_modified>20170622T205231Z</version_modified>
+  <version_id>4d785e59-970e-4de9-a971-98686aef8918</version_id>
+  <version_modified>20170623T213048Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -59,12 +59,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F78518CC</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>32CCC7D8</checksum>
     </file>
     <file>
       <filename>ResidentialApplianceClothesDryerFuel.osw</filename>
@@ -270,16 +264,22 @@
       <checksum>9CA4226D</checksum>
     </file>
     <file>
-      <filename>create-model-example.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8EDB9E5D</checksum>
-    </file>
-    <file>
       <filename>Garage.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>FD97A0B9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8A52CAE6</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0D4B6ACE</checksum>
     </file>
   </files>
 </measure>

@@ -2029,10 +2029,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     spaces.each do |space|
     
       if space.volume == 0
-        next
+        space.f_t_SG = 0 # FIXME: until we figure out how to deal with volumes
+      else
+        space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
       end
-      
-      space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
       if space.inf_method == @infMethodSG
         space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_lk_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
@@ -2066,6 +2066,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
   
     if not infil.InfiltrationLivingSpaceACH50.nil?
       if unit.living.volume == 0
+          infil.A_o = 0 # FIXME: until we figure out how to deal with volumes
           unit.living.SLA = 0
           unit.living.ELA = 0
           unit.living.ACH = 0
@@ -2082,7 +2083,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           
           # Calculate SLA for above-grade portion of the building
           building.SLA = Airflow.get_infiltration_SLA_from_ACH50(infil.InfiltrationLivingSpaceACH50, infil.n_i, building.above_grade_finished_floor_area, building.above_grade_volume)
-
+          
           # Effective Leakage Area (ft^2)
           infil.A_o = building.SLA * building.above_grade_finished_floor_area * (unit.above_grade_exterior_wall_area/building.above_grade_exterior_wall_area)
 
@@ -2207,10 +2208,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     spaces.each do |space|
       
       if space.volume == 0
-        next
+        space.f_t_SG = 0 # FIXME: until we figure out how to deal with volumes
+      else  
+        space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
       end
-            
-      space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
       if space.inf_method == @infMethodSG
         space.f_s_SG = 2.0 / 3.0 * (1 + space.hor_lk_frac / 2.0) * (2.0 * space.neutral_level * (1.0 - space.neutral_level)) ** 0.5 / (space.neutral_level ** 0.5 + (1.0 - space.neutral_level) ** 0.5)
@@ -2249,9 +2250,6 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
             # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation 
             # rate shall not be reduced as described in Section 4.1.3.").     
             ela = infil.A_o # Effective leakage area, ft^2
-            puts ela
-            puts unit.living.area
-            puts unit.living.height
             nl = 1000.0 * ela / unit.living.area * (unit.living.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
             qinf = nl * @weather.data.WSF * unit.living.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
             infil.rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min

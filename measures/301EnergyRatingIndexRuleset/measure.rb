@@ -201,8 +201,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # Obtain list of OpenStudio measures (and arguments)
     measures = OSMeasures.build_measures_from_hpxml(building, weather_file_path)
     
-    #puts "measures #{measures.to_s}"
-    
     # Create OpenStudio model
     if not OSModel.create_geometry(building, runner, model)
       return false
@@ -2023,7 +2021,7 @@ class OSMeasures
             "duct_return_area_mult"=>duct_return_area_mult, # FIXME
             "duct_unconditioned_r"=>duct_unconditioned_r # FIXME
            }  
-    # measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
+    measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
 
   end
 
@@ -2033,7 +2031,7 @@ class OSMeasures
     args = {
             "show_debug_info"=>"false"
            }  
-    # measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
+    measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
 
   end
 
