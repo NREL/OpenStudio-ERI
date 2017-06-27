@@ -1303,27 +1303,25 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     end    
     
     # SolarThermal
-    solar_thermal = nil
-    model.getBuildingUnits.each do |unit|
-      model.getPlantLoops.each do |pl|
-        next if pl.name.to_s != Constants.PlantLoopSolarHotWater(unit.name.to_s)
-        if systems.elements["SolarThermal"].nil?
-          solar_thermal = systems.add_element "SolarThermal"
-        end
-        solar_thermal_system = solar_thermal.add_element "SolarThermalSystem"            
+    # solar_thermal = nil
+    # model.getBuildingUnits.each do |unit|
+      # model.getPlantLoops.each do |pl|
+        # next if pl.name.to_s != Constants.PlantLoopSolarHotWater(unit.name.to_s)
+        # if systems.elements["SolarThermal"].nil?
+          # solar_thermal = systems.add_element "SolarThermal"
+        # end
+        # solar_thermal_system = solar_thermal.add_element "SolarThermalSystem"            
             
-        XMLHelper.add_element(solar_thermal_system, "SystemType", "hot water")
-        XMLHelper.add_element(solar_thermal_system, "CollectorArea", measures["ResidentialHotWaterSolar"]["collector_area"])
-        XMLHelper.add_element(solar_thermal_system, "CollectorAzimuth", Geometry.get_abs_azimuth(Constants.CoordAbsolute, measures["ResidentialHotWaterSolar"]["azimuth"].to_f, 0).round)
-        XMLHelper.add_element(solar_thermal_system, "CollectorTilt", measures["ResidentialHotWaterSolar"]["tilt"])
-        pl.supplyComponents.each do |wh|
-          next if !wh.to_WaterHeaterStratified.is_initialized
-          XMLHelper.add_element(solar_thermal_system, "StorageVolume", OpenStudio.convert(wh.to_WaterHeaterStratified.get.tankVolume.get,"m^3","gal").get.round)
-        end
-           
-      end
-            
-    end
+        # XMLHelper.add_element(solar_thermal_system, "SystemType", "hot water")
+        # XMLHelper.add_element(solar_thermal_system, "CollectorArea", measures["ResidentialHotWaterSolar"]["collector_area"])
+        # XMLHelper.add_element(solar_thermal_system, "CollectorAzimuth", Geometry.get_abs_azimuth(Constants.CoordAbsolute, measures["ResidentialHotWaterSolar"]["azimuth"].to_f, 0).round)
+        # XMLHelper.add_element(solar_thermal_system, "CollectorTilt", measures["ResidentialHotWaterSolar"]["tilt"])
+        # pl.supplyComponents.each do |wh|
+          # next if !wh.to_WaterHeaterStratified.is_initialized
+          # XMLHelper.add_element(solar_thermal_system, "StorageVolume", OpenStudio.convert(wh.to_WaterHeaterStratified.get.tankVolume.get,"m^3","gal").get.round)
+        # end           
+      # end            
+    # end
     
     # Appliances
     appliances = building_details.add_element "Appliances"
