@@ -12,3 +12,7 @@ coverage
 /workflows/energy_rating_index/results
 /measures/301EnergyRatingIndexRuleset/tests/valid-rated.xml
 /measures/301EnergyRatingIndexRuleset/tests/valid-ref.xml
+/measures/OSWtoHPXMLExport/tests/*.osm
+/measures/OSWtoHPXMLExport/tests/*.xml
+/measures/301EnergyRatingIndexRuleset/tests/*.osm
+/measures/301EnergyRatingIndexRuleset/tests/HERS*.xml

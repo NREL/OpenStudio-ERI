@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>4d785e59-970e-4de9-a971-98686aef8918</version_id>
-  <version_modified>20170623T213048Z</version_modified>
+  <version_id>a1a0403d-2341-4907-b5dd-981bc7a638a6</version_id>
+  <version_modified>20170629T211230Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -247,23 +247,6 @@
       <checksum>9D78B57E</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FBDC2D6C</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9CA4226D</checksum>
-    </file>
-    <file>
       <filename>Garage.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
@@ -276,10 +259,183 @@
       <checksum>8A52CAE6</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B10486EF</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D5733EEC</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A769662F</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6E53AF44</checksum>
+    </file>
+    <file>
+      <filename>Garage.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>76599F95</checksum>
+    </file>
+    <file>
+      <filename>Garage.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A969CD6E</checksum>
+    </file>
+    <file>
+      <filename>ResidentialApplianceClothesDryerFuel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A0FEA088</checksum>
+    </file>
+    <file>
+      <filename>ResidentialApplianceClothesDryerFuel.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>219EC6CA</checksum>
+    </file>
+    <file>
+      <filename>ResidentialApplianceCookingRangeFuel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C83C9A13</checksum>
+    </file>
+    <file>
+      <filename>ResidentialApplianceCookingRangeFuel.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E8B37835</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsCeilingsRoofsFinishedRoof.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F2F8094F</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsCeilingsRoofsFinishedRoof.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EE0EE26B</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsBasementFinished.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BFED6C55</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsBasementFinished.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>39CC37DE</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsBasementUnfinished.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1E33EB3A</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsBasementUnfinished.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>68145CA6</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsCrawlspace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7CFA960D</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsCrawlspace.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2A96D9CC</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsPierBeam.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2EDA8DCE</checksum>
+    </file>
+    <file>
+      <filename>ResidentialConstructionsFoundationsFloorsPierBeam.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BE496097</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterHeatPump.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C6282F3B</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterHeatPump.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>056CC660</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTankElectric.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>48B49B34</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTankElectric.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3D70E082</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTanklessElectric.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>05C9A623</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTanklessElectric.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>823EB1A3</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTanklessFuel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>545D9F90</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHotWaterHeaterTanklessFuel.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A72C30AE</checksum>
+    </file>
+    <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>0D4B6ACE</checksum>
+      <checksum>508A788B</checksum>
     </file>
   </files>
 </measure>

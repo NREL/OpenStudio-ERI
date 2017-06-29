@@ -537,7 +537,6 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.copy_element(new_wall, orig_wall, "Height")
         XMLHelper.copy_element(new_wall, orig_wall, "Area")
         XMLHelper.copy_element(new_wall, orig_wall, "BelowGradeDepth")
-        XMLHelper.copy_element(new_wall, orig_wall, "AdjacentToFoundation")
         XMLHelper.copy_element(new_wall, orig_wall, "AdjacentTo")
         insulation = XMLHelper.add_element(new_wall, "Insulation")
         XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")

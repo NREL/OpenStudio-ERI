@@ -49,6 +49,7 @@ class EnergyRatingIndex301Validator
                 'RoofArea',
                 'RoofColor',
                 'RadiantBarrier',
+                #'[extension/InteriorAdjacentTo="living space" or InteriorAdjacentTo="attic" or InteriorAdjacentTo="garage"]',
             ],
             # Attics
             '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => [
@@ -65,6 +66,7 @@ class EnergyRatingIndex301Validator
                 'FoundationType/Basement/Conditioned',
                 'FrameFloor',
                 'FoundationWall',
+                'Slab',
             ],
             # Crawlspace Foundation
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace]' => [
@@ -127,6 +129,10 @@ class EnergyRatingIndex301Validator
                 'extension/CarpetFraction',
                 'extension/CarpetRValue',
             ],
+            # Basement Slab
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/Slab' => [
+                'DepthBelowGrade',
+            ],
             # Slab Perimeter Insulation Layer
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab/PerimeterInsulation/Layer' => [
                 'InstallationType',
@@ -139,11 +145,20 @@ class EnergyRatingIndex301Validator
                 'NominalRValue',
                 'Thickness',
             ],
+            # Basement Slab Perimeter Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/Slab/PerimeterInsulation/Layer' => [
+                '[NominalRValue=0]',
+            ],
+            # Basement Slab UnderSlab Insulation Layer
+            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/Slab/UnderSlabInsulation/Layer' => [
+                '[NominalRValue=0]',
+            ],
             # Wall
             '//Building/BuildingDetails/Enclosure/Walls/Wall' => [
                 'Area',
-                'InteriorAdjacentTo',
-                'ExteriorAdjacentTo',
+                # FIXME: Need to restrict combinations? e.g., InteriorAdjacentTo=crawlspace and ExteriorAdjacentTo=attic
+                '[InteriorAdjacentTo="living space" or InteriorAdjacentTo="unconditioned basement" or InteriorAdjacentTo="crawlspace" or InteriorAdjacentTo="attic" or InteriorAdjacentTo="garage"]',
+                '[ExteriorAdjacentTo="ambient" or ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="crawlspace" or ExteriorAdjacentTo="attic" or ExteriorAdjacentTo="garage"]',
                 'WallType/WoodStud',
                 '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]',
                 'Color',

@@ -2102,7 +2102,7 @@ class OSModel
       return false
     end    
     
-    # Set the zone volumes based on the sum of space volumes
+    # FIXME: Set the zone volumes based on the sum of space volumes
     model.getThermalZones.each do |thermal_zone|
       zone_volume = 0
       if not Geometry.get_volume_from_spaces(thermal_zone.spaces) > 0 # space doesn't have a floor
@@ -2152,12 +2152,13 @@ class OSModel
       
     end
     
-    # Explode the floors
-    floor_offset = 0.0
+    # Explode the above-grade floors
+    floor_offset = 0.5
     surfaces_moved = []
     model.getSurfaces.each do |surface|
 
       next unless surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling"
+      next if surface.outsideBoundaryCondition.downcase == "ground"
       
       if surface.adjacentSurface.is_initialized
         next if surfaces_moved.include? surface.adjacentSurface.get
@@ -2209,7 +2210,7 @@ class OSModel
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(1)    
     
-    # Store number of stories
+    # Store number of stories TODO: Review this
     num_floors = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
     if num_floors.nil?
       num_floors = 1
@@ -2315,13 +2316,14 @@ class OSModel
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       next unless wall.elements["InteriorAdjacentTo"].text == "living space"
-      next if wall.elements["Area"].nil?
+      
+      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
     
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall.elements["SystemIdentifier"].attributes["id"]) / wall_height
+      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
 
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, 0), model)
-      surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
+      surface.setName(wall_id)
       surface.setSurfaceType("Wall") 
       surface.setSpace(living_space)
       if wall.elements["ExteriorAdjacentTo"].text == "attic"
@@ -2393,16 +2395,18 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
+      fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
+    
       if not foundation_spaces.keys.include? foundation.elements["FoundationType"]
-        foundation_spaces[foundation.elements["FoundationType"]] = {foundation.elements["SystemIdentifier"].attributes["id"]=>build_foundation_spaces(model, foundation.elements["FoundationType"])}
+        foundation_spaces[foundation.elements["FoundationType"]] = {fnd_id=>build_foundation_spaces(model, foundation.elements["FoundationType"])}
       else
-        foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]] = build_foundation_spaces(model, foundation.elements["FoundationType"])
+        foundation_spaces[foundation.elements["FoundationType"]][fnd_id] = build_foundation_spaces(model, foundation.elements["FoundationType"])
       end
 
       foundation.elements.each("Slab") do |slab|
       
-        next if slab.elements["Area"].nil?
-        
+        slab_id = slab.elements["SystemIdentifier"].attributes["id"]
+      
         slab_width = OpenStudio.convert(Math::sqrt(slab.elements["Area"].text.to_f),"ft","m").get
         slab_length = OpenStudio.convert(slab.elements["Area"].text.to_f,"ft^2","m^2").get / slab_width
         
@@ -2412,13 +2416,13 @@ class OSModel
         end
         
         surface = OpenStudio::Model::Surface.new(add_floor_polygon(slab_length, slab_width, z_origin), model)
-        surface.setName(slab.elements["SystemIdentifier"].attributes["id"])
+        surface.setName(slab_id)
         surface.setSurfaceType("Floor") 
         surface.setOutsideBoundaryCondition("Ground")
-        if z_origin < 0
-          surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]])
-        else
+        if not foundation.elements["FoundationType/SlabOnGrade"].nil?
           surface.setSpace(living_space)
+        else
+          surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][fnd_id])
         end
         
       end
@@ -2432,22 +2436,27 @@ class OSModel
   def self.add_foundation_walls(model, building, living_space, foundation_spaces, fenestration_areas)
   
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+    
+      fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
       
       foundation.elements.each("FoundationWall") do |wall|
+      
+        wall_id = wall.elements["SystemIdentifier"].attributes["id"]
         
         wall_height = OpenStudio.convert(wall.elements["Height"].text.to_f,"ft","m").get
-        wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, foundation.elements["SystemIdentifier"].attributes["id"]) / wall_height
+        wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, fnd_id) / wall_height
         
-        z_origin = 0
-        unless wall.elements["BelowGradeDepth"].nil?
-          z_origin = -OpenStudio.convert(wall.elements["BelowGradeDepth"].text.to_f,"ft","m").get
-        end
+        z_origin = -OpenStudio.convert(wall.elements["BelowGradeDepth"].text.to_f,"ft","m").get
         
         surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
-        surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
-        surface.setSurfaceType("Wall") 
-        surface.setOutsideBoundaryCondition("Ground")
-        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]])
+        surface.setName(wall_id)
+        surface.setSurfaceType("Wall")
+        if wall.elements["AdjacentTo"].text == 'ground'
+          surface.setOutsideBoundaryCondition("Ground")
+        else
+          errors << "#{wall.elements["AdjacentTo"].text} not handled yet."
+        end
+        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][fnd_id])
         
       end
     
@@ -2459,10 +2468,12 @@ class OSModel
        
     foundation_ceiling_area = 0
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+    
+      fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
      
       foundation.elements.each("FrameFloor") do |framefloor|
       
-        next if framefloor.elements["Area"].nil?
+        floor_id = framefloor.elements["SystemIdentifier"].attributes["id"]
 
         framefloor_width = OpenStudio.convert(Math::sqrt(framefloor.elements["Area"].text.to_f),"ft","m").get
         framefloor_length = OpenStudio.convert(framefloor.elements["Area"].text.to_f,"ft^2","m^2").get / framefloor_width
@@ -2470,9 +2481,9 @@ class OSModel
         z_origin = 0
         
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(framefloor_length, framefloor_width, z_origin), model)
-        surface.setName(framefloor.elements["SystemIdentifier"].attributes["id"])
+        surface.setName(floor_id)
         surface.setSurfaceType("RoofCeiling")
-        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][foundation.elements["SystemIdentifier"].attributes["id"]])
+        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][fnd_id])
         surface.createAdjacentSurface(living_space)
         
         foundation_ceiling_area += framefloor.elements["Area"].text.to_f
@@ -2487,6 +2498,7 @@ class OSModel
 
   def self.add_living_floors(model, building, errors, living_space, foundation_ceiling_area) # TODO: loop thru extension element other_floors instead of the following?
 
+    # TODO: Review this
     finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
     above_grade_finished_floor_area = finished_floor_area - foundation_ceiling_area
     return unless above_grade_finished_floor_area > 0
@@ -2530,22 +2542,16 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
-      next if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
-      next if attic.elements["Area"].nil?
+      attic_id = attic.elements["SystemIdentifier"].attributes["id"]
     
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
      
-      if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
-      elsif ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text
-        surface = OpenStudio::Model::Surface.new(add_floor_polygon(attic_length, attic_width, 0), model)
-        surface.setName(attic.elements["SystemIdentifier"].attributes["id"])        
-        surface.setSpace(attic_space)
-        surface.setSurfaceType("Floor")
-        surface.createAdjacentSurface(living_space)
-      else
-        errors << "#{attic.elements["AtticType"].text} not handled yet."
-      end
+      surface = OpenStudio::Model::Surface.new(add_floor_polygon(attic_length, attic_width, 0), model)
+      surface.setName(attic_id)        
+      surface.setSpace(attic_space)
+      surface.setSurfaceType("Floor")
+      surface.createAdjacentSurface(living_space)
       
     end
       
@@ -2555,14 +2561,14 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
+      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
       next unless wall.elements["InteriorAdjacentTo"].text == "attic"
-      next if wall.elements["Area"].nil?
       
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall.elements["SystemIdentifier"].attributes["id"]) / wall_height
+      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
 
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_height, wall_length, 0), model)
-      surface.setName(wall.elements["SystemIdentifier"].attributes["id"])
+      surface.setName(wall_id)
       surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
       if wall.elements["ExteriorAdjacentTo"].text == "living space"
@@ -2581,15 +2587,14 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
-      next if ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text
-      next if attic.elements["Area"].nil?
+      attic_id = attic.elements["SystemIdentifier"].attributes["id"]
     
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
      
       if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, 0), model)
-        surface.setName(attic.elements["SystemIdentifier"].attributes["id"])
+        surface.setName(attic_id)
         surface.setSpace(living_space)
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")
@@ -2602,13 +2607,13 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
     
-      next if roof.elements["RoofArea"].nil?
+      roof_id = roof.elements["SystemIdentifier"].attributes["id"]
     
       roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
       roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
 
       surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
-      surface.setName("#{roof.elements["SystemIdentifier"].attributes["id"]}")
+      surface.setName(roof_id)
       surface.setSurfaceType("RoofCeiling")
       surface.setOutsideBoundaryCondition("Outdoors")
       surface.setSpace(attic_space)
@@ -2620,6 +2625,8 @@ class OSModel
   def self.add_windows(model, building, errors, living_space, fenestration_areas)
   
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
+    
+      window_id = window.elements["SystemIdentifier"].attributes["id"]
 
       window_height = OpenStudio.convert(5.0,"ft","m").get
       window_width = OpenStudio.convert(window.elements["Area"].text.to_f,"ft^2","m^2").get / window_height
@@ -2631,13 +2638,13 @@ class OSModel
       end
 
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [0, 0.001, 0.001 * 2, 0.001]), model) # offsets B, L, T, R
-      surface.setName("surface #{window.elements["SystemIdentifier"].attributes["id"]}")
+      surface.setName("surface #{window_id}")
       surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
       surface.setOutsideBoundaryCondition("Outdoors")
 
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
-      sub_surface.setName(window.elements["SystemIdentifier"].attributes["id"])
+      sub_surface.setName(window_id)
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("FixedWindow")
       
@@ -2648,6 +2655,8 @@ class OSModel
   def self.add_doors(model, building, errors, living_space, fenestration_areas)
   
     building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
+    
+      door_id = door.elements["SystemIdentifier"].attributes["id"]
 
       door_height = OpenStudio.convert(6.666,"ft","m").get
       door_width = OpenStudio.convert(door.elements["Area"].text.to_f,"ft^2","m^2").get / door_height
@@ -2659,13 +2668,13 @@ class OSModel
       end
       
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0.001, 0.001, 0.001]), model) # offsets B, L, T, R
-      surface.setName("surface #{door.elements["SystemIdentifier"].attributes["id"]}")
+      surface.setName("surface #{door_id}")
       surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
       surface.setOutsideBoundaryCondition("Outdoors")
 
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0, 0, 0]), model) # offsets B, L, T, R
-      sub_surface.setName(door.elements["SystemIdentifier"].attributes["id"])
+      sub_surface.setName(door_id)
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("Door")
       

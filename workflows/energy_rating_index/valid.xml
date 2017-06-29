@@ -177,6 +177,33 @@
                 </Layer>
               </Insulation>
             </FoundationWall>
+            <Slab>
+              <SystemIdentifier id='fndslab-1'/>
+              <Area>3500</Area>
+              <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
+              <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
+              <DepthBelowGrade>7</DepthBelowGrade>
+              <PerimeterInsulation>
+                <SystemIdentifier id='FSlab_PerimIns_ID1'/>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
+                </Layer>
+              </PerimeterInsulation>
+              <UnderSlabInsulation>
+                <SystemIdentifier id='FSlab_UnderIns_ID1'/>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
+                </Layer>
+              </UnderSlabInsulation>
+              <extension>
+                <CarpetFraction>0</CarpetFraction>
+                <CarpetRValue>0</CarpetRValue>
+              </extension>
+            </Slab>
           </Foundation>
         </Foundations>
         <RimJoists>
