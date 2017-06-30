@@ -25,14 +25,14 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
-  
+=begin  
   def test_hpxml_home_foundation_unconditioned_basement
     hpxml = "valid-foundation-unconditioned-basement.xml"
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
@@ -200,7 +200,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
-
+=end
   private
   
   def _test_error_or_NA(osm_file_or_model, args_hash)

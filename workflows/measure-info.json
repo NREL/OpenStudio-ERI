@@ -264,7 +264,14 @@
         "measures": [
           "ResidentialHotWaterDistribution"
         ]
-      }
+      },
+      {
+        "name": "4. Solar Water Heating",
+        "dependencies": "Water Heater",
+        "measures": [
+          "ResidentialHotWaterSolar"
+        ]
+      }      
     ]
   },
   {

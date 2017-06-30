@@ -162,7 +162,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
             "dst_start_date"=>"NA",
             "dst_end_date"=>"NA"
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
+
     if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
     end
@@ -366,7 +367,7 @@ class OSMeasures
             "left_facade"=>"true",
             "right_facade"=>"true"
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
   end
       
@@ -379,7 +380,7 @@ class OSMeasures
             "num_bedrooms"=>num_bedrooms,
             "num_bathrooms"=>num_bathrooms
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
   end
       
@@ -400,7 +401,7 @@ class OSMeasures
             "weekend_sch"=>"1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
             "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
   end
       
@@ -408,20 +409,29 @@ class OSMeasures
 
     # FIXME
   
-    measure_subdir = "ResidentialConstructionsWindows"
-    args = {
-            "ufactor_front"=>0.3,
-            "ufactor_back"=>0.3,
-            "ufactor_left"=>0.3,
-            "ufactor_right"=>0.3,
-            "shgc_front"=>0.3,
-            "shgc_back"=>0.3,
-            "shgc_left"=>0.3,
-            "shgc_right"=>0.3,
-            "heating_shade_mult"=>0.7,
-            "cooling_shade_mult"=>0.7
-           }  
-    measures[measure_subdir] = args
+    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
+  
+      ufactor = XMLHelper.get_value(window, "UFactor")
+      shgc = XMLHelper.get_value(window, "SHGC")
+      cooling_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer")
+      heating_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter")
+  
+      measure_subdir = "ResidentialConstructionsWindows"
+      args = {
+              "ufactor_front"=>ufactor,
+              "ufactor_back"=>ufactor,
+              "ufactor_left"=>ufactor,
+              "ufactor_right"=>ufactor,
+              "shgc_front"=>shgc,
+              "shgc_back"=>shgc,
+              "shgc_left"=>shgc,
+              "shgc_right"=>shgc,
+              "heating_shade_mult"=>heating_shade_mult,
+              "cooling_shade_mult"=>cooling_shade_mult
+             }  
+      update_args_hash(measures, measure_subdir, args)
+      
+    end
 
   end
   
@@ -429,21 +439,21 @@ class OSMeasures
   
     # FIXME
 
-    tot_area = 0.0
-    tot_ua = 0.0
     building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
+    
+      name = door.elements["SystemIdentifier"].attributes["id"]
       area = Float(XMLHelper.get_value(door, "Area"))
       ua = area/Float(XMLHelper.get_value(door, "RValue"))
-      tot_area += area
-      tot_ua += ua
-    end
+      
+      if area > 0
+        measure_subdir = "ResidentialConstructionsDoors"
+        args = {
+                "sub_surface"=>name,
+                "door_ufactor"=>ua/area
+               }  
+        update_args_hash(measures, measure_subdir, args)
+      end
 
-    if tot_area > 0
-      measure_subdir = "ResidentialConstructionsDoors"
-      args = {
-              "door_ufactor"=>tot_ua/tot_area
-             }  
-      measures[measure_subdir] = args
     end
     
   end
@@ -452,30 +462,44 @@ class OSMeasures
   
     # FIXME
 
-    measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
-    args = {
-            "ceil_r"=>30,
-            "ceil_grade"=>"I",
-            "ceil_ins_thick_in"=>8.55,
-            "ceil_ff"=>0.07,
-            "ceil_joist_height"=>3.5,
-            "roof_cavity_r"=>0,
-            "roof_cavity_grade"=>"I",
-            "roof_cavity_ins_thick_in"=>0,
-            "roof_ff"=>0.07,
-            "roof_fram_thick_in"=>7.25
-           }  
-    measures[measure_subdir] = args
-
-    measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
-    args = {
-            "cavity_r"=>30,
-            "install_grade"=>"I",
-            "cavity_depth"=>9.25,
-            "ins_fills_cavity"=>"false",
-            "framing_factor"=>0.07
-           }  
-    measures[measure_subdir] = args
+    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
+    
+      name = attic.elements["SystemIdentifier"].attributes["id"]
+      attic_type = XMLHelper.get_value(attic, "AtticType")
+      
+      if ["venting unknown attic", "vented attic", "unvented attic"].include? attic_type
+    
+        measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
+        args = {
+                "surface"=>name,
+                "ceil_r"=>30,
+                "ceil_grade"=>"I",
+                "ceil_ins_thick_in"=>8.55,
+                "ceil_ff"=>0.07,
+                "ceil_joist_height"=>3.5,
+                "roof_cavity_r"=>0,
+                "roof_cavity_grade"=>"I",
+                "roof_cavity_ins_thick_in"=>0,
+                "roof_ff"=>0.07,
+                "roof_fram_thick_in"=>7.25
+               }  
+        update_args_hash(measures, measure_subdir, args)
+       
+      else
+      
+        measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
+        args = {
+                "cavity_r"=>30,
+                "install_grade"=>"I",
+                "cavity_depth"=>9.25,
+                "ins_fills_cavity"=>"false",
+                "framing_factor"=>0.07
+               }  
+        update_args_hash(measures, measure_subdir, args)
+        
+      end
+      
+    end
     
     measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
     args = {
@@ -484,7 +508,7 @@ class OSMeasures
             "material"=>Constants.RoofMaterialAsphaltShingles,
             "color"=>Constants.ColorMedium
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
     measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
     args = {
@@ -492,7 +516,7 @@ class OSMeasures
             "rigid_r"=>0.0,
             "rigid_thick_in"=>0.0,
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
            
     measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
     args = {
@@ -505,7 +529,7 @@ class OSMeasures
             "specheat1"=>0.2,
             "specheat2"=>nil
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
 
     has_rb = false
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
@@ -519,7 +543,7 @@ class OSMeasures
       args = {
               "has_rb"=>"true"
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
     end
     
   end
@@ -671,7 +695,7 @@ class OSMeasures
                   "ceil_joist_height"=>floor_cav_depth,
                   "exposed_perim"=>exposed_perim
                  }  
-          measures[measure_subdir] = args
+          update_args_hash(measures, measure_subdir, args)
           
         else
           
@@ -691,7 +715,7 @@ class OSMeasures
                   "ceil_joist_height"=>floor_cav_depth,
                   "exposed_perim"=>exposed_perim
                  }
-          measures[measure_subdir] = args
+          update_args_hash(measures, measure_subdir, args)
     
         end
         
@@ -701,7 +725,7 @@ class OSMeasures
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
       
@@ -720,7 +744,7 @@ class OSMeasures
                 "ceil_joist_height"=>floor_cav_depth,
                 "exposed_perim"=>exposed_perim
                }  
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
@@ -728,7 +752,7 @@ class OSMeasures
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
 
       elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
       
@@ -748,8 +772,7 @@ class OSMeasures
                 "mass_specific_heat"=>0.2,
                 "exposed_perim"=>exposed_perim
                }  
-        measures[measure_subdir] = args
-        
+        update_args_hash(measures, measure_subdir, args)        
         
       elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
         
@@ -761,7 +784,7 @@ class OSMeasures
                 "install_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
                 "framing_factor"=>floor_ff
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
@@ -769,7 +792,7 @@ class OSMeasures
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
 
       end
     
@@ -778,7 +801,7 @@ class OSMeasures
               "covering_frac"=>carpet_frac,
               "covering_r"=>carpet_r
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
 
     end
     
@@ -788,7 +811,7 @@ class OSMeasures
             "install_grade"=>"I",
             "framing_factor"=>0.13
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
     measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
     args = {
@@ -797,7 +820,7 @@ class OSMeasures
             "dens"=>34.0,
             "specheat"=>0.29
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
   end
   
@@ -892,6 +915,8 @@ class OSMeasures
     
   end
 
+
+  
   def self.get_wall_constructions(building, measures)
   
     mat_mass = Material.DefaultWallMass
@@ -899,6 +924,9 @@ class OSMeasures
   
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
+      name = wall.elements["SystemIdentifier"].attributes["id"]
+      interior_adjacent_to = XMLHelper.get_value(wall, "InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(wall, "ExteriorAdjacentTo")
       siding = XMLHelper.get_value(wall, "Siding")
       color = XMLHelper.get_value(wall, "Color")
       mat_siding = get_siding_material(siding, color)
@@ -927,7 +955,7 @@ class OSMeasures
                   "density_1"=>rho,
                   "specific_heat_1"=>cp
                  }
-          measures[measure_subdir] = args
+          update_args_hash(measures, measure_subdir, args)
           
           measure_subdir = "ResidentialConstructionsWallsSheathing"
           args = {
@@ -935,8 +963,8 @@ class OSMeasures
                   "rigid_r"=>0.0,
                   "rigid_thick_in"=>0.0
                  }
-          measures[measure_subdir] = args
-          
+          update_args_hash(measures, measure_subdir, args)
+
         else # Rated Home
       
           cavity_layer = wall.elements["Insulation/Layer[InstallationType='cavity']"]
@@ -951,13 +979,16 @@ class OSMeasures
         
           measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
           args = {
+                  "surface"=>name,
                   "cavity_r"=>cavity_r,
                   "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
                   "cavity_depth"=>cavity_depth,
                   "ins_fills_cavity"=>ins_fills_cavity,
                   "framing_factor"=>framing_factor
                  }
-          measures[measure_subdir] = args
+          if exterior_adjacent_to == "ambient"
+            update_args_hash(measures, measure_subdir, args)
+          end
           
           measure_subdir = "ResidentialConstructionsWallsInterzonal"
           args = {
@@ -967,7 +998,7 @@ class OSMeasures
                   "ins_fills_cavity"=>ins_fills_cavity,
                   "framing_factor"=>framing_factor
                  }  
-          measures[measure_subdir] = args
+          update_args_hash(measures, measure_subdir, args)
           
         end
         
@@ -977,7 +1008,7 @@ class OSMeasures
                 "rigid_r"=>cont_r,
                 "rigid_thick_in"=>cont_depth
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
 
         measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
         args = {
@@ -988,9 +1019,7 @@ class OSMeasures
                 "thick_in"=>mat_siding.thick_in,
                 "emissivity"=>mat_siding.tAbs
                }
-        measures[measure_subdir] = args
-
-        break # FIXME
+        update_args_hash(measures, measure_subdir, args)
       
       else
       
@@ -1011,7 +1040,7 @@ class OSMeasures
             "specheat1"=>mat_mass.cp,
             "specheat2"=>nil
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
     measure_subdir = "ResidentialConstructionsWallsPartitionThermalMass"
     args = {
@@ -1025,7 +1054,7 @@ class OSMeasures
             "specheat1"=>mat_mass.cp,
             "specheat2"=>nil
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
 
   end
 
@@ -1035,7 +1064,7 @@ class OSMeasures
 
     measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
     args = {}
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
 
     measure_subdir = "ResidentialConstructionsFurnitureThermalMass"
     args = {
@@ -1046,7 +1075,7 @@ class OSMeasures
             "density"=>40.0,
             "specific_heat"=>BaseMaterial.Wood.cp.to_s,
            }
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
   end
 
@@ -1076,7 +1105,7 @@ class OSMeasures
                 "capacity"=>OpenStudio::convert(cap_btuh,"Btu/h","kW").get,
                 "energy_factor"=>ef
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif ["natural gas", "fuel oil", "propane"].include? fuel
       
@@ -1094,7 +1123,7 @@ class OSMeasures
                 "offcyc_power"=>0,
                 "oncyc_power"=>0
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       end      
       
@@ -1113,7 +1142,7 @@ class OSMeasures
                 "energy_factor"=>ef,
                 "cycling_derate"=>ef_adj
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif ["natural gas", "fuel oil", "propane"].include? fuel
         
@@ -1127,7 +1156,7 @@ class OSMeasures
                 "offcyc_power"=>0,
                 "oncyc_power"=>0,
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       end
       
@@ -1152,7 +1181,7 @@ class OSMeasures
               "int_factor"=>1.0,
               "temp_depress"=>0
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
       
     end
     
@@ -1189,7 +1218,7 @@ class OSMeasures
                 "fan_power_installed"=>0.5,
                 "capacity"=>heat_capacity_kbtuh
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif ["natural gas", "fuel oil", "propane"].include? fuel
       
@@ -1200,7 +1229,7 @@ class OSMeasures
                 "fan_power_installed"=>0.5,
                 "capacity"=>heat_capacity_kbtuh
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       end
       
@@ -1222,7 +1251,7 @@ class OSMeasures
                 "design_temp"=>180, # FIXME
                 "capacity"=>heat_capacity_kbtuh
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif ["natural gas", "fuel oil", "propane"].include? fuel
       
@@ -1240,7 +1269,7 @@ class OSMeasures
                 "modulation"=>"false",
                 "capacity"=>heat_capacity_kbtuh
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       end
       
@@ -1253,7 +1282,7 @@ class OSMeasures
               "efficiency"=>percent,
               "capacity"=>heat_capacity_kbtuh
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
              
     end
 
@@ -1301,7 +1330,7 @@ class OSMeasures
                 "eer_capacity_derate_5ton"=>1,
                 "capacity"=>cool_capacity_tons
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif num_speeds == "2-Speed"
       
@@ -1327,7 +1356,7 @@ class OSMeasures
                 "eer_capacity_derate_5ton"=>1,
                 "capacity"=>cool_capacity_tons
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif num_speeds == "Variable-Speed"
       
@@ -1361,7 +1390,7 @@ class OSMeasures
                 "eer_capacity_derate_5ton"=>1,
                 "capacity"=>cool_capacity_tons
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       else
       
@@ -1380,7 +1409,7 @@ class OSMeasures
               "airflow_rate"=>350,
               "capacity"=>cool_capacity_tons
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
       
     end  
 
@@ -1448,7 +1477,7 @@ class OSMeasures
                 "heat_pump_capacity"=>cool_capacity_tons,
                 "supplemental_capacity"=>backup_heat_capacity_kbtuh
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif num_speeds == "2-Speed"
       
@@ -1486,7 +1515,7 @@ class OSMeasures
                 "heat_pump_capacity"=>cool_capacity_tons,
                 "supplemental_capacity"=>backup_heat_capacity_kbtuh
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       elsif num_speeds == "Variable-Speed"
       
@@ -1536,7 +1565,7 @@ class OSMeasures
                 "heat_pump_capacity"=>cool_capacity_tons,
                 "supplemental_capacity"=>backup_heat_capacity_kbtuh
                }
-        measures[measure_subdir] = args
+        update_args_hash(measures, measure_subdir, args)
         
       else
       
@@ -1575,7 +1604,7 @@ class OSMeasures
               "supplemental_efficiency"=>1,
               "supplemental_capacity"=>backup_heat_capacity_kbtuh
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
              
     elsif hp_type == "ground-to-air"
     
@@ -1606,7 +1635,7 @@ class OSMeasures
               "heat_pump_capacity"=>cool_capacity_tons.to_s,
               "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
              
     end
 
@@ -1624,14 +1653,14 @@ class OSMeasures
             "htg_wkdy"=>htg_sp.to_s,
             "htg_wked"=>htg_sp.to_s
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
     measure_subdir = "ResidentialHVACCoolingSetpoints"
     args = {
             "clg_wkdy"=>clg_sp.to_s,
             "clg_wked"=>clg_sp.to_s
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
 
   end
 
@@ -1653,7 +1682,7 @@ class OSMeasures
             "weekend_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
             "monthly_sch"=>"1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
 
   end
 
@@ -1675,7 +1704,7 @@ class OSMeasures
             "humidity_setpoint"=>humidity_setpoint.to_s,
             "water_removal_rate"=>water_removal_rate.to_s
            }  
-    measures[measure_subdir] = args    
+    update_args_hash(measures, measure_subdir, args)    
   
   end
   
@@ -1694,7 +1723,7 @@ class OSMeasures
             "monthly_sch"=>"0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
             "space"=>Constants.Auto
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
   end
 
@@ -1719,7 +1748,7 @@ class OSMeasures
             "space"=>Constants.Auto,
             "plant_loop"=>Constants.Auto
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
     
   end
 
@@ -1740,7 +1769,7 @@ class OSMeasures
               "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
               "space"=>Constants.Auto
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
     else
       measure_subdir = "ResidentialApplianceClothesDryerFuel"
       args = {
@@ -1753,7 +1782,7 @@ class OSMeasures
               "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
               "space"=>Constants.Auto
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
     end
     
   end
@@ -1777,7 +1806,7 @@ class OSMeasures
             "space"=>Constants.Auto,
             "plant_loop"=>Constants.Auto
            }  
-    measures[measure_subdir] = args
+    update_args_hash(measures, measure_subdir, args)
 
   end
 
@@ -1800,7 +1829,7 @@ class OSMeasures
               "monthly_sch"=>"1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
               "space"=>Constants.Auto
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
     else
       measure_subdir = "ResidentialApplianceCookingRangeFuel"
       args = {
@@ -1814,7 +1843,7 @@ class OSMeasures
               "monthly_sch"=>"1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
               "space"=>Constants.Auto
              }
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
     end
     
   end
@@ -1844,7 +1873,7 @@ class OSMeasures
             "energy_use_exterior"=>annual_kwh_exterior.to_s,
             "energy_use_garage"=>annual_kwh_garage.to_s
            }  
-    measures[measure_subdir] = args  
+    update_args_hash(measures, measure_subdir, args)  
 
   end
   
@@ -1876,7 +1905,7 @@ class OSMeasures
             "weekend_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
             "monthly_sch"=>"1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248",
            }  
-    measures[measure_subdir] = args  
+    update_args_hash(measures, measure_subdir, args)  
   
   end
 
@@ -2021,7 +2050,7 @@ class OSMeasures
             "duct_return_area_mult"=>duct_return_area_mult, # FIXME
             "duct_unconditioned_r"=>duct_unconditioned_r # FIXME
            }  
-    measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
+    update_args_hash(measures, measure_subdir, args) # FIXME (need to figure out approach for dealing with volumes)
 
   end
 
@@ -2031,7 +2060,7 @@ class OSMeasures
     args = {
             "show_debug_info"=>"false"
            }  
-    measures[measure_subdir] = args # FIXME (need to figure out approach for dealing with volumes)
+    update_args_hash(measures, measure_subdir, args) # FIXME (need to figure out approach for dealing with volumes)
 
   end
 
@@ -2057,7 +2086,7 @@ class OSMeasures
               "tilt_type"=>Constants.CoordAbsolute,
               "tilt"=>tilt.to_s # TODO: Double-check
              }  
-      measures[measure_subdir] = args
+      update_args_hash(measures, measure_subdir, args)
       
     end
 
@@ -2549,7 +2578,7 @@ class OSModel
      
       surface = OpenStudio::Model::Surface.new(add_floor_polygon(attic_length, attic_width, 0), model)
       surface.setName(attic_id)        
-      surface.setSpace(attic_space)
+      surface.setSpace(attic_space) # TODO: this should only be for the non "cathedral ceiling" type attic surfaces
       surface.setSurfaceType("Floor")
       surface.createAdjacentSurface(living_space)
       
@@ -2641,7 +2670,7 @@ class OSModel
       surface.setName("surface #{window_id}")
       surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
-      surface.setOutsideBoundaryCondition("Outdoors")
+      surface.setOutsideBoundaryCondition("Adiabatic")
 
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
       sub_surface.setName(window_id)
@@ -2666,12 +2695,12 @@ class OSModel
       else
         fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] += door.elements["Area"].text.to_f
       end
-      
+
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0.001, 0.001, 0.001]), model) # offsets B, L, T, R
       surface.setName("surface #{door_id}")
       surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
-      surface.setOutsideBoundaryCondition("Outdoors")
+      surface.setOutsideBoundaryCondition("Adiabatic")
 
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0, 0, 0]), model) # offsets B, L, T, R
       sub_surface.setName(door_id)

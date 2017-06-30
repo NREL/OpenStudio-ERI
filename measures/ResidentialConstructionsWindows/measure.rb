@@ -34,6 +34,15 @@ class ProcessConstructionsWindows < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
+    # #make a choice argument for window sub surfaces
+    # sub_surfaces_args = Geometry.get_sub_surfaces(model.getSubSurfaces, "window")
+    # sub_surfaces_args << Constants.Auto
+    # sub_surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("sub_surface", sub_surfaces_args, false)
+    # sub_surface.setDisplayName("Subsurface(s)")
+    # sub_surface.setDescription("Select the sub surface(s) to assign constructions.")
+    # sub_surface.setDefaultValue(Constants.Auto)
+    # args << sub_surface    
+    
     #make an argument for entering front window u-factor
     ufactor_front = OpenStudio::Measure::OSArgument::makeDoubleArgument("ufactor_front",true)
     ufactor_front.setDisplayName("Front U-Factor")
@@ -120,20 +129,36 @@ class ProcessConstructionsWindows < OpenStudio::Measure::ModelMeasure
       return false
     end
     
+    # sub_surface_s = runner.getOptionalStringArgumentValue("sub_surface",user_arguments)
+    # if not sub_surface_s.is_initialized
+      # sub_surface_s = Constants.Auto
+    # else
+      # sub_surface_s = sub_surface_s.get
+    # end
+    
     facades = [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight]
     
     # loop thru all the spaces
     sub_surfaces = {Constants.FacadeFront=>[], Constants.FacadeBack=>[],
                     Constants.FacadeLeft=>[], Constants.FacadeRight=>[]}
-    model.getSpaces.each do |space|
-        space.surfaces.each do |surface|
-            surface.subSurfaces.each do |subSurface|
-                next unless subSurface.subSurfaceType.downcase.include? "window"
-                facade = Geometry.get_facade_for_surface(surface)
-                sub_surfaces[facade] << subSurface
-            end
-        end
-    end
+                    
+    # if sub_surface_s == Constants.Auto
+      model.getSpaces.each do |space|
+          space.surfaces.each do |surface|
+              surface.subSurfaces.each do |subSurface|
+                  next unless subSurface.subSurfaceType.downcase.include? "window"
+                  facade = Geometry.get_facade_for_surface(surface)
+                  sub_surfaces[facade] << subSurface
+              end
+          end
+      end
+    # else
+      # model.getSubSurfaces.each do |sub_surface|
+          # next unless sub_surface.name.to_s == sub_surface_s
+          # facade = Geometry.get_facade_for_surface(sub_surface.surface.get)
+          # sub_surfaces[facade] << sub_surface
+      # end
+    # end
     
     # Continue if no applicable sub surfaces
     if sub_surfaces[Constants.FacadeFront].empty? and sub_surfaces[Constants.FacadeBack].empty? and sub_surfaces[Constants.FacadeLeft].empty? and sub_surfaces[Constants.FacadeRight].empty?
@@ -151,7 +176,7 @@ class ProcessConstructionsWindows < OpenStudio::Measure::ModelMeasure
     shgcs[Constants.FacadeBack] = runner.getDoubleArgumentValue("shgc_back",user_arguments)
     shgcs[Constants.FacadeLeft] = runner.getDoubleArgumentValue("shgc_left",user_arguments)
     shgcs[Constants.FacadeRight] = runner.getDoubleArgumentValue("shgc_right",user_arguments)
-
+    
     #error checking
     facades.each do |facade|
       if ufactors[facade] <= 0

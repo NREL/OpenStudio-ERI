@@ -39,7 +39,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     args_hash["cooling_shade_mult"] = 1
     expected_num_del_objects = {}
     expected_num_new_objects = {"SimpleGlazing"=>4, "Construction"=>4}
-    expected_values = {"shgc"=>0.3*4, "ufactor"=>0.37*4}
+    expected_values = {"shgc"=>0.3*4, "ufactor"=>0.37*4, "SubSurfacesWithConstructions"=>36}
     result = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
@@ -61,7 +61,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"SimpleGlazing"=>4, "Construction"=>4, "ShadingControl"=>1, "WindowMaterialShade"=>1, "ScheduleRuleset"=>1}
-    expected_values = {"shgc"=>0.3*0.7*4, "ufactor"=>0.37*4}
+    expected_values = {"shgc"=>0.3*0.7*4, "ufactor"=>0.37*4, "SubSurfacesWithConstructions"=>36}
     model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = {}
     args_hash["ufactor_front"] = 0.20
@@ -76,9 +76,18 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     args_hash["cooling_shade_mult"] = 1
     expected_num_del_objects = {"SimpleGlazing"=>4, "Construction"=>4, "ShadingControl"=>1, "WindowMaterialShade"=>1, "ScheduleRuleset"=>1}
     expected_num_new_objects = {"SimpleGlazing"=>4, "Construction"=>4}
-    expected_values = {"shgc"=>0.5+0.5+0.3+0.3, "ufactor"=>0.20+0.20+0.10+0.10}
+    expected_values = {"shgc"=>0.5+0.5+0.3+0.3, "ufactor"=>0.20+0.20+0.10+0.10, "SubSurfacesWithConstructions"=>36}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
+  
+  # def test_apply_to_specific_sub_surface
+    # args_hash = {}
+    # args_hash["sub_surface"] = "Surface 5 - Window 1"
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {"SimpleGlazing"=>1, "Construction"=>1, "ShadingControl"=>1, "WindowMaterialShade"=>1, "ScheduleRuleset"=>1}
+    # expected_values = {"shgc"=>0.3*0.7, "ufactor"=>0.37, "SubSurfacesWithConstructions"=>1}
+    # model = _test_measure("SFD_2000sqft_2story_SL_UA_Denver_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
   private
   
@@ -125,7 +134,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     
     model = get_model(File.dirname(__FILE__), osm_file_or_model)
-
+    
     # get the initial objects in the model
     initial_objects = get_objects(model)
     
@@ -164,7 +173,7 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_values = {"shgc"=>0, "ufactor"=>0}
+    actual_values = {"shgc"=>0, "ufactor"=>0, "SubSurfacesWithConstructions"=>0}
     all_new_objects.each do |obj_type, new_objects|
         new_objects.each do |new_object|
             next if not new_object.respond_to?("to_#{obj_type}")
@@ -173,11 +182,19 @@ class ProcessConstructionsWindowsTest < MiniTest::Test
                 new_object = new_object.to_SimpleGlazing.get
                 actual_values["ufactor"] += OpenStudio::convert(new_object.uFactor,"W/m^2*K","Btu/ft^2*h*R").get
                 actual_values["shgc"] += new_object.solarHeatGainCoefficient
+            elsif obj_type == "Construction"
+                model.getSubSurfaces.each do |sub_surface|
+                  if sub_surface.construction.is_initialized
+                    next unless sub_surface.construction.get == new_object
+                    actual_values["SubSurfacesWithConstructions"] += 1
+                  end
+                end            
             end
         end
     end
     assert_in_epsilon(expected_values["shgc"], actual_values["shgc"], 0.01)
     assert_in_epsilon(expected_values["ufactor"], actual_values["ufactor"], 0.01)
+    assert_in_epsilon(expected_values["SubSurfacesWithConstructions"], actual_values["SubSurfacesWithConstructions"], 0.01)
 
     return model
   end  

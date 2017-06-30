@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_tub_pump</name>
   <uid>58b3f782-0d34-455c-9101-df36412196f1</uid>
-  <version_id>4ad0fbf0-d072-4858-9422-53fa4bc23bcd</version_id>
-  <version_modified>20170623T213104Z</version_modified>
+  <version_id>0cd3f376-b39f-4e4b-b232-5a971d5e8e26</version_id>
+  <version_modified>20170630T154137Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialHotTubPump</class_name>
   <display_name>Set Residential Hot Tub Pump</display_name>
@@ -145,13 +145,13 @@
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F78518CC</checksum>
+      <checksum>97687FFD</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8A52CAE6</checksum>
+      <checksum>2DC58F42</checksum>
     </file>
   </files>
 </measure>

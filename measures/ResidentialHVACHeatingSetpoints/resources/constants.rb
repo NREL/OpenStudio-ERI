@@ -850,6 +850,13 @@ class Constants
     end
     return "Domestic Hot Water Loop#{s_unit}"
   end
+  def self.PlantLoopSolarHotWater(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "Solar Hot Water Loop#{s_unit}"
+  end  
   def self.RADuctZone
     return 'RA Duct Zone'
   end

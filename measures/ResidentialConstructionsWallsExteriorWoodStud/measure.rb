@@ -20,11 +20,20 @@ class ProcessConstructionsWallsExteriorWoodStud < OpenStudio::Measure::ModelMeas
   
   def modeler_description
     return "Calculates and assigns material layer properties of wood stud constructions for 1) above-grade walls between finished space and outside, and 2) above-grade walls between attics under insulated roofs and outside. If the walls have an existing construction, the layers (other than exterior finish, wall sheathing, and wall mass) are replaced. This measure is intended to be used in conjunction with Exterior Finish, Wall Sheathing, and Exterior Wall Mass measures."
-  end  
+  end
   
   #define the arguments that the user will input
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
+    
+    #make a choice argument for above-grade exterior walls adjacent to finished space or attic walls under insulated roofs
+    surfaces_args = Geometry.get_surfaces_above_grade(model.getSurfaces, "wall", "outdoors")
+    surfaces_args << Constants.Auto
+    surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
+    surface.setDisplayName("Surface(s)")
+    surface.setDescription("Select the surface(s) to assign constructions.")
+    surface.setDefaultValue(Constants.Auto)
+    args << surface
 
     #make a double argument for R-value of installed cavity insulation
     cavity_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("cavity_r", true)
@@ -80,33 +89,53 @@ class ProcessConstructionsWallsExteriorWoodStud < OpenStudio::Measure::ModelMeas
       return false
     end
     
+    surface_s = runner.getOptionalStringArgumentValue("surface",user_arguments)
+    if not surface_s.is_initialized
+      surface_s = Constants.Auto
+    else
+      surface_s = surface_s.get
+    end
+    
     finished_surfaces = []
     unfinished_surfaces = []
-    model.getSpaces.each do |space|
-        # Wall between finished space and outdoors
-        if Geometry.space_is_finished(space) and Geometry.space_is_above_grade(space)
-            space.surfaces.each do |surface|
-                next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
-                finished_surfaces << surface
-            end
-        # Attic wall under an insulated roof
+    
+    if surface_s == Constants.Auto
+      model.getSpaces.each do |space|
+          # Wall between finished space and outdoors
+          if Geometry.space_is_finished(space) and Geometry.space_is_above_grade(space)
+              space.surfaces.each do |surface|
+                  next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+                  finished_surfaces << surface
+              end
+          # Attic wall under an insulated roof
+          elsif Geometry.is_unfinished_attic(space)
+              attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
+              next if attic_roof_r.nil? or attic_roof_r <= 5 # assume uninsulated if <= R-5 assembly
+              space.surfaces.each do |surface|
+                  next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+                  unfinished_surfaces << surface
+              end
+          end
+      end
+    else
+      model.getSurfaces.each do |surface|
+        next unless surface.name.to_s == surface_s
+        space = surface.space.get
+        if Geometry.space_is_finished(space)
+          finished_surfaces << surface
         elsif Geometry.is_unfinished_attic(space)
-            attic_roof_r = Construction.get_space_r_value(runner, space, "roofceiling")
-            next if attic_roof_r.nil? or attic_roof_r <= 5 # assume uninsulated if <= R-5 assembly
-            space.surfaces.each do |surface|
-                next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
-                unfinished_surfaces << surface
-            end
+          unfinished_surfaces << surface
         end
+      end
     end
     
     # Continue if no applicable surfaces
     if finished_surfaces.empty? and unfinished_surfaces.empty?
       runner.registerAsNotApplicable("Measure not applied because no applicable surfaces were found.")
       return true
-    end     
+    end
     
-    # Get inputs
+    # Get inputs    
     wsWallCavityInsRvalueInstalled = runner.getDoubleArgumentValue("cavity_r",user_arguments)
     wsWallInstallGrade = {"I"=>1, "II"=>2, "III"=>3}[runner.getStringArgumentValue("install_grade",user_arguments)]
     wsWallCavityDepth = runner.getDoubleArgumentValue("cavity_depth",user_arguments)

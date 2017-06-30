@@ -79,6 +79,7 @@ The order in which these measures are called is important. For example, the Wind
 |4. Domestic Hot Water|1. Water Heater - Fuel Tank (or Electric Tank, Fuel Tankless, Heat Pump, etc.)|Beds/Baths|
 ||2. Hot Water Fixtures|Water Heater|
 ||3. Hot Water Distribution|Hot Water Fixtures, Location|
+||4. Solar Water Heating|Water Heater|
 |5. HVAC|1. Central Air Source Heat Pump (or AC/Furnace, Boiler, MSHP, etc.)||
 ||2. Heating Setpoint|HVAC Equipment, Location|
 ||3. Cooling Setpoint|HVAC Equipment, Location|

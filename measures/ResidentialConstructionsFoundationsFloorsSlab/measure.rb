@@ -25,6 +25,15 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
+    #make a choice argument for above-grade ground floors adjacent to finished space
+    surfaces_args = Geometry.get_surfaces_above_grade_adjacent_to_finished_space(model.getSurfaces, "floor", "ground")
+    surfaces_args << Constants.Auto
+    surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
+    surface.setDisplayName("Surface(s)")
+    surface.setDescription("Select the surface(s) to assign constructions.")
+    surface.setDefaultValue(Constants.Auto)
+    args << surface    
+    
     #make a double argument for slab perimeter insulation R-value
     perim_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("perim_r", true)
     perim_r.setDisplayName("Perimeter Insulation Nominal R-value")
@@ -125,20 +134,39 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
       return false
     end
 
+    surface_s = runner.getOptionalStringArgumentValue("surface",user_arguments)
+    if not surface_s.is_initialized
+      surface_s = Constants.Auto
+    else
+      surface_s = surface_s.get
+    end    
+    
     surfaces = []
     spaces = []
-    model.getSpaces.each do |space|
-        next if Geometry.space_is_unfinished(space)
-        next if Geometry.space_is_below_grade(space)
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "floor"
-            next if surface.outsideBoundaryCondition.downcase != "ground"
-            surfaces << surface
-            if not spaces.include? space
-                # Floors between above-grade finished space and ground
-                spaces << space
-            end
-        end
+    
+    if surface_s == Constants.Auto
+      model.getSpaces.each do |space|
+          next if Geometry.space_is_unfinished(space)
+          next if Geometry.space_is_below_grade(space)
+          space.surfaces.each do |surface|
+              next if surface.surfaceType.downcase != "floor"
+              next if surface.outsideBoundaryCondition.downcase != "ground"
+              surfaces << surface
+          end
+      end
+    else
+      model.getSurfaces.each do |surface|
+        next unless surface.name.to_s == surface_s
+        surfaces << surface
+      end
+    end
+    
+    surfaces.each do |surface|
+      space = surface.space.get
+      if not spaces.include? space
+          # Floors between above-grade finished space and ground
+          spaces << space
+      end
     end
   
     # Continue if no applicable surfaces

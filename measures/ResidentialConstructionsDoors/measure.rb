@@ -31,6 +31,15 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
+    #make a choice argument for door sub surfaces
+    sub_surfaces_args = Geometry.get_sub_surfaces(model.getSubSurfaces, "door")
+    sub_surfaces_args << Constants.Auto
+    sub_surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("sub_surface", sub_surfaces_args, false)
+    sub_surface.setDisplayName("Subsurface(s)")
+    sub_surface.setDescription("Select the sub surface(s) to assign constructions.")
+    sub_surface.setDefaultValue(Constants.Auto)
+    args << sub_surface     
+    
     #make a string argument for door u-factor
     door_ufactor = OpenStudio::Measure::OSArgument::makeDoubleArgument("door_ufactor", true)
     door_ufactor.setDisplayName("U-Factor")
@@ -51,40 +60,57 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
       return false
     end
 
+    sub_surface_s = runner.getOptionalStringArgumentValue("sub_surface",user_arguments)
+    if not sub_surface_s.is_initialized
+      sub_surface_s = Constants.Auto
+    else
+      sub_surface_s = sub_surface_s.get
+    end
+    
     doorUfactor = runner.getDoubleArgumentValue("door_ufactor",user_arguments)
     if doorUfactor <= 0.0
         runner.registerError("U-Factor must be greater than 0.")
         return false
     end
 
-    # Sub-surface between finished space and outdoors
     finished_sub_surfaces = []
-    model.getSpaces.each do |space|
-        next if Geometry.space_is_unfinished(space)
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
-            surface.subSurfaces.each do |sub_surface|
-                next if not sub_surface.subSurfaceType.downcase.include? "door"
-                finished_sub_surfaces << sub_surface
-            end
+    unfinished_sub_surfaces = []
+    
+    if sub_surface_s == Constants.Auto
+      model.getSpaces.each do |space|
+        if not Geometry.space_is_unfinished(space) # Sub-surface between finished space and outdoors
+          space.surfaces.each do |surface|
+              next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+              surface.subSurfaces.each do |sub_surface|
+                  next if not sub_surface.subSurfaceType.downcase.include? "door"
+                  finished_sub_surfaces << sub_surface
+              end
+          end
+        elsif not Geometry.space_is_unfinished(space) # Sub-surface between unfinished space and outdoors
+          space.surfaces.each do |surface|
+              next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+              surface.subSurfaces.each do |sub_surface|
+                  next if not sub_surface.subSurfaceType.downcase.include? "door"
+                  unfinished_sub_surfaces << sub_surface
+              end
+          end
         end
+      end
+    else
+      model.getSubSurfaces.each do |sub_surface|
+          next unless sub_surface.name.to_s == sub_surface_s
+          space = sub_surface.space.get
+          if not Geometry.space_is_unfinished(space)
+            finished_sub_surfaces << sub_surface
+          elsif not Geometry.space_is_unfinished(space)
+            unfinished_sub_surfaces << sub_surface
+          end
+      end
     end
 
-    # Sub-surface between unfinished space and outdoors
-    unfinished_sub_surfaces = []
-    model.getSpaces.each do |space|
-        next if Geometry.space_is_finished(space)
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
-            surface.subSurfaces.each do |sub_surface|
-                next if not sub_surface.subSurfaceType.downcase.include? "door"
-                unfinished_sub_surfaces << sub_surface
-            end
-        end
-    end
-    
     # Continue if no applicable sub surfaces
     if finished_sub_surfaces.empty? and unfinished_sub_surfaces.empty?
+      runner.registerAsNotApplicable("Measure not applied because no doors were found.")
       return true
     end   
     

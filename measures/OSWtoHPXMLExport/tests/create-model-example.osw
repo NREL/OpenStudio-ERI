@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170629T211237Z",
+   "created_at" : "20170630T154140Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -143,7 +143,8 @@
             "roof_cavity_ins_thick_in" : "0",
             "roof_cavity_r" : "0",
             "roof_ff" : "0.07",
-            "roof_fram_thick_in" : "7.25"
+            "roof_fram_thick_in" : "7.25",
+            "surface" : "auto"
          },
          "description" : "This measure assigns constructions to unfinished attic floors and ceilings.",
          "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
@@ -206,6 +207,7 @@
             "mass_thick_in" : "4",
             "perim_r" : "0",
             "perim_width" : "0",
+            "surface" : "auto",
             "whole_r" : "0"
          },
          "description" : "This measure assigns a construction to slabs-on-grade.",
@@ -263,7 +265,8 @@
             "cavity_r" : "13",
             "framing_factor" : "0.25",
             "ins_fills_cavity" : "true",
-            "install_grade" : "I"
+            "install_grade" : "I",
+            "surface" : "auto"
          },
          "description" : "This measure assigns a wood stud construction to above-grade exterior walls adjacent to finished space or attic walls under insulated roofs.",
          "measure_dir_name" : "ResidentialConstructionsWallsExteriorWoodStud",
@@ -360,7 +363,8 @@
       },
       {
          "arguments" : {
-            "door_ufactor" : "0.2"
+            "door_ufactor" : "0.2",
+            "sub_surface" : "auto"
          },
          "description" : "This measure assigns a construction to exterior doors adjacent to finished or unfinished space.",
          "measure_dir_name" : "ResidentialConstructionsDoors",
@@ -423,6 +427,27 @@
          "measure_dir_name" : "ResidentialHotWaterDistribution",
          "modeler_description" : "Modifies the existing HotWater:Equipment Objects for showers, sinks, and baths to take into account the additional water drawn due to distribution system inefficiencies. Also adds an internal gain to the space due to heat loss from the pipes and an ElectricEquipment object for the pump if recirculation is included.",
          "name" : "Set Residential Hot Water Distribution"
+      },
+      {
+         "arguments" : {
+            "azimuth" : "180",
+            "azimuth_type" : "relative",
+            "collector_area" : "40",
+            "fluid_type" : "propylene-glycol",
+            "frta" : "0.77",
+            "frul" : "0.793",
+            "heat_ex_eff" : "0.7",
+            "iam" : "0.1",
+            "pump_power" : "0.8",
+            "storage_vol" : "auto",
+            "tank_r" : "10",
+            "tilt" : "0",
+            "tilt_type" : "pitch"
+         },
+         "description" : "Adds (or replaces) residential solar water heating to the model based on user inputs. For both single-family detached and multifamily buildings, the added storage tank and collector plate provide pre-heated water to the (existing) conventional water heater.",
+         "measure_dir_name" : "ResidentialHotWaterSolar",
+         "modeler_description" : "Any supply or demand components, including collector plate surface, are removed along with corresponding plant loop. A stratified storage tank demand branch, flat plate collector supply branch, and constant speed pump are added to a new plant loop. The existing water heater is added to the outlet node of the storage tank. A differential thermostat, with collector plate outlet as the hot node and storage tank outlet as the cold node, represents the availability manager on the plant loop.",
+         "name" : "Set Residential Solar Water Heating"
       },
       {
          "arguments" : {
@@ -816,5 +841,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170629T211239Z"
+   "updated_at" : "20170630T154143Z"
 }

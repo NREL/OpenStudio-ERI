@@ -25,6 +25,15 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Measure::Mo
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
     
+    #make a choice argument for unfinished attic floors and ceilings
+    surfaces_args = Geometry.get_unfinished_attic_surfaces(model.getSurfaces, model)
+    surfaces_args << Constants.Auto
+    surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
+    surface.setDisplayName("Surface(s)")
+    surface.setDescription("Select the surface(s) to assign constructions.")
+    surface.setDefaultValue(Constants.Auto)
+    args << surface    
+    
     #make a double argument for ceiling R-value
     ceil_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("ceil_r", true)
     ceil_r.setDisplayName("Ceiling Insulation Nominal R-value")
@@ -121,26 +130,53 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Measure::Mo
       return false
     end
 
-    spaces = Geometry.get_unfinished_attic_spaces(model.getSpaces, model)
-
-    ceiling_surfaces = []
-    spaces.each do |space|
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "floor"
-            next if not surface.adjacentSurface.is_initialized
-            next if not surface.adjacentSurface.get.space.is_initialized
-            adjacent_space = surface.adjacentSurface.get.space.get
-            next if Geometry.space_is_unfinished(adjacent_space)
-            ceiling_surfaces << surface
-        end   
-    end 
+    surface_s = runner.getOptionalStringArgumentValue("surface",user_arguments)
+    if not surface_s.is_initialized
+      surface_s = Constants.Auto
+    else
+      surface_s = surface_s.get
+    end
     
+    ceiling_surfaces = []
     roof_surfaces = []
-    spaces.each do |space|
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "roofceiling" or surface.outsideBoundaryCondition.downcase != "outdoors"
-            roof_surfaces << surface
-        end   
+    
+    if surface_s == Constants.Auto
+    
+      spaces = Geometry.get_unfinished_attic_spaces(model.getSpaces, model)
+      
+      spaces.each do |space|
+          space.surfaces.each do |surface|
+              next if surface.surfaceType.downcase != "floor"
+              next if not surface.adjacentSurface.is_initialized
+              next if not surface.adjacentSurface.get.space.is_initialized
+              adjacent_space = surface.adjacentSurface.get.space.get
+              next if Geometry.space_is_unfinished(adjacent_space)
+              ceiling_surfaces << surface
+          end
+      end
+
+      spaces.each do |space|
+          space.surfaces.each do |surface|
+              next if surface.surfaceType.downcase != "roofceiling" or surface.outsideBoundaryCondition.downcase != "outdoors"
+              roof_surfaces << surface
+          end   
+      end
+      
+    else
+    
+      model.getSurfaces.each do |surface|
+        next unless surface.name.to_s == surface_s
+        if surface.surfaceType.downcase == "floor" and surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized and not Geometry.space_is_unfinished(surface.adjacentSurface.get.space.get)
+          ceiling_surfaces << surface
+        elsif surface.surfaceType.downcase == "roofceiling" or surface.outsideBoundaryCondition.downcase == "outdoors"
+          roof_surfaces << surface
+        end      
+      end
+      
+      (ceiling_surfaces + roof_surfaces).each do |surface|
+        spaces = [surface.space.get]
+      end
+    
     end
 
     # Continue if no applicable surfaces
