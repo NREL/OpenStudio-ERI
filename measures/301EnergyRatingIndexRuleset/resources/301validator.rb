@@ -56,6 +56,7 @@ class EnergyRatingIndex301Validator
                 #'AtticFloorInsulation[AssemblyEffectiveRValue and InsulationGrade]',
                 #'AtticRoofInsulation[AssemblyEffectiveRValue and InsulationGrade]',
                 'Area',
+                '[AtticType="vented attic" or AtticType="unvented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]',
             ],
             # Foundation
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation' => [

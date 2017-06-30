@@ -467,7 +467,7 @@ class OSMeasures
       name = attic.elements["SystemIdentifier"].attributes["id"]
       attic_type = XMLHelper.get_value(attic, "AtticType")
       
-      if ["venting unknown attic", "vented attic", "unvented attic"].include? attic_type
+      if ["vented attic", "unvented attic"].include? attic_type
     
         measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
         args = {
@@ -2549,9 +2549,7 @@ class OSModel
     attic_zone = nil
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
-      next if attic.elements["Area"].nil?
-    
-      if ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text
+      if ["vented attic", "unvented attic"].include? attic.elements["AtticType"].text
         if attic_space.nil?
           attic_zone = OpenStudio::Model::ThermalZone.new(model)
           attic_zone.setName(Constants.UnfinishedAtticZone)
@@ -2627,7 +2625,7 @@ class OSModel
         surface.setSpace(living_space)
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")
-      elsif ["venting unknown attic", "vented attic", "unvented attic"].include? attic.elements["AtticType"].text     
+      elsif ["vented attic", "unvented attic"].include? attic.elements["AtticType"].text     
       else
         errors << "#{attic.elements["AtticType"].text} not handled yet."
       end
