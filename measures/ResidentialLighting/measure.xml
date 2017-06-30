@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_lighting</name>
   <uid>82efbdfd-258d-421a-8c32-ff4636bea099</uid>
-  <version_id>51492d8f-1f3c-422a-b0f4-861d12d71da8</version_id>
-  <version_modified>20170630T154136Z</version_modified>
+  <version_id>6db64a12-1675-4b08-b341-0124d9064243</version_id>
+  <version_modified>20170630T192806Z</version_modified>
   <xml_checksum>2DDDDD82</xml_checksum>
   <class_name>ResidentialLighting</class_name>
   <display_name>Set Residential Lighting</display_name>
@@ -283,7 +283,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2DC58F42</checksum>
+      <checksum>99D1E315</checksum>
     </file>
   </files>
 </measure>

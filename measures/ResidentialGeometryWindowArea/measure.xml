@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>001b63c4-eed2-4c29-b902-76167a619678</version_id>
-  <version_modified>20170630T154128Z</version_modified>
+  <version_id>563993ef-96a4-48b9-b20f-c6ed609e373c</version_id>
+  <version_modified>20170630T192757Z</version_modified>
   <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -198,7 +198,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2DC58F42</checksum>
+      <checksum>99D1E315</checksum>
     </file>
   </files>
 </measure>

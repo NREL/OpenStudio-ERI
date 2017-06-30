@@ -26,8 +26,12 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Measure::Mo
     args = OpenStudio::Measure::OSArgumentVector.new
     
     #make a choice argument for unfinished attic floors and ceilings
-    surfaces_args = Geometry.get_unfinished_attic_surfaces(model.getSurfaces, model)
+    ceiling_surfaces, roof_surfaces, spaces = get_unfinished_attic_ceilings_and_roofs_surfaces(model)
+    surfaces_args = OpenStudio::StringVector.new
     surfaces_args << Constants.Auto
+    (ceiling_surfaces + roof_surfaces).each do |surface|
+      surfaces_args << surface.name.to_s
+    end   
     surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
     surface.setDisplayName("Surface(s)")
     surface.setDescription("Select the surface(s) to assign constructions.")
@@ -137,46 +141,11 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Measure::Mo
       surface_s = surface_s.get
     end
     
-    ceiling_surfaces = []
-    roof_surfaces = []
+    ceiling_surfaces, roof_surfaces, spaces = get_unfinished_attic_ceilings_and_roofs_surfaces(model)
     
-    if surface_s == Constants.Auto
-    
-      spaces = Geometry.get_unfinished_attic_spaces(model.getSpaces, model)
-      
-      spaces.each do |space|
-          space.surfaces.each do |surface|
-              next if surface.surfaceType.downcase != "floor"
-              next if not surface.adjacentSurface.is_initialized
-              next if not surface.adjacentSurface.get.space.is_initialized
-              adjacent_space = surface.adjacentSurface.get.space.get
-              next if Geometry.space_is_unfinished(adjacent_space)
-              ceiling_surfaces << surface
-          end
-      end
-
-      spaces.each do |space|
-          space.surfaces.each do |surface|
-              next if surface.surfaceType.downcase != "roofceiling" or surface.outsideBoundaryCondition.downcase != "outdoors"
-              roof_surfaces << surface
-          end   
-      end
-      
-    else
-    
-      model.getSurfaces.each do |surface|
-        next unless surface.name.to_s == surface_s
-        if surface.surfaceType.downcase == "floor" and surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized and not Geometry.space_is_unfinished(surface.adjacentSurface.get.space.get)
-          ceiling_surfaces << surface
-        elsif surface.surfaceType.downcase == "roofceiling" or surface.outsideBoundaryCondition.downcase == "outdoors"
-          roof_surfaces << surface
-        end      
-      end
-      
-      (ceiling_surfaces + roof_surfaces).each do |surface|
-        spaces = [surface.space.get]
-      end
-    
+    unless surface_s == Constants.Auto
+      ceiling_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
+      roof_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
     end
 
     # Continue if no applicable surfaces
@@ -335,6 +304,34 @@ class ProcessConstructionsCeilingsRoofsUnfinishedAttic < OpenStudio::Measure::Mo
     return true
  
   end #end the run method
+  
+  def get_unfinished_attic_ceilings_and_roofs_surfaces(model)
+  
+    spaces = Geometry.get_unfinished_attic_spaces(model.getSpaces, model)
+
+    ceiling_surfaces = []
+    spaces.each do |space|
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "floor"
+            next if not surface.adjacentSurface.is_initialized
+            next if not surface.adjacentSurface.get.space.is_initialized
+            adjacent_space = surface.adjacentSurface.get.space.get
+            next if Geometry.space_is_unfinished(adjacent_space)
+            ceiling_surfaces << surface
+        end   
+    end 
+    
+    roof_surfaces = []
+    spaces.each do |space|
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "roofceiling" or surface.outsideBoundaryCondition.downcase != "outdoors"
+            roof_surfaces << surface
+        end   
+    end  
+  
+    return ceiling_surfaces, roof_surfaces, spaces
+  
+  end
 
 end #end the measure
 

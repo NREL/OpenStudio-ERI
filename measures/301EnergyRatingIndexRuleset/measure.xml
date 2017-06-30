@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>d1ca738a-de94-4c12-9a39-2112d4e99d90</version_id>
-  <version_modified>20170630T154121Z</version_modified>
+  <version_id>adc6fd33-23a1-4c89-a6e4-ae7ac6c91c42</version_id>
+  <version_modified>20170630T192749Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -274,6 +274,12 @@
       <checksum>840A15A7</checksum>
     </file>
     <file>
+      <filename>HERS Rated Home - valid.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7F5139D4</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -282,25 +288,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>76E0B71B</checksum>
+      <checksum>412FA9C5</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6BE9CDAF</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7F5139D4</checksum>
+      <checksum>1B121FE9</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2DC58F42</checksum>
+      <checksum>99D1E315</checksum>
     </file>
   </files>
 </measure>

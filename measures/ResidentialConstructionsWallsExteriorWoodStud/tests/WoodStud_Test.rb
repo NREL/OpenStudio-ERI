@@ -126,7 +126,7 @@ class ProcessConstructionsWallsExteriorWoodStudTest < MiniTest::Test
     args_hash = {}
     _test_na(nil, args_hash)
   end
-  
+
   def test_apply_to_specific_surface
     args_hash = {}
     args_hash["surface"] = "Surface 2"

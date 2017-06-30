@@ -1187,7 +1187,7 @@ class Geometry
         end
         return below_grade_exterior_walls
     end
-
+    
     def self.get_spaces_below_grade_exterior_floors(spaces)
         below_grade_exterior_floors = []
         spaces.each do |space|
@@ -1201,50 +1201,6 @@ class Geometry
             end
         end
         return below_grade_exterior_floors
-    end
-    
-    def self.get_surfaces_above_grade(surfaces, surface_type, outside_boundary_condition)
-      surfaces_args = OpenStudio::StringVector.new
-      surfaces.each do |surface|
-        next if surface.surfaceType.downcase != surface_type or surface.outsideBoundaryCondition.downcase != outside_boundary_condition
-        space = surface.space.get
-        next unless Geometry.space_is_above_grade(space)
-        surfaces_args << surface.name.to_s
-      end
-      return surfaces_args    
-    end
-    
-    def self.get_surfaces_above_grade_adjacent_to_finished_space(surfaces, surface_type, outside_boundary_condition)
-      surfaces_args = OpenStudio::StringVector.new
-      surfaces.each do |surface|
-        space = surface.space.get
-        next if Geometry.space_is_unfinished(space)
-        next if Geometry.space_is_below_grade(space)      
-        next if surface.surfaceType.downcase != surface_type or surface.outsideBoundaryCondition.downcase != outside_boundary_condition
-        surfaces_args << surface.name.to_s
-      end
-      return surfaces_args    
-    end    
-    
-    def self.get_sub_surfaces(sub_surfaces, sub_surface_type)
-      sub_surfaces_args = OpenStudio::StringVector.new
-      sub_surfaces.each do |sub_surface|
-        next unless sub_surface.subSurfaceType.downcase.include? sub_surface_type
-        sub_surfaces_args << sub_surface.name.to_s
-      end
-      return sub_surfaces_args
-    end
-    
-    def self.get_unfinished_attic_surfaces(surfaces, model)
-      surfaces_args = OpenStudio::StringVector.new
-      surfaces.each do |surface|
-        Geometry.get_unfinished_attic_spaces(model.getSpaces, model).each do |space|
-          if space.surfaces.include? surface
-            surfaces_args << surface.name.to_s
-          end
-        end
-      end
-      return surfaces_args
     end
 
 end

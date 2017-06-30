@@ -26,8 +26,12 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
     args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a choice argument for above-grade ground floors adjacent to finished space
-    surfaces_args = Geometry.get_surfaces_above_grade_adjacent_to_finished_space(model.getSurfaces, "floor", "ground")
+    surfaces = get_slab_floor_surfaces(model)
+    surfaces_args = OpenStudio::StringVector.new
     surfaces_args << Constants.Auto
+    surfaces.each do |surface|
+      surfaces_args << surface.name.to_s
+    end
     surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
     surface.setDisplayName("Surface(s)")
     surface.setDescription("Select the surface(s) to assign constructions.")
@@ -140,27 +144,14 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
     else
       surface_s = surface_s.get
     end    
+
+    surfaces = get_slab_floor_surfaces(model)
     
-    surfaces = []
-    spaces = []
-    
-    if surface_s == Constants.Auto
-      model.getSpaces.each do |space|
-          next if Geometry.space_is_unfinished(space)
-          next if Geometry.space_is_below_grade(space)
-          space.surfaces.each do |surface|
-              next if surface.surfaceType.downcase != "floor"
-              next if surface.outsideBoundaryCondition.downcase != "ground"
-              surfaces << surface
-          end
-      end
-    else
-      model.getSurfaces.each do |surface|
-        next unless surface.name.to_s == surface_s
-        surfaces << surface
-      end
+    unless surface_s == Constants.Auto
+      surfaces.delete_if { |surface| surface.name.to_s != surface_s }
     end
     
+    spaces = []
     surfaces.each do |surface|
       space = surface.space.get
       if not spaces.include? space
@@ -452,6 +443,20 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
     end
     perimeterConductance = a / (b + rvalue ** e1 * depth ** e2) 
     return perimeterConductance
+  end
+  
+  def get_slab_floor_surfaces(model)
+    surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+        next if Geometry.space_is_below_grade(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "floor"
+            next if surface.outsideBoundaryCondition.downcase != "ground"
+            surfaces << surface
+        end
+    end
+    return surfaces
   end
   
 end #end the measure

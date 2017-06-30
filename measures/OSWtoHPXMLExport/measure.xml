@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>c500b1a5-c7d6-4eee-bec8-54d881064fa0</version_id>
-  <version_modified>20170630T154123Z</version_modified>
+  <version_id>a81196a2-0945-4366-9751-20a5a7cd5439</version_id>
+  <version_modified>20170630T192752Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -609,13 +609,13 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2DC58F42</checksum>
+      <checksum>99D1E315</checksum>
     </file>
     <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>3D2D2C44</checksum>
+      <checksum>CE0EF288</checksum>
     </file>
   </files>
 </measure>

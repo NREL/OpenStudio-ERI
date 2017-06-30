@@ -32,8 +32,12 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
     args = OpenStudio::Measure::OSArgumentVector.new
 
     #make a choice argument for door sub surfaces
-    sub_surfaces_args = Geometry.get_sub_surfaces(model.getSubSurfaces, "door")
+    finished_sub_surfaces, unfinished_sub_surfaces = get_door_sub_surfaces(model)
+    sub_surfaces_args = OpenStudio::StringVector.new
     sub_surfaces_args << Constants.Auto
+    (finished_sub_surfaces + unfinished_sub_surfaces).each do |sub_surface|
+      sub_surfaces_args << sub_surface.name.to_s
+    end        
     sub_surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("sub_surface", sub_surfaces_args, false)
     sub_surface.setDisplayName("Subsurface(s)")
     sub_surface.setDescription("Select the sub surface(s) to assign constructions.")
@@ -73,39 +77,11 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
         return false
     end
 
-    finished_sub_surfaces = []
-    unfinished_sub_surfaces = []
+    finished_sub_surfaces, unfinished_sub_surfaces = get_door_sub_surfaces(model)
     
-    if sub_surface_s == Constants.Auto
-      model.getSpaces.each do |space|
-        if not Geometry.space_is_unfinished(space) # Sub-surface between finished space and outdoors
-          space.surfaces.each do |surface|
-              next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
-              surface.subSurfaces.each do |sub_surface|
-                  next if not sub_surface.subSurfaceType.downcase.include? "door"
-                  finished_sub_surfaces << sub_surface
-              end
-          end
-        elsif not Geometry.space_is_unfinished(space) # Sub-surface between unfinished space and outdoors
-          space.surfaces.each do |surface|
-              next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
-              surface.subSurfaces.each do |sub_surface|
-                  next if not sub_surface.subSurfaceType.downcase.include? "door"
-                  unfinished_sub_surfaces << sub_surface
-              end
-          end
-        end
-      end
-    else
-      model.getSubSurfaces.each do |sub_surface|
-          next unless sub_surface.name.to_s == sub_surface_s
-          space = sub_surface.space.get
-          if not Geometry.space_is_unfinished(space)
-            finished_sub_surfaces << sub_surface
-          elsif not Geometry.space_is_unfinished(space)
-            unfinished_sub_surfaces << sub_surface
-          end
-      end
+    unless sub_surface_s == Constants.Auto
+      finished_sub_surfaces.delete_if { |sub_surface| sub_surface.name.to_s != sub_surface_s }
+      unfinished_sub_surfaces.delete_if { |sub_surface| sub_surface.name.to_s != sub_surface_s }
     end
 
     # Continue if no applicable sub surfaces
@@ -162,6 +138,38 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
     return true
  
   end #end the run method
+  
+  def get_door_sub_surfaces(model)
+  
+    # Sub-surface between finished space and outdoors
+    finished_sub_surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+            surface.subSurfaces.each do |sub_surface|
+                next if not sub_surface.subSurfaceType.downcase.include? "door"
+                finished_sub_surfaces << sub_surface
+            end
+        end
+    end
+
+    # Sub-surface between unfinished space and outdoors
+    unfinished_sub_surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_finished(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+            surface.subSurfaces.each do |sub_surface|
+                next if not sub_surface.subSurfaceType.downcase.include? "door"
+                unfinished_sub_surfaces << sub_surface
+            end
+        end
+    end
+
+    return finished_sub_surfaces, unfinished_sub_surfaces
+  
+  end
 
 end #end the measure
 
