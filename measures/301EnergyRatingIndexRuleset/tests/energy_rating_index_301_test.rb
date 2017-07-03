@@ -19,34 +19,34 @@ class EnergyRatingIndex301Test < MiniTest::Test
     return args_hash
   end
 
-  def test_hpxml_home
-    hpxml = "valid.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
+  # def test_hpxml_home
+    # hpxml = "valid.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
     # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-=begin  
-  def test_hpxml_home_foundation_unconditioned_basement
-    hpxml = "valid-foundation-unconditioned-basement.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-  
+  # end
+
+  # def test_hpxml_home_foundation_unconditioned_basement
+    # hpxml = "valid-foundation-unconditioned-basement.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
+
   def test_hpxml_home_foundation_vented_crawlspace
     hpxml = "valid-foundation-vented-crawlspace.xml"
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
@@ -60,7 +60,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
-  
+
   def test_hpxml_home_foundation_slab
     hpxml = "valid-foundation-slab.xml"
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
@@ -74,133 +74,133 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
+
+  # def test_hpxml_home_hvac_central_ac_only
+    # hpxml = "valid-hvac-central-ac-only.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
+
+  # def test_hpxml_home_hvac_furnace_only
+    # hpxml = "valid-hvac-furnace-only.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
-  def test_hpxml_home_hvac_central_ac_only
-    hpxml = "valid-hvac-central-ac-only.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
+  # def test_hpxml_home_hvac_air_to_air_heat_pump
+    # hpxml = "valid-hvac-air-to-air-heat-pump.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
-  def test_hpxml_home_hvac_furnace_only
-    hpxml = "valid-hvac-furnace-only.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
+  # def test_hpxml_home_hvac_none
+    # hpxml = "valid-hvac-none.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
-  def test_hpxml_home_hvac_air_to_air_heat_pump
-    hpxml = "valid-hvac-air-to-air-heat-pump.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
+  # def test_hpxml_home_hvac_boiler_only
+    # hpxml = "valid-hvac-boiler-only.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
-  def test_hpxml_home_hvac_none
-    hpxml = "valid-hvac-none.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
+  # def test_hpxml_home_hvac_elec_resistance_only
+    # hpxml = "valid-hvac-elec-resistance-only.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
-  def test_hpxml_home_hvac_boiler_only
-    hpxml = "valid-hvac-boiler-only.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
+  # def test_hpxml_home_hvac_ground_to_air_heat_pump
+    # hpxml = "valid-hvac-ground-to-air-heat-pump.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
-  def test_hpxml_home_hvac_elec_resistance_only
-    hpxml = "valid-hvac-elec-resistance-only.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
+  # def test_hpxml_home_hvac_mini_split_heat_pump
+    # hpxml = "valid-hvac-mini-split-heat-pump.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
   
-  #def test_hpxml_home_hvac_ground_to_air_heat_pump
-  #  hpxml = "valid-hvac-ground-to-air-heat-pump.xml"
-  #  args_hash = get_args_hash(hpxml, "HERS Reference Home")
-  #  expected_num_del_objects = {}
-  #  expected_num_new_objects = {}
-  #  expected_values = {}
-  #  result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  #  args_hash = get_args_hash(hpxml, "HERS Rated Home")
-  #  expected_num_del_objects = {}
-  #  expected_num_new_objects = {}
-  #  expected_values = {}
-  #  result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  #end
-  
-  def test_hpxml_home_hvac_mini_split_heat_pump
-    hpxml = "valid-hvac-mini-split-heat-pump.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-  
-  def test_hpxml_home_hvac_room_ac_only
-    hpxml = "valid-hvac-room-ac-only.xml"
-    args_hash = get_args_hash(hpxml, "HERS Reference Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = get_args_hash(hpxml, "HERS Rated Home")
-    expected_num_del_objects = {}
-    expected_num_new_objects = {}
-    expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-=end
+  # def test_hpxml_home_hvac_room_ac_only
+    # hpxml = "valid-hvac-room-ac-only.xml"
+    # args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    # args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    # expected_num_del_objects = {}
+    # expected_num_new_objects = {}
+    # expected_values = {}
+    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  # end
+
   private
   
   def _test_error_or_NA(osm_file_or_model, args_hash)

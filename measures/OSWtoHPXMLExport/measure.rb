@@ -239,7 +239,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       if Geometry.is_unfinished_attic(space)
         attic = attics.add_element "Attic"
         XMLHelper.add_attribute(attic.add_element("SystemIdentifier"), "id", "#{space.name} attic")
-        XMLHelper.add_element(attic, "AtticType", "venting unknown attic")
+        XMLHelper.add_element(attic, "AtticType", "vented attic")
         attic_floor_insulation = attic.add_element "AtticFloorInsulation"
         XMLHelper.add_attribute(attic_floor_insulation.add_element("SystemIdentifier"), "id", "#{space.name} floor ins")
         XMLHelper.add_element(attic_floor_insulation, "InsulationGrade", os_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"][0]["ceil_grade"]))

@@ -635,7 +635,7 @@ class OSMeasures
                 "ceil_ff"=>0.13,
                 "ceil_joist_height"=>9.25,
                 "exposed_perim"=>get_exposed_perimeter(foundation)
-               }  
+               }
         update_args_hash(measures, measure_subdir, args)      
       elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")      
       elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
@@ -714,7 +714,7 @@ class OSMeasures
                 "ceil_ff"=>floor_ff,
                 "ceil_joist_height"=>floor_cav_depth,
                 "exposed_perim"=>get_exposed_perimeter(foundation)
-               }  
+               }
         update_args_hash(measures, measure_subdir, args)
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
@@ -827,7 +827,7 @@ class OSMeasures
                 "ceil_ff"=>0.13,
                 "ceil_joist_height"=>9.25,
                 "exposed_perim"=>get_exposed_perimeter(foundation)
-               }  
+               }
         update_args_hash(measures, measure_subdir, args)     
       elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSlab"
@@ -843,7 +843,7 @@ class OSMeasures
                 "mass_conductivity"=>9.1,
                 "mass_density"=>140,
                 "mass_specific_heat"=>0.2,
-                "exposed_perim"=>exposed_perim
+                "exposed_perim"=>get_exposed_perimeter(foundation)
                }  
         update_args_hash(measures, measure_subdir, args)
       elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
@@ -878,7 +878,7 @@ class OSMeasures
     # FIXME
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       get_foundation_wall_properties(foundation, measures)
-      get_foundation_frame_floor_properties(foundation, measures)      
+      get_foundation_frame_floor_properties(foundation, measures)
       get_foundation_slab_properties(foundation, measures)
     end
     
