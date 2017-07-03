@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_heat_pump</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>9a38a2ea-0751-40df-829a-1b03f746bd00</version_id>
-  <version_modified>20170630T192758Z</version_modified>
+  <version_id>906a3d47-1159-46f4-b759-7970ca95588c</version_id>
+  <version_modified>20170630T203554Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterHeatPump</class_name>
   <display_name>Set Residential Heat Pump Water Heater</display_name>
@@ -337,12 +337,6 @@
       <checksum>766DEF59</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>787EAB06</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -353,6 +347,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>99D1E315</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>64BC6389</checksum>
     </file>
   </files>
 </measure>

@@ -25,6 +25,19 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Measure::Model
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
+    #make a choice argument for roofs above finished space
+    surfaces = get_finished_roofs(model)
+    surfaces_args = OpenStudio::StringVector.new
+    surfaces_args << Constants.Auto
+    surfaces.each do |surface|
+      surfaces_args << surface.name.to_s
+    end   
+    surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
+    surface.setDisplayName("Surface(s)")
+    surface.setDescription("Select the surface(s) to assign constructions.")
+    surface.setDefaultValue(Constants.Auto)
+    args << surface
+    
     #make a double argument for finished roof insulation R-value
     cavity_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("cavity_r", true)
     cavity_r.setDisplayName("Cavity Insulation Installed R-value")
@@ -80,22 +93,27 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Measure::Model
     if not runner.validateUserArguments(arguments(model), user_arguments)
       return false
     end
-
-    # Roof above finished space
-    spaces = []
-    surfaces = []
-    model.getSpaces.each do |space|
-        next if Geometry.space_is_unfinished(space)
-        next if Geometry.space_is_below_grade(space)
-        space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "roofceiling"
-            next if surface.outsideBoundaryCondition.downcase != "outdoors"
-            surfaces << surface
-            if not spaces.include? space
-                spaces << space
-            end
-        end
+    
+    surface_s = runner.getOptionalStringArgumentValue("surface",user_arguments)
+    if not surface_s.is_initialized
+      surface_s = Constants.Auto
+    else
+      surface_s = surface_s.get
     end
+    
+    surfaces = get_finished_roofs(model)
+    
+    unless surface_s == Constants.Auto
+      surfaces.delete_if { |surface| surface.name.to_s != surface_s }
+    end
+    
+    spaces = []
+    surfaces.each do |surface|
+      space = surface.space.get
+      if not spaces.include? space
+          spaces << space
+      end
+    end    
     
     # Continue if no applicable surfaces
     if surfaces.empty?
@@ -178,6 +196,20 @@ class ProcessConstructionsCeilingsRoofsFinishedRoof < OpenStudio::Measure::Model
     return true
  
   end #end the run method
+  
+  def get_finished_roofs(model)  
+    surfaces = []
+    model.getSpaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+        next if Geometry.space_is_below_grade(space)
+        space.surfaces.each do |surface|
+            next if surface.surfaceType.downcase != "roofceiling"
+            next if surface.outsideBoundaryCondition.downcase != "outdoors"
+            surfaces << surface
+        end
+    end
+    return surfaces
+  end
   
 end #end the measure
 

@@ -143,7 +143,7 @@ class ProcessConstructionsFoundationsFloorsSlab < OpenStudio::Measure::ModelMeas
       surface_s = Constants.Auto
     else
       surface_s = surface_s.get
-    end    
+    end
 
     surfaces = get_slab_floor_surfaces(model)
     

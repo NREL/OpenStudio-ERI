@@ -205,7 +205,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # Create OpenStudio model
     if not OSModel.create_geometry(building, runner, model)
       return false
-    end
+    end 
 
     if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
@@ -309,7 +309,7 @@ class OSMeasures
     get_foundation_constructions(building, measures)
     get_wall_constructions(building, measures)
     get_other_constructions(building, measures)
-    
+
     # Water Heating
     get_water_heating(building, measures)
     
@@ -486,9 +486,10 @@ class OSMeasures
         update_args_hash(measures, measure_subdir, args)
        
       else
-      
+
         measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
         args = {
+                "surface"=>name,
                 "cavity_r"=>30,
                 "install_grade"=>"I",
                 "cavity_depth"=>9.25,
@@ -531,26 +532,27 @@ class OSMeasures
            }
     update_args_hash(measures, measure_subdir, args)
 
-    has_rb = false
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
-      if Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))
-        has_rb = true
-      end
-    end
-
-    if has_rb
+      
+      name = roof.elements["SystemIdentifier"].attributes["id"]
+      has_rb = Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))
+      
       measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
       args = {
-              "has_rb"=>"true"
+              "surface"=>name,
+              "has_rb"=>has_rb.to_s
              }
       update_args_hash(measures, measure_subdir, args)
+
     end
     
   end
   
-  def self.get_foundation_wall_properties(foundation)
+  def self.get_foundation_wall_properties(foundation, measures)
   
     foundation.elements.each("FoundationWall") do |fnd_wall|
+    
+      name = fnd_wall.elements["SystemIdentifier"].attributes["id"]
   
       if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue") # Reference Home
       
@@ -583,20 +585,71 @@ class OSMeasures
         wall_cont_depth = Float(XMLHelper.get_value(fnd_wall_cont, "Thickness"))
         
       end
-       
-      # FIXME
-      return wall_cav_r, wall_cav_depth, wall_grade, wall_ff, wall_cont_height, wall_cont_r, wall_cont_depth
+      
+      if XMLHelper.has_element(foundation, "FoundationType/Basement")
+        if Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
+          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementFinished"
+          args = {
+                  "surface"=>name,
+                  "wall_ins_height"=>wall_cont_height,
+                  "wall_cavity_r"=>wall_cav_r,
+                  "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
+                  "wall_cavity_depth"=>wall_cav_depth,
+                  "wall_cavity_insfills"=>"true", # FIXME
+                  "wall_ff"=>wall_ff,
+                  "wall_rigid_r"=>wall_cont_r,
+                  "wall_rigid_thick_in"=>wall_cont_depth,
+                  "ceil_ff"=>0.13,
+                  "ceil_joist_height"=>9.25,
+                  "exposed_perim"=>get_exposed_perimeter(foundation)
+                 }  
+          update_args_hash(measures, measure_subdir, args)        
+        else
+          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementUnfinished"
+          args = {
+                  "surface"=>name,
+                  "wall_ins_height"=>wall_cont_height,
+                  "wall_cavity_r"=>wall_cav_r,
+                  "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
+                  "wall_cavity_depth"=>wall_cav_depth,
+                  "wall_cavity_insfills"=>"true", # FIXME
+                  "wall_ff"=>wall_ff,
+                  "wall_rigid_r"=>wall_cont_r,
+                  "wall_rigid_thick_in"=>wall_cont_depth,
+                  "ceil_cavity_r"=>0,
+                  "ceil_cavity_grade"=>"I",
+                  "ceil_ff"=>0.13,
+                  "ceil_joist_height"=>9.25,
+                  "exposed_perim"=>get_exposed_perimeter(foundation)
+                 }
+          update_args_hash(measures, measure_subdir, args)      
+        end   
+      elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
+        args = {
+                "surface"=>name,
+                "wall_rigid_r"=>wall_cont_r,
+                "wall_rigid_thick_in"=>wall_cont_depth,
+                "ceil_cavity_r"=>0,
+                "ceil_cavity_grade"=>"I",
+                "ceil_ff"=>0.13,
+                "ceil_joist_height"=>9.25,
+                "exposed_perim"=>get_exposed_perimeter(foundation)
+               }  
+        update_args_hash(measures, measure_subdir, args)      
+      elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")      
+      elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
+      end       
        
     end
     
   end
   
-  def self.get_foundation_frame_floor_properties(foundation)
+  def self.get_foundation_frame_floor_properties(foundation, measures)
           
     foundation.elements.each("FrameFloor") do |fnd_floor|
     
-      carpet_frac = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetFraction"))
-      carpet_r = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetRValue"))
+      name = fnd_floor.elements["SystemIdentifier"].attributes["id"]
 
       if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue") # Reference Home
       
@@ -621,19 +674,93 @@ class OSMeasures
       
       end
       
-      # FIXME
-      return floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r
+      if XMLHelper.has_element(foundation, "FoundationType/Basement")
+        if Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
+        else
+          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementUnfinished"
+          args = {
+                  "surface"=>name,
+                  "wall_ins_height"=>8,
+                  "wall_cavity_r"=>0,
+                  "wall_cavity_grade"=>"I",
+                  "wall_cavity_depth"=>0,
+                  "wall_cavity_insfills"=>"false",
+                  "wall_ff"=>0,
+                  "wall_rigid_r"=>10,
+                  "wall_rigid_thick_in"=>2,
+                  "ceil_cavity_r"=>floor_cav_r,
+                  "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
+                  "ceil_ff"=>floor_ff,
+                  "ceil_joist_height"=>floor_cav_depth,
+                  "exposed_perim"=>get_exposed_perimeter(foundation)
+                 }
+          update_args_hash(measures, measure_subdir, args)      
+        end
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
+        args = {
+                "osb_thick_in"=>0.75,
+                "rigid_r"=>floor_cont_r,
+                "rigid_thick_in"=>floor_cont_depth
+               }
+        update_args_hash(measures, measure_subdir, args)        
+      elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
+        args = {
+                "surface"=>name,
+                "wall_rigid_r"=>10,
+                "wall_rigid_thick_in"=>2,
+                "ceil_cavity_r"=>floor_cav_r,
+                "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
+                "ceil_ff"=>floor_ff,
+                "ceil_joist_height"=>floor_cav_depth,
+                "exposed_perim"=>get_exposed_perimeter(foundation)
+               }  
+        update_args_hash(measures, measure_subdir, args)
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
+        args = {
+                "osb_thick_in"=>0.75,
+                "rigid_r"=>floor_cont_r,
+                "rigid_thick_in"=>floor_cont_depth
+               }
+        update_args_hash(measures, measure_subdir, args)        
+      elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")      
+      elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsPierBeam"
+        args = {
+                "surface"=>name,
+                "cavity_r"=>floor_cav_r,
+                "install_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
+                "framing_factor"=>floor_ff
+               }
+        update_args_hash(measures, measure_subdir, args)        
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
+        args = {
+                "osb_thick_in"=>0.75,
+                "rigid_r"=>floor_cont_r,
+                "rigid_thick_in"=>floor_cont_depth
+               }
+        update_args_hash(measures, measure_subdir, args)
+      end
+      
+      carpet_frac = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetFraction"))
+      carpet_r = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetRValue"))      
+      
+      measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
+      args = {
+              "covering_frac"=>carpet_frac,
+              "covering_r"=>carpet_r
+             }
+      update_args_hash(measures, measure_subdir, args)      
       
     end
       
   end
 
-  def self.get_foundation_slab_properties(foundation)
+  def self.get_foundation_slab_properties(foundation, measures)
           
     foundation.elements.each("Slab") do |fnd_slab|
     
-      carpet_frac = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
-      carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
+      name = fnd_slab.elements["SystemIdentifier"].attributes["id"]
       
       fnd_slab_perim = fnd_slab.elements["PerimeterInsulation/Layer[InstallationType='continuous']"]
       ext_r = Float(XMLHelper.get_value(fnd_slab_perim, "NominalRValue"))
@@ -651,115 +778,61 @@ class OSMeasures
         perim_width = 0
       end
       
-      # FIXME
-      return ext_r, ext_depth, perim_r, perim_width, carpet_frac, carpet_r
-      
-    end
-    
-  end
-
-  def self.get_foundation_constructions(building, measures)
-  
-    # FIXME
-    exposed_perim = 0
-    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-      foundation.elements.each("Slab") do |slab|        
-        unless slab.elements["ExposedPerimeter"].nil?
-          exposed_perim += Float(slab.elements["ExposedPerimeter"].text)
-        end
-      end
-    end
-    
-    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-    
       if XMLHelper.has_element(foundation, "FoundationType/Basement")
-    
-        is_cond = Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
-        
-        wall_cav_r, wall_cav_depth, wall_grade, wall_ff, wall_cont_height, wall_cont_r, wall_cont_depth = get_foundation_wall_properties(foundation)
-        floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r = get_foundation_frame_floor_properties(foundation)
-        
-        if is_cond
-        
+        if Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
           measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementFinished"
           args = {
-                  "wall_ins_height"=>wall_cont_height,
-                  "wall_cavity_r"=>wall_cav_r,
-                  "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
-                  "wall_cavity_depth"=>wall_cav_depth,
-                  "wall_cavity_insfills"=>"true", # FIXME
-                  "wall_ff"=>wall_ff,
-                  "wall_rigid_r"=>wall_cont_r,
-                  "wall_rigid_thick_in"=>wall_cont_depth,
-                  "ceil_ff"=>floor_ff,
-                  "ceil_joist_height"=>floor_cav_depth,
-                  "exposed_perim"=>exposed_perim
+                  "surface"=>name,
+                  "wall_ins_height"=>8,
+                  "wall_cavity_r"=>0,
+                  "wall_cavity_grade"=>"I",
+                  "wall_cavity_depth"=>0,
+                  "wall_cavity_insfills"=>"false", # FIXME
+                  "wall_ff"=>0,
+                  "wall_rigid_r"=>10,
+                  "wall_rigid_thick_in"=>2,
+                  "ceil_ff"=>0.13,
+                  "ceil_joist_height"=>9.25,
+                  "exposed_perim"=>get_exposed_perimeter(foundation)
                  }  
-          update_args_hash(measures, measure_subdir, args)
-          
+          update_args_hash(measures, measure_subdir, args)        
         else
-          
           measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementUnfinished"
           args = {
-                  "wall_ins_height"=>wall_cont_height,
-                  "wall_cavity_r"=>wall_cav_r,
-                  "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
-                  "wall_cavity_depth"=>wall_cav_depth,
-                  "wall_cavity_insfills"=>"true", # FIXME
-                  "wall_ff"=>wall_ff,
-                  "wall_rigid_r"=>wall_cont_r,
-                  "wall_rigid_thick_in"=>wall_cont_depth,
-                  "ceil_cavity_r"=>floor_cav_r,
-                  "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                  "ceil_ff"=>floor_ff,
-                  "ceil_joist_height"=>floor_cav_depth,
-                  "exposed_perim"=>exposed_perim
+                  "surface"=>name,
+                  "wall_ins_height"=>8,
+                  "wall_cavity_r"=>0,
+                  "wall_cavity_grade"=>"I",
+                  "wall_cavity_depth"=>0,
+                  "wall_cavity_insfills"=>"false", # FIXME
+                  "wall_ff"=>0,
+                  "wall_rigid_r"=>10,
+                  "wall_rigid_thick_in"=>2,
+                  "ceil_cavity_r"=>0,
+                  "ceil_cavity_grade"=>"I",
+                  "ceil_ff"=>0.13,
+                  "ceil_joist_height"=>9.25,
+                  "exposed_perim"=>get_exposed_perimeter(foundation)
                  }
-          update_args_hash(measures, measure_subdir, args)
-    
-        end
-        
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
-        args = {
-                "osb_thick_in"=>0.75,
-                "rigid_r"=>floor_cont_r,
-                "rigid_thick_in"=>floor_cont_depth
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
+          update_args_hash(measures, measure_subdir, args)      
+        end  
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
-      
-        is_vented = Boolean(XMLHelper.get_value(foundation, "FoundationType/Crawlspace/Vented"))
-        
-        wall_cav_r, wall_cav_depth, wall_grade, wall_ff, wall_cont_height, wall_cont_r, wall_cont_depth = get_foundation_wall_properties(foundation)
-        floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r = get_foundation_frame_floor_properties(foundation)
-        
         measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
         args = {
-                "wall_rigid_r"=>wall_cont_r,
-                "wall_rigid_thick_in"=>wall_cont_depth,
-                "ceil_cavity_r"=>floor_cav_r,
-                "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                "ceil_ff"=>floor_ff,
-                "ceil_joist_height"=>floor_cav_depth,
-                "exposed_perim"=>exposed_perim
+                "surface"=>name,
+                "wall_rigid_r"=>10,
+                "wall_rigid_thick_in"=>2,
+                "ceil_cavity_r"=>0,
+                "ceil_cavity_grade"=>"I",
+                "ceil_ff"=>0.13,
+                "ceil_joist_height"=>9.25,
+                "exposed_perim"=>get_exposed_perimeter(foundation)
                }  
-        update_args_hash(measures, measure_subdir, args)
-        
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
-        args = {
-                "osb_thick_in"=>0.75,
-                "rigid_r"=>floor_cont_r,
-                "rigid_thick_in"=>floor_cont_depth
-               }
-        update_args_hash(measures, measure_subdir, args)
-
+        update_args_hash(measures, measure_subdir, args)     
       elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
-      
-        ext_r, ext_depth, perim_r, perim_width, carpet_frac, carpet_r = get_foundation_slab_properties(foundation)
-      
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSlab"
         args = {
+                "surface"=>name,
                 "perim_r"=>perim_r,
                 "perim_width"=>perim_width,
                 "whole_r"=>0, # FIXME
@@ -772,37 +845,41 @@ class OSMeasures
                 "mass_specific_heat"=>0.2,
                 "exposed_perim"=>exposed_perim
                }  
-        update_args_hash(measures, measure_subdir, args)        
-        
+        update_args_hash(measures, measure_subdir, args)
       elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
-        
-        floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth, carpet_frac, carpet_r = get_foundation_frame_floor_properties(foundation)
-
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsPierBeam"
-        args = {
-                "cavity_r"=>floor_cav_r,
-                "install_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                "framing_factor"=>floor_ff
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
-        args = {
-                "osb_thick_in"=>0.75,
-                "rigid_r"=>floor_cont_r,
-                "rigid_thick_in"=>floor_cont_depth
-               }
-        update_args_hash(measures, measure_subdir, args)
-
       end
-    
+
+      carpet_frac = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
+      carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))      
+      
       measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
       args = {
               "covering_frac"=>carpet_frac,
               "covering_r"=>carpet_r
              }
-      update_args_hash(measures, measure_subdir, args)
+      update_args_hash(measures, measure_subdir, args)      
+      
+    end
+    
+  end
 
+  def self.get_exposed_perimeter(foundation)
+    exposed_perim = 0
+    foundation.elements.each("Slab") do |slab|        
+      unless slab.elements["ExposedPerimeter"].nil?
+        exposed_perim += Float(slab.elements["ExposedPerimeter"].text)
+      end
+    end
+    return exposed_perim
+  end
+  
+  def self.get_foundation_constructions(building, measures)
+  
+    # FIXME
+    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+      get_foundation_wall_properties(foundation, measures)
+      get_foundation_frame_floor_properties(foundation, measures)      
+      get_foundation_slab_properties(foundation, measures)
     end
     
     measure_subdir = "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
@@ -821,7 +898,7 @@ class OSMeasures
             "specheat"=>0.29
            }
     update_args_hash(measures, measure_subdir, args)
-    
+
   end
   
   def self.get_siding_material(siding, color)
@@ -2569,14 +2646,16 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
+      next if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
+    
       attic_id = attic.elements["SystemIdentifier"].attributes["id"]
     
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
      
       surface = OpenStudio::Model::Surface.new(add_floor_polygon(attic_length, attic_width, 0), model)
-      surface.setName(attic_id)        
-      surface.setSpace(attic_space) # TODO: this should only be for the non "cathedral ceiling" type attic surfaces
+      surface.setName(attic_id)
+      surface.setSpace(attic_space)
       surface.setSurfaceType("Floor")
       surface.createAdjacentSurface(living_space)
       

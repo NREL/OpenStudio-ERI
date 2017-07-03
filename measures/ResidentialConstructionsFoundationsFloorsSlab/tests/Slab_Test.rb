@@ -268,7 +268,7 @@ class ProcessConstructionsFoundationsFloorsSlabTest < MiniTest::Test
     expected_num_new_objects = {"Material"=>3, "Construction"=>1}
     expected_values = {"LayerRValue"=>0.0254/0.01838+0.3048/1.731+0.1016/1.3127, "LayerDensity"=>40.05+1842.3+2242.8, "LayerSpecificHeat"=>1214.23+418.7+837.4, "LayerIndex"=>0+1+2, "SurfacesWithConstructions"=>1}
     _test_measure(osm_geo_slab, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end  
+  end
   
   private
   

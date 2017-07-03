@@ -26,6 +26,19 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
+    #make a choice argument for crawlspace ceilings, walls, and floors
+    wall_surfaces, floor_surfaces, ceiling_surfaces, spaces = get_crawlspace_surfaces(model)
+    surfaces_args = OpenStudio::StringVector.new
+    surfaces_args << Constants.Auto
+    (ceiling_surfaces + wall_surfaces + floor_surfaces).each do |surface|
+      surfaces_args << surface.name.to_s
+    end
+    surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
+    surface.setDisplayName("Surface(s)")
+    surface.setDescription("Select the surface(s) to assign constructions.")
+    surface.setDefaultValue(Constants.Auto)
+    args << surface
+    
     #make a double argument for wall continuous insulation R-value
     wall_rigid_r = OpenStudio::Measure::OSArgument::makeDoubleArgument("wall_rigid_r", true)
     wall_rigid_r.setDisplayName("Wall Continuous Insulation Nominal R-value")
@@ -97,28 +110,19 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
       return false
     end
 
-    wall_surfaces = []
-    floor_surfaces = []
-    ceiling_surfaces = []
-    spaces = Geometry.get_crawl_spaces(model.getSpaces)
-    spaces.each do |space|
-        space.surfaces.each do |surface|
-            # Wall between below-grade unfinished space and ground
-            if surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "ground"
-                wall_surfaces << surface
-            end
-            # Floor below below-grade unfinished space
-            if surface.surfaceType.downcase == "floor" and surface.outsideBoundaryCondition.downcase == "ground"
-                floor_surfaces << surface
-            end
-            # Ceiling above below-grade unfinished space and below finished space
-            if surface.surfaceType.downcase == "roofceiling" and surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized
-                adjacent_space = surface.adjacentSurface.get.space.get
-                if Geometry.space_is_finished(adjacent_space)
-                    ceiling_surfaces << surface
-                end
-            end
-        end
+    surface_s = runner.getOptionalStringArgumentValue("surface",user_arguments)
+    if not surface_s.is_initialized
+      surface_s = Constants.Auto
+    else
+      surface_s = surface_s.get
+    end
+    
+    wall_surfaces, floor_surfaces, ceiling_surfaces, spaces = get_crawlspace_surfaces(model)
+
+    unless surface_s == Constants.Auto
+      ceiling_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
+      wall_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
+      floor_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
     end
     
     # Continue if no applicable surfaces
@@ -302,6 +306,33 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
 
   end #end the run method
 
+  def get_crawlspace_surfaces(model)
+    wall_surfaces = []
+    floor_surfaces = []
+    ceiling_surfaces = []
+    spaces = Geometry.get_crawl_spaces(model.getSpaces)
+    spaces.each do |space|
+        space.surfaces.each do |surface|
+            # Wall between below-grade unfinished space and ground
+            if surface.surfaceType.downcase == "wall" and surface.outsideBoundaryCondition.downcase == "ground"
+                wall_surfaces << surface
+            end
+            # Floor below below-grade unfinished space
+            if surface.surfaceType.downcase == "floor" and surface.outsideBoundaryCondition.downcase == "ground"
+                floor_surfaces << surface
+            end
+            # Ceiling above below-grade unfinished space and below finished space
+            if surface.surfaceType.downcase == "roofceiling" and surface.adjacentSurface.is_initialized and surface.adjacentSurface.get.space.is_initialized
+                adjacent_space = surface.adjacentSurface.get.space.get
+                if Geometry.space_is_finished(adjacent_space)
+                    ceiling_surfaces << surface
+                end
+            end
+        end
+    end
+    return wall_surfaces, floor_surfaces, ceiling_surfaces, spaces
+  end
+  
 end #end the measure
 
 #this allows the measure to be use by the application
