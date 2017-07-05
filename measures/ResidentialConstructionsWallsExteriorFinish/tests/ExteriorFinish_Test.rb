@@ -33,7 +33,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     args_hash["emissivity"] = 0.9
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0, "SurfacesWithConstructions"=>10}
     _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
@@ -47,7 +47,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     args_hash["emissivity"] = 0.92
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0, "SurfacesWithConstructions"=>10}
     _test_measure(osm_geo_finished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
@@ -61,7 +61,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     args_hash["emissivity"] = 0.9
     expected_num_del_objects = {"Construction"=>1}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0, "SurfacesWithConstructions"=>10}
     model = _test_measure(osm_geo_finished_attic_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["solar_abs"] = 0.75
     args_hash["conductivity"] = 0.71
@@ -71,7 +71,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     args_hash["emissivity"] = 0.92
     expected_num_del_objects = {"Material"=>1, "Construction"=>1}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0, "SurfacesWithConstructions"=>10}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
@@ -85,7 +85,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     args_hash["emissivity"] = 0.9
     expected_num_del_objects = {"Construction"=>2}
     expected_num_new_objects = {"Material"=>1, "Construction"=>2}
-    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0, "SurfacesWithConstructions"=>10}
     model = _test_measure(osm_geo_unfinished_attic_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["solar_abs"] = 0.75
     args_hash["conductivity"] = 0.71
@@ -95,7 +95,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     args_hash["emissivity"] = 0.92
     expected_num_del_objects = {"Material"=>1, "Construction"=>2}
     expected_num_new_objects = {"Material"=>1, "Construction"=>2}
-    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1024175, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1172.36, "LayerThermalAbs"=>0.92, "LayerSolarAbs"=>0.75, "LayerVisibleAbs"=>0.75, "LayerIndex"=>0, "SurfacesWithConstructions"=>10}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
@@ -160,6 +160,15 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     _test_na(nil, args_hash)
   end
 
+  def test_apply_to_specific_surface
+    args_hash = {}
+    args_hash["surface"] = "Surface 2"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
+    expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0, "SurfacesWithConstructions"=>1}
+    _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
+  end  
+  
   private
   
   def _test_error(osm_file, args_hash)
@@ -286,7 +295,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerThermalAbs"=>0, "LayerSolarAbs"=>0, "LayerVisibleAbs"=>0, "LayerIndex"=>0}
+    actual_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerThermalAbs"=>0, "LayerSolarAbs"=>0, "LayerVisibleAbs"=>0, "LayerIndex"=>0, "SurfacesWithConstructions"=>0}
     all_new_objects.each do |obj_type, new_objects|
         new_objects.each do |new_object|
             next if not new_object.respond_to?("to_#{obj_type}")
@@ -306,6 +315,12 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
                     new_material = new_material.to_StandardOpaqueMaterial.get
                     actual_values["LayerIndex"] += new_object.getLayerIndices(new_material)[0]
                 end
+                model.getSurfaces.each do |surface|
+                  if surface.construction.is_initialized
+                    next unless surface.construction.get == new_object
+                    actual_values["SurfacesWithConstructions"] += 1
+                  end
+                end
             end
         end
     end
@@ -317,6 +332,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     assert_in_epsilon(expected_values["LayerThermalAbs"], actual_values["LayerThermalAbs"], 0.01)
     assert_in_epsilon(expected_values["LayerSolarAbs"], actual_values["LayerSolarAbs"], 0.01)
     assert_in_epsilon(expected_values["LayerVisibleAbs"], actual_values["LayerVisibleAbs"], 0.01)
+    assert_in_epsilon(expected_values["SurfacesWithConstructions"], actual_values["SurfacesWithConstructions"], 0.01)
     
     return model
   end

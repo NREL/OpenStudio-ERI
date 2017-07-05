@@ -1024,18 +1024,21 @@ class OSMeasures
           cp = (1.0 - framing_factor) * mat_ins.cp + framing_factor * mat_wood.cp
           cont_r = 0.0
           cont_depth = 0.0
-    
           measure_subdir = "ResidentialConstructionsWallsExteriorGeneric"
           args = {
+                  "surface"=>name,
                   "thick_in_1"=>layer_t,
                   "conductivity_1"=>layer_k,
                   "density_1"=>rho,
                   "specific_heat_1"=>cp
                  }
-          update_args_hash(measures, measure_subdir, args)
+          if exterior_adjacent_to == "ambient"
+            update_args_hash(measures, measure_subdir, args)
+          end
           
           measure_subdir = "ResidentialConstructionsWallsSheathing"
           args = {
+                  "surface"=>name,
                   "osb_thick_in"=>mat_sheath.thick_in,
                   "rigid_r"=>0.0,
                   "rigid_thick_in"=>0.0
@@ -1053,7 +1056,6 @@ class OSMeasures
           cont_layer = wall.elements["Insulation/Layer[InstallationType='continuous']"]
           cont_r = Float(XMLHelper.get_value(cont_layer, "NominalRValue"))
           cont_depth = Float(XMLHelper.get_value(cont_layer, "Thickness"))
-        
           measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
           args = {
                   "surface"=>name,
@@ -1077,18 +1079,20 @@ class OSMeasures
                  }  
           update_args_hash(measures, measure_subdir, args)
           
+          measure_subdir = "ResidentialConstructionsWallsSheathing"
+          args = {
+                  "surface"=>name,
+                  "osb_thick_in"=>mat_sheath.thick_in,
+                  "rigid_r"=>cont_r,
+                  "rigid_thick_in"=>cont_depth
+                 }
+          update_args_hash(measures, measure_subdir, args)
+          
         end
-        
-        measure_subdir = "ResidentialConstructionsWallsSheathing"
-        args = {
-                "osb_thick_in"=>mat_sheath.thick_in,
-                "rigid_r"=>cont_r,
-                "rigid_thick_in"=>cont_depth
-               }
-        update_args_hash(measures, measure_subdir, args)
 
         measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
         args = {
+                "surface"=>name,
                 "solar_abs"=>mat_siding.sAbs,
                 "conductivity"=>mat_siding.k_in,
                 "density"=>mat_siding.rho,
@@ -1096,7 +1100,9 @@ class OSMeasures
                 "thick_in"=>mat_siding.thick_in,
                 "emissivity"=>mat_siding.tAbs
                }
-        update_args_hash(measures, measure_subdir, args)
+        if exterior_adjacent_to == "ambient"
+          update_args_hash(measures, measure_subdir, args)
+        end
       
       else
       
@@ -2620,7 +2626,7 @@ class OSModel
 
   end
 
-  def self.build_attic_space(model, building)
+  def self.build_attic_space(model, building) # FIXME: what if there were multiple attic elements with differing floor insulation levels? should we assume that attics of the same type are the same zone?
 
     attic_space = nil
     attic_zone = nil
