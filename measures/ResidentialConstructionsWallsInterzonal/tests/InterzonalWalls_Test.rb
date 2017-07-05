@@ -7,10 +7,19 @@ require 'fileutils'
 
 class ProcessConstructionsWallsInterzonalTest < MiniTest::Test
 
+  def osm_geo
+    "SFD_2000sqft_2story_SL_UA.osm"
+  end
+
   def osm_geo_int_walls
     return "SFD_2000sqft_2story_SL_GRG_UA.osm"
   end
 
+  def test_not_applicable
+    args_hash = {}
+    _test_na(osm_geo, args_hash)
+  end
+  
   def test_argument_error_cavity_r_negative
     args_hash = {}
     args_hash["cavity_r"] = -1
