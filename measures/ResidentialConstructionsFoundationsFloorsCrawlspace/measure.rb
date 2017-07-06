@@ -30,7 +30,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
     wall_surfaces, floor_surfaces, ceiling_surfaces, spaces = get_crawlspace_surfaces(model)
     surfaces_args = OpenStudio::StringVector.new
     surfaces_args << Constants.Auto
-    (ceiling_surfaces + wall_surfaces + floor_surfaces).each do |surface|
+    (ceiling_surfaces + wall_surfaces).each do |surface|
       surfaces_args << surface.name.to_s
     end
     surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
@@ -122,7 +122,6 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
     unless surface_s == Constants.Auto
       ceiling_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
       wall_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
-      floor_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
     end
     
     # Continue if no applicable surfaces
@@ -226,7 +225,7 @@ class ProcessConstructionsFoundationsFloorsCrawlspace < OpenStudio::Measure::Mod
     # Process the crawl floor
     # -------------------------------
     
-    if not floor_surfaces.empty?
+    if not floor_surfaces.empty? and not wall_surfaces.empty?
         crawlspace_total_UA = csExtWallArea / crawlspace_effective_Rvalue # Btu/hr*F
         crawlspace_wall_Rvalue = crawlspace_US_Rvalue + Material.Soil12in.rvalue
         crawlspace_wall_UA = csExtWallArea / crawlspace_wall_Rvalue

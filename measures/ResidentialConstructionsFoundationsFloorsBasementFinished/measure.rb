@@ -30,7 +30,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Measur
     wall_surfaces, floor_surfaces, spaces = get_finished_basement_surfaces(model)
     surfaces_args = OpenStudio::StringVector.new
     surfaces_args << Constants.Auto
-    (wall_surfaces + floor_surfaces).each do |surface|
+    wall_surfaces.each do |surface|
       surfaces_args << surface.name.to_s
     end
     surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("surface", surfaces_args, false)
@@ -154,7 +154,6 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Measur
     
     unless surface_s == Constants.Auto
       wall_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
-      floor_surfaces.delete_if { |surface| surface.name.to_s != surface_s }
     end
     
     # Continue if no applicable surfaces
@@ -322,7 +321,7 @@ class ProcessConstructionsFoundationsFloorsBasementFinished < OpenStudio::Measur
     # Process the basement floor
     # -------------------------------
     
-    if not floor_surfaces.empty?
+    if not floor_surfaces.empty? and not wall_surfaces.empty?
         fb_total_ua = fbExtWallArea / fb_effective_Rvalue # Btu/hr*F
         fb_wall_Rvalue = fb_US_Rvalue + Material.Soil12in.rvalue
         fb_wall_UA = fbExtWallArea / fb_wall_Rvalue

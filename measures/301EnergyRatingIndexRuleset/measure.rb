@@ -364,12 +364,12 @@ class OSMeasures
     end
     measure_subdir = "ResidentialGeometryOverhangs"
     args = {
-            "depth"=>OpenStudio.convert(depth,"in","ft").get.to_s,
-            "offset"=>OpenStudio.convert(offset,"in","ft").get.to_s,
-            "front_facade"=>"true",
-            "back_facade"=>"true",
-            "left_facade"=>"true",
-            "right_facade"=>"true"
+            "depth"=>OpenStudio.convert(depth,"in","ft").get,
+            "offset"=>OpenStudio.convert(offset,"in","ft").get,
+            "front_facade"=>true,
+            "back_facade"=>true,
+            "left_facade"=>true,
+            "right_facade"=>true
            }
     update_args_hash(measures, measure_subdir, args)
     
@@ -497,7 +497,7 @@ class OSMeasures
                 "cavity_r"=>30,
                 "install_grade"=>"I",
                 "cavity_depth"=>9.25,
-                "ins_fills_cavity"=>"false",
+                "ins_fills_cavity"=>false,
                 "framing_factor"=>0.07
                }  
         update_args_hash(measures, measure_subdir, args)
@@ -560,7 +560,7 @@ class OSMeasures
       measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
       args = {
               "surface"=>name,
-              "has_rb"=>has_rb.to_s
+              "has_rb"=>has_rb
              }
       update_args_hash(measures, measure_subdir, args)
       
@@ -623,7 +623,7 @@ class OSMeasures
                   "wall_cavity_r"=>wall_cav_r,
                   "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
                   "wall_cavity_depth"=>wall_cav_depth,
-                  "wall_cavity_insfills"=>"true", # FIXME
+                  "wall_cavity_insfills"=>true, # FIXME
                   "wall_ff"=>wall_ff,
                   "wall_rigid_r"=>wall_cont_r,
                   "wall_rigid_thick_in"=>wall_cont_depth,
@@ -640,7 +640,7 @@ class OSMeasures
                   "wall_cavity_r"=>wall_cav_r,
                   "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
                   "wall_cavity_depth"=>wall_cav_depth,
-                  "wall_cavity_insfills"=>"true", # FIXME
+                  "wall_cavity_insfills"=>true, # FIXME
                   "wall_ff"=>wall_ff,
                   "wall_rigid_r"=>wall_cont_r,
                   "wall_rigid_thick_in"=>wall_cont_depth,
@@ -712,7 +712,7 @@ class OSMeasures
                   "wall_cavity_r"=>0,
                   "wall_cavity_grade"=>"I",
                   "wall_cavity_depth"=>0,
-                  "wall_cavity_insfills"=>"false",
+                  "wall_cavity_insfills"=>false,
                   "wall_ff"=>0,
                   "wall_rigid_r"=>10,
                   "wall_rigid_thick_in"=>2,
@@ -811,56 +811,9 @@ class OSMeasures
       end
       
       if XMLHelper.has_element(foundation, "FoundationType/Basement")
-        if Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
-          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementFinished"
-          args = {
-                  "surface"=>name,
-                  "wall_ins_height"=>8,
-                  "wall_cavity_r"=>0,
-                  "wall_cavity_grade"=>"I",
-                  "wall_cavity_depth"=>0,
-                  "wall_cavity_insfills"=>"false", # FIXME
-                  "wall_ff"=>0,
-                  "wall_rigid_r"=>10,
-                  "wall_rigid_thick_in"=>2,
-                  "ceil_ff"=>0.13,
-                  "ceil_joist_height"=>9.25,
-                  "exposed_perim"=>get_exposed_perimeter(foundation)
-                 }  
-          update_args_hash(measures, measure_subdir, args)        
-        else
-          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementUnfinished"
-          args = {
-                  "surface"=>name,
-                  "wall_ins_height"=>8,
-                  "wall_cavity_r"=>0,
-                  "wall_cavity_grade"=>"I",
-                  "wall_cavity_depth"=>0,
-                  "wall_cavity_insfills"=>"false", # FIXME
-                  "wall_ff"=>0,
-                  "wall_rigid_r"=>10,
-                  "wall_rigid_thick_in"=>2,
-                  "ceil_cavity_r"=>0,
-                  "ceil_cavity_grade"=>"I",
-                  "ceil_ff"=>0.13,
-                  "ceil_joist_height"=>9.25,
-                  "exposed_perim"=>get_exposed_perimeter(foundation)
-                 }
-          update_args_hash(measures, measure_subdir, args)      
-        end  
+        # Uninsulated floor assumed in model
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
-        args = {
-                "surface"=>name,
-                "wall_rigid_r"=>10,
-                "wall_rigid_thick_in"=>2,
-                "ceil_cavity_r"=>0,
-                "ceil_cavity_grade"=>"I",
-                "ceil_ff"=>0.13,
-                "ceil_joist_height"=>9.25,
-                "exposed_perim"=>get_exposed_perimeter(foundation)
-               }
-        update_args_hash(measures, measure_subdir, args)     
+        # Uninsulated floor assumed in model
       elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSlab"
         args = {
@@ -1162,7 +1115,7 @@ class OSMeasures
     
     measure_subdir = "ResidentialConstructionsWallsPartitionThermalMass"
     args = {
-            "frac"=>"1.0",
+            "frac"=>1.0,
             "thick_in1"=>mat_mass.thick_in,
             "thick_in2"=>nil,
             "cond1"=>mat_mass.k_in,
@@ -1189,9 +1142,9 @@ class OSMeasures
             "area_fraction"=>0.4,
             "mass"=>8.0,
             "solar_abs"=>0.6,
-            "conductivity"=>BaseMaterial.Wood.k_in.to_s,
+            "conductivity"=>BaseMaterial.Wood.k_in,
             "density"=>40.0,
-            "specific_heat"=>BaseMaterial.Wood.cp.to_s,
+            "specific_heat"=>BaseMaterial.Wood.cp,
            }
     update_args_hash(measures, measure_subdir, args)
     
@@ -1361,7 +1314,7 @@ class OSMeasures
         args = {
                 "system_type"=>Constants.BoilerTypeForcedDraft,
                 "afue"=>afue,
-                "oat_reset_enabled"=>"false",
+                "oat_reset_enabled"=>false,
                 "oat_high"=>nil, # FIXME
                 "oat_low"=>nil, # FIXME
                 "oat_hwst_high"=>nil, # FIXME
@@ -1378,13 +1331,13 @@ class OSMeasures
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "system_type"=>Constants.BoilerTypeForcedDraft,
                 "afue"=>afue,
-                "oat_reset_enabled"=>"false", # FIXME
+                "oat_reset_enabled"=>false, # FIXME
                 "oat_high"=>nil, # FIXME
                 "oat_low"=>nil, # FIXME
                 "oat_hwst_high"=>nil, # FIXME
                 "oat_hwst_low"=>nil, # FIXME
                 "design_temp"=>180, # FIXME
-                "modulation"=>"false",
+                "modulation"=>false,
                 "capacity"=>heat_capacity_kbtuh
                }
         update_args_hash(measures, measure_subdir, args)
@@ -1731,27 +1684,27 @@ class OSMeasures
     
       measure_subdir = "ResidentialHVACGroundSourceHeatPumpVerticalBore"
       args = {
-              "cop"=>cop.to_s,
-              "eer"=>eer.to_s,
-              "ground_conductivity"=>"0.6",
-              "grout_conductivity"=>"0.4",
+              "cop"=>cop,
+              "eer"=>eer,
+              "ground_conductivity"=>0.6,
+              "grout_conductivity"=>0.4,
               "bore_config"=>Constants.SizingAuto,
               "bore_holes"=>Constants.SizingAuto,
               "bore_depth"=>Constants.SizingAuto,
-              "bore_spacing"=>"20.0",
-              "bore_diameter"=>"5.0",
-              "pipe_size"=>"0.75",
-              "ground_diffusivity"=>"0.0208",
+              "bore_spacing"=>20.0,
+              "bore_diameter"=>5.0,
+              "pipe_size"=>0.75,
+              "ground_diffusivity"=>0.0208,
               "fluid_type"=>Constants.FluidPropyleneGlycol,
-              "frac_glycol"=>"0.3",
-              "design_delta_t"=>"10.0",
-              "pump_head"=>"50.0",
-              "u_tube_leg_spacing"=>"0.9661",
+              "frac_glycol"=>0.3,
+              "design_delta_t"=>10.0,
+              "pump_head"=>50.0,
+              "u_tube_leg_spacing"=>0.9661,
               "u_tube_spacing_type"=>"b",
-              "rated_shr"=>"0.732",
-              "fan_power"=>"0.5",
-              "heat_pump_capacity"=>cool_capacity_tons.to_s,
-              "supplemental_capacity"=>backup_heat_capacity_kbtuh.to_s
+              "rated_shr"=>0.732,
+              "fan_power"=>0.5,
+              "heat_pump_capacity"=>cool_capacity_tons,
+              "supplemental_capacity"=>backup_heat_capacity_kbtuh
              }
       update_args_hash(measures, measure_subdir, args)
              
@@ -1768,15 +1721,15 @@ class OSMeasures
     
     measure_subdir = "ResidentialHVACHeatingSetpoints"
     args = {
-            "htg_wkdy"=>htg_sp.to_s,
-            "htg_wked"=>htg_sp.to_s
+            "htg_wkdy"=>htg_sp,
+            "htg_wked"=>htg_sp
            }  
     update_args_hash(measures, measure_subdir, args)
     
     measure_subdir = "ResidentialHVACCoolingSetpoints"
     args = {
-            "clg_wkdy"=>clg_sp.to_s,
-            "clg_wked"=>clg_sp.to_s
+            "clg_wkdy"=>clg_sp,
+            "clg_wked"=>clg_sp
            }  
     update_args_hash(measures, measure_subdir, args)
 
@@ -1790,12 +1743,12 @@ class OSMeasures
     measure_subdir = "ResidentialHVACCeilingFan"
     args = {
             "coverage"=>"NA",
-            "specified_num"=>"1",
-            "power"=>"45",
-            "control"=>"typical",
-            "use_benchmark_energy"=>"true",
-            "mult"=>"1",
-            "cooling_setpoint_offset"=>"0",
+            "specified_num"=>1,
+            "power"=>45,
+            "control"=>Constants.CeilingFanControlTypical,
+            "use_benchmark_energy"=>true,
+            "mult"=>1,
+            "cooling_setpoint_offset"=>0,
             "weekday_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
             "weekend_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
             "monthly_sch"=>"1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
@@ -1817,10 +1770,10 @@ class OSMeasures
   
     measure_subdir = "ResidentialHVACDehumidifier"
     args = {
-            "air_flow_rate"=>air_flow_rate.to_s,
-            "energy_factor"=>energy_factor.to_s,
-            "humidity_setpoint"=>humidity_setpoint.to_s,
-            "water_removal_rate"=>water_removal_rate.to_s
+            "air_flow_rate"=>air_flow_rate,
+            "energy_factor"=>energy_factor,
+            "humidity_setpoint"=>humidity_setpoint,
+            "water_removal_rate"=>water_removal_rate
            }  
     update_args_hash(measures, measure_subdir, args)    
   
@@ -1834,8 +1787,8 @@ class OSMeasures
     
     measure_subdir = "ResidentialApplianceRefrigerator"  
     args = {
-            "fridge_E"=>kWhs.to_s,
-            "mult"=>"1",
+            "fridge_E"=>kWhs,
+            "mult"=>1,
             "weekday_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
             "weekend_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
             "monthly_sch"=>"0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
@@ -1852,17 +1805,17 @@ class OSMeasures
     
     measure_subdir = "ResidentialApplianceClothesWasher"  
     args = {
-            "imef"=>"0.95",
-            "rated_annual_energy"=>"387",
-            "annual_cost"=>"24",
-            "test_date"=>"2007",
-            "drum_volume"=>"3.5",
-            "cold_cycle"=>"false",
-            "thermostatic_control"=>"true",
-            "internal_heater"=>"false",
-            "fill_sensor"=>"false",
-            "mult_e"=>"1",
-            "mult_hw"=>"1",
+            "imef"=>0.95,
+            "rated_annual_energy"=>387,
+            "annual_cost"=>24,
+            "test_date"=>2007,
+            "drum_volume"=>3.5,
+            "cold_cycle"=>false,
+            "thermostatic_control"=>true,
+            "internal_heater"=>false,
+            "fill_sensor"=>false,
+            "mult_e"=>1,
+            "mult_hw"=>1,
             "space"=>Constants.Auto,
             "plant_loop"=>Constants.Auto
            }  
@@ -1880,8 +1833,8 @@ class OSMeasures
     if cd_fuel == "electricity"
       measure_subdir = "ResidentialApplianceClothesDryerElectric"
       args = {
-              "cef"=>"2.7",
-              "mult"=>"1",
+              "cef"=>2.7,
+              "mult"=>1,
               "weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
               "weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
               "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
@@ -1892,9 +1845,9 @@ class OSMeasures
       measure_subdir = "ResidentialApplianceClothesDryerFuel"
       args = {
               "fuel_type"=>to_beopt_fuel(cd_fuel),
-              "cef"=>"2.4",
-              "fuel_split"=>"0.07",
-              "mult"=>"1",
+              "cef"=>2.4,
+              "fuel_split"=>0.07,
+              "mult"=>1,
               "weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
               "weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
               "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
@@ -1912,15 +1865,15 @@ class OSMeasures
     
     measure_subdir = "ResidentialApplianceDishwasher"
     args = {
-            "num_settings"=>"12",
-            "dw_E"=>"290",
-            "int_htr"=>"true",
-            "cold_inlet"=>"false",
-            "cold_use"=>"0",
-            "eg_date"=>"2007",
-            "eg_gas_cost"=>"23",
-            "mult_e"=>"1",
-            "mult_hw"=>"1",
+            "num_settings"=>12,
+            "dw_E"=>290,
+            "int_htr"=>true,
+            "cold_inlet"=>false,
+            "cold_use"=>0,
+            "eg_date"=>2007,
+            "eg_gas_cost"=>23,
+            "mult_e"=>1,
+            "mult_hw"=>1,
             "space"=>Constants.Auto,
             "plant_loop"=>Constants.Auto
            }  
@@ -1939,9 +1892,9 @@ class OSMeasures
     if crange_fuel == "electricity"
       measure_subdir = "ResidentialApplianceCookingRangeElectric"
       args = {
-              "c_ef"=>"0.74",
-              "o_ef"=>"0.11",
-              "mult"=>"1",
+              "c_ef"=>0.74,
+              "o_ef"=>0.11,
+              "mult"=>1,
               "weekday_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
               "weekend_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
               "monthly_sch"=>"1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
@@ -1952,10 +1905,10 @@ class OSMeasures
       measure_subdir = "ResidentialApplianceCookingRangeFuel"
       args = {
               "fuel_type"=>to_beopt_fuel(crange_fuel),
-              "c_ef"=>"0.4",
-              "o_ef"=>"0.058",
-              "e_ignition"=>"true",
-              "mult"=>"1",
+              "c_ef"=>0.4,
+              "o_ef"=>0.058,
+              "e_ignition"=>true,
+              "mult"=>1,
               "weekday_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
               "weekend_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
               "monthly_sch"=>"1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
@@ -1977,19 +1930,19 @@ class OSMeasures
     measure_subdir = "ResidentialLighting"
     args = {
             "option_type"=>Constants.OptionTypeLightingEnergyUses,
-            "hw_cfl"=>"0", # not used
-            "hw_led"=>"0", # not used
-            "hw_lfl"=>"0", # not used
-            "pg_cfl"=>"0", # not used
-            "pg_led"=>"0", # not used
-            "pg_lfl"=>"0", # not used
-            "in_eff"=>"15", # not used
-            "cfl_eff"=>"55", # not used
-            "led_eff"=>"80", # not used
-            "lfl_eff"=>"88", # not used
-            "energy_use_interior"=>annual_kwh_interior.to_s,
-            "energy_use_exterior"=>annual_kwh_exterior.to_s,
-            "energy_use_garage"=>annual_kwh_garage.to_s
+            "hw_cfl"=>0, # not used
+            "hw_led"=>0, # not used
+            "hw_lfl"=>0, # not used
+            "pg_cfl"=>0, # not used
+            "pg_led"=>0, # not used
+            "pg_lfl"=>0, # not used
+            "in_eff"=>15, # not used
+            "cfl_eff"=>55, # not used
+            "led_eff"=>80, # not used
+            "lfl_eff"=>88, # not used
+            "energy_use_interior"=>annual_kwh_interior,
+            "energy_use_exterior"=>annual_kwh_exterior,
+            "energy_use_garage"=>annual_kwh_garage
            }  
     update_args_hash(measures, measure_subdir, args)  
 
@@ -2015,10 +1968,10 @@ class OSMeasures
     measure_subdir = "ResidentialMiscPlugLoads"
     args = {
             "option_type"=>Constants.OptionTypePlugLoadsEnergyUse,
-            "mult"=>"0", # not used
-            "energy_use"=>tot_kWhs.to_s,
-            "sens_frac"=>(sens_kWhs/tot_kWhs).to_s,
-            "lat_frac"=>(lat_kWhs/tot_kWhs).to_s,
+            "mult"=>0, # not used
+            "energy_use"=>tot_kWhs,
+            "sens_frac"=>(sens_kWhs/tot_kWhs),
+            "lat_frac"=>(lat_kWhs/tot_kWhs),
             "weekday_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
             "weekend_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
             "monthly_sch"=>"1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248",
@@ -2123,27 +2076,27 @@ class OSMeasures
   
     measure_subdir = "ResidentialAirflow"
     args = {
-            "living_ach50"=>infil_ach50.to_s,
-            "garage_ach50"=>infil_ach50.to_s,
-            "finished_basement_ach"=>"0", # TODO: Need to handle above-grade basement
-            "unfinished_basement_ach"=>"0.1", # TODO: Need to handle above-grade basement
-            "crawl_ach"=>crawl_sla.to_s,
-            "pier_beam_ach"=>"100",
-            "unfinished_attic_sla"=>attic_sla.to_s,
+            "living_ach50"=>infil_ach50,
+            "garage_ach50"=>infil_ach50,
+            "finished_basement_ach"=>0, # TODO: Need to handle above-grade basement
+            "unfinished_basement_ach"=>0.1, # TODO: Need to handle above-grade basement
+            "crawl_ach"=>crawl_sla,
+            "pier_beam_ach"=>100,
+            "unfinished_attic_sla"=>attic_sla,
             "shelter_coef"=>Constants.Auto,
-            "has_hvac_flue"=>"false", # FIXME
-            "has_water_heater_flue"=>"false", # FIXME
-            "has_fireplace_chimney"=>"false", # FIXME
-            "terrain"=>"suburban",
-            "mech_vent_type"=>mech_vent_type.to_s,
-            "mech_vent_total_efficiency"=>mech_vent_total_efficiency.to_s,
-            "mech_vent_sensible_efficiency"=>mech_vent_sensible_efficiency.to_s,
-            "mech_vent_fan_power"=>mech_vent_fan_power.to_s,
-            "mech_vent_frac_62_2"=>mech_vent_frac_62_2.to_s,
-            "mech_vent_ashrae_std"=>"2013",
-            "mech_vent_infil_credit"=>"true",
-            "is_existing_home"=>"false", # FIXME
-            "clothes_dryer_exhaust"=>"0",
+            "has_hvac_flue"=>false, # FIXME
+            "has_water_heater_flue"=>false, # FIXME
+            "has_fireplace_chimney"=>false, # FIXME
+            "terrain"=>Constants.TerrainSuburban,
+            "mech_vent_type"=>mech_vent_type,
+            "mech_vent_total_efficiency"=>mech_vent_total_efficiency,
+            "mech_vent_sensible_efficiency"=>mech_vent_sensible_efficiency,
+            "mech_vent_fan_power"=>mech_vent_fan_power,
+            "mech_vent_frac_62_2"=>mech_vent_frac_62_2,
+            "mech_vent_ashrae_std"=>2013,
+            "mech_vent_infil_credit"=>true,
+            "is_existing_home"=>false, # FIXME
+            "clothes_dryer_exhaust"=>0,
             "nat_vent_htg_offset"=>nat_vent_htg_offset,
             "nat_vent_clg_offset"=>nat_vent_clg_offset,
             "nat_vent_ovlp_offset"=>nat_vent_ovlp_offset,
@@ -2176,7 +2129,7 @@ class OSMeasures
     
     measure_subdir = "ResidentialHVACSizing"
     args = {
-            "show_debug_info"=>"false"
+            "show_debug_info"=>false
            }  
     update_args_hash(measures, measure_subdir, args) # FIXME (need to figure out approach for dealing with volumes)
 
@@ -2195,14 +2148,14 @@ class OSMeasures
       
       measure_subdir = "ResidentialPhotovoltaics"
       args = {
-              "size"=>power_kw.to_s,
+              "size"=>power_kw,
               "module_type"=>Constants.PVModuleTypeStandard,
-              "system_losses"=>"0.14",
-              "inverter_efficiency"=>inv_eff.to_s,
+              "system_losses"=>0.14,
+              "inverter_efficiency"=>inv_eff,
               "azimuth_type"=>Constants.CoordAbsolute,
-              "azimuth"=>az.to_s, # TODO: Double-check
+              "azimuth"=>az, # TODO: Double-check
               "tilt_type"=>Constants.CoordAbsolute,
-              "tilt"=>tilt.to_s # TODO: Double-check
+              "tilt"=>tilt # TODO: Double-check
              }  
       update_args_hash(measures, measure_subdir, args)
       

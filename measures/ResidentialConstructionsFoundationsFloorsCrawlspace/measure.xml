@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>cbfbddb7-4428-424e-b87a-e5ede8dedfab</version_id>
-  <version_modified>20170706T202508Z</version_modified>
+  <version_id>f6fce0c9-d51c-4f04-82f0-84038e61c0b1</version_id>
+  <version_modified>20170706T231312Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
@@ -176,12 +176,6 @@
       <checksum>64BC6389</checksum>
     </file>
     <file>
-      <filename>Crawlspace_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>16B32E6B</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -206,6 +200,12 @@
       <checksum>8D8257BF</checksum>
     </file>
     <file>
+      <filename>Crawlspace_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3D29002C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.3.0</identifier>
@@ -214,7 +214,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8644B523</checksum>
+      <checksum>47CFDDA2</checksum>
     </file>
   </files>
 </measure>

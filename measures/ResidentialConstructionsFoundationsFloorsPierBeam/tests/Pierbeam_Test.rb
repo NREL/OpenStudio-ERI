@@ -69,7 +69,7 @@ class ProcessConstructionsFoundationsFloorsPierBeamTest < MiniTest::Test
     args_hash["surface"] = "Surface 23"
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerRValue"=>0.1397/0.048947, "LayerConductivity"=>0.048947, "LayerDensity"=>106.354587, "LayerSpecificHeat"=>1151.630118, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
+    expected_values = {"SurfacesWithConstructions"=>2}
     _test_measure(osm_geo_pier_beam, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
@@ -234,11 +234,22 @@ class ProcessConstructionsFoundationsFloorsPierBeamTest < MiniTest::Test
             end
         end
     end
-    assert_in_epsilon(expected_values["LayerRValue"], actual_values["LayerRValue"], 0.01)
-    assert_in_epsilon(expected_values["LayerDensity"], actual_values["LayerDensity"], 0.01)
-    assert_in_epsilon(expected_values["LayerSpecificHeat"], actual_values["LayerSpecificHeat"], 0.01)
-    assert_in_epsilon(expected_values["LayerIndex"], actual_values["LayerIndex"], 0.01)
-    assert_in_epsilon(expected_values["SurfacesWithConstructions"], actual_values["SurfacesWithConstructions"], 0.01)
+    
+    if not expected_values["LayerRValue"].nil?
+      assert_in_epsilon(expected_values["LayerRValue"], actual_values["LayerRValue"], 0.01)
+    end
+    if not expected_values["LayerDensity"].nil?
+      assert_in_epsilon(expected_values["LayerDensity"], actual_values["LayerDensity"], 0.01)
+    end
+    if not expected_values["LayerSpecificHeat"].nil?
+      assert_in_epsilon(expected_values["LayerSpecificHeat"], actual_values["LayerSpecificHeat"], 0.01)
+    end
+    if not expected_values["LayerIndex"].nil?
+      assert_in_epsilon(expected_values["LayerIndex"], actual_values["LayerIndex"], 0.01)
+    end
+    if not expected_values["SurfacesWithConstructions"].nil?
+      assert_in_epsilon(expected_values["SurfacesWithConstructions"], actual_values["SurfacesWithConstructions"], 0.01)
+    end
     
     return model
   end
