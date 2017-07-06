@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>536f062d-84d1-4714-89c3-e8bb02681fc4</version_id>
-  <version_modified>20170630T203544Z</version_modified>
+  <version_id>f46cc245-4e14-4e7e-acfb-c17c5fe55994</version_id>
+  <version_modified>20170706T202506Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -166,12 +166,6 @@
       <checksum>6A1BBCCC</checksum>
     </file>
     <file>
-      <filename>301.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>2A59DC5B</checksum>
-    </file>
-    <file>
       <filename>valid-foundation-unconditioned-basement.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
@@ -238,12 +232,6 @@
       <checksum>538B242D</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D5733EEC</checksum>
-    </file>
-    <file>
       <filename>measure-info.json</filename>
       <filetype>json</filetype>
       <usage_type>resource</usage_type>
@@ -262,18 +250,6 @@
       <checksum>C4E799E0</checksum>
     </file>
     <file>
-      <filename>energy_rating_index_301_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>840A15A7</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7F5139D4</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -286,6 +262,24 @@
       <checksum>64BC6389</checksum>
     </file>
     <file>
+      <filename>301.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CBE0FA3B</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B344DD8B</checksum>
+    </file>
+    <file>
+      <filename>energy_rating_index_301_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2DE53C7F</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -294,13 +288,55 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>990C1822</checksum>
+      <checksum>7AD08653</checksum>
     </file>
     <file>
-      <filename>HERS Rated Home - valid.osm</filename>
+      <filename>HERS Rated Home - valid-foundation-slab.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1F04D5F4</checksum>
+      <checksum>3B7ADF55</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-foundation-slab.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>20CC3612</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-foundation-vented-crawlspace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D45C06DC</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-foundation-vented-crawlspace.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3CBF59A9</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-slab.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5D6BAF09</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-slab.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7D994A9C</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-vented-crawlspace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B2EAC815</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-vented-crawlspace.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9FE7D88A</checksum>
     </file>
   </files>
 </measure>

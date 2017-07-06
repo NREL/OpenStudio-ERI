@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170630T203605Z",
+   "created_at" : "20170706T202520Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -155,7 +155,8 @@
          "arguments" : {
             "osb_thick_in" : "0.75",
             "rigid_r" : "0",
-            "rigid_thick_in" : "0"
+            "rigid_thick_in" : "0",
+            "surface" : "auto"
          },
          "description" : "This measure assigns roof sheathing to all attic roofs.",
          "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsSheathing",
@@ -167,7 +168,8 @@
             "color" : "medium",
             "emissivity" : "0.91",
             "material" : "asphalt shingles",
-            "solar_abs" : "0.85"
+            "solar_abs" : "0.85",
+            "surface" : "auto"
          },
          "description" : "This measure assigns the roofing material to all roof surfaces.",
          "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsRoofingMaterial",
@@ -189,6 +191,7 @@
             "cond1" : "1.1112",
             "dens1" : "50",
             "specheat1" : "0.2",
+            "surface" : "auto",
             "thick_in1" : "0.5"
          },
          "description" : "This measure assigns thermal mass to ceilings adjacent to finished space.",
@@ -220,7 +223,8 @@
          "arguments" : {
             "cavity_r" : "19",
             "framing_factor" : "0.13",
-            "install_grade" : "I"
+            "install_grade" : "I",
+            "surface" : "auto"
          },
          "description" : "This measure assigns a wood stud construction to floors between finished space and unfinished space or floors below cantilevered finished space.",
          "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsInterzonalFloors",
@@ -230,7 +234,8 @@
       {
          "arguments" : {
             "covering_frac" : "0.8",
-            "covering_r" : "2.08"
+            "covering_r" : "2.08",
+            "surface" : "auto"
          },
          "description" : "This measure assigns a covering to floors of above-grade finished spaces.",
          "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsCovering",
@@ -241,7 +246,8 @@
          "arguments" : {
             "osb_thick_in" : "0.75",
             "rigid_r" : "0",
-            "rigid_thick_in" : "0"
+            "rigid_thick_in" : "0",
+            "surface" : "auto"
          },
          "description" : "This measure assigns floor sheathing to floors of finished spaces, with the exception of foundation slabs.",
          "measure_dir_name" : "ResidentialConstructionsFoundationsFloorsSheathing",
@@ -253,6 +259,7 @@
             "cond" : "0.8004",
             "dens" : "34",
             "specheat" : "0.29",
+            "surface" : "auto",
             "thick_in" : "0.625"
          },
          "description" : "This measure assigns floor mass to floors of finished spaces, with the exception of foundation slabs.",
@@ -280,7 +287,8 @@
             "cavity_r" : "13",
             "framing_factor" : "0.25",
             "ins_fills_cavity" : "true",
-            "install_grade" : "I"
+            "install_grade" : "I",
+            "surface" : "auto"
          },
          "description" : "This measure assigns a wood stud construction to walls between finished space and unfinished space.",
          "measure_dir_name" : "ResidentialConstructionsWallsInterzonal",
@@ -291,7 +299,8 @@
          "arguments" : {
             "osb_thick_in" : "0.5",
             "rigid_r" : "0",
-            "rigid_thick_in" : "0"
+            "rigid_thick_in" : "0",
+            "surface" : "auto"
          },
          "description" : "This measure assigns wall sheathing to all above-grade walls adjacent to finished space.",
          "measure_dir_name" : "ResidentialConstructionsWallsSheathing",
@@ -305,6 +314,7 @@
             "emissivity" : "0.9",
             "solar_abs" : "0.3",
             "specific_heat" : "0.25",
+            "surface" : "auto",
             "thick_in" : "0.375"
          },
          "description" : "This measure assigns the exterior finish to all above-grade exterior walls.",
@@ -842,5 +852,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170630T203608Z"
+   "updated_at" : "20170706T202523Z"
 }

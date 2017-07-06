@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_slab</name>
   <uid>4fd36916-5b69-43d2-a7bb-e7fad34508db</uid>
-  <version_id>90d2a0c3-559b-4dbd-935e-30186fe75973</version_id>
-  <version_modified>20170630T203551Z</version_modified>
+  <version_id>d860737b-8936-46b1-847b-22ec8e3c958f</version_id>
+  <version_modified>20170706T202508Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSlab</class_name>
   <display_name>Set Residential Foundations/Floors - Slab Construction</display_name>
@@ -173,18 +173,6 @@
       <checksum>AD531B32</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0F334C52</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5092668A</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_UB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -197,18 +185,6 @@
       <checksum>2B1EAA1D</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>268702A1</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>39FFFE07</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -219,12 +195,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>E685B58F</checksum>
-    </file>
-    <file>
-      <filename>Slab_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>97D7BE77</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -248,6 +218,36 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>883F0102</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>212AE794</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3BD21067</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6453B529</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
+    </file>
+    <file>
+      <filename>Slab_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E6E7DBDE</checksum>
     </file>
   </files>
 </measure>

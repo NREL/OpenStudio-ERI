@@ -2,14 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>8678f02d-f85c-4213-aa77-60cb4b8f1fbc</version_id>
-  <version_modified>20170630T203552Z</version_modified>
+  <version_id>ae7ae0d3-0fac-4dd1-a0f1-7e73231fe7ab</version_id>
+  <version_modified>20170706T202509Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>
   <description>This measure assigns a wood stud construction to walls between finished space and unfinished space.</description>
   <modeler_description>Calculates and assigns material layer properties of wood stud constructions for walls between finished and unfinished spaces. If the walls have an existing construction, the layers (other than wall sheathing and partition wall mass) are replaced. This measure is intended to be used in conjunction with Wall Sheathing and Partition Wall Mass measures.</modeler_description>
   <arguments>
+    <argument>
+      <name>surface</name>
+      <display_name>Surface(s)</display_name>
+      <description>Select the surface(s) to assign constructions.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+      <choices>
+        <choice>
+          <value>auto</value>
+          <display_name>auto</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>cavity_r</name>
       <display_name>Cavity Insulation Installed R-value</display_name>
@@ -102,17 +117,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>1972D9A1</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -129,6 +133,35 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>F0FE70BC</checksum>
+    </file>
+    <file>
+      <filename>InterzonalWalls_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>72C38E88</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6453B529</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
     </file>
   </files>
 </measure>

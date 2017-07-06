@@ -5,105 +5,61 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
+class ProcessConstructionsFoundationsFloorsSheathingTest < MiniTest::Test
 
-  def osm_geo_unfinished_attic
-    return "SFD_2000sqft_2story_SL_UA.osm"
+  def osm_geo
+    return "SFD_2000sqft_2story_FB_UA.osm"
   end
   
-  def osm_geo_unfinished_attic_layers
-    return "SFD_2000sqft_2story_SL_FA_AllLayersButRoofSheathing.osm"
-  end
-  
-  def test_add_plywood
-    args_hash = {}
-    args_hash["osb_thick_in"] = 0.75
-    args_hash["rigid_thick_in"] = 0
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.01905, "LayerConductivity"=>0.1154577, "LayerDensity"=>512.64, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
-    _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_add_r10
-    args_hash = {}
-    args_hash["osb_thick_in"] = 0
-    args_hash["rigid_r"] = 10
-    args_hash["rigid_thick_in"] = 2
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0508, "LayerConductivity"=>0.02885, "LayerDensity"=>32.04, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
-    _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_add_plywood_and_r10
-    args_hash = {}
-    args_hash["osb_thick_in"] = 0.75
-    args_hash["rigid_r"] = 10
-    args_hash["rigid_thick_in"] = 2
-    expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>2, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.01905+0.0508, "LayerConductivity"=>0.1154577+0.02885, "LayerDensity"=>512.64+32.04, "LayerSpecificHeat"=>1214.23+1214.23, "LayerIndex"=>0+1, "SurfacesWithConstructions"=>2}
-    _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_add_plywood_and_r10_to_layers_and_remove
-    args_hash = {}
-    args_hash["osb_thick_in"] = 0.75
-    args_hash["rigid_r"] = 10
-    args_hash["rigid_thick_in"] = 2
-    expected_num_del_objects = {"Construction"=>1}
-    expected_num_new_objects = {"Material"=>2, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.01905+0.0508, "LayerConductivity"=>0.1154577+0.02885, "LayerDensity"=>512.64+32.04, "LayerSpecificHeat"=>1214.23+1214.23, "LayerIndex"=>1+2, "SurfacesWithConstructions"=>2}
-    model = _test_measure(osm_geo_unfinished_attic_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash["osb_thick_in"] = 0
-    args_hash["rigid_thick_in"] = 0
-    expected_num_del_objects = {"Material"=>2, "Construction"=>1}
-    expected_num_new_objects = {"Construction"=>1}
-    expected_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerIndex"=>0, "SurfacesWithConstructions"=>0}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
   def test_argument_error_osb_thick_in_negative
     args_hash = {}
     args_hash["osb_thick_in"] = -1
-    result = _test_error(osm_geo_unfinished_attic, args_hash)
+    result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "OSB/Plywood Thickness must be greater than or equal to 0.")
   end
     
   def test_argument_error_rigid_rvalue_negative
     args_hash = {}
     args_hash["rigid_r"] = -1
-    result = _test_error(osm_geo_unfinished_attic, args_hash)
+    result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Continuous Insulation Nominal R-value must be greater than or equal to 0.")
   end
 
   def test_argument_error_rigid_thick_in_negative
     args_hash = {}
     args_hash["rigid_thick_in"] = -1
-    result = _test_error(osm_geo_unfinished_attic, args_hash)
+    result = _test_error(osm_geo, args_hash)
     assert_equal(result.errors.map{ |x| x.logMessage }[0], "Continuous Insulation Thickness must be greater than or equal to 0.")
-  end
+  end  
 
-  def test_not_applicable_no_geometry
+  def test_retrofit_replace
     args_hash = {}
-    _test_na(nil, args_hash)
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
+    expected_values = {"LayerThickness"=>0.01905, "LayerConductivity"=>0.1154577, "LayerDensity"=>512.64, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>4}
+    _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    args_hash = {}
+    args_hash["osb_thick_in"] = 1
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
+    expected_values = {"LayerThickness"=>0.0254, "LayerConductivity"=>0.1154577, "LayerDensity"=>512.64, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>4}
+    _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
   end
 
   def test_apply_to_specific_surface
     args_hash = {}
-    args_hash["surface"] = "Surface 14"
+    args_hash["surface"] = "Surface 1"
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.01905, "LayerConductivity"=>0.1154577, "LayerDensity"=>512.64, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>1}
-    _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
+    expected_values = {"LayerThickness"=>0.01905, "LayerConductivity"=>0.1154577, "LayerDensity"=>512.64, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
+    _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
   end
   
   private
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsSheathing.new
+    measure = ProcessConstructionsFoundationsFloorsSheathing.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
@@ -139,7 +95,7 @@ class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
   
   def _test_na(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsSheathing.new
+    measure = ProcessConstructionsFoundationsFloorsSheathing.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
@@ -175,7 +131,7 @@ class ProcessConstructionsCeilingsRoofsSheathingTest < MiniTest::Test
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsSheathing.new
+    measure = ProcessConstructionsFoundationsFloorsSheathing.new
 
     # check for standard methods
     assert(!measure.name.empty?)

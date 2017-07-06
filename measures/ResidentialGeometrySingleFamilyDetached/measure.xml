@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>1502feee-4e01-4ea7-9452-53384c438d29</version_id>
-  <version_modified>20170630T192757Z</version_modified>
+  <version_id>e995518d-1f65-4946-9b21-e73e85444333</version_id>
+  <version_modified>20170706T202509Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>
@@ -277,12 +277,6 @@
       <checksum>9B7FF7C3</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>39FFFE07</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.12.4</identifier>
@@ -304,6 +298,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>99D1E315</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
     </file>
   </files>
 </measure>

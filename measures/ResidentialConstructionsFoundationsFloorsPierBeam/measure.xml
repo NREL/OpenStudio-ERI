@@ -2,14 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_pier_beam</name>
   <uid>c47f2fc2-008e-403c-82e6-fd751b4f3b8a</uid>
-  <version_id>cb813507-787c-49f5-8256-3af1a47c798d</version_id>
-  <version_modified>20170630T203551Z</version_modified>
+  <version_id>5e48f9f7-6782-4df4-a6cc-72758489304f</version_id>
+  <version_modified>20170706T202508Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsPierBeam</class_name>
   <display_name>Set Residential Foundations/Floors - Pier &amp; Beam Construction</display_name>
   <description>This measure assigns a wood stud construction to the ceiling of the pier &amp; beam space.</description>
   <modeler_description>Calculates and assigns material layer properties of wood stud constructions for floors finished space and pier &amp; beam space. If the floors have an existing construction, the layers (other than floor covering and floor mass) are replaced. This measure is intended to be used in conjunction with Floor Covering and Floor Mass measures.</modeler_description>
   <arguments>
+    <argument>
+      <name>surface</name>
+      <display_name>Surface(s)</display_name>
+      <description>Select the surface(s) to assign constructions.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+      <choices>
+        <choice>
+          <value>auto</value>
+          <display_name>auto</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>cavity_r</name>
       <display_name>Cavity Insulation Nominal R-value</display_name>
@@ -73,17 +88,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>9053FEE9</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -100,6 +104,35 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>0DD97920</checksum>
+    </file>
+    <file>
+      <filename>Pierbeam_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A7CE7145</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3BD21067</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
     </file>
   </files>
 </measure>

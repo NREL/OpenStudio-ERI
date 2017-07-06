@@ -21,7 +21,7 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterialTest < MiniTest::Test
     args_hash["emissivity"] = 0.94
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.94, "LayerSolarAbs"=>0.9, "LayerVisibleAbs"=>0.9, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.94, "LayerSolarAbs"=>0.9, "LayerVisibleAbs"=>0.9, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
     _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
@@ -31,7 +31,7 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterialTest < MiniTest::Test
     args_hash["emissivity"] = 0.88
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.88, "LayerSolarAbs"=>0.7, "LayerVisibleAbs"=>0.7, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.88, "LayerSolarAbs"=>0.7, "LayerVisibleAbs"=>0.7, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
     _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
@@ -41,13 +41,13 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterialTest < MiniTest::Test
     args_hash["emissivity"] = 0.94
     expected_num_del_objects = {"Construction"=>1}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.94, "LayerSolarAbs"=>0.9, "LayerVisibleAbs"=>0.9, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.94, "LayerSolarAbs"=>0.9, "LayerVisibleAbs"=>0.9, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
     model = _test_measure(osm_geo_unfinished_attic_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash["solar_abs"] = 0.7
     args_hash["emissivity"] = 0.88
     expected_num_del_objects = {"Material"=>1, "Construction"=>1}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.88, "LayerSolarAbs"=>0.7, "LayerVisibleAbs"=>0.7, "LayerIndex"=>0}
+    expected_values = {"LayerThickness"=>0.00945, "LayerConductivity"=>0.163, "LayerDensity"=>1121.4, "LayerSpecificHeat"=>1465.445, "LayerThermalAbs"=>0.88, "LayerSolarAbs"=>0.7, "LayerVisibleAbs"=>0.7, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
     _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
@@ -84,6 +84,15 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterialTest < MiniTest::Test
     _test_na(nil, args_hash)
   end
 
+  def test_apply_to_specific_surface
+    args_hash = {}
+    args_hash["surface"] = "Surface 14"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
+    expected_values = {"LayerThickness"=>0.0094488, "LayerConductivity"=>0.162714, "LayerDensity"=>1121.3999999999999, "LayerSpecificHeat"=>1465.4499999999998, "LayerThermalAbs"=>0.91, "LayerSolarAbs"=>0.85, "LayerVisibleAbs"=>0.85, "LayerIndex"=>0, "SurfacesWithConstructions"=>1}
+    _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
+  end
+  
   private
   
   def _test_error(osm_file, args_hash)
@@ -210,7 +219,7 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterialTest < MiniTest::Test
     check_num_objects(all_new_objects, expected_num_new_objects, "added")
     check_num_objects(all_del_objects, expected_num_del_objects, "deleted")
     
-    actual_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerThermalAbs"=>0, "LayerSolarAbs"=>0, "LayerVisibleAbs"=>0, "LayerIndex"=>0}
+    actual_values = {"LayerThickness"=>0, "LayerConductivity"=>0, "LayerDensity"=>0, "LayerSpecificHeat"=>0, "LayerThermalAbs"=>0, "LayerSolarAbs"=>0, "LayerVisibleAbs"=>0, "LayerIndex"=>0, "SurfacesWithConstructions"=>0}
     all_new_objects.each do |obj_type, new_objects|
         new_objects.each do |new_object|
             next if not new_object.respond_to?("to_#{obj_type}")
@@ -230,6 +239,12 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterialTest < MiniTest::Test
                     new_material = new_material.to_StandardOpaqueMaterial.get
                     actual_values["LayerIndex"] += new_object.getLayerIndices(new_material)[0]
                 end
+                model.getSurfaces.each do |surface|
+                  if surface.construction.is_initialized
+                    next unless surface.construction.get == new_object
+                    actual_values["SurfacesWithConstructions"] += 1
+                  end
+                end
             end
         end
     end
@@ -241,6 +256,7 @@ class ProcessConstructionsCeilingsRoofsRoofingMaterialTest < MiniTest::Test
     assert_in_epsilon(expected_values["LayerThermalAbs"], actual_values["LayerThermalAbs"], 0.01)
     assert_in_epsilon(expected_values["LayerSolarAbs"], actual_values["LayerSolarAbs"], 0.01)
     assert_in_epsilon(expected_values["LayerVisibleAbs"], actual_values["LayerVisibleAbs"], 0.01)
+    assert_in_epsilon(expected_values["SurfacesWithConstructions"], actual_values["SurfacesWithConstructions"], 0.01)
     
     return model
   end

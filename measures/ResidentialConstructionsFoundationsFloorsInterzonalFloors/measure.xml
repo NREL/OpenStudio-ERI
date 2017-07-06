@@ -2,14 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_interzonal_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>4a23fc7b-c566-4130-b663-242be37855ef</version_id>
-  <version_modified>20170630T203551Z</version_modified>
+  <version_id>8df9cc3b-12f0-4a41-950d-351eb2cb5795</version_id>
+  <version_modified>20170706T202508Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsInterzonalFloors</class_name>
   <display_name>Set Residential Foundations/Floors - Interzonal Floor Construction</display_name>
   <description>This measure assigns a wood stud construction to floors between finished space and unfinished space or floors below cantilevered finished space.</description>
   <modeler_description>Calculates and assigns material layer properties of wood stud constructions for floors 1) between finished and unfinished spaces or 2) between finished spaces and outside. If the floors have an existing construction, the layers (other than floor covering and floor mass) are replaced. This measure is intended to be used in conjunction with Floor Covering and Floor Mass measures.</modeler_description>
   <arguments>
+    <argument>
+      <name>surface</name>
+      <display_name>Surface(s)</display_name>
+      <description>Select the surface(s) to assign constructions.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+      <choices>
+        <choice>
+          <value>auto</value>
+          <display_name>auto</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>cavity_r</name>
       <display_name>Cavity Insulation Nominal R-value</display_name>
@@ -73,17 +88,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>C088D6AE</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -100,6 +104,41 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8041CC38</checksum>
+    </file>
+    <file>
+      <filename>InterzonalFloors_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2B222DC9</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3BD21067</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6453B529</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
     </file>
   </files>
 </measure>

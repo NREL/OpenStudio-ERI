@@ -207,6 +207,10 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
 
+    # if osm_output_file_path.is_initialized
+      # File.write(osm_output_file_path.get, model.to_s)
+    # end    
+    
     if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
     end
@@ -498,44 +502,60 @@ class OSMeasures
                }  
         update_args_hash(measures, measure_subdir, args)
         
+        measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
+        args = {
+                "surface"=>name,
+                "solar_abs"=>0.85,
+                "emissivity"=>0.91,
+                "material"=>Constants.RoofMaterialAsphaltShingles,
+                "color"=>Constants.ColorMedium
+               }  
+        update_args_hash(measures, measure_subdir, args)         
+        
       end
       
+      measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
+      args = {
+              # "surface"=>name, # FIXME
+              "thick_in1"=>0.5,
+              "thick_in2"=>nil,
+              "cond1"=>1.1112,
+              "cond2"=>nil,
+              "dens1"=>50.0,
+              "dens2"=>nil,
+              "specheat1"=>0.2,
+              "specheat2"=>nil
+             }
+      update_args_hash(measures, measure_subdir, args)
+      
     end
-    
-    measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
-    args = {
-            "solar_abs"=>0.85,
-            "emissivity"=>0.91,
-            "material"=>Constants.RoofMaterialAsphaltShingles,
-            "color"=>Constants.ColorMedium
-           }  
-    update_args_hash(measures, measure_subdir, args)
-    
-    measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
-    args = {
-            "osb_thick_in"=>0.75,
-            "rigid_r"=>0.0,
-            "rigid_thick_in"=>0.0,
-           }
-    update_args_hash(measures, measure_subdir, args)
-           
-    measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
-    args = {
-            "thick_in1"=>0.5,
-            "thick_in2"=>nil,
-            "cond1"=>1.1112,
-            "cond2"=>nil,
-            "dens1"=>50.0,
-            "dens2"=>nil,
-            "specheat1"=>0.2,
-            "specheat2"=>nil
-           }
-    update_args_hash(measures, measure_subdir, args)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
       
       name = roof.elements["SystemIdentifier"].attributes["id"]
       has_rb = Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))
+
+      if not XMLHelper.has_element(roof, "extension")# Reference Home
+      
+        solar_abs = 0.85
+        emissivity = 0.91
+      
+      else # Rated Home
+      
+        solar_abs = Float(XMLHelper.get_value(roof, "extension/SolarAbsorptance"))
+        emissivity = Float(XMLHelper.get_value(roof, "extension/Emittance"))
+      
+      end
+
+      measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
+      args = {
+              "surface"=>name,
+              "solar_abs"=>solar_abs,
+              "emissivity"=>emissivity,
+              "material"=>Constants.RoofMaterialAsphaltShingles,
+              "color"=>Constants.ColorMedium
+             }  
+      update_args_hash(measures, measure_subdir, args)       
       
       measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
       args = {
@@ -543,7 +563,16 @@ class OSMeasures
               "has_rb"=>has_rb.to_s
              }
       update_args_hash(measures, measure_subdir, args)
-
+      
+      measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
+      args = {
+              "surface"=>name,
+              "osb_thick_in"=>0.75,
+              "rigid_r"=>0.0,
+              "rigid_thick_in"=>0.0,
+             }
+      update_args_hash(measures, measure_subdir, args)      
+      
     end
     
   end
@@ -561,8 +590,7 @@ class OSMeasures
         wall_cav_r = 0.0
         wall_cav_depth = 0.0
         wall_grade = 1
-        wall_ff = 0.0
-        
+        wall_ff = 0.0        
         wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
         wall_cont_r = wall_R - Material.Concrete8in.rvalue - Material.DefaultWallSheathing.rvalue - Material.AirFilmVertical.rvalue
         wall_cont_depth = 1.0
@@ -698,11 +726,12 @@ class OSMeasures
         end
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
+                # "surface"=>name, # FIXME
                 "osb_thick_in"=>0.75,
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
                }
-        update_args_hash(measures, measure_subdir, args)        
+        update_args_hash(measures, measure_subdir, args)
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
         measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
         args = {
@@ -718,6 +747,7 @@ class OSMeasures
         update_args_hash(measures, measure_subdir, args)
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
+                # "surface"=>name, # FIXME
                 "osb_thick_in"=>0.75,
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
@@ -735,6 +765,7 @@ class OSMeasures
         update_args_hash(measures, measure_subdir, args)        
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
+                # "surface"=>name, # FIXME
                 "osb_thick_in"=>0.75,
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
@@ -747,6 +778,7 @@ class OSMeasures
       
       measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
       args = {
+              # "surface"=>name, # FIXME
               "covering_frac"=>carpet_frac,
               "covering_r"=>carpet_r
              }
@@ -850,10 +882,11 @@ class OSMeasures
       end
 
       carpet_frac = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
-      carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))      
+      carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
       
       measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
       args = {
+              # "surface"=>name, # FIXME
               "covering_frac"=>carpet_frac,
               "covering_r"=>carpet_r
              }
@@ -884,6 +917,7 @@ class OSMeasures
     
     measure_subdir = "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
     args = {
+            # "surface"=>name, # FIXME: apply to all floors, or which floors?
             "cavity_r"=>19,
             "install_grade"=>"I",
             "framing_factor"=>0.13
@@ -892,6 +926,7 @@ class OSMeasures
     
     measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
     args = {
+            # "surface"=>name, # FIXME: apply to all floors, or which floors?
             "thick_in"=>0.625,
             "cond"=>0.8004,
             "dens"=>34.0,
@@ -2563,7 +2598,7 @@ class OSModel
         surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
         surface.setName(wall_id)
         surface.setSurfaceType("Wall")
-        if wall.elements["AdjacentTo"].text == 'ground'
+        if wall.elements["AdjacentTo"].text == "ground"
           surface.setOutsideBoundaryCondition("Ground")
         else
           errors << "#{wall.elements["AdjacentTo"].text} not handled yet."

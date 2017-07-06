@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_radiant_barrier</name>
   <uid>fd81853a-75a3-4c57-a5b5-373793430f49</uid>
-  <version_id>1199179f-9226-4a33-91de-828befed0485</version_id>
-  <version_modified>20170630T203550Z</version_modified>
+  <version_id>dd75d4d8-a7a1-4eeb-ac20-b11c26397d04</version_id>
+  <version_modified>20170706T202507Z</version_modified>
   <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsRadiantBarrier</class_name>
   <display_name>Set Residential Ceilings/Roofs - Radiant Barrier</display_name>
@@ -136,13 +136,19 @@
       <filename>RadiantBarrier_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>DE2DCEFA</checksum>
+      <checksum>2ED5A8E7</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
+      <filename>SFD_2000sqft_2story_SL_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4EA8F63E</checksum>
+      <checksum>31B8592A</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
     </file>
   </files>
 </measure>

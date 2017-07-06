@@ -5,188 +5,63 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class ProcessConstructionsCeilingsRoofsThermalMassTest < MiniTest::Test
+class ProcessConstructionsFoundationsFloorsThermalMassTest < MiniTest::Test
 
   def osm_geo
-    return "SFD_2000sqft_2story_SL_UA.osm"
+    return "SFD_2000sqft_2story_FB_UA.osm"
   end
   
-  def osm_geo_layers
-    return "SFD_2000sqft_2story_SL_UA_AllLayersButCeilingThermalMass.osm"
+  def test_argument_error_thick_in_negative
+    args_hash = {}
+    args_hash["thick_in"] = -1
+    result = _test_error(osm_geo, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Thickness must be greater than 0.")
+  end
+    
+  def test_argument_error_cond_negative
+    args_hash = {}
+    args_hash["cond"] = -1
+    result = _test_error(osm_geo, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Conductivity must be greater than 0.")
   end
 
-  def test_add_1_2in_drywall
+  def test_argument_error_dens_negative
     args_hash = {}
-    args_hash["thick_in1"] = 0.5
-    args_hash["cond1"] = 1.1112
-    args_hash["dens1"] = 50.0
-    args_hash["specheat1"] = 0.2
+    args_hash["dens"] = -1
+    result = _test_error(osm_geo, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Density must be greater than 0.")
+  end
+  
+  def test_argument_error_specheat_negative
+    args_hash = {}
+    args_hash["specheat"] = -1
+    result = _test_error(osm_geo, args_hash)
+    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Specific Heat must be greater than 0.")
+  end
+
+  def test_retrofit_replace
+    args_hash = {}
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0127, "LayerConductivity"=>0.16029, "LayerDensity"=>801, "LayerSpecificHeat"=>837.4, "LayerIndex"=>0, "SurfacesWithConstructions"=>4}
+    expected_values = {"LayerThickness"=>0.015875, "LayerConductivity"=>0.1154577, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>4}
     _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_add_2_of_5_8in_drywall
     args_hash = {}
-    args_hash["thick_in1"] = 0.625
-    args_hash["cond1"] = 1.1112
-    args_hash["dens1"] = 50.0
-    args_hash["specheat1"] = 0.2
-    args_hash["thick_in2"] = 0.625
-    args_hash["cond2"] = 1.1112
-    args_hash["dens2"] = 50.0
-    args_hash["specheat2"] = 0.2
+    args_hash["thick_in"] = 2
+    args_hash["cond"] = 4.75
+    args_hash["dens"] = 100
+    args_hash["specheat"] = 0.223
     expected_num_del_objects = {}
-    expected_num_new_objects = {"Material"=>2, "Construction"=>2}
-    expected_values = {"LayerThickness"=>0.015875*2, "LayerConductivity"=>0.16029*2, "LayerDensity"=>801*2, "LayerSpecificHeat"=>837.4*2, "LayerIndex"=>0+1+1+0, "SurfacesWithConstructions"=>4}
-    _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_add_2_of_1_2in_drywall_to_layers_and_replace_with_5_8in_drywall
-    args_hash = {}
-    args_hash["thick_in1"] = 0.5
-    args_hash["cond1"] = 1.1112
-    args_hash["dens1"] = 50.0
-    args_hash["specheat1"] = 0.2
-    args_hash["thick_in2"] = 0.5
-    args_hash["cond2"] = 1.1112
-    args_hash["dens2"] = 50.0
-    args_hash["specheat2"] = 0.2
-    expected_num_del_objects = {"Construction"=>4}
-    expected_num_new_objects = {"Material"=>2, "Construction"=>4}
-    # FIXME: Why is CeilingMass1 not next to CeilingMass2 in one of the constructions?
-    expected_values = {"LayerThickness"=>0.0127*2, "LayerConductivity"=>0.16029*2, "LayerDensity"=>801*2, "LayerSpecificHeat"=>837.4*2, "LayerIndex"=>14, "SurfacesWithConstructions"=>4}
-    model = _test_measure(osm_geo_layers, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    args_hash = {}
-    args_hash["thick_in1"] = 0.625
-    args_hash["cond1"] = 1.1112
-    args_hash["dens1"] = 50.0
-    args_hash["specheat1"] = 0.2
-    expected_num_del_objects = {"Material"=>2, "Construction"=>4}
-    expected_num_new_objects = {"Material"=>1, "Construction"=>4}
-    expected_values = {"LayerThickness"=>0.015875, "LayerConductivity"=>0.16029, "LayerDensity"=>801, "LayerSpecificHeat"=>837.4, "LayerIndex"=>0+2+0+3, "SurfacesWithConstructions"=>4}
-    _test_measure(model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-  end
-
-  def test_argument_error_layer2_missing_args
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 1
-    args_hash["thick_in2"] = 1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Layer 2 does not have all four properties (thickness, conductivity, density, specific heat) entered.")
-  end
-
-  def test_argument_error_thick_in1_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 0
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Thickness 1 must be greater than 0.")
-  end
-
-  def test_argument_error_thick_in2_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 1
-    args_hash["thick_in2"] = 0
-    args_hash["cond2"] = 1
-    args_hash["dens2"] = 1
-    args_hash["specheat2"] = 1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Thickness 2 must be greater than 0.")
-  end
-
-  def test_argument_error_cond1_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 0
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Conductivity 1 must be greater than 0.")
-  end
-
-  def test_argument_error_cond2_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 1
-    args_hash["thick_in2"] = 1
-    args_hash["cond2"] = 0
-    args_hash["dens2"] = 1
-    args_hash["specheat2"] = 1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Conductivity 2 must be greater than 0.")
-  end
-
-  def test_argument_error_dens1_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 0
-    args_hash["specheat1"] = 1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Density 1 must be greater than 0.")
-  end
-
-  def test_argument_error_dens2_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 1
-    args_hash["thick_in2"] = 1
-    args_hash["cond2"] = 1
-    args_hash["dens2"] = 0
-    args_hash["specheat2"] = 1
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Density 2 must be greater than 0.")
-  end
-
-  def test_argument_error_specheat1_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Specific Heat 1 must be greater than 0.")
-  end
-
-  def test_argument_error_specheat2_zero
-    args_hash = {}
-    args_hash["thick_in1"] = 1
-    args_hash["cond1"] = 1
-    args_hash["dens1"] = 1
-    args_hash["specheat1"] = 1
-    args_hash["thick_in2"] = 1
-    args_hash["cond2"] = 1
-    args_hash["dens2"] = 1
-    args_hash["specheat2"] = 0
-    result = _test_error(osm_geo, args_hash)
-    assert_equal(result.errors.map{ |x| x.logMessage }[0], "Specific Heat 2 must be greater than 0.")
-  end
-
-  def test_not_applicable_no_geometry
-    args_hash = {}
-    _test_na(nil, args_hash)
+    expected_num_new_objects = {"Material"=>1, "Construction"=>1}
+    expected_values = {"LayerThickness"=>0.0508, "LayerConductivity"=>0.6851875000000001, "LayerDensity"=>1602, "LayerSpecificHeat"=>933.701, "LayerIndex"=>0, "SurfacesWithConstructions"=>4}
+    _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)    
   end
 
   def test_apply_to_specific_surface
     args_hash = {}
-    args_hash["surface"] = "Surface 12"
+    args_hash["surface"] = "Surface 1"
     expected_num_del_objects = {}
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
-    expected_values = {"LayerThickness"=>0.0127, "LayerConductivity"=>0.16029, "LayerDensity"=>801, "LayerSpecificHeat"=>837.4, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
+    expected_values = {"LayerThickness"=>0.015875, "LayerConductivity"=>0.1154577, "LayerDensity"=>544.68, "LayerSpecificHeat"=>1214.23, "LayerIndex"=>0, "SurfacesWithConstructions"=>2}
     _test_measure(osm_geo, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
   end
   
@@ -194,7 +69,7 @@ class ProcessConstructionsCeilingsRoofsThermalMassTest < MiniTest::Test
   
   def _test_error(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsThermalMass.new
+    measure = ProcessConstructionsFoundationsFloorsThermalMass.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
@@ -230,7 +105,7 @@ class ProcessConstructionsCeilingsRoofsThermalMassTest < MiniTest::Test
   
   def _test_na(osm_file, args_hash)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsThermalMass.new
+    measure = ProcessConstructionsFoundationsFloorsThermalMass.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
@@ -266,7 +141,7 @@ class ProcessConstructionsCeilingsRoofsThermalMassTest < MiniTest::Test
 
   def _test_measure(osm_file_or_model, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     # create an instance of the measure
-    measure = ProcessConstructionsCeilingsRoofsThermalMass.new
+    measure = ProcessConstructionsFoundationsFloorsThermalMass.new
 
     # check for standard methods
     assert(!measure.name.empty?)

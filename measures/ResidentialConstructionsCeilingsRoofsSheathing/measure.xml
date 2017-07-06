@@ -2,14 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_sheathing</name>
   <uid>f9125155-4fe6-4dae-b5a6-e1249eb2da3c</uid>
-  <version_id>44615150-1e46-4246-a01c-82ca7a5debe5</version_id>
-  <version_modified>20170630T203550Z</version_modified>
+  <version_id>df919b4a-5faa-4783-bf6a-e93ee9a5d42b</version_id>
+  <version_modified>20170706T202507Z</version_modified>
   <xml_checksum>A465C8A5</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsSheathing</class_name>
   <display_name>Set Residential Ceilings/Roofs - Roof Sheathing</display_name>
   <description>This measure assigns roof sheathing to all attic roofs.</description>
   <modeler_description>Assigns material layer properties for all attic roofs.</modeler_description>
   <arguments>
+    <argument>
+      <name>surface</name>
+      <display_name>Surface(s)</display_name>
+      <description>Select the surface(s) to assign constructions.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+      <choices>
+        <choice>
+          <value>auto</value>
+          <display_name>auto</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>osb_thick_in</name>
       <display_name>OSB/Plywood Thickness</display_name>
@@ -85,33 +100,10 @@
   </attributes>
   <files>
     <file>
-      <filename>RoofSheathing_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>58B6E6C2</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_FA_AllLayersButRoofSheathing.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>33E69767</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>39FFFE07</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>87BD6DD0</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -130,6 +122,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
+    </file>
+    <file>
+      <filename>RoofSheathing_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>58677797</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8A0D75E0</checksum>
     </file>
   </files>
 </measure>

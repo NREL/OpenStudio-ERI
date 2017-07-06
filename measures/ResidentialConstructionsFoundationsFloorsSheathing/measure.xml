@@ -2,14 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_sheathing</name>
   <uid>b59d63a5-8d7b-41e2-b290-6d22cdfc0c0c</uid>
-  <version_id>6847aa6a-a6ac-4423-8d8d-eade68e95fc1</version_id>
-  <version_modified>20170630T203551Z</version_modified>
+  <version_id>d91e803a-e5a3-436c-825c-2d2a397ecb3e</version_id>
+  <version_modified>20170706T202508Z</version_modified>
   <xml_checksum>78504A2C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsSheathing</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Sheathing</display_name>
   <description>This measure assigns floor sheathing to floors of finished spaces, with the exception of foundation slabs.</description>
   <modeler_description>Assigns material layer properties for floors of finished spaces that are not adjacent to the ground.</modeler_description>
   <arguments>
+    <argument>
+      <name>surface</name>
+      <display_name>Surface(s)</display_name>
+      <description>Select the surface(s) to assign constructions.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+      <choices>
+        <choice>
+          <value>auto</value>
+          <display_name>auto</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>osb_thick_in</name>
       <display_name>OSB/Plywood Thickness</display_name>
@@ -100,17 +115,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.10.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>FA8851D3</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -127,6 +131,29 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.10.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>506C74E8</checksum>
+    </file>
+    <file>
+      <filename>FloorSheathing_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FD5F3E5E</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>212AE794</checksum>
     </file>
   </files>
 </measure>

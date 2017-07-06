@@ -2,14 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_crawlspace</name>
   <uid>c30a490e-4ff6-4fe9-88ae-a949421a287d</uid>
-  <version_id>2ecb5341-e6b0-4bc4-8076-fe09bbc2cffe</version_id>
-  <version_modified>20170630T203550Z</version_modified>
+  <version_id>cbfbddb7-4428-424e-b87a-e5ede8dedfab</version_id>
+  <version_modified>20170706T202508Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCrawlspace</class_name>
   <display_name>Set Residential Foundations/Floors - Crawlspace Constructions</display_name>
   <description>This measure assigns constructions to the crawlspace ceilings, walls, and floors.</description>
   <modeler_description>Calculates and assigns material layer properties of constructions for: 1) ceilings above below-grade unfinished space, 2) walls between below-grade unfinished space and ground, and 3) floors below below-grade unfinished space. Below-grade spaces are assumed to be crawlspaces (and not basements) if the space height is less than 7 ft.</modeler_description>
   <arguments>
+    <argument>
+      <name>surface</name>
+      <display_name>Surface(s)</display_name>
+      <description>Select the surface(s) to assign constructions.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+      <choices>
+        <choice>
+          <value>auto</value>
+          <display_name>auto</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>wall_rigid_r</name>
       <display_name>Wall Continuous Insulation Nominal R-value</display_name>
@@ -113,12 +128,6 @@
   </attributes>
   <files>
     <file>
-      <filename>Crawlspace_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AA7AEA1D</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_CS_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -137,18 +146,6 @@
       <checksum>AD531B32</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0F334C52</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5092668A</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_UB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -159,29 +156,6 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>2B1EAA1D</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>268702A1</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>39FFFE07</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.3.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>A60F2223</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -200,6 +174,47 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
+    </file>
+    <file>
+      <filename>Crawlspace_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>16B32E6B</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>212AE794</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3BD21067</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6453B529</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8D8257BF</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.3.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>8644B523</checksum>
     </file>
   </files>
 </measure>
