@@ -401,8 +401,6 @@ class EnergyRatingIndex301Ruleset
     4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
     '''
     
-    # FIXME: Need to look out for conditioned attics, etc.?
-    
     ufactor = get_reference_component_characteristics(climate_zone, "ceiling")
     
     new_attics = XMLHelper.add_element(new_attic_roof, "Attics")
@@ -410,14 +408,36 @@ class EnergyRatingIndex301Ruleset
       # Create new attic
       new_attic = XMLHelper.add_element(new_attics, "Attic")
       XMLHelper.copy_element(new_attic, orig_attic, "SystemIdentifier")
-      XMLHelper.copy_element(new_attic, orig_attic, "ExteriorAdjacentTo")
-      XMLHelper.copy_element(new_attic, orig_attic, "InteriorAdjacentTo")
-      XMLHelper.add_element(new_attic, "AtticType", "vented attic")
-      insulation = XMLHelper.add_element(new_attic, "AtticFloorInsulation")
-      XMLHelper.copy_element(insulation, orig_attic, "AtticFloorInsulation/SystemIdentifier")
-      XMLHelper.add_element(insulation, "InsulationGrade", 1)
-      XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
+      XMLHelper.copy_element(new_attic, orig_attic, "AtticType")
+      attic_type = XMLHelper.get_value(new_attic, "AtticType")
+      if ["vented attic", "unvented attic", "cape cod"].include? attic_type
+        floor_ins = XMLHelper.add_element(new_attic, "AtticFloorInsulation")
+        XMLHelper.copy_element(floor_ins, orig_attic, "AtticFloorInsulation/SystemIdentifier")
+        XMLHelper.add_element(floor_ins, "InsulationGrade", 1)
+        if ["vented attic", "unvented attic"].include? attic_type
+          XMLHelper.add_element(floor_ins, "AssemblyEffectiveRValue", 1.0/ufactor)
+        else
+          XMLHelper.add_element(floor_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
+        end
+      end
+      roof_ins = XMLHelper.add_element(new_attic, "AtticRoofInsulation")
+      XMLHelper.copy_element(roof_ins, orig_attic, "AtticRoofInsulation/SystemIdentifier")
+      XMLHelper.add_element(roof_ins, "InsulationGrade", 1)
+      if ["cathedral ceiling", "cape cod"].include? attic_type
+        XMLHelper.add_element(roof_ins, "AssemblyEffectiveRValue", 1.0/ufactor)
+      else
+        XMLHelper.add_element(roof_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
+      end
       XMLHelper.copy_element(new_attic, orig_attic, "Area")
+      if ["vented attic", "unvented attic", "cape cod"].include? attic_type
+        extension = XMLHelper.add_element(new_attic, "extension")
+        XMLHelper.copy_element(extension, orig_attic, "extension/FloorAdjacentTo")
+        floor_joists = XMLHelper.add_element(extension, "FloorJoists")
+        XMLHelper.copy_element(floor_joists, orig_attic, "extension/FloorJoists/Material")
+        XMLHelper.copy_element(floor_joists, orig_attic, "extension/FloorJoists/FramingFactor")
+      end
+      XMLHelper.copy_element(new_attic, orig_attic, "extension/ExteriorAdjacentTo")
+      XMLHelper.copy_element(new_attic, orig_attic, "extension/InteriorAdjacentTo")
     end
     
   end
@@ -473,12 +493,12 @@ class EnergyRatingIndex301Ruleset
       # Create new attic
       new_attic = XMLHelper.add_element(new_attics, "Attic")
       XMLHelper.copy_element(new_attic, orig_attic, "SystemIdentifier")
-      XMLHelper.copy_element(new_attic, orig_attic, "ExteriorAdjacentTo")
-      XMLHelper.copy_element(new_attic, orig_attic, "InteriorAdjacentTo")
       XMLHelper.copy_element(new_attic, orig_attic, "AtticType")
       XMLHelper.copy_element(new_attic, orig_attic, "AtticFloorInsulation")
       XMLHelper.copy_element(new_attic, orig_attic, "AtticRoofInsulation")
       XMLHelper.copy_element(new_attic, orig_attic, "Area")
+      XMLHelper.copy_element(new_attic, orig_attic, "extension/InteriorAdjacentTo")
+      XMLHelper.copy_element(new_attic, orig_attic, "extension/ExteriorAdjacentTo")
     end
 
   end
@@ -520,6 +540,7 @@ class EnergyRatingIndex301Ruleset
         extension = XMLHelper.add_element(new_floor, "extension")
         XMLHelper.copy_element(extension, orig_floor, "extension/CarpetFraction", 0.0)
         XMLHelper.copy_element(extension, orig_floor, "extension/CarpetRValue", 2.0)
+        XMLHelper.copy_element(extension, orig_floor, "extension/AdjacentTo")
       end
   
       '''
@@ -540,11 +561,12 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.copy_element(new_wall, orig_wall, "Height")
         XMLHelper.copy_element(new_wall, orig_wall, "Area")
         XMLHelper.copy_element(new_wall, orig_wall, "BelowGradeDepth")
-        XMLHelper.copy_element(new_wall, orig_wall, "AdjacentTo")
         insulation = XMLHelper.add_element(new_wall, "Insulation")
         XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")
         XMLHelper.add_element(insulation, "InsulationGrade", 1)
         XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
+        extension = XMLHelper.add_element(new_wall, "extension")
+        XMLHelper.copy_element(extension, orig_wall, "extension/AdjacentTo")
       end
   
       '''
@@ -658,8 +680,6 @@ class EnergyRatingIndex301Ruleset
       # Create new wall
       new_wall = XMLHelper.add_element(new_walls, "Wall")
       XMLHelper.copy_element(new_wall, orig_wall, "SystemIdentifier")
-      XMLHelper.copy_element(new_wall, orig_wall, "ExteriorAdjacentTo")
-      XMLHelper.copy_element(new_wall, orig_wall, "InteriorAdjacentTo")
       XMLHelper.add_element(new_wall, "WallType/WoodStud") # FIXME?
       XMLHelper.copy_element(new_wall, orig_wall, "Area")
       # Convert to net wall area; when windows/doors are added, we will convert back to gross wall area.
@@ -672,6 +692,9 @@ class EnergyRatingIndex301Ruleset
       insulation = XMLHelper.add_element(new_wall, "Insulation")
       XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")
       XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
+      extension = XMLHelper.add_element(new_wall, "extension")
+      XMLHelper.copy_element(extension, orig_wall, "extension/ExteriorAdjacentTo")
+      XMLHelper.copy_element(extension, orig_wall, "extension/InteriorAdjacentTo")
     end
     
   end
@@ -692,8 +715,6 @@ class EnergyRatingIndex301Ruleset
       # Create new wall
       new_wall = XMLHelper.add_element(new_walls, "Wall")
       XMLHelper.copy_element(new_wall, orig_wall, "SystemIdentifier")
-      XMLHelper.copy_element(new_wall, orig_wall, "ExteriorAdjacentTo")
-      XMLHelper.copy_element(new_wall, orig_wall, "InteriorAdjacentTo")
       XMLHelper.copy_element(new_wall, orig_wall, "WallType")
       XMLHelper.copy_element(new_wall, orig_wall, "Area")
       studs = XMLHelper.add_element(new_wall, "Studs")
@@ -711,6 +732,9 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(cont_layer, "InstallationType", "continuous")
       XMLHelper.copy_element(cont_layer, orig_wall, "Insulation/Layer[InstallationType='continuous']/NominalRValue", 0.0)
       XMLHelper.copy_element(cont_layer, orig_wall, "Insulation/Layer[InstallationType='continuous']/Thickness", 0.0)
+      extension = XMLHelper.add_element(new_wall, "extension")
+      XMLHelper.copy_element(extension, orig_wall, "extension/ExteriorAdjacentTo")
+      XMLHelper.copy_element(extension, orig_wall, "extension/InteriorAdjacentTo")
     end
     
   end
@@ -754,15 +778,15 @@ class EnergyRatingIndex301Ruleset
     bg_wall_area = 0.0
     
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      int_adj_to = XMLHelper.get_value(wall, "InteriorAdjacentTo")
-      ext_adj_to = XMLHelper.get_value(wall, "ExteriorAdjacentTo")
+      int_adj_to = XMLHelper.get_value(wall, "extension/InteriorAdjacentTo")
+      ext_adj_to = XMLHelper.get_value(wall, "extension/ExteriorAdjacentTo")
       next if not ((int_adj_to == "living space" or ext_adj_to == "living space") and int_adj_to != ext_adj_to)
       area = Float(XMLHelper.get_value(wall, "Area"))
       ag_wall_area += area
     end
     
     orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned='true']/FoundationWall") do |fwall|
-      adj_to = XMLHelper.get_value(fwall, "AdjacentTo")
+      adj_to = XMLHelper.get_value(fwall, "extension/AdjacentTo")
       next if adj_to == "living space"
       height = Float(XMLHelper.get_value(fwall, "Height"))
       bg_depth = Float(XMLHelper.get_value(fwall, "BelowGradeDepth"))
@@ -796,7 +820,6 @@ class EnergyRatingIndex301Ruleset
 
     # Adjust wall gross area
     wall.elements["Area"].text = Float(wall.elements["Area"].text) + total_window_area
-    
   end
   
   def self.set_window_interior_shading_reference(window)

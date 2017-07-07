@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>da366482-d736-49da-b2d5-838f92030478</version_id>
-  <version_modified>20170706T231311Z</version_modified>
+  <version_id>4063386b-4507-457b-80c3-4a6bab6ebb01</version_id>
+  <version_modified>20170707T194354Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -259,12 +259,6 @@
       <checksum>64BC6389</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B344DD8B</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -432,10 +426,76 @@
       <checksum>A72C30AE</checksum>
     </file>
     <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>072CF012</checksum>
+    </file>
+    <file>
       <filename>create-model-example.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
-      <checksum>CDE4D7A6</checksum>
+      <checksum>4188AFEB</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACAirSourceHeatPumpTwoSpeed.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B6860D2B</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACAirSourceHeatPumpTwoSpeed.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C3A57135</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACAirSourceHeatPumpVariableSpeed.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3996832C</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACAirSourceHeatPumpVariableSpeed.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9BDF43F0</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACBoilerElectric.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>15301C00</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACBoilerElectric.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4FB1E25F</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACBoilerFuel.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1B283C98</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACBoilerFuel.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>53621D6A</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACCentralAirConditionerSingleSpeed.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7EA275B6</checksum>
+    </file>
+    <file>
+      <filename>ResidentialHVACCentralAirConditionerSingleSpeed.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5340FC9B</checksum>
     </file>
   </files>
 </measure>

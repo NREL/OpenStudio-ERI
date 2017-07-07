@@ -177,12 +177,12 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     errors.each do |error|
       runner.registerError(error)
     end
-    unless errors.empty?
-      return false
-    end
-    
     if hpxml_output_file_path.is_initialized
       XMLHelper.write_file(hpxml_doc, hpxml_output_file_path.get)
+      runner.registerInfo("Wrote file: #{hpxml_output_file_path.get}")
+    end
+    unless errors.empty?
+      return false
     end
     
     # Validate new HPXML
@@ -217,6 +217,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     if osm_output_file_path.is_initialized
       File.write(osm_output_file_path.get, model.to_s)
+      runner.registerInfo("Wrote file: #{osm_output_file_path.get}")
     end
     
     # Add output variables for RESNET building loads
@@ -472,7 +473,7 @@ class OSMeasures
       attic_type = XMLHelper.get_value(attic, "AtticType")
       
       if ["vented attic", "unvented attic"].include? attic_type
-    
+      
         measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
         args = {
                 "surface"=>name,
@@ -990,8 +991,8 @@ class OSMeasures
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
       name = wall.elements["SystemIdentifier"].attributes["id"]
-      interior_adjacent_to = XMLHelper.get_value(wall, "InteriorAdjacentTo")
-      exterior_adjacent_to = XMLHelper.get_value(wall, "ExteriorAdjacentTo")
+      interior_adjacent_to = XMLHelper.get_value(wall, "extension/InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(wall, "extension/ExteriorAdjacentTo")
       siding = XMLHelper.get_value(wall, "Siding")
       color = XMLHelper.get_value(wall, "Color")
       mat_siding = get_siding_material(siding, color)
@@ -2415,10 +2416,13 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
-      next unless wall.elements["InteriorAdjacentTo"].text == "living space"
+      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
+      next unless interior_adjacent_to == "living space"
       
       wall_id = wall.elements["SystemIdentifier"].attributes["id"]
     
+      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
+      
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
       wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
 
@@ -2426,12 +2430,12 @@ class OSModel
       surface.setName(wall_id)
       surface.setSurfaceType("Wall") 
       surface.setSpace(living_space)
-      if wall.elements["ExteriorAdjacentTo"].text == "attic"
+      if ["unvented attic", "vented attic"].include? exterior_adjacent_to
         surface.createAdjacentSurface(attic_space)
-      elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
+      elsif ["ambient"].include? exterior_adjacent_to
         surface.setOutsideBoundaryCondition("Outdoors")
       else
-        errors << "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
+        errors << "#{exterior_adjacent_to} not handled."
       end
       
     end
@@ -2543,6 +2547,8 @@ class OSModel
       
         wall_id = wall.elements["SystemIdentifier"].attributes["id"]
         
+        adjacent_to = wall.elements["extension/AdjacentTo"].text
+        
         wall_height = OpenStudio.convert(wall.elements["Height"].text.to_f,"ft","m").get
         wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, fnd_id) / wall_height
         
@@ -2551,10 +2557,10 @@ class OSModel
         surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
         surface.setName(wall_id)
         surface.setSurfaceType("Wall")
-        if wall.elements["AdjacentTo"].text == "ground"
+        if adjacent_to == "ground"
           surface.setOutsideBoundaryCondition("Ground")
         else
-          errors << "#{wall.elements["AdjacentTo"].text} not handled yet."
+          errors << "#{adjacent_to} not handled."
         end
         surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][fnd_id])
         
@@ -2661,8 +2667,12 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
+      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
+      next unless ["vented attic", "unvented attic"].include? interior_adjacent_to
+      
       wall_id = wall.elements["SystemIdentifier"].attributes["id"]
-      next unless wall.elements["InteriorAdjacentTo"].text == "attic"
+      
+      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
       
       wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
       wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
@@ -2671,12 +2681,12 @@ class OSModel
       surface.setName(wall_id)
       surface.setSurfaceType("Wall")
       surface.setSpace(living_space)
-      if wall.elements["ExteriorAdjacentTo"].text == "living space"
+      if exterior_adjacent_to == "living space"
         surface.createAdjacentSurface(living_space)
-      elsif wall.elements["ExteriorAdjacentTo"].text == "ambient"
+      elsif exterior_adjacent_to == "ambient"
         surface.setOutsideBoundaryCondition("Outdoors")
       else
-        errors << "#{wall.elements["ExteriorAdjacentTo"].text} not handled yet."
+        errors << "#{exterior_adjacent_to} not handled."
       end
       
     end
@@ -2689,18 +2699,19 @@ class OSModel
     
       attic_id = attic.elements["SystemIdentifier"].attributes["id"]
     
+      attic_type = attic.elements["AtticType"].text
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
      
-      if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
+      if ["cathedral ceiling", "cape cod"].include? attic_type
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, 0), model)
         surface.setName(attic_id)
         surface.setSpace(living_space)
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")
-      elsif ["vented attic", "unvented attic"].include? attic.elements["AtticType"].text     
+      elsif ["vented attic", "unvented attic"].include? attic_type
       else
-        errors << "#{attic.elements["AtticType"].text} not handled yet."
+        errors << "#{attic_type} not handled."
       end
       
     end  

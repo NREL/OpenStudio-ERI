@@ -71,40 +71,71 @@
           <Attics>
             <Attic>
               <SystemIdentifier id='Attic_ID1'/>
-              <AtticType>vented attic</AtticType>
+              <AttachedToRoof idref='roof-1'/>
+              <AtticType>unvented attic</AtticType>
               <AtticFloorInsulation>
                 <SystemIdentifier id='Attic_Ins_ID1'/>
                 <InsulationGrade>1</InsulationGrade>
                 <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>37</NominalRValue>
+                  <InstallationType>cavity</InstallationType>
+                  <NominalRValue>13</NominalRValue>
                   <Thickness>3.5</Thickness>
                 </Layer>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>25</NominalRValue>
+                  <Thickness>7.0</Thickness>
+                </Layer>
               </AtticFloorInsulation>
-              <Area>4200</Area>
-              <Rafters>
-                <Size>2x4</Size>
-                <Spacing>24</Spacing>
-                <FramingFactor>0.11</FramingFactor>
-              </Rafters>
-            </Attic>
-            <Attic>
-              <SystemIdentifier id='Attic_ID2'/>
-              <AtticType>cathedral ceiling</AtticType>
-              <AtticFloorInsulation>
+              <AtticRoofInsulation>
                 <SystemIdentifier id='Attic_Ins_ID2'/>
                 <InsulationGrade>1</InsulationGrade>
                 <Layer>
+                  <InstallationType>cavity</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
+                </Layer>
+                <Layer>
                   <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
+                </Layer>
+              </AtticRoofInsulation>
+              <Area>4200</Area>
+              <Rafters>
+                <FramingFactor>0.11</FramingFactor>
+                <Material>wood</Material>
+              </Rafters>
+              <extension>
+                <FloorAdjacentTo>living space</FloorAdjacentTo>
+                <FloorJoists>
+                  <FramingFactor>0.11</FramingFactor>
+                  <Material>wood</Material>
+                </FloorJoists>
+              </extension>
+            </Attic>
+            <Attic>
+              <SystemIdentifier id='Attic_ID2'/>
+              <AttachedToRoof idref='roof-2'/>
+              <AtticType>cathedral ceiling</AtticType>
+              <AtticRoofInsulation>
+                <SystemIdentifier id='Attic_Ins_ID3'/>
+                <InsulationGrade>1</InsulationGrade>
+                <Layer>
+                  <InstallationType>cavity</InstallationType>
                   <NominalRValue>5</NominalRValue>
                   <Thickness>9.5</Thickness>
                 </Layer>
-              </AtticFloorInsulation>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>5</NominalRValue>
+                  <Thickness>1</Thickness>
+                </Layer>
+              </AtticRoofInsulation>
               <Area>269</Area>
               <Rafters>
-                <Size>2x10</Size>
-                <Spacing>24</Spacing>
                 <FramingFactor>0.11</FramingFactor>
+                <Material>wood</Material>
               </Rafters>
             </Attic>
           </Attics>
@@ -184,16 +215,13 @@
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
-            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
               <WoodStud></WoodStud>
             </WallType>
             <Area>3796</Area>
             <Studs>
-              <Size>2x6</Size>
-              <Spacing>24</Spacing>
               <FramingFactor>0.1988</FramingFactor>
+              <Material>wood</Material>
             </Studs>
             <Siding>stucco</Siding>
             <Color>medium</Color>
@@ -211,19 +239,20 @@
                 <Thickness>2</Thickness>
               </Layer>
             </Insulation>
+            <extension>
+              <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            </extension>
           </Wall>
           <Wall>
             <SystemIdentifier id='agwall-2'/>
-            <ExteriorAdjacentTo>attic</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
               <WoodStud></WoodStud>
             </WallType>
             <Area>32</Area>
             <Studs>
-              <Size>2x6</Size>
-              <Spacing>24</Spacing>
               <FramingFactor>0.1988</FramingFactor>
+              <Material>wood</Material>
             </Studs>
             <Siding>vinyl siding</Siding>
             <Color>light</Color>
@@ -241,19 +270,20 @@
                 <Thickness>0</Thickness>
               </Layer>
             </Insulation>
+            <extension>
+              <ExteriorAdjacentTo>unvented attic</ExteriorAdjacentTo>
+              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            </extension>
           </Wall>
           <Wall>
             <SystemIdentifier id='agwall-3'/>
-            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
               <WoodStud></WoodStud>
             </WallType>
             <Area>32</Area>
             <Studs>
-              <Size>2x6</Size>
-              <Spacing>24</Spacing>
               <FramingFactor>0.1988</FramingFactor>
+              <Material>wood</Material>
             </Studs>
             <Siding>brick veneer</Siding>
             <Color>dark</Color>
@@ -271,6 +301,10 @@
                 <Thickness>0</Thickness>
               </Layer>
             </Insulation>
+            <extension>
+              <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            </extension>
           </Wall>
         </Walls>
         <Windows>

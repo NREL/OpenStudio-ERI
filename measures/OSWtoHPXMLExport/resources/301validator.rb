@@ -49,14 +49,38 @@ class EnergyRatingIndex301Validator
                 'RoofArea',
                 'RoofColor',
                 'RadiantBarrier',
-                #'[extension/InteriorAdjacentTo="living space" or InteriorAdjacentTo="attic" or InteriorAdjacentTo="garage"]',
             ],
             # Attics
             '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => [
-                #'AtticFloorInsulation[AssemblyEffectiveRValue and InsulationGrade]',
-                #'AtticRoofInsulation[AssemblyEffectiveRValue and InsulationGrade]',
                 'Area',
-                '[AtticType="vented attic" or AtticType="unvented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]',
+                'AttachedToRoof',
+                '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]',
+                'AtticRoofInsulation/InsulationGrade',
+                'AtticRoofInsulation/Layer[InstallationType="cavity"]',
+                'AtticRoofInsulation/Layer[InstallationType="continuous"]',
+                'Rafters[Material="wood"]',
+                'Rafters/FramingFactor',
+            ],
+            # AtticFloor (everything but cathedral ceiling and flat roof)
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic" or AtticType="unvented attic" or AtticType="cape cod"]' => [
+                'AtticFloorInsulation/InsulationGrade',
+                'AtticFloorInsulation/Layer[InstallationType="cavity"]',
+                'AtticFloorInsulation/Layer[InstallationType="continuous"]',
+                'extension/FloorJoists[Material="wood"]',
+                'extension/FloorJoists/FramingFactor',
+                'extension[FloorAdjacentTo="living space" or FloorAdjacentTo="garage"]',
+            ],
+            # Attic FloorInsulation Layer
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/AtticFloorInsulation/Layer' => [
+                'InstallationType',
+                'NominalRValue',
+                'Thickness',
+            ],
+            # Attic RoofInsulation Layer
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/AtticRoofInsulation/Layer' => [
+                'InstallationType',
+                'NominalRValue',
+                'Thickness',
             ],
             # Foundation
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation' => [
@@ -86,12 +110,14 @@ class EnergyRatingIndex301Validator
             # FrameFloor
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor' => [
                 'Area',
+                'FloorJoists[Material="wood"]',
                 'FloorJoists/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
                 'extension/CarpetFraction',
                 'extension/CarpetRValue',
+                'extension[AdjacentTo="living space"]',
             ],
             # FrameFloor Insulation Layer
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor/Insulation/Layer' => [
@@ -104,11 +130,12 @@ class EnergyRatingIndex301Validator
                 'Area',
                 'Height',
                 'BelowGradeDepth',
-                'AdjacentTo',
+                'InteriorStuds[Material="wood"]',
                 'InteriorStuds/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
+                'extension[AdjacentTo="ground" or AdjacentTo="unconditioned basement" or AdjacentTo="conditioned basement" or AdjacentTo="crawlspace"]',
             ],
             # FoundationWall Insulation Layer
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall/Insulation/Layer' => [
@@ -157,9 +184,8 @@ class EnergyRatingIndex301Validator
             # Wall
             '//Building/BuildingDetails/Enclosure/Walls/Wall' => [
                 'Area',
-                # FIXME: Need to restrict combinations? e.g., InteriorAdjacentTo=crawlspace and ExteriorAdjacentTo=attic
-                '[InteriorAdjacentTo="living space" or InteriorAdjacentTo="unconditioned basement" or InteriorAdjacentTo="crawlspace" or InteriorAdjacentTo="attic" or InteriorAdjacentTo="garage"]',
-                '[ExteriorAdjacentTo="ambient" or ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="crawlspace" or ExteriorAdjacentTo="attic" or ExteriorAdjacentTo="garage"]',
+                'extension[InteriorAdjacentTo="living space" or InteriorAdjacentTo="garage" or InteriorAdjacentTo="vented attic" or InteriorAdjacentTo="unvented attic" or InteriorAdjacentTo="cape cod"]',
+                'extension[ExteriorAdjacentTo="ambient" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="unvented attic" or ExteriorAdjacentTo="vented attic" or ExteriorAdjacentTo="cape cod"]',
                 'WallType/WoodStud',
                 '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]',
                 'Color',
@@ -172,10 +198,23 @@ class EnergyRatingIndex301Validator
             ],
             # WoodStud Wall
             '//Building/BuildingDetails/Enclosure/Walls/Wall[WallType/WoodStud]' => [
+                'Studs[Material="wood"]',
                 'Studs/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
+            ],
+            # Floors
+            '//Building/BuildingDetails/Enclosure/extension/Floors/Floor' => [                'Area',
+                'FloorJoists[Material="wood"]',
+                'FloorJoists/FramingFactor',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
+                'CarpetFraction',
+                'CarpetRValue',
+                '[InteriorAdjacentTo="living space"]',
+                '[ExteriorAdjacentTo="garage"]',
             ],
             # Window
             '//Building/BuildingDetails/Enclosure/Windows/Window' => [
@@ -184,7 +223,6 @@ class EnergyRatingIndex301Validator
                 'UFactor',
                 'SHGC',
                 'AttachedToWall',
-                #Quantity, # FIXME: Should we require/use?
             ],
             # Skylight
             '//Building/BuildingDetails/Enclosure/Skylights/Skylight' => [
@@ -194,7 +232,6 @@ class EnergyRatingIndex301Validator
                 'SHGC',
                 'Pitch',
                 'AttachedToRoof',
-                #Quantity, # FIXME: Should we require/use?
             ],
             # Door
             '//Building/BuildingDetails/Enclosure/Doors/Door' => [
@@ -202,7 +239,6 @@ class EnergyRatingIndex301Validator
                 'Area',
                 'Azimuth',
                 'RValue',
-                #Quantity, # FIXME: Should we require/use?
             ],
             # HeatingSystem
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => [
