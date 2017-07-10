@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_extra_refrigerator</name>
   <uid>96f1e9ca-41b9-4fb8-a219-57850e351500</uid>
-  <version_id>cbbbfeb2-ff66-4dd4-810b-656116967a67</version_id>
-  <version_modified>20170630T192806Z</version_modified>
+  <version_id>17f2b20d-d8ab-4698-9790-22abc42d9a73</version_id>
+  <version_modified>20170710T193023Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialExtraRefrigerator</class_name>
   <display_name>Set Residential Extra Refrigerator</display_name>
@@ -147,7 +147,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>99D1E315</checksum>
+      <checksum>20190C86</checksum>
     </file>
   </files>
 </measure>

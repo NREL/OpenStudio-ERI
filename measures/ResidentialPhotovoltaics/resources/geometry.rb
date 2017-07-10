@@ -894,6 +894,10 @@ class Geometry
         return true if space_or_zone.name.to_s.start_with?(Constants.GarageSpace) or space_or_zone.name.to_s.start_with?(Constants.GarageZone)
     end
     
+    def self.is_foundation(space_or_zone)
+      return true if self.is_pier_beam(space_or_zone) or self.is_crawl(space_or_zone) or self.is_finished_basement(space_or_zone) or self.is_unfinished_basement(space_or_zone)
+    end
+    
     def self.get_crawl_spaces(spaces)
         crawl_spaces = []
         spaces.each do |space|

@@ -449,7 +449,6 @@ def apply_measures(measures_dir, measures, runner, model, show_measure_calls=tru
     # Call each measure for sample to build up model
     workflow_order.each do |measure_subdir|
       next unless measures.keys.include? measure_subdir
-      puts measure_subdir
 
       # Gather measure arguments and call measure
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")

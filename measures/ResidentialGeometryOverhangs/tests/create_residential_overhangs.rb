@@ -92,6 +92,15 @@ class CreateResidentialOverhangsTest < MiniTest::Test
     _test_measure("MF_8units_1story_SL_Inset_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 60)
   end
   
+  def test_apply_to_specific_sub_surface
+    args_hash = {}
+    args_hash["sub_surface"] = "Surface 11 - Window 1"
+    expected_num_del_objects = {}
+    expected_num_new_objects = {"ShadingSurface"=>1, "ShadingSurfaceGroup"=>1}
+    expected_values = {"overhang_depth"=>2}
+    _test_measure("SFD_2000sqft_2story_SL_UA_Windows.osm", args_hash, expected_num_del_objects, expected_num_new_objects, expected_values, 1)
+  end
+  
   private
   
   def _test_error(osm_file, args_hash)

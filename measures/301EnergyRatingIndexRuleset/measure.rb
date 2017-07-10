@@ -209,7 +209,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
     # if osm_output_file_path.is_initialized
       # File.write(osm_output_file_path.get, model.to_s)
-    # end    
+    # end
     
     if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
@@ -357,23 +357,27 @@ class OSMeasures
     depth = 0
     offset = 0
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
+
       overhangs = window.elements["Overhangs"]
-      break if overhangs.nil?
+      next if overhangs.nil?
+      name = window.elements["SystemIdentifier"].attributes["id"]
       depth = Float(XMLHelper.get_value(overhangs, "Depth"))
       offset = Float(XMLHelper.get_value(overhangs, "DistanceToTopOfWindow"))
-      break
+      
+      measure_subdir = "ResidentialGeometryOverhangs"
+      args = {
+              "sub_surface"=>name,
+              "depth"=>OpenStudio.convert(depth,"in","ft").get,
+              "offset"=>OpenStudio.convert(offset,"in","ft").get,
+              "front_facade"=>true,
+              "back_facade"=>true,
+              "left_facade"=>true,
+              "right_facade"=>true
+             }
+      update_args_hash(measures, measure_subdir, args)      
+      
     end
-    measure_subdir = "ResidentialGeometryOverhangs"
-    args = {
-            "depth"=>OpenStudio.convert(depth,"in","ft").get,
-            "offset"=>OpenStudio.convert(offset,"in","ft").get,
-            "front_facade"=>true,
-            "back_facade"=>true,
-            "left_facade"=>true,
-            "right_facade"=>true
-           }
-    update_args_hash(measures, measure_subdir, args)
-    
+
   end
       
   def self.get_beds_and_baths(building, measures)
@@ -489,6 +493,20 @@ class OSMeasures
                 "roof_fram_thick_in"=>7.25
                }  
         update_args_hash(measures, measure_subdir, args)
+        
+        measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
+        args = {
+                "surface"=>"#{name} Reversed", # FIXME: I can't rename the adjacent roofceiling to the id in the hpxml because then the unfinished attic measure gets the wrong surface name. Can we modify this measure to input the floor instead of the roofceiling?
+                "thick_in1"=>0.5,
+                "thick_in2"=>nil,
+                "cond1"=>1.1112,
+                "cond2"=>nil,
+                "dens1"=>50.0,
+                "dens2"=>nil,
+                "specheat1"=>0.2,
+                "specheat2"=>nil
+               }
+        update_args_hash(measures, measure_subdir, args)
        
       else
 
@@ -514,20 +532,6 @@ class OSMeasures
         update_args_hash(measures, measure_subdir, args)         
         
       end
-      
-      measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
-      args = {
-              # "surface"=>name, # FIXME
-              "thick_in1"=>0.5,
-              "thick_in2"=>nil,
-              "cond1"=>1.1112,
-              "cond2"=>nil,
-              "dens1"=>50.0,
-              "dens2"=>nil,
-              "specheat1"=>0.2,
-              "specheat2"=>nil
-             }
-      update_args_hash(measures, measure_subdir, args)
       
     end
 
@@ -727,10 +731,19 @@ class OSMeasures
         end
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
-                # "surface"=>name, # FIXME
+                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
                 "osb_thick_in"=>0.75,
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
+               }
+        update_args_hash(measures, measure_subdir, args)
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
+        args = {
+                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
+                "thick_in"=>0.625,
+                "cond"=>0.8004,
+                "dens"=>34.0,
+                "specheat"=>0.29
                }
         update_args_hash(measures, measure_subdir, args)
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
@@ -748,13 +761,22 @@ class OSMeasures
         update_args_hash(measures, measure_subdir, args)
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
-                # "surface"=>name, # FIXME
+                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
                 "osb_thick_in"=>0.75,
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
                }
-        update_args_hash(measures, measure_subdir, args)        
-      elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")      
+        update_args_hash(measures, measure_subdir, args)
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
+        args = {
+                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
+                "thick_in"=>0.625,
+                "cond"=>0.8004,
+                "dens"=>34.0,
+                "specheat"=>0.29
+               }
+        update_args_hash(measures, measure_subdir, args)
+      elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
       elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
         measure_subdir = "ResidentialConstructionsFoundationsFloorsPierBeam"
         args = {
@@ -766,24 +788,33 @@ class OSMeasures
         update_args_hash(measures, measure_subdir, args)        
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
         args = {
-                # "surface"=>name, # FIXME
+                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
                 "osb_thick_in"=>0.75,
                 "rigid_r"=>floor_cont_r,
                 "rigid_thick_in"=>floor_cont_depth
                }
         update_args_hash(measures, measure_subdir, args)
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
+        args = {
+                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
+                "thick_in"=>0.625,
+                "cond"=>0.8004,
+                "dens"=>34.0,
+                "specheat"=>0.29
+               }
+        update_args_hash(measures, measure_subdir, args)
       end
       
       carpet_frac = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetFraction"))
-      carpet_r = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetRValue"))      
+      carpet_r = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetRValue"))
       
       measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
       args = {
-              # "surface"=>name, # FIXME
+              "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
               "covering_frac"=>carpet_frac,
               "covering_r"=>carpet_r
              }
-      update_args_hash(measures, measure_subdir, args)      
+      update_args_hash(measures, measure_subdir, args)
       
     end
       
@@ -816,6 +847,7 @@ class OSMeasures
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
         # Uninsulated floor assumed in model
       elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
+
         measure_subdir = "ResidentialConstructionsFoundationsFloorsSlab"
         args = {
                 "surface"=>name,
@@ -832,19 +864,20 @@ class OSMeasures
                 "exposed_perim"=>get_exposed_perimeter(foundation)
                }  
         update_args_hash(measures, measure_subdir, args)
-      elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
-      end
+        
+        carpet_frac = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
+        carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
+        
+        measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
+        args = {
+                "surface"=>name,
+                "covering_frac"=>carpet_frac,
+                "covering_r"=>carpet_r
+               }
+        update_args_hash(measures, measure_subdir, args)
 
-      carpet_frac = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
-      carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
-      
-      measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
-      args = {
-              # "surface"=>name, # FIXME
-              "covering_frac"=>carpet_frac,
-              "covering_r"=>carpet_r
-             }
-      update_args_hash(measures, measure_subdir, args)      
+      elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
+      end    
       
     end
     
@@ -875,16 +908,6 @@ class OSMeasures
             "cavity_r"=>19,
             "install_grade"=>"I",
             "framing_factor"=>0.13
-           }
-    update_args_hash(measures, measure_subdir, args)
-    
-    measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
-    args = {
-            # "surface"=>name, # FIXME: apply to all floors, or which floors?
-            "thick_in"=>0.625,
-            "cond"=>0.8004,
-            "dens"=>34.0,
-            "specheat"=>0.29
            }
     update_args_hash(measures, measure_subdir, args)
 

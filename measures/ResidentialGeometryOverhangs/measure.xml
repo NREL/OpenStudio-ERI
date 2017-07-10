@@ -2,14 +2,29 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>93a704d1-ae84-4dbc-b5fd-ceb46dbcb502</version_id>
-  <version_modified>20170706T202509Z</version_modified>
+  <version_id>604c90b9-3610-4c7f-887f-b1d562dcd154</version_id>
+  <version_modified>20170710T193012Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
   <description>Sets presence/dimensions of overhangs for windows on the specified building facade(s).</description>
   <modeler_description>Creates overhang shading surfaces for windows on the specified building facade(s) and specified depth/offset. Any existing overhang shading surfaces are removed.</modeler_description>
   <arguments>
+    <argument>
+      <name>sub_surface</name>
+      <display_name>Sub Surface(s)</display_name>
+      <description>Select the sub surface(s) to assign overhangs.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>auto</default_value>
+      <choices>
+        <choice>
+          <value>auto</value>
+          <display_name>auto</display_name>
+        </choice>
+      </choices>
+    </argument>
     <argument>
       <name>depth</name>
       <display_name>Depth</display_name>
@@ -136,23 +151,6 @@
   </attributes>
   <files>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>FDD8C3BC</checksum>
-    </file>
-    <file>
-      <filename>create_residential_overhangs.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>14237DE1</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -189,16 +187,33 @@
       <checksum>97687FFD</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>99D1E315</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>8D8257BF</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>762CE439</checksum>
+    </file>
+    <file>
+      <filename>create_residential_overhangs.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>57410F31</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>20190C86</checksum>
     </file>
   </files>
 </measure>
