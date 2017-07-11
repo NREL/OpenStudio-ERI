@@ -25,7 +25,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    # result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}

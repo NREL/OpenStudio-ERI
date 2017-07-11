@@ -210,7 +210,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # if osm_output_file_path.is_initialized
       # File.write(osm_output_file_path.get, model.to_s)
     # end
-    
+
     if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
     end
@@ -1004,8 +1004,6 @@ class OSMeasures
     
   end
 
-
-  
   def self.get_wall_constructions(building, measures)
   
     mat_mass = Material.DefaultWallMass
@@ -1158,7 +1156,9 @@ class OSMeasures
     # FIXME
 
     measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
-    args = {}
+    args = {
+            # "surface"=>name # FIXME: how to apply this to, e.g., adiabatic floors between stories?
+            }
     update_args_hash(measures, measure_subdir, args)
 
     measure_subdir = "ResidentialConstructionsFurnitureThermalMass"
@@ -2191,6 +2191,102 @@ end
 
 class OSModel
 
+  def self.create_spaces_and_zones(model, spaces, space_name, thermal_zone_name)
+    if not spaces.keys.include? space_name
+      thermal_zone = create_zone(model, thermal_zone_name)
+      create_space(model, space_name, spaces, thermal_zone)
+    end
+  end
+
+  def self.create_zone(model, name)
+    thermal_zone = OpenStudio::Model::ThermalZone.new(model)
+    thermal_zone.setName(name)
+    return thermal_zone
+  end
+  
+  def self.create_space(model, name, spaces, thermal_zone)
+    space = OpenStudio::Model::Space.new(model)
+    space.setName(name)
+    space.setThermalZone(thermal_zone)
+    spaces[name] = space
+  end
+
+  def self.get_all_spaces_and_zones(model, building, spaces)
+    
+    building.elements.each("BuildingDetails/Enclosure/Attics/Attic") do |attic|
+    
+      floor_adjacent_to = wall.elements["extension/FloorAdjacentTo"].text
+      if floor_adjacent_to == "living space"
+        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+      elsif interior_adjacent_to == "garage"
+        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+      end
+      
+    end
+    
+    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+      
+      foundation_type = foundation.elements["FoundationType"]      
+      if foundation_type.elements["Basement/Conditioned/text()='true'"]        
+        create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
+      elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
+        create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
+      elsif foundation_type.elements["Crawlspace"]
+        create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
+      end
+      
+      foundation.elements.each("FrameFloor") do |frame_floor|
+        
+        adjacent_to = frame_floor.elements["extension/AdjacentTo"].text
+        if adjacent_to == "living space"
+          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+        end
+        
+      end
+      
+      foundation.elements.each("FoundationWall") do |foundation_wall|
+        
+        adjacent_to = foundation_wall.elements["extension/AdjacentTo"].text
+        if adjacent_to == "unconditioned basement"
+          create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
+        elsif adjacent_to == "conditioned basement"
+          create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
+        elsif adjacent_to == "crawlspace"
+          create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
+        end
+        
+      end
+    
+    end
+
+    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
+    
+      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
+      if interior_adjacent_to == "living space"
+        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+      elsif interior_adjacent_to == "garage"
+        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+      elsif interior_adjacent_to == "vented attic" or interior_adjacent_to == "unvented attic"
+        create_spaces_and_zones(model, spaces, Constants.UnfinishedAtticSpace, Constants.UnfinishedAtticZone)
+      elsif interior_adjacent_to == "cape cod"
+        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.FinishedAtticZone)
+      end
+      
+      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
+      if exterior_adjacent_to == "garage"
+        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+      elsif exterior_adjacent_to == "living space"
+        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+      elsif exterior_adjacent_to == "vented attic" or exterior_adjacent_to == "unvented attic"
+        create_spaces_and_zones(model, spaces, Constants.UnfinishedAtticSpace, Constants.UnfinishedAtticZone)
+      elsif exterior_adjacent_to == "cape cod"
+        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.FinishedAtticZone)
+      end      
+      
+    end
+    
+  end
+
   def self.create_geometry(building, runner, model)
 
     geometry_errors = []
@@ -2203,20 +2299,19 @@ class OSModel
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
     
-    foundation_spaces = {}
+    spaces = {}
+    get_all_spaces_and_zones(model, building, spaces)
+
     fenestration_areas = {}
-    living_space = build_living_space(model, building)
-    attic_space, attic_zone = build_attic_space(model, building)
-    add_windows(model, building, geometry_errors, living_space, fenestration_areas)
-    add_doors(model, building, geometry_errors, living_space, fenestration_areas)
-    add_foundation_floors(model, building, living_space, foundation_spaces)
-    add_foundation_walls(model, building, living_space, foundation_spaces, fenestration_areas)
-    foundation_ceiling_area = add_foundation_ceilings(model, building, living_space, foundation_spaces)
-    add_living_floors(model, building, geometry_errors, living_space, foundation_ceiling_area)
-    add_living_walls(model, building, geometry_errors, avg_ceil_hgt, living_space, attic_space, fenestration_areas)
-    add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)
-    add_attic_walls(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space, fenestration_areas)
-    add_attic_ceilings(model, building, geometry_errors, avg_ceil_hgt, attic_space, living_space)    
+    add_windows(model, building, geometry_errors, spaces, fenestration_areas)
+    add_doors(model, building, geometry_errors, spaces, fenestration_areas)
+    add_foundation_floors(model, building, spaces)
+    add_foundation_walls(model, building, spaces, fenestration_areas)
+    foundation_ceiling_area = add_foundation_ceilings(model, building, spaces)
+    add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
+    add_above_grade_walls(model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
+    add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, spaces)    
+    add_attic_ceilings(model, building, geometry_errors, avg_ceil_hgt, spaces)
     
     geometry_errors.each do |error|
       runner.registerError(error)
@@ -2416,119 +2511,28 @@ class OSModel
       
   end
 
-  def self.build_living_space(model, building)
-      
-    living_zone = OpenStudio::Model::ThermalZone.new(model)
-    living_zone.setName(Constants.LivingZone)
-    living_space = OpenStudio::Model::Space.new(model)
-    living_space.setName(Constants.LivingSpace)
-    living_space.setThermalZone(living_zone)   
-    
-    return living_space
-      
-  end
-
   def self.net_wall_area(gross_wall_area, wall_fenestration_areas, wall_id)
     if wall_fenestration_areas.keys.include? wall_id
       return gross_wall_area - OpenStudio.convert(wall_fenestration_areas[wall_id],"ft^2","m^2").get
     end    
     return gross_wall_area
   end
-  
-  def self.add_living_walls(model, building, errors, avg_ceil_hgt, living_space, attic_space, fenestration_areas)
 
-    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
-    
-      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
-      next unless interior_adjacent_to == "living space"
-      
-      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
-    
-      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
-      
-      wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
-
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, 0), model)
-      surface.setName(wall_id)
-      surface.setSurfaceType("Wall") 
-      surface.setSpace(living_space)
-      if ["unvented attic", "vented attic"].include? exterior_adjacent_to
-        surface.createAdjacentSurface(attic_space)
-      elsif ["ambient"].include? exterior_adjacent_to
-        surface.setOutsideBoundaryCondition("Outdoors")
-      else
-        errors << "#{exterior_adjacent_to} not handled."
-      end
-      
+  def self.get_foundation_space_name(foundation_type)
+    if foundation_type.elements["Basement/Conditioned/text()='true'"]        
+      return Constants.FinishedBasementSpace
+    elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
+      return Constants.UnfinishedBasementSpace
+    elsif foundation_type.elements["Crawlspace"]
+      return Constants.CrawlSpace
     end
-    
-  end
-
-  def self.build_foundation_spaces(model, foundation_type)
-
-    unless foundation_type.nil?
-      foundation_space_name = nil
-      if foundation_type.elements["Basement/Conditioned/text()='true'"] or foundation_type.elements["Basement/Finished/text()='true'"]
-        foundation_space_name = Constants.FinishedBasementSpace
-      elsif foundation_type.elements["Basement/Conditioned/text()='false'"] or foundation_type.elements["Basement/Finished/text()='false'"]
-        foundation_space_name = Constants.UnfinishedBasementSpace
-      elsif foundation_type.elements["Crawlspace/Vented/text()='true'"] or foundation_type.elements["Crawlspace/Vented/text()='false'"] or foundation_type.elements["Crawlspace/Conditioned/text()='true'"] or foundation_type.elements["Crawlspace/Conditioned/text()='false'"]
-        foundation_space_name = Constants.CrawlSpace
-      elsif foundation_type.elements["Garage/Conditioned/text()='true'"] or foundation_type.elements["Garage/Conditioned/text()='false'"]
-        foundation_space_name = Constants.GarageSpace
-      end
-      if not foundation_space_name.nil?
-        foundation_space = OpenStudio::Model::Space.new(model)
-        foundation_space.setName(foundation_space_name)
-      end
-    end
-    
-    return foundation_space
-      
   end
   
-  def self.build_foundation_zones(model, foundation_spaces)
-  
-    foundation_spaces.each do |foundation_type, spaces|
-    
-      foundation_zone_name = nil
-      if foundation_type.elements["Basement/Conditioned/text()='true'"] or foundation_type.elements["Basement/Finished/text()='true'"]
-        foundation_zone_name = Constants.FinishedBasementZone
-      elsif foundation_type.elements["Basement/Conditioned/text()='false'"] or foundation_type.elements["Basement/Finished/text()='false'"]
-        foundation_zone_name = Constants.UnfinishedBasementZone
-      elsif foundation_type.elements["Crawlspace/Vented/text()='true'"] or foundation_type.elements["Crawlspace/Vented/text()='false'"] or foundation_type.elements["Crawlspace/Conditioned/text()='true'"] or foundation_type.elements["Crawlspace/Conditioned/text()='false'"]
-        foundation_zone_name = Constants.CrawlZone
-      elsif foundation_type.elements["Garage/Conditioned/text()='true'"] or foundation_type.elements["Garage/Conditioned/text()='false'"]
-        foundation_zone_name = Constants.GarageZone
-      end
-
-      if not foundation_zone_name.nil?
-        
-        foundation_zone = OpenStudio::Model::ThermalZone.new(model)
-        foundation_zone.setName(foundation_zone_name)
-        
-        spaces.each do |foundation_id, foundation_space|
-          foundation_space.setThermalZone(foundation_zone)
-        end
-        
-      end
-
-    end
-  
-  end
-
-  def self.add_foundation_floors(model, building, living_space, foundation_spaces)
+  def self.add_foundation_floors(model, building, spaces)
 
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-    
-      fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
-    
-      if not foundation_spaces.keys.include? foundation.elements["FoundationType"]
-        foundation_spaces[foundation.elements["FoundationType"]] = {fnd_id=>build_foundation_spaces(model, foundation.elements["FoundationType"])}
-      else
-        foundation_spaces[foundation.elements["FoundationType"]][fnd_id] = build_foundation_spaces(model, foundation.elements["FoundationType"])
-      end
+      
+      foundation_space_name = get_foundation_space_name(foundation.elements["FoundationType"])
 
       foundation.elements.each("Slab") do |slab|
       
@@ -2546,24 +2550,23 @@ class OSModel
         surface.setName(slab_id)
         surface.setSurfaceType("Floor") 
         surface.setOutsideBoundaryCondition("Ground")
-        if not foundation.elements["FoundationType/SlabOnGrade"].nil?
-          surface.setSpace(living_space)
+        if z_origin == 0
+          surface.setSpace(spaces[Constants.LivingSpace])
         else
-          surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][fnd_id])
+          surface.setSpace(spaces[foundation_space_name])
         end
         
       end
       
     end
-    
-    build_foundation_zones(model, foundation_spaces)
 
   end
 
-  def self.add_foundation_walls(model, building, living_space, foundation_spaces, fenestration_areas)
+  def self.add_foundation_walls(model, building, spaces, fenestration_areas)
   
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
+      foundation_space_name = get_foundation_space_name(foundation.elements["FoundationType"])
       fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
       
       foundation.elements.each("FoundationWall") do |wall|
@@ -2585,7 +2588,7 @@ class OSModel
         else
           errors << "#{adjacent_to} not handled."
         end
-        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][fnd_id])
+        surface.setSpace(spaces[foundation_space_name])
         
       end
     
@@ -2593,12 +2596,12 @@ class OSModel
 
   end
 
-  def self.add_foundation_ceilings(model, building, living_space, foundation_spaces)
+  def self.add_foundation_ceilings(model, building, spaces)
        
     foundation_ceiling_area = 0
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
     
-      fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
+      foundation_space_name = get_foundation_space_name(foundation.elements["FoundationType"])
      
       foundation.elements.each("FrameFloor") do |framefloor|
       
@@ -2612,8 +2615,8 @@ class OSModel
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(framefloor_length, framefloor_width, z_origin), model)
         surface.setName(floor_id)
         surface.setSurfaceType("RoofCeiling")
-        surface.setSpace(foundation_spaces[foundation.elements["FoundationType"]][fnd_id])
-        surface.createAdjacentSurface(living_space)
+        surface.setSpace(spaces[foundation_space_name])
+        surface.createAdjacentSurface(spaces[Constants.LivingSpace])
         
         foundation_ceiling_area += framefloor.elements["Area"].text.to_f
       
@@ -2625,7 +2628,7 @@ class OSModel
       
   end
 
-  def self.add_living_floors(model, building, errors, living_space, foundation_ceiling_area) # TODO: loop thru extension element other_floors instead of the following?
+  def self.add_living_floors(model, building, errors, spaces, foundation_ceiling_area) # TODO: loop thru extension element other_floors instead of the following?
 
     # TODO: Review this
     finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
@@ -2638,38 +2641,58 @@ class OSModel
     surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model)
     surface.setName("inferred finished floor")
     surface.setSurfaceType("Floor")
-    surface.setSpace(living_space)
+    surface.setSpace(spaces[Constants.LivingSpace])
     surface.setOutsideBoundaryCondition("Adiabatic")
 
   end
 
-  def self.build_attic_space(model, building) # FIXME: what if there were multiple attic elements with differing floor insulation levels? should we assume that attics of the same type are the same zone?
+  def self.add_above_grade_walls(model, building, errors, avg_ceil_hgt, spaces, fenestration_areas)
 
-    attic_space = nil
-    attic_zone = nil
-    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
+    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
-      if ["vented attic", "unvented attic"].include? attic.elements["AtticType"].text
-        if attic_space.nil?
-          attic_zone = OpenStudio::Model::ThermalZone.new(model)
-          attic_zone.setName(Constants.UnfinishedAtticZone)
-          attic_space = OpenStudio::Model::Space.new(model)
-          attic_space.setName(Constants.UnfinishedAtticSpace)
-          attic_space.setThermalZone(attic_zone)
-        end
+      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
+      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
+      
+      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+      
+      wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
+      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
+
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, 0), model)
+      surface.setName(wall_id)
+      surface.setSurfaceType("Wall") 
+      if ["living space"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.LivingSpace])
+      elsif ["garage"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.GarageSpace])
+      elsif ["unvented attic", "vented attic"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+      elsif ["cape cod"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.FinishedAtticSpace])
+      end
+      if ["ambient"].include? exterior_adjacent_to
+        surface.setOutsideBoundaryCondition("Outdoors")
+      elsif ["garage"].include? exterior_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.GarageSpace])
+      elsif ["unvented attic", "vented attic"].include? exterior_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.UnfinishedAtticSpace])
+      elsif ["cape cod"].include? exterior_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.FinishedAtticSpace])
       end
       
     end
     
-    return attic_space, attic_zone
-      
   end
-
-  def self.add_attic_floors(model, building, errors, avg_ceil_hgt, attic_space, living_space)
+  
+  def self.add_attic_floors(model, building, errors, avg_ceil_hgt, spaces)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
-      next if ["cathedral ceiling", "cape cod"].include? attic.elements["AtticType"].text
+      next if ["cathedral ceiling", "cape cod", "flat roof"].include? attic.elements["AtticType"].text
+    
+      attic_type = attic.elements["AtticType"].text
+      # floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text # FIXME: not in rated home?
+      floor_adjacent_to = "living space"
     
       attic_id = attic.elements["SystemIdentifier"].attributes["id"]
     
@@ -2678,85 +2701,69 @@ class OSModel
      
       surface = OpenStudio::Model::Surface.new(add_floor_polygon(attic_length, attic_width, 0), model)
       surface.setName(attic_id)
-      surface.setSpace(attic_space)
       surface.setSurfaceType("Floor")
-      surface.createAdjacentSurface(living_space)
-      
-    end
-      
-  end
-
-  def self.add_attic_walls(model, building, errors, avg_ceil_hgt, attic_space, living_space, fenestration_areas)
-
-    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
-    
-      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
-      next unless ["vented attic", "unvented attic"].include? interior_adjacent_to
-      
-      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
-      
-      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
-      
-      wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
-
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_height, wall_length, 0), model)
-      surface.setName(wall_id)
-      surface.setSurfaceType("Wall")
-      surface.setSpace(living_space)
-      if exterior_adjacent_to == "living space"
-        surface.createAdjacentSurface(living_space)
-      elsif exterior_adjacent_to == "ambient"
-        surface.setOutsideBoundaryCondition("Outdoors")
-      else
-        errors << "#{exterior_adjacent_to} not handled."
+      if ["vented attic", "unvented attic"].include? attic_type
+        surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+      end
+      if ["living space"].include? floor_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.LivingSpace])
+      elsif ["garage"].include? floor_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.GarageSpace])
       end
       
     end
       
   end
 
-  def self.add_attic_ceilings(model, building, errors, avg_ceil_hgt, attic_space, living_space)
+  def self.add_attic_ceilings(model, building, errors, avg_ceil_hgt, spaces)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
-      attic_id = attic.elements["SystemIdentifier"].attributes["id"]
-    
       attic_type = attic.elements["AtticType"].text
+    
+      attic_id = attic.elements["SystemIdentifier"].attributes["id"]  
+      
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
      
-      if ["cathedral ceiling", "cape cod"].include? attic_type
-        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, 0), model)
-        surface.setName(attic_id)
-        surface.setSpace(living_space)
+      unless ["vented attic", "unvented attic"].include? attic_type
+        if ["cathedral ceiling", "cape cod", "flat roof"].include? attic_type
+          surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, 0), model)
+          surface.setName(attic_id)
+          if attic_type == "cape cod"
+            surface.setSpace(spaces[Constants.FinishedAtticSpace])
+          else
+            surface.setSpace(spaces[Constants.LivingSpace])
+          end
+          surface.setSurfaceType("RoofCeiling")
+          surface.setOutsideBoundaryCondition("Outdoors")
+        end
+      end
+
+      building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
+      
+        next unless ["vented attic", "unvented attic"].include? attic_type
+      
+        roof_id = roof.elements["SystemIdentifier"].attributes["id"]
+      
+        # next unless roof_id == attic.elements["AttachedToRoof"].attributes["idref"] # FIXME: AttachedToRoof is dropped?
+      
+        roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
+        roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
+
+        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
+        surface.setName(roof_id)
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")
-      elsif ["vented attic", "unvented attic"].include? attic_type
-      else
-        errors << "#{attic_type} not handled."
+        surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+
       end
-      
-    end  
-
-    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
-    
-      roof_id = roof.elements["SystemIdentifier"].attributes["id"]
-    
-      roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
-      roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
-
-      surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
-      surface.setName(roof_id)
-      surface.setSurfaceType("RoofCeiling")
-      surface.setOutsideBoundaryCondition("Outdoors")
-      surface.setSpace(attic_space)
 
     end
         
   end
   
-  def self.add_windows(model, building, errors, living_space, fenestration_areas)
+  def self.add_windows(model, building, errors, spaces, fenestration_areas)
   
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
     
@@ -2774,7 +2781,19 @@ class OSModel
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [0, 0.001, 0.001 * 2, 0.001]), model) # offsets B, L, T, R
       surface.setName("surface #{window_id}")
       surface.setSurfaceType("Wall")
-      surface.setSpace(living_space)
+      building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
+        next unless wall.elements["SystemIdentifier"].attributes["id"] == window.elements["AttachedToWall"].attributes["idref"]
+        interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
+        if interior_adjacent_to == "living space"
+          surface.setSpace(spaces[Constants.LivingSpace])
+        elsif interior_adjacent_to == "garage"
+          surface.setSpace(spaces[Constants.GarageSpace])
+        elsif interior_adjacent_to == "vented attic" or interior_adjacent_to == "unvented attic"
+          surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+        elsif interior_adjacent_to == "cape cod"
+          surface.setSpace(spaces[Constants.FinishedAtticSpace])
+        end
+      end
       surface.setOutsideBoundaryCondition("Adiabatic")
 
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
@@ -2786,7 +2805,7 @@ class OSModel
    
   end
   
-  def self.add_doors(model, building, errors, living_space, fenestration_areas)
+  def self.add_doors(model, building, errors, spaces, fenestration_areas)
   
     building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
     
@@ -2804,7 +2823,19 @@ class OSModel
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0.001, 0.001, 0.001]), model) # offsets B, L, T, R
       surface.setName("surface #{door_id}")
       surface.setSurfaceType("Wall")
-      surface.setSpace(living_space)
+      building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
+        next unless wall.elements["SystemIdentifier"].attributes["id"] == door.elements["AttachedToWall"].attributes["idref"]
+        interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
+        if interior_adjacent_to == "living space"
+          surface.setSpace(spaces[Constants.LivingSpace])
+        elsif interior_adjacent_to == "garage"
+          surface.setSpace(spaces[Constants.GarageSpace])
+        elsif interior_adjacent_to == "vented attic" or interior_adjacent_to == "unvented attic"
+          surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+        elsif interior_adjacent_to == "cape cod"
+          surface.setSpace(spaces[Constants.FinishedAtticSpace])
+        end
+      end
       surface.setOutsideBoundaryCondition("Adiabatic")
 
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0, 0, 0]), model) # offsets B, L, T, R
