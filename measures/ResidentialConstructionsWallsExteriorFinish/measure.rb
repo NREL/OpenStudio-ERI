@@ -38,7 +38,7 @@ class ProcessConstructionsWallsExteriorFinish < OpenStudio::Measure::ModelMeasur
     surface.setDisplayName("Surface(s)")
     surface.setDescription("Select the surface(s) to assign constructions.")
     surface.setDefaultValue(Constants.Auto)
-    args << surface    
+    args << surface
     
     #make a double argument for solar absorptivity
     solar_abs = OpenStudio::Measure::OSArgument::makeDoubleArgument("solar_abs", true)

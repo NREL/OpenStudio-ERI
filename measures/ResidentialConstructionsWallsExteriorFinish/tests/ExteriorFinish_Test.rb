@@ -167,7 +167,7 @@ class ProcessConstructionsWallsExteriorFinishTest < MiniTest::Test
     expected_num_new_objects = {"Material"=>1, "Construction"=>1}
     expected_values = {"LayerThickness"=>0.009525, "LayerConductivity"=>0.089435, "LayerDensity"=>177.822, "LayerSpecificHeat"=>1046.75, "LayerThermalAbs"=>0.9, "LayerSolarAbs"=>0.3, "LayerVisibleAbs"=>0.3, "LayerIndex"=>0, "SurfacesWithConstructions"=>1}
     _test_measure(osm_geo_unfinished_attic, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)  
-  end  
+  end
   
   private
   

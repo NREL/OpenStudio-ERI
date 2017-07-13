@@ -332,7 +332,7 @@ class OSMeasures
     get_clothes_dryer(building, measures)
     get_dishwasher(building, measures)
     get_cooking_range(building, measures)
-    get_lighting(building, measures)
+    # get_lighting(building, measures)
     get_mels(building, measures)
     
     # Other
@@ -475,61 +475,74 @@ class OSMeasures
     
       name = attic.elements["SystemIdentifier"].attributes["id"]
       attic_type = XMLHelper.get_value(attic, "AtticType")
-      
+      floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text
+
       if ["vented attic", "unvented attic"].include? attic_type
       
-        measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
-        args = {
-                "surface"=>name,
-                "ceil_r"=>30,
-                "ceil_grade"=>"I",
-                "ceil_ins_thick_in"=>8.55,
-                "ceil_ff"=>0.07,
-                "ceil_joist_height"=>3.5,
-                "roof_cavity_r"=>0,
-                "roof_cavity_grade"=>"I",
-                "roof_cavity_ins_thick_in"=>0,
-                "roof_ff"=>0.07,
-                "roof_fram_thick_in"=>7.25
-               }  
-        update_args_hash(measures, measure_subdir, args)
+        if floor_adjacent_to == "living space"
+      
+          measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
+          args = {
+                  "surface"=>name,
+                  "ceil_r"=>30,
+                  "ceil_grade"=>"I",
+                  "ceil_ins_thick_in"=>8.55,
+                  "ceil_ff"=>0.07,
+                  "ceil_joist_height"=>3.5,
+                  "roof_cavity_r"=>0,
+                  "roof_cavity_grade"=>"I",
+                  "roof_cavity_ins_thick_in"=>0,
+                  "roof_ff"=>0.07,
+                  "roof_fram_thick_in"=>7.25
+                 }  
+          update_args_hash(measures, measure_subdir, args)
+          
+          measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
+          args = {
+                  "surface"=>"#{name} Reversed", # FIXME: I can't rename the adjacent roofceiling to the id in the hpxml because then the unfinished attic measure gets the wrong surface name. Can we modify this measure to input the floor instead of the roofceiling?
+                  "thick_in1"=>0.5,
+                  "thick_in2"=>nil,
+                  "cond1"=>1.1112,
+                  "cond2"=>nil,
+                  "dens1"=>50.0,
+                  "dens2"=>nil,
+                  "specheat1"=>0.2,
+                  "specheat2"=>nil
+                 }
+          update_args_hash(measures, measure_subdir, args)          
+          
+        elsif floor_adjacent_to == "garage"
         
-        measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
-        args = {
-                "surface"=>"#{name} Reversed", # FIXME: I can't rename the adjacent roofceiling to the id in the hpxml because then the unfinished attic measure gets the wrong surface name. Can we modify this measure to input the floor instead of the roofceiling?
-                "thick_in1"=>0.5,
-                "thick_in2"=>nil,
-                "cond1"=>1.1112,
-                "cond2"=>nil,
-                "dens1"=>50.0,
-                "dens2"=>nil,
-                "specheat1"=>0.2,
-                "specheat2"=>nil
-               }
-        update_args_hash(measures, measure_subdir, args)
+          measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
+          args = {
+                  "surface"=>name
+                  }
+          update_args_hash(measures, measure_subdir, args)        
+        
+        end
        
-      else
+      elsif ["cape cod"].include? attic_type
 
-        measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
-        args = {
-                "surface"=>name,
-                "cavity_r"=>30,
-                "install_grade"=>"I",
-                "cavity_depth"=>9.25,
-                "ins_fills_cavity"=>false,
-                "framing_factor"=>0.07
-               }  
-        update_args_hash(measures, measure_subdir, args)
+        if floor_adjacent_to == "living space"
         
-        measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
-        args = {
-                "surface"=>name,
-                "solar_abs"=>0.85,
-                "emissivity"=>0.91,
-                "material"=>Constants.RoofMaterialAsphaltShingles,
-                "color"=>Constants.ColorMedium
-               }  
-        update_args_hash(measures, measure_subdir, args)         
+          measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
+          args = {
+                  "surface"=>name
+                  }
+          update_args_hash(measures, measure_subdir, args)
+        
+        elsif floor_adjacent_to == "garage"
+        
+          measure_subdir = "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
+          args = {
+                  "surface"=>name,
+                  "cavity_r"=>19,
+                  "install_grade"=>"I",
+                  "framing_factor"=>0.13
+                 }
+          update_args_hash(measures, measure_subdir, args)        
+        
+        end
         
       end
       
@@ -539,7 +552,12 @@ class OSMeasures
       
       name = roof.elements["SystemIdentifier"].attributes["id"]
       has_rb = Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))
-
+      attic_type = nil
+      building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
+        next unless name == attic.elements["AttachedToRoof"].attributes["idref"]
+        attic_type = attic.elements["AtticType"].text
+      end
+      
       if not XMLHelper.has_element(roof, "extension")# Reference Home
       
         solar_abs = 0.85
@@ -562,12 +580,16 @@ class OSMeasures
              }  
       update_args_hash(measures, measure_subdir, args)       
       
-      measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
-      args = {
-              "surface"=>name,
-              "has_rb"=>has_rb
-             }
-      update_args_hash(measures, measure_subdir, args)
+      if ["vented attic", "unvented attic"].include? attic_type
+      
+        measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
+        args = {
+                "surface"=>name,
+                "has_rb"=>has_rb
+               }
+        update_args_hash(measures, measure_subdir, args)
+        
+      end
       
       measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
       args = {
@@ -576,7 +598,22 @@ class OSMeasures
               "rigid_r"=>0.0,
               "rigid_thick_in"=>0.0,
              }
-      update_args_hash(measures, measure_subdir, args)      
+      update_args_hash(measures, measure_subdir, args)
+      
+      unless ["unvented attic", "vented attic"].include? attic_type
+      
+        measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
+        args = {
+                "surface"=>name,
+                "cavity_r"=>30,
+                "install_grade"=>"I",
+                "cavity_depth"=>9.25,
+                "ins_fills_cavity"=>false,
+                "framing_factor"=>0.07
+               }  
+        update_args_hash(measures, measure_subdir, args)
+       
+      end
       
     end
     
@@ -901,15 +938,6 @@ class OSMeasures
       get_foundation_frame_floor_properties(foundation, measures)
       get_foundation_slab_properties(foundation, measures)
     end
-    
-    measure_subdir = "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
-    args = {
-            # "surface"=>name, # FIXME: apply to all floors, or which floors?
-            "cavity_r"=>19,
-            "install_grade"=>"I",
-            "framing_factor"=>0.13
-           }
-    update_args_hash(measures, measure_subdir, args)
 
   end
   
@@ -1034,26 +1062,42 @@ class OSMeasures
           cp = (1.0 - framing_factor) * mat_ins.cp + framing_factor * mat_wood.cp
           cont_r = 0.0
           cont_depth = 0.0
-          measure_subdir = "ResidentialConstructionsWallsExteriorGeneric"
-          args = {
-                  "surface"=>name,
-                  "thick_in_1"=>layer_t,
-                  "conductivity_1"=>layer_k,
-                  "density_1"=>rho,
-                  "specific_heat_1"=>cp
-                 }
-          if exterior_adjacent_to == "ambient"
+
+          if exterior_adjacent_to == "ambient" and ["living space", "cape cod"].include? interior_adjacent_to
+
+            measure_subdir = "ResidentialConstructionsWallsExteriorGeneric"
+            args = {
+                    "surface"=>name,
+                    "thick_in_1"=>layer_t,
+                    "conductivity_1"=>layer_k,
+                    "density_1"=>rho,
+                    "specific_heat_1"=>cp
+                   }
             update_args_hash(measures, measure_subdir, args)
-          end
+            
+            measure_subdir = "ResidentialConstructionsWallsSheathing"
+            args = {
+                    "surface"=>name,
+                    "osb_thick_in"=>mat_sheath.thick_in,
+                    "rigid_r"=>0.0,
+                    "rigid_thick_in"=>0.0
+                   }
+            update_args_hash(measures, measure_subdir, args)
+
+          elsif exterior_adjacent_to != "ambient" and ["living space"].include? interior_adjacent_to
           
-          measure_subdir = "ResidentialConstructionsWallsSheathing"
-          args = {
-                  "surface"=>name,
-                  "osb_thick_in"=>mat_sheath.thick_in,
-                  "rigid_r"=>0.0,
-                  "rigid_thick_in"=>0.0
-                 }
-          update_args_hash(measures, measure_subdir, args)
+            measure_subdir = "ResidentialConstructionsWallsInterzonal"
+            args = {
+                    "surface"=>name,
+                    "cavity_r"=>layer_R,
+                    "install_grade"=>"I",
+                    "cavity_depth"=>layer_t,
+                    "ins_fills_cavity"=>true,
+                    "framing_factor"=>framing_factor
+                   }
+            update_args_hash(measures, measure_subdir, args)
+          
+          end
 
         else # Rated Home
       
@@ -1066,52 +1110,74 @@ class OSMeasures
           cont_layer = wall.elements["Insulation/Layer[InstallationType='continuous']"]
           cont_r = Float(XMLHelper.get_value(cont_layer, "NominalRValue"))
           cont_depth = Float(XMLHelper.get_value(cont_layer, "Thickness"))
-          measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
-          args = {
-                  "surface"=>name,
-                  "cavity_r"=>cavity_r,
-                  "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                  "cavity_depth"=>cavity_depth,
-                  "ins_fills_cavity"=>ins_fills_cavity,
-                  "framing_factor"=>framing_factor
-                 }
-          if exterior_adjacent_to == "ambient"
+
+          if exterior_adjacent_to == "ambient" and ["living space", "cape cod"].include? interior_adjacent_to
+
+            measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
+            args = {
+                    "surface"=>name,
+                    "cavity_r"=>cavity_r,
+                    "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
+                    "cavity_depth"=>cavity_depth,
+                    "ins_fills_cavity"=>ins_fills_cavity,
+                    "framing_factor"=>framing_factor
+                   }
             update_args_hash(measures, measure_subdir, args)
+
+            measure_subdir = "ResidentialConstructionsWallsSheathing"
+            args = {
+                    "surface"=>name,
+                    "osb_thick_in"=>mat_sheath.thick_in,
+                    "rigid_r"=>cont_r,
+                    "rigid_thick_in"=>cont_depth
+                   }
+            update_args_hash(measures, measure_subdir, args)
+            
+          elsif exterior_adjacent_to != "ambient" and ["living space"].include? interior_adjacent_to
+          
+            measure_subdir = "ResidentialConstructionsWallsInterzonal"
+            args = {
+                    "surface"=>name,
+                    "cavity_r"=>cavity_r,
+                    "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
+                    "cavity_depth"=>cavity_depth,
+                    "ins_fills_cavity"=>ins_fills_cavity,
+                    "framing_factor"=>framing_factor
+                   }
+            update_args_hash(measures, measure_subdir, args)          
+          
           end
-          
-          measure_subdir = "ResidentialConstructionsWallsInterzonal"
-          args = {
-                  "cavity_r"=>cavity_r,
-                  "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                  "cavity_depth"=>cavity_depth,
-                  "ins_fills_cavity"=>ins_fills_cavity,
-                  "framing_factor"=>framing_factor
-                 }  
-          update_args_hash(measures, measure_subdir, args)
-          
-          measure_subdir = "ResidentialConstructionsWallsSheathing"
-          args = {
-                  "surface"=>name,
-                  "osb_thick_in"=>mat_sheath.thick_in,
-                  "rigid_r"=>cont_r,
-                  "rigid_thick_in"=>cont_depth
-                 }
-          update_args_hash(measures, measure_subdir, args)
           
         end
 
-        measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
-        args = {
-                "surface"=>name,
-                "solar_abs"=>mat_siding.sAbs,
-                "conductivity"=>mat_siding.k_in,
-                "density"=>mat_siding.rho,
-                "specific_heat"=>mat_siding.cp,
-                "thick_in"=>mat_siding.thick_in,
-                "emissivity"=>mat_siding.tAbs
-               }
         if exterior_adjacent_to == "ambient"
+
+          measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
+          args = {
+                  "surface"=>name,
+                  "solar_abs"=>mat_siding.sAbs,
+                  "conductivity"=>mat_siding.k_in,
+                  "density"=>mat_siding.rho,
+                  "specific_heat"=>mat_siding.cp,
+                  "thick_in"=>mat_siding.thick_in,
+                  "emissivity"=>mat_siding.tAbs
+                 }          
           update_args_hash(measures, measure_subdir, args)
+
+          measure_subdir = "ResidentialConstructionsWallsExteriorThermalMass"
+          args = {
+                  "surface"=>name,
+                  "thick_in1"=>mat_mass.thick_in,
+                  "thick_in2"=>nil,
+                  "cond1"=>mat_mass.k_in,
+                  "cond2"=>nil,
+                  "dens1"=>mat_mass.rho,
+                  "dens2"=>nil,
+                  "specheat1"=>mat_mass.cp,
+                  "specheat2"=>nil
+                 }
+          update_args_hash(measures, measure_subdir, args)          
+          
         end
       
       else
@@ -1121,20 +1187,7 @@ class OSMeasures
       end
       
     end
-    
-    measure_subdir = "ResidentialConstructionsWallsExteriorThermalMass"
-    args = {
-            "thick_in1"=>mat_mass.thick_in,
-            "thick_in2"=>nil,
-            "cond1"=>mat_mass.k_in,
-            "cond2"=>nil,
-            "dens1"=>mat_mass.rho,
-            "dens2"=>nil,
-            "specheat1"=>mat_mass.cp,
-            "specheat2"=>nil
-           }
-    update_args_hash(measures, measure_subdir, args)
-    
+
     measure_subdir = "ResidentialConstructionsWallsPartitionThermalMass"
     args = {
             "frac"=>1.0,
@@ -1155,11 +1208,11 @@ class OSMeasures
   
     # FIXME
 
-    measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
-    args = {
-            # "surface"=>name # FIXME: how to apply this to, e.g., adiabatic floors between stories?
-            }
-    update_args_hash(measures, measure_subdir, args)
+    # measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
+    # args = {
+            # # "surface"=>name # FIXME: how to apply this to, e.g., adiabatic floors between stories?
+            # }
+    # update_args_hash(measures, measure_subdir, args)
 
     measure_subdir = "ResidentialConstructionsFurnitureThermalMass"
     args = {
@@ -2286,7 +2339,7 @@ class OSModel
     end
     
   end
-
+  
   def self.create_geometry(building, runner, model)
 
     geometry_errors = []
@@ -2424,8 +2477,8 @@ class OSModel
     unit.setName(Constants.ObjectNameBuildingUnit)
     model.getSpaces.each do |space|
       space.setBuildingUnit(unit)
-    end
-
+    end    
+    
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(1)    
     
@@ -2452,6 +2505,11 @@ class OSModel
     # Store the building type
     facility_types_map = {"single-family detached"=>Constants.BuildingTypeSingleFamilyDetached}
     model.getBuilding.setStandardsBuildingType(facility_types_map[building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType"].text])
+
+    # Store info for HVAC Sizing measure
+    if building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"].text == "true"
+      unit.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 1.0) # FIXME: assumption
+    end
 
     return true
     
@@ -2621,6 +2679,12 @@ class OSModel
         foundation_ceiling_area += framefloor.elements["Area"].text.to_f
       
       end
+      
+      foundation.elements.each("Slab") do |slab|
+      
+        foundation_ceiling_area += slab.elements["Area"].text.to_f
+      
+      end
     
     end
     
@@ -2630,7 +2694,6 @@ class OSModel
 
   def self.add_living_floors(model, building, errors, spaces, foundation_ceiling_area) # TODO: loop thru extension element other_floors instead of the following?
 
-    # TODO: Review this
     finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
     above_grade_finished_floor_area = finished_floor_area - foundation_ceiling_area
     return unless above_grade_finished_floor_area > 0
@@ -2688,11 +2751,10 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
-      next if ["cathedral ceiling", "cape cod", "flat roof"].include? attic.elements["AtticType"].text
+      next if ["cathedral ceiling", "flat roof"].include? attic.elements["AtticType"].text
     
       attic_type = attic.elements["AtticType"].text
-      # floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text # FIXME: not in rated home?
-      floor_adjacent_to = "living space"
+      floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text
     
       attic_id = attic.elements["SystemIdentifier"].attributes["id"]
     
@@ -2704,6 +2766,8 @@ class OSModel
       surface.setSurfaceType("Floor")
       if ["vented attic", "unvented attic"].include? attic_type
         surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+      elsif ["cape cod"].include? attic_type
+        surface.setSpace(spaces[Constants.FinishedAtticSpace])
       end
       if ["living space"].include? floor_adjacent_to
         surface.createAdjacentSurface(spaces[Constants.LivingSpace])
@@ -2716,47 +2780,30 @@ class OSModel
   end
 
   def self.add_attic_ceilings(model, building, errors, avg_ceil_hgt, spaces)
-
-    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
-    
-      attic_type = attic.elements["AtticType"].text
-    
-      attic_id = attic.elements["SystemIdentifier"].attributes["id"]  
+  
+    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
+  
+      roof_id = roof.elements["SystemIdentifier"].attributes["id"]
       
-      attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
-      attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
-     
-      unless ["vented attic", "unvented attic"].include? attic_type
-        if ["cathedral ceiling", "cape cod", "flat roof"].include? attic_type
-          surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(attic_length, attic_width, 0), model)
-          surface.setName(attic_id)
-          if attic_type == "cape cod"
-            surface.setSpace(spaces[Constants.FinishedAtticSpace])
-          else
-            surface.setSpace(spaces[Constants.LivingSpace])
-          end
-          surface.setSurfaceType("RoofCeiling")
-          surface.setOutsideBoundaryCondition("Outdoors")
-        end
+      attic_type = nil
+      building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|      
+        next unless roof_id == attic.elements["AttachedToRoof"].attributes["idref"]
+        attic_type = attic.elements["AtticType"].text      
       end
+      
+      roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
+      roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
 
-      building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
-      
-        next unless ["vented attic", "unvented attic"].include? attic_type
-      
-        roof_id = roof.elements["SystemIdentifier"].attributes["id"]
-      
-        # next unless roof_id == attic.elements["AttachedToRoof"].attributes["idref"] # FIXME: AttachedToRoof is dropped?
-      
-        roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
-        roof_length = OpenStudio.convert(roof.elements["RoofArea"].text.to_f,"ft^2","m^2").get / roof_width
-
-        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
-        surface.setName(roof_id)
-        surface.setSurfaceType("RoofCeiling")
-        surface.setOutsideBoundaryCondition("Outdoors")
+      surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
+      surface.setName(roof_id)
+      surface.setSurfaceType("RoofCeiling")
+      surface.setOutsideBoundaryCondition("Outdoors")
+      if ["unvented attic", "vented attic"].include? attic_type
         surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
-
+      elsif ["flat roof", "cathedral ceiling"].include? attic_type
+        surface.setSpace(spaces[Constants.LivingSpace])
+      elsif ["cape cod"].include? attic_type
+        surface.setSpace(spaces[Constants.FinishedAtticSpace])
       end
 
     end
