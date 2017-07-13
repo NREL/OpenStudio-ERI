@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170710T193026Z",
+   "created_at" : "20170713T181915Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -349,7 +349,9 @@
          "name" : "Set Residential Walls - Partition Thermal Mass"
       },
       {
-         "arguments" : {},
+         "arguments" : {
+            "surface" : "auto"
+         },
          "description" : "This measure assigns an uninsulated constructions to 1) exterior surfaces adjacent to unfinished space, 2) surfaces between two unfinished (or two finished) spaces, or 3) adiabatic surfaces.",
          "measure_dir_name" : "ResidentialConstructionsUninsulatedSurfaces",
          "modeler_description" : "Calculates and assigns material layer properties of uninsulated constructions for surfaces that are not typically insulated.",
@@ -853,5 +855,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170710T193029Z"
+   "updated_at" : "20170713T181917Z"
 }

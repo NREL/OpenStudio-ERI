@@ -408,6 +408,7 @@ class EnergyRatingIndex301Ruleset
       # Create new attic
       new_attic = XMLHelper.add_element(new_attics, "Attic")
       XMLHelper.copy_element(new_attic, orig_attic, "SystemIdentifier")
+      XMLHelper.copy_element(new_attic, orig_attic, "AttachedToRoof")
       XMLHelper.copy_element(new_attic, orig_attic, "AtticType")
       attic_type = XMLHelper.get_value(new_attic, "AtticType")
       if ["vented attic", "unvented attic", "cape cod"].include? attic_type
@@ -429,15 +430,14 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(roof_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
       end
       XMLHelper.copy_element(new_attic, orig_attic, "Area")
+      extension = XMLHelper.add_element(new_attic, "extension")
       if ["vented attic", "unvented attic", "cape cod"].include? attic_type
-        extension = XMLHelper.add_element(new_attic, "extension")
         XMLHelper.copy_element(extension, orig_attic, "extension/FloorAdjacentTo")
         floor_joists = XMLHelper.add_element(extension, "FloorJoists")
         XMLHelper.copy_element(floor_joists, orig_attic, "extension/FloorJoists/Material")
         XMLHelper.copy_element(floor_joists, orig_attic, "extension/FloorJoists/FramingFactor")
       end
-      XMLHelper.copy_element(new_attic, orig_attic, "extension/ExteriorAdjacentTo")
-      XMLHelper.copy_element(new_attic, orig_attic, "extension/InteriorAdjacentTo")
+      XMLHelper.copy_element(extension, orig_attic, "extension/FloorAdjacentTo")
     end
     
   end
@@ -493,12 +493,13 @@ class EnergyRatingIndex301Ruleset
       # Create new attic
       new_attic = XMLHelper.add_element(new_attics, "Attic")
       XMLHelper.copy_element(new_attic, orig_attic, "SystemIdentifier")
+      XMLHelper.copy_element(new_attic, orig_attic, "AttachedToRoof")
       XMLHelper.copy_element(new_attic, orig_attic, "AtticType")
       XMLHelper.copy_element(new_attic, orig_attic, "AtticFloorInsulation")
       XMLHelper.copy_element(new_attic, orig_attic, "AtticRoofInsulation")
       XMLHelper.copy_element(new_attic, orig_attic, "Area")
-      XMLHelper.copy_element(new_attic, orig_attic, "extension/InteriorAdjacentTo")
-      XMLHelper.copy_element(new_attic, orig_attic, "extension/ExteriorAdjacentTo")
+      extension = XMLHelper.add_element(new_attic, "extension")
+      XMLHelper.copy_element(extension, orig_attic, "extension/FloorAdjacentTo")
     end
 
   end

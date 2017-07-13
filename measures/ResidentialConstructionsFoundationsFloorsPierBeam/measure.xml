@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_pier_beam</name>
   <uid>c47f2fc2-008e-403c-82e6-fd751b4f3b8a</uid>
-  <version_id>98f5197c-abd6-4c15-8e7c-28e7d859fb0e</version_id>
-  <version_modified>20170710T193009Z</version_modified>
+  <version_id>844f5cb7-d016-46cc-bf6a-cf44d90d2361</version_id>
+  <version_modified>20170713T181235Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsPierBeam</class_name>
   <display_name>Set Residential Foundations/Floors - Pier &amp; Beam Construction</display_name>
@@ -117,12 +117,6 @@
       <checksum>3BD21067</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8D8257BF</checksum>
-    </file>
-    <file>
       <filename>Pierbeam_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -133,6 +127,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>20190C86</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1BA99481</checksum>
     </file>
   </files>
 </measure>
