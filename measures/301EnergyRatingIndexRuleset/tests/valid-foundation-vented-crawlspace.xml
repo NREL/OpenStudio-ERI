@@ -138,10 +138,7 @@
               <Rafters>
                 <FramingFactor>0.11</FramingFactor>
                 <Material>wood</Material>
-              </Rafters>
-              <extension>
-                <FloorAdjacentTo>living space</FloorAdjacentTo>
-              </extension>              
+              </Rafters>        
             </Attic>
           </Attics>
         </AtticAndRoof>

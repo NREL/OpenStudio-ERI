@@ -475,9 +475,10 @@ class OSMeasures
     
       name = attic.elements["SystemIdentifier"].attributes["id"]
       attic_type = XMLHelper.get_value(attic, "AtticType")
-      floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text
 
       if ["vented attic", "unvented attic"].include? attic_type
+      
+        floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text
       
         if floor_adjacent_to == "living space"
       
@@ -522,6 +523,8 @@ class OSMeasures
         end
        
       elsif ["cape cod"].include? attic_type
+      
+        floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text
 
         if floor_adjacent_to == "living space"
         
@@ -562,7 +565,7 @@ class OSMeasures
       
         solar_abs = 0.85
         emissivity = 0.91
-      
+
       else # Rated Home
       
         solar_abs = Float(XMLHelper.get_value(roof, "extension/SolarAbsorptance"))
@@ -578,18 +581,7 @@ class OSMeasures
               "material"=>Constants.RoofMaterialAsphaltShingles,
               "color"=>Constants.ColorMedium
              }  
-      update_args_hash(measures, measure_subdir, args)       
-      
-      if ["vented attic", "unvented attic"].include? attic_type
-      
-        measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
-        args = {
-                "surface"=>name,
-                "has_rb"=>has_rb
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-      end
+      update_args_hash(measures, measure_subdir, args)
       
       measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
       args = {
@@ -600,7 +592,16 @@ class OSMeasures
              }
       update_args_hash(measures, measure_subdir, args)
       
-      unless ["unvented attic", "vented attic"].include? attic_type
+      if ["vented attic", "unvented attic"].include? attic_type
+      
+        measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
+        args = {
+                "surface"=>name,
+                "has_rb"=>has_rb
+               }
+        update_args_hash(measures, measure_subdir, args)
+        
+      else
       
         measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
         args = {
@@ -611,8 +612,8 @@ class OSMeasures
                 "ins_fills_cavity"=>false,
                 "framing_factor"=>0.07
                }  
-        update_args_hash(measures, measure_subdir, args)
-       
+        update_args_hash(measures, measure_subdir, args)      
+      
       end
       
     end
@@ -2692,7 +2693,7 @@ class OSModel
       
   end
 
-  def self.add_living_floors(model, building, errors, spaces, foundation_ceiling_area) # TODO: loop thru extension element other_floors instead of the following?
+  def self.add_living_floors(model, building, errors, spaces, foundation_ceiling_area)
 
     finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
     above_grade_finished_floor_area = finished_floor_area - foundation_ceiling_area
@@ -2751,13 +2752,13 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
-      next if ["cathedral ceiling", "flat roof"].include? attic.elements["AtticType"].text
-    
       attic_type = attic.elements["AtticType"].text
-      floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text
     
+      next if ["cathedral ceiling", "flat roof"].include? attic_type    
+
       attic_id = attic.elements["SystemIdentifier"].attributes["id"]
-    
+      floor_adjacent_to = attic.elements["extension/FloorAdjacentTo"].text
+      
       attic_width = OpenStudio.convert(Math::sqrt(attic.elements["Area"].text.to_f),"ft","m").get
       attic_length = OpenStudio.convert(attic.elements["Area"].text.to_f,"ft^2","m^2").get / attic_width
      
@@ -2784,11 +2785,11 @@ class OSModel
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof") do |roof|
   
       roof_id = roof.elements["SystemIdentifier"].attributes["id"]
-      
+
       attic_type = nil
       building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|      
         next unless roof_id == attic.elements["AttachedToRoof"].attributes["idref"]
-        attic_type = attic.elements["AtticType"].text      
+        attic_type = attic.elements["AtticType"].text
       end
       
       roof_width = OpenStudio.convert(Math::sqrt(roof.elements["RoofArea"].text.to_f),"ft","m").get
