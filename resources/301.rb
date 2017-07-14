@@ -1005,7 +1005,7 @@ class EnergyRatingIndex301Ruleset
     # FIXME: Add PrimarySystems
     
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
-    if fuel_type == 'eletricity' or not has_fuel_access
+    if fuel_type == 'electricity' or not has_fuel_access
     
       # 7.7 HSPF air source heat pump
       seer = 13.0

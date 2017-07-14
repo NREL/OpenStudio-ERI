@@ -158,7 +158,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
-  
+
   def test_hpxml_home_hvac_ground_to_air_heat_pump
     hpxml = "valid-hvac-ground-to-air-heat-pump.xml"
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
@@ -172,7 +172,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
-  
+
   def test_hpxml_home_hvac_mini_split_heat_pump
     hpxml = "valid-hvac-mini-split-heat-pump.xml"
     args_hash = get_args_hash(hpxml, "HERS Reference Home")

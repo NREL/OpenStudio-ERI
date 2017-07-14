@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>978489df-6e7a-4950-84e6-6a384b8f1b4b</version_id>
-  <version_modified>20170714T171332Z</version_modified>
+  <version_id>916eb1d2-b848-4643-9b32-a44a51ec886b</version_id>
+  <version_modified>20170714T220153Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -109,69 +109,10 @@
       <checksum>AA8E83EA</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>5E22F2DD</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>526AE87E</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5D8199C9</checksum>
-    </file>
-    <file>
-      <filename>Garage.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2F9810D4</checksum>
-    </file>
-    <file>
-      <filename>Garage.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>66702E2E</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.osw</filename>
-      <filetype>osw</filetype>
-      <usage_type>test</usage_type>
-      <checksum>88D3804F</checksum>
-    </file>
-    <file>
-      <filename>1-StoryFinishedAttic.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4FED7B9F</checksum>
-    </file>
-    <file>
       <filename>1-StoryFinishedAttic.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>21552925</checksum>
-    </file>
-    <file>
-      <filename>1-StoryFinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CD3F069B</checksum>
-    </file>
-    <file>
-      <filename>1-StoryUnfinishedAttic.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DF54BE76</checksum>
     </file>
     <file>
       <filename>1-StoryUnfinishedAttic.osw</filename>
@@ -180,34 +121,10 @@
       <checksum>E813F534</checksum>
     </file>
     <file>
-      <filename>1-StoryUnfinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1FFFF0F3</checksum>
-    </file>
-    <file>
-      <filename>AirSourceHeatPumpTwoSpeed.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E052FD8D</checksum>
-    </file>
-    <file>
       <filename>AirSourceHeatPumpTwoSpeed.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>433C2DA8</checksum>
-    </file>
-    <file>
-      <filename>AirSourceHeatPumpTwoSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>201CE3CC</checksum>
-    </file>
-    <file>
-      <filename>AirSourceHeatPumpVariableSpeed.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BB262F0D</checksum>
     </file>
     <file>
       <filename>AirSourceHeatPumpVariableSpeed.osw</filename>
@@ -216,34 +133,10 @@
       <checksum>E44674F2</checksum>
     </file>
     <file>
-      <filename>AirSourceHeatPumpVariableSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8DB69B08</checksum>
-    </file>
-    <file>
-      <filename>BasementFinished.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B7714DE7</checksum>
-    </file>
-    <file>
       <filename>BasementFinished.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>295B04AF</checksum>
-    </file>
-    <file>
-      <filename>BasementFinished.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8C5673C3</checksum>
-    </file>
-    <file>
-      <filename>BasementUnfinished.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B165D8D6</checksum>
     </file>
     <file>
       <filename>BasementUnfinished.osw</filename>
@@ -252,34 +145,10 @@
       <checksum>855F8A8F</checksum>
     </file>
     <file>
-      <filename>BasementUnfinished.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9B7D42F5</checksum>
-    </file>
-    <file>
-      <filename>BoilerElectric.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7DC7E165</checksum>
-    </file>
-    <file>
       <filename>BoilerElectric.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>18054D15</checksum>
-    </file>
-    <file>
-      <filename>BoilerElectric.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5EFA14B4</checksum>
-    </file>
-    <file>
-      <filename>BoilerFuel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E83CF3F0</checksum>
     </file>
     <file>
       <filename>BoilerFuel.osw</filename>
@@ -288,34 +157,10 @@
       <checksum>F4CAB028</checksum>
     </file>
     <file>
-      <filename>BoilerFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>44061EFD</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerSingleSpeed.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A105A9B0</checksum>
-    </file>
-    <file>
       <filename>CentralAirConditionerSingleSpeed.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>F68E7062</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerSingleSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>611124FD</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerTwoSpeed.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CE47D893</checksum>
     </file>
     <file>
       <filename>CentralAirConditionerTwoSpeed.osw</filename>
@@ -324,34 +169,10 @@
       <checksum>1FB3E082</checksum>
     </file>
     <file>
-      <filename>CentralAirConditionerTwoSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FBB954C0</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerVariableSpeed.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>54F48A92</checksum>
-    </file>
-    <file>
       <filename>CentralAirConditionerVariableSpeed.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>C519D5B1</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerVariableSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6BC2D8FA</checksum>
-    </file>
-    <file>
-      <filename>ClothesDryerFuel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>43EC297F</checksum>
     </file>
     <file>
       <filename>ClothesDryerFuel.osw</filename>
@@ -360,34 +181,10 @@
       <checksum>194D4739</checksum>
     </file>
     <file>
-      <filename>ClothesDryerFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>61905EC1</checksum>
-    </file>
-    <file>
-      <filename>CookingRangeFuel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>65AA16FE</checksum>
-    </file>
-    <file>
       <filename>CookingRangeFuel.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>73DE7C95</checksum>
-    </file>
-    <file>
-      <filename>CookingRangeFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6291200B</checksum>
-    </file>
-    <file>
-      <filename>Crawlspace.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3AAAE481</checksum>
     </file>
     <file>
       <filename>Crawlspace.osw</filename>
@@ -396,34 +193,10 @@
       <checksum>147B5CFB</checksum>
     </file>
     <file>
-      <filename>Crawlspace.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7F5D305C</checksum>
-    </file>
-    <file>
-      <filename>Dehumidifier.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D5605315</checksum>
-    </file>
-    <file>
       <filename>Dehumidifier.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>F605045A</checksum>
-    </file>
-    <file>
-      <filename>Dehumidifier.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DDE4FF2D</checksum>
-    </file>
-    <file>
-      <filename>ElectricBaseboard.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7D9DEC5E</checksum>
     </file>
     <file>
       <filename>ElectricBaseboard.osw</filename>
@@ -432,34 +205,10 @@
       <checksum>46D04542</checksum>
     </file>
     <file>
-      <filename>ElectricBaseboard.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F699BD42</checksum>
-    </file>
-    <file>
-      <filename>FinishedAttic.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>62F98035</checksum>
-    </file>
-    <file>
       <filename>FinishedAttic.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>78840586</checksum>
-    </file>
-    <file>
-      <filename>FinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AB1F910D</checksum>
-    </file>
-    <file>
-      <filename>FlatRoof.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F62ABF30</checksum>
     </file>
     <file>
       <filename>FlatRoof.osw</filename>
@@ -468,46 +217,16 @@
       <checksum>16855B65</checksum>
     </file>
     <file>
-      <filename>FlatRoof.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F3A6ABBD</checksum>
-    </file>
-    <file>
-      <filename>FurnaceElectric.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AF3CB582</checksum>
-    </file>
-    <file>
       <filename>FurnaceElectric.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>2F14E2A6</checksum>
     </file>
     <file>
-      <filename>FurnaceElectric.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6D982DE7</checksum>
-    </file>
-    <file>
-      <filename>FurnaceFuel.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>53881478</checksum>
-    </file>
-    <file>
       <filename>FurnaceFuel.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>4CF7DAC4</checksum>
-    </file>
-    <file>
-      <filename>FurnaceFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3AF582EA</checksum>
     </file>
     <file>
       <filename>HotTubHeaterGas.osw</filename>
@@ -562,6 +281,23 @@
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>FE1E5D5A</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>947711EE</checksum>
+    </file>
+    <file>
+      <filename>create-model-example.osw</filename>
+      <filetype>osw</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5255E539</checksum>
     </file>
   </files>
 </measure>
