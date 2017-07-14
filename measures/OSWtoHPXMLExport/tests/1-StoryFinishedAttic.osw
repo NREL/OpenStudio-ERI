@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170714T171343Z",
+   "created_at" : "20170710T193026Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -18,15 +18,15 @@
       {
          "arguments" : {
             "aspect_ratio" : "2",
-            "attic_type" : "unfinished attic",
+            "attic_type" : "finished attic",
             "foundation_height" : "3",
             "foundation_type" : "slab",
-            "garage_depth" : "20",
+            "garage_depth" : "10",
             "garage_pos" : "Right",
             "garage_protrusion" : "0",
-            "garage_width" : "0",
+            "garage_width" : "12",
             "living_height" : "8",
-            "num_floors" : "2",
+            "num_floors" : "1",
             "roof_pitch" : "6:12",
             "roof_type" : "gable",
             "total_ffa" : "2000"
@@ -135,22 +135,16 @@
       },
       {
          "arguments" : {
-            "ceil_ff" : "0.07",
-            "ceil_grade" : "I",
-            "ceil_ins_thick_in" : "8.55",
-            "ceil_joist_height" : "3.5",
-            "ceil_r" : "30",
-            "roof_cavity_grade" : "I",
-            "roof_cavity_ins_thick_in" : "0",
-            "roof_cavity_r" : "0",
-            "roof_ff" : "0.07",
-            "roof_fram_thick_in" : "7.25",
-            "surface" : "auto"
+            "cavity_depth" : "9.25",
+            "cavity_r" : "30",
+            "framing_factor" : "0.07",
+            "ins_fills_cavity" : "false",
+            "install_grade" : "I"
          },
-         "description" : "This measure assigns constructions to unfinished attic floors and ceilings.",
-         "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
-         "modeler_description" : "Calculates and assigns material layer properties of constructions for 1) floors between unfinished space under a roof and finished space and 2) roofs of unfinished space.",
-         "name" : "Set Residential Ceilings/Roofs - Unfinished Attic Constructions"
+         "description" : "This measure assigns a construction to finished roofs.",
+         "measure_dir_name" : "ResidentialConstructionsCeilingsRoofsFinishedRoof",
+         "modeler_description" : "Calculates and assigns material layer properties of finished constructions for roofs above finished space.",
+         "name" : "Set Residential Ceilings/Roofs - Finished Roof Construction"
       },
       {
          "arguments" : {
@@ -328,7 +322,6 @@
             "cond1" : "1.1112",
             "dens1" : "50",
             "specheat1" : "0.2",
-            "surface" : "auto",
             "thick_in1" : "0.5"
          },
          "description" : "This measure assigns wall mass to above-grade exterior walls adjacent to finished space.",
@@ -350,9 +343,7 @@
          "name" : "Set Residential Walls - Partition Thermal Mass"
       },
       {
-         "arguments" : {
-            "surface" : "auto"
-         },
+         "arguments" : {},
          "description" : "This measure assigns an uninsulated constructions to 1) exterior surfaces adjacent to unfinished space, 2) surfaces between two unfinished (or two finished) spaces, or 3) adiabatic surfaces.",
          "measure_dir_name" : "ResidentialConstructionsUninsulatedSurfaces",
          "modeler_description" : "Calculates and assigns material layer properties of uninsulated constructions for surfaces that are not typically insulated.",
@@ -856,5 +847,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170714T171346Z"
+   "updated_at" : "20170710T193029Z"
 }

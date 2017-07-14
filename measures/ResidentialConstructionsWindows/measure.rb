@@ -34,74 +34,37 @@ class ProcessConstructionsWindows < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    # #make a choice argument for window sub surfaces
-    # sub_surfaces_args = Geometry.get_sub_surfaces(model.getSubSurfaces, "window")
-    # sub_surfaces_args << Constants.Auto
-    # sub_surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("sub_surface", sub_surfaces_args, false)
-    # sub_surface.setDisplayName("Subsurface(s)")
-    # sub_surface.setDescription("Select the sub surface(s) to assign constructions.")
-    # sub_surface.setDefaultValue(Constants.Auto)
-    # args << sub_surface    
+    #make a choice argument for window sub surfaces
+    sub_surfaces = get_window_sub_surfaces(model)
+    sub_surfaces_args = OpenStudio::StringVector.new
+    sub_surfaces_args << Constants.Auto
+    sub_surfaces_args << Constants.FacadeFront
+    sub_surfaces_args << Constants.FacadeBack
+    sub_surfaces_args << Constants.FacadeLeft
+    sub_surfaces_args << Constants.FacadeRight
+    sub_surfaces.each do |sub_surface|
+      sub_surfaces_args << sub_surface.name.to_s
+    end      
+    sub_surface = OpenStudio::Measure::OSArgument::makeChoiceArgument("sub_surface", sub_surfaces_args, false)
+    sub_surface.setDisplayName("Subsurface(s)")
+    sub_surface.setDescription("Select the sub surface(s) to assign constructions.")
+    sub_surface.setDefaultValue(Constants.Auto)
+    args << sub_surface
     
     #make an argument for entering front window u-factor
-    ufactor_front = OpenStudio::Measure::OSArgument::makeDoubleArgument("ufactor_front",true)
-    ufactor_front.setDisplayName("Front U-Factor")
-    ufactor_front.setUnits("Btu/hr-ft^2-R")
-    ufactor_front.setDescription("The heat transfer coefficient of the windows on the front facade.")
-    ufactor_front.setDefaultValue(0.37)
-    args << ufactor_front
-
-    #make an argument for entering back window u-factor
-    ufactor_back = OpenStudio::Measure::OSArgument::makeDoubleArgument("ufactor_back",true)
-    ufactor_back.setDisplayName("Back U-Factor")
-    ufactor_back.setUnits("Btu/hr-ft^2-R")
-    ufactor_back.setDescription("The heat transfer coefficient of the windows on the back facade.")
-    ufactor_back.setDefaultValue(0.37)
-    args << ufactor_back
-
-    #make an argument for entering left window u-factor
-    ufactor_left = OpenStudio::Measure::OSArgument::makeDoubleArgument("ufactor_left",true)
-    ufactor_left.setDisplayName("Left U-Factor")
-    ufactor_left.setUnits("Btu/hr-ft^2-R")
-    ufactor_left.setDescription("The heat transfer coefficient of the windows on the left facade.")
-    ufactor_left.setDefaultValue(0.37)
-    args << ufactor_left
-
-    #make an argument for entering right window u-factor
-    ufactor_right = OpenStudio::Measure::OSArgument::makeDoubleArgument("ufactor_right",true)
-    ufactor_right.setDisplayName("Right U-Factor")
-    ufactor_right.setUnits("Btu/hr-ft^2-R")
-    ufactor_right.setDescription("The heat transfer coefficient of the windows on the right facade.")
-    ufactor_right.setDefaultValue(0.37)
-    args << ufactor_right
+    ufactor = OpenStudio::Measure::OSArgument::makeDoubleArgument("ufactor",true)
+    ufactor.setDisplayName("U-Factor")
+    ufactor.setUnits("Btu/hr-ft^2-R")
+    ufactor.setDescription("The heat transfer coefficient of the windows.")
+    ufactor.setDefaultValue(0.37)
+    args << ufactor
 
     #make an argument for entering front window shgc
-    shgc_front = OpenStudio::Measure::OSArgument::makeDoubleArgument("shgc_front",true)
-    shgc_front.setDisplayName("Front SHGC")
-    shgc_front.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening, for windows on the front facade.")
-    shgc_front.setDefaultValue(0.3)
-    args << shgc_front
-
-    #make an argument for entering back window shgc
-    shgc_back = OpenStudio::Measure::OSArgument::makeDoubleArgument("shgc_back",true)
-    shgc_back.setDisplayName("Back SHGC")
-    shgc_back.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening, for windows on the back facade.")
-    shgc_back.setDefaultValue(0.3)
-    args << shgc_back
-
-    #make an argument for entering left window shgc
-    shgc_left = OpenStudio::Measure::OSArgument::makeDoubleArgument("shgc_left",true)
-    shgc_left.setDisplayName("Left SHGC")
-    shgc_left.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening, for windows on the left facade.")
-    shgc_left.setDefaultValue(0.3)
-    args << shgc_left
-
-    #make an argument for entering right window shgc
-    shgc_right = OpenStudio::Measure::OSArgument::makeDoubleArgument("shgc_right",true)
-    shgc_right.setDisplayName("Right SHGC")
-    shgc_right.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening, for windows on the right facade.")
-    shgc_right.setDefaultValue(0.3)
-    args << shgc_right
+    shgc = OpenStudio::Measure::OSArgument::makeDoubleArgument("shgc",true)
+    shgc.setDisplayName("SHGC")
+    shgc.setDescription("The ratio of solar heat gain through a glazing system compared to that of an unobstructed opening, for windows.")
+    shgc.setDefaultValue(0.3)
+    args << shgc
 
     #make an argument for entering heating shade multiplier
     heating_shade_mult = OpenStudio::Measure::OSArgument::makeDoubleArgument("heating_shade_mult",true)
@@ -129,65 +92,39 @@ class ProcessConstructionsWindows < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    # sub_surface_s = runner.getOptionalStringArgumentValue("sub_surface",user_arguments)
-    # if not sub_surface_s.is_initialized
-      # sub_surface_s = Constants.Auto
-    # else
-      # sub_surface_s = sub_surface_s.get
-    # end
+    sub_surface_s = runner.getOptionalStringArgumentValue("sub_surface",user_arguments)
+    if not sub_surface_s.is_initialized
+      sub_surface_s = Constants.Auto
+    else
+      sub_surface_s = sub_surface_s.get
+    end
     
-    facades = [Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight]
+    sub_surfaces = get_window_sub_surfaces(model)
     
-    # loop thru all the spaces
-    sub_surfaces = {Constants.FacadeFront=>[], Constants.FacadeBack=>[],
-                    Constants.FacadeLeft=>[], Constants.FacadeRight=>[]}
-                    
-    # if sub_surface_s == Constants.Auto
-      model.getSpaces.each do |space|
-          space.surfaces.each do |surface|
-              surface.subSurfaces.each do |subSurface|
-                  next unless subSurface.subSurfaceType.downcase.include? "window"
-                  facade = Geometry.get_facade_for_surface(surface)
-                  sub_surfaces[facade] << subSurface
-              end
-          end
-      end
-    # else
-      # model.getSubSurfaces.each do |sub_surface|
-          # next unless sub_surface.name.to_s == sub_surface_s
-          # facade = Geometry.get_facade_for_surface(sub_surface.surface.get)
-          # sub_surfaces[facade] << sub_surface
-      # end
-    # end
+    if not [Constants.Auto, Constants.FacadeFront, Constants.FacadeBack, Constants.FacadeLeft, Constants.FacadeRight].include? sub_surface_s
+      sub_surfaces.delete_if { |sub_surface| sub_surface.name.to_s != sub_surface_s }
+    elsif not sub_surface_s == Constants.Auto
+      sub_surfaces.delete_if { |sub_surface| Geometry.get_facade_for_surface(sub_surface) != sub_surface_s }
+    end
     
     # Continue if no applicable sub surfaces
-    if sub_surfaces[Constants.FacadeFront].empty? and sub_surfaces[Constants.FacadeBack].empty? and sub_surfaces[Constants.FacadeLeft].empty? and sub_surfaces[Constants.FacadeRight].empty?
+    if sub_surfaces.empty?
       runner.registerAsNotApplicable("Measure not applied because no windows were found.")
       return true
     end
     
-    ufactors = {}
-    ufactors[Constants.FacadeFront] = OpenStudio::convert(runner.getDoubleArgumentValue("ufactor_front",user_arguments),"Btu/hr*ft^2*R","W/m^2*K").get
-    ufactors[Constants.FacadeBack] = OpenStudio::convert(runner.getDoubleArgumentValue("ufactor_back",user_arguments),"Btu/hr*ft^2*R","W/m^2*K").get
-    ufactors[Constants.FacadeLeft] = OpenStudio::convert(runner.getDoubleArgumentValue("ufactor_left",user_arguments),"Btu/hr*ft^2*R","W/m^2*K").get
-    ufactors[Constants.FacadeRight] = OpenStudio::convert(runner.getDoubleArgumentValue("ufactor_right",user_arguments),"Btu/hr*ft^2*R","W/m^2*K").get
-    shgcs = {}
-    shgcs[Constants.FacadeFront] = runner.getDoubleArgumentValue("shgc_front",user_arguments)
-    shgcs[Constants.FacadeBack] = runner.getDoubleArgumentValue("shgc_back",user_arguments)
-    shgcs[Constants.FacadeLeft] = runner.getDoubleArgumentValue("shgc_left",user_arguments)
-    shgcs[Constants.FacadeRight] = runner.getDoubleArgumentValue("shgc_right",user_arguments)
+    ufactor = OpenStudio::convert(runner.getDoubleArgumentValue("ufactor",user_arguments),"Btu/hr*ft^2*R","W/m^2*K").get
+    shgc = runner.getDoubleArgumentValue("shgc",user_arguments)
     
     #error checking
-    facades.each do |facade|
-      if ufactors[facade] <= 0
-        runner.registerError("Invalid #{facade} window U-factor.")
-        return false
-      end
-      if shgcs[facade] <= 0
-        runner.registerError("Invalid #{facade} window SHGC.")
-        return false
-      end
+    if ufactor <= 0
+      runner.registerError("Invalid window U-factor.")
+      return false
     end
+    if shgc <= 0
+      runner.registerError("Invalid window SHGC.")
+      return false
+    end      
 
     intShadeHeatingMultiplier = runner.getDoubleArgumentValue("heating_shade_mult",user_arguments)
     intShadeCoolingMultiplier = runner.getDoubleArgumentValue("cooling_shade_mult",user_arguments)
@@ -258,72 +195,73 @@ class ProcessConstructionsWindows < OpenStudio::Measure::ModelMeasure
         sc.setSchedule(sch.schedule)
         
     end
+
+    # Define materials
+    glaz_mat = GlazingMaterial.new(name="GlazingMaterial", ufactor=ufactor, shgc=shgc * intShadeHeatingMultiplier)
     
-    msgs = []
-    facades.each do |facade|
+    # Set paths
+    path_fracs = [1]
     
-        # Define materials
-        glaz_mat = GlazingMaterial.new(name="GlazingMaterial#{facade}", ufactor=ufactors[facade], shgc=shgcs[facade] * intShadeHeatingMultiplier)
-        
-        # Set paths
-        path_fracs = [1]
-        
-        # Define construction
-        window = Construction.new(path_fracs)
-        window.add_layer(glaz_mat, true)
-        
-        # Create and assign construction to surfaces
-        if not window.create_and_assign_constructions(sub_surfaces[facade], runner, model, name="WindowConstruction#{facade}")
-            return false
-        end
-        
-        sc_msg = ""
-        if sc.nil?
-            # Remove any existing shading controls
-            objects_to_remove = []
-            sub_surfaces[facade].each do |sub_surface|
-                next if not sub_surface.shadingControl.is_initialized
-                shade_control = sub_surface.shadingControl.get
-                if shade_control.shadingMaterial.is_initialized
-                    objects_to_remove << shade_control.shadingMaterial.get
-                end
-                if shade_control.schedule.is_initialized
-                    objects_to_remove << shade_control.schedule.get
-                end
-                objects_to_remove << shade_control
-                sub_surface.resetShadingControl
-            end
-            objects_to_remove.uniq.each do |object|
-                begin
-                    object.remove
-                rescue
-                    # no op
-                end
-            end
-        else
-            # Add shading controls
-            sc_msg = " and interior shades"
-            sub_surfaces[facade].each do |sub_surface|
-                sub_surface.setShadingControl(sc)
-            end
-        end
-        
-        msgs << "Construction#{sc_msg} added to #{sub_surfaces[facade].size.to_s} window(s)."
-        
+    # Define construction
+    window = Construction.new(path_fracs)
+    window.add_layer(glaz_mat, true)
+    
+    # Create and assign construction to surfaces
+    if not window.create_and_assign_constructions(sub_surfaces, runner, model, name="WindowConstruction")
+        return false
     end
+    
+    sc_msg = ""
+    if sc.nil?
+        # Remove any existing shading controls
+        objects_to_remove = []
+        sub_surfaces.each do |sub_surface|
+            next if not sub_surface.shadingControl.is_initialized
+            shade_control = sub_surface.shadingControl.get
+            if shade_control.shadingMaterial.is_initialized
+                objects_to_remove << shade_control.shadingMaterial.get
+            end
+            if shade_control.schedule.is_initialized
+                objects_to_remove << shade_control.schedule.get
+            end
+            objects_to_remove << shade_control
+            sub_surface.resetShadingControl
+        end
+        objects_to_remove.uniq.each do |object|
+            begin
+                object.remove
+            rescue
+                # no op
+            end
+        end
+    else
+        # Add shading controls
+        sc_msg = " and interior shades"
+        sub_surfaces.each do |sub_surface|
+            sub_surface.setShadingControl(sc)
+        end
+    end
+    
+    runner.registerInfo("Construction#{sc_msg} added to #{sub_surfaces.size.to_s} window(s).")
 
     # Remove any constructions/materials that aren't used
     HelperMethods.remove_unused_constructions_and_materials(model, runner)
     
     # Reporting
-    msgs.each do |msg|
-        runner.registerInfo(msg)
-    end
     runner.registerFinalCondition("All windows have been assigned constructions.")
     
     return true
  
   end #end the run method
+  
+  def get_window_sub_surfaces(model)
+    sub_surfaces = []
+    model.getSubSurfaces.each do |sub_surface|
+        next unless sub_surface.subSurfaceType.downcase.include? "window"
+        sub_surfaces << sub_surface
+    end
+    return sub_surfaces
+  end  
 
 end #end the measure
 

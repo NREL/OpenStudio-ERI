@@ -1,5 +1,5 @@
 {
-   "created_at" : "20170713T181915Z",
+   "created_at" : "20170714T171343Z",
    "measure_paths" : [ "../measures" ],
    "seed_file" : "../seeds/EmptySeedModel.osm",
    "steps" : [
@@ -328,6 +328,7 @@
             "cond1" : "1.1112",
             "dens1" : "50",
             "specheat1" : "0.2",
+            "surface" : "auto",
             "thick_in1" : "0.5"
          },
          "description" : "This measure assigns wall mass to above-grade exterior walls adjacent to finished space.",
@@ -855,5 +856,5 @@
          "name" : "Set Residential HVAC Sizing"
       }
    ],
-   "updated_at" : "20170713T181917Z"
+   "updated_at" : "20170714T171346Z"
 }

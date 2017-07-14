@@ -220,8 +220,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         XMLHelper.add_element(roof, "RadiantBarrier", false)
       end
       space.surfaces.each do |surface|
-        if surface.surfaceType.downcase == "floor" and ( Geometry.is_unfinished_attic(space) or Geometry.is_finished_attic(space) )
-        elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors" and Geometry.is_living(space)
+        if surface.surfaceType.downcase == "floor" and ( Geometry.is_unfinished_attic(space) or Geometry.is_finished_attic(space) ) # vented attic, unvented attic, cape cod
+        elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors" and Geometry.is_living(space) # cathedral ceiling, flat roof
         else
           next
         end
@@ -231,8 +231,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       
     attached_to_roofs.each do |space, roof|
       space.surfaces.each do |surface|
-        if surface.surfaceType.downcase == "floor" and ( Geometry.is_unfinished_attic(space) or Geometry.is_finished_attic(space) )
-        elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors" and Geometry.is_living(space)
+        if surface.surfaceType.downcase == "floor" and ( Geometry.is_unfinished_attic(space) or Geometry.is_finished_attic(space) ) # vented attic, unvented attic, cape cod
+        elsif surface.surfaceType.downcase == "roofceiling" and surface.outsideBoundaryCondition.downcase == "outdoors" and Geometry.is_living(space) # cathedral ceiling, flat roof
         else
           next
         end
@@ -257,7 +257,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_element(layer, "NominalRValue", 0) # FIXME: can this be specified somewhere?
           XMLHelper.add_element(layer, "Thickness", 0) # FIXME: can this be specified somewhere?          
           attic_roof_insulation = attic.add_element "AtticRoofInsulation"
-          XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} #{get_exterior_adjacent_to(surface)} roof ins")          
+          XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} #{get_exterior_adjacent_to(surface)} roof ins")
           XMLHelper.add_element(attic_roof_insulation, "InsulationGrade", os_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsUnfinishedAttic"][0]["roof_cavity_grade"]))
           layer = attic_roof_insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")
@@ -280,7 +280,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         elsif Geometry.is_finished_attic(space)
           XMLHelper.add_element(attic, "AtticType", "cape cod")
           attic_floor_insulation = attic.add_element "AtticFloorInsulation" # FIXME: what about uninsulated surfaces (e.g., above garage)?
-          XMLHelper.add_attribute(attic_floor_insulation.add_element("SystemIdentifier"), "id", "#{space.name} floor ins")
+          XMLHelper.add_attribute(attic_floor_insulation.add_element("SystemIdentifier"), "id", "#{space.name} #{get_exterior_adjacent_to(surface)} floor ins")
           XMLHelper.add_element(attic_floor_insulation, "InsulationGrade", os_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsFinishedRoof"][0]["install_grade"]))
           layer = attic_floor_insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")
@@ -291,7 +291,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_element(layer, "NominalRValue", 0) # FIXME: can this be specified somewhere?
           XMLHelper.add_element(layer, "Thickness", 0) # FIXME: can this be specified somewhere?
           attic_roof_insulation = attic.add_element "AtticRoofInsulation"
-          XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} roof ins")
+          XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} #{get_exterior_adjacent_to(surface)} roof ins")
           XMLHelper.add_element(attic_roof_insulation, "InsulationGrade", os_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsFinishedRoof"][0]["install_grade"]))
           layer = attic_roof_insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")
@@ -314,7 +314,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
         elsif Geometry.is_living(space)
           XMLHelper.add_element(attic, "AtticType", "cathedral ceiling")
           attic_roof_insulation = attic.add_element "AtticRoofInsulation"
-          XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} roof ins")
+          XMLHelper.add_attribute(attic_roof_insulation.add_element("SystemIdentifier"), "id", "#{space.name} #{get_exterior_adjacent_to(surface)} roof ins")
           XMLHelper.add_element(attic_roof_insulation, "InsulationGrade", os_to_hpxml_ins_grade(measures["ResidentialConstructionsCeilingsRoofsFinishedRoof"][0]["install_grade"]))
           layer = attic_roof_insulation.add_element "Layer"
           XMLHelper.add_element(layer, "InstallationType", "cavity")
@@ -859,26 +859,41 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_element(door, "RValue", 1.0 / measures["ResidentialConstructionsDoors"][0]["door_ufactor"].to_f)
     end
     
-    # Enclosure extension for adiabatic floors, interior shading, eaves
+    # Enclosure extension for other living space floors over garage, interior shading, eaves
     extension = enclosure.add_element "extension"
     
-    # AdiabaticFloors
-    adiabatic_floors = nil
+    # Floors
+    floors = nil
     model.getSpaces.each do |space|
-      if Geometry.space_is_above_grade(space) and Geometry.space_is_finished(space)
-        space.surfaces.each do |surface|
-          next unless surface.surfaceType.downcase == "floor"
-          next if surface.outsideBoundaryCondition.downcase == "ground" or surface.outsideBoundaryCondition.downcase == "outdoors"
-          if surface.adjacentSurface.is_initialized
-            next unless Geometry.space_is_above_grade(surface.adjacentSurface.get.space.get) and Geometry.space_is_finished(surface.adjacentSurface.get.space.get)
-          end
-          if adiabatic_floors.nil?
-            adiabatic_floors = extension.add_element "adiabatic_floors"
-          end
-          floor = adiabatic_floors.add_element "floor"
-          XMLHelper.add_element(floor, "SystemIdentifier", surface.name)
-          XMLHelper.add_element(floor, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+      next unless Geometry.space_is_above_grade(space) and Geometry.is_living(space)
+      next if Geometry.is_finished_attic(space)
+      space.surfaces.each do |surface|
+        next unless surface.surfaceType.downcase == "floor"
+        next unless surface.adjacentSurface.is_initialized
+        next unless Geometry.is_garage(surface.adjacentSurface.get.space.get)
+        if floors.nil?
+          floors = extension.add_element "Floors"
         end
+        floor = floors.add_element "Floor"
+        XMLHelper.add_element(floor, "SystemIdentifier", surface.name)
+        XMLHelper.add_element(floor, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+        floor_joists = floor.add_element "FloorJoists"
+        XMLHelper.add_element(floor_joists, "Material", "wood")
+        XMLHelper.add_element(floor_joists, "FramingFactor", measures["ResidentialConstructionsFoundationsFloorsInterzonalFloors"][0]["framing_factor"])
+        insulation = floor.add_element "Insulation"
+        XMLHelper.add_element(insulation, "InsulationGrade", os_to_hpxml_ins_grade(measures["ResidentialConstructionsFoundationsFloorsInterzonalFloors"][0]["install_grade"]))
+        layer = insulation.add_element "Layer"
+        XMLHelper.add_element(layer, "InstallationType", "cavity")        
+        XMLHelper.add_element(layer, "NominalRValue", measures["ResidentialConstructionsFoundationsFloorsInterzonalFloors"][0]["cavity_r"])
+        XMLHelper.add_element(layer, "Thickness", 3.5) # FIXME
+        layer = insulation.add_element "Layer"
+        XMLHelper.add_element(layer, "InstallationType", "continuous")        
+        XMLHelper.add_element(layer, "NominalRValue", 0)
+        XMLHelper.add_element(layer, "Thickness", 0)
+        XMLHelper.add_element(floor, "CarpetFraction", measures["ResidentialConstructionsFoundationsFloorsCovering"][0]["covering_frac"])
+        XMLHelper.add_element(floor, "CarpetRValue", measures["ResidentialConstructionsFoundationsFloorsCovering"][0]["covering_r"])
+        XMLHelper.add_element(floor, "InteriorAdjacentTo", get_interior_adjacent_to(space, measures))
+        XMLHelper.add_element(floor, "ExteriorAdjacentTo", get_exterior_adjacent_to(surface))
       end
     end
     

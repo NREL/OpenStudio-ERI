@@ -420,6 +420,7 @@ class OSMeasures
   
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
   
+      name = window.elements["SystemIdentifier"].attributes["id"]
       ufactor = XMLHelper.get_value(window, "UFactor")
       shgc = XMLHelper.get_value(window, "SHGC")
       cooling_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer")
@@ -427,14 +428,9 @@ class OSMeasures
   
       measure_subdir = "ResidentialConstructionsWindows"
       args = {
-              "ufactor_front"=>ufactor,
-              "ufactor_back"=>ufactor,
-              "ufactor_left"=>ufactor,
-              "ufactor_right"=>ufactor,
-              "shgc_front"=>shgc,
-              "shgc_back"=>shgc,
-              "shgc_left"=>shgc,
-              "shgc_right"=>shgc,
+              "sub_surface"=>name,
+              "ufactor"=>ufactor,
+              "shgc"=>shgc,
               "heating_shade_mult"=>heating_shade_mult,
               "cooling_shade_mult"=>cooling_shade_mult
              }  

@@ -205,7 +205,8 @@ class EnergyRatingIndex301Validator
                 'Insulation/Layer[InstallationType="continuous"]',
             ],
             # Floors
-            '//Building/BuildingDetails/Enclosure/extension/Floors/Floor' => [                'Area',
+            '//Building/BuildingDetails/Enclosure/extension/Floors/Floor' => [
+                'Area',
                 'FloorJoists[Material="wood"]',
                 'FloorJoists/FramingFactor',
                 'Insulation/InsulationGrade',
