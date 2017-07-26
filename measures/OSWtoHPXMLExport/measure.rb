@@ -826,14 +826,14 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       if enclosure.elements["Windows"].nil?
         windows = enclosure.add_element "Windows"
       end
-      facade = Geometry.get_facade_for_surface(subsurface.surface.get)
       window = windows.add_element "Window"
       XMLHelper.add_attribute(window.add_element("SystemIdentifier"), "id", subsurface.name)
       XMLHelper.add_element(window, "Area", OpenStudio.convert(subsurface.grossArea,"m^2","ft^2").get.round(1))
       XMLHelper.add_element(window, "Azimuth", OpenStudio.convert(subsurface.azimuth,"rad","deg").get.round)
-      XMLHelper.add_element(window, "UFactor", measures["ResidentialConstructionsWindows"][0]["ufactor_#{facade}"])
-      XMLHelper.add_element(window, "SHGC", measures["ResidentialConstructionsWindows"][0]["shgc_#{facade}"])
+      XMLHelper.add_element(window, "UFactor", measures["ResidentialConstructionsWindows"][0]["ufactor"])
+      XMLHelper.add_element(window, "SHGC", measures["ResidentialConstructionsWindows"][0]["shgc"])
       if measures.keys.include? "ResidentialGeometryOverhangs"
+        facade = Geometry.get_facade_for_surface(subsurface.surface.get)
         if measures["ResidentialGeometryOverhangs"][0]["#{facade}_facade"] == "true"
           XMLHelper.add_element(window, "ExteriorShading", "external overhangs")
           overhangs = window.add_element "Overhangs"

@@ -159,7 +159,7 @@ class ProcessConstructionsDoors < OpenStudio::Measure::ModelMeasure
     model.getSpaces.each do |space|
         next if Geometry.space_is_finished(space)
         space.surfaces.each do |surface|
-            next if surface.surfaceType.downcase != "wall" or surface.outsideBoundaryCondition.downcase != "outdoors"
+            next if surface.surfaceType.downcase != "wall" or ( surface.outsideBoundaryCondition.downcase != "outdoors" and surface.outsideBoundaryCondition.downcase != "adiabatic" )
             surface.subSurfaces.each do |sub_surface|
                 next if not sub_surface.subSurfaceType.downcase.include? "door"
                 unfinished_sub_surfaces << sub_surface

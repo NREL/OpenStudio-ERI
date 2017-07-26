@@ -1161,19 +1161,23 @@ class OSMeasures
                  }          
           update_args_hash(measures, measure_subdir, args)
 
-          measure_subdir = "ResidentialConstructionsWallsExteriorThermalMass"
-          args = {
-                  "surface"=>name,
-                  "thick_in1"=>mat_mass.thick_in,
-                  "thick_in2"=>nil,
-                  "cond1"=>mat_mass.k_in,
-                  "cond2"=>nil,
-                  "dens1"=>mat_mass.rho,
-                  "dens2"=>nil,
-                  "specheat1"=>mat_mass.cp,
-                  "specheat2"=>nil
-                 }
-          update_args_hash(measures, measure_subdir, args)          
+          if ["living space", "cape cod"].include? interior_adjacent_to
+          
+            measure_subdir = "ResidentialConstructionsWallsExteriorThermalMass"
+            args = {
+                    "surface"=>name,
+                    "thick_in1"=>mat_mass.thick_in,
+                    "thick_in2"=>nil,
+                    "cond1"=>mat_mass.k_in,
+                    "cond2"=>nil,
+                    "dens1"=>mat_mass.rho,
+                    "dens2"=>nil,
+                    "specheat1"=>mat_mass.cp,
+                    "specheat2"=>nil
+                   }
+            update_args_hash(measures, measure_subdir, args)
+          
+          end
           
         end
       
