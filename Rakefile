@@ -358,6 +358,17 @@ task :update_measures do
       end
   end
   
+  # Copy HPXML files from measures\301EnergyRatingIndexRuleset\tests to workflows\energy_rating_index\sample_files
+  Dir.foreach(File.expand_path("../measures/301EnergyRatingIndexRuleset/tests", __FILE__)) do |item|
+    next if not (item.start_with?("valid") and item.end_with?(".xml"))
+    src_item = File.expand_path("../measures/301EnergyRatingIndexRuleset/tests/#{item}", __FILE__)
+    dest_item = File.expand_path("../workflows/energy_rating_index/sample_files/#{item}", __FILE__)
+    if not File.exists?(dest_item) or not FileUtils.compare_file(src_item, dest_item)
+      FileUtils.cp(src_item, dest_item)
+      puts "Updated #{File.basename(dest_item)} in workflows/energy_rating_index/sample_files/."
+    end
+  end
+  
 end
 
 desc 'Copy resources from OpenStudio-BuildStock repo'

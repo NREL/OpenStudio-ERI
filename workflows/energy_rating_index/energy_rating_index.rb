@@ -648,7 +648,7 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml -w location.epw"
+  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml -w location.epw\n e.g., #{File.basename(__FILE__)} -x sample_files/valid.xml -e sample_files/denver.epw\n"
 
   opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
     options[:hpxml] = t

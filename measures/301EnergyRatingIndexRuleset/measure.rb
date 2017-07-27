@@ -291,9 +291,6 @@ end
 
 class OSMeasures    
 
-  # FIXME: Allow args to have non-string values; atuo-convert all args to strings later.
-  # FIXME: Add surface argument to envelope construction measures
-
   def self.build_measures_from_hpxml(building, weather_file_path)
 
     measures = {}
