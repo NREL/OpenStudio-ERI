@@ -24,110 +24,6 @@ if os_clis.size == 0
 end
 os_cli = os_clis[-1]
 
-namespace :measures do
-  desc 'Generate measures to prepare for upload to BCL '
-  task :generate do
-    require 'bcl'
-    name_hash = replace_name_in_measure_xmls()
-    # verify staged directory exists
-    FileUtils.mkdir_p('./staged')
-    dirs = Dir.glob('./measures/*')
-    dirs.each do |dir|
-      next if dir.include?('Rakefile')
-      current_d = Dir.pwd
-      measure_name = File.basename(dir)
-      puts "Generating #{measure_name}"
-
-      Dir.chdir(dir)
-      # puts Dir.pwd
-
-      destination = "../../staged/#{measure_name}.tar.gz"
-      FileUtils.rm(destination) if File.exist?(destination)
-      files = Pathname.glob('**/*')
-      files.each do |f|
-        puts "  #{f}"
-      end
-      paths = []
-      files.each do |file|
-        paths << file.to_s
-      end
-
-      BCL.tarball(destination, paths)
-      Dir.chdir(current_d)
-    end
-    revert_name_in_measure_xmls(name_hash)
-  end
-
-  desc 'Push generated measures to the BCL group defined in .bcl/config.yml'
-  task :push do
-    require 'bcl'
-    # grab all the tar files and push to bcl
-    measures = []
-    paths = Pathname.glob('./staged/*.tar.gz')
-    paths.each do |path|
-      puts path
-      measures << path.to_s
-    end
-    bcl = BCL::ComponentMethods.new
-    bcl.login
-    bcl.push_contents(measures, true, 'nrel_measure')
-  end
-
-  desc 'update generated measures on the BCL'
-  task :update do
-    require 'bcl'
-    # grab all the tar files and push to bcl
-    measures = []
-    paths = Pathname.glob('./staged/*.tar.gz')
-    paths.each do |path|
-      puts path
-      measures << path.to_s
-    end
-    bcl = BCL::ComponentMethods.new
-    bcl.login
-    bcl.update_contents(measures, true)
-  end
-
-  desc 'test the BCL login credentials defined in .bcl/config.yml'
-  task :test_bcl_login do
-    require 'bcl'
-    bcl = BCL::ComponentMethods.new
-    bcl.login
-  end
-
-  desc 'create JSON metadata files'
-  task :create_measure_jsons do
-    require 'bcl'
-    bcl = BCL::ComponentMethods.new
-
-    Dir['./**/measure.rb'].each do |m|
-      puts "Parsing #{m}"
-      j = bcl.parse_measure_file(nil, m)
-      m_j = "#{File.join(File.dirname(m), File.basename(m, '.*'))}.json"
-      puts "Writing #{m_j}"
-      File.open(m_j, 'w') { |f| f << JSON.pretty_generate(j) }
-    end
-  end
-
-  desc 'make csv file of measures'
-  task create_measure_csv: [:create_measure_jsons] do
-    require 'CSV'
-    require 'bcl'
-
-    b = BCL::ComponentMethods.new
-    new_csv_file = './measures_spreadsheet.csv'
-    FileUtils.rm_f(new_csv_file) if File.exist?(new_csv_file)
-    csv = CSV.open(new_csv_file, 'w')
-    Dir.glob('./**/measure.json').each do |file|
-      puts "Parsing Measure JSON for CSV #{file}"
-      json = JSON.parse(File.read(file), symbolize_names: true)
-      b.translate_measure_hash_to_csv(json).each { |r| csv << r }
-    end
-
-    csv.close
-  end
-end # end the :measures namespace
-
 namespace :test do
 
   desc 'Run unit tests for all measures'
@@ -249,142 +145,8 @@ namespace :test do
     
     puts "Completed. #{num_success} of #{num_tot} osm files were regenerated successfully."
     
-  end
-
-end
-
-desc 'update all measures (resources, xmls, workflows, README)'
-task :update_measures do
-
-  puts "Updating measure resources..."
-  measures_dir = File.expand_path("../measures/", __FILE__)
-  
-  measures = Dir.entries(measures_dir).select {|entry| File.directory? File.join(File.expand_path("../measures/", __FILE__), entry) and !(entry == '.' || entry == '..') }
-  measures.each do |m|
-    measurerb = File.expand_path("../measures/#{m}/measure.rb", __FILE__)
-    
-    # Get recursive list of resources required based on looking for 'require FOO' in rb files
-    resources = get_requires_from_file(measurerb)
-
-    # Add any additional resources specified in resource_to_measure_mapping.csv
-    subdir_resources = {} # Handle resources in subdirs
-    File.open(File.expand_path("../resources/resource_to_measure_mapping.csv", __FILE__)) do |file|
-      file.each do |line|
-        line = line.chomp.split(',').reject { |l| l.empty? }
-        measure = line.delete_at(0)
-        next if measure != m
-        line.each do |resource|
-          fullresource = File.expand_path("../resources/#{resource}", __FILE__)
-          next if resources.include?(fullresource)
-          resources << fullresource
-          if resource != File.basename(resource)
-            subdir_resources[File.basename(resource)] = resource
-          end
-        end
-      end
-    end
-    
-    # Add/update resource files as needed
-    resources.each do |resource|
-      if not File.exist?(resource)
-        puts "Cannot find resource: #{resource}."
-        next
-      end
-      r = File.basename(resource)
-      dest_resource = File.expand_path("../measures/#{m}/resources/#{r}", __FILE__)
-      measure_resource_dir = File.dirname(dest_resource)
-      if not File.directory?(measure_resource_dir)
-        FileUtils.mkdir_p(measure_resource_dir)
-      end
-      if not File.file?(dest_resource)
-        FileUtils.cp(resource, measure_resource_dir)
-        puts "Added #{r} to #{m}/resources."
-      elsif not FileUtils.compare_file(resource, dest_resource)
-        FileUtils.cp(resource, measure_resource_dir)
-        puts "Updated #{r} in #{m}/resources."
-      end
-    end
-    
-    # Any extra resource files?
-    if File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
-      Dir.foreach(File.expand_path("../measures/#{m}/resources", __FILE__)) do |item|
-        next if item == '.' or item == '..'
-        if subdir_resources.include?(item)
-          item = subdir_resources[item]
-        end
-        resource = File.expand_path("../resources/#{item}", __FILE__)
-        next if resources.include?(resource)
-        item_path = File.expand_path("../measures/#{m}/resources/#{item}", __FILE__)
-        if File.directory?(item_path)
-            puts "Extra dir #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
-            input = STDIN.gets.strip.downcase
-            next if input != "y"
-            puts "deleting #{item_path}"
-            FileUtils.rm_rf(item_path)
-            puts "Dir deleted."
-        else
-            next if item == 'measure-info.json'
-            puts "Extra file #{item} found in #{m}/resources. Do you want to delete it? (y/n)"
-            input = STDIN.gets.strip.downcase
-            next if input != "y"
-            FileUtils.rm(item_path)
-            puts "File deleted."
-        end
-      end
-    end
-    
-  end
-  
-  # Update measure xmls
-  command = "\"#{os_cli}\" measure --update_all #{measures_dir} >> log"
-  puts "Updating measure.xml files..."
-  system(command)
-  
-  # Generate example OSW
-  generate_example_osw_of_all_measures_in_order
-
-  # Copy measure-info.json into certain [measures]/resources
-  measures = ['301EnergyRatingIndexRuleset']
-  measures.each do |measure|
-      json_path = "workflows/measure-info.json"
-      dest_resource = File.expand_path("measures/#{measure}/resources/#{File.basename(json_path)}")
-      measure_resource_dir = File.dirname(dest_resource)  
-      if not File.file?(dest_resource)
-        FileUtils.cp(json_path, measure_resource_dir)
-        puts "Added #{File.basename(json_path)} to #{measure}/resources."
-      elsif not FileUtils.compare_file(json_path, dest_resource)
-        FileUtils.cp(json_path, measure_resource_dir)
-        puts "Updated #{File.basename(json_path)} in #{measure}/resources."
-      end
-  end
-  
-  # Copy HPXML files from measures\301EnergyRatingIndexRuleset\tests to workflows\energy_rating_index\sample_files
-  Dir.foreach(File.expand_path("../measures/301EnergyRatingIndexRuleset/tests", __FILE__)) do |item|
-    next if not (item.start_with?("valid") and item.end_with?(".xml"))
-    src_item = File.expand_path("../measures/301EnergyRatingIndexRuleset/tests/#{item}", __FILE__)
-    dest_item = File.expand_path("../workflows/energy_rating_index/sample_files/#{item}", __FILE__)
-    if not File.exists?(dest_item) or not FileUtils.compare_file(src_item, dest_item)
-      FileUtils.cp(src_item, dest_item)
-      puts "Updated #{File.basename(dest_item)} in workflows/energy_rating_index/sample_files/."
-    end
-  end
-  
-end
-
-desc 'Copy resources from OpenStudio-BuildStock repo'
-task :copy_buildstock_resources do  
-  extra_files = [
-                 File.join("resources", "helper_methods.rb")
-                ]  
-  extra_files.each do |extra_file|
-      puts "Copying #{extra_file}..."
-      resstock_file = File.join(File.dirname(__FILE__), "..", "OpenStudio-BuildStock", extra_file)
-      local_file = File.join(File.dirname(__FILE__), extra_file)
-      if File.exists?(local_file)
-        FileUtils.rm(local_file)
-      end
-      FileUtils.cp(resstock_file, local_file)
   end  
+  
 end
 
 # This function will generate an OpenStudio OSW
@@ -623,4 +385,89 @@ def revert_name_in_measure_xmls(name_hash)
       end
       xmldoc.write(File.open(measure_xml, "w"))
     end
+end
+
+desc 'Copy measures/osms from OpenStudio-BEopt repo'
+task :copy_beopt_files do
+  require 'fileutils'
+
+  beopt_measures_dir = File.join(File.dirname(__FILE__), "..", "OpenStudio-BEopt", "measures")
+  buildstock_resource_measures_dir = File.join(File.dirname(__FILE__), "resources", "measures")
+  if not Dir.exist?(beopt_measures_dir)
+    puts "Cannot find OpenStudio-BEopt measures dir at #{beopt_measures_dir}."
+  end
+  
+  # Copy seed osm and other needed resource files
+  project_dir_names = get_all_project_dir_names()
+  extra_files = [
+                 File.join("seeds", "EmptySeedModel.osm"),
+                 File.join("resources", "geometry.rb"), # Needed by SimulationOutputReport
+                 File.join("resources", "constants.rb") # Needed by geometry.rb
+                ]
+  extra_files.each do |extra_file|
+      puts "Copying #{extra_file}..."
+      beopt_file = File.join(File.dirname(__FILE__), "..", "OpenStudio-BEopt", extra_file)
+      if extra_file.start_with?("seeds") # Distribute to all projects
+        project_dir_names.each do |project_dir_name|
+          buildstock_file = File.join(File.dirname(__FILE__), project_dir_name, extra_file)
+          if File.exists?(buildstock_file)
+            FileUtils.rm(buildstock_file)
+          end
+          FileUtils.cp(beopt_file, buildstock_file)
+        end
+      else # Copy to resources dir
+        buildstock_file = File.join(File.dirname(__FILE__), extra_file)
+        if File.exists?(buildstock_file)
+          FileUtils.rm(buildstock_file)
+        end
+        FileUtils.cp(beopt_file, buildstock_file)
+      end
+  end
+  
+  # Clean out resources/measures/ dir
+  puts "Deleting #{buildstock_resource_measures_dir}..."
+  while Dir.exist?(buildstock_resource_measures_dir)
+    FileUtils.rm_rf("#{buildstock_resource_measures_dir}/.", secure: true)
+    sleep 1
+  end
+  FileUtils.makedirs(buildstock_resource_measures_dir)
+  
+  # Copy residential measures to resources/measures/
+  Dir.foreach(beopt_measures_dir) do |beopt_measure|
+    next if !beopt_measure.include? 'Residential'
+    beopt_measure_dir = File.join(beopt_measures_dir, beopt_measure)
+    next if not Dir.exist?(beopt_measure_dir)
+    puts "Copying #{beopt_measure} measure..."
+    FileUtils.cp_r(beopt_measure_dir, buildstock_resource_measures_dir)
+    ["coverage","tests"].each do |subdir|
+      buildstock_resource_measures_subdir = File.join(buildstock_resource_measures_dir, beopt_measure, subdir)
+      if Dir.exist?(buildstock_resource_measures_subdir)
+        FileUtils.rm_rf("#{buildstock_resource_measures_subdir}/.", secure: true)
+      end
+    end
+  end
+  
+  # Copy other measures to measure/ dir
+  other_measures = ["TimeseriesCSVExport"]
+  buildstock_measures_dir = buildstock_resource_measures_dir = File.join(File.dirname(__FILE__), "measures")
+  other_measures.each do |other_measure|
+    puts "Copying #{other_measure} measure..."
+    FileUtils.cp_r(File.join(beopt_measures_dir, other_measure), buildstock_measures_dir)
+    ["coverage","tests"].each do |subdir|
+      buildstock_measure_subdir = File.join(buildstock_measures_dir, other_measure, subdir)
+      if Dir.exist?(buildstock_measure_subdir)
+        FileUtils.rm_rf("#{buildstock_measure_subdir}/.", secure: true)
+      end
+    end
+  end
+end
+
+def get_all_project_dir_names()
+    project_dir_names = []
+    Dir.entries(File.dirname(__FILE__)).each do |entry|
+        next if not Dir.exist?(entry)
+        next if not entry.start_with?("project_")
+        project_dir_names << entry
+    end
+    return project_dir_names
 end
