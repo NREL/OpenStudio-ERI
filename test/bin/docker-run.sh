@@ -9,7 +9,7 @@ export CIRCLECI=true
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
-cd /OpenStudio-Beopt
+cd /OpenStudio-ERI
 
 rm -f Gemfile.lock
 bundle install
