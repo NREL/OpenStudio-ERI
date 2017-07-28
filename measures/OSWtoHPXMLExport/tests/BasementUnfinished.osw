@@ -444,7 +444,8 @@
             "min_temp" : "0",
             "seer" : "13",
             "shr" : "0.73",
-            "supplemental_capacity" : "autosize"
+            "supplemental_capacity" : "autosize",
+            "supplemental_efficiency" : "1"
          },
          "description" : "This measure removes any existing HVAC components from the building and adds a single-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the single-speed air source heat pump can be set for all units of the building.",
          "measure_dir_name" : "ResidentialHVACAirSourceHeatPumpSingleSpeed",

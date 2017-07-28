@@ -402,7 +402,8 @@ task :copy_beopt_files do
   extra_files = [
                  File.join("seeds", "EmptySeedModel.osm"),
                  File.join("resources", "geometry.rb"), # Needed by SimulationOutputReport
-                 File.join("resources", "constants.rb") # Needed by geometry.rb
+                 File.join("resources", "constants.rb"), # Needed by geometry.rb
+                 File.join("resources", "util.rb")
                 ]
   extra_files.each do |extra_file|
       puts "Copying #{extra_file}..."
@@ -446,20 +447,7 @@ task :copy_beopt_files do
       end
     end
   end
-  
-  # Copy other measures to measure/ dir
-  other_measures = ["TimeseriesCSVExport"]
-  buildstock_measures_dir = buildstock_resource_measures_dir = File.join(File.dirname(__FILE__), "measures")
-  other_measures.each do |other_measure|
-    puts "Copying #{other_measure} measure..."
-    FileUtils.cp_r(File.join(beopt_measures_dir, other_measure), buildstock_measures_dir)
-    ["coverage","tests"].each do |subdir|
-      buildstock_measure_subdir = File.join(buildstock_measures_dir, other_measure, subdir)
-      if Dir.exist?(buildstock_measure_subdir)
-        FileUtils.rm_rf("#{buildstock_measure_subdir}/.", secure: true)
-      end
-    end
-  end
+
 end
 
 def get_all_project_dir_names()

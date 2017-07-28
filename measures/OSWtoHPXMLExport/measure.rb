@@ -1324,7 +1324,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
             eff = wh.heaterThermalEfficiency.round(2)
             vol = OpenStudio.convert(wh.tankVolume.get,"m^3","gal").get.round(1)
             model.getOtherEquipments.each do |oe|
-              next unless oe.name.to_s.downcase.include? "hpwh_sens"
+              next unless oe.name.to_s.downcase.include? "sens"
               loc = oe.space.get
             end
             model.getWaterHeaterHeatPumpWrappedCondensers.each do |hp|

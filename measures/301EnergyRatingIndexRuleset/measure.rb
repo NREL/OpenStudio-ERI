@@ -207,9 +207,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
 
-    # if osm_output_file_path.is_initialized
-      # File.write(osm_output_file_path.get, model.to_s)
-    # end
+    if osm_output_file_path.is_initialized
+      File.write(osm_output_file_path.get, model.to_s)
+    end
 
     if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
       return false
@@ -1330,7 +1330,7 @@ class OSMeasures
       update_args_hash(measures, measure_subdir, args)
       
     end
-    
+
     # TODO: ResidentialHotWaterDistribution
     # TODO: ResidentialHotWaterFixtures
     # TODO: ResidentialHotWaterSolar
@@ -1621,6 +1621,7 @@ class OSMeasures
                 "cop_capacity_derate_4ton"=>1,
                 "cop_capacity_derate_5ton"=>1,
                 "heat_pump_capacity"=>cool_capacity_tons,
+                "supplemental_efficiency"=>1,
                 "supplemental_capacity"=>backup_heat_capacity_kbtuh
                }
         update_args_hash(measures, measure_subdir, args)

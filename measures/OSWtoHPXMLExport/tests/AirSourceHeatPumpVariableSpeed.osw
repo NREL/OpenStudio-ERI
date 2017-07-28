@@ -463,7 +463,8 @@
             "shr2" : "0.79",
             "shr3" : "0.76",
             "shr4" : "0.77",
-            "supplemental_capacity" : "autosize"
+            "supplemental_capacity" : "autosize",
+            "supplemental_efficiency" : "1"
          },
          "description" : "This measure removes any existing HVAC components from the building and adds a variable-speed air source heat pump along with an on/off supply fan to a unitary air loop. For multifamily buildings, the variable-speed air source heat pump can be set for all units of the building.",
          "measure_dir_name" : "ResidentialHVACAirSourceHeatPumpVariableSpeed",

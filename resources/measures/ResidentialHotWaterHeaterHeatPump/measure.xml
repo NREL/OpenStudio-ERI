@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_heat_pump</name>
   <uid>cfbe1e78-78db-4902-aba3-95d23310802e</uid>
-  <version_id>6385356a-caa7-4d85-9fba-ad93b12a06d0</version_id>
-  <version_modified>20170728T200338Z</version_modified>
+  <version_id>223d0e59-7da6-4611-b805-9df367c909eb</version_id>
+  <version_modified>20170728T224921Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterHeatPump</class_name>
   <display_name>Set Residential Heat Pump Water Heater</display_name>
@@ -21,7 +21,7 @@
       <default_value>50</default_value>
     </argument>
     <argument>
-      <name>dhw_setpoint_temperature</name>
+      <name>setpoint_temp</name>
       <display_name>Setpoint</display_name>
       <description>Water heater setpoint temperature.</description>
       <type>Double</type>
@@ -338,17 +338,6 @@
       <checksum>BE79CE58</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>1.13.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>DA52CC41</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -377,6 +366,17 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B34275B6</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>1.13.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>50F96BD2</checksum>
     </file>
   </files>
 </measure>
