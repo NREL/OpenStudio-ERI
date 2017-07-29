@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_generic</name>
   <uid>d7572e51-b9af-4cb3-b984-7c8d0a7e0e73</uid>
-  <version_id>082b6579-0f45-4f68-8ea9-9e4ac5a7ff40</version_id>
-  <version_modified>20170728T200334Z</version_modified>
+  <version_id>4381bd65-f9b6-4060-9b01-f861814efc86</version_id>
+  <version_modified>20170729T172838Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorGeneric</class_name>
   <display_name>Set Residential Walls - Generic Construction</display_name>
@@ -229,18 +229,6 @@
   </attributes>
   <files>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CE2384AA</checksum>
-    </file>
-    <file>
-      <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3C06B792</checksum>
-    </file>
-    <file>
       <filename>Generic_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -274,6 +262,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B34275B6</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7DC7F583</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BB6E6857</checksum>
     </file>
   </files>
 </measure>

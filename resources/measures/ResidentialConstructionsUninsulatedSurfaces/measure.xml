@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_surfaces</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>89a0b530-c64f-4fc8-ad03-811360d90cb2</version_id>
-  <version_modified>20170728T200334Z</version_modified>
+  <version_id>7ab0ca00-096f-4a9a-926f-03ea92cdf685</version_id>
+  <version_modified>20170729T172838Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSurfaces</class_name>
   <display_name>Set Residential Uninsulated Surfaces</display_name>
@@ -74,16 +74,16 @@
       <checksum>9B3F5A37</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1BA99481</checksum>
-    </file>
-    <file>
       <filename>UninsulatedSurfaces_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>E532DC9C</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EC4B2988</checksum>
     </file>
   </files>
 </measure>

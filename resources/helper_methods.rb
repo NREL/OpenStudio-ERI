@@ -1,4 +1,5 @@
 require 'csv'
+require 'openstudio'
 
 # TODO: Move some methods below into a MetaMeasure class
 
@@ -213,7 +214,6 @@ def get_combination_hashes(tsvfiles, dependencies)
 end
   
 def get_value_from_runner_past_results(runner, key_lookup, measure_name, error_if_missing=true)
-    require 'openstudio'
     key_lookup = OpenStudio::toUnderscoreCase(key_lookup)
     success_value = OpenStudio::StepResult.new("Success")
     runner.workflow.workflowSteps.each do |step|
@@ -310,6 +310,14 @@ def get_measure_instance(measure_rb_path)
     return measure
 end
 
+def update_args_hash(hash, key, args)
+  if not hash.keys.include? key
+    hash[key] = [args]
+  else
+    hash[key] << args
+  end
+end
+
 def validate_measure_args(measure_args, provided_args, lookup_file, measure_name, runner=nil)
     measure_arg_names = measure_args.map { |arg| arg.name }
     lookup_file_str = ""
@@ -363,7 +371,6 @@ def validate_measure_args(measure_args, provided_args, lookup_file, measure_name
 end
   
 def get_argument_map(model, measure, provided_args, lookup_file, measure_name, runner=nil)
-    require 'openstudio'
     measure_args = measure.arguments(model)
     validate_measure_args(measure_args, provided_args, lookup_file, measure_name, runner)
     
@@ -380,8 +387,8 @@ def get_argument_map(model, measure, provided_args, lookup_file, measure_name, r
 end
   
 def run_measure(model, measure, argument_map, runner)
-    require 'openstudio'
     begin
+
       # run the measure
       runner_child = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
       if model.instance_of? OpenStudio::Workspace
@@ -417,6 +424,7 @@ def run_measure(model, measure, argument_map, runner)
         runner.registerError("The measure was not successful")
         return false
       end
+
     rescue => e
       runner.registerError("Measure Failed with Error: #{e.backtrace.join("\n")}")
       return false
@@ -445,13 +453,15 @@ def apply_measures(measures_dir, measures, runner, model, show_measure_calls=tru
       # Gather measure arguments and call measure
       full_measure_path = File.join(measures_dir, measure_subdir, "measure.rb")
       measure_instance = get_measure_instance(full_measure_path)
-      argument_map = get_argument_map(model, measure_instance, measures[measure_subdir], nil, measure_subdir, runner)
-      if show_measure_calls
-        print_measure_call(measures[measure_subdir], measure_subdir, runner)
-      end
+      measures[measure_subdir].each do |args|
+        argument_map = get_argument_map(model, measure_instance, args, nil, measure_subdir, runner)
+        if show_measure_calls
+          print_measure_call(args, measure_subdir, runner)
+        end
 
-      if not run_measure(model, measure_instance, argument_map, runner)
-        return false
+        if not run_measure(model, measure_instance, argument_map, runner)
+          return false
+        end
       end
 
     end
@@ -459,7 +469,6 @@ def apply_measures(measures_dir, measures, runner, model, show_measure_calls=tru
     return true
 
 end
-
   
 def hash_to_string(hash, delim="=", separator=",")
     hash_s = ""

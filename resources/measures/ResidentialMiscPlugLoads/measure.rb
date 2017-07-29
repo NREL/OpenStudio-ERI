@@ -62,7 +62,7 @@ class ResidentialMiscellaneousElectricLoads < OpenStudio::Measure::ModelMeasure
     sens_frac = OpenStudio::Measure::OSArgument::makeDoubleArgument("sens_frac", true)
     sens_frac.setDisplayName("Sensible Fraction")
     sens_frac.setDescription("Fraction of internal gains that are sensible.")
-    sens_frac.setDefaultValue(0.093)
+    sens_frac.setDefaultValue(0.93)
     args << sens_frac
     
     # Make a double argument for latent fraction

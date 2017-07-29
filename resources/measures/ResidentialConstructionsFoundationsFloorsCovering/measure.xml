@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_covering</name>
   <uid>c0a10f27-c095-4b45-91f8-faee094a1d42</uid>
-  <version_id>eb85f37d-78db-47b6-9096-eafec913ba2a</version_id>
-  <version_modified>20170728T200333Z</version_modified>
+  <version_id>37bffb36-343b-4e39-b923-eb52c5a76ef0</version_id>
+  <version_modified>20170729T172837Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsCovering</class_name>
   <display_name>Set Residential Foundations/Floors - Floor Covering</display_name>
@@ -102,7 +102,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1BA99481</checksum>
+      <checksum>EC4B2988</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>ad7c29b7-009e-4b23-8886-6a0c93e21bdc</version_id>
-  <version_modified>20170728T200333Z</version_modified>
+  <version_id>cae12f88-9855-48d3-b9a2-31c76608c4be</version_id>
+  <version_modified>20170729T172837Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
   <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>
@@ -200,22 +200,22 @@
       <checksum>B34275B6</checksum>
     </file>
     <file>
+      <filename>UnfinishedAttic_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D92619E6</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4EA8F63E</checksum>
+      <checksum>37D1C614</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>31B8592A</checksum>
-    </file>
-    <file>
-      <filename>UnfinishedAttic_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D92619E6</checksum>
+      <checksum>88FCF3AD</checksum>
     </file>
   </files>
 </measure>

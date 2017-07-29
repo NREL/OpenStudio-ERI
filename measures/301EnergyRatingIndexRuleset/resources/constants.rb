@@ -789,14 +789,14 @@ class Constants
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
     end
-    return "residential solar hot water#{s_unit}"
+    return "res solar hot water#{s_unit}"
   end
   def self.ObjectNameWaterHeater(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit
       s_unit = "|#{unit_name}"
     end
-    return "residential water heater#{s_unit}"
+    return "res wh#{s_unit}"
   end
   def self.ObjectNameWellPump(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
@@ -1002,9 +1002,6 @@ class Constants
   def self.SizingInfoHVACCoolingCFMs
     return self.SizingInfo(__method__.to_s)
   end
-  def self.SizingInfoHVACFanspeedRatioCooling
-    return self.SizingInfo(__method__.to_s)
-  end
   def self.SizingInfoHVACHeatingCapacityOffset
     return self.SizingInfo(__method__.to_s)
   end
@@ -1167,6 +1164,9 @@ class Constants
   end
   def self.WaterHeaterTypeHeatPump
     return 'heatpump'
+  end
+  def self.WorkflowDescription
+    return ' See https://github.com/NREL/OpenStudio-BEopt#workflows for supported workflows using this measure.'
   end
     
 end

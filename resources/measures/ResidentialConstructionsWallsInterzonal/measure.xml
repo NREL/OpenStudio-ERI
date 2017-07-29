@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_interzonal</name>
   <uid>944105aa-3789-447c-bf4b-ace7eadee2db</uid>
-  <version_id>f3c8446b-19a0-4ad4-972a-292c266a4306</version_id>
-  <version_modified>20170728T200335Z</version_modified>
+  <version_id>888390c7-7828-4f48-82bf-19db9b3a2f08</version_id>
+  <version_modified>20170729T172839Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsInterzonal</class_name>
   <display_name>Set Residential Walls - Interzonal Construction</display_name>
@@ -155,13 +155,13 @@
       <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6453B529</checksum>
+      <checksum>388F7188</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1BA99481</checksum>
+      <checksum>EC4B2988</checksum>
     </file>
   </files>
 </measure>

@@ -92,7 +92,7 @@ class AddResidentialOccupants < OpenStudio::Measure::ModelMeasure
     
     num_occ = runner.getStringArgumentValue("num_occ",user_arguments)
     occ_gain = runner.getDoubleArgumentValue("occ_gain",user_arguments)
-    sens_frac = runner.getDoubleArgumentValue("lat_frac",user_arguments)
+    sens_frac = runner.getDoubleArgumentValue("sens_frac",user_arguments)
     lat_frac = runner.getDoubleArgumentValue("lat_frac",user_arguments)
     weekday_sch = runner.getStringArgumentValue("weekday_sch",user_arguments)
     weekend_sch = runner.getStringArgumentValue("weekend_sch",user_arguments)

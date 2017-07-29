@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_foundations_floors_interzonal_floors</name>
   <uid>65e577ab-327e-4afa-af30-0f6b4e6b1ebf</uid>
-  <version_id>e7db6e0b-2a85-49e9-a1f6-7590658f0d79</version_id>
-  <version_modified>20170728T200334Z</version_modified>
+  <version_id>829c3d68-f061-4560-94ea-8219568b1fb2</version_id>
+  <version_modified>20170729T175326Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsFoundationsFloorsInterzonalFloors</class_name>
   <display_name>Set Residential Foundations/Floors - Interzonal Floor Construction</display_name>
@@ -117,28 +117,28 @@
       <checksum>B34275B6</checksum>
     </file>
     <file>
-      <filename>InterzonalFloors_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2B222DC9</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_PB_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>3BD21067</checksum>
+      <checksum>347912E7</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6453B529</checksum>
+      <checksum>388F7188</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1BA99481</checksum>
+      <checksum>EC4B2988</checksum>
+    </file>
+    <file>
+      <filename>InterzonalFloors_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6BF08329</checksum>
     </file>
   </files>
 </measure>
