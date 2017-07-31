@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>c7bb661b-f8f1-41c0-a065-b544a299afd6</version_id>
-  <version_modified>20170729T172840Z</version_modified>
+  <version_id>237cd162-3552-404f-870e-2039156f48d3</version_id>
+  <version_modified>20170731T151913Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>
@@ -303,7 +303,7 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EC4B2988</checksum>
+      <checksum>A6433770</checksum>
     </file>
   </files>
 </measure>

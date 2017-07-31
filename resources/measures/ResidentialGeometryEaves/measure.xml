@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_eaves</name>
   <uid>13c930a5-6afa-4f3a-869a-48514ec7a224</uid>
-  <version_id>cf3320d1-8d2b-4c6c-85be-428532e451f6</version_id>
-  <version_modified>20170729T172839Z</version_modified>
+  <version_id>7aad4c37-4c97-4ca1-9852-c77e74a16930</version_id>
+  <version_modified>20170731T151912Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialEaves</class_name>
   <display_name>Set Residential Eaves</display_name>
@@ -113,109 +113,109 @@
       <filename>SFD_2000sqft_2story_SL_FR_Denver_AspectRatioHalf.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B1E4057E</checksum>
+      <checksum>1A021123</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_FR_Denver_AspectRatioTwo.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DE8AC185</checksum>
+      <checksum>9F69E732</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_GableRoof_AspectRatioHalf.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A4DE1611</checksum>
+      <checksum>37469B67</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_GableRoof_AspectRatioTwo.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D88BEF18</checksum>
+      <checksum>8A8449E5</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_HipRoof_AspectRatioHalf.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B779BC09</checksum>
+      <checksum>9A144593</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_HipRoof_AspectRatioTwo.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>ACFF5B77</checksum>
+      <checksum>149E80C6</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver_HipRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>24E7265A</checksum>
+      <checksum>155268AA</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F23E50C7</checksum>
+      <checksum>A8D04DB5</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRG_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BB009B5A</checksum>
+      <checksum>FF45B565</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRGLeft_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>76BCEBC7</checksum>
+      <checksum>FF4A3BD3</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Inset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>62998ED3</checksum>
+      <checksum>78339EF5</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_InsetLeft.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6E0D1249</checksum>
+      <checksum>F1A4ACCD</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_1story_SL_GRG_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DFFE6FDB</checksum>
+      <checksum>B7EACE33</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_1story_SL_GRGLeft_FlatRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8EC7A9C0</checksum>
+      <checksum>EDF6999D</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A65EC13B</checksum>
+      <checksum>3CF3D175</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRGTucked_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4BA264FE</checksum>
+      <checksum>FC6424F6</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>388F7188</checksum>
+      <checksum>9538B6D0</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EC4B2988</checksum>
+      <checksum>A6433770</checksum>
     </file>
   </files>
 </measure>

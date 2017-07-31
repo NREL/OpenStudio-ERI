@@ -300,7 +300,7 @@ class ProcessVariableSpeedCentralAirConditioner < OpenStudio::Measure::ModelMeas
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # Remove existing equipment
-        htg_coil = HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, control_zone)
+        htg_coil, _perf = HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, control_zone)
 
         # _processCurvesDXCooling
         

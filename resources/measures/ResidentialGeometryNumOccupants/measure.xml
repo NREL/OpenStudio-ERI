@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>add_residential_occupants</name>
   <uid>f2397929-23f4-46a9-8e46-23aad913d09f</uid>
-  <version_id>aba649f4-7578-4b7b-8118-be2079260065</version_id>
-  <version_modified>20170729T172839Z</version_modified>
+  <version_id>0087564a-bde0-4278-844e-ca523448b55d</version_id>
+  <version_modified>20170731T151913Z</version_modified>
   <xml_checksum>57232789</xml_checksum>
   <class_name>AddResidentialOccupants</class_name>
   <display_name>Set Residential Number of Occupants</display_name>
@@ -148,25 +148,25 @@
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>82AC779C</checksum>
+      <checksum>4A4369FC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AD603F33</checksum>
+      <checksum>EEB150BD</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0A325901</checksum>
+      <checksum>DD3A4A07</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>644BA600</checksum>
+      <checksum>DD29FB28</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_fireplace</name>
   <uid>0565d3b2-593b-480b-a742-a6ec7058d3c4</uid>
-  <version_id>abd2715d-0d1a-467d-9df0-3b801d0db270</version_id>
-  <version_modified>20170729T172847Z</version_modified>
+  <version_id>0267cbcd-306d-4835-8f98-68ae36f8a523</version_id>
+  <version_modified>20170731T151921Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasFireplace</class_name>
   <display_name>Set Residential Gas Fireplace</display_name>
@@ -148,25 +148,25 @@
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>82AC779C</checksum>
+      <checksum>4A4369FC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AD603F33</checksum>
+      <checksum>EEB150BD</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0A325901</checksum>
+      <checksum>DD3A4A07</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>644BA600</checksum>
+      <checksum>DD29FB28</checksum>
     </file>
   </files>
 </measure>

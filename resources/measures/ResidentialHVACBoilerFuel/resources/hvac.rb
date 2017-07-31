@@ -743,7 +743,7 @@ class HVAC
       return nil
     end
     
-    def self.has_air_loop(model, runner, thermal_zone, remove=false)
+    def self.has_air_loop(model, runner, thermal_zone, remove=false, clone_perf=false)
       model.getAirLoopHVACs.each do |air_loop|
         air_loop.thermalZones.each do |thermalZone|
           next unless thermal_zone.handle.to_s == thermalZone.handle.to_s
@@ -753,7 +753,14 @@ class HVAC
             next if air_loop_unitary.heatingCoil.is_initialized or air_loop_unitary.coolingCoil.is_initialized
             if remove
               runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
+              cloned_perf = nil
+              if clone_perf and air_loop_unitary.designSpecificationMultispeedObject.is_initialized
+                perf = air_loop_unitary.designSpecificationMultispeedObject.get
+                cloned_perf = perf.clone.to_UnitarySystemPerformanceMultispeed.get
+                cloned_perf.setName(perf.name.to_s)
+              end
               air_loop.remove
+              return cloned_perf
             end
             return true
           end
@@ -776,8 +783,9 @@ class HVAC
       return zone_hvac_list
     end
     
-    def self.remove_existing_hvac_equipment(model, runner, new_equip, thermal_zone)
+    def self.remove_existing_hvac_equipment(model, runner, new_equip, thermal_zone, clone_perf=false)
       counterpart_equip = nil
+      perf = nil
       case new_equip
       when Constants.ObjectNameCentralAirConditioner
         removed_ashp = self.has_air_source_heat_pump(model, runner, thermal_zone, true)
@@ -819,7 +827,10 @@ class HVAC
         removed_elec_baseboard = self.has_electric_baseboard(model, runner, thermal_zone, true)
         removed_gshp_vert_bore = self.has_gshp_vert_bore(model, runner, thermal_zone, true)
         if counterpart_equip or removed_furnace or removed_ashp or removed_gshp_vert_bore
-          self.has_air_loop(model, runner, thermal_zone, true)
+          if removed_ashp or removed_gshp_vert_bore
+            clone_perf = false
+          end
+          perf = self.has_air_loop(model, runner, thermal_zone, true, clone_perf)
         end
       when Constants.ObjectNameBoiler
         removed_boiler = self.has_boiler(model, runner, thermal_zone, true)
@@ -878,9 +889,7 @@ class HVAC
           self.has_air_loop(model, runner, thermal_zone, true)
         end
       end
-      unless counterpart_equip.nil?
-        return counterpart_equip
-      end
+      return counterpart_equip, perf
     end   
     
     def self.remove_boiler_and_gshp_loops(model, runner)

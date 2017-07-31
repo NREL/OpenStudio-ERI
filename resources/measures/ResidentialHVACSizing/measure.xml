@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_hvac_sizing</name>
   <uid>6cd70740-6ca3-4575-8b1e-663976e254d0</uid>
-  <version_id>4ad3d8b0-439e-4f96-9403-1e07d7ec4b55</version_id>
-  <version_modified>20170729T172847Z</version_modified>
+  <version_id>eb4be847-ccd9-4882-90d6-e2df1cc6988e</version_id>
+  <version_modified>20170731T151921Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessHVACSizing</class_name>
   <display_name>Set Residential HVAC Sizing</display_name>
@@ -125,12 +125,6 @@
       <checksum>20190C86</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C27A8C79</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -160,334 +154,340 @@
       <checksum>63E90D88</checksum>
     </file>
     <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F5B2C721</checksum>
+    </file>
+    <file>
       <filename>SFD_HVACSizing_Load_2story_CS_GRG_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C58C9771</checksum>
+      <checksum>41BC106F</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_FB_GRG_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F62BD2CD</checksum>
+      <checksum>70F9CD65</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_S_GRG_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>664D4F6C</checksum>
+      <checksum>3B561610</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_UB_GRG_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6374F930</checksum>
+      <checksum>64FDEFD7</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_CS_GRG_FA_ASHP_DuctsInCS.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1862DD4C</checksum>
+      <checksum>1B871197</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_CS_GRG_FA_ASHP_DuctsInFA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>56089438</checksum>
+      <checksum>DC9ABDF0</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_CS_GRG_FA_ASHP_DuctsInGRG.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>21DA2BC4</checksum>
+      <checksum>1BD8FCC3</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_CS_GRG_FA_ASHP_DuctsInLiv.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>406394B3</checksum>
+      <checksum>107F622B</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_FB_GRG_FA_ASHP_DuctsInFB.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0A8FA759</checksum>
+      <checksum>5E073AE2</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_2story_UB_GRG_FA_ASHP_DuctsInUB.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>669FAC49</checksum>
+      <checksum>00A8496B</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_BB_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9EB0676E</checksum>
+      <checksum>4F360AD2</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_AC1_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F4D9B208</checksum>
+      <checksum>24247413</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_RAC_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AF8F0CA5</checksum>
+      <checksum>F536313E</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_AC1_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5C66565C</checksum>
+      <checksum>A4C7FE33</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_BB_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>863847DA</checksum>
+      <checksum>272D7349</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_RAC_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9A1FE761</checksum>
+      <checksum>BEA2CAE8</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_Dehumidifier_Auto_Atlanta.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C8262ABC</checksum>
+      <checksum>E107861A</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_Dehumidifier_Fixed_Atlanta.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0084B343</checksum>
+      <checksum>6A4E2308</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C1F5B4D4</checksum>
+      <checksum>67ABD202</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>96B4F0CC</checksum>
+      <checksum>DEE2B6FD</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP1_Autosize_MinTemp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AE14E32D</checksum>
+      <checksum>5F58B677</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP1_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7EAD529D</checksum>
+      <checksum>ABB7504B</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_MSHP_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8B96572C</checksum>
+      <checksum>3D3C24A0</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_MSHP_BB_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CB438646</checksum>
+      <checksum>ABC857F8</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_MSHP_AutosizeForMaxLoad.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2254D5ED</checksum>
+      <checksum>8696E59B</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_MSHP_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>EFB6C5CD</checksum>
+      <checksum>0122E625</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_MSHP_BB_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>85167CE0</checksum>
+      <checksum>6F5CAB81</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ElecBoiler_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1E53C28A</checksum>
+      <checksum>BA8438F2</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ElecBoiler_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>51C045CC</checksum>
+      <checksum>52E9CE18</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GSHP_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2E3E82D5</checksum>
+      <checksum>E510F40C</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GSHP_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>73696FA9</checksum>
+      <checksum>CE6F6E2B</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_PB_UA_Vented.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D32582E8</checksum>
+      <checksum>9E98CBBC</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_PB_UA_Vented_ASHP_DuctsInPB.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>503FFEF4</checksum>
+      <checksum>5396DA58</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_PB_UA_Vented_ASHP_DuctsInUA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>99453AFF</checksum>
+      <checksum>B136B488</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_ERV.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>37DC4D75</checksum>
+      <checksum>150333EF</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_HRV.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>DA9C011C</checksum>
+      <checksum>39BE60BA</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_NoMechVent.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B7826E3A</checksum>
+      <checksum>E16CB185</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_NoOverhangs_NoIntShading_SupplyMechVent.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>88957720</checksum>
+      <checksum>9EAE23F3</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Vented.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>71A7D2BB</checksum>
+      <checksum>37EC8DC9</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Vented_Atlanta_ExtFinDark.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8B8F118D</checksum>
+      <checksum>5EC59A4C</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Vented_LosAngeles.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C02CB528</checksum>
+      <checksum>9A69821F</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Load_1story_S_UA_Unvented_InsRoof.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6DF8FEF6</checksum>
+      <checksum>A321AB81</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_MissingBeds.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>69AA3A0F</checksum>
+      <checksum>51B3A348</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHPV_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A701336D</checksum>
+      <checksum>7A5A7405</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_EF_AC2_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>46DD7D22</checksum>
+      <checksum>372EA838</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP2_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CF0BF5A8</checksum>
+      <checksum>E4FE6FF5</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHPV_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6B388FFA</checksum>
+      <checksum>4BA5687D</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_EF_AC2_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F8CB37B0</checksum>
+      <checksum>4BA534F0</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_ACV_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C35C2599</checksum>
+      <checksum>671693D6</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP2_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>6283EFAC</checksum>
+      <checksum>EC7DBF79</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>82BFF73C</checksum>
+      <checksum>5D72AA62</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>37D1C614</checksum>
+      <checksum>10EB9C4E</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP1_Autosize.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>77F6074A</checksum>
+      <checksum>77B1C0A4</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_ASHP1_AutosizeForMaxLoad_MinTemp.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F2C9DFB4</checksum>
+      <checksum>0529FC08</checksum>
     </file>
     <file>
       <filename>SFD_HVACSizing_Equip_GF_ACV_Fixed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>FA6AD21D</checksum>
+      <checksum>B3BD290C</checksum>
     </file>
   </files>
 </measure>

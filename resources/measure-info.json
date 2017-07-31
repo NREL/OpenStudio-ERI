@@ -85,7 +85,14 @@
     "group_name": "3. Envelope Constructions",
     "group_steps": [
       {
-        "name": "1. Ceilings/Roofs - Unfinished Attic (or Finished Roof)",
+        "name": "1. Uninsulated Surfaces",
+        "dependencies": "",
+        "measures": [
+          "ResidentialConstructionsUninsulatedSurfaces"
+        ]
+      },
+      {
+        "name": "2. Ceilings/Roofs - Unfinished Attic (or Finished Roof)",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsCeilingsRoofsUnfinishedAttic",
@@ -93,35 +100,35 @@
         ]
       },
       {
-        "name": "2. Ceilings/Roofs - Roof Sheathing",
+        "name": "3. Ceilings/Roofs - Roof Sheathing",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsCeilingsRoofsSheathing"
         ]
       },
       {
-        "name": "3. Ceilings/Roofs - Roofing Material",
+        "name": "4. Ceilings/Roofs - Roofing Material",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
         ]
       },
       {
-        "name": "4. Ceilings/Roofs - Radiant Barrier",
+        "name": "5. Ceilings/Roofs - Radiant Barrier",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
         ]
       },
       {
-        "name": "5. Ceilings/Roofs - Ceiling Thermal Mass",
+        "name": "6. Ceilings/Roofs - Ceiling Thermal Mass",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsCeilingsRoofsThermalMass"
         ]
       },
       {
-        "name": "6. Foundations/Floors - Slab (or Finished Basement, Unfinished Basement, Crawlspace, Pier & Beam)",
+        "name": "7. Foundations/Floors - Slab (or Finished Basement, Unfinished Basement, Crawlspace, Pier & Beam)",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsFoundationsFloorsSlab",
@@ -132,35 +139,35 @@
         ]
       },
       {
-        "name": "7. Foundations/Floors - Interzonal Floor Construction",
+        "name": "8. Foundations/Floors - Interzonal Floor Construction",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
         ]
       },
       {
-        "name": "8. Foundations/Floors - Floor Covering",
+        "name": "9. Foundations/Floors - Floor Covering",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsFoundationsFloorsCovering"
         ]
       },
       {
-        "name": "9. Foundations/Floors - Floor Sheathing",
+        "name": "10. Foundations/Floors - Floor Sheathing",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsFoundationsFloorsSheathing"
         ]
       },
       {
-        "name": "10. Foundations/Floors - Floor Thermal Mass",
+        "name": "11. Foundations/Floors - Floor Thermal Mass",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsFoundationsFloorsThermalMass"
         ]
       },
       {
-        "name": "11. Walls - Wood Stud (or Double Stud, CMU, etc.)",
+        "name": "12. Walls - Wood Stud (or Double Stud, CMU, etc.)",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsWallsExteriorWoodStud",
@@ -173,45 +180,38 @@
         ]
       },
       {
-        "name": "12. Walls - Interzonal Construction",
+        "name": "13. Walls - Interzonal Construction",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsWallsInterzonal"
         ]
       },
       {
-        "name": "13. Walls - Wall Sheathing",
+        "name": "14. Walls - Wall Sheathing",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsWallsSheathing"
         ]
       },
       {
-        "name": "14. Walls - Exterior Finish",
+        "name": "15. Walls - Exterior Finish",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsWallsExteriorFinish"
         ]
       },
       {
-        "name": "15. Walls - Exterior Thermal Mass",
+        "name": "16. Walls - Exterior Thermal Mass",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsWallsExteriorThermalMass"
         ]
       },
       {
-        "name": "16. Walls - Partition Thermal Mass",
+        "name": "17. Walls - Partition Thermal Mass",
         "dependencies": "",
         "measures": [
           "ResidentialConstructionsWallsPartitionThermalMass"
-        ]
-      },
-      {
-        "name": "17. Uninsulated Surfaces",
-        "dependencies": "",
-        "measures": [
-          "ResidentialConstructionsUninsulatedSurfaces"
         ]
       },
       {
@@ -245,10 +245,10 @@
         "dependencies": "Beds/Baths",
         "measures": [
           "ResidentialHotWaterHeaterTankFuel",
-          "ResidentialHotWaterHeaterHeatPump",
           "ResidentialHotWaterHeaterTankElectric",
           "ResidentialHotWaterHeaterTanklessElectric",
-          "ResidentialHotWaterHeaterTanklessFuel"
+          "ResidentialHotWaterHeaterTanklessFuel",
+          "ResidentialHotWaterHeaterHeatPump"
         ]
       },
       {
@@ -266,12 +266,12 @@
         ]
       },
       {
-        "name": "4. Solar Water Heating",
-        "dependencies": "Water Heater",
+        "name": "4. Solar Hot Water",
+        "dependencies": "Water Heater, Location",
         "measures": [
           "ResidentialHotWaterSolar"
         ]
-      }      
+      }
     ]
   },
   {
@@ -284,12 +284,11 @@
           "ResidentialHVACAirSourceHeatPumpSingleSpeed",     
           "ResidentialHVACAirSourceHeatPumpTwoSpeed",
           "ResidentialHVACAirSourceHeatPumpVariableSpeed",
-          "ResidentialHVACCentralAirConditionerSingleSpeed", 
           "ResidentialHVACBoilerElectric",
           "ResidentialHVACBoilerFuel",
+          "ResidentialHVACCentralAirConditionerSingleSpeed", 
           "ResidentialHVACCentralAirConditionerTwoSpeed",
           "ResidentialHVACCentralAirConditionerVariableSpeed",
-          "ResidentialHVACDehumidifier",
           "ResidentialHVACElectricBaseboard",
           "ResidentialHVACFurnaceElectric",
           "ResidentialHVACFurnaceFuel",
@@ -317,6 +316,13 @@
         "dependencies": "Cooling Setpoint, Beds/Baths",
         "measures": [
           "ResidentialHVACCeilingFan"
+        ]
+      },
+      {
+        "name": "5. Dehumidifier",
+        "dependencies": "HVAC Equipment",
+        "measures": [
+          "ResidentialHVACDehumidifier"
         ]
       }
     ]

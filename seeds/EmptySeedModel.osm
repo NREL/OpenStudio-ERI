@@ -1,7 +1,7 @@
 
 OS:Version,
   {fc003c06-618b-4051-9b37-6b6f71b12672}, !- Handle
-  1.12.2;                                 !- Version Identifier
+  2.2.0;                                  !- Version Identifier
 
 OS:Building,
   {bf305633-c5a1-4881-9edf-ca5e1a8e1274}, !- Handle
@@ -26,7 +26,7 @@ OS:SimulationControl,
 
 OS:Timestep,
   {4ebc9f1e-4707-402e-9844-67eb1ffbd522}, !- Handle
-  6;                                      !- Number of Timesteps per Hour
+  1;                                      !- Number of Timesteps per Hour
 
 OS:RunPeriod,
   {28df894d-6af9-4fb8-8f56-df1753344aa3}, !- Handle

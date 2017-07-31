@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>3c837179-6b04-47bb-8d29-66bea3801273</version_id>
-  <version_modified>20170729T172839Z</version_modified>
+  <version_id>5861b3b8-1a1c-49fe-a74a-8dd40735a0f0</version_id>
+  <version_modified>20170731T151912Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -124,43 +124,43 @@
       <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>63A55B10</checksum>
+      <checksum>667B40B1</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B95B25AA</checksum>
+      <checksum>6D82A165</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E1C9555A</checksum>
+      <checksum>FD26C6EC</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1B27687E</checksum>
+      <checksum>CFF1C6E8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Eaves.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>14F364F0</checksum>
+      <checksum>73D62733</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Overhangs.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7437FFAF</checksum>
+      <checksum>D42C7BEE</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C81BC81F</checksum>
+      <checksum>15DB60CF</checksum>
     </file>
   </files>
 </measure>

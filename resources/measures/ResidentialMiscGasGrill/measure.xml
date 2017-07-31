@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_gas_grill</name>
   <uid>5b539cd4-fef6-4600-9254-166877fabddd</uid>
-  <version_id>e0e3f6e9-072f-4c83-af60-14422c44ca91</version_id>
-  <version_modified>20170729T172847Z</version_modified>
+  <version_id>61d44183-f789-4dae-9adf-1cf5bf8b5fdc</version_id>
+  <version_modified>20170731T151922Z</version_modified>
   <xml_checksum>25A40D75</xml_checksum>
   <class_name>ResidentialGasGrill</class_name>
   <display_name>Set Residential Gas Grill</display_name>
@@ -133,25 +133,25 @@
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>82AC779C</checksum>
+      <checksum>4A4369FC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_3Beds_2Baths.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>AD603F33</checksum>
+      <checksum>EEB150BD</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>0A325901</checksum>
+      <checksum>DD3A4A07</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_3Beds_2Baths_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>644BA600</checksum>
+      <checksum>DD29FB28</checksum>
     </file>
   </files>
 </measure>

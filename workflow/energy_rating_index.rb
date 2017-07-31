@@ -6,9 +6,9 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require 'openstudio'
-require "#{File.dirname(__FILE__)}/../../resources/constants" # FIXME
-require "#{File.dirname(__FILE__)}/../../resources/xmlhelper" # FIXME
-require "#{File.dirname(__FILE__)}/../../resources/util" # FIXME
+require "#{File.dirname(__FILE__)}/../resources/constants" # FIXME
+require "#{File.dirname(__FILE__)}/../resources/xmlhelper" # FIXME
+require "#{File.dirname(__FILE__)}/../resources/util" # FIXME
 
 # TODO: Rake task to package ERI
 # TODO: Add error-checking
@@ -45,12 +45,12 @@ def create_osw(design, basedir, resultsdir, options)
   osw_path = File.join(designdir, "run.osw")
   osw = OpenStudio::WorkflowJSON.new
   osw.setOswPath(osw_path)
-  osw.addMeasurePath("../../../measures") # FIXME
-  osw.setSeedFile("../../../seeds/EmptySeedModel.osm") # FIXME
+  osw.addMeasurePath("../../measures") # FIXME
+  osw.setSeedFile("../../seeds/EmptySeedModel.osm") # FIXME
   
   # Add measures (w/args) to OSW
-  measures_dir = File.absolute_path(File.join(basedir, "..", "..", "measures")) # FIXME
-  schemas_dir = File.absolute_path(File.join(basedir, "..", "..", "measures", "301EnergyRatingIndexRuleset", "tests", "schemas"))
+  measures_dir = File.absolute_path(File.join(basedir, "..", "resources", "measures")) # FIXME
+  schemas_dir = File.absolute_path(File.join(basedir, "..", "measures", "301EnergyRatingIndexRuleset", "tests", "schemas"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
   measures = {}
   measures['301EnergyRatingIndexRuleset'] = {}
@@ -343,7 +343,11 @@ def get_eec_heat(hpxml_doc)
       sys = heat_pump_system
     end
     ['HSPF','COP','AFUE','Percent'].each do |unit|
-      value = XMLHelper.get_value(sys, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
+      if sys == heating_system
+        value = XMLHelper.get_value(sys, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
+      elsif sys == heat_pump_system
+        value = XMLHelper.get_value(sys, "AnnualHeatEfficiency[Units='#{unit}']/Value")
+      end
       next if value.nil?
       if not eec_heat.nil?
         fail "ERROR: Multiple heating system efficiency values found."
@@ -375,7 +379,11 @@ def get_eec_cool(hpxml_doc)
       sys = heat_pump_system
     end
     ['SEER','COP','EER'].each do |unit|
-      value = XMLHelper.get_value(sys, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
+      if sys == cooling_system  
+        value = XMLHelper.get_value(sys, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
+      elsif sys == heat_pump_system
+        value = XMLHelper.get_value(sys, "AnnualCoolEfficiency[Units='#{unit}']/Value")
+      end
       next if value.nil?
       if not eec_cool.nil?
         fail "ERROR: Multiple cooling system efficiency values found."
@@ -694,6 +702,8 @@ recreate_path(resultsdir)
 
 # Run simulations
 sim_outputs = {}
+puts "HPXML: #{options[:hpxml]}"
+puts "EPW: #{options[:epw]}"
 Parallel.map(designs, in_threads: designs.size) do |design|
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   

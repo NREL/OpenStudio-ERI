@@ -1780,6 +1780,7 @@ class OSMeasures
               "rated_shr"=>0.732,
               "fan_power"=>0.5,
               "heat_pump_capacity"=>cool_capacity_tons,
+              "supplemental_efficiency"=>1,
               "supplemental_capacity"=>backup_heat_capacity_kbtuh
              }
       update_args_hash(measures, measure_subdir, args)

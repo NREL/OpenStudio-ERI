@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_freezer</name>
   <uid>8cf2bd55-56a1-416f-b2a1-ff6a8f617e49</uid>
-  <version_id>74f15bcd-d2d3-4f16-88c1-3c86d01d27e9</version_id>
-  <version_modified>20170729T172847Z</version_modified>
+  <version_id>4fe5d7cb-db42-456d-bac1-7243a317e951</version_id>
+  <version_modified>20170731T151921Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialFreezer</class_name>
   <display_name>Set Residential Freezer</display_name>
@@ -129,25 +129,25 @@
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>82AC779C</checksum>
+      <checksum>4A4369FC</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_UB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>25EF17AE</checksum>
+      <checksum>4956A2E5</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>84CBAEEA</checksum>
+      <checksum>D257FE0C</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A65EC13B</checksum>
+      <checksum>3CF3D175</checksum>
     </file>
   </files>
 </measure>

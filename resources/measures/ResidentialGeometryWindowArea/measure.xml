@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>2ee97d92-cc01-4518-a1dd-878051c59bd2</version_id>
-  <version_modified>20170729T172840Z</version_modified>
+  <version_id>46f46e43-d3aa-41c8-9ae5-cb165f2a1ad2</version_id>
+  <version_modified>20170731T151913Z</version_modified>
   <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -168,37 +168,37 @@
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>82AC779C</checksum>
+      <checksum>4A4369FC</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9A0B444E</checksum>
+      <checksum>11343AF5</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Offset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>8DE96FA2</checksum>
+      <checksum>B15FEE2C</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Inset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>62998ED3</checksum>
+      <checksum>78339EF5</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>84CBAEEA</checksum>
+      <checksum>D257FE0C</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A65EC13B</checksum>
+      <checksum>3CF3D175</checksum>
     </file>
   </files>
 </measure>

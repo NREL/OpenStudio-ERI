@@ -77,13 +77,12 @@ task :copy_beopt_files do
     end
   end
   
-  # Copy seed OSM
-  seed_osm = File.join("seeds", "EmptySeedModel.osm")
-  src_seed = File.join(beopt_dir, seed_osm)
-  dest_seed = File.join(File.dirname(__FILE__), seed_osm)
-  if not FileUtils.compare_file(src_seed, dest_seed)
-    FileUtils.cp(src_seed, dest_seed)
-    puts puts "Copied #{File.basename(seed_osm)} to #{File.dirname(seed_osm)}."
+  # Copy measure-info.json
+  src_json = File.join(beopt_dir, "workflows", "measure-info.json")
+  dest_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
+  if not FileUtils.compare_file(src_json, dest_json)
+    FileUtils.cp(src_json, dest_json)
+    puts puts "Copied #{File.basename(src_json)} to #{File.dirname(dest_json)}."
   end
   
 end
@@ -100,6 +99,24 @@ task :update_measures do
     
     # Get recursive list of resources required based on looking for 'require FOO' in rb files
     resources = get_requires_from_file(measurerb)
+    
+    # Add any additional resources specified in resource_to_measure_mapping.csv
+    subdir_resources = {} # Handle resources in subdirs
+    File.open(File.expand_path("../resources/resource_to_measure_mapping.csv", __FILE__)) do |file|
+      file.each do |line|
+        line = line.chomp.split(',').reject { |l| l.empty? }
+        measure = line.delete_at(0)
+        next if measure != m
+        line.each do |resource|
+          fullresource = File.expand_path("../resources/#{resource}", __FILE__)
+          next if resources.include?(fullresource)
+          resources << fullresource
+          if resource != File.basename(resource)
+            subdir_resources[File.basename(resource)] = resource
+          end
+        end
+      end
+    end
     
     # Add/update resource files as needed
     resources.each do |resource|
@@ -126,6 +143,9 @@ task :update_measures do
     if File.directory?(File.expand_path("../measures/#{m}/resources", __FILE__))
       Dir.foreach(File.expand_path("../measures/#{m}/resources", __FILE__)) do |item|
         next if item == '.' or item == '..'
+        if subdir_resources.include?(item)
+          item = subdir_resources[item]
+        end
         resource = File.expand_path("../resources/#{item}", __FILE__)
         next if resources.include?(resource)
         item_path = File.expand_path("../measures/#{m}/resources/#{item}", __FILE__)

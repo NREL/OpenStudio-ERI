@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>907362bf-c84d-41f9-add4-40887ba96e90</version_id>
-  <version_modified>20170729T172839Z</version_modified>
+  <version_id>0abc9b9f-1043-462e-8cc1-d721776f3549</version_id>
+  <version_modified>20170731T151912Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -279,7 +279,7 @@
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>84CBAEEA</checksum>
+      <checksum>D257FE0C</checksum>
     </file>
   </files>
 </measure>

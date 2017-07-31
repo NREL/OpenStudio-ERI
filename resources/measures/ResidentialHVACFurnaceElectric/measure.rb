@@ -108,7 +108,7 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
       control_slave_zones_hash.each do |control_zone, slave_zones|
       
         # Remove existing equipment
-        clg_coil = HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameFurnace, control_zone)
+        clg_coil, perf = HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameFurnace, control_zone, true)
         
         # _processSystemHeatingCoil
         
@@ -143,6 +143,9 @@ class ProcessFurnaceElectric < OpenStudio::Measure::ModelMeasure
           air_loop_unitary.setCoolingCoil(clg_coil)
         else
           air_loop_unitary.setSupplyAirFlowRateDuringCoolingOperation(0.0000001) # this is when there is no cooling present
+        end
+        if not perf.nil?
+          air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
         end
         air_loop_unitary.setSupplyFan(fan)
         air_loop_unitary.setFanPlacement("BlowThrough")

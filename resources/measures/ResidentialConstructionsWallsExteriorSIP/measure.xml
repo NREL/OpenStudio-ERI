@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>c06b779f-314a-4d0b-b663-e4c3c2aacbc6</version_id>
-  <version_modified>20170729T172838Z</version_modified>
+  <version_id>ee797eef-2d71-49e2-8115-beafa77157dd</version_id>
+  <version_modified>20170731T151912Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -141,13 +141,13 @@
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>7DC7F583</checksum>
+      <checksum>7855CEC5</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BB6E6857</checksum>
+      <checksum>61D570ED</checksum>
     </file>
   </files>
 </measure>
