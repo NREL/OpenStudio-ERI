@@ -1,0 +1,19 @@
+{
+   "created_at" : "20170801T162321Z",
+   "measure_paths" : [ "../../measures" ],
+   "seed_file" : "../../seeds/EmptySeedModel.osm",
+   "steps" : [
+      {
+         "arguments" : {
+            "calc_type" : "HERS Rated Home",
+            "hpxml_file_path" : "C:/Users/shorowit/Documents/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml",
+            "hpxml_output_file_path" : "C:/Users/shorowit/Documents/GitHub/OpenStudio-ERI/workflow/results/HERSRatedHome.xml",
+            "measures_dir" : "C:/Users/shorowit/Documents/GitHub/OpenStudio-ERI/resources/measures",
+            "weather_file_path" : "C:/Users/shorowit/Documents/GitHub/OpenStudio-ERI/workflow/sample_files/denver.epw"
+         },
+         "measure_dir_name" : "301EnergyRatingIndexRuleset",
+         "name" : "301EnergyRatingIndexRuleset"
+      }
+   ],
+   "updated_at" : "20170801T162321Z"
+}

@@ -1,13 +1,13 @@
 OpenStudio-ERI
 ===============
 
-**Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI)
-
-**Code Coverage:** [![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-ERI/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-ERI?branch=master)
-
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
 
 The ERI is defined by the ANSI/RESNET 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using the HERS Index".
+
+**Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI)
+
+**Code Coverage:** [![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-ERI/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-ERI?branch=master)
 
 ## Setup
 
@@ -15,7 +15,7 @@ Download the latest version of OpenStudio from https://www.openstudio.net/develo
 
 ## Running
 
-1. Navigate to the `workflow` directory.
+1. Navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory.
 2. Run the ERI calculation on a provided sample HPXML file:  
 ```c:/openstudio-2.2.0/bin/openstudio.exe execute_ruby_script energy_rating_index.rb -x sample_files/valid.xml -e sample_files/denver.epw```  
 Note that the Reference Home and Rated Home workflows/simulations will be executed in parallel on the local machine.
@@ -25,8 +25,11 @@ Note that the Reference Home and Rated Home workflows/simulations will be execut
 ## ERI Outputs
 
 Upon completion of the ERI calculation, multiple outputs are currently available:
-* Reference & Rated Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
 * results.csv and worksheet.csv files (that mirror the [HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
+* Reference & Rated Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
+* EnergyPlus input/output files
+
+See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results) directory for examples of these outputs.
 
 ## Disclaimers
 

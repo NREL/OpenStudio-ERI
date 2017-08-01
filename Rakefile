@@ -176,6 +176,20 @@ task :update_measures do
   
 end
 
+desc 'generate sample outputs'
+task :generate_sample_outputs do
+  Dir.chdir('workflow')
+  os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
+  os_cli = os_clis[-1]
+  command = "\"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x sample_files/valid.xml -e sample_files/denver.epw"
+  system(command)
+  
+  dirs = ["HERSRatedHome", "HERSReferenceHome", "results"]
+  dirs.each do |dir|
+    FileUtils.copy_entry dir, "sample_results/#{dir}"
+  end
+end
+
 def get_requires_from_file(filerb)
   requires = []
   if not File.exists?(filerb)
