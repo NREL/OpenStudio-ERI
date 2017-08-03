@@ -11,7 +11,7 @@ class OSWtoHPXMLExportTest < MiniTest::Test
 
   def test_valid_xml
     args_hash = {}
-    args_hash["schemas_dir"] = "./tests/schemas"
+    args_hash["schemas_dir"] = "../../hpxml_schemas"
     args_hash["measures_dir"] = "../../resources/measures"
     Dir[File.join(File.dirname(__FILE__), "*.osw")].each do |osw_file_path| # one osw file in tests directory at a time
     # Parallel.each(Dir[File.join(File.dirname(__FILE__), "*.osw")], in_threads: 1) do |osw_file_path| # parallelized osw files in tests directory (doesn't work on ci machine?)

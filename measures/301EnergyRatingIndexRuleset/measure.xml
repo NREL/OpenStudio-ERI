@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>b1d70f9f-9c1d-49a4-a842-c051059f1fb0</version_id>
-  <version_modified>20170803T171103Z</version_modified>
+  <version_id>18b90c29-5b67-4018-acd8-7f0b8231a004</version_id>
+  <version_modified>20170803T172824Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -189,28 +189,10 @@
       <checksum>FB4B670A</checksum>
     </file>
     <file>
-      <filename>energy_rating_index_301_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>5DB745DD</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F5B2C721</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-none.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>88F1F9A2</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-room-ac-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A8888B03</checksum>
     </file>
     <file>
       <filename>301validator.rb</filename>
@@ -219,76 +201,22 @@
       <checksum>BA84B306</checksum>
     </file>
     <file>
-      <filename>valid-foundation-unconditioned-basement.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>05BB25F2</checksum>
-    </file>
-    <file>
-      <filename>valid-foundation-vented-crawlspace.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8716B84A</checksum>
-    </file>
-    <file>
-      <filename>valid-foundation-slab.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3217DA01</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-air-to-air-heat-pump.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4518DF42</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-boiler-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1F1608FF</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-central-ac-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>459D26AB</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-elec-resistance-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9A536D3F</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-furnace-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4265202</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-ground-to-air-heat-pump.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AE20A763</checksum>
-    </file>
-    <file>
-      <filename>valid-hvac-mini-split-heat-pump.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E5CD59BA</checksum>
-    </file>
-    <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>2A40F2FD</checksum>
     </file>
     <file>
-      <filename>valid.xml</filename>
+      <filename>energy_rating_index_301_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CEEDFEFD</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>C168DF35</checksum>
+      <checksum>AECFE96F</checksum>
     </file>
   </files>
 </measure>

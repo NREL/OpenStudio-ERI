@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_mto_hpxml_export</name>
   <uid>02b3d8c6-2985-42a1-a82b-33890e5f282e</uid>
-  <version_id>b9aa6280-9284-4745-8cf8-fdd16592e0d6</version_id>
-  <version_modified>20170803T171103Z</version_modified>
+  <version_id>41bdb877-49bc-4dcb-8c60-7260011a5ef6</version_id>
+  <version_modified>20170803T172332Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSMtoHPXMLExport</class_name>
   <display_name>OSM to HPXML Export</display_name>
@@ -59,12 +59,6 @@
       <checksum>99FB7A57</checksum>
     </file>
     <file>
-      <filename>osm_to_hpxml_export_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EA91EAEA</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -110,6 +104,12 @@
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
       <checksum>6BC15D6A</checksum>
+    </file>
+    <file>
+      <filename>osm_to_hpxml_export_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A311BE57</checksum>
     </file>
   </files>
 </measure>
