@@ -56,89 +56,123 @@
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <AtticAndRoof>
-          <Roofs>
-            <Roof>
-              <SystemIdentifier id='roof-1'/>
-              <RoofColor>medium</RoofColor>
-              <RoofArea>4200</RoofArea>
-              <RadiantBarrier>true</RadiantBarrier>
-            </Roof>
-            <Roof>
-              <SystemIdentifier id='roof-2'/>
-              <RoofColor>reflective</RoofColor>
-              <RoofArea>269</RoofArea>
-              <RadiantBarrier>true</RadiantBarrier>
-            </Roof>
-          </Roofs>
           <Attics>
             <Attic>
               <SystemIdentifier id='Attic_ID1'/>
-              <AttachedToRoof idref='roof-1'/>
               <AtticType>unvented attic</AtticType>
-              <AtticFloorInsulation>
-                <SystemIdentifier id='Attic_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>13</NominalRValue>
-                  <Thickness>3.5</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>25</NominalRValue>
-                  <Thickness>7.0</Thickness>
-                </Layer>
-              </AtticFloorInsulation>
-              <AtticRoofInsulation>
-                <SystemIdentifier id='Attic_Ins_ID2'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
-              </AtticRoofInsulation>
+              <Roofs>
+                <Roof>
+                  <SystemIdentifier id='attic-roof-1'/>
+                  <Area>4200</Area>
+                  <RoofColor>medium</RoofColor>
+                  <Rafters>
+                    <FramingFactor>0.11</FramingFactor>
+                    <Material>wood</Material>
+                  </Rafters>
+                  <Pitch>6</Pitch>
+                  <RadiantBarrier>true</RadiantBarrier>
+                  <Insulation>
+                    <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
+                    <InsulationGrade>1</InsulationGrade>
+                    <Layer>
+                      <InstallationType>cavity</InstallationType>
+                      <NominalRValue>0</NominalRValue>
+                      <Thickness>0</Thickness>
+                    </Layer>
+                    <Layer>
+                      <InstallationType>continuous</InstallationType>
+                      <NominalRValue>0</NominalRValue>
+                      <Thickness>0</Thickness>
+                    </Layer>
+                  </Insulation>
+                </Roof>
+                <Roof>
+                  <SystemIdentifier id='attic-roof-2'/>
+                  <Area>269</Area>
+                  <RoofColor>reflective</RoofColor>
+                  <Rafters>
+                    <FramingFactor>0.11</FramingFactor>
+                    <Material>wood</Material>
+                  </Rafters>
+                  <Pitch>6</Pitch>
+                  <RadiantBarrier>true</RadiantBarrier>
+                  <Insulation>
+                    <SystemIdentifier id='Attic_Roof_Ins_ID2'/>
+                    <InsulationGrade>1</InsulationGrade>
+                    <Layer>
+                      <InstallationType>cavity</InstallationType>
+                      <NominalRValue>0</NominalRValue>
+                      <Thickness>0</Thickness>
+                    </Layer>
+                    <Layer>
+                      <InstallationType>continuous</InstallationType>
+                      <NominalRValue>0</NominalRValue>
+                      <Thickness>0</Thickness>
+                    </Layer>
+                  </Insulation>
+                </Roof>
+              </Roofs>
+              <Floors>
+                <Floor>
+                  <SystemIdentifier id='attic-floor-1'/>
+                  <Area>4200</Area>
+                  <Joists>
+                    <FramingFactor>0.11</FramingFactor>
+                    <Material>wood</Material>
+                  </Joists>
+                  <Insulation>
+                    <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
+                    <InsulationGrade>1</InsulationGrade>
+                    <Layer>
+                      <InstallationType>cavity</InstallationType>
+                      <NominalRValue>13</NominalRValue>
+                      <Thickness>3.5</Thickness>
+                    </Layer>
+                    <Layer>
+                      <InstallationType>continuous</InstallationType>
+                      <NominalRValue>25</NominalRValue>
+                      <Thickness>7.0</Thickness>
+                    </Layer>
+                  </Insulation>
+                  <extension>
+                    <AdjacentTo>living space</AdjacentTo>
+                  </extension>
+                </Floor>
+              </Floors>
+              <Walls>
+                <Wall>
+                  <SystemIdentifier id='attic-wall-1'/>
+                  <AtticWallType>other</AtticWallType>
+                  <Area>32</Area>
+                  <Studs>
+                    <FramingFactor>0.1988</FramingFactor>
+                    <Material>wood</Material>
+                  </Studs>
+                  <Siding>vinyl siding</Siding>
+                  <Color>light</Color>
+                  <Insulation>
+                    <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
+                    <InsulationGrade>1</InsulationGrade>
+                    <Layer>
+                      <InstallationType>cavity</InstallationType>
+                      <NominalRValue>22</NominalRValue>
+                      <Thickness>5.5</Thickness>
+                    </Layer>
+                    <Layer>
+                      <InstallationType>continuous</InstallationType>
+                      <NominalRValue>0</NominalRValue>
+                      <Thickness>0</Thickness>
+                    </Layer>
+                  </Insulation>
+                  <extension>
+                    <AdjacentTo>living space</AdjacentTo>
+                    <WallType>
+                      <WoodStud></WoodStud>
+                    </WallType>
+                  </extension>
+                </Wall>
+              </Walls>
               <Area>4200</Area>
-              <Rafters>
-                <FramingFactor>0.11</FramingFactor>
-                <Material>wood</Material>
-              </Rafters>
-              <extension>
-                <FloorAdjacentTo>living space</FloorAdjacentTo>
-                <FloorJoists>
-                  <FramingFactor>0.11</FramingFactor>
-                  <Material>wood</Material>
-                </FloorJoists>
-              </extension>
-            </Attic>
-            <Attic>
-              <SystemIdentifier id='Attic_ID2'/>
-              <AttachedToRoof idref='roof-2'/>
-              <AtticType>cathedral ceiling</AtticType>
-              <AtticRoofInsulation>
-                <SystemIdentifier id='Attic_Ins_ID3'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>5</NominalRValue>
-                  <Thickness>9.5</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>5</NominalRValue>
-                  <Thickness>1</Thickness>
-                </Layer>
-              </AtticRoofInsulation>
-              <Area>269</Area>
-              <Rafters>
-                <FramingFactor>0.11</FramingFactor>
-                <Material>wood</Material>
-              </Rafters>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -300,68 +334,6 @@
                 <InstallationType>continuous</InstallationType>
                 <NominalRValue>10</NominalRValue>
                 <Thickness>2</Thickness>
-              </Layer>
-            </Insulation>
-            <extension>
-              <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            </extension>
-          </Wall>
-          <Wall>
-            <SystemIdentifier id='agwall-2'/>
-            <WallType>
-              <WoodStud></WoodStud>
-            </WallType>
-            <Area>32</Area>
-            <Studs>
-              <FramingFactor>0.1988</FramingFactor>
-              <Material>wood</Material>
-            </Studs>
-            <Siding>vinyl siding</Siding>
-            <Color>light</Color>
-            <Insulation>
-              <SystemIdentifier id='AGW_Ins_ID2'/>
-              <InsulationGrade>1</InsulationGrade>
-              <Layer>
-                <InstallationType>cavity</InstallationType>
-                <NominalRValue>22</NominalRValue>
-                <Thickness>5.5</Thickness>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous</InstallationType>
-                <NominalRValue>0</NominalRValue>
-                <Thickness>0</Thickness>
-              </Layer>
-            </Insulation>
-            <extension>
-              <ExteriorAdjacentTo>unvented attic</ExteriorAdjacentTo>
-              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            </extension>
-          </Wall>
-          <Wall>
-            <SystemIdentifier id='agwall-3'/>
-            <WallType>
-              <WoodStud></WoodStud>
-            </WallType>
-            <Area>32</Area>
-            <Studs>
-              <FramingFactor>0.1988</FramingFactor>
-              <Material>wood</Material>
-            </Studs>
-            <Siding>brick veneer</Siding>
-            <Color>dark</Color>
-            <Insulation>
-              <SystemIdentifier id='AGW_Ins_ID3'/>
-              <InsulationGrade>1</InsulationGrade>
-              <Layer>
-                <InstallationType>cavity</InstallationType>
-                <NominalRValue>22</NominalRValue>
-                <Thickness>5.5</Thickness>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous</InstallationType>
-                <NominalRValue>0</NominalRValue>
-                <Thickness>0</Thickness>
               </Layer>
             </Insulation>
             <extension>

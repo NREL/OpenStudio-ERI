@@ -35,7 +35,7 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms',
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType',
             '//Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2006"]',
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Roofs',
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics',
             '//Building/BuildingDetails/Enclosure/Foundations',
             '//Building/BuildingDetails/Enclosure/Walls',
             '//Building/BuildingDetails/Systems/WaterHeating/WaterFixture[WaterFixtureType="shower head"]',
@@ -44,43 +44,67 @@ class EnergyRatingIndex301Validator
     
     # If the key exists, the file must have 1 (or more) of these child elements
     conditional_has = {
-            # Roofs
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Roofs/Roof' => [
-                'RoofArea',
-                'RoofColor',
-                'RadiantBarrier',
-            ],
             # Attics
             '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => [
-                'Area',
-                'AttachedToRoof',
                 '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]',
-                'AtticRoofInsulation/InsulationGrade',
-                'AtticRoofInsulation/Layer[InstallationType="cavity"]',
-                'AtticRoofInsulation/Layer[InstallationType="continuous"]',
+                'Area',
+            ],
+            # Attic Roofs
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Roofs/Roof' => [
+                'Area',
+                'RoofColor',
                 'Rafters[Material="wood"]',
                 'Rafters/FramingFactor',
+                'Pitch',
+                'RadiantBarrier',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
             ],
-            # AtticFloor (everything but cathedral ceiling and flat roof)
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic" or AtticType="unvented attic" or AtticType="cape cod"]' => [
-                'AtticFloorInsulation/InsulationGrade',
-                'AtticFloorInsulation/Layer[InstallationType="cavity"]',
-                'AtticFloorInsulation/Layer[InstallationType="continuous"]',
-                'extension/FloorJoists[Material="wood"]',
-                'extension/FloorJoists/FramingFactor',
-                'extension[FloorAdjacentTo="living space" or FloorAdjacentTo="garage"]',
-            ],
-            # Attic FloorInsulation Layer
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/AtticFloorInsulation/Layer' => [
+            # Attic Roofs Insulation Layer
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Roofs/Roof/Insulation/Layer' => [
                 'InstallationType',
                 'NominalRValue',
                 'Thickness',
             ],
-            # Attic RoofInsulation Layer
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/AtticRoofInsulation/Layer' => [
+            # Attic Floors (everything but cathedral ceiling and flat roof)
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic" or AtticType="unvented attic" or AtticType="cape cod"]/Floors/Floor' => [
+                'Area',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
+                'Joists[Material="wood"]',
+                'Joists/FramingFactor',
+                'extension[AdjacentTo="living space" or AdjacentTo="garage"]',
+            ],
+            # Attic Floors Insulation Layer
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Floors/Floor/Insulation/Layer' => [
                 'InstallationType',
                 'NominalRValue',
                 'Thickness',
+            ],
+            # Attic Walls
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall' => [
+                'AtticWallType', # FIXME: Shouldn't be required in HPXML schema
+                'Area',
+                '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]',
+                'Color',
+                'extension/WallType/WoodStud',
+                'extension[AdjacentTo="ambient" or AdjacentTo="garage" or AdjacentTo="living space" or AdjacentTo="unvented attic" or AdjacentTo="vented attic" or AdjacentTo="cape cod"]',
+            ],
+            # Attic Walls Insulation Layer
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall/Insulation/Layer' => [
+                'InstallationType',
+                'NominalRValue',
+                'Thickness',
+            ],
+            # Attic Walls WoodStud
+            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall[extension/WallType/WoodStud]' => [
+                'Studs[Material="wood"]',
+                'Studs/FramingFactor',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
             ],
             # Foundation
             '//Building/BuildingDetails/Enclosure/Foundations/Foundation' => [
