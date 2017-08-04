@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>07d7a8b9-330e-4af0-b4b2-061c4ce64668</version_id>
-  <version_modified>20170803T172333Z</version_modified>
+  <version_id>fec5f711-3d34-488c-8ee1-5a357908741b</version_id>
+  <version_modified>20170804T124228Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -48,12 +48,6 @@
     </attribute>
   </attributes>
   <files>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C6C1F0B1</checksum>
-    </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
@@ -298,6 +292,12 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>8D87C4E1</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>696FBE04</checksum>
     </file>
   </files>
 </measure>

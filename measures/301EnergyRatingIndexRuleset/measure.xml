@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>18b90c29-5b67-4018-acd8-7f0b8231a004</version_id>
-  <version_modified>20170803T172824Z</version_modified>
+  <version_id>21f6eabc-5ddd-447c-b412-e1740e031820</version_id>
+  <version_modified>20170804T130507Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -130,12 +130,6 @@
       <checksum>36B7CAC2</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C6C1F0B1</checksum>
-    </file>
-    <file>
       <filename>airflow.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -178,17 +172,6 @@
       <checksum>80580ABD</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>FB4B670A</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -201,10 +184,33 @@
       <checksum>BA84B306</checksum>
     </file>
     <file>
+      <filename>HERS Rated Home - valid.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>55CF8306</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>696FBE04</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>CA74A46E</checksum>
+    </file>
+    <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2A40F2FD</checksum>
+      <checksum>A0DED3F7</checksum>
     </file>
     <file>
       <filename>energy_rating_index_301_test.rb</filename>
@@ -216,7 +222,7 @@
       <filename>HERS Reference Home - valid.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>AECFE96F</checksum>
+      <checksum>551E68A4</checksum>
     </file>
   </files>
 </measure>

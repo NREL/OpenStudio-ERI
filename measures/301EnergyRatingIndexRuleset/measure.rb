@@ -553,18 +553,8 @@ class OSMeasures
         next unless name == attic.elements["AttachedToRoof"].attributes["idref"]
         attic_type = attic.elements["AtticType"].text
       end
-      
-      if not XMLHelper.has_element(roof, "extension")# Reference Home
-      
-        solar_abs = 0.85
-        emissivity = 0.91
-
-      else # Rated Home
-      
-        solar_abs = Float(XMLHelper.get_value(roof, "extension/SolarAbsorptance"))
-        emissivity = Float(XMLHelper.get_value(roof, "extension/Emittance"))
-      
-      end
+      solar_abs = Float(XMLHelper.get_value(roof, "extension/SolarAbsorptance"))
+      emissivity = Float(XMLHelper.get_value(roof, "extension/Emittance"))
 
       measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
       args = {
