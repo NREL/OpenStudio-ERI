@@ -193,7 +193,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     XMLHelper.add_element(building_air_leakage, "UnitofMeasure", "ACHnatural")
     XMLHelper.add_element(building_air_leakage, "AirLeakage", measures["ResidentialAirflow"][0]["living_ach50"]) # TODO: how to convert to ACHnatural? what is the N factor?
     
-    # AtticAndRoof    
+    # AtticAndRoof
     attics = nil
     model.getSpaces.each do |space|
       next unless Geometry.is_unfinished_attic(space) or Geometry.is_finished_attic(space) or Geometry.is_living(space)
