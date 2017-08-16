@@ -20,8 +20,12 @@ class XMLHelper
   
   # Deletes the child element with element_name. Returns the deleted element.
   def self.delete_element(parent, element_name)
-    element = parent.elements.delete(element_name)
-    return element
+    element = nil
+    begin
+      last_element = element
+      element = parent.elements.delete(element_name)
+    end while !element.nil?
+    return last_element
   end
   
   # Returns the value of 'element_name' in the parent element or nil.

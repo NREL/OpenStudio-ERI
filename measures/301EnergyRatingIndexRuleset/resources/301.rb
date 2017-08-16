@@ -370,27 +370,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_attics_roofs_reference(new_enclosure, orig_details, climate_zone)
   
-    new_attic_roof = XMLHelper.add_element(new_enclosure, "AtticAndRoof")
-    
-    '''
-    Table 4.2.2(1) - Roofs
-    Type: composition shingle on wood sheathing
-    Gross area: same as Rated Home
-    Solar absorptance = 0.75
-    Emittance = 0.90
-    '''
-    
-    new_roofs = XMLHelper.add_element(new_attic_roof, "Roofs")
-    orig_details.elements.each("Enclosure/AtticAndRoof/Roofs/Roof") do |orig_roof|
-      # Create new roof
-      new_roof = XMLHelper.add_element(new_roofs, "Roof")
-      XMLHelper.copy_element(new_roof, orig_roof, "SystemIdentifier")
-      XMLHelper.add_element(new_roof, "RoofType", "shingles")
-      XMLHelper.add_element(new_roof, "DeckType", "wood")
-      XMLHelper.copy_element(new_roof, orig_roof, "Pitch")
-      XMLHelper.copy_element(new_roof, orig_roof, "RoofArea")
-      XMLHelper.add_element(new_roof, "RadiantBarrier", false)
-    end
+    new_attic_roof = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/AtticAndRoof")
     
     '''
     Table 4.2.2(1) - Ceilings
@@ -398,55 +378,80 @@ class EnergyRatingIndex301Ruleset
     Gross area: same as Rated Home
     U-Factor: from Table 4.2.2(2)
     
+    Table 4.2.2(1) - Roofs
+    Type: composition shingle on wood sheathing
+    Gross area: same as Rated Home
+    Solar absorptance = 0.75
+    Emittance = 0.90
+    
     4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
     '''
     
-    ufactor = get_reference_component_characteristics(climate_zone, "ceiling")
+    ceiling_ufactor = get_reference_component_characteristics(climate_zone, "ceiling")
+    wall_ufactor = get_reference_component_characteristics(climate_zone, "frame_wall")
     
-    new_attics = XMLHelper.add_element(new_attic_roof, "Attics")
-    orig_details.elements.each("Enclosure/AtticAndRoof/Attics/Attic") do |orig_attic|
-      # Create new attic
-      new_attic = XMLHelper.add_element(new_attics, "Attic")
-      XMLHelper.copy_element(new_attic, orig_attic, "SystemIdentifier")
-      XMLHelper.copy_element(new_attic, orig_attic, "AttachedToRoof")
-      XMLHelper.copy_element(new_attic, orig_attic, "AtticType")
+    new_attic_roof.elements.each("Attics/Attic") do |new_attic|
       attic_type = XMLHelper.get_value(new_attic, "AtticType")
-      if ["vented attic", "unvented attic", "cape cod"].include? attic_type
-        floor_ins = XMLHelper.add_element(new_attic, "AtticFloorInsulation")
-        XMLHelper.copy_element(floor_ins, orig_attic, "AtticFloorInsulation/SystemIdentifier")
-        XMLHelper.add_element(floor_ins, "InsulationGrade", 1)
-        if ["vented attic", "unvented attic"].include? attic_type
-          XMLHelper.add_element(floor_ins, "AssemblyEffectiveRValue", 1.0/ufactor)
+      
+      # Roofs
+      new_attic.elements.each("Roofs/Roof") do |new_roof|
+        new_roof.elements["RadiantBarrier"].text = false
+        new_roof_ins = new_roof.elements["Insulation"]
+        new_roof_ins.elements["InsulationGrade"].text = 1
+        XMLHelper.delete_element(new_roof_ins, "Layer")
+        if ["cathedral ceiling", "cape cod"].include? attic_type
+          XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
         else
-          XMLHelper.add_element(floor_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
+          XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
+        end
+        extension = new_roof.elements["extension"]
+        if extension.nil?
+          extension = XMLHelper.add_element(new_roof, "extension")
+        end
+        XMLHelper.delete_element(extension, "SolarAbsorptance")
+        XMLHelper.add_element(extension, "SolarAbsorptance", 0.85)
+        XMLHelper.delete_element(extension, "Emittance")
+        XMLHelper.add_element(extension, "Emittance", 0.91)
+      end
+      
+      # Floors
+      new_attic.elements.each("Floors/Floor") do |new_floor|
+        new_floor_ins = new_floor.elements["Insulation"]
+        new_floor_ins.elements["InsulationGrade"].text = 1
+        XMLHelper.delete_element(new_floor_ins, "Layer")
+        if ["vented attic", "unvented attic"].include? attic_type
+          XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
+        else
+          XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
         end
       end
-      roof_ins = XMLHelper.add_element(new_attic, "AtticRoofInsulation")
-      XMLHelper.copy_element(roof_ins, orig_attic, "AtticRoofInsulation/SystemIdentifier")
-      XMLHelper.add_element(roof_ins, "InsulationGrade", 1)
-      if ["cathedral ceiling", "cape cod"].include? attic_type
-        XMLHelper.add_element(roof_ins, "AssemblyEffectiveRValue", 1.0/ufactor)
-      else
-        XMLHelper.add_element(roof_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
+      
+      # Walls
+      new_attic.elements.each("Walls/Wall") do |new_wall|
+        new_wall_ins = new_wall.elements["Insulation"]
+        new_wall_ins.elements["InsulationGrade"].text = 1
+        XMLHelper.delete_element(new_wall_ins, "Layer")
+        if ["vented attic", "unvented attic"].include? attic_type
+          XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
+        else
+          XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
+        end
       end
-      XMLHelper.copy_element(new_attic, orig_attic, "Area")
-      extension = XMLHelper.add_element(new_attic, "extension")
-      if ["vented attic", "unvented attic", "cape cod"].include? attic_type
-        XMLHelper.copy_element(extension, orig_attic, "extension/FloorAdjacentTo")
-        floor_joists = XMLHelper.add_element(extension, "FloorJoists")
-        XMLHelper.copy_element(floor_joists, orig_attic, "extension/FloorJoists/Material")
-        XMLHelper.copy_element(floor_joists, orig_attic, "extension/FloorJoists/FramingFactor")
-      end
-      XMLHelper.copy_element(extension, orig_attic, "extension/FloorAdjacentTo")
+      
     end
     
   end
   
   def self.set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
     
-    new_attic_roof = XMLHelper.add_element(new_enclosure, "AtticAndRoof")
+    new_attic_roof = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/AtticAndRoof")
     
     '''
+    Table 4.2.2(1) - Ceilings
+    Type: Same as Rated Home
+    Gross area: Same as Rated Home
+    U-Factor: Same as Rated Home
+    
     Table 4.2.2(1) - Roofs
     Type: Same as Rated Home
     Gross area: Same as Rated Home
@@ -457,51 +462,28 @@ class EnergyRatingIndex301Ruleset
     C-1371 shall be used when available. In cases where the appropriate data are not known, same as the 
     Reference Home.
     '''
-    
-    new_roofs = XMLHelper.add_element(new_attic_roof, "Roofs")
-    orig_details.elements.each("Enclosure/AtticAndRoof/Roofs/Roof") do |orig_roof|
-      roof_color = XMLHelper.get_value(orig_roof, "RoofColor")
-      # Create new roof
-      new_roof = XMLHelper.add_element(new_roofs, "Roof")
-      XMLHelper.copy_element(new_roof, orig_roof, "SystemIdentifier")
-      XMLHelper.copy_element(new_roof, orig_roof, "RoofType")
-      XMLHelper.copy_element(new_roof, orig_roof, "DeckType")
-      XMLHelper.copy_element(new_roof, orig_roof, "Pitch")
-      XMLHelper.copy_element(new_roof, orig_roof, "RoofArea")
-      XMLHelper.copy_element(new_roof, orig_roof, "RadiantBarrier")
-      extension = XMLHelper.add_element(new_roof, "extension")
-      if roof_color == "reflective"
-        XMLHelper.add_element(extension, "SolarAbsorptance", 0.20)
-      elsif roof_color == "dark"
-        XMLHelper.add_element(extension, "SolarAbsorptance", 0.92)
-      elsif roof_color == "medium"
-        XMLHelper.add_element(extension, "SolarAbsorptance", 0.75)
-      elsif roof_color == "light"
-        XMLHelper.add_element(extension, "SolarAbsorptance", 0.60)
+    new_attic_roof.elements.each("Attics/Attic") do |new_attic|
+      new_attic.elements.each("Roofs/Roof") do |new_roof|
+        roof_color = XMLHelper.get_value(new_roof, "RoofColor")
+        extension = new_roof.elements["extension"]
+        if extension.nil?
+          extension = XMLHelper.add_element(new_roof, "extension")
+        end
+        XMLHelper.delete_element(extension, "SolarAbsorptance")
+        if roof_color == "reflective"
+          XMLHelper.add_element(extension, "SolarAbsorptance", 0.20)
+        elsif roof_color == "dark"
+          XMLHelper.add_element(extension, "SolarAbsorptance", 0.92)
+        elsif roof_color == "medium"
+          XMLHelper.add_element(extension, "SolarAbsorptance", 0.75)
+        elsif roof_color == "light"
+          XMLHelper.add_element(extension, "SolarAbsorptance", 0.60)
+        end
+        XMLHelper.delete_element(extension, "Emittance")
+        XMLHelper.add_element(extension, "Emittance", 0.90)
       end
-      XMLHelper.add_element(extension, "Emittance", 0.90)
     end
-
-    '''
-    Table 4.2.2(1) - Ceilings
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    U-Factor: Same as Rated Home
-    '''
-    new_attics = XMLHelper.add_element(new_attic_roof, "Attics")
-    orig_details.elements.each("Enclosure/AtticAndRoof/Attics/Attic") do |orig_attic|
-      # Create new attic
-      new_attic = XMLHelper.add_element(new_attics, "Attic")
-      XMLHelper.copy_element(new_attic, orig_attic, "SystemIdentifier")
-      XMLHelper.copy_element(new_attic, orig_attic, "AttachedToRoof")
-      XMLHelper.copy_element(new_attic, orig_attic, "AtticType")
-      XMLHelper.copy_element(new_attic, orig_attic, "AtticFloorInsulation")
-      XMLHelper.copy_element(new_attic, orig_attic, "AtticRoofInsulation")
-      XMLHelper.copy_element(new_attic, orig_attic, "Area")
-      extension = XMLHelper.add_element(new_attic, "extension")
-      XMLHelper.copy_element(extension, orig_attic, "extension/FloorAdjacentTo")
-    end
-
+    
   end
   
   def self.set_enclosure_foundations_reference(new_enclosure, orig_details, climate_zone)

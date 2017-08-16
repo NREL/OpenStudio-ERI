@@ -50,7 +50,7 @@ def create_osw(design, basedir, resultsdir, options)
   
   # Add measures (w/args) to OSW
   measures_dir = File.absolute_path(File.join(basedir, "..", "resources", "measures")) # FIXME
-  schemas_dir = File.absolute_path(File.join(basedir, "..", "measures", "301EnergyRatingIndexRuleset", "tests", "schemas"))
+  schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
   measures = {}
   measures['301EnergyRatingIndexRuleset'] = {}

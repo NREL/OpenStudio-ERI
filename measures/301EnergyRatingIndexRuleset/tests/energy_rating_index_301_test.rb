@@ -9,11 +9,11 @@ class EnergyRatingIndex301Test < MiniTest::Test
 
   def get_args_hash(hpxml_filename, calc_type)
     args_hash = {}
-    args_hash["hpxml_file_path"] = "./tests/#{hpxml_filename}"
+    args_hash["hpxml_file_path"] = "../../workflow/sample_files/#{hpxml_filename}"
     args_hash["weather_file_path"] = "../../resources/measures/ResidentialLocation/resources/USA_CO_Denver_Intl_AP_725650_TMY3.epw"
     args_hash["calc_type"] = calc_type
     args_hash["measures_dir"] = "../../resources/measures"
-    args_hash["schemas_dir"] = "./tests/schemas"
+    args_hash["schemas_dir"] = "../../hpxml_schemas"
     args_hash["hpxml_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename}")
     args_hash["osm_output_file_path"] = File.join(File.dirname(__FILE__), "#{calc_type} - #{hpxml_filename.gsub(".xml", ".osm")}")
     return args_hash

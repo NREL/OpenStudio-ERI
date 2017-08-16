@@ -130,25 +130,6 @@ class OSMtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       # XMLHelper.add_element(weather_station, "State", model.getSite.weatherFile.get.stateProvinceRegion.to_s)
       # XMLHelper.add_element(weather_station, "WBAN", model.getSite.weatherFile.get.file.get.wmoNumber.to_s)
     end
-    
-    # Zones
-    zones = building_details.add_element "Zones"
-    model.getThermalZones.each do |thermal_zone|
-      zone = zones.add_element "Zone"
-      XMLHelper.add_attribute(zone.add_element("SystemIdentifier"), "id", thermal_zone.name)
-      if thermal_zone.thermostat.is_initialized or thermal_zone.thermostatSetpointDualSetpoint.is_initialized
-        XMLHelper.add_element(zone, "ZoneType", "conditioned")
-      else
-        XMLHelper.add_element(zone, "ZoneType", "unconditioned")
-      end
-      spaces = zone.add_element "Spaces"
-      thermal_zone.spaces.each do |sp|
-        space = spaces.add_element "Space"
-        XMLHelper.add_attribute(space.add_element("SystemIdentifier"), "id", sp.name)
-        XMLHelper.add_element(space, "FloorArea", OpenStudio.convert(sp.floorArea,"m^2","ft^2").get.round)
-        XMLHelper.add_element(space, "Volume", Geometry.get_volume_from_spaces([sp]).round.to_s)
-      end
-    end
 
     # Enclosure
     enclosure = building_details.add_element "Enclosure"
@@ -166,16 +147,83 @@ class OSMtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       end
     end
     
-    # Roofs
-    attic_and_roof = enclosure.add_element "AtticAndRoof"
-    roofs = attic_and_roof.add_element "Roofs"
-    model.getSurfaces.each do |surface|
-      next unless surface.surfaceType.downcase == "roofceiling"
-      next unless surface.outsideBoundaryCondition.downcase == "outdoors"
-      roof = roofs.add_element "Roof"
-      XMLHelper.add_attribute(roof.add_element("SystemIdentifier"), "id", surface.name)
-      roof.add_element("RoofArea").add_text(OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round.to_s)
-    end    
+    # AtticAndRoof
+    attics = nil
+    model.getSpaces.each do |space|
+      next unless Geometry.is_unfinished_attic(space) or Geometry.is_finished_attic(space)
+      if enclosure.elements["AtticAndRoof"].nil?
+        attic_and_roof = enclosure.add_element "AtticAndRoof"
+        attics = attic_and_roof.add_element "Attics"
+      end
+      roofs = nil
+      floors = nil
+      walls = nil
+      if Geometry.is_unfinished_attic(space)
+        attic = attics.add_element "Attic"
+        XMLHelper.add_attribute(attic.add_element("SystemIdentifier"), "id", space.name)
+        XMLHelper.add_element(attic, "AtticType", "unvented attic")
+        space.surfaces.each do |surface|
+          next unless surface.surfaceType.downcase == "roofceiling"
+          if attic.elements["Roofs"].nil?
+            roofs = attic.add_element "Roofs"
+          end
+          roof = roofs.add_element "Roof"
+          XMLHelper.add_attribute(roof.add_element("SystemIdentifier"), "id", surface.name)
+          XMLHelper.add_element(roof, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+        end
+        space.surfaces.each do |surface|
+          next unless surface.surfaceType.downcase == "floor"
+          if attic.elements["Floors"].nil?
+            floors = attic.add_element "Floors"
+          end
+          floor = floors.add_element "Floor"
+          XMLHelper.add_attribute(floor.add_element("SystemIdentifier"), "id", surface.name)
+          XMLHelper.add_element(floor, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+        end
+        space.surfaces.each do |surface|
+          next unless surface.surfaceType.downcase == "wall"
+          if attic.elements["Walls"].nil?
+            walls = attic.add_element "Walls"
+          end
+          wall = walls.add_element "Wall"
+          XMLHelper.add_attribute(wall.add_element("SystemIdentifier"), "id", surface.name)
+          XMLHelper.add_element(wall, "AtticWallType", "gable")
+          XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+        end        
+      elsif Geometry.is_finished_attic(space) and measures["ResidentialGeometrySingleFamilyDetached"][0]["attic_type"] == Constants.FinishedAtticType and measures["ResidentialGeometrySingleFamilyDetached"][0]["roof_type"] != Constants.RoofTypeFlat
+        attic = attics.add_element "Attic"
+        XMLHelper.add_attribute(attic.add_element("SystemIdentifier"), "id", space.name)
+        XMLHelper.add_element(attic, "AtticType", "cape cod")
+        space.surfaces.each do |surface|
+          next unless surface.surfaceType.downcase == "roofceiling"
+          if attic.elements["Roofs"].nil?
+            roofs = attic.add_element "Roofs"
+          end
+          roof = roofs.add_element "Roof"
+          XMLHelper.add_attribute(roof.add_element("SystemIdentifier"), "id", surface.name)
+          XMLHelper.add_element(roof, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+        end
+        space.surfaces.each do |surface|
+          next unless surface.surfaceType.downcase == "floor"
+          if attic.elements["Floors"].nil?
+            floors = attic.add_element "Floors"
+          end
+          floor = floors.add_element "Floor"
+          XMLHelper.add_attribute(floor.add_element("SystemIdentifier"), "id", surface.name)
+          XMLHelper.add_element(floor, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+        end
+        space.surfaces.each do |surface|
+          next unless surface.surfaceType.downcase == "wall"
+          if attic.elements["Walls"].nil?
+            walls = attic.add_element "Walls"
+          end
+          wall = walls.add_element "Wall"
+          XMLHelper.add_attribute(wall.add_element("SystemIdentifier"), "id", surface.name)
+          XMLHelper.add_element(wall, "AtticWallType", "gable")
+          XMLHelper.add_element(wall, "Area", OpenStudio.convert(surface.grossArea,"m^2","ft^2").get.round(1))
+        end
+      end
+    end
     
     # Foundations
     foundations = enclosure.add_element "Foundations"

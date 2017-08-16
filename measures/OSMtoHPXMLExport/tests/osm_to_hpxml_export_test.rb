@@ -10,7 +10,7 @@ class OSMtoHPXMLExportTest < MiniTest::Test
   def test_valid_xml
     args_hash = {}
     args_hash["osm_file_path"] = "./tests/create-model-example.osm"
-    args_hash["schemas_dir"] = "./tests/schemas"
+    args_hash["schemas_dir"] = "../../hpxml_schemas"
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
