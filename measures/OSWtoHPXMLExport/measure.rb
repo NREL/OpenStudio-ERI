@@ -137,6 +137,21 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     if measures.keys.include? "ResidentialGeometryOrientation"
       XMLHelper.add_element(site, "AzimuthOfFrontOfHome", Geometry.get_abs_azimuth(Constants.CoordAbsolute, measures["ResidentialGeometryOrientation"][0]["orientation"].to_f, 0).round)
     end
+    fuel_types_available = XMLHelper.add_element(site, "FuelTypesAvailable")
+    XMLHelper.add_element(fuel_types_available, "Fuel", "electricity")
+    fuel_type_map = {Constants.FuelTypeGas=>"natural gas", Constants.FuelTypeOil=>"fuel oil", Constants.FuelTypePropane=>"propane"}
+    fuels = []
+    measures.values.each do |h|
+      h.each do |args|
+        args.each do |k, v|
+          next unless fuel_type_map.keys.include? v
+          fuels << v
+        end
+      end
+    end
+    fuels.uniq.each do |fuel|
+      XMLHelper.add_element(fuel_types_available, "Fuel", fuel_type_map[fuel])
+    end
     building_occupancy = building_summary.add_element "BuildingOccupancy"
     num_people = 0
     model.getPeopleDefinitions.each do |people_def|
@@ -160,18 +175,6 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_element(building_construction, "GaragePresent", true)
     else
       XMLHelper.add_element(building_construction, "GaragePresent", false)
-    end
-
-    arg_vals = []
-    measures.values.each do |h|
-      h.each do |k, v|
-        arg_vals << v
-      end
-    end
-    if arg_vals.include? Constants.FuelTypeGas
-      XMLHelper.add_element(building_summary.add_element("extension"), "HasNaturalGasAccessOrFuelDelivery", true)
-    else
-      XMLHelper.add_element(building_summary.add_element("extension"), "HasNaturalGasAccessOrFuelDelivery", false)
     end
     
     # ClimateandRiskZones
