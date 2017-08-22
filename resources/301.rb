@@ -973,7 +973,6 @@ class EnergyRatingIndex301Ruleset
     # Init
     has_boiler = false
     fuel_type = nil
-    has_fuel_access = Boolean(XMLHelper.get_value(orig_details, "BuildingSummary/extension/HasNaturalGasAccessOrFuelDelivery"))
     
     heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
     heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
@@ -987,7 +986,7 @@ class EnergyRatingIndex301Ruleset
     # FIXME: Add PrimarySystems
     
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
-    if fuel_type == 'electricity' or not has_fuel_access
+    if fuel_type == 'electricity' or not has_fuel_access(orig_details)
     
       # 7.7 HSPF air source heat pump
       seer = 13.0
@@ -1127,8 +1126,6 @@ class EnergyRatingIndex301Ruleset
     then be added together to obtain the total energy uses for heating and cooling.
     '''
     
-    has_fuel_access = Boolean(XMLHelper.get_value(orig_details, "BuildingSummary/extension/HasNaturalGasAccessOrFuelDelivery"))
-    
     heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
     heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
     cooling_system = orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"]
@@ -1136,7 +1133,7 @@ class EnergyRatingIndex301Ruleset
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
     if heating_system.nil? and heat_pump_system.nil?
     
-      if not has_fuel_access
+      if not has_fuel_access(orig_details)
       
         # 7.7 HSPF air source heat pump
         seer = 13.0
@@ -2354,6 +2351,20 @@ class EnergyRatingIndex301Ruleset
             "propane"=>Constants.FuelTypePropane, 
             "electricity"=>Constants.FuelTypeElectric}
     return conv[fuel]
+  end
+  
+  def self.has_fuel_access(orig_details)
+    orig_details.elements.each("BuildingSummary/Site/FuelTypesAvailable/Fuel") do |fuel|
+      fuels = ["natural gas", "fuel oil", "fuel oil 1", 
+               "fuel oil 2", "fuel oil 4", "fuel oil 5/6",
+               "propane", "kerosene", "diesel",
+               "anthracite coal", "bituminous coal", "coke",
+               "wood", "wood pellets"]
+      if fuels.include?(fuel.text)
+        return true
+      end
+    end
+    return false
   end
   
 end

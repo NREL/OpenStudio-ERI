@@ -5,7 +5,7 @@ class EnergyRatingIndex301Validator
     # Every file must have this number of elements
     unconditional_counts = {
             '//Building' => [1],
-            '//Building/BuildingDetails/BuildingSummary/extension/HasNaturalGasAccessOrFuelDelivery' => [1],
+            '//Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable' => [1],
             '//Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]' => [1], # TODO: Allow ACH50, ELA, and/or SLA?
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
