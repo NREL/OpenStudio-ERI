@@ -18,6 +18,10 @@
       <BuildingSummary>
         <Site>
           <AzimuthOfFrontOfHome>90</AzimuthOfFrontOfHome>
+          <FuelTypesAvailable>
+            <Fuel>electricity</Fuel>
+            <Fuel>natural gas</Fuel>
+          </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
@@ -32,9 +36,6 @@
           </FoundationType>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
-        <extension>
-          <HasNaturalGasAccessOrFuelDelivery>true</HasNaturalGasAccessOrFuelDelivery>
-        </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
