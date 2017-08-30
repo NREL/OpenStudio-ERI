@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>9da20214-bc26-4aa2-babb-dc064dfbb9c4</version_id>
-  <version_modified>20170822T174700Z</version_modified>
+  <version_id>883c8e13-faed-47ef-be39-675349ddf488</version_id>
+  <version_modified>20170830T210705Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -281,23 +281,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>696FBE04</checksum>
-    </file>
-    <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FFC452BA</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>050B9C40</checksum>
     </file>
     <file>
       <filename>1-StoryFinishedAttic.osm</filename>
@@ -670,6 +653,23 @@
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
       <checksum>5B873E00</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C506FC72</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>314AD2B0</checksum>
     </file>
   </files>
 </measure>

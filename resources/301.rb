@@ -1711,11 +1711,11 @@ class EnergyRatingIndex301Ruleset
       therms/cyc = (LER * $/kWh - AGC) / (21.9825 * $/kWh - $/therm) / 392
     '''
     
-    ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/EnergyRating"))
-    elec_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/ElectricRate"))
-    gas_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/GasRate"))
-    agc = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/AnnualGasCost"))
-    cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/Capacity"))
+    ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
+    elec_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelElectricRate"))
+    gas_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelGasRate"))
+    agc = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelAnnualGasCost"))
+    cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
     
     ncy = (3.0 / 2.847) * (164 + nbeds * 46.5)
     acy = ncy * ((3.0 * 2.08 + 1.59) / (cap * 2.08 + 1.59)) #Adjusted Cycles per Year
@@ -1788,11 +1788,11 @@ class EnergyRatingIndex301Ruleset
     '''
     
     dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
-    ef_dry = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/EfficiencyFactor"))
-    has_timer_control = Boolean(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/HasTimerControl"))
+    ef_dry = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/EfficiencyFactor"))
+    has_timer_control = Boolean(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer[ControlType='timer']"))
     
-    ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/EnergyRating"))
-    cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/Capacity"))
+    ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
+    cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
     mef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/ModifiedEnergyFactor"))
     
     field_util_factor = nil
@@ -1862,7 +1862,7 @@ class EnergyRatingIndex301Ruleset
       ΔGPDDW = [(88.4+34.9*Nbr)*8.16 - (88.4+34.9*Nbr)*12/dWcap*(4.6415*(1/EF) - 1.9295)]/365 (Eq 4.2-8b)
     '''
     
-    cap = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/Capacity"))
+    cap = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/PlaceSettingCapacity"))
     ef = XMLHelper.get_value(orig_details, "Appliances/Dishwasher/EnergyFactor")
     if ef.nil?
       rated_annual_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/RatedAnnualkWh"))
@@ -1964,8 +1964,8 @@ class EnergyRatingIndex301Ruleset
     # FIXME: How to handle different fuel types for CookingRange vs Oven?
     range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
     oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
-    range_is_induction = Boolean(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/IsInduction"))
-    oven_is_convection = Boolean(XMLHelper.get_value(orig_details, "Appliances/Oven/extension/IsConvection"))
+    range_is_induction = Boolean(XMLHelper.get_value(orig_details, "Appliances/CookingRange/IsInduction"))
+    oven_is_convection = Boolean(XMLHelper.get_value(orig_details, "Appliances/Oven/IsConvection"))
     
     burner_ef = 1.0
     if range_is_induction

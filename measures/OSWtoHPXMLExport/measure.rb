@@ -1546,12 +1546,11 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_attribute(clothes_washer.add_element("SystemIdentifier"), "id", Constants.ObjectNameClothesWasher)
       XMLHelper.add_element(clothes_washer, "Location", get_appliance_location(model, Constants.ObjectNameClothesWasher))
       XMLHelper.add_element(clothes_washer, "ModifiedEnergyFactor", measures["ResidentialApplianceClothesWasher"][0]["imef"])
-      extension = clothes_washer.add_element "extension"
-      XMLHelper.add_element(extension, "EnergyRating", measures["ResidentialApplianceClothesWasher"][0]["rated_annual_energy"])
-      XMLHelper.add_element(extension, "ElectricRate", 0.127)
-      XMLHelper.add_element(extension, "GasRate", 1.003)
-      XMLHelper.add_element(extension, "AnnualGasCost", 24.0)
-      XMLHelper.add_element(extension, "Capacity", measures["ResidentialApplianceClothesWasher"][0]["drum_volume"])
+      XMLHelper.add_element(clothes_washer, "RatedAnnualkWh", measures["ResidentialApplianceClothesWasher"][0]["rated_annual_energy"])
+      XMLHelper.add_element(clothes_washer, "LabelElectricRate", 0.127)
+      XMLHelper.add_element(clothes_washer, "LabelGasRate", 1.003)
+      XMLHelper.add_element(clothes_washer, "LabelAnnualGasCost", 24.0)
+      XMLHelper.add_element(clothes_washer, "Capacity", measures["ResidentialApplianceClothesWasher"][0]["drum_volume"])
     end
 
     if measures.keys.include? "ResidentialApplianceClothesDryerElectric"
@@ -1559,17 +1558,15 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_attribute(clothes_dryer.add_element("SystemIdentifier"), "id", Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric))
       XMLHelper.add_element(clothes_dryer, "Location", get_appliance_location(model, Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric)))
       XMLHelper.add_element(clothes_dryer, "FuelType", os_to_hpxml_fuel_map(Constants.FuelTypeElectric))      
-      extension = clothes_dryer.add_element "extension"
-      XMLHelper.add_element(extension, "EfficiencyFactor", measures["ResidentialApplianceClothesDryerElectric"][0]["cef"])
-      XMLHelper.add_element(extension, "HasTimerControl", true)      
+      XMLHelper.add_element(clothes_dryer, "EfficiencyFactor", measures["ResidentialApplianceClothesDryerElectric"][0]["cef"])
+      XMLHelper.add_element(clothes_dryer, "ControlType", "timer")      
     elsif measures.keys.include? "ResidentialApplianceClothesDryerFuel"
       clothes_dryer = appliances.add_element "ClothesDryer"
       XMLHelper.add_attribute(clothes_dryer.add_element("SystemIdentifier"), "id", Constants.ObjectNameClothesDryer(measures["ResidentialApplianceClothesDryerFuel"][0]["fuel_type"]))
       XMLHelper.add_element(clothes_dryer, "Location", get_appliance_location(model, Constants.ObjectNameClothesDryer(measures["ResidentialApplianceClothesDryerFuel"][0]["fuel_type"])))
       XMLHelper.add_element(clothes_dryer, "FuelType", os_to_hpxml_fuel_map(measures["ResidentialApplianceClothesDryerFuel"][0]["fuel_type"]))
-      extension = clothes_dryer.add_element "extension"
-      XMLHelper.add_element(extension, "EfficiencyFactor", measures["ResidentialApplianceClothesDryerFuel"][0]["cef"])
-      XMLHelper.add_element(extension, "HasTimerControl", true)      
+      XMLHelper.add_element(clothes_dryer, "EfficiencyFactor", measures["ResidentialApplianceClothesDryerFuel"][0]["cef"])
+      XMLHelper.add_element(clothes_dryer, "ControlType", "timer")      
     else
       runner.registerError("Building does not have a clothes dryer.")
       return false
@@ -1579,8 +1576,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       dishwasher = appliances.add_element "Dishwasher"
       XMLHelper.add_attribute(dishwasher.add_element("SystemIdentifier"), "id", "dishwasher")
       XMLHelper.add_element(dishwasher, "RatedAnnualkWh", measures["ResidentialApplianceDishwasher"][0]["dw_E"])
-      extension = dishwasher.add_element "extension"
-      XMLHelper.add_element(extension, "Capacity", measures["ResidentialApplianceDishwasher"][0]["num_settings"])      
+      XMLHelper.add_element(dishwasher, "PlaceSettingCapacity", measures["ResidentialApplianceDishwasher"][0]["num_settings"])      
     end
 
     if measures.keys.include? "ResidentialApplianceRefrigerator"
@@ -1601,24 +1597,20 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       cooking_range = appliances.add_element "CookingRange"
       XMLHelper.add_attribute(cooking_range.add_element("SystemIdentifier"), "id", Constants.ObjectNameCookingRange(Constants.FuelTypeElectric))
       XMLHelper.add_element(cooking_range, "FuelType", os_to_hpxml_fuel_map(Constants.FuelTypeElectric))
-      extension = cooking_range.add_element "extension"
-      XMLHelper.add_element(extension, "IsInduction", true)
+      XMLHelper.add_element(cooking_range, "IsInduction", true)
       oven = appliances.add_element "Oven"
       XMLHelper.add_attribute(oven.add_element("SystemIdentifier"), "id", "#{Constants.ObjectNameCookingRange(Constants.FuelTypeElectric)} oven")
       XMLHelper.add_element(oven, "FuelType", os_to_hpxml_fuel_map(Constants.FuelTypeElectric))
-      extension = oven.add_element "extension"
-      XMLHelper.add_element(extension, "IsConvection", true)
+      XMLHelper.add_element(oven, "IsConvection", true)
     elsif measures.keys.include? "ResidentialApplianceCookingRangeFuel"
       cooking_range = appliances.add_element "CookingRange"
       XMLHelper.add_attribute(cooking_range.add_element("SystemIdentifier"), "id", Constants.ObjectNameCookingRange(measures["ResidentialApplianceCookingRangeFuel"][0]["fuel_type"]))
       XMLHelper.add_element(cooking_range, "FuelType", os_to_hpxml_fuel_map(measures["ResidentialApplianceCookingRangeFuel"][0]["fuel_type"]))
-      extension = cooking_range.add_element "extension"
-      XMLHelper.add_element(extension, "IsInduction", true)
+      XMLHelper.add_element(cooking_range, "IsInduction", true)
       oven = appliances.add_element "Oven"
       XMLHelper.add_attribute(oven.add_element("SystemIdentifier"), "id", "#{Constants.ObjectNameCookingRange(Constants.FuelTypeElectric)} oven")
       XMLHelper.add_element(oven, "FuelType", os_to_hpxml_fuel_map(measures["ResidentialApplianceCookingRangeFuel"][0]["fuel_type"]))
-      extension = oven.add_element "extension"
-      XMLHelper.add_element(extension, "IsConvection", true)
+      XMLHelper.add_element(oven, "IsConvection", true)
     end
     
     # Lighting

@@ -371,22 +371,22 @@ class EnergyRatingIndex301Validator
             # ClothesWasher
             '//Building/BuildingDetails/Appliances/ClothesWasher' => [
                 'ModifiedEnergyFactor',
-                'extension/EnergyRating',
-                'extension/ElectricRate',
-                'extension/GasRate',
-                'extension/AnnualGasCost',
-                'extension/Capacity',
+                'RatedAnnualkWh',
+                'LabelElectricRate',
+                'LabelGasRate',
+                'LabelAnnualGasCost',
+                'Capacity',
             ],
             # ClothesDryer
             '//Building/BuildingDetails/Appliances/ClothesDryer' => [
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
-                'extension/EfficiencyFactor',
-                'extension/HasTimerControl',
+                'EfficiencyFactor',
+                'ControlType',
             ],
             # Dishwasher
             '//Building/BuildingDetails/Appliances/Dishwasher' => [
                 '[EnergyFactor|RatedAnnualkWh]',
-                'extension/Capacity',
+                'PlaceSettingCapacity',
             ],
             # Refrigerator
             '//Building/BuildingDetails/Appliances/Refrigerator' => [
@@ -395,12 +395,12 @@ class EnergyRatingIndex301Validator
             # CookingRange
             '//Building/BuildingDetails/Appliances/CookingRange' => [
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
-                'extension/IsInduction',
+                'IsInduction',
             ],
             # Oven
             '//Building/BuildingDetails/Appliances/Oven' => [
                 'FuelType',
-                'extension/IsConvection',
+                'IsConvection',
             ],
             # Lighting
             '//Building/BuildingDetails/Lighting/LightingFractions' => [
