@@ -1479,9 +1479,12 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           XMLHelper.add_attribute(hot_water_distribution.add_element("AttachedToWaterHeatingSystem"), "idref", water_heating_system.elements["SystemIdentifier"].attributes["id"])
           system_type = hot_water_distribution.add_element "SystemType"
           if not measures["ResidentialHotWaterDistribution"][0]["recirc_type"] == Constants.RecircTypeNone
-            XMLHelper.add_element(system_type.add_element "Recirculation", "ControlType", os_to_hpxml_recirc(measures["ResidentialHotWaterDistribution"][0]["recirc_type"]))
+            recirc = system_type.add_element "Recirculation"
+            XMLHelper.add_element(recirc.add_element "ControlType", os_to_hpxml_recirc(measures["ResidentialHotWaterDistribution"][0]["recirc_type"]))
+            XMLHelper.add_element(recirc, "LongestPipingLength", 30) # TODO: where to get this value?
           else
-            system_type.add_element "Standard"
+            standard = system_type.add_element "Standard"
+            XMLHelper.add_element(standard, "LongestPipingLength", 30) # TODO: where to get this value?
           end
           pipe_insulation = hot_water_distribution.add_element "PipeInsulation"
           XMLHelper.add_element(pipe_insulation, "PipeRValue", measures["ResidentialHotWaterDistribution"][0]["dist_ins"])
@@ -1490,7 +1493,6 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           else
             XMLHelper.add_element(pipe_insulation, "FractionPipeInsulation", 0)
           end
-          XMLHelper.add_element(hot_water_distribution.add_element("extension"), "LongestPipeLength", 30) # TODO: where to get this value?
         end
         
         pl.demandComponents.each do |component|

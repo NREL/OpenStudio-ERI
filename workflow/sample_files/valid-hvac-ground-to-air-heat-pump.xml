@@ -472,15 +472,14 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
-              <Recirculation/>
+              <Recirculation>
+                <LongestPipingLength>30</LongestPipingLength>
+              </Recirculation>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>0.0</PipeRValue>
               <FractionPipeInsulation>1.0</FractionPipeInsulation>
             </PipeInsulation>
-            <extension>
-              <LongestPipeLength>30</LongestPipeLength>
-            </extension>
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WF_ID1'/>

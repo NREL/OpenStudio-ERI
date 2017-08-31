@@ -338,7 +338,14 @@ class EnergyRatingIndex301Validator
                 'SystemType',
                 'PipeInsulation/PipeRValue',
                 'PipeInsulation/FractionPipeInsulation',
-                'extension/LongestPipeLength',
+            ],
+            # HotWaterDistribution Standard
+            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard' => [
+                'LongestPipingLength',
+            ],
+            # HotWaterDistribution Recirculation
+            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => [
+                'LongestPipingLength',
             ],
             # WaterFixture
             '//Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => [

@@ -18,7 +18,7 @@ class OSWtoHPXMLExportTest < MiniTest::Test
       osw_file_path = File.join(".", File.join(File.basename(File.dirname(__FILE__)), File.basename(osw_file_path)))
     # Parallel.each(get_resstock_osw_file_paths, in_threads: 3) do |osw_file_path| # parallelized osw files in resstock directory (doesn't work on ci machine?)
       args_hash["osw_file_path"] = osw_file_path
-      next if File.exist? File.join(File.dirname(__FILE__), "#{File.basename osw_file_path, ".*"}.xml")
+    #  next if File.exist? File.join(File.dirname(__FILE__), "#{File.basename osw_file_path, ".*"}.xml")
       expected_num_del_objects = {}
       expected_num_new_objects = {}
       expected_values = {}

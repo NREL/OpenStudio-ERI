@@ -1583,6 +1583,9 @@ class EnergyRatingIndex301Ruleset
     is_recirc = false
     if not orig_details.elements["Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation"].nil?
       is_recirc = true
+      pipe_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/LongestPipingLength"))
+    else
+      pipe_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Standard/LongestPipingLength"))
     end
     
     bsmnt = 0.0
@@ -1606,7 +1609,6 @@ class EnergyRatingIndex301Ruleset
     o_frac = 0.25
     o_cd_eff = 0.0
     
-    pipe_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/extension/LongestPipeLength"))
     ref_pipe_l = 2.0 * (cfa / nfl)**0.5 + 10.0 * nfl + 5.0 * bsmnt
     p_ratio = pipe_l / ref_pipe_l
     
