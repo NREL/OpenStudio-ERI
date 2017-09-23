@@ -8,7 +8,7 @@ require 'pathname'
 require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/xmlhelper"
-require "#{File.dirname(__FILE__)}/resources/helper_methods"
+require "#{File.dirname(__FILE__)}/resources/meta_measure"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/hvac"
@@ -153,6 +153,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
     end
     
+    workflow_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
+    
     # Apply Location measure to obtain weather data
     measures = {}
     measure_subdir = "ResidentialLocation"
@@ -164,7 +166,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
            }
     update_args_hash(measures, measure_subdir, args)
 
-    if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
+    if not apply_measures(measures_dir, measures, runner, model, workflow_json, nil, show_measure_calls)
       return false
     end
     weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
@@ -211,7 +213,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       File.write(osm_output_file_path.get, model.to_s)
     end
 
-    if not apply_measures(measures_dir, measures, runner, model, show_measure_calls)
+    if not apply_measures(measures_dir, measures, runner, model, workflow_json, nil, show_measure_calls)
       return false
     end
     
@@ -2931,7 +2933,7 @@ class OSModel
     end
    
   end  
-    
+  
 end
 
 # register the measure to be used by the application

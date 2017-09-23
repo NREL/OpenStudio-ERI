@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>46f46e43-d3aa-41c8-9ae5-cb165f2a1ad2</version_id>
-  <version_modified>20170731T151913Z</version_modified>
+  <version_id>b993f9c3-f6e2-4681-8ee7-5a2db7c3bdf5</version_id>
+  <version_modified>20170831T031752Z</version_modified>
   <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -136,27 +136,10 @@
   </attributes>
   <files>
     <file>
-      <filename>WindowArea_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3CB49F85</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>20190C86</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.9.0</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>01DBB2FD</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -177,18 +160,6 @@
       <checksum>11343AF5</checksum>
     </file>
     <file>
-      <filename>SFA_4units_1story_SL_UA_Offset.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B15FEE2C</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Inset.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>78339EF5</checksum>
-    </file>
-    <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -199,6 +170,53 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>3CF3D175</checksum>
+    </file>
+    <file>
+      <filename>WindowArea_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F92E1389</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.9.0</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>ADAC426B</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver_Windows_FourConstructions.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>83C6DF50</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_Denver_Windows_OneConstruction.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DF11372B</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Offset.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FE482FC4</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Inset.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5A06961A</checksum>
+    </file>
+    <file>
+      <filename>SFD_1000sqft_1story_FB_GRG_UA_DoorArea.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>940F10DE</checksum>
     </file>
   </files>
 </measure>

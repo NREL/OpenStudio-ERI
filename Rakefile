@@ -71,7 +71,7 @@ task :copy_beopt_files do
   resources.each do |resource|
     resource = File.expand_path(File.join(beopt_resources_dir, resource), __FILE__)
     dest_resource = resource.gsub(beopt_dir, File.dirname(__FILE__))
-    if not FileUtils.compare_file(resource, dest_resource)
+    if not File.exists?(dest_resource) or not FileUtils.compare_file(resource, dest_resource)
       FileUtils.cp(resource, dest_resource)
       puts "Copied #{File.basename(resource)} to resources."
     end
