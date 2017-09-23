@@ -5,7 +5,7 @@ require 'rexml/document'
 
 require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/helper_methods"
+require "#{File.dirname(__FILE__)}/resources/meta_measure"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/301validator"
 
@@ -88,6 +88,8 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     
     osw = JSON.parse(File.read(osw_file_path))
     
+    workflow_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
+    
     measures = {}
     
     steps = osw["steps"]
@@ -101,7 +103,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     end
 
     # Geometry
-    if not apply_measures(measures_dir, measures, runner, model, show_measure_calls=true)
+    if not apply_measures(measures_dir, measures, runner, model, workflow_json, nil, show_measure_calls=true)
       return false
     end
 
