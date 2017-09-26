@@ -395,7 +395,8 @@
             "plant_loop" : "auto",
             "shower_mult" : "1",
             "sink_mult" : "1",
-            "space" : "auto"
+            "space" : "auto",
+            "schedule_day_shift" : "0"
          },
          "description" : "Adds (or replaces) residential hot water fixtures -- showers, sinks, and baths. For multifamily buildings, the hot water fixtures can be set for all units of the building.",
          "measure_dir_name" : "ResidentialHotWaterFixtures",
@@ -512,7 +513,8 @@
             "rated_annual_energy" : "387",
             "space" : "auto",
             "test_date" : "2007",
-            "thermostatic_control" : "true"
+            "thermostatic_control" : "true",
+            "schedule_day_shift" : "0"
          },
          "description" : "Adds (or replaces) a residential clothes washer with the specified efficiency, operation, and schedule. For multifamily buildings, the clothes washer can be set for all units of the building.",
          "measure_dir_name" : "ResidentialApplianceClothesWasher",
@@ -545,7 +547,8 @@
             "mult_hw" : "1",
             "num_settings" : "12",
             "plant_loop" : "auto",
-            "space" : "auto"
+            "space" : "auto",
+            "schedule_day_shift" : "0"
          },
          "description" : "Adds (or replaces) a residential dishwasher with the specified efficiency, operation, and schedule. For multifamily buildings, the dishwasher can be set for all units of the building.",
          "measure_dir_name" : "ResidentialApplianceDishwasher",
