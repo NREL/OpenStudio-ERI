@@ -32,10 +32,15 @@ end
 desc 'Copy measures/osms from OpenStudio-BEopt repo'
 task :copy_beopt_files do
   require 'fileutils'
+  require 'openstudio'
   
-  # TODO: Should really grab latest from https://github.com/NREL/OpenStudio-BEopt/archive/master.zip
-  beopt_dir = File.expand_path(File.join(File.dirname(__FILE__), "..", "OpenStudio-BEopt"), __FILE__)
-
+  puts "Downloading latest residential measures..."
+  system("curl -L https://github.com/NREL/OpenStudio-BEopt/archive/master.zip > master.zip")
+  puts "Extracting latest residential measures..."
+  unzip_file = OpenStudio::UnzipFile.new(File.join(File.dirname(__FILE__), "master.zip"))
+  unzip_file.extractAllFiles(OpenStudio::toPath(File.join(File.dirname(__FILE__), "master")))  
+  
+  beopt_dir = File.join(File.dirname(__FILE__), "master", "OpenStudio-BEopt-master")
   beopt_measures_dir = File.join(beopt_dir, "measures")
   resource_measures_dir = File.join(File.dirname(__FILE__), "resources", "measures")
   if not Dir.exist?(beopt_measures_dir)
@@ -85,6 +90,8 @@ task :copy_beopt_files do
     puts puts "Copied #{File.basename(src_json)} to #{File.dirname(dest_json)}."
   end
   
+  FileUtils.rm_rf(File.join(File.dirname(__FILE__), "master"))
+
 end
 
 desc 'update all measures (resources, xmls)'
