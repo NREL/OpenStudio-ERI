@@ -1912,7 +1912,8 @@ class OSMeasures
             "mult_e"=>1,
             "mult_hw"=>1,
             "space"=>Constants.Auto,
-            "plant_loop"=>Constants.Auto
+            "plant_loop"=>Constants.Auto,
+            "schedule_day_shift"=>"0"
            }  
     update_args_hash(measures, measure_subdir, args)
     
@@ -1970,7 +1971,8 @@ class OSMeasures
             "mult_e"=>1,
             "mult_hw"=>1,
             "space"=>Constants.Auto,
-            "plant_loop"=>Constants.Auto
+            "plant_loop"=>Constants.Auto,
+            "schedule_day_shift"=>"0"
            }  
     update_args_hash(measures, measure_subdir, args)
 
