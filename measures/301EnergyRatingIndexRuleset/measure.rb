@@ -1359,6 +1359,8 @@ class OSMeasures
 
     htgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
     
+    return if not building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"].nil? # FIXME: Temporary
+    
     return if htgsys.nil?
     
     fuel = XMLHelper.get_value(htgsys, "HeatingSystemFuel")
@@ -1455,6 +1457,8 @@ class OSMeasures
   def self.get_cooling_system(building, measures)
   
     clgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
+    
+    return if not building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"].nil? # FIXME: Temporary
     
     return if clgsys.nil?
     

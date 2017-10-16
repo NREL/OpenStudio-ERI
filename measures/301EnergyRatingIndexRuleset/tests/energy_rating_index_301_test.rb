@@ -45,12 +45,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
     assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    
-    # Rated Home: Air-to-air heat pump
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
     
     '''
     Ground-to-air heat pump
@@ -69,12 +64,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
     assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    
-    # Rated Home: Ground-to-air heat pump
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("ground-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
     
     '''
     Mini-split heat pump
@@ -93,12 +83,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
     assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    
-    # Rated Home: Mini-split heat pump
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("mini-split", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
     
     '''
     Natural gas furnace
@@ -118,12 +103,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
     assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
     assert_equal(0.78, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
-    
-    # Rated Home: Natural gas furnace
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
-    assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
     
     '''
     Electric furnace
@@ -143,12 +123,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
     assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    
-    # Rated Home: Electric furnace
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
-    assert_equal("electricity", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
     
     '''
     Natural gas boiler
@@ -168,13 +143,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Boiler"))
     assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
     assert_equal(0.80, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
 
-    # Rated Home: Natural gas boiler
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Boiler"))
-    assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
-    
     '''
     Electric boiler
     '''
@@ -193,12 +163,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
     assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    
-    # Rated Home: Electric boiler
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Boiler"))
-    assert_equal("electricity", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
     
     '''
     Electric resistance
@@ -218,12 +183,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
     assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    
-    # Rated Home: Electric resistance
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/ElectricResistance"))
-    assert_equal("electricity", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
     
     '''
     None (gas available)
@@ -240,12 +200,15 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
     assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
     assert_equal(0.78, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
     
-    # Rated Home: Natural gas furnace
+    # Rated Home: Natural gas furnace, AFUE 78
     systems = REXML::Element.new
     EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
     assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(0.78, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
     
     '''
     None (gas not available)
@@ -261,12 +224,83 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
     assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
     
-    # Rated Home: Air-to-air heat pump
+    # Rated Home: Air-to-air heat pump, HSPF 7.7
     systems = REXML::Element.new
     EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
     assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
     assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
+    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
+    
+  end
+  
+  def test_hvac_cooling_systems
+
+    '''
+    Air-to-air heat pump
+    '''
+    
+    details = get_hpxml_doc_details
+    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
+    XMLHelper.add_element(fta, "Fuel", "electricity")
+    XMLHelper.add_element(fta, "Fuel", "natural gas")
+    hp = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatPump")
+    XMLHelper.add_element(hp, "HeatPumpType", "air-to-air")
+
+    # Reference Home: Air conditioner, SEER 13
+    systems = REXML::Element.new
+    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
+    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
+    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
+    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
+    
+    '''
+    Air conditioner
+    '''
+    
+    details = get_hpxml_doc_details
+    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
+    XMLHelper.add_element(fta, "Fuel", "electricity")
+    XMLHelper.add_element(fta, "Fuel", "natural gas")
+    cs = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/CoolingSystem")
+    XMLHelper.add_element(cs, "CoolingSystemType", "central air conditioning")
+    XMLHelper.add_element(cs, "CoolingSystemFuel", "electricity")
+
+    # Reference Home: Air conditioner, SEER 13
+    systems = REXML::Element.new
+    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
+    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
+    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
+    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
+    
+    '''
+    None
+    '''
+    
+    details = get_hpxml_doc_details
+    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
+    XMLHelper.add_element(fta, "Fuel", "electricity")
+    XMLHelper.add_element(fta, "Fuel", "natural gas")
+
+    # Reference Home: Air conditioner, SEER 13
+    systems = REXML::Element.new
+    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
+    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
+    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
+    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
+    
+    # Rated Home: Air conditioner, SEER 13
+    systems = REXML::Element.new
+    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
+    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
+    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
+    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
+    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
     
   end
   
