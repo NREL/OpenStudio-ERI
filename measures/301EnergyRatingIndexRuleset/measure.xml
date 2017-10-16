@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>6fe25814-0f32-410b-9704-15ffd7045f04</version_id>
-  <version_modified>20170923T005522Z</version_modified>
+  <version_id>d56d1c4f-7bcd-47ea-b8b7-5ba71d304b71</version_id>
+  <version_modified>20171016T184224Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -112,12 +112,6 @@
       <checksum>3C131B97</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E4C6BC93</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -134,18 +128,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>20190C86</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B9EE062E</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -172,90 +154,6 @@
       <checksum>696FBE04</checksum>
     </file>
     <file>
-      <filename>energy_rating_index_301_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CEEDFEFD</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>551E68A4</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-foundation-slab.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>48687E2E</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-foundation-unconditioned-basement.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>54D53B61</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-foundation-vented-crawlspace.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C4497C8B</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-air-to-air-heat-pump.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDDE11A7</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-boiler-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C7F73117</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-central-ac-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>551E68A4</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-elec-resistance-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDDE11A7</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-furnace-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>551E68A4</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-ground-to-air-heat-pump.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDDE11A7</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-mini-split-heat-pump.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDDE11A7</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-none.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>551E68A4</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-room-ac-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>551E68A4</checksum>
-    </file>
-    <file>
       <filename>HERS Rated Home - valid.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
@@ -280,34 +178,189 @@
       <checksum>A1732EAC</checksum>
     </file>
     <file>
-      <filename>HERS Rated Home - valid-hvac-air-to-air-heat-pump.xml</filename>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>78FEF574</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8F96C373</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7BFE5DD7</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6A82C5DA</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C144F9B</checksum>
+    </file>
+    <file>
+      <filename>meta_measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>833F3B7E</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-none.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>7CFE6C0E</checksum>
+      <checksum>9A5EAF84</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9A5EAF84</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-slab.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>14E70A22</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-unconditioned-basement.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>11B75739</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-vented-crawlspace.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2139D5BE</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-boiler-only.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>01E5126B</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-central-ac-only.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9A5EAF84</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-furnace-only.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9A5EAF84</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-room-ac-only.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9A5EAF84</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid-hvac-boiler-only.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>EC087FFF</checksum>
+      <checksum>4B2A0B46</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid-hvac-central-ac-only.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>598B42CA</checksum>
+      <checksum>E038C2CC</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid-hvac-elec-resistance-only.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>0466570D</checksum>
+      <checksum>F0A7F86D</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid-hvac-furnace-only.xml</filename>
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
-      <checksum>36E81A07</checksum>
+      <checksum>A40D59DD</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-room-ac-only.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8E3CB30B</checksum>
+    </file>
+    <file>
+      <filename>energy_rating_index_301_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8218A536</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-none.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CE5686C6</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>3EAF231F</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-air-to-air-heat-pump.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C9C05E4E</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-elec-resistance-only.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C9C05E4E</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-ground-to-air-heat-pump.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C9C05E4E</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-mini-split-heat-pump.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C9C05E4E</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-air-to-air-heat-pump.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB9B524C</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-mini-split-heat-pump.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1EE21A8B</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-air-to-air-heat-pump.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7CFE6C0E</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid-hvac-ground-to-air-heat-pump.xml</filename>
@@ -322,207 +375,154 @@
       <checksum>45FC272C</checksum>
     </file>
     <file>
-      <filename>HERS Rated Home - valid-hvac-none.xml</filename>
-      <filetype>xml</filetype>
+      <filename>HERS Rated Home - valid-hvac-ground-to-air-heat-pump.osm</filename>
+      <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2F9801DF</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-room-ac-only.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C8FACB68</checksum>
-    </file>
-    <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>78FEF574</checksum>
+      <checksum>4A5465A0</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>972811C8</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>8F96C373</checksum>
-    </file>
-    <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>D39E19D6</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-foundation-slab.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D69A0471</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-foundation-unconditioned-basement.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D9E9F047</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-foundation-vented-crawlspace.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9A9B512A</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-air-to-air-heat-pump.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>29D54B67</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-boiler-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A3647812</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-central-ac-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>23B0C203</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-furnace-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>373BBE84</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-ground-to-air-heat-pump.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C8AC7168</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-none.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6D2A6288</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-room-ac-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>04903F33</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-foundation-slab.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>50761DD1</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-foundation-unconditioned-basement.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A63E66C4</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-foundation-vented-crawlspace.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4FB97F54</checksum>
+      <checksum>E186B65C</checksum>
     </file>
     <file>
       <filename>HERS Reference Home - valid-hvac-air-to-air-heat-pump.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E8D5AAFB</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-boiler-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E83E1F18</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-furnace-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>92D334C6</checksum>
+      <checksum>0667FA4F</checksum>
     </file>
     <file>
       <filename>HERS Reference Home - valid-hvac-ground-to-air-heat-pump.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>F6C9FF81</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-none.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>7FA0467A</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-room-ac-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FB79D82D</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-central-ac-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>73A72A20</checksum>
+      <checksum>2C8E0162</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid-hvac-elec-resistance-only.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>87D6B414</checksum>
-    </file>
-    <file>
-      <filename>HERS Rated Home - valid-hvac-mini-split-heat-pump.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AA784FD6</checksum>
+      <checksum>A12A1DD8</checksum>
     </file>
     <file>
       <filename>HERS Reference Home - valid-hvac-elec-resistance-only.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>4DA7E307</checksum>
+      <checksum>3AE21E32</checksum>
     </file>
     <file>
       <filename>HERS Reference Home - valid-hvac-mini-split-heat-pump.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>28586E65</checksum>
+      <checksum>246A4734</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-foundation-slab.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>02A26B60</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-foundation-unconditioned-basement.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E6D14EF3</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-foundation-vented-crawlspace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3E115340</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-boiler-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>20678630</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-central-ac-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>55124E8C</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-furnace-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AD821394</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-none.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>7F4293E6</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-room-ac-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D4EF65ED</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-slab.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FBE1350F</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-unconditioned-basement.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2EF5AC18</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-foundation-vented-crawlspace.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A15CB3AF</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-boiler-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>94D235A2</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-furnace-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A572360E</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-room-ac-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F25F5A58</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-central-ac-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A00A1C1F</checksum>
     </file>
     <file>
       <filename>HERS Rated Home - valid.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D842A655</checksum>
+      <checksum>9A733AFE</checksum>
     </file>
     <file>
       <filename>HERS Reference Home - valid.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>CBC01E63</checksum>
+      <checksum>93A86B37</checksum>
     </file>
     <file>
-      <filename>meta_measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D5C57349</checksum>
+      <filename>HERS Reference Home - valid-hvac-none.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F6D28898</checksum>
     </file>
   </files>
 </measure>
