@@ -1,5 +1,5 @@
 EnergyPlus Starting
-EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
+EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25
 Processing Data Dictionary
 Processing Input File
 Initializing Simulation
@@ -13,6 +13,14 @@ Warming up {4}
 Warming up {5}
 Warming up {6}
 Warming up {7}
+Warming up {8}
+Warming up {9}
+Warming up {10}
+Warming up {11}
+Warming up {12}
+Warming up {13}
+Warming up {14}
+Warming up {15}
 Starting Simulation at 01/01 for RUN PERIOD
 Updating Shadowing Calculations, Start Date=01/21
 Continuing Simulation at 01/21 for RUN PERIOD
@@ -53,4 +61,4 @@ Continuing Simulation at 12/27 for RUN PERIOD
 Writing tabular output file results using HTML format.
 Computing Life Cycle Costs and Reporting
 Writing final SQL reports
-EnergyPlus Run Time=00hr 00min 21.32sec
+EnergyPlus Run Time=00hr 00min 12.10sec

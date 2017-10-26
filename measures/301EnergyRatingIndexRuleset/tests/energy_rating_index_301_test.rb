@@ -26,7 +26,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     return details
   end
 
-  def test_hvac_heating_systems
+  def test_hvac_systems
 
     '''
     Air-to-air heat pump

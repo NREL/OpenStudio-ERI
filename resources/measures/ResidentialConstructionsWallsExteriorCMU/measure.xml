@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_cmu</name>
   <uid>64c320f1-6e42-4f15-8946-8ca3e5314dd9</uid>
-  <version_id>51013434-afcd-4026-a1c9-5ac8858fc3e1</version_id>
-  <version_modified>20170906T152209Z</version_modified>
+  <version_id>f2b25011-e4cc-4a06-ad87-c782bf118ae5</version_id>
+  <version_modified>20171025T195005Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorCMU</class_name>
   <display_name>Set Residential Walls - CMU Construction</display_name>
@@ -133,12 +133,6 @@
       <checksum>64BC6389</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B34275B6</checksum>
-    </file>
-    <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -155,6 +149,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6A82C5DA</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B466251C</checksum>
     </file>
   </files>
 </measure>

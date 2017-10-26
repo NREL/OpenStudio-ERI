@@ -412,6 +412,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
@@ -432,6 +433,9 @@
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <HydronicDistribution/>
+            </DistributionSystemType>
           </HVACDistribution>
         </HVAC>
         <MechanicalVentilation>

@@ -60,6 +60,9 @@ def create_osw(design, basedir, resultsdir, options)
   measures['301EnergyRatingIndexRuleset']['measures_dir'] = measures_dir
   #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
   measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
+  if options[:debug]
+    measures['301EnergyRatingIndexRuleset']['debug'] = 'true'
+  end
   steps = OpenStudio::WorkflowStepVector.new
   measures.keys.each do |measure|
     step = OpenStudio::MeasureStep.new(measure)
@@ -664,6 +667,11 @@ OptionParser.new do |opts|
 
   opts.on('-e', '--epw <FILE>', 'EPW weather file') do |t|
     options[:epw] = t
+  end
+  
+  options[:debug] = false
+  opts.on('-d', '--debug', 'EPW weather file') do |t|
+    options[:debug] = true
   end
   
   opts.on_tail('-h', '--help', 'Display help') do

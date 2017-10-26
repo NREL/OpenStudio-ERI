@@ -1075,6 +1075,7 @@ class EnergyRatingIndex301Ruleset
     cooling system efficiencies
     '''
 
+    # FIXME: What about when there is a boiler? Don't write heating DSE?
     new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
     sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACDistribution")
@@ -1229,25 +1230,27 @@ class EnergyRatingIndex301Ruleset
     '''
     
     has_programmable_tstat = false
-    control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HVACControl/ControlType")
+    control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType")
     if control_type == "programmable thermostat"
       has_programmable_tstat = true
     end
     
+    programmable_offset = 2 # F
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
     sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACControl")
     XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
+    if has_programmable_tstat
+      XMLHelper.add_element(new_hvac_control, "SetbackTempHeatingSeason", 68-programmable_offset)
+      XMLHelper.add_element(new_hvac_control, "TotalSetbackHoursperWeekHeating", 7*7) # 11 p.m. to 5:59 a.m., 7 days a week
+      XMLHelper.add_element(new_hvac_control, "SetupTempCoolingSeason", 78+programmable_offset)
+    end
     XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
     if has_programmable_tstat
-      offset = 2 # F
-      XMLHelper.add_element(new_hvac_control, "SetbackTempHeatingSeason", 68-offset)
-      XMLHelper.add_element(new_hvac_control, "SetupTempCoolingSeason", 78+offset)
-      XMLHelper.add_element(new_hvac_control, "TotalSetbackHoursperWeekHeating", 7*7) # 11 p.m. to 5:59 a.m., 7 days a week
       XMLHelper.add_element(new_hvac_control, "TotalSetupHoursperWeekCooling", 6*7) # 9 a.m. to 2:59 p.m., 7 days a week
       extension = XMLHelper.add_element(new_hvac_control, "extension")
       XMLHelper.add_element(extension, "SetbackStartHour", 23) # 11 p.m.
-      XMLHelper.add_element(extension, "SetupCoolingStartHour", 9) # 9 a.m.
+      XMLHelper.add_element(extension, "SetupStartHour", 9) # 9 a.m.
     end
     
     '''
@@ -1261,7 +1264,9 @@ class EnergyRatingIndex301Ruleset
     '''
     
     # Retain distribution system
-    XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HVACDistribution")
+    # FIXME: There can be no distribution system when HVAC prescribed via above
+    #        e.g., no cooling system => AC w/o ducts
+    XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
 
   end
   
