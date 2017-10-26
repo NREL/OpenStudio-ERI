@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>03eaca3a-68ad-4cb1-8ad7-a83e55a4f629</version_id>
-  <version_modified>20171026T195028Z</version_modified>
+  <version_id>33427e4a-c1ba-46e2-ba23-a2df59c02dec</version_id>
+  <version_modified>20171026T210841Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -156,12 +156,6 @@
       <checksum>917D2064</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B466251C</checksum>
-    </file>
-    <file>
       <filename>Garage.osw</filename>
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
@@ -280,12 +274,6 @@
       <filetype>osw</filetype>
       <usage_type>test</usage_type>
       <checksum>03B1CA23</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C9C319CF</checksum>
     </file>
     <file>
       <filename>FlatRoof.osm</filename>
@@ -462,42 +450,6 @@
       <checksum>32A056DE</checksum>
     </file>
     <file>
-      <filename>1-StoryFinishedAttic.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A80B5B2F</checksum>
-    </file>
-    <file>
-      <filename>1-StoryFinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDDBC542</checksum>
-    </file>
-    <file>
-      <filename>1-StoryUnfinishedAttic.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DF62A12B</checksum>
-    </file>
-    <file>
-      <filename>1-StoryUnfinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0763341D</checksum>
-    </file>
-    <file>
-      <filename>AirSourceHeatPumpTwoSpeed.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>6E7AA0F7</checksum>
-    </file>
-    <file>
-      <filename>AirSourceHeatPumpTwoSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3A553BA3</checksum>
-    </file>
-    <file>
       <filename>AirSourceHeatPumpVariableSpeed.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -658,6 +610,54 @@
       <filetype>xml</filetype>
       <usage_type>test</usage_type>
       <checksum>BABAB8C8</checksum>
+    </file>
+    <file>
+      <filename>1-StoryFinishedAttic.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A80B5B2F</checksum>
+    </file>
+    <file>
+      <filename>1-StoryFinishedAttic.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FDDBC542</checksum>
+    </file>
+    <file>
+      <filename>1-StoryUnfinishedAttic.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DF62A12B</checksum>
+    </file>
+    <file>
+      <filename>1-StoryUnfinishedAttic.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0763341D</checksum>
+    </file>
+    <file>
+      <filename>AirSourceHeatPumpTwoSpeed.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>6E7AA0F7</checksum>
+    </file>
+    <file>
+      <filename>AirSourceHeatPumpTwoSpeed.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3A553BA3</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B466251C</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C9C319CF</checksum>
     </file>
     <file>
       <filename>301validator.rb</filename>
