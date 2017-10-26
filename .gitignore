@@ -22,3 +22,10 @@ coverage
 
 /master.zip
 /master
+/workflow/sample_results/HERSRatedHome/run/data_point.zip
+/workflow/sample_results/HERSRatedHome/run/eplusout.eso
+/workflow/sample_results/HERSRatedHome/run/pre-preprocess.idf
+/workflow/sample_results/HERSReferenceHome/run/data_point.zip
+/workflow/sample_results/HERSReferenceHome/run/eplusout.eso
+/workflow/sample_results/HERSReferenceHome/run/pre-preprocess.idf
+/workflow/sample_results/HERSReferenceHome/run/pre-preprocess.idf
