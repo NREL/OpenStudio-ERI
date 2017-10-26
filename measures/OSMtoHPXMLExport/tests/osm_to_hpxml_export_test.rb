@@ -7,6 +7,7 @@ require 'fileutils'
 
 class OSMtoHPXMLExportTest < MiniTest::Test
 
+=begin
   def test_valid_xml
     args_hash = {}
     args_hash["osm_file_path"] = "./tests/create-model-example.osm"
@@ -16,6 +17,7 @@ class OSMtoHPXMLExportTest < MiniTest::Test
     expected_values = {}
     result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
+=end
   
   private
   
