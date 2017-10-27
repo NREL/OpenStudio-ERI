@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>b667079f-1824-4d09-9a89-5fea93550327</version_id>
-  <version_modified>20171027T015540Z</version_modified>
+  <version_id>6516ff00-56eb-4877-97d1-b452f6d1532c</version_id>
+  <version_modified>20171027T122118Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -484,18 +484,6 @@
       <checksum>A8B09C11</checksum>
     </file>
     <file>
-      <filename>HERS Rated Home - valid-hvac-elec-resistance-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8D741FB2</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid-hvac-elec-resistance-only.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>90DBDF0D</checksum>
-    </file>
-    <file>
       <filename>HERS Reference Home - valid-hvac-mini-split-heat-pump.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -586,12 +574,6 @@
       <checksum>D9F1CEB4</checksum>
     </file>
     <file>
-      <filename>energy_rating_index_301_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FFA1E43C</checksum>
-    </file>
-    <file>
       <filename>HERS Rated Home - valid-hvac-air-to-air-heat-pump.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -662,6 +644,24 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>637C9B41</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid-hvac-elec-resistance-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F535C5DF</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid-hvac-elec-resistance-only.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>39686A4A</checksum>
+    </file>
+    <file>
+      <filename>energy_rating_index_301_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>0A35008A</checksum>
     </file>
   </files>
 </measure>

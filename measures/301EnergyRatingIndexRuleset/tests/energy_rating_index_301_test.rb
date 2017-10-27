@@ -451,7 +451,7 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
   end
   
-  def _test_for_hpxml_elec_resistance(details, fueltype, percent, loadfrac)
+  def _test_for_hpxml_elec_resistance(details, percent, loadfrac)
     assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemType/ElectricResistance"))
     assert_equal("electricity", XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
     assert_equal(percent, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='Percent']/Value")))
