@@ -7,307 +7,6 @@ require 'fileutils'
 
 class EnergyRatingIndex301Test < MiniTest::Test
 
-  '''
-  Test reference/rated home logic via HPXML text snippets.
-  '''
-  
-  def get_hpxml_doc_details
-    hpxml = """
-      <?xml version='1.0' encoding='UTF-8'?>
-      <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6 N:/Groups/REM/XML/BPI HPXML Standard/schemas/HPXML.xsd' schemaVersion='2.2'>
-        <Building>
-          <BuildingDetails>
-          </BuildingDetails>
-        </Building>
-      </HPXML>
-    """
-    hpxml_doc = REXML::Document.new(hpxml)
-    details = hpxml_doc.elements["//Building/BuildingDetails"]
-    return details
-  end
-
-  def test_hvac_systems
-
-    '''
-    Air-to-air heat pump
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hp = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatPump")
-    XMLHelper.add_element(hp, "HeatPumpType", "air-to-air")
-
-    # Reference Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-    '''
-    Ground-to-air heat pump
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hp = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatPump")
-    XMLHelper.add_element(hp, "HeatPumpType", "ground-to-air")
-
-    # Reference Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-    '''
-    Mini-split heat pump
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hp = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatPump")
-    XMLHelper.add_element(hp, "HeatPumpType", "mini-split")
-
-    # Reference Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-    '''
-    Natural gas furnace
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hs = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatingSystem")
-    XMLHelper.add_element(hs, "HeatingSystemType/Furnace")
-    XMLHelper.add_element(hs, "HeatingSystemFuel", "natural gas")
-    
-    # Reference Home: Natural gas furnace, AFUE 78
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
-    assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
-    assert_equal(0.78, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
-    
-    '''
-    Electric furnace
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hs = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatingSystem")
-    XMLHelper.add_element(hs, "HeatingSystemType/Furnace")
-    XMLHelper.add_element(hs, "HeatingSystemFuel", "electricity")
-    
-    # Reference Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-    '''
-    Natural gas boiler
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hs = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatingSystem")
-    XMLHelper.add_element(hs, "HeatingSystemType/Boiler")
-    XMLHelper.add_element(hs, "HeatingSystemFuel", "natural gas")
-    
-    # Reference Home: Natural gas boiler, AFUE 80
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Boiler"))
-    assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
-    assert_equal(0.80, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
-
-    '''
-    Electric boiler
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hs = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatingSystem")
-    XMLHelper.add_element(hs, "HeatingSystemType/Boiler")
-    XMLHelper.add_element(hs, "HeatingSystemFuel", "electricity")
-    
-    # Reference Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-    '''
-    Electric resistance
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hs = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatingSystem")
-    XMLHelper.add_element(hs, "HeatingSystemType/ElectricResistance")
-    XMLHelper.add_element(hs, "HeatingSystemFuel", "electricity")
-    
-    # Reference Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-    '''
-    None (gas available)
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    
-    # Reference Home: Natural gas furnace, AFUE 78
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
-    assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
-    assert_equal(0.78, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
-    
-    # Rated Home: Natural gas furnace, AFUE 78
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
-    assert_equal("natural gas", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
-    assert_equal(0.78, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
-    
-    '''
-    None (gas not available)
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    
-    # Reference Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-    # Rated Home: Air-to-air heat pump, HSPF 7.7
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(7.7, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
-    
-  end
-  
-  def test_hvac_cooling_systems
-
-    '''
-    Air-to-air heat pump
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    hp = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/HeatPump")
-    XMLHelper.add_element(hp, "HeatPumpType", "air-to-air")
-
-    # Reference Home: Air conditioner, SEER 13
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
-    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
-    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
-    
-    '''
-    Air conditioner
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-    cs = XMLHelper.add_element(details, "Systems/HVAC/HVACPlant/CoolingSystem")
-    XMLHelper.add_element(cs, "CoolingSystemType", "central air conditioning")
-    XMLHelper.add_element(cs, "CoolingSystemFuel", "electricity")
-
-    # Reference Home: Air conditioner, SEER 13
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
-    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
-    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
-    
-    '''
-    None
-    '''
-    
-    details = get_hpxml_doc_details
-    fta = XMLHelper.add_element(details, "BuildingSummary/Site/FuelTypesAvailable")
-    XMLHelper.add_element(fta, "Fuel", "electricity")
-    XMLHelper.add_element(fta, "Fuel", "natural gas")
-
-    # Reference Home: Air conditioner, SEER 13
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_reference(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
-    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
-    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
-    
-    # Rated Home: Air conditioner, SEER 13
-    systems = REXML::Element.new
-    EnergyRatingIndex301Ruleset.set_systems_hvac_rated(systems, details)
-    assert(XMLHelper.has_element(systems, "HVAC/HVACPlant/CoolingSystem"))
-    assert_equal("central air conditioning", XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
-    assert_equal(13.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
-    assert_equal(1.0, Float(XMLHelper.get_value(systems, "HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
-    
-  end
-  
-  '''
-  Test running simulations for various HPXML files to completion.
-  '''
-  
   def get_args_hash(hpxml_filename, calc_type)
     args_hash = {}
     args_hash["hpxml_file_path"] = "../../workflow/sample_files/#{hpxml_filename}"
@@ -322,187 +21,356 @@ class EnergyRatingIndex301Test < MiniTest::Test
 
   def test_hpxml_home
     hpxml = "valid.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_hpxml_home_foundation_unconditioned_basement
     hpxml = "valid-foundation-unconditioned-basement.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_hpxml_home_foundation_vented_crawlspace
     hpxml = "valid-foundation-vented-crawlspace.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_hpxml_home_foundation_slab
     hpxml = "valid-foundation-slab.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_hpxml_home_hvac_central_ac_only
     hpxml = "valid-hvac-central-ac-only.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
-  def test_hpxml_home_hvac_furnace_only
-    hpxml = "valid-hvac-furnace-only.xml"
+  def test_hpxml_home_hvac_furnace_gas_only
+    hpxml = "valid-hvac-furnace-gas-only.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_home_hvac_furnace_elec_only
+    hpxml = "valid-hvac-furnace-elec-only.xml"
+
+    # Reference Home
+    args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
+    args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_hpxml_home_hvac_air_to_air_heat_pump
     hpxml = "valid-hvac-air-to-air-heat-pump.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_hpxml_home_hvac_none
     hpxml = "valid-hvac-none.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
   end
   
-  def test_hpxml_home_hvac_boiler_only
-    hpxml = "valid-hvac-boiler-only.xml"
+  def test_hpxml_home_hvac_none_no_fuel_access
+    hpxml = "valid-hvac-none-no-fuel-access.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+  end
+  
+  def test_hpxml_home_hvac_boiler_gas_only
+    hpxml = "valid-hvac-boiler-gas-only.xml"
+
+    # Reference Home
+    args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_boiler(details, "natural gas", 0.80, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
+    args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+  end
+  
+  def test_hpxml_home_hvac_boiler_elec_only
+    hpxml = "valid-hvac-boiler-elec-only.xml"
+
+    # Reference Home
+    args_hash = get_args_hash(hpxml, "HERS Reference Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
+    args_hash = get_args_hash(hpxml, "HERS Rated Home")
+    expected_num_del_objects = {}
+    expected_num_new_objects = {}
+    expected_values = {}
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_hpxml_home_hvac_elec_resistance_only
     hpxml = "valid-hvac-elec-resistance-only.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_hpxml_home_hvac_ground_to_air_heat_pump
     hpxml = "valid-hvac-ground-to-air-heat-pump.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   def test_hpxml_home_hvac_mini_split_heat_pump
     hpxml = "valid-hvac-mini-split-heat-pump.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
   
   def test_hpxml_home_hvac_room_ac_only
     hpxml = "valid-hvac-room-ac-only.xml"
+
+    # Reference Home
     args_hash = get_args_hash(hpxml, "HERS Reference Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    
+    # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
     expected_num_del_objects = {}
     expected_num_new_objects = {}
     expected_values = {}
-    result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
   end
 
   private
+  
+  def _test_for_hpxml_furnace(details, fueltype, afue, loadfrac)
+    assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Furnace"))
+    assert_equal(fueltype, XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(afue, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
+    assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
+  end
+  
+  def _test_for_hpxml_central_ac(details, seer, loadfrac)
+    assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/CoolingSystem"))
+    assert_equal("central air conditioning", XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
+    assert_equal(seer, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
+    assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
+  end
+  
+  def _test_for_hpxml_air_source_heat_pump(details, hspf, heatloadfrac)
+    assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/HeatPump"))
+    assert_equal("air-to-air", XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/HeatPumpType"))
+    assert_equal(hspf, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
+    assert_equal(heatloadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
+  end
+  
+  def _test_for_hpxml_boiler(details, fueltype, afue, loadfrac)
+    assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemType/Boiler"))
+    assert_equal(fueltype, XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(afue, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
+    assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
+  end
   
   def _test_error_or_NA(osm_file_or_model, args_hash)
     # create an instance of the measure
@@ -595,7 +463,10 @@ class EnergyRatingIndex301Test < MiniTest::Test
         end
     end
     
-    return result
+    hpxml_doc = REXML::Document.new(File.new(args_hash["hpxml_output_file_path"]))
+    details = hpxml_doc.elements["//Building/BuildingDetails"]
+    
+    return result, details
   end
 
 end

@@ -416,7 +416,7 @@
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
-              <HeatingSystemFuel>propane</HeatingSystemFuel>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
               <HeatingCapacity>64000</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
