@@ -29,7 +29,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -37,6 +38,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.92, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 16.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   def test_hpxml_home_foundation_unconditioned_basement
@@ -49,7 +53,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -57,6 +62,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.92, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 16.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   def test_hpxml_home_foundation_vented_crawlspace
@@ -69,7 +77,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -77,6 +86,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.92, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 16.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   def test_hpxml_home_foundation_slab
@@ -89,7 +101,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -97,6 +110,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.92, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 16.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   def test_hpxml_home_hvac_central_ac_only
@@ -109,7 +125,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -117,6 +134,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 16.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   def test_hpxml_home_hvac_furnace_gas_only
@@ -129,7 +149,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -137,6 +158,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.92, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_furnace_elec_only
@@ -148,8 +172,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -157,6 +182,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "electricity", 1.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_air_to_air_heat_pump
@@ -168,8 +196,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -177,6 +206,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 10.0, nil, 1.0, 19.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_none
@@ -189,7 +220,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -198,7 +230,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_none_no_fuel_access
@@ -210,8 +243,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -219,7 +253,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_boiler_gas_only
@@ -232,7 +268,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_boiler(details, "natural gas", 0.80, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -240,6 +277,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_boiler(details, "natural gas", 0.92, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_boiler_elec_only
@@ -251,8 +291,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -260,6 +301,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_boiler(details, "electricity", 1.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_elec_resistance_only
@@ -271,8 +315,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -280,6 +325,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_elec_resistance(details, 1.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   def test_hpxml_home_hvac_ground_to_air_heat_pump
@@ -291,8 +339,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -300,6 +349,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_heat_pump(details, "ground-to-air", nil, 3.6, 1.0, nil, 16.6, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   def test_hpxml_home_hvac_mini_split_heat_pump
@@ -311,8 +362,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
-    _test_for_hpxml_air_source_heat_pump(details, 7.7, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_heat_pump(details, "air-to-air", 7.7, nil, 1.0, nil, nil, nil)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -320,6 +372,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_heat_pump(details, "mini-split", 10.0, nil, 1.0, 19.0, nil, 1.0)
+    _test_for_hpxml_ducts(details)
   end
   
   def test_hpxml_home_hvac_room_ac_only
@@ -332,7 +386,8 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
-    _test_for_hpxml_central_ac(details, 13.0, 1.0)
+    _test_for_hpxml_air_conditioner(details, "central air conditioning", 13.0, nil, 1.0)
+    _test_for_hpxml_dse(details, 0.8)
     
     # Rated Home
     args_hash = get_args_hash(hpxml, "HERS Rated Home")
@@ -340,6 +395,9 @@ class EnergyRatingIndex301Test < MiniTest::Test
     expected_num_new_objects = {}
     expected_values = {}
     result, details = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
+    _test_for_hpxml_furnace(details, "natural gas", 0.78, 1.0)
+    _test_for_hpxml_air_conditioner(details, "room air conditioner", nil, 8.5, 1.0)
+    _test_for_hpxml_ducts(details)
   end
 
   private
@@ -351,18 +409,39 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
   end
   
-  def _test_for_hpxml_central_ac(details, seer, loadfrac)
+  def _test_for_hpxml_air_conditioner(details, actype, seer, eer, loadfrac)
     assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/CoolingSystem"))
-    assert_equal("central air conditioning", XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
-    assert_equal(seer, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
+    assert_equal(actype, XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/CoolingSystemType"))
+    if not seer.nil?
+      assert_equal(seer, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='SEER']/Value")))
+    end
+    if not eer.nil?
+      assert_equal(eer, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/AnnualCoolingEfficiency[Units='EER']/Value")))
+    end
     assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed")))
   end
   
-  def _test_for_hpxml_air_source_heat_pump(details, hspf, heatloadfrac)
+  def _test_for_hpxml_heat_pump(details, hptype, hspf, cop, heatloadfrac, seer, eer, coolloadfrac)
     assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/HeatPump"))
-    assert_equal("air-to-air", XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/HeatPumpType"))
-    assert_equal(hspf, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
-    assert_equal(heatloadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
+    assert_equal(hptype, XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/HeatPumpType"))
+    if not hspf.nil?
+      assert_equal(hspf, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='HSPF']/Value")))
+    end
+    if not cop.nil?
+      assert_equal(cop, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/AnnualHeatEfficiency[Units='COP']/Value")))
+    end
+    if not heatloadfrac.nil?
+      assert_equal(heatloadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/FractionHeatLoadServed")))
+    end
+    if not seer.nil?
+      assert_equal(seer, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/AnnualCoolEfficiency[Units='SEER']/Value")))
+    end
+    if not eer.nil?
+      assert_equal(eer, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/AnnualCoolEfficiency[Units='EER']/Value")))
+    end
+    if not coolloadfrac.nil?
+      assert_equal(coolloadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatPump/FractionCoolLoadServed")))
+    end
   end
   
   def _test_for_hpxml_boiler(details, fueltype, afue, loadfrac)
@@ -370,6 +449,22 @@ class EnergyRatingIndex301Test < MiniTest::Test
     assert_equal(fueltype, XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
     assert_equal(afue, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='AFUE']/Value")))
     assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
+  end
+  
+  def _test_for_hpxml_elec_resistance(details, fueltype, percent, loadfrac)
+    assert(XMLHelper.has_element(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemType/ElectricResistance"))
+    assert_equal("electricity", XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel"))
+    assert_equal(percent, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/AnnualHeatingEfficiency[Units='Percent']/Value")))
+    assert_equal(loadfrac, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed")))
+  end
+  
+  def _test_for_hpxml_ducts(details)
+    # TODO
+  end
+  
+  def _test_for_hpxml_dse(details, dse)
+    assert_equal(dse, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")))
+    assert_equal(dse, Float(XMLHelper.get_value(details, "Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")))
   end
   
   def _test_error_or_NA(osm_file_or_model, args_hash)

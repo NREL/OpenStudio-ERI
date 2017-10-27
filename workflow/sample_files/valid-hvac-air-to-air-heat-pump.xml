@@ -418,11 +418,11 @@
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolEfficiency>
                 <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Value>19.0</Value>
               </AnnualCoolEfficiency>
               <AnnualHeatEfficiency>
                 <Units>HSPF</Units>
-                <Value>7.7</Value>
+                <Value>10.0</Value>
               </AnnualHeatEfficiency>
               <extension>
                 <NumberSpeeds>1-Speed</NumberSpeeds>
