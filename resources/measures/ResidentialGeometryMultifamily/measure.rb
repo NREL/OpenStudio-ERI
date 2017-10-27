@@ -414,7 +414,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Measure::ModelMeasure
         end
         
         living_zone = OpenStudio::Model::ThermalZone.new(model)
-        living_zone.setName(Constants.LivingZone(Constants.ObjectNameBuildingUnit(unit_num))        )
+        living_zone.setName(Constants.LivingZone(Constants.ObjectNameBuildingUnit(unit_num)))
       
         new_living_spaces = []
         living_spaces.each_with_index do |living_space, story|

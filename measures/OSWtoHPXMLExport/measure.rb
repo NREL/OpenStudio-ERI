@@ -1329,7 +1329,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       XMLHelper.add_element(extension, "duct_ah_return_frac", measures["ResidentialAirflow"][0]["duct_ah_return_frac"])    
       duct = air_distribution.add_element "Ducts"
       XMLHelper.add_element(duct, "DuctType", "supply")
-      XMLHelper.add_element(duct, "DuctInsulationRValue", measures["ResidentialAirflow"][0]["duct_unconditioned_r"])
+      XMLHelper.add_element(duct, "DuctInsulationRValue", measures["ResidentialAirflow"][0]["duct_r"])
       XMLHelper.add_element(duct, "DuctLocation", duct_location)
       XMLHelper.add_element(duct, "FractionDuctArea", Airflow.get_duct_location_frac_leakage(measures["ResidentialAirflow"][0]["duct_location_frac"], building_construction.elements["NumberofConditionedFloorsAboveGrade"].text.to_f))
       XMLHelper.add_element(duct, "DuctSurfaceArea", Airflow.get_duct_supply_surface_area(measures["ResidentialAirflow"][0]["duct_supply_area_mult"].to_f, building_construction.elements["ConditionedFloorArea"].text.to_f, building_construction.elements["NumberofConditionedFloorsAboveGrade"].text.to_f) * Airflow.get_duct_location_frac_leakage(measures["ResidentialAirflow"][0]["duct_location_frac"], building_construction.elements["NumberofConditionedFloorsAboveGrade"].text.to_f))
@@ -1342,7 +1342,7 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
       end
       duct = air_distribution.add_element "Ducts"
       XMLHelper.add_element(duct, "DuctType", "return")
-      XMLHelper.add_element(duct, "DuctInsulationRValue", measures["ResidentialAirflow"][0]["duct_unconditioned_r"])
+      XMLHelper.add_element(duct, "DuctInsulationRValue", measures["ResidentialAirflow"][0]["duct_r"])
       XMLHelper.add_element(duct, "DuctLocation", duct_location)
       XMLHelper.add_element(duct, "FractionDuctArea", 1)
       XMLHelper.add_element(duct, "DuctSurfaceArea", Airflow.get_duct_return_surface_area(measures["ResidentialAirflow"][0]["duct_return_area_mult"].to_f, building_construction.elements["ConditionedFloorArea"].text.to_f, building_construction.elements["NumberofConditionedFloorsAboveGrade"].text.to_f, Airflow.get_duct_num_returns(measures["ResidentialAirflow"][0]["duct_num_returns"], building_construction.elements["NumberofConditionedFloorsAboveGrade"].text.to_f)))

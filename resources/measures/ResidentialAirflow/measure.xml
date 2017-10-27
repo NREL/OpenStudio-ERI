@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>9d6cb0e0-d49c-47d0-a9bc-bf18e6b37614</version_id>
-  <version_modified>20170914T174000Z</version_modified>
+  <version_id>ae0e1c6a-4b62-4862-a12b-5da5717946eb</version_id>
+  <version_modified>20171026T142250Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -12,7 +12,7 @@
   <arguments>
     <argument>
       <name>living_ach50</name>
-      <display_name>Air Leakage: Above-Grade Living Space ACH50</display_name>
+      <display_name>Air Leakage: Above-Grade Living ACH50</display_name>
       <description>Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for above-grade living space (including finished attic).</description>
       <type>Double</type>
       <units>1/hr</units>
@@ -22,7 +22,7 @@
     </argument>
     <argument>
       <name>garage_ach50</name>
-      <display_name>Garage: ACH50</display_name>
+      <display_name>Air Leakage: Garage ACH50</display_name>
       <description>Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for the garage.</description>
       <type>Double</type>
       <units>1/hr</units>
@@ -32,7 +32,7 @@
     </argument>
     <argument>
       <name>finished_basement_ach</name>
-      <display_name>Finished Basement: Constant ACH</display_name>
+      <display_name>Air Leakage: Finished Basement Constant ACH</display_name>
       <description>Constant air exchange rate, in Air Changes per Hour (ACH), for the finished basement.</description>
       <type>Double</type>
       <units>1/hr</units>
@@ -42,7 +42,7 @@
     </argument>
     <argument>
       <name>unfinished_basement_ach</name>
-      <display_name>Unfinished Basement: Constant ACH</display_name>
+      <display_name>Air Leakage: Unfinished Basement Constant ACH</display_name>
       <description>Constant air exchange rate, in Air Changes per Hour (ACH), for the unfinished basement. A value of 0.10 ACH or greater is recommended for modeling Heat Pump Water Heaters in unfinished basements.</description>
       <type>Double</type>
       <units>1/hr</units>
@@ -52,7 +52,7 @@
     </argument>
     <argument>
       <name>crawl_ach</name>
-      <display_name>Crawlspace: Constant ACH</display_name>
+      <display_name>Air Leakage: Crawlspace Constant ACH</display_name>
       <description>Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for the crawlspace.</description>
       <type>Double</type>
       <units>1/hr</units>
@@ -62,7 +62,7 @@
     </argument>
     <argument>
       <name>pier_beam_ach</name>
-      <display_name>Pier &amp; Beam: Constant ACH</display_name>
+      <display_name>Air Leakage: Pier &amp; Beam Constant ACH</display_name>
       <description>Air exchange rate, in Air Changes per Hour at 50 Pascals (ACH50), for the pier &amp; beam foundation.</description>
       <type>Double</type>
       <units>1/hr</units>
@@ -72,7 +72,7 @@
     </argument>
     <argument>
       <name>unfinished_attic_sla</name>
-      <display_name>Unfinished Attic: SLA</display_name>
+      <display_name>Air Leakage: Unfinished Attic SLA</display_name>
       <description>Ratio of the effective leakage area (infiltration and/or ventilation) in the unfinished attic to the total floor area of the attic.</description>
       <type>Double</type>
       <required>false</required>
@@ -603,7 +603,7 @@
       <default_value>1</default_value>
     </argument>
     <argument>
-      <name>duct_unconditioned_r</name>
+      <name>duct_r</name>
       <display_name>Ducts: Insulation Nominal R-Value</display_name>
       <description>The nominal R-value for duct insulation.</description>
       <type>Double</type>
@@ -611,6 +611,15 @@
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>0</default_value>
+    </argument>
+    <argument>
+      <name>duct_dse</name>
+      <display_name>Ducts: Distribution System Efficiency</display_name>
+      <description>Defines the energy losses associated with the delivery of energy from the equipment to the source of the load. If provided, overrides all other duct inputs.</description>
+      <type>String</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <default_value>NA</default_value>
     </argument>
   </arguments>
   <outputs/>
@@ -672,34 +681,16 @@
       <checksum>6BA22437</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>20190C86</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B34275B6</checksum>
-    </file>
-    <file>
       <filename>airflow.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1FFCC8C3</checksum>
-    </file>
-    <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F5B2C721</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
@@ -780,22 +771,46 @@
       <checksum>A729B1E5</checksum>
     </file>
     <file>
-      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_ElecWHTank_ClothesWasher_ClothesDryer.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>03DB0FF8</checksum>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6A82C5DA</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>7576B4B2</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8F96C373</checksum>
+      <checksum>03F09690</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C9C319CF</checksum>
+    </file>
+    <file>
+      <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver_Furnace_CentralAC_ElecWHTank_ClothesWasher_ClothesDryer.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>226D22CB</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B466251C</checksum>
     </file>
     <file>
       <filename>residential_airflow_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>2C665EA0</checksum>
+      <checksum>9C288573</checksum>
     </file>
     <file>
       <version>
@@ -806,7 +821,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F9977BB0</checksum>
+      <checksum>C6A32C36</checksum>
     </file>
   </files>
 </measure>

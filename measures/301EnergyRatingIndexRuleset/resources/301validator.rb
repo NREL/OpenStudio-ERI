@@ -9,7 +9,8 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]' => [1], # TODO: Allow ACH50, ELA, and/or SLA?
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl/ControlType' => [0,1],
+            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => [0,1],
+            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution' => [0,1],
             '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [0,1],
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [1],
@@ -271,10 +272,19 @@ class EnergyRatingIndex301Validator
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
                 '[FractionHeatLoadServed=1.0]',
             ],
-            # HeatingSystem (Furnace/Boiler)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace or HeatingSystemType/Boiler]' => [
+            # HeatingSystem (Furnace)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => [
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value',
                 '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
+                'DistributionSystem',
+                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
+            ],
+            # HeatingSystem (Boiler)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => [
+                'AnnualHeatingEfficiency[Units="AFUE"]/Value',
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
+                'DistributionSystem',
+                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution',
             ],
             # HeatingSystem (ElectricResistance)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/ElectricResistance]' => [
@@ -293,6 +303,8 @@ class EnergyRatingIndex301Validator
                 'AnnualCoolingEfficiency[Units="SEER"]/Value',
                 '[CoolingSystemFuel="electricity"]',
                 'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
+                'DistributionSystem',
+                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
             ],
             # CoolingSystem (RoomAC)
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioner"]' => [
@@ -309,8 +321,15 @@ class EnergyRatingIndex301Validator
                 '[FractionCoolLoadServed=1.0]',
                 'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
             ],
-            # HeatPump (AirSource/MiniSplit)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air" or HeatPumpType="mini-split"]' => [
+            # HeatPump (AirSource)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => [
+                'AnnualCoolEfficiency[Units="SEER"]/Value',
+                'AnnualHeatEfficiency[Units="HSPF"]/Value',
+                'DistributionSystem',
+                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
+            ],
+            # HeatPump (MiniSplit)
+            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="mini-split"]' => [
                 'AnnualCoolEfficiency[Units="SEER"]/Value',
                 'AnnualHeatEfficiency[Units="HSPF"]/Value',
             ],
@@ -318,6 +337,29 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => [
                 'AnnualCoolEfficiency[Units="EER"]/Value',
                 'AnnualHeatEfficiency[Units="COP"]/Value',
+                'DistributionSystem',
+                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
+            ],
+            # AirDistribution
+            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => [
+                'DuctLeakageMeasurement[DuctType="supply"]',
+                'DuctLeakageMeasurement[DuctType="return"]',
+                'Ducts[DuctType="supply" and FractionDuctArea=1.0]',
+                'Ducts[DuctType="return" and FractionDuctArea=1.0]',
+            ],
+            # DuctLeakageMeasurement
+            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement' => [
+                'DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value',
+            ],
+            # Ducts
+            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts' => [
+                'DuctInsulationRValue',
+                'DuctLocation', # TODO: Restrict values
+                'DuctSurfaceArea',
+            ],
+            # HydronicDistribution
+            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution' => [
+                # TODO
             ],
             # WaterHeatingSystem
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [

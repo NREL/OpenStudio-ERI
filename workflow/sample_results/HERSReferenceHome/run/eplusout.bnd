@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
+Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25
 ! This file shows details about the branches, nodes, and other
 ! elements of the flow connections.
 ! This file is intended for use in "debugging" potential problems
@@ -8,51 +8,55 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
 ! schematic diagram of the HVAC system.
 ! ===============================================================
 ! #Nodes,<Number of Unique Nodes>
- #Nodes,36
+ #Nodes,39
 ! <Node>,<NodeNumber>,<Node Name>,<Node Fluid Type>,<# Times Node Referenced After Definition>
- Node,1,NODE 21,Air,3
- Node,2,NODE 19,Air,3
- Node,3,NODE 25,Air,3
- Node,4,NODE 24,Air,3
- Node,5,NODE 16,Air,4
- Node,6,NODE 17,Air,3
- Node,7,NODE 15,Air,3
- Node,8,NODE 4,Water,2
- Node,9,NODE 12,Water,1
- Node,10,NODE 6,Water,1
- Node,11,NODE 10,Water,1
- Node,12,NODE 13,Water,1
- Node,13,NODE 14,Water,1
- Node,14,NODE 11,Water,1
- Node,15,NODE 5,Water,4
- Node,16,NODE 7,Water,2
- Node,17,DOMESTIC HOT WATER LOOP DEMAND INLET PIPE NODE,Water,1
- Node,18,NODE 9,Water,1
- Node,19,NODE 23,Water,1
- Node,20,DOMESTIC HOT WATER LOOP DEMAND BYPASS PIPE INLET NODE,Water,1
- Node,21,DOMESTIC HOT WATER LOOP DEMAND BYPASS PIPE OUTLET NODE,Water,1
- Node,22,DOMESTIC HOT WATER LOOP DEMAND OUTLET PIPE NODE,Water,1
- Node,23,NODE 8,Water,2
- Node,24,RES MV_U 1 ERV OA NODE,Air,2
- Node,25,NODE 1,Air,0
- Node,26,NODE 22,Air,1
- Node,27,NODE 2,Air,0
- Node,28,NODE 20,Air,1
- Node,29,NODE 18,Air,2
- Node,30,RES MV_U 1 ERV SUPPLY FAN INLET NODE,Air,1
- Node,31,RES MV_U 1 ERV EXHAUST FAN INLET NODE,Air,1
- Node,32,RES MV_U 1 ERV EXHAUST FAN OUTLET NODE,Air,1
- Node,33,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM FAN - COOLING COIL NODE,Air,1
- Node,34,NODE 26,Air,0
- Node,35,NODE 28,Air,1
- Node,36,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM COOLING COIL - HEATING COIL NODE,Air,1
+ Node,1,NODE 27,Air,3
+ Node,2,NODE 21,Air,3
+ Node,3,NODE 19,Air,3
+ Node,4,NODE 25,Air,3
+ Node,5,NODE 24,Air,3
+ Node,6,NODE 16,Air,4
+ Node,7,NODE 17,Air,3
+ Node,8,NODE 15,Air,3
+ Node,9,NODE 4,Water,2
+ Node,10,NODE 12,Water,1
+ Node,11,NODE 6,Water,1
+ Node,12,NODE 10,Water,1
+ Node,13,NODE 13,Water,1
+ Node,14,NODE 14,Water,1
+ Node,15,NODE 11,Water,1
+ Node,16,NODE 5,Water,4
+ Node,17,NODE 7,Water,2
+ Node,18,DOMESTIC HOT WATER LOOP DEMAND INLET PIPE NODE,Water,1
+ Node,19,NODE 9,Water,1
+ Node,20,NODE 23,Water,1
+ Node,21,DOMESTIC HOT WATER LOOP DEMAND BYPASS PIPE INLET NODE,Water,1
+ Node,22,DOMESTIC HOT WATER LOOP DEMAND BYPASS PIPE OUTLET NODE,Water,1
+ Node,23,DOMESTIC HOT WATER LOOP DEMAND OUTLET PIPE NODE,Water,1
+ Node,24,NODE 8,Water,2
+ Node,25,RES MV_U 1 ERV OA NODE,Air,2
+ Node,26,NODE 26,Air,0
+ Node,27,NODE 28,Air,1
+ Node,28,NODE 3,Air,0
+ Node,29,NODE 22,Air,1
+ Node,30,NODE 2,Air,0
+ Node,31,NODE 20,Air,1
+ Node,32,NODE 18,Air,2
+ Node,33,RES MV_U 1 ERV SUPPLY FAN INLET NODE,Air,1
+ Node,34,RES MV_U 1 ERV EXHAUST FAN INLET NODE,Air,1
+ Node,35,RES MV_U 1 ERV EXHAUST FAN OUTLET NODE,Air,1
+ Node,36,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM FAN - COOLING COIL NODE,Air,1
+ Node,37,NODE 29,Air,0
+ Node,38,NODE 31,Air,1
+ Node,39,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM COOLING COIL - HEATING COIL NODE,Air,1
 ! ===============================================================
 ! Suspicious nodes have 0 references.  It is normal for some nodes, however.
 ! Listing nodes with 0 references (culled from previous list):
 ! <Suspicious Node>,<NodeNumber>,<Node Name>,<Node Fluid Type>,<# Times Node Referenced After Definition>
- Suspicious Node,25,NODE 1,Air,0
- Suspicious Node,27,NODE 2,Air,0
- Suspicious Node,34,NODE 26,Air,0
+ Suspicious Node,26,NODE 26,Air,0
+ Suspicious Node,28,NODE 3,Air,0
+ Suspicious Node,30,NODE 2,Air,0
+ Suspicious Node,37,NODE 29,Air,0
 ! ===============================================================
 ! <#Branch Lists>,<Number of Branch Lists>
  #Branch Lists,3
@@ -81,15 +85,17 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
  Supply Air Path,1,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM NODE 17 SUPPLY PATH,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
    #Components on Supply Air Path,1
    Supply Air Path Component,1,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
-     #Outlet Nodes on Supply Air Path Component,2
+     #Outlet Nodes on Supply Air Path Component,3
      Supply Air Path Component Nodes,1,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,NODE 17,NODE 19,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
      Supply Air Path Component Nodes,2,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,NODE 17,NODE 21,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+     Supply Air Path Component Nodes,3,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,NODE 17,NODE 27,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
 ! <#Nodes on Supply Air Path>,<Number of Nodes>
 ! <Supply Air Path Node>,<Node Type>,<Node Count>,<Node Name>,<AirLoopHVAC Name>
-#Nodes on Supply Air Path,3
+#Nodes on Supply Air Path,4
    Supply Air Path Node,Inlet Node,1,NODE 17,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
    Supply Air Path Node,Outlet Node,2,NODE 19,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
    Supply Air Path Node,Outlet Node,3,NODE 21,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+   Supply Air Path Node,Outlet Node,4,NODE 27,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
 ! ===============================================================
 ! <#Return Air Paths>,<Number of Return Air Paths>
  #Return Air Paths,1
@@ -102,20 +108,22 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
    #Components on Return Air Path,2
    Return Air Path Component,1,AIRLOOPHVAC:RETURNPLENUM,AIR LOOP HVAC RETURN PLENUM 1,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
    Return Air Path Component,2,AIRLOOPHVAC:ZONEMIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE MIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
-     #Inlet Nodes on Return Air Path Component,1
-     Return Air Path Component Nodes,1,AIRLOOPHVAC:ZONEMIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE MIXER,NODE 28,NODE 18,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+     #Inlet Nodes on Return Air Path Component,2
+     Return Air Path Component Nodes,1,AIRLOOPHVAC:ZONEMIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE MIXER,NODE 31,NODE 18,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+     Return Air Path Component Nodes,2,AIRLOOPHVAC:ZONEMIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE MIXER,NODE 28,NODE 18,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
 ! <#Nodes on Return Air Path>,<Number of Nodes>
 ! <Return Air Path Node>,<Node Type>,<Node Count>,<Node Name>,<AirLoopHVAC Name>
-   #Nodes on Return Air Path,4
+   #Nodes on Return Air Path,5
    Return Air Path Node,Outlet Node,1,NODE 18,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
-   Return Air Path Node,Inlet Node,2,NODE 28,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
-   Return Air Path Node,Inlet Node,3,NODE 20,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
-   Return Air Path Node,Inlet Node,4,NODE 22,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+   Return Air Path Node,Inlet Node,2,NODE 31,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+   Return Air Path Node,Inlet Node,3,NODE 28,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+   Return Air Path Node,Inlet Node,4,NODE 20,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+   Return Air Path Node,Inlet Node,5,NODE 22,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
 ! ===============================================================
 ! #Outdoor Air Nodes,<Number of Outdoor Air Nodes>
  #Outdoor Air Nodes,1
 ! <Outdoor Air Node>,<NodeNumber>,<Node Name>
- Outdoor Air Node,24,RES MV_U 1 ERV OA NODE
+ Outdoor Air Node,25,RES MV_U 1 ERV OA NODE
 ! ===============================================================
 ! <#Component Sets>,<Number of Component Sets>
  #Component Sets,15
@@ -179,11 +187,13 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
 ! <Condenser Loop Return Connection>,<Condenser Loop Name>,<Demand Side Outlet Node Name>,<Supply Side Inlet Node Name>
 ! ===============================================================
 ! <# Controlled Zones>,<Number of Controlled Zones>
- #Controlled Zones,2
+ #Controlled Zones,3
 ! <Controlled Zone>,<Controlled Zone Name>,<Equip List Name>,<Control List Name>,<Zone Node Name>,<Return Air Node Name>,<# Inlet Nodes>,<# Exhaust Nodes>
 ! <Controlled Zone Inlet>,<Inlet Node Count>,<Controlled Zone Name>,<Supply Air Inlet Node Name>,<SD Sys:Cooling/Heating [DD:Cooling] Inlet Node Name>,<DD Sys:Heating Inlet Node Name>
 ! <Controlled Zone Exhaust>,<Exhaust Node Count>,<Controlled Zone Name>,<Exhaust Air Node Name>
- Controlled Zone,FINISHED BASEMENT ZONE,FINISHED BASEMENT ZONE EQUIPMENT LIST,,NODE 1,NODE 22,1,0
+ Controlled Zone,DSE ZONE,DSE ZONE EQUIPMENT LIST,,NODE 26,NODE 28,1,0
+   Controlled Zone Inlet,1,DSE ZONE,NODE 27,NODE 27,N/A
+ Controlled Zone,FINISHED BASEMENT ZONE,FINISHED BASEMENT ZONE EQUIPMENT LIST,,NODE 3,NODE 22,1,0
    Controlled Zone Inlet,1,FINISHED BASEMENT ZONE,NODE 21,NODE 21,N/A
  Controlled Zone,LIVING ZONE,LIVING ZONE EQUIPMENT LIST,,NODE 2,NODE 20,2,1
    Controlled Zone Inlet,1,LIVING ZONE,NODE 19,NODE 19,N/A
@@ -191,12 +201,14 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
    Controlled Zone Exhaust,1,LIVING ZONE,NODE 24
 ! ===============================================================
 ! <#Zone Equipment Lists>,<Number of Zone Equipment Lists>
- #Zone Equipment Lists,2
+ #Zone Equipment Lists,3
 ! <Zone Equipment List>,<Zone Equipment List Count>,<Zone Equipment List Name>,<Zone Name>,<Number of Components>
 ! <Zone Equipment Component>,<Component Count>,<Component Type>,<Component Name>,<Zone Name>,<Heating Priority>,<Cooling Priority>
- Zone Equipment List,1,FINISHED BASEMENT ZONE EQUIPMENT LIST,FINISHED BASEMENT ZONE,1
+ Zone Equipment List,1,DSE ZONE EQUIPMENT LIST,DSE ZONE,1
+   Zone Equipment Component,1,AIRTERMINAL:SINGLEDUCT:UNCONTROLLED,RES DS_U 1 DIST SYSTEM EFF ZONE DIRECT AIR,DSE ZONE,1,1
+ Zone Equipment List,2,FINISHED BASEMENT ZONE EQUIPMENT LIST,FINISHED BASEMENT ZONE,1
    Zone Equipment Component,1,AIRTERMINAL:SINGLEDUCT:UNCONTROLLED,RESIDENTIAL FURNACE GAS AND CENTRAL AC FINISHED BASEMENT ZONE DIRECT AIR,FINISHED BASEMENT ZONE,1,1
- Zone Equipment List,2,LIVING ZONE EQUIPMENT LIST,LIVING ZONE,2
+ Zone Equipment List,3,LIVING ZONE EQUIPMENT LIST,LIVING ZONE,2
    Zone Equipment Component,1,AIRTERMINAL:SINGLEDUCT:UNCONTROLLED,RESIDENTIAL FURNACE GAS AND CENTRAL AC LIVING ZONE DIRECT AIR,LIVING ZONE,2,2
    Zone Equipment Component,2,ZONEHVAC:ENERGYRECOVERYVENTILATOR,RES MV_U 1 ERV,LIVING ZONE,1,1
 ! ===============================================================
@@ -211,11 +223,12 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
 ! <AirLoopHVAC Connector>,<Connector Type>,<Connector Name>,<Loop Name>,<Loop Type>,<Number of Inlets/Outlets>
 ! <AirLoopHVAC Connector Branches>,<Connector Node Count>,<Connector Type>,<Connector Name>,<Inlet Branch>,<Outlet Branch>,<Loop Name>,<Loop Type>
 ! <AirLoopHVAC Connector Nodes>,<Connector Node Count>,<Connector Type>,<Connector Name>,<Inlet Node>,<Outlet Node>,<Loop Name>,<Loop Type>
- AirLoopHVAC,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM,1,1,2,0,No
-   AirLoop Return Connections,1,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM,29,NODE 18,7,NODE 15
-   AirLoop Supply Connections,1,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM,6,NODE 17,5,NODE 16
-   Cooled Zone Info,1,LIVING ZONE,2,NODE 19,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
-   Cooled Zone Info,2,FINISHED BASEMENT ZONE,1,NODE 21,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+ AirLoopHVAC,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM,1,1,3,0,No
+   AirLoop Return Connections,1,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM,32,NODE 18,8,NODE 15
+   AirLoop Supply Connections,1,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM,7,NODE 17,6,NODE 16
+   Cooled Zone Info,1,LIVING ZONE,3,NODE 19,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+   Cooled Zone Info,2,FINISHED BASEMENT ZONE,2,NODE 21,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
+   Cooled Zone Info,3,DSE ZONE,1,NODE 27,RESIDENTIAL FURNACE GAS AND CENTRAL AC CENTRAL AIR SYSTEM
 ! ===============================================================
 ! <#Parent Node Connections>,<Number of Parent Node Connections>
  #Parent Node Connections,35
@@ -257,7 +270,7 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
  Parent Node Connection,NODE 16,AIRLOOPHVAC:UNITARYSYSTEM,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM,Outlet,1
 ! ===============================================================
 ! <#Non-Parent Node Connections>,<Number of Non-Parent Node Connections>
- #Non-Parent Node Connections,63
+ #Non-Parent Node Connections,69
 ! <Non-Parent Node Connection>,<Node Name>,<Node ObjectType>,<Node ObjectName>,<Node ConnectionType>,<Node FluidStream>
  Non-Parent Node Connection,RES MV_U 1 ERV OA NODE,OUTDOORAIR:NODELIST,OutdoorAir:NodeList,OutdoorAir,1
  Non-Parent Node Connection,NODE 5,SETPOINTMANAGER:SCHEDULED,SETPOINT MANAGER SCHEDULED 1,Setpoint,1
@@ -283,7 +296,10 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
  Non-Parent Node Connection,NODE 11,CONNECTOR:MIXER,DOMESTIC HOT WATER LOOP SUPPLY MIXER,Outlet,1
  Non-Parent Node Connection,NODE 10,CONNECTOR:MIXER,DOMESTIC HOT WATER LOOP SUPPLY MIXER,Inlet,1
  Non-Parent Node Connection,NODE 14,CONNECTOR:MIXER,DOMESTIC HOT WATER LOOP SUPPLY MIXER,Inlet,1
- Non-Parent Node Connection,NODE 1,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneNode,1
+ Non-Parent Node Connection,NODE 26,ZONEHVAC:EQUIPMENTCONNECTIONS,DSE ZONE,ZoneNode,1
+ Non-Parent Node Connection,NODE 28,ZONEHVAC:EQUIPMENTCONNECTIONS,DSE ZONE,ZoneReturn,1
+ Non-Parent Node Connection,NODE 27,ZONEHVAC:EQUIPMENTCONNECTIONS,DSE ZONE,ZoneInlet,1
+ Non-Parent Node Connection,NODE 3,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneNode,1
  Non-Parent Node Connection,NODE 22,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneReturn,1
  Non-Parent Node Connection,NODE 21,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneInlet,1
  Non-Parent Node Connection,NODE 2,ZONEHVAC:EQUIPMENTCONNECTIONS,LIVING ZONE,ZoneNode,1
@@ -294,6 +310,8 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
  Non-Parent Node Connection,NODE 17,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,Inlet,1
  Non-Parent Node Connection,NODE 19,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,Outlet,1
  Non-Parent Node Connection,NODE 21,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,Outlet,1
+ Non-Parent Node Connection,NODE 27,AIRLOOPHVAC:ZONESPLITTER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE SPLITTER,Outlet,1
+ Non-Parent Node Connection,NODE 27,AIRTERMINAL:SINGLEDUCT:UNCONTROLLED,RES DS_U 1 DIST SYSTEM EFF ZONE DIRECT AIR,Outlet,1
  Non-Parent Node Connection,NODE 21,AIRTERMINAL:SINGLEDUCT:UNCONTROLLED,RESIDENTIAL FURNACE GAS AND CENTRAL AC FINISHED BASEMENT ZONE DIRECT AIR,Outlet,1
  Non-Parent Node Connection,NODE 19,AIRTERMINAL:SINGLEDUCT:UNCONTROLLED,RESIDENTIAL FURNACE GAS AND CENTRAL AC LIVING ZONE DIRECT AIR,Outlet,1
  Non-Parent Node Connection,RES MV_U 1 ERV OA NODE,HEATEXCHANGER:AIRTOAIR:SENSIBLEANDLATENT,RES MV_U 1 ERV HEAT EXCHANGER,Inlet,1
@@ -306,11 +324,12 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
  Non-Parent Node Connection,RES MV_U 1 ERV EXHAUST FAN OUTLET NODE,FAN:ONOFF,RES MV_U 1 ERV EXHAUST FAN,Outlet,1
  Non-Parent Node Connection,NODE 15,FAN:ONOFF,RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN,Inlet,1
  Non-Parent Node Connection,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM FAN - COOLING COIL NODE,FAN:ONOFF,RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN,Outlet,1
- Non-Parent Node Connection,NODE 26,AIRLOOPHVAC:RETURNPLENUM,AIR LOOP HVAC RETURN PLENUM 1,ZoneNode,1
- Non-Parent Node Connection,NODE 28,AIRLOOPHVAC:RETURNPLENUM,AIR LOOP HVAC RETURN PLENUM 1,Outlet,1
+ Non-Parent Node Connection,NODE 29,AIRLOOPHVAC:RETURNPLENUM,AIR LOOP HVAC RETURN PLENUM 1,ZoneNode,1
+ Non-Parent Node Connection,NODE 31,AIRLOOPHVAC:RETURNPLENUM,AIR LOOP HVAC RETURN PLENUM 1,Outlet,1
  Non-Parent Node Connection,NODE 20,AIRLOOPHVAC:RETURNPLENUM,AIR LOOP HVAC RETURN PLENUM 1,Inlet,1
  Non-Parent Node Connection,NODE 22,AIRLOOPHVAC:RETURNPLENUM,AIR LOOP HVAC RETURN PLENUM 1,Inlet,1
  Non-Parent Node Connection,NODE 18,AIRLOOPHVAC:ZONEMIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE MIXER,Outlet,1
+ Non-Parent Node Connection,NODE 31,AIRLOOPHVAC:ZONEMIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE MIXER,Inlet,1
  Non-Parent Node Connection,NODE 28,AIRLOOPHVAC:ZONEMIXER,RESIDENTIAL FURNACE GAS AND CENTRAL AC ZONE MIXER,Inlet,1
  Non-Parent Node Connection,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM COOLING COIL - HEATING COIL NODE,COIL:HEATING:FUEL,RESIDENTIAL FURNACE GAS HEATING COIL,Inlet,1
  Non-Parent Node Connection,NODE 16,COIL:HEATING:FUEL,RESIDENTIAL FURNACE GAS HEATING COIL,Outlet,1

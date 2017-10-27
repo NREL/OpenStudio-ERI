@@ -9,15 +9,15 @@
   Processing Input Data File -- Start
   Echo of input lines is off. May be activated by setting the environmental variable DISPLAYINPUTINAUDIT=YES
   Processing Input Data File -- Complete
-  Maximum number of Alpha IDF Args=        3316
+  Maximum number of Alpha IDF Args=        3640
   Maximum number of Numeric IDF Args=          84
-  Number of IDF "Lines"=        1161
-  Number of Defaulted Fields=         150
-  Number of Fields with Defaults=         951
+  Number of IDF "Lines"=        1153
+  Number of Defaulted Fields=         144
+  Number of Fields with Defaults=         930
   Number of Autosized Fields=          11
   Number of Autosizable Fields =          35
-  Number of Autocalculated Fields=          54
-  Number of Autocalculatable Fields =          61
+  Number of Autocalculated Fields=          48
+  Number of Autocalculatable Fields =          55
  Getting object=OUTPUT:SQLITE
  Getting object=VERSION
  Getting object=HEATBALANCEALGORITHM
@@ -129,16 +129,16 @@
  sizeColumnTag=         400
  numColumnTag=         347
  sizeTableEntry=        1600
- numTableEntry=        1041
+ numTableEntry=        1032
  sizeCompSizeTableEntry=         100
  numCompSizeTableEntry=          21
- NumOfRVariable=        3170
- NumOfRVariable(Total)=        3174
+ NumOfRVariable=        2979
+ NumOfRVariable(Total)=        2983
  NumOfRVariable(Actual)=         238
  NumOfRVariable(Summed)=          53
  NumOfRVariable(Meter)=          51
- NumOfIVariable=         119
- NumOfIVariable(Total)=         119
+ NumOfIVariable=         106
+ NumOfIVariable(Total)=         106
  NumOfIVariable(Actual)=           0
  NumOfIVariable(Summed)=           0
  MaxRVariable=        1000
@@ -156,7 +156,7 @@
  NumConsideredOutputVariables=         151
  MaxConsideredOutputVariables=       10000
  numActuatorsUsed=          18
- numEMSActuatorsAvailable=         578
+ numEMSActuatorsAvailable=         557
  maxEMSActuatorsAvailable=        1000
  numInternalVariablesUsed=           0
  numEMSInternalVarsAvailable=          51

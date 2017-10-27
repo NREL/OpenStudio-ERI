@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
+Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25
 ! This file shows details about the branches, nodes, and other
 ! elements of the flow connections.
 ! This file is intended for use in "debugging" potential problems
@@ -31,7 +31,7 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
  Node,19,DOMESTIC HOT WATER LOOP DEMAND BYPASS PIPE OUTLET NODE,Water,1
  Node,20,DOMESTIC HOT WATER LOOP DEMAND OUTLET PIPE NODE,Water,1
  Node,21,NODE 8,Water,2
- Node,22,NODE 1,Air,0
+ Node,22,NODE 3,Air,0
  Node,23,NODE 22,Air,1
  Node,24,NODE 2,Air,0
  Node,25,NODE 20,Air,1
@@ -44,7 +44,7 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
 ! Suspicious nodes have 0 references.  It is normal for some nodes, however.
 ! Listing nodes with 0 references (culled from previous list):
 ! <Suspicious Node>,<NodeNumber>,<Node Name>,<Node Fluid Type>,<# Times Node Referenced After Definition>
- Suspicious Node,22,NODE 1,Air,0
+ Suspicious Node,22,NODE 3,Air,0
  Suspicious Node,24,NODE 2,Air,0
  Suspicious Node,27,NODE 24,Air,0
 ! ===============================================================
@@ -172,7 +172,7 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
 ! <Controlled Zone>,<Controlled Zone Name>,<Equip List Name>,<Control List Name>,<Zone Node Name>,<Return Air Node Name>,<# Inlet Nodes>,<# Exhaust Nodes>
 ! <Controlled Zone Inlet>,<Inlet Node Count>,<Controlled Zone Name>,<Supply Air Inlet Node Name>,<SD Sys:Cooling/Heating [DD:Cooling] Inlet Node Name>,<DD Sys:Heating Inlet Node Name>
 ! <Controlled Zone Exhaust>,<Exhaust Node Count>,<Controlled Zone Name>,<Exhaust Air Node Name>
- Controlled Zone,FINISHED BASEMENT ZONE,FINISHED BASEMENT ZONE EQUIPMENT LIST,,NODE 1,NODE 22,1,0
+ Controlled Zone,FINISHED BASEMENT ZONE,FINISHED BASEMENT ZONE EQUIPMENT LIST,,NODE 3,NODE 22,1,0
    Controlled Zone Inlet,1,FINISHED BASEMENT ZONE,NODE 21,NODE 21,N/A
  Controlled Zone,LIVING ZONE,LIVING ZONE EQUIPMENT LIST,,NODE 2,NODE 20,1,0
    Controlled Zone Inlet,1,LIVING ZONE,NODE 19,NODE 19,N/A
@@ -264,7 +264,7 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.08.01 10:24
  Non-Parent Node Connection,NODE 11,CONNECTOR:MIXER,DOMESTIC HOT WATER LOOP SUPPLY MIXER,Outlet,1
  Non-Parent Node Connection,NODE 10,CONNECTOR:MIXER,DOMESTIC HOT WATER LOOP SUPPLY MIXER,Inlet,1
  Non-Parent Node Connection,NODE 14,CONNECTOR:MIXER,DOMESTIC HOT WATER LOOP SUPPLY MIXER,Inlet,1
- Non-Parent Node Connection,NODE 1,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneNode,1
+ Non-Parent Node Connection,NODE 3,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneNode,1
  Non-Parent Node Connection,NODE 22,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneReturn,1
  Non-Parent Node Connection,NODE 21,ZONEHVAC:EQUIPMENTCONNECTIONS,FINISHED BASEMENT ZONE,ZoneInlet,1
  Non-Parent Node Connection,NODE 2,ZONEHVAC:EQUIPMENTCONNECTIONS,LIVING ZONE,ZoneNode,1

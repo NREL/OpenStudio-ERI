@@ -1,5 +1,5 @@
 
- Meters for 15,RESIDENTIAL CEILING FAN BENCHMARK|FINISHED BASEMENT SPACE:Electric Equipment Electric Energy [J]
+ Meters for 16,RESIDENTIAL CEILING FAN BENCHMARK|FINISHED BASEMENT SPACE:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:FINISHED BASEMENT ZONE [J]
@@ -7,7 +7,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:FINISHED BASEMENT ZONE [J]
   OnMeter=residential ceiling fan:InteriorEquipment:Electricity [J]
 
- Meters for 76,RESIDENTIAL MISC PLUG LOADS|FINISHED BASEMENT SPACE:Electric Equipment Electric Energy [J]
+ Meters for 77,RESIDENTIAL MISC PLUG LOADS|FINISHED BASEMENT SPACE:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:FINISHED BASEMENT ZONE [J]
@@ -15,7 +15,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:FINISHED BASEMENT ZONE [J]
   OnMeter=residential misc plug loads:InteriorEquipment:Electricity [J]
 
- Meters for 87,RES INFIL_U 1 BATH EXH FAN LOAD EQUIP:Electric Equipment Electric Energy [J]
+ Meters for 88,RES INFIL_U 1 BATH EXH FAN LOAD EQUIP:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -23,7 +23,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=VentFans:InteriorEquipment:Electricity [J]
 
- Meters for 118,RES INFIL_U 1 HOUSE EXH FAN LOAD EQUIP:Electric Equipment Electric Energy [J]
+ Meters for 119,RES INFIL_U 1 HOUSE EXH FAN LOAD EQUIP:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -31,7 +31,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=VentFans:InteriorEquipment:Electricity [J]
 
- Meters for 119,RES INFIL_U 1 RANGE HOOD FAN LOAD EQUIP:Electric Equipment Electric Energy [J]
+ Meters for 120,RES INFIL_U 1 RANGE HOOD FAN LOAD EQUIP:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -39,7 +39,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=VentFans:InteriorEquipment:Electricity [J]
 
- Meters for 120,RESIDENTIAL CEILING FAN BENCHMARK|LIVING SPACE:Electric Equipment Electric Energy [J]
+ Meters for 121,RESIDENTIAL CEILING FAN BENCHMARK|LIVING SPACE:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -47,7 +47,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=residential ceiling fan:InteriorEquipment:Electricity [J]
 
- Meters for 121,RESIDENTIAL CEILING FAN NON BENCHMARK EQUIP:Electric Equipment Electric Energy [J]
+ Meters for 122,RESIDENTIAL CEILING FAN NON BENCHMARK EQUIP:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -55,7 +55,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=General:InteriorEquipment:Electricity [J]
 
- Meters for 132,RESIDENTIAL CLOTHES DRYER ELECTRIC:Electric Equipment Electric Energy [J]
+ Meters for 133,RESIDENTIAL CLOTHES DRYER ELECTRIC:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -63,7 +63,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=residential clothes dryer electric:InteriorEquipment:Electricity [J]
 
- Meters for 143,RESIDENTIAL CLOTHES WASHER:Electric Equipment Electric Energy [J]
+ Meters for 144,RESIDENTIAL CLOTHES WASHER:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -71,7 +71,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=residential clothes washer:InteriorEquipment:Electricity [J]
 
- Meters for 154,RESIDENTIAL DISHWASHER:Electric Equipment Electric Energy [J]
+ Meters for 155,RESIDENTIAL DISHWASHER:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -79,7 +79,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=residential dishwasher:InteriorEquipment:Electricity [J]
 
- Meters for 165,RESIDENTIAL MISC PLUG LOADS|LIVING SPACE:Electric Equipment Electric Energy [J]
+ Meters for 166,RESIDENTIAL MISC PLUG LOADS|LIVING SPACE:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -87,7 +87,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=residential misc plug loads:InteriorEquipment:Electricity [J]
 
- Meters for 166,RESIDENTIAL RANGE ELECTRIC:Electric Equipment Electric Energy [J]
+ Meters for 167,RESIDENTIAL RANGE ELECTRIC:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -95,7 +95,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=residential range electric:InteriorEquipment:Electricity [J]
 
- Meters for 177,RESIDENTIAL REFRIGERATOR:Electric Equipment Electric Energy [J]
+ Meters for 178,RESIDENTIAL REFRIGERATOR:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING ZONE [J]
@@ -103,241 +103,255 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING ZONE [J]
   OnMeter=residential refrigerator:InteriorEquipment:Electricity [J]
 
- Meters for 196,FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy [J]
+ Meters for 199,DSE ZONE:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:DSE ZONE [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:DSE ZONE [J]
+
+ Meters for 250,DSE ZONE:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:DSE ZONE [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:DSE ZONE [J]
+
+ Meters for 274,FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:FINISHED BASEMENT ZONE [J]
   OnMeter=Heating:EnergyTransfer [J]
   OnMeter=Heating:EnergyTransfer:Zone:FINISHED BASEMENT ZONE [J]
 
- Meters for 247,FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy [J]
+ Meters for 295,FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:FINISHED BASEMENT ZONE [J]
   OnMeter=Cooling:EnergyTransfer [J]
   OnMeter=Cooling:EnergyTransfer:Zone:FINISHED BASEMENT ZONE [J]
 
- Meters for 271,LIVING ZONE:Zone Air System Sensible Heating Energy [J]
+ Meters for 309,LIVING ZONE:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:LIVING ZONE [J]
   OnMeter=Heating:EnergyTransfer [J]
   OnMeter=Heating:EnergyTransfer:Zone:LIVING ZONE [J]
 
- Meters for 292,LIVING ZONE:Zone Air System Sensible Cooling Energy [J]
+ Meters for 330,LIVING ZONE:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:LIVING ZONE [J]
   OnMeter=Cooling:EnergyTransfer [J]
   OnMeter=Cooling:EnergyTransfer:Zone:LIVING ZONE [J]
 
- Meters for 306,RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Heating Energy [J]
+ Meters for 344,RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:RES DS_U 1 RET AIR ZONE [J]
   OnMeter=Heating:EnergyTransfer [J]
   OnMeter=Heating:EnergyTransfer:Zone:RES DS_U 1 RET AIR ZONE [J]
 
- Meters for 327,RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Cooling Energy [J]
+ Meters for 365,RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:RES DS_U 1 RET AIR ZONE [J]
   OnMeter=Cooling:EnergyTransfer [J]
   OnMeter=Cooling:EnergyTransfer:Zone:RES DS_U 1 RET AIR ZONE [J]
 
- Meters for 341,UNFINISHED ATTIC ZONE:Zone Air System Sensible Heating Energy [J]
+ Meters for 379,UNFINISHED ATTIC ZONE:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:UNFINISHED ATTIC ZONE [J]
   OnMeter=Heating:EnergyTransfer [J]
   OnMeter=Heating:EnergyTransfer:Zone:UNFINISHED ATTIC ZONE [J]
 
- Meters for 362,UNFINISHED ATTIC ZONE:Zone Air System Sensible Cooling Energy [J]
+ Meters for 400,UNFINISHED ATTIC ZONE:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:UNFINISHED ATTIC ZONE [J]
   OnMeter=Cooling:EnergyTransfer [J]
   OnMeter=Cooling:EnergyTransfer:Zone:UNFINISHED ATTIC ZONE [J]
 
- Meters for 376,RES MV_U 1 ERV HEAT EXCHANGER:Heat Exchanger Total Heating Energy [J]
+ Meters for 414,RES MV_U 1 ERV HEAT EXCHANGER:Heat Exchanger Total Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatRecoveryForHeating:EnergyTransfer [J]
 
- Meters for 397,RES MV_U 1 ERV HEAT EXCHANGER:Heat Exchanger Total Cooling Energy [J]
+ Meters for 435,RES MV_U 1 ERV HEAT EXCHANGER:Heat Exchanger Total Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatRecoveryForCooling:EnergyTransfer [J]
 
- Meters for 408,RES MV_U 1 ERV HEAT EXCHANGER:Heat Exchanger Electric Energy [J]
+ Meters for 446,RES MV_U 1 ERV HEAT EXCHANGER:Heat Exchanger Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=HeatRecovery:Electricity [J]
 
- Meters for 429,RES MV_U 1 ERV SUPPLY FAN:Fan Electric Energy [J]
+ Meters for 467,RES MV_U 1 ERV SUPPLY FAN:Fan Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=residential mech vent fan:Fans:Electricity [J]
 
- Meters for 450,RES MV_U 1 ERV EXHAUST FAN:Fan Electric Energy [J]
+ Meters for 488,RES MV_U 1 ERV EXHAUST FAN:Fan Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=residential mech vent fan:Fans:Electricity [J]
 
- Meters for 451,RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN:Fan Electric Energy [J]
+ Meters for 489,RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN:Fan Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=residential hvac fan:Fans:Electricity [J]
 
- Meters for 465,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Air Heating Energy [J]
+ Meters for 503,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Air Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=HeatingCoils:EnergyTransfer [J]
 
- Meters for 476,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Gas Energy [J]
+ Meters for 514,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Gas Energy [J]
   OnMeter=Gas:Facility [J]
   OnMeter=Gas:HVAC [J]
   OnMeter=Heating:Gas [J]
 
- Meters for 507,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Electric Energy [J]
+ Meters for 545,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
 
- Meters for 518,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Ancillary Gas Energy [J]
+ Meters for 556,RESIDENTIAL FURNACE GAS HEATING COIL:Heating Coil Ancillary Gas Energy [J]
   OnMeter=Gas:Facility [J]
   OnMeter=Gas:HVAC [J]
   OnMeter=Heating:Gas [J]
 
- Meters for 519,RESIDENTIAL CENTRAL AC COOLING COIL:Cooling Coil Total Cooling Energy [J]
+ Meters for 557,RESIDENTIAL CENTRAL AC COOLING COIL:Cooling Coil Total Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=CoolingCoils:EnergyTransfer [J]
 
- Meters for 532,RESIDENTIAL CENTRAL AC COOLING COIL:Cooling Coil Electric Energy [J]
+ Meters for 570,RESIDENTIAL CENTRAL AC COOLING COIL:Cooling Coil Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Cooling:Electricity [J]
 
- Meters for 543,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy [J]
+ Meters for 581,RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
 
- Meters for 544,RESIDENTIAL CLOTHES WASHER:Water Use Equipment Total Volume [m3]
+ Meters for 582,RESIDENTIAL CLOTHES WASHER:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=residential clothes washer:WaterSystems:Water [m3]
 
- Meters for 585,RESIDENTIAL CLOTHES WASHER:Water Use Equipment Mains Water Volume [m3]
+ Meters for 623,RESIDENTIAL CLOTHES WASHER:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=residential clothes washer:WaterSystems:MainsWater [m3]
 
- Meters for 626,RESIDENTIAL CLOTHES WASHER:Water Use Equipment Heating Energy [J]
+ Meters for 664,RESIDENTIAL CLOTHES WASHER:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=residential clothes washer:WaterSystems:EnergyTransfer [J]
 
- Meters for 657,RESIDENTIAL DISHWASHER:Water Use Equipment Total Volume [m3]
+ Meters for 695,RESIDENTIAL DISHWASHER:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=residential dishwasher:WaterSystems:Water [m3]
 
- Meters for 668,RESIDENTIAL DISHWASHER:Water Use Equipment Mains Water Volume [m3]
+ Meters for 706,RESIDENTIAL DISHWASHER:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=residential dishwasher:WaterSystems:MainsWater [m3]
 
- Meters for 679,RESIDENTIAL DISHWASHER:Water Use Equipment Heating Energy [J]
+ Meters for 717,RESIDENTIAL DISHWASHER:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=residential dishwasher:WaterSystems:EnergyTransfer [J]
 
- Meters for 690,WATER USE CONNECTIONS 1:Water Use Connections Plant Hot Water Energy [J]
+ Meters for 728,WATER USE CONNECTIONS 1:Water Use Connections Plant Hot Water Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 721,RES WH:Water Heater Source Side Heat Transfer Energy [J]
+ Meters for 759,RES WH:Water Heater Source Side Heat Transfer Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
   OnMeter=Water Heater:WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 732,RES WH:Water Heater Electric Energy [J]
+ Meters for 770,RES WH:Water Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=Water Heater:WaterSystems:Electricity [J]
 
- Meters for 763,RES WH:Water Heater Off Cycle Parasitic Electric Energy [J]
+ Meters for 801,RES WH:Water Heater Off Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=Water Heater:WaterSystems:Electricity [J]
 
- Meters for 764,RES WH:Water Heater On Cycle Parasitic Electric Energy [J]
+ Meters for 802,RES WH:Water Heater On Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=Water Heater:WaterSystems:Electricity [J]
 
- Meters for 765,RES WH:Water Heater Water Volume [m3]
+ Meters for 803,RES WH:Water Heater Water Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=Water Heater:WaterSystems:Water [m3]
 
- Meters for 776,RES WH:Water Heater Mains Water Volume [m3]
+ Meters for 814,RES WH:Water Heater Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=Water Heater:WaterSystems:MainsWater [m3]
 
- Meters for 787,Whole Building:Facility Total Purchased Electric Energy [J]
+ Meters for 825,Whole Building:Facility Total Purchased Electric Energy [J]
   OnMeter=ElectricityPurchased:Facility [J]
   OnMeter=ElectricityPurchased:Plant [J]
   OnMeter=Cogeneration:ElectricityPurchased [J]
 
- Meters for 818,Whole Building:Facility Total Surplus Electric Energy [J]
+ Meters for 856,Whole Building:Facility Total Surplus Electric Energy [J]
   OnMeter=ElectricitySurplusSold:Facility [J]
   OnMeter=ElectricitySurplusSold:Plant [J]
   OnMeter=Cogeneration:ElectricitySurplusSold [J]
 
- Meters for 849,Whole Building:Facility Net Purchased Electric Energy [J]
+ Meters for 887,Whole Building:Facility Net Purchased Electric Energy [J]
   OnMeter=ElectricityNet:Facility [J]
   OnMeter=ElectricityNet:Plant [J]
   OnMeter=Cogeneration:ElectricityNet [J]
 
- Meters for 880,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
+ Meters for 918,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Pumps:Electricity [J]
 
- Meters for 891,RESIDENTIAL CENTRAL AC COOLING COIL:Cooling Coil Crankcase Heater Electric Energy [J]
+ Meters for 929,RESIDENTIAL CENTRAL AC COOLING COIL:Cooling Coil Crankcase Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Cooling:Electricity [J]
 
- Meters for 1071,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+ Meters for 1121,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1092,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1142,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1093,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1143,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
@@ -464,6 +478,8 @@
   RESIDENTIAL REFRIGERATOR:Electric Equipment Electric Energy
 
  For Meter=EnergyTransfer:Facility [J], ResourceType=EnergyTransfer, contents are:
+  DSE ZONE:Zone Air System Sensible Heating Energy
+  DSE ZONE:Zone Air System Sensible Cooling Energy
   FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy
   FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy
   LIVING ZONE:Zone Air System Sensible Heating Energy
@@ -480,6 +496,8 @@
   RESIDENTIAL DISHWASHER:Water Use Equipment Heating Energy
 
  For Meter=EnergyTransfer:Building [J], ResourceType=EnergyTransfer, Group=Building, contents are:
+  DSE ZONE:Zone Air System Sensible Heating Energy
+  DSE ZONE:Zone Air System Sensible Cooling Energy
   FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy
   FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy
   LIVING ZONE:Zone Air System Sensible Heating Energy
@@ -488,25 +506,37 @@
   RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Cooling Energy
   UNFINISHED ATTIC ZONE:Zone Air System Sensible Heating Energy
   UNFINISHED ATTIC ZONE:Zone Air System Sensible Cooling Energy
+
+ For Meter=EnergyTransfer:Zone:DSE ZONE [J], ResourceType=EnergyTransfer, Group=Zone, contents are:
+  DSE ZONE:Zone Air System Sensible Heating Energy
+  DSE ZONE:Zone Air System Sensible Cooling Energy
+
+ For Meter=Heating:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=Heating, contents are:
+  DSE ZONE:Zone Air System Sensible Heating Energy
+  FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy
+  LIVING ZONE:Zone Air System Sensible Heating Energy
+  RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Heating Energy
+  UNFINISHED ATTIC ZONE:Zone Air System Sensible Heating Energy
+
+ For Meter=Heating:EnergyTransfer:Zone:DSE ZONE [J], ResourceType=EnergyTransfer, EndUse=Heating, Group=Zone, contents are:
+  DSE ZONE:Zone Air System Sensible Heating Energy
+
+ For Meter=Cooling:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=Cooling, contents are:
+  DSE ZONE:Zone Air System Sensible Cooling Energy
+  FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy
+  LIVING ZONE:Zone Air System Sensible Cooling Energy
+  RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Cooling Energy
+  UNFINISHED ATTIC ZONE:Zone Air System Sensible Cooling Energy
+
+ For Meter=Cooling:EnergyTransfer:Zone:DSE ZONE [J], ResourceType=EnergyTransfer, EndUse=Cooling, Group=Zone, contents are:
+  DSE ZONE:Zone Air System Sensible Cooling Energy
 
  For Meter=EnergyTransfer:Zone:FINISHED BASEMENT ZONE [J], ResourceType=EnergyTransfer, Group=Zone, contents are:
   FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy
   FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy
 
- For Meter=Heating:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=Heating, contents are:
-  FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy
-  LIVING ZONE:Zone Air System Sensible Heating Energy
-  RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Heating Energy
-  UNFINISHED ATTIC ZONE:Zone Air System Sensible Heating Energy
-
  For Meter=Heating:EnergyTransfer:Zone:FINISHED BASEMENT ZONE [J], ResourceType=EnergyTransfer, EndUse=Heating, Group=Zone, contents are:
   FINISHED BASEMENT ZONE:Zone Air System Sensible Heating Energy
-
- For Meter=Cooling:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=Cooling, contents are:
-  FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy
-  LIVING ZONE:Zone Air System Sensible Cooling Energy
-  RES DS_U 1 RET AIR ZONE:Zone Air System Sensible Cooling Energy
-  UNFINISHED ATTIC ZONE:Zone Air System Sensible Cooling Energy
 
  For Meter=Cooling:EnergyTransfer:Zone:FINISHED BASEMENT ZONE [J], ResourceType=EnergyTransfer, EndUse=Cooling, Group=Zone, contents are:
   FINISHED BASEMENT ZONE:Zone Air System Sensible Cooling Energy

@@ -9,6 +9,7 @@ require 'parallel'
 
 class OSWtoHPXMLExportTest < MiniTest::Test
 
+=begin
   def test_valid_xml
     args_hash = {}
     args_hash["schemas_dir"] = "../../hpxml_schemas"
@@ -25,6 +26,7 @@ class OSWtoHPXMLExportTest < MiniTest::Test
       result = _test_measure(nil, args_hash, expected_num_del_objects, expected_num_new_objects, expected_values)
     end
   end
+=end
   
   private
   

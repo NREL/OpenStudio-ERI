@@ -77,6 +77,12 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the output OSM file.")
     args << arg    
     
+    arg = OpenStudio::Measure::OSArgument.makeBoolArgument("debug", false)
+    arg.setDisplayName("Debug")
+    arg.setDescription("Enable debugging.")
+    arg.setDefaultValue(false)
+    args << arg    
+    
     return args
   end
 
@@ -97,6 +103,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     hpxml_output_file_path = runner.getOptionalStringArgumentValue("hpxml_output_file_path", user_arguments)
     osm_output_file_path = runner.getOptionalStringArgumentValue("osm_output_file_path", user_arguments)
+    debug = runner.getBoolArgumentValue("debug", user_arguments)
 
     unless (Pathname.new hpxml_file_path).absolute?
       hpxml_file_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_file_path))
@@ -137,7 +144,14 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     hpxml_doc = REXML::Document.new(File.read(hpxml_file_path))
     
-    show_measure_calls=false
+    show_measure_calls = false
+    apply_measures_osw1 = nil
+    apply_measures_osw2 = nil
+    if debug
+      show_measure_calls = true
+      apply_measures_osw1 = "apply_measures1.osw"
+      apply_measures_osw2 = "apply_measures2.osw"
+    end
     
     # Validate input HPXML
     if not schemas_dir.nil?
@@ -166,7 +180,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
            }
     update_args_hash(measures, measure_subdir, args)
 
-    if not apply_measures(measures_dir, measures, runner, model, workflow_json, nil, show_measure_calls)
+    if not apply_measures(measures_dir, measures, runner, model, workflow_json, apply_measures_osw1, show_measure_calls)
       return false
     end
     weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
@@ -213,7 +227,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       File.write(osm_output_file_path.get, model.to_s)
     end
 
-    if not apply_measures(measures_dir, measures, runner, model, workflow_json, nil, show_measure_calls)
+    if not apply_measures(measures_dir, measures, runner, model, workflow_json, apply_measures_osw2, show_measure_calls)
       return false
     end
     
@@ -233,7 +247,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
   
   def generate_building_loads(model, runner)
     # Note: Duct losses are included the heating/cooling energy values. For the 
-    # RESNET Reference Home, the effect of DSE will be removed during post-processing.
+    # RESNET Reference Home, the effect of DSE is removed during post-processing.
     
     # FIXME: Are HW distribution losses included in the HW energy values?
     # FIXME: Handle fan/pump energy (requires EMS or timeseries output to split apart heating/cooling)
@@ -1814,6 +1828,8 @@ class OSMeasures
   def self.get_setpoints(building, measures) 
 
     control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
+    
+    # TODO: Setbacks and setups
   
     htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
     clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
@@ -1917,7 +1933,7 @@ class OSMeasures
             "mult_hw"=>1,
             "space"=>Constants.Auto,
             "plant_loop"=>Constants.Auto,
-            "schedule_day_shift"=>"0"
+            "schedule_day_shift"=>0
            }  
     update_args_hash(measures, measure_subdir, args)
     
@@ -1976,7 +1992,7 @@ class OSMeasures
             "mult_hw"=>1,
             "space"=>Constants.Auto,
             "plant_loop"=>Constants.Auto,
-            "schedule_day_shift"=>"0"
+            "schedule_day_shift"=>0
            }  
     update_args_hash(measures, measure_subdir, args)
 
@@ -2120,18 +2136,18 @@ class OSMeasures
     natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
     
     if natural_ventilation.nil?
-      nat_vent_htg_offset = "1"
-      nat_vent_clg_offset = "1"
-      nat_vent_ovlp_offset = "1"
-      nat_vent_htg_season = "true"
-      nat_vent_clg_season = "true"
-      nat_vent_ovlp_season = "true"
-      nat_vent_num_weekdays = "5"
-      nat_vent_num_weekends = "2"
-      nat_vent_frac_windows_open = "0.33"
-      nat_vent_frac_window_area_openable = "0.2"
-      nat_vent_max_oa_hr = "0.0115"
-      nat_vent_max_oa_rh = "0.7"
+      nat_vent_htg_offset = 1
+      nat_vent_clg_offset = 1
+      nat_vent_ovlp_offset = 1
+      nat_vent_htg_season = true
+      nat_vent_clg_season = true
+      nat_vent_ovlp_season = true
+      nat_vent_num_weekdays = 5
+      nat_vent_num_weekends = 2
+      nat_vent_frac_windows_open = 0.33
+      nat_vent_frac_window_area_openable = 0.2
+      nat_vent_max_oa_hr = 0.0115
+      nat_vent_max_oa_rh = 0.7
     else
       nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_offset")
       nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_offset")
@@ -2147,32 +2163,66 @@ class OSMeasures
       nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_rh")
     end
   
-    air_distribution = building.elements["BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution"]
+    hvac_distribution = building.elements["BuildingDetails/Systems/HVAC/HVACDistribution"]
+    air_distribution = nil
+    if not hvac_distribution.nil?
+      air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
+    end
     
-    if air_distribution.nil?
+    if not air_distribution.nil?
+      # Ducts
+      supply_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+      return_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+      supply_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctInsulationRValue"))
+      return_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue"))
+      supply_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctSurfaceArea"))
+      return_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctSurfaceArea"))
+      # FIXME: Values below
       duct_location = Constants.Auto
-      duct_total_leakage = "0.3"
-      duct_supply_frac = "0.6"
-      duct_return_frac = "0.067"
-      duct_ah_supply_frac = "0.067"
-      duct_ah_return_frac = "0.267"
+      duct_total_leakage = 0.3
+      duct_supply_frac = 0.6
+      duct_return_frac = 0.067
+      duct_ah_supply_frac = 0.067
+      duct_ah_return_frac = 0.267
       duct_location_frac = Constants.Auto
-      duct_num_returns = Constants.Auto
-      duct_supply_area_mult = "1"
-      duct_return_area_mult = "1"
-      duct_unconditioned_r = "0"
+      duct_num_returns = 1
+      duct_supply_area_mult = 1
+      duct_return_area_mult = 1
+      duct_r = 4.0
+      duct_dse = "NA"
     else
-      duct_location = Constants.Auto
-      duct_total_leakage = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_total_leakage")
-      duct_supply_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_supply_frac")
-      duct_return_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_return_frac")
-      duct_ah_supply_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_ah_supply_frac")
-      duct_ah_return_frac = XMLHelper.get_value(duct_leakage_measurement, "DuctLeakageMeasurement/extension/duct_ah_return_frac")
-      duct_location_frac = Constants.Auto
-      duct_num_returns = XMLHelper.get_value(air_distribution, "NumberofReturnRegisters")
-      duct_supply_area_mult = "1"
-      duct_return_area_mult = "1"      
-      duct_unconditioned_r = XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue")
+      # DSE or no ducts
+      if hvac_distribution.elements["AnnualHeatingDistributionSystemEfficiency"].nil? and hvac_distribution.elements["AnnualCoolingDistributionSystemEfficiency"].nil?
+        # No ducts
+        duct_location = "none"
+        duct_total_leakage = 0
+        duct_supply_frac = 0
+        duct_return_frac = 0
+        duct_ah_supply_frac = 0
+        duct_ah_return_frac = 0
+        duct_location_frac = Constants.Auto
+        duct_num_returns = Constants.Auto
+        duct_supply_area_mult = 1
+        duct_return_area_mult = 1
+        duct_r = 0
+        duct_dse = "NA"
+      else
+        heat_dse = Float(XMLHelper.get_value(hvac_distribution, "AnnualHeatingDistributionSystemEfficiency"))
+        cool_dse = Float(XMLHelper.get_value(hvac_distribution, "AnnualCoolingDistributionSystemEfficiency"))
+        # FIXME: error if heat_dse != cool_dse
+        duct_location = "none"
+        duct_total_leakage = 0
+        duct_supply_frac = 0
+        duct_return_frac = 0
+        duct_ah_supply_frac = 0
+        duct_ah_return_frac = 0
+        duct_location_frac = Constants.Auto
+        duct_num_returns = Constants.Auto
+        duct_supply_area_mult = 1
+        duct_return_area_mult = 1
+        duct_r = 0
+        duct_dse = heat_dse
+      end
     end
   
     measure_subdir = "ResidentialAirflow"
@@ -2210,17 +2260,18 @@ class OSMeasures
             "nat_vent_frac_window_area_openable"=>nat_vent_frac_window_area_openable,
             "nat_vent_max_oa_hr"=>nat_vent_max_oa_hr,
             "nat_vent_max_oa_rh"=>nat_vent_max_oa_rh,
-            "duct_location"=>duct_location, # FIXME
-            "duct_total_leakage"=>duct_total_leakage, # FIXME
-            "duct_supply_frac"=>duct_supply_frac, # FIXME
-            "duct_return_frac"=>duct_return_frac, # FIXME
-            "duct_ah_supply_frac"=>duct_ah_supply_frac, # FIXME
-            "duct_ah_return_frac"=>duct_ah_return_frac, # FIXME
-            "duct_location_frac"=>duct_location_frac, # FIXME
-            "duct_num_returns"=>duct_num_returns, # FIXME
-            "duct_supply_area_mult"=>duct_supply_area_mult, # FIXME
-            "duct_return_area_mult"=>duct_return_area_mult, # FIXME
-            "duct_unconditioned_r"=>duct_unconditioned_r # FIXME
+            "duct_location"=>duct_location,
+            "duct_total_leakage"=>duct_total_leakage,
+            "duct_supply_frac"=>duct_supply_frac,
+            "duct_return_frac"=>duct_return_frac,
+            "duct_ah_supply_frac"=>duct_ah_supply_frac,
+            "duct_ah_return_frac"=>duct_ah_return_frac,
+            "duct_location_frac"=>duct_location_frac,
+            "duct_num_returns"=>duct_num_returns,
+            "duct_supply_area_mult"=>duct_supply_area_mult,
+            "duct_return_area_mult"=>duct_return_area_mult,
+            "duct_r"=>duct_r,
+            "duct_dse"=>duct_dse,
            }  
     update_args_hash(measures, measure_subdir, args) # FIXME (need to figure out approach for dealing with volumes)
 

@@ -36,11 +36,17 @@ task :copy_beopt_files do
   require 'net/http'
   require 'openssl'
 
-  if File.exists? File.join(File.dirname(__FILE__), "master.zip")
-    FileUtils.rm(File.join(File.dirname(__FILE__), "master.zip"))
+  STDOUT.puts "Enter branch of repo (<ENTER> for master):"
+  branch = STDIN.gets.strip
+  if branch.empty?
+    branch = "master"
   end
   
-  url = URI.parse('https://codeload.github.com/NREL/OpenStudio-BEopt/zip/master')
+  if File.exists? File.join(File.dirname(__FILE__), "#{branch}.zip")
+    FileUtils.rm(File.join(File.dirname(__FILE__), "#{branch}.zip"))
+  end
+
+  url = URI.parse("https://codeload.github.com/NREL/OpenStudio-BEopt/zip/#{branch}")
   http = Net::HTTP.new(url.host, url.port)
   http.use_ssl = true
   http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -51,9 +57,12 @@ task :copy_beopt_files do
 
   http.request request do |response|
     total = response.header["Content-Length"].to_i
+    if total == 0
+      fail "Did not successfully download zip file."
+    end
     size = 0
     progress = 0
-    open 'master.zip', 'wb' do |io|
+    open "#{branch}.zip", 'wb' do |io|
       response.read_body do |chunk|
         io.write chunk
         size += chunk.size
@@ -67,10 +76,11 @@ task :copy_beopt_files do
   end
 
   puts "Extracting latest residential measures..."
-  unzip_file = OpenStudio::UnzipFile.new(File.join(File.dirname(__FILE__), "master.zip"))
-  unzip_file.extractAllFiles(OpenStudio::toPath(File.join(File.dirname(__FILE__), "master")))  
+  unzip_file = OpenStudio::UnzipFile.new(File.join(File.dirname(__FILE__), "#{branch}.zip"))
+  unzip_file.extractAllFiles(OpenStudio::toPath(File.join(File.dirname(__FILE__), branch)))
+
   
-  beopt_dir = File.join(File.dirname(__FILE__), "master", "OpenStudio-BEopt-master")
+  beopt_dir = File.join(File.dirname(__FILE__), branch, "OpenStudio-BEopt-#{branch}")
   beopt_measures_dir = File.join(beopt_dir, "measures")
   resource_measures_dir = File.join(File.dirname(__FILE__), "resources", "measures")
   if not Dir.exist?(beopt_measures_dir)
@@ -120,7 +130,7 @@ task :copy_beopt_files do
     puts puts "Copied #{File.basename(src_json)} to #{File.dirname(dest_json)}."
   end
   
-  FileUtils.rm_rf(File.join(File.dirname(__FILE__), "master"))
+  FileUtils.rm_rf(File.join(File.dirname(__FILE__), branch))
 
 end
 
