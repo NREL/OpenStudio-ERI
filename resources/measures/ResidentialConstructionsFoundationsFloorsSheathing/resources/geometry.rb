@@ -152,19 +152,14 @@ class Geometry
             return nil
         end
         
-        units = model.getBuildingUnits
-        
-        # Remove any units from list that have no associated spaces or are not residential
-        to_remove = []
-        units.each do |unit|
-            next if unit.spaces.size > 0 and unit.buildingUnitType == Constants.BuildingUnitTypeResidential
-            to_remove << unit
-        end
-        to_remove.each do |unit|
-            units.delete(unit)
+        return_units = []
+        model.getBuildingUnits.each do |unit|
+            # Remove any units from list that have no associated spaces or are not residential
+            next if not (unit.spaces.size > 0 and unit.buildingUnitType == Constants.BuildingUnitTypeResidential)
+            return_units << unit
         end
         
-        if units.size == 0
+        if return_units.size == 0
             # Assume SFD; create single building unit for entire model
             if !runner.nil?
                 runner.registerWarning("No building units defined; assuming single-family detached building.")
@@ -175,10 +170,12 @@ class Geometry
             model.getSpaces.each do |space|
                 space.setBuildingUnit(unit)
             end
-            units = model.getBuildingUnits
+            model.getBuildingUnits.each do |unit|
+              return_units << unit
+            end
         end
         
-        return units
+        return return_units
     end
     
     def self.get_unit_beds_baths(model, unit, runner=nil)

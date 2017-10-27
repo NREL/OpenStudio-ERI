@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>6516ff00-56eb-4877-97d1-b452f6d1532c</version_id>
-  <version_modified>20171027T122118Z</version_modified>
+  <version_id>94a3fdc4-574d-464b-931a-9a48ebeed0af</version_id>
+  <version_modified>20171027T215016Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -161,12 +161,6 @@
       <checksum>696FBE04</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6A82C5DA</checksum>
-    </file>
-    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -213,12 +207,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6BB3CD66</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>03F09690</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
@@ -556,18 +544,6 @@
       <checksum>2B8C00EA</checksum>
     </file>
     <file>
-      <filename>HERS Rated Home - valid.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F71566BA</checksum>
-    </file>
-    <file>
-      <filename>HERS Reference Home - valid.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FB7149BE</checksum>
-    </file>
-    <file>
       <filename>HERS Reference Home - valid-hvac-none.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
@@ -662,6 +638,30 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>0A35008A</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>81FEFA12</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E62158E</checksum>
+    </file>
+    <file>
+      <filename>HERS Rated Home - valid.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>911E85B4</checksum>
+    </file>
+    <file>
+      <filename>HERS Reference Home - valid.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E908FC34</checksum>
     </file>
   </files>
 </measure>
