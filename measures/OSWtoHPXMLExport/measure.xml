@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>fd97538e-f597-451e-92e1-3480285d059a</version_id>
-  <version_modified>20171026T213337Z</version_modified>
+  <version_id>93279ee2-25b3-46c9-ac74-7ffe106c95ca</version_id>
+  <version_modified>20171027T215019Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -65,12 +65,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>696FBE04</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6A82C5DA</checksum>
     </file>
     <file>
       <filename>BoilerElectric.osw</filename>
@@ -670,6 +664,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>F27C99B9</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>81FEFA12</checksum>
     </file>
   </files>
 </measure>

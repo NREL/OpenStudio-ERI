@@ -854,7 +854,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Measure::ModelMeasure
       
       floor_zs[2..-2].each do |floor_z|
         units_to_remove = []
-        model.getBuildingUnits.each do |unit|
+        Geometry.get_building_units(model, runner).each do |unit|
           unit.spaces.each do |space|
             next unless floor_z == Geometry.get_space_floor_z(space)
             next if units_to_remove.include? unit
@@ -872,7 +872,7 @@ class CreateResidentialMultifamilyGeometry < OpenStudio::Measure::ModelMeasure
         end      
       end
       
-      model.getBuildingUnits.each do |unit|
+      Geometry.get_building_units(model, runner).each do |unit|
         unit.spaces.each do |space|
           next unless floor_zs[1] == Geometry.get_space_floor_z(space)
           thermal_zone = space.thermalZone.get
