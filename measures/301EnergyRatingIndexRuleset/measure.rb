@@ -223,10 +223,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
 
-    if osm_output_file_path.is_initialized
-      File.write(osm_output_file_path.get, model.to_s)
-    end
-
     if not apply_measures(measures_dir, measures, runner, model, workflow_json, apply_measures_osw2, show_measure_calls)
       return false
     end
@@ -1622,8 +1618,15 @@ class OSMeasures
     
     if hp_type == "air-to-air"        
     
-      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
-      seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
+      if not hp.elements["AnnualCoolEfficiency"].nil?
+        seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
+        seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
+      else
+        # FIXME: Currently getting from AC
+        clgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
+        seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+        seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
+      end
       seer = seer_nom * seer_adj
       hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
