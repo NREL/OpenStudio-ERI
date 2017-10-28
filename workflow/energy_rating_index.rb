@@ -336,15 +336,8 @@ def get_eec_heat(hpxml_doc)
   heating_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
   heat_pump_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
   
-  if heating_system.nil? and heat_pump_system.nil?
-    fail "ERROR: No heating system found."
-  elsif not heating_system.nil? and not heat_pump_system.nil?
-    fail "ERROR: Multiple heating systems found."
-  else
-    sys = heating_system
-    if sys.nil?
-      sys = heat_pump_system
-    end
+  [heating_system, heat_pump_system].each do |sys|
+    next if sys.nil?
     ['HSPF','COP','AFUE','Percent'].each do |unit|
       if sys == heating_system
         value = XMLHelper.get_value(sys, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
@@ -372,15 +365,8 @@ def get_eec_cool(hpxml_doc)
   cooling_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
   heat_pump_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
   
-  if cooling_system.nil? and heat_pump_system.nil?
-    fail "ERROR: No cooling system found."
-  elsif not cooling_system.nil? and not heat_pump_system.nil?
-    fail "ERROR: Multiple cooling systems found."
-  else
-    sys = cooling_system
-    if sys.nil?
-      sys = heat_pump_system
-    end
+  [cooling_system, heat_pump_system].each do |sys|
+    next if sys.nil?
     ['SEER','COP','EER'].each do |unit|
       if sys == cooling_system  
         value = XMLHelper.get_value(sys, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
@@ -407,11 +393,10 @@ def get_eec_dhw(hpxml_doc)
   
   dhw_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
   
-  if dhw_system.nil?
-    fail "ERROR: No water heating system found."
-  else
-    value = XMLHelper.get_value(dhw_system, "EnergyFactor")
-    value_adj = XMLHelper.get_value(dhw_system, "extension/PerformanceAdjustmentEnergyFactor")
+  [dhw_system].each do |sys|
+    next if sys.nil?
+    value = XMLHelper.get_value(sys, "EnergyFactor")
+    value_adj = XMLHelper.get_value(sys, "extension/PerformanceAdjustmentEnergyFactor")
     if not value.nil? and not value_adj.nil?
       eec_dhw = get_eec_value_numerator('EF') / (value.to_f * value_adj.to_f)
     end

@@ -21,7 +21,8 @@ def exclude_file(f)
     exclude = true
   elsif f.include?('resources')
     allowances = {
-                  '301EnergyRatingIndexRuleset'=>['301.rb','hpxml.rb']
+                  '301EnergyRatingIndexRuleset'=>['301.rb','301validator.rb'],
+                  'OSWtoHPXMLExport'=>[],
                  }
     exclude = true
     allowances.keys.each do |m|
