@@ -1108,7 +1108,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       infil, building, unit = _processInfiltrationForUnit(infil, wind_speed, building, unit, has_hvac_flue, has_water_heater_flue, has_fireplace_chimney, runner)
       mech_vent = _processMechanicalVentilationForUnit(model, runner, infil, mech_vent, building, unit)
-      nat_vent = _processNaturalVentilationForUnit(model, runner, nat_vent, wind_speed, infil, building, unit)   
+      nat_vent = _processNaturalVentilationForUnit(model, runner, nat_vent, wind_speed, infil, building, unit)
       ducts = _processDuctsForUnit(model, runner, ducts, building, unit)
       
       schedules.BathExhaust = HourlyByMonthSchedule.new(model, runner, obj_name_infil + " bath exhaust schedule", [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, normalize_values = false)
@@ -2500,13 +2500,13 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     end
 
     if heatingSetpointWeekday.all? {|x| x == Constants.NoHeatingSetpoint}
-      runner.registerWarning("No heating equipment found. Assuming #{Constants.DefaultHeatingSetpoint} F for natural ventilation calculations.")
+      runner.registerWarning("No heating setpoint schedule found. Assuming #{Constants.DefaultHeatingSetpoint} F for natural ventilation calculations.")
       nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
     else
       nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio.convert([heatingSetpointWeekday.max, heatingSetpointWeekend.max].max + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
     end
     if coolingSetpointWeekday.all? {|x| x == Constants.NoCoolingSetpoint}
-      runner.registerWarning("No cooling equipment found. Assuming #{Constants.DefaultCoolingSetpoint} F for natural ventilation calculations.")
+      runner.registerWarning("No cooling setpoint schedule found. Assuming #{Constants.DefaultCoolingSetpoint} F for natural ventilation calculations.")
     end
     nat_vent.ovlp_ssn_hourly_weekend_temp = nat_vent.ovlp_ssn_hourly_temp
       

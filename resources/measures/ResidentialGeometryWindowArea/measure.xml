@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>set_residential_window_area</name>
   <uid>d05f5b32-1ad6-4c3d-964a-0dbd49a7fde8</uid>
-  <version_id>bef018f7-ae68-463e-8f05-c2ceafa3d379</version_id>
-  <version_modified>20171027T191847Z</version_modified>
+  <version_id>821c1e57-5646-4765-a480-e09eeee6ce35</version_id>
+  <version_modified>20171030T152910Z</version_modified>
   <xml_checksum>9014E219</xml_checksum>
   <class_name>SetResidentialWindowArea</class_name>
   <display_name>Set Residential Window Area</display_name>
@@ -162,61 +162,61 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>81FEFA12</checksum>
+      <checksum>F43282E8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>72DE4379</checksum>
+      <checksum>4D491EAF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B5FF728C</checksum>
+      <checksum>EDC5D96D</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5762B383</checksum>
+      <checksum>6ADAF527</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>13CE818C</checksum>
+      <checksum>35EF81E9</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_Windows_FourConstructions.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D30ADDD9</checksum>
+      <checksum>97A2C8CD</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_Windows_OneConstruction.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>A6E38F25</checksum>
+      <checksum>E1D63E31</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Offset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C56F24E9</checksum>
+      <checksum>A0DC789C</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Inset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>1132DB2A</checksum>
+      <checksum>DD96B6E1</checksum>
     </file>
     <file>
       <filename>SFD_1000sqft_1story_FB_GRG_UA_DoorArea.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D9439841</checksum>
+      <checksum>4F1B6925</checksum>
     </file>
   </files>
 </measure>
