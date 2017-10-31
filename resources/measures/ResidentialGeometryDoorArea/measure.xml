@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_door_area</name>
   <uid>901a04ee-99d4-42b3-91e1-b5b97970f441</uid>
-  <version_id>ca9fb913-aa29-4d8b-b0f2-0295efb3b8d2</version_id>
-  <version_modified>20171027T191846Z</version_modified>
+  <version_id>5fbfc306-2b3b-4bb5-9838-f3f94ac9162c</version_id>
+  <version_modified>20171030T152910Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialDoorArea</class_name>
   <display_name>Set Residential Door Area</display_name>
@@ -76,43 +76,43 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>81FEFA12</checksum>
+      <checksum>F43282E8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>72DE4379</checksum>
+      <checksum>4D491EAF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA_Southwest.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>B5FF728C</checksum>
+      <checksum>EDC5D96D</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver_ExteriorCorridor.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>963B9967</checksum>
+      <checksum>4801D4C0</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5762B383</checksum>
+      <checksum>6ADAF527</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>13CE818C</checksum>
+      <checksum>35EF81E9</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRG_UA_Doors_OneConstruction.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>10320D83</checksum>
+      <checksum>ECCEB9A2</checksum>
     </file>
   </files>
 </measure>

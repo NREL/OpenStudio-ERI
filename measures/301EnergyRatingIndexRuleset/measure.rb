@@ -1839,15 +1839,21 @@ class OSMeasures
     
     measure_subdir = "ResidentialHVACHeatingSetpoints"
     args = {
-            "htg_wkdy"=>htg_sp,
-            "htg_wked"=>htg_sp
+            "weekday_setpoint"=>htg_sp,
+            "weekend_setpoint"=>htg_sp,
+            "use_auto_season"=>false,
+            "season_start_month"=>"Jan",
+            "season_end_month"=>"Dec"
            }  
     update_args_hash(measures, measure_subdir, args)
     
     measure_subdir = "ResidentialHVACCoolingSetpoints"
     args = {
-            "clg_wkdy"=>clg_sp,
-            "clg_wked"=>clg_sp
+            "weekday_setpoint"=>clg_sp,
+            "weekend_setpoint"=>clg_sp,
+            "use_auto_season"=>false,
+            "season_start_month"=>"Jan",
+            "season_end_month"=>"Dec"
            }  
     update_args_hash(measures, measure_subdir, args)
 
