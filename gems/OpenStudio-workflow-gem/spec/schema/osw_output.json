@@ -1,0 +1,624 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"$ref": "#/definitions/OpenStudioWorkflow Schema",
+	"definitions": {
+		"OpenStudioWorkflow Schema": {
+			"description": "JSON Schema for the OpenStudioWorkflow (OSW) file format",
+			"type": "object",
+			"properties": {
+				"file_format_version": {
+					"description": "Currently 0.1, however will infered to be the default of the software package unless otherwise specified",
+					"type": "string"
+				},
+				"id": {
+					"description": "UUID of this file",
+					"type": "string"
+				},
+				"root": {
+					"description": "Path to the root directory against which relative paths are evaluated.  If root is empty, the directory containing the osw is used.",
+					"type": "string"
+				},
+				"run_directory": {
+					"description": "Path to the run directory relative to root directory: note that a run folder will be created in the target location",
+					"type": "string"
+				},
+				"out_name": {
+					"description": "Name of the output OSW file, will be in same directory as input OSW to ensure that all relative file paths remain valid.",
+					"type": "string"
+				},
+				"file_paths": {
+					"description": "A set of ordered directories relative to root_directory to search for required files and libraries",
+					"type": "array",
+					"items": {
+						"description": "A path relative to the root_dir which should be searched for support files and folders",
+						"type": "string"
+					}
+				},
+				"measure_paths": {
+					"description": "A set of ordered directories relative to root_directory to search for required measures",
+					"type": "array",
+					"items": {
+						"description": "A path relative to the root_directory which should be searched for support files and folders",
+						"type": "string"
+					}
+				},
+				"weather_file": {
+					"$ref": "#/definitions/Weather Definition"
+				},
+				"seed_file": {
+					"$ref": "#/definitions/Seed Definition"
+				},
+				"steps": {
+					"$ref": "#/definitions/Workflow Steps"
+				},
+				"file_format_version": {
+					"description": "Currently 0.1, however will infered to be the default of the software package unless otherwise specified",
+					"type": "string"
+				},
+				"osa_id": {
+					"description": "UUID of the .osa file fron which this file was generated, or null if not generated from a .osa file",
+					"type": "string"
+				},
+				"osa_checksum": {
+					"description": "Checksum of the .osa file from which this file was generated, or null if not generated from a .osa file",
+					"type": "string"
+				},
+				"osd_id": {
+					"description": "UUID of the .osd file from which this file was generated, or null if not generated from a .osd file",
+					"type": "string"
+				},
+				"osd_checksum": {
+					"description": "Checksum of the .osd file from which this file was generated, or null if not generated from a .osd file",
+					"type": "string"
+				},
+				"created_at": {
+					"$ref": "#/definitions/Timestamp"
+				},
+				"started_at": {
+					"$ref": "#/definitions/Timestamp"
+				},
+				"current_step": {
+					"description": "Index of current workflow step, first step is index 0. Index remains at the last running step if error occurs.",
+					"type": "number"
+				},
+				"updated_at": {
+					"$ref": "#/definitions/Timestamp"
+				},
+				"completed_at": {
+					"$ref": "#/definitions/Timestamp"
+				},
+				"completed_status": {
+					"description": "If the workflow is complete records if it failed or succeeded.",
+					"type": "string",
+					"enum": [
+						"Success",
+						"Fail",
+						"Invalid",
+						"Cancel"
+					]
+				},
+				"eplusout_err": {
+					"description": "Content of the eplusout.err file.  This may be removed at some point if explicit step for EnergyPlus simulation is added.",
+					"type": "string"
+				},
+				"run_options": {
+					"type": "object",
+					"properties": {
+						"debug": {
+							"type": "boolean"
+						},
+						"preserve_run_dir": {
+							"type": "boolean"
+						},
+						"cleanup": {
+							"type": "boolean"
+						},
+						"output_adapter": {
+							"type": "object",
+							"oneOf": [
+								{
+									"$ref": "#/definitions/Custom Output Adapter"
+								}
+							]
+						},
+						"jobs": {
+							"type": "object",
+							"oneOf": [
+								{
+									"$ref": "#/definitions/Custom Jobs"
+								}
+							]
+						}
+					}
+				}
+			},
+			"required": [
+				"steps"
+			],
+			"dependencies": {
+				"completed_at": [
+					"completed_status"
+				],
+				"started_at": [
+					"current_step",
+					"updated_at"
+				]
+			},
+			"additionalProperties": false
+		},
+		"Workflow Step Result": {
+			"description": "Result is populated when the workflow step is run.",
+			"type": "object",
+			"properties": {
+				"started_at": {
+					"$ref": "#/definitions/Timestamp"
+				},
+				"completed_at": {
+					"$ref": "#/definitions/Timestamp"
+				},
+				"measure_type": {
+					"description": "Type of the measure that was run",
+					"type": "string"
+				},
+				"measure_name": {
+					"description": "Name of the measure that was run",
+					"type": "string"
+				},
+				"measure_uid": {
+					"description": "UID of the measure that was run",
+					"type": "string"
+				},
+				"measure_version_id": {
+					"description": "Version id of the measure that was run",
+					"type": "string"
+				},
+				"measure_version_modified": {
+					"description": "Version modified timestamp of the measure that was run",
+					"type": "string"
+				},
+				"measure_xml_checksum": {
+					"description": "XML checksum of the measure that was run",
+					"type": "string"
+				},
+				"measure_class_name": {
+					"description": "Class name of the measure that was run",
+					"type": "string"
+				},
+				"measure_display_name": {
+					"description": "Display name of the measure that was run",
+					"type": "string"
+				},
+				"measure_taxonomy": {
+					"type": "string"
+				},
+				"step_result": {
+					"description": "Overall result value of the measure.",
+					"type": "string",
+					"enum": [
+						"Success",
+						"Fail",
+						"NotApplicable"
+					]
+				},
+				"initial_condition": {
+					"description": "Condition of the model before the workflow step",
+					"type": "string"
+				},
+				"final_condition": {
+					"description": "Condition of the model after the workflow step",
+					"type": "string"
+				},
+				"step_errors": {
+					"description": "Any errors that ocurred during the workflow step.  Simulation workflow will halt if any errors are present.",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"step_warnings": {
+					"description": "Any warnings that occurred during the workflow step.  Simulation workflow will not halt due to precense of warnings.",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"step_info": {
+					"description": "Any info messages that occur during the workflow step.",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"step_values": {
+					"description": "Named output attributes that are added using runner.registerValue",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Workflow Step Value"
+					}
+				},
+				"step_files": {
+					"description": "New files that are generated during the worfklow step.  Relative file paths are evaluated relative to the root dir",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Output File"
+					}
+				},
+				"stdout": {
+					"description": "Output written to standard out during workflow step.",
+					"type": "string"
+				},
+				"stderr": {
+					"description": "Output written to standard error during workflow step.",
+					"type": "string"
+				}
+			},
+			"dependencies": {
+				"completed_at": [
+					"step_result",
+					"step_errors",
+					"step_warnings",
+					"step_info",
+					"step_values",
+					"step_files"
+				]
+			},
+			"additionalProperties": false
+		},
+		"Measure Definition": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"directory": {
+					"type": "string"
+				},
+				"visible": {
+					"type": "boolean"
+				},
+				"uid": {
+					"type": "string"
+				},
+				"uuid": {
+					"type": "string"
+				},
+				"version_id": {
+					"type": "string"
+				},
+				"version_uuid": {
+					"type": "string"
+				},
+				"version_modified": {
+					"type": "string"
+				},
+				"xml_checksum": {
+					"type": "string"
+				},
+				"display_name": {
+					"type": "string"
+				},
+				"class_name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"modeler_description": {
+					"type": "string"
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"outputs": {
+					"type": "array"
+				},
+				"attributes": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"display_name": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"arguments": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"visible": {
+								"type": "boolean"
+							},
+							"display_name": {
+								"type": "string"
+							},
+							"description": {
+								"type": "string"
+							},
+							"type": {
+								"type": "string"
+							},
+							"required": {
+								"type": "boolean"
+							},
+							"model_dependent": {
+								"type": "boolean"
+							},
+							"units": {
+								"type": "string"
+							},
+							"default_value": {},
+							"choice_values": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"choice_display_names": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"Measure Step": {
+			"description": "This step runs a measure with given arguments.  The measure can either be a Model, EnergyPlus, or Reporting Model.",
+			"type": "object",
+			"properties": {
+				"measure_dir_name": {
+					"description": "Measure directory name containing the measure.rb file",
+					"type": "string"
+				},
+				"measure_definition": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/Measure Definition"
+					}
+				},
+				"arguments": {
+					"description": "Arguments to pass to the measure ",
+					"type": "object",
+					"properties": {
+						"__SKIP__": {
+							"description": "If present and true, the __SKIP__ measure step will be skipped",
+							"type": "boolean",
+							"default": false
+						}
+					}
+				},
+				"name": {
+					"description": "Name of this measure step, can be different than measure name",
+					"type": "string"
+				},
+				"description": {
+					"description": "Description of this measure step, can be different than measure description",
+					"type": "string"
+				},
+				"modeler_description": {
+					"description": "Modeler description of this measure step, can be different than measure modeler description",
+					"type": "string"
+				},
+				"result": {
+					"$ref": "#/definitions/Workflow Step Result"
+				}
+			},
+			"required": [
+				"measure_dir_name",
+				"arguments"
+			],
+			"additionalProperties": false
+		},
+		"ModelToIdf Step": {
+			"description": "This step converts the Model to EnergyPlus IDF",
+			"type": "object",
+			"properties": {
+				"model_to_idf": {
+					"type": "boolean",
+					"enum": [
+						true
+					],
+					"default": true
+				},
+				"result": {
+					"$ref": "#/definitions/Workflow Step Result"
+				}
+			},
+			"required": [
+				"model_to_idf"
+			],
+			"additionalProperties": false
+		},
+		"EnergyPlus Step": {
+			"description": "This step runs EnergyPlus as well as ExpandObjects and preprocessing the IDF.",
+			"type": "object",
+			"properties": {
+				"expand_objects": {
+					"type": "boolean",
+					"default": true
+				},
+				"energyplus_preprocess": {
+					"type": "boolean",
+					"default": true
+				},
+				"energyplus": {
+					"type": "boolean",
+					"default": true
+				},
+				"result": {
+					"$ref": "#/definitions/Workflow Step Result"
+				}
+			},
+			"required": [
+				"energyplus"
+			],
+			"additionalProperties": false
+		},
+		"Post Process Step": {
+			"description": "This step deletes temporary files and copies results to a known location.  Omitting this step is equivalent to setting post_process equal to none.",
+			"type": "object",
+			"properties": {
+				"post_process": {
+					"type": "string",
+					"enum": [
+						"None",
+						"Normal",
+						"Maximum"
+					]
+				},
+				"result": {
+					"$ref": "#/definitions/Workflow Step Result"
+				}
+			},
+			"required": [
+				"post_process"
+			],
+			"additionalProperties": false
+		},
+		"Workflow Step": {
+			"type": "object",
+			"oneOf": [
+				{
+					"$ref": "#/definitions/Measure Step"
+				},
+				{
+					"$ref": "#/definitions/ModelToIdf Step"
+				},
+				{
+					"$ref": "#/definitions/EnergyPlus Step"
+				},
+				{
+					"$ref": "#/definitions/Post Process Step"
+				}
+			]
+		},
+		"Workflow Steps": {
+			"description": "Array of measures to be executed in the simulation process",
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Workflow Step"
+			}
+		},
+		"Seed Definition": {
+			"title": "seed_file",
+			"description": "String defining the filename for the seed model in the file_paths",
+			"type": "string"
+		},
+		"Weather Definition": {
+			"title": "weather_file",
+			"description": "String defining the filename for the weather file in the file_paths",
+			"type": "string"
+		},
+		"Output File": {
+			"type": "object",
+			"properties": {
+				"path": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"path"
+			],
+			"additionalProperties": false
+		},
+		"Timestamp": {
+			"description": "ISO8601 string defining a fully qualified date time",
+			"type": "string"
+		},
+		"Workflow Step Value": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"display_name": {
+					"type": "string"
+				},
+				"units": {
+					"type": "string"
+				},
+				"value": {
+					"type": [
+						"string",
+						"number",
+						"boolean"
+					]
+				}
+			},
+			"required": [
+				"name",
+				"value"
+			],
+			"additionalProperties": false
+		},
+		"Custom Output Adapter": {
+			"type": "object",
+			"properties": {
+				"custom_file_name": {
+					"type": "string"
+				},
+				"class_name": {
+					"type": "string"
+				},
+				"options": {
+					"type": "object"
+				}
+			},
+			"additionalProperties": false
+		},
+		"Custom Jobs": {
+			"type": "object",
+			"properties": {
+				"custom_states": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Custom State"
+					}
+				}
+			},
+			"additionalProperties": false
+		},
+		"Custom State": {
+			"type": "object",
+			"properties": {
+				"state": {
+					"type": "string"
+				},
+				"next_state": {
+					"type": "string"
+				},
+				"job": {
+					"type": "string"
+				},
+				"file": {
+					"type": "string"
+				},
+				"options": {
+					"type": "object",
+					"properties": {
+						"initial": {
+							"type": "boolean"
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,18 @@
+{
+    "weather_file": "USA_CO_Denver.Intl.AP.725650_TMY3.epw",
+    "seed_file": "office.osm",
+    "steps": [
+        {
+            "measure_dir_name": "Rotate Building Relative to Current Orientation",
+            "arguments": {
+                "relative_building_rotation": 45
+            }
+        },
+        {
+            "measure_dir_name": "openstudio_results"
+        },
+        {
+            "measure_dir_name": "Xcel EDA Reporting and QAQC"
+        }
+    ]
+}

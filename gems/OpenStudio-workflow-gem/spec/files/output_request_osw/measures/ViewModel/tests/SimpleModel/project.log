@@ -1,0 +1,56 @@
+[openstudio.LocalLibraryController] <-2> Creating LocalLibraryController with base app 0037F8D4
+[utilities.bcl.BCLMeasure] <-2> Loading measures in path: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/CalibrationReports
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/CalibrationReports
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/RadianceMeasure
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/RadianceMeasure
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/ReplaceModel
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/ReplaceModel
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/ReportRequest
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/ReportRequest
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/StandardReports
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: C:/Program Files (x86)/OpenStudio 1.8.4/share/openstudio-1.8.4/pat/Measures/StandardReports
+[utilities.bcl.BCLMeasure] <-2> Loading measures in path: E:/openstudio-vA3C
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: E:/openstudio-vA3C/.git
+[utilities.bcl.BCLXML] <2> 'E:/openstudio-vA3C/.git/measure.xml' does not exist
+[utilities.bcl.BCLMeasure] <2> 'E:/openstudio-vA3C/.git' is not a measure
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: E:/openstudio-vA3C/doc
+[utilities.bcl.BCLXML] <2> 'E:/openstudio-vA3C/doc/measure.xml' does not exist
+[utilities.bcl.BCLMeasure] <2> 'E:/openstudio-vA3C/doc' is not a measure
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: E:/openstudio-vA3C/ViewData
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: E:/openstudio-vA3C/ViewData
+[utilities.bcl.BCLMeasure] <-2> Attempting to load measure: E:/openstudio-vA3C/ViewModel
+[utilities.bcl.BCLMeasure] <-2> Success loading measure: E:/openstudio-vA3C/ViewModel
+[openstudio.model.WeatherFile] <-2> Current path 'files/USA_CO_Golden-NREL.724666_TMY3.epw' not complete. After calling system_complete have 'C:/Program Files (x86)/OpenStudio 1.8.4/files/USA_CO_Golden-NREL.724666_TMY3.epw'.
+[openstudio.model.WeatherFile] <-2> Going to look for 'E:/openstudio-vA3C/ViewModel/tests/SimpleModel/files/USA_CO_Golden-NREL.724666_TMY3.epw'.
+[openstudio.model.WeatherFile] <-2> Going to look for 'E:/openstudio-vA3C/ViewModel/tests/SimpleModel/USA_CO_Golden-NREL.724666_TMY3.epw'.
+[openstudio.runmanager.Workflow] <-2> creating workflow
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources/run.db) Persisting job status for {27077ec4-ce02-4b26-ac50-b0f0b59a4679}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {27077ec4-ce02-4b26-ac50-b0f0b59a4679}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {27077ec4-ce02-4b26-ac50-b0f0b59a4679}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources/run.db) Persisting job status for {fa390587-b108-4d90-9de7-cff3f470a25e}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {fa390587-b108-4d90-9de7-cff3f470a25e}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {fa390587-b108-4d90-9de7-cff3f470a25e}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources/run.db) Persisting job status for {99e0c4fd-92c8-4f5e-affa-99d12ea2a171}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {99e0c4fd-92c8-4f5e-affa-99d12ea2a171}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {99e0c4fd-92c8-4f5e-affa-99d12ea2a171}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources/run.db) Persisting job status for {dc8f6e04-9b1b-4d53-9c0e-4258ffb445dd}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {dc8f6e04-9b1b-4d53-9c0e-4258ffb445dd}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {dc8f6e04-9b1b-4d53-9c0e-4258ffb445dd}
+[openstudio.runmanager.Job_Impl] <-2> Returning previously saved outputfiles
+[openstudio.runmanager.RunManager] <-2> (C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources/run.db) Persisting job status for {0aaa501f-72f3-40c1-aeb4-bbae4b9f8c56}
+[openstudio.runmanager.RunManager] <-2> Deleted previous data job status for {0aaa501f-72f3-40c1-aeb4-bbae4b9f8c56}
+[openstudio.runmanager.RunManager] <-2> Not persisting, job has not actually finished {0aaa501f-72f3-40c1-aeb4-bbae4b9f8c56}
+[openstudio.project.ProjectDatabase] <-1> DB Message: cannot start a transaction within a transaction Unable to begin transaction
+[saveModel] <-2> Saved model to 'C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/in.osm'
+[saveModelTempDir] <-2> Copying C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources to E:/openstudio-vA3C/ViewModel/tests/SimpleModel
+[copyDir] <-1> copyDir 'C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources' to 'E:/openstudio-vA3C/ViewModel/tests/SimpleModel'
+[copyDir] <-1> Creating directory named = 'SimpleModel' in parentDstDir = 'E:/openstudio-vA3C/ViewModel/tests'
+[synchDirStructures] <-1> Synching destination 'E:/openstudio-vA3C/ViewModel/tests/SimpleModel' with source 'C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources'
+[copyDir] <-1> copyDir 'C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources/files' to 'E:/openstudio-vA3C/ViewModel/tests/SimpleModel/files'
+[copyDir] <-1> Creating directory named = 'files' in parentDstDir = 'E:/openstudio-vA3C/ViewModel/tests/SimpleModel'
+[synchDirStructures] <-1> Synching destination 'E:/openstudio-vA3C/ViewModel/tests/SimpleModel/files' with source 'C:/Users/dmacumbe/AppData/Local/Temp/1/OpenStudio.KZ4528/resources/files'
