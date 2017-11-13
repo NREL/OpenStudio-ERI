@@ -96,8 +96,11 @@ def run_osw(osw_path, show_debug=false)
     # Redirect to a log file
     log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
   end
+  
+  # FIXME: Push changes upstream to OpenStudio-workflow gem
+  gem_str = '-I ..\gems\OpenStudio-workflow-gem\lib\ '
 
-  command = "\"#{os_cli}\" run -w \"#{osw_path}\"#{log_str}"
+  command = "\"#{os_cli}\" #{gem_str}run -w \"#{osw_path}\"#{log_str}"
   system(command)
   
   return File.join(File.dirname(osw_path), "run", "eplusout.sql")
@@ -124,7 +127,7 @@ def parse_sql(design, sql_path, output_hpxml_path)
     fail "ERROR: Simulation unsuccessful for #{design}."
   end
   
-  sqlFile = OpenStudio::SqlFile.new(sql_path)
+  sqlFile = OpenStudio::SqlFile.new(sql_path, false)
   
   sim_output = {}
   sim_output[:hpxml] = output_hpxml_path
@@ -655,7 +658,7 @@ OptionParser.new do |opts|
   end
   
   options[:debug] = false
-  opts.on('-d', '--debug', 'EPW weather file') do |t|
+  opts.on('-d', '--debug', '') do |t|
     options[:debug] = true
   end
   

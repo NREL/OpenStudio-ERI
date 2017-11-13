@@ -1,0 +1,26 @@
+{
+	"weather_file": "srrl_2013_amy.epw",
+	"seed_file": "seb.osm",
+	"steps": [
+		{
+			"measure_dir_name": "ReduceSpaceInfiltrationByPercentage",
+			"arguments": {
+        "space_infiltration_reduction_percent": 10
+      }
+		},
+		{
+			"measure_dir_name": "ReduceSpaceInfiltrationByPercentage",
+			"arguments": {
+				"space_type": "{ef611f95-658d-4609-9b31-7cfea756bfd5}",
+        "space_infiltration_reduction_percent": 5
+			}
+		},
+		{
+			"measure_dir_name": "ReduceSpaceInfiltrationByPercentage",
+			"arguments": {
+				"space_type": "*Entire Building*",
+        "space_infiltration_reduction_percent": 1
+			}
+		}
+	]
+}
