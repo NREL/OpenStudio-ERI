@@ -98,7 +98,7 @@ def run_osw(osw_path, show_debug=false)
   end
   
   # FIXME: Push changes upstream to OpenStudio-workflow gem
-  gem_str = '-I ..\gems\OpenStudio-workflow-gem\lib\ '
+  gem_str = '-I ../gems/OpenStudio-workflow-gem/lib/ '
 
   command = "\"#{os_cli}\" #{gem_str}run -w \"#{osw_path}\"#{log_str}"
   system(command)
