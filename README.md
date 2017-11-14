@@ -37,4 +37,4 @@ See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/work
 * The format of the ERI HPXML file is still in flux.
 *	The workflow has only been tested with a few sample files, as provided in the `workflow/sample_files` directory.
 *	Errors/warnings are not yet being handled gracefully.
-*	No effort has been spent to optimize/speed up the process yet. 
+*	Limited effort has been spent to optimize/speed up the process. 
