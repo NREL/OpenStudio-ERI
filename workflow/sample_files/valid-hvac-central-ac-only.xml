@@ -31,11 +31,6 @@
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
           <ConditionedBuildingVolume>67575</ConditionedBuildingVolume>
-          <FoundationType>
-            <Basement>
-              <Conditioned>true</Conditioned>
-            </Basement>
-          </FoundationType>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
       </BuildingSummary>
@@ -49,7 +44,6 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='InfiltMeas64'/>
-            <TypeOfInfiltrationMeasurement>blower door</TypeOfInfiltrationMeasurement>
             <BuildingAirLeakage>
               <UnitofMeasure>ACHnatural</UnitofMeasure>
               <AirLeakage>0.02</AirLeakage>
@@ -173,7 +167,6 @@
                   </extension>
                 </Wall>
               </Walls>
-              <Area>4200</Area>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -191,7 +184,6 @@
                 <FramingFactor>0.2</FramingFactor>
                 <Material>wood</Material>
               </FloorJoists>
-              <FloorCovering>carpet</FloorCovering>
               <Area>3500</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
@@ -489,17 +481,11 @@
             <SystemIdentifier id='DHW_ID1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>conditioned space</Location>
             <TankVolume>80</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <HeatingCapacity>15354</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
             <RecoveryEfficiency>0.98</RecoveryEfficiency>
-            <WaterHeaterInsulation>
-              <Jacket>
-                <JacketRValue>0</JacketRValue>
-              </Jacket>
-            </WaterHeaterInsulation>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
@@ -524,33 +510,10 @@
             <FlowRate>2.5</FlowRate>
           </WaterFixture>
         </WaterHeating>
-        <SolarThermal>
-          <SolarThermalSystem>
-            <SystemIdentifier id='Active_Solar_ID1'/>
-            <SystemType>hot water and space heating</SystemType>
-            <CollectorArea>700</CollectorArea>
-            <CollectorLoopType>liquid direct</CollectorLoopType>
-            <CollectorType>double glazing selective</CollectorType>
-            <CollectorOrientation>south</CollectorOrientation>
-            <CollectorTilt>41</CollectorTilt>
-            <StorageVolume>900</StorageVolume>
-          </SolarThermalSystem>
-        </SolarThermal>
-        <Photovoltaics>
-          <PVSystem>
-            <SystemIdentifier id='Photovoltaic_ID1'/>
-            <ArrayAzimuth>180</ArrayAzimuth>
-            <ArrayTilt>41</ArrayTilt>
-            <MaxPowerOutput>215</MaxPowerOutput>
-            <CollectorArea>800</CollectorArea>
-            <InverterEfficiency>91</InverterEfficiency>
-          </PVSystem>
-        </Photovoltaics>
       </Systems>
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher_ID1'/>
-          <Location>living space</Location>
           <ModifiedEnergyFactor>1.2</ModifiedEnergyFactor>
           <RatedAnnualkWh>387.0</RatedAnnualkWh>
           <LabelElectricRate>0.127</LabelElectricRate>
@@ -560,7 +523,6 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer_ID1'/>
-          <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <EfficiencyFactor>3.01</EfficiencyFactor>
           <ControlType>timer</ControlType>
@@ -568,13 +530,10 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher_ID1'/>
           <RatedAnnualkWh>100</RatedAnnualkWh>
-          <EnergyFactor>0.68</EnergyFactor>
-          <RatedWaterGalPerCycle>12</RatedWaterGalPerCycle>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator_ID1'/>
-          <Location>kitchen</Location>
           <RatedAnnualkWh>609</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
@@ -590,21 +549,12 @@
       </Appliances>
       <Lighting>
         <LightingFractions>
-          <FractionIncandescent>0</FractionIncandescent>
-          <FractionCFL>1</FractionCFL>
-          <FractionLFL>0</FractionLFL>
           <extension>
             <QualifyingLightFixturesInterior>0.5</QualifyingLightFixturesInterior>
             <QualifyingLightFixturesExterior>0.5</QualifyingLightFixturesExterior>
             <QualifyingLightFixturesGarage>0.5</QualifyingLightFixturesGarage>
           </extension>
         </LightingFractions>
-        <CeilingFan>
-          <SystemIdentifier id='CeilingFan_ID1'/>
-          <Airflow>
-            <Efficiency>0</Efficiency>
-          </Airflow>
-        </CeilingFan>
       </Lighting>
     </BuildingDetails>
   </Building>

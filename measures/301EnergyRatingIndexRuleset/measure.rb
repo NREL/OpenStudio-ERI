@@ -163,6 +163,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       if has_errors
         return false
       end
+      runner.registerInfo("Validated input HPXML.")
     else
       runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
     end
@@ -205,12 +206,13 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     if not schemas_dir.nil?
       has_errors = false
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-        runner.registerError("Generated HPXML: #{error.to_s}")
+        runner.registerError("Output HPXML: #{error.to_s}")
         has_errors = true
       end
       if has_errors
         return false
       end
+      runner.registerInfo("Validated output HPXML.")
     else
       runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
     end
