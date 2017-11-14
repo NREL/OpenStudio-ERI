@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>14929f3c-96c9-4231-b0d7-b4acda3cc945</version_id>
-  <version_modified>20171031T180757Z</version_modified>
+  <version_id>7ff0dcc8-4221-4089-a275-8773662db686</version_id>
+  <version_modified>20171114T164556Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -247,192 +247,6 @@
       <checksum>03B1CA23</checksum>
     </file>
     <file>
-      <filename>FlatRoof.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>99CA96EA</checksum>
-    </file>
-    <file>
-      <filename>FurnaceElectric.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>66EE8004</checksum>
-    </file>
-    <file>
-      <filename>FurnaceFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D9644E44</checksum>
-    </file>
-    <file>
-      <filename>Garage.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4CDD0C6A</checksum>
-    </file>
-    <file>
-      <filename>HotTubHeaterGas.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>244D6A50</checksum>
-    </file>
-    <file>
-      <filename>HPWH.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DCA8A4B2</checksum>
-    </file>
-    <file>
-      <filename>MiniSplitHeatPump.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>00BAB77D</checksum>
-    </file>
-    <file>
-      <filename>PierBeam.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>746731A5</checksum>
-    </file>
-    <file>
-      <filename>PoolHeaterGas.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>45ECEEA0</checksum>
-    </file>
-    <file>
-      <filename>RoomAirConditioner.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F6AFD9F2</checksum>
-    </file>
-    <file>
-      <filename>WaterHeaterTankElectric.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C0D457C6</checksum>
-    </file>
-    <file>
-      <filename>WaterHeaterTanklessElectric.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EED38E1B</checksum>
-    </file>
-    <file>
-      <filename>WaterHeaterTanklessFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>23B44C8D</checksum>
-    </file>
-    <file>
-      <filename>AirSourceHeatPumpVariableSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E7230184</checksum>
-    </file>
-    <file>
-      <filename>BasementFinished.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9851286A</checksum>
-    </file>
-    <file>
-      <filename>BasementUnfinished.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>1869867D</checksum>
-    </file>
-    <file>
-      <filename>BoilerElectric.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>8CA6B8AE</checksum>
-    </file>
-    <file>
-      <filename>BoilerFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>89C31DBF</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerSingleSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C795CEA5</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerTwoSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9C1C2676</checksum>
-    </file>
-    <file>
-      <filename>CentralAirConditionerVariableSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FEE98063</checksum>
-    </file>
-    <file>
-      <filename>ClothesDryerFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>80B64205</checksum>
-    </file>
-    <file>
-      <filename>CookingRangeFuel.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>430BE5FD</checksum>
-    </file>
-    <file>
-      <filename>Crawlspace.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3B89F5D1</checksum>
-    </file>
-    <file>
-      <filename>create-model-example.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E80E4343</checksum>
-    </file>
-    <file>
-      <filename>Dehumidifier.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B208CDED</checksum>
-    </file>
-    <file>
-      <filename>ElectricBaseboard.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D5619AE5</checksum>
-    </file>
-    <file>
-      <filename>FinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BABAB8C8</checksum>
-    </file>
-    <file>
-      <filename>1-StoryFinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FDDBC542</checksum>
-    </file>
-    <file>
-      <filename>1-StoryUnfinishedAttic.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0763341D</checksum>
-    </file>
-    <file>
-      <filename>AirSourceHeatPumpTwoSpeed.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3A553BA3</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -443,12 +257,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>C9C319CF</checksum>
-    </file>
-    <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6BB3CD66</checksum>
     </file>
     <file>
       <filename>meta_measure.rb</filename>
@@ -484,6 +292,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>F43282E8</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>636AF018</checksum>
     </file>
   </files>
 </measure>
