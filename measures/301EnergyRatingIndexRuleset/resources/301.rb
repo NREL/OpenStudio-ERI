@@ -2508,10 +2508,11 @@ class EnergyRatingIndex301Ruleset
     oew_fact = ew_fact * o_frac # standard operating condition portion of hot water energy waste
     ocd_eff = 0.0 # FIXME: Need an HPXML input for this?
     sew_fact = ew_fact - oew_fact
+    ref_pipe_l = get_pipe_length_reference(cfa, nfl, bsmnt)
     if not is_recirc
-      ref_pipe_l = get_pipe_length_reference(cfa, nfl, bsmnt)
       pe_ratio = pipe_l / ref_pipe_l
     else
+      ref_loop_l = 2.0 * ref_pipe_l - 20.0
       pe_ratio = loop_l / ref_loop_l
     end
     e_waste = oew_fact * (1.0 - ocd_eff) + sew_fact * pe_ratio

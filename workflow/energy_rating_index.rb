@@ -194,6 +194,10 @@ def parse_sql(design, sql_path, output_hpxml_path)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE 'VentFans%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   sim_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
   
+  # Other - Recirculation pump
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameHotWaterRecircPump}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  sim_output[:elecRecircPump] = get_sql_query_result(sqlFile, query)
+  
   # Other - Space Heating Load
   vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
@@ -234,7 +238,8 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sum_elec_equips = (sim_output[:elecFridge] + sim_output[:elecDishwasher] +
                      sim_output[:elecClothesWasher] + sim_output[:elecClothesDryer] +
                      sim_output[:elecMELs] + sim_output[:elecRangeOven] +
-                     sim_output[:elecCeilingFan] + sim_output[:elecMechVent])
+                     sim_output[:elecCeilingFan] + sim_output[:elecMechVent] +
+                     sim_output[:elecRecircPump])
   if (sim_output[:elecEquipment] - sum_elec_equips).abs > tolerance
     fail "ERROR: Electric equipments do not sum to total."
   end

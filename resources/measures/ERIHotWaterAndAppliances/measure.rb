@@ -208,8 +208,9 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         end
         
         # Schedules init
+        timestep_minutes = (60.0/model.getTimestep.numberOfTimestepsPerHour).to_i
         start_date = model.getYearDescription.makeDate(1,1)
-        interval = OpenStudio::Time.new(0, 0, 60)
+        interval = OpenStudio::Time.new(0, 0, timestep_minutes)
         temp_sch_limits = model.getScheduleTypeLimitsByName("Temperature").get
         
         # Get weather
@@ -264,24 +265,29 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           end
           
           # Create hot water draw profile schedule
-          data_hw = []
+          fractions_hw = []
           for day in 0..364
             for hr in 0..23
-              data_hw << norm_daily_fraction[hr]
+              for timestep in 1..(60.0/timestep_minutes)
+                fractions_hw << norm_daily_fraction[hr]
+              end
             end
           end
-          time_series_hw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(data_hw), "")
+          sum_fractions_hw = fractions_hw.reduce(:+).to_f
+          time_series_hw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(fractions_hw), "")
           schedule_hw = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_hw, model).get
           schedule_hw.setName("Hot Water Draw Profile")
           
           # Create mixed water draw profile schedule
-          data_mw = []
+          fractions_mw = []
           for day in 0..364
             for hr in 0..23
-              data_mw << norm_daily_fraction[hr] * adjFmix[day]
+              for timestep in 1..(60.0/timestep_minutes)
+                fractions_mw << norm_daily_fraction[hr] * adjFmix[day]
+              end
             end
           end
-          time_series_mw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(data_mw), "")
+          time_series_mw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(fractions_mw), "")
           schedule_mw = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_mw, model).get
           schedule_mw.setName("Mixed Water Draw Profile")
           
@@ -294,13 +300,10 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           # Clothes washer
           cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
           cw_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
-          if cw_space.nil?
-            return false
-          end
-          cw_design_level = 10.0 # FIXME
-          cw_peak_flow = 10.0 # FIXME
-          add_electric_equipment(model, cw_name, cw_space, cw_design_level, cd_frac_sens, cd_frac_lat, schedule_hw)
-          add_water_use_equipment(model, cw_name, cw_space, cw_peak_flow, schedule_hw, hw_temp_schedule, water_use_connection)
+          cw_peak_flow_gpm = cw_gpd/sum_fractions_hw/timestep_minutes*365.0
+          cw_design_level_w = OpenStudio::convert(cw_annual_kwh*60.0/(cw_gpd*365.0/cw_peak_flow_gpm), "kW", "W").get
+          add_electric_equipment(model, cw_name, cw_space, cw_design_level_w, cw_frac_sens, cw_frac_lat, schedule_hw)
+          add_water_use_equipment(model, cw_name, cw_peak_flow_gpm, schedule_hw, hw_temp_schedule, water_use_connection)
           
           # Clothes dryer
           cd_name_e = Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric, unit.name.to_s)
@@ -308,34 +311,25 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           cd_weekday_sch = "0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024"
           cd_monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
           cd_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
-          if cd_space.nil?
-            return false
-          end
           cd_schedule = MonthWeekdayWeekendSchedule.new(model, runner, cd_name_e, cd_weekday_sch, cd_weekday_sch, cd_monthly_sch, 1.0, 1.0)
           cd_design_level_e = cd_schedule.calcDesignLevelFromDailykWh(cd_annual_kwh/365.0)
           cd_design_level_f = cd_schedule.calcDesignLevelFromDailyTherm(cd_annual_therm/365.0)
           add_electric_equipment(model, cd_name_e, cd_space, cd_design_level_e, cd_frac_sens, cd_frac_lat, cd_schedule.schedule)
-          add_other_equipment(model, cd_name_f, cd_space, cd_design_level_f, cd_frac_sens, cd_frac_lat, cd_schedule.schedule)
+          add_other_equipment(model, cd_name_f, cd_space, cd_design_level_f, cd_frac_sens, cd_frac_lat, cd_schedule.schedule, cd_fuel_type)
           
           # Dishwasher
           dw_name = Constants.ObjectNameDishwasher(unit.name.to_s)
           dw_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
-          if dw_space.nil?
-            return false
-          end
-          dw_design_level = 10.0 # FIXME
-          dw_peak_flow = 10.0 # FIXME
-          add_electric_equipment(model, dw_name, dw_space, dw_design_level, dw_frac_sens, dw_frac_lat, schedule_hw)
-          add_water_use_equipment(model, dw_name, dw_space, dw_peak_flow, schedule_hw, hw_temp_schedule, water_use_connection)
+          dw_peak_flow_gpm = dw_gpd/sum_fractions_hw/timestep_minutes*365.0
+          dw_design_level_w = OpenStudio::convert(dw_annual_kwh*60.0/(dw_gpd*365.0/dw_peak_flow_gpm), "kW", "W").get
+          add_electric_equipment(model, dw_name, dw_space, dw_design_level_w, dw_frac_sens, dw_frac_lat, schedule_hw)
+          add_water_use_equipment(model, dw_name, dw_peak_flow_gpm, schedule_hw, hw_temp_schedule, water_use_connection)
           
           # Refrigerator
           fridge_name = Constants.ObjectNameRefrigerator(unit.name.to_s)
           fridge_weekday_sch = "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041"
           fridge_monthly_sch = "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837"
           fridge_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
-          if fridge_space.nil?
-            return false
-          end
           fridge_schedule = MonthWeekdayWeekendSchedule.new(model, runner, fridge_name, fridge_weekday_sch, fridge_weekday_sch, fridge_monthly_sch, 1.0, 1.0)
           fridge_design_level = fridge_schedule.calcDesignLevelFromDailykWh(fridge_annual_kwh/365.0)
           add_electric_equipment(model, fridge_name, fridge_space, fridge_design_level, 1.0, 0.0, fridge_schedule.schedule)
@@ -346,38 +340,28 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           cook_weekday_sch = "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011"
           cook_monthly_sch = "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097"
           cook_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
-          if cook_space.nil?
-            return false
-          end
           cook_schedule = MonthWeekdayWeekendSchedule.new(model, runner, cook_name_e, cook_weekday_sch, cook_weekday_sch, cook_monthly_sch, 1.0, 1.0)
           cook_design_level_e = cook_schedule.calcDesignLevelFromDailykWh(cook_annual_kwh/365.0)
           cook_design_level_f = cook_schedule.calcDesignLevelFromDailyTherm(cook_annual_therm/365.0)
           add_electric_equipment(model, cook_name_e, cook_space, cook_design_level_e, cook_frac_sens, cook_frac_lat, cook_schedule.schedule)
-          add_other_equipment(model, cook_name_f, cook_space, cook_design_level_f, cook_frac_sens, cook_frac_lat, cook_schedule.schedule)
+          add_other_equipment(model, cook_name_f, cook_space, cook_design_level_f, cook_frac_sens, cook_frac_lat, cook_schedule.schedule, cook_fuel_type)
           
           # Fixtures (showers, sinks, baths)
           fx_obj_name = Constants.ObjectNameShower(unit.name.to_s)
-          fx_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
-          if fx_space.nil?
-            return false
-          end
-          fx_peak_flow = 10.0 # FIXME
-          add_water_use_equipment(model, fx_obj_name, fx_space, fx_peak_flow, schedule_mw, hw_temp_schedule, water_use_connection)
+          fx_peak_flow_gpm = fx_gpd/sum_fractions_hw/timestep_minutes*365.0
+          add_water_use_equipment(model, fx_obj_name, fx_peak_flow_gpm, schedule_mw, hw_temp_schedule, water_use_connection)
           
           # Distribution losses
           dist_obj_name = Constants.ObjectNameHotWaterDistribution(unit.name.to_s)
-          dist_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
-          if dist_space.nil?
-            return false
-          end
-          dist_peak_flow = 10.0 # FIXME
-          add_water_use_equipment(model, dist_obj_name, dist_space, dist_peak_flow, schedule_mw, hw_temp_schedule, water_use_connection)
+          dist_peak_flow_gpm = dist_gpd/sum_fractions_hw/timestep_minutes*365.0
+          add_water_use_equipment(model, dist_obj_name, dist_peak_flow_gpm, schedule_mw, hw_temp_schedule, water_use_connection)
           
           # Recirculation pump
-          pump_obj_name = Constants.ObjectNameHotWaterRecircPump(unit.name.to_s)
-          pump_schedule = cd_schedule # FIXME
-          pump_design_level = pump_schedule.calcDesignLevelFromDailykWh(dist_pump_annual_kwh/365.0)
-          add_electric_equipment(model, pump_obj_name, dist_space, pump_design_level, 0.0, 0.0, pump_schedule.schedule)
+          dist_pump_obj_name = Constants.ObjectNameHotWaterRecircPump(unit.name.to_s)
+          dist_pump_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          dist_pump_schedule = cd_schedule
+          dist_pump_design_level = dist_pump_schedule.calcDesignLevelFromDailykWh(dist_pump_annual_kwh/365.0)
+          add_electric_equipment(model, dist_pump_obj_name, dist_pump_space, dist_pump_design_level, 0.0, 0.0, dist_pump_schedule.schedule)
           
         end
         
@@ -385,45 +369,44 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         
     end
     
-    def add_electric_equipment(model, obj_name, space, design_level, frac_sens, frac_lat, schedule)
-        return if design_level <= 0.0
+    def add_electric_equipment(model, obj_name, space, design_level_w, frac_sens, frac_lat, schedule)
+        return if design_level_w <= 0.0
         ee_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         ee = OpenStudio::Model::ElectricEquipment.new(ee_def)
         ee.setName(obj_name)
         ee.setEndUseSubcategory(obj_name)
         ee.setSpace(space)
         ee_def.setName(obj_name)
-        ee_def.setDesignLevel(design_level)
+        ee_def.setDesignLevel(design_level_w)
         ee_def.setFractionRadiant(0.6 * frac_sens)
         ee_def.setFractionLatent(frac_lat)
         ee_def.setFractionLost(1.0 - frac_sens - frac_lat)
         ee.setSchedule(schedule)
     end
     
-    def add_other_equipment(model, obj_name, space, design_level, frac_sens, frac_lat, schedule)
-        return if design_level <= 0.0
+    def add_other_equipment(model, obj_name, space, design_level_w, frac_sens, frac_lat, schedule, fuel_type)
+        return if design_level_w <= 0.0
         oe_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
         oe = OpenStudio::Model::OtherEquipment.new(oe_def)
         oe.setName(obj_name)
         oe.setEndUseSubcategory(obj_name)
-        oe.setFuelType(cd_fuel_type)
+        oe.setFuelType(fuel_type)
         oe.setSpace(space)
         oe_def.setName(obj_name)
-        oe_def.setDesignLevel(design_level)
+        oe_def.setDesignLevel(design_level_w)
         oe_def.setFractionRadiant(0.6 * frac_sens)
         oe_def.setFractionLatent(frac_lat)
         oe_def.setFractionLost(1.0 - frac_sens - frac_lat)
         oe.setSchedule(schedule)
     end
     
-    def add_water_use_equipment(model, obj_name, space, peak_flow, schedule, temp_schedule, water_use_connection)
-        return if peak_flow <= 0.0
+    def add_water_use_equipment(model, obj_name, peak_flow_gpm, schedule, temp_schedule, water_use_connection)
+        return if peak_flow_gpm <= 0.0
         wu_def = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
         wu = OpenStudio::Model::WaterUseEquipment.new(wu_def)
         wu.setName(obj_name)
-        wu.setSpace(space)
         wu_def.setName(obj_name)
-        wu_def.setPeakFlowRate(peak_flow)
+        wu_def.setPeakFlowRate(OpenStudio::convert(peak_flow_gpm, "gal/min", "m^3/s").get)
         wu_def.setEndUseSubcategory(obj_name)
         wu.setFlowRateFractionSchedule(schedule)
         wu_def.setTargetTemperatureSchedule(temp_schedule)
