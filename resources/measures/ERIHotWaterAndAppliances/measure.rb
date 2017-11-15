@@ -154,10 +154,35 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         dwhr_eff.setDescription("Rated according to CSA B55.1.")
         args << dwhr_eff
         
-        # FIXME: Add DWHR Location Factor
-        # FIXME: Add DWHR Fixture Factor
-        # FIXME: Add DWHR Low Flow Fixtures Adjustment
-        # FIXME: Add DWHR Piping Loss Coefficient
+        # DHWR: Efficiency Adjustment
+        dwhr_eff_adj = OpenStudio::Measure::OSArgument::makeDoubleArgument("dwhr_eff_adj", true)
+        dwhr_eff_adj.setDisplayName("Drain Water Heat Recovery: Efficiency Adjustment")
+        dwhr_eff_adj.setDescription("Adjustment factor for low flow fixtures.")
+        args << dwhr_eff_adj
+        
+        # DHWR: Fraction Impacted Hot Water
+        dwhr_iFrac = OpenStudio::Measure::OSArgument::makeDoubleArgument("dwhr_iFrac", true)
+        dwhr_iFrac.setDisplayName("Drain Water Heat Recovery: Fraction Impacted Hot Water")
+        dwhr_iFrac.setDescription("Fraction of hot water use impacted by DWHR.")
+        args << dwhr_iFrac
+
+        # DHWR: PLC
+        dwhr_plc = OpenStudio::Measure::OSArgument::makeDoubleArgument("dwhr_plc", true)
+        dwhr_plc.setDisplayName("Drain Water Heat Recovery: PLC")
+        dwhr_plc.setDescription("Piping Loss Coefficient.")
+        args << dwhr_plc
+
+        # DHWR: Location Factor
+        dwhr_locF = OpenStudio::Measure::OSArgument::makeDoubleArgument("dwhr_locF", true)
+        dwhr_locF.setDisplayName("Drain Water Heat Recovery: Location Factor")
+        dwhr_locF.setDescription("Location factor for DWHR placement.")
+        args << dwhr_locF
+
+        # DHWR: Fixture Factor
+        dwhr_fixF = OpenStudio::Measure::OSArgument::makeDoubleArgument("dwhr_fixF", true)
+        dwhr_fixF.setDisplayName("Drain Water Heat Recovery: Fixture Factor")
+        dwhr_fixF.setDescription("Based on whether all showers in the home are connected to DWHR units.")
+        args << dwhr_fixF
         
         return args
     end #end the arguments method
@@ -197,6 +222,11 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         dist_pump_annual_kwh = runner.getDoubleArgumentValue("dist_pump_annual_kwh",user_arguments)
         dwhr_avail = runner.getBoolArgumentValue("dwhr_avail",user_arguments)
         dwhr_eff = runner.getDoubleArgumentValue("dwhr_eff",user_arguments)
+        dwhr_eff_adj = runner.getDoubleArgumentValue("dwhr_eff_adj",user_arguments)
+        dwhr_iFrac = runner.getDoubleArgumentValue("dwhr_iFrac",user_arguments)
+        dwhr_plc = runner.getDoubleArgumentValue("dwhr_plc",user_arguments)
+        dwhr_locF = runner.getDoubleArgumentValue("dwhr_locF",user_arguments)
+        dwhr_fixF = runner.getDoubleArgumentValue("dwhr_fixF",user_arguments)
         
         # Table 4.6.1.1(1): Hourly Hot Water Draw Fraction for Hot Water Tests
         daily_fraction = [0.0085, 0.0085, 0.0085, 0.0085, 0.0085, 0.0100, 0.0750, 0.0750, 
@@ -251,10 +281,11 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           tMix = 105.0 # F, Temperature of mixed water at fixtures
           
           # Calculate adjFmix
+          dwhr_inT = 97.0 # F
           adjFmix = [0.0] * 365
           if dwhr_avail
             for day in 0..364
-              dwhr_WHinTadj = dwhr_iFrac * (dwhr_inT - tmains_daily[day]) * dwhr_eff * dwhr_plc * dhwr_locF * dwhr_fixF
+              dwhr_WHinTadj = dwhr_iFrac * (dwhr_inT - tmains_daily[day]) * dwhr_eff * dwhr_eff_adj * dwhr_plc * dwhr_locF * dwhr_fixF
               dwhr_WHinT = tmains_daily[day] + dwhr_WHinTadj
               adjFmix[day] = 1.0 - ((tHot - tMix) / (tHot - dwhr_WHinT))
             end

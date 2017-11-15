@@ -1417,13 +1417,19 @@ class OSMeasures
     # Drain Water Heat Recovery
     dwhr_avail = false
     dwhr_eff = 0.0
+    dwhr_eff_adj = 0.0
+    dwhr_iFrac = 0.0
+    dwhr_plc = 0.0
+    dwhr_locF = 0.0
+    dwhr_fixF = 0.0
     if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
       dwhr_avail = true
       dwhr_eff = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
-      # FIXME: Add DWHR Location Factor
-      # FIXME: Add DWHR Fixture Factor
-      # FIXME: Add DWHR Low Flow Fixtures Adjustment
-      # FIXME: Add DWHR Piping Loss Coefficient
+      dwhr_eff_adj = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/EfficiencyAdjustment"))
+      dwhr_iFrac = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FracImpactedHotWater"))
+      dwhr_plc = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/PipingLossCoefficient"))
+      dwhr_locF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/LocationFactor"))
+      dwhr_fixF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FixtureFactor"))
     end
     
     # FIXME: Need to ensure this measure executes at the right time
@@ -1454,6 +1460,11 @@ class OSMeasures
             "dist_pump_annual_kwh"=>dist_pump_annual_kwh,
             "dwhr_avail"=>dwhr_avail,
             "dwhr_eff"=>dwhr_eff,
+            "dwhr_eff_adj"=>dwhr_eff_adj,
+            "dwhr_iFrac"=>dwhr_iFrac,
+            "dwhr_plc"=>dwhr_plc,
+            "dwhr_locF"=>dwhr_locF,
+            "dwhr_fixF"=>dwhr_fixF,
            }
     update_args_hash(measures, measure_subdir, args)
     
