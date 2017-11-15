@@ -326,8 +326,10 @@ class OSMeasures
     get_wall_constructions(building, measures)
     get_other_constructions(building, measures)
 
-    # Water Heating
+    # Water Heating & Appliances
     get_water_heating(building, measures)
+    # TODO: ResidentialHotWaterSolar
+    get_hot_water_and_appliances(building, measures)
     
     # HVAC
     get_heating_system(building, measures)
@@ -337,12 +339,7 @@ class OSMeasures
     get_ceiling_fan(building, measures)
     get_dehumidifier(building, measures)
     
-    # Appliances, Plug Loads, and Lighting
-    get_refrigerator(building, measures)
-    get_clothes_washer(building, measures)
-    get_clothes_dryer(building, measures)
-    get_dishwasher(building, measures)
-    get_cooking_range(building, measures)
+    # Plug Loads and Lighting
     # get_lighting(building, measures)
     get_mels(building, measures)
     
@@ -1361,10 +1358,105 @@ class OSMeasures
       
     end
 
-    # TODO: ResidentialHotWaterDistribution
-    # TODO: ResidentialHotWaterFixtures
-    # TODO: ResidentialHotWaterSolar
-
+  end
+  
+  def self.get_hot_water_and_appliances(building, measures)
+  
+    wh = building.elements["BuildingDetails/Systems/WaterHeating"]
+    appl = building.elements["BuildingDetails/Appliances"]
+    
+    # Clothes Washer
+    cw = appl.elements["ClothesWasher"]
+    cw_annual_kwh = Float(XMLHelper.get_value(cw, "extension/AnnualkWh"))
+    cw_frac_sens = Float(XMLHelper.get_value(cw, "extension/FracSensible"))
+    cw_frac_lat = Float(XMLHelper.get_value(cw, "extension/FracLatent"))
+    cw_gpd = Float(XMLHelper.get_value(cw, "extension/HotWaterGPD"))
+    
+    # Clothes Dryer
+    cd = appl.elements["ClothesDryer"]
+    cd_annual_kwh = Float(XMLHelper.get_value(cd, "extension/AnnualkWh"))
+    cd_annual_therm = Float(XMLHelper.get_value(cd, "extension/AnnualTherm"))
+    cd_frac_sens = Float(XMLHelper.get_value(cd, "extension/FracSensible"))
+    cd_frac_lat = Float(XMLHelper.get_value(cd, "extension/FracLatent"))
+    cd_fuel_type = XMLHelper.get_value(cd, "FuelType")
+    
+    # Dishwasher
+    dw = appl.elements["Dishwasher"]
+    dw_annual_kwh = Float(XMLHelper.get_value(dw, "extension/AnnualkWh"))
+    dw_frac_sens = Float(XMLHelper.get_value(dw, "extension/FracSensible"))
+    dw_frac_lat = Float(XMLHelper.get_value(dw, "extension/FracLatent"))
+    dw_gpd = Float(XMLHelper.get_value(dw, "extension/HotWaterGPD"))
+  
+    # Refrigerator
+    fridge = appl.elements["Refrigerator"]
+    fridge_annual_kwh = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
+    
+    # Cooking Range
+    cook = appl.elements["CookingRange"]
+    cook_annual_kwh = Float(XMLHelper.get_value(cook, "extension/AnnualkWh"))
+    cook_annual_therm = Float(XMLHelper.get_value(cook, "extension/AnnualTherm"))
+    cook_frac_sens = Float(XMLHelper.get_value(cook, "extension/FracSensible"))
+    cook_frac_lat = Float(XMLHelper.get_value(cook, "extension/FracLatent"))
+    cook_fuel_type = XMLHelper.get_value(cook, "FuelType")
+    
+    # Fixtures
+    fx = wh.elements["WaterFixture[WaterFixtureType='other']"]
+    fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
+    
+    # Distribution
+    dist = wh.elements["HotWaterDistribution"]
+    if XMLHelper.has_element(dist, "SystemType/Standard")
+      dist_type = "standard"
+      dist_pump_annual_kwh = 0.0
+    elsif XMLHelper.has_element(dist, "SystemType/Recirculation")
+      dist_type = "recirculation"
+      dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "extension/RecircPumpAnnualkWh"))
+    end
+    dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
+    
+    # Drain Water Heat Recovery
+    dwhr_avail = false
+    dwhr_eff = 0.0
+    if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
+      dwhr_avail = true
+      dwhr_eff = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
+      # FIXME: Add DWHR Location Factor
+      # FIXME: Add DWHR Fixture Factor
+      # FIXME: Add DWHR Low Flow Fixtures Adjustment
+      # FIXME: Add DWHR Piping Loss Coefficient
+    end
+    
+    # FIXME: Need to ensure this measure executes at the right time
+    measure_subdir = "ERIHotWaterAndAppliances"
+    args = {
+            "cw_annual_kwh"=>cw_annual_kwh,
+            "cw_frac_sens"=>cw_frac_sens,
+            "cw_frac_lat"=>cw_frac_lat,
+            "cw_gpd"=>cw_gpd,
+            "cd_annual_kwh"=>cd_annual_kwh,
+            "cd_annual_therm"=>cd_annual_therm,
+            "cd_frac_sens"=>cd_frac_sens,
+            "cd_frac_lat"=>cd_frac_lat,
+            "cd_fuel_type"=>to_beopt_fuel(cd_fuel_type),
+            "dw_annual_kwh"=>dw_annual_kwh,
+            "dw_frac_sens"=>dw_frac_sens,
+            "dw_frac_lat"=>dw_frac_lat,
+            "dw_gpd"=>dw_gpd,
+            "fridge_annual_kwh"=>fridge_annual_kwh,
+            "cook_annual_kwh"=>cook_annual_kwh,
+            "cook_annual_therm"=>cook_annual_therm,
+            "cook_frac_sens"=>cook_frac_sens,
+            "cook_frac_lat"=>cook_frac_lat,
+            "cook_fuel_type"=>to_beopt_fuel(cook_fuel_type),
+            "fx_gpd"=>fx_gpd,
+            "dist_type"=>dist_type,
+            "dist_gpd"=>dist_gpd,
+            "dist_pump_annual_kwh"=>dist_pump_annual_kwh,
+            "dwhr_avail"=>dwhr_avail,
+            "dwhr_eff"=>dwhr_eff,
+           }
+    update_args_hash(measures, measure_subdir, args)
+    
   end
 
   def self.get_heating_system(building, measures)
@@ -1905,148 +1997,6 @@ class OSMeasures
   
   end
   
-  def self.get_refrigerator(building, measures)
-
-    fridge = building.elements["BuildingDetails/Appliances/Refrigerator"]
-    
-    kWhs = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
-    
-    measure_subdir = "ResidentialApplianceRefrigerator"  
-    args = {
-            "fridge_E"=>kWhs,
-            "mult"=>1,
-            "weekday_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
-            "weekend_sch"=>"0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041",
-            "monthly_sch"=>"0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837",
-            "space"=>Constants.Auto
-           }  
-    update_args_hash(measures, measure_subdir, args)
-    
-  end
-
-  def self.get_clothes_washer(building, measures)
-
-    # FIXME
-    cw = building.elements["BuildingDetails/Appliances/ClothesWasher"]
-    
-    measure_subdir = "ResidentialApplianceClothesWasher"  
-    args = {
-            "imef"=>0.95,
-            "rated_annual_energy"=>387,
-            "annual_cost"=>24,
-            "test_date"=>2007,
-            "drum_volume"=>3.5,
-            "cold_cycle"=>false,
-            "thermostatic_control"=>true,
-            "internal_heater"=>false,
-            "fill_sensor"=>false,
-            "mult_e"=>1,
-            "mult_hw"=>1,
-            "space"=>Constants.Auto,
-            "plant_loop"=>Constants.Auto,
-            "schedule_day_shift"=>0
-           }  
-    update_args_hash(measures, measure_subdir, args)
-    
-  end
-
-  def self.get_clothes_dryer(building, measures)
-    
-    # FIXME
-    cd = building.elements["BuildingDetails/Appliances/ClothesDryer"]
-    
-    cd_fuel = XMLHelper.get_value(cd, "FuelType")
-    
-    if cd_fuel == "electricity"
-      measure_subdir = "ResidentialApplianceClothesDryerElectric"
-      args = {
-              "cef"=>2.7,
-              "mult"=>1,
-              "weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-              "weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-              "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
-              "space"=>Constants.Auto
-             }
-      update_args_hash(measures, measure_subdir, args)
-    else
-      measure_subdir = "ResidentialApplianceClothesDryerFuel"
-      args = {
-              "fuel_type"=>to_beopt_fuel(cd_fuel),
-              "cef"=>2.4,
-              "fuel_split"=>0.07,
-              "mult"=>1,
-              "weekday_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-              "weekend_sch"=>"0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024",
-              "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0",
-              "space"=>Constants.Auto
-             }
-      update_args_hash(measures, measure_subdir, args)
-    end
-    
-  end
-
-  def self.get_dishwasher(building, measures)
-
-    # FIXME
-    dw = building.elements["BuildingDetails/Appliances/Dishwasher"]
-    
-    measure_subdir = "ResidentialApplianceDishwasher"
-    args = {
-            "num_settings"=>12,
-            "dw_E"=>290,
-            "int_htr"=>true,
-            "cold_inlet"=>false,
-            "cold_use"=>0,
-            "eg_date"=>2007,
-            "eg_gas_cost"=>23,
-            "mult_e"=>1,
-            "mult_hw"=>1,
-            "space"=>Constants.Auto,
-            "plant_loop"=>Constants.Auto,
-            "schedule_day_shift"=>0
-           }  
-    update_args_hash(measures, measure_subdir, args)
-
-  end
-
-  def self.get_cooking_range(building, measures)
-    
-    # FIXME
-    crange = building.elements["BuildingDetails/Appliances/CookingRange"]
-    ov = building.elements["BuildingDetails/Appliances/Oven"] # TODO
-    
-    crange_fuel = XMLHelper.get_value(crange, "FuelType")
-    
-    if crange_fuel == "electricity"
-      measure_subdir = "ResidentialApplianceCookingRangeElectric"
-      args = {
-              "c_ef"=>0.74,
-              "o_ef"=>0.11,
-              "mult"=>1,
-              "weekday_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
-              "weekend_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
-              "monthly_sch"=>"1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
-              "space"=>Constants.Auto
-             }
-      update_args_hash(measures, measure_subdir, args)
-    else
-      measure_subdir = "ResidentialApplianceCookingRangeFuel"
-      args = {
-              "fuel_type"=>to_beopt_fuel(crange_fuel),
-              "c_ef"=>0.4,
-              "o_ef"=>0.058,
-              "e_ignition"=>true,
-              "mult"=>1,
-              "weekday_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
-              "weekend_sch"=>"0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011",
-              "monthly_sch"=>"1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097",
-              "space"=>Constants.Auto
-             }
-      update_args_hash(measures, measure_subdir, args)
-    end
-    
-  end
-
   def self.get_lighting(building, measures)
   
     lighting = building.elements["BuildingDetails/Lighting"]

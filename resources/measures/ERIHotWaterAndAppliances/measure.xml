@@ -1,0 +1,326 @@
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>eri_hot_water_and_appliances</name>
+  <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
+  <version_id>35f77ddb-ddc6-41ab-8edc-7af34ece5965</version_id>
+  <version_modified>20171114T235553Z</version_modified>
+  <xml_checksum>A6ACD89C</xml_checksum>
+  <class_name>ERIHotWaterAndAppliances</class_name>
+  <display_name>Set ERI Hot Water &amp; Appliances</display_name>
+  <description>Sets ERI hot water use according to ANSI/RESNET 301-2014 Addendum A-2015 Amendment on Domestic Hot Water (DHW) Systems.</description>
+  <modeler_description>Creates three new WaterUse:Equipment objects to represent showers, sinks, and baths in a home. OtherEquipment objects are also added to take into account the heat gain in the space due to hot water use.</modeler_description>
+  <arguments>
+    <argument>
+      <name>cw_annual_kwh</name>
+      <display_name>Clothes Washer: Annual kWh</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cw_frac_sens</name>
+      <display_name>Clothes Washer: Fraction Sensible</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cw_frac_lat</name>
+      <display_name>Clothes Washer: Fraction Latent</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cw_gpd</name>
+      <display_name>Clothes Washer: Hot Water Gallons Per Day</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cd_annual_kwh</name>
+      <display_name>Clothes Dryer: Annual kWh</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cd_annual_therm</name>
+      <display_name>Clothes Dryer: Annual therm</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cd_frac_sens</name>
+      <display_name>Clothes Dryer: Fraction Sensible</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cd_frac_lat</name>
+      <display_name>Clothes Dryer: Fraction Latent</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cd_fuel_type</name>
+      <display_name>Clothes Dryer: Fuel Type</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>gas</value>
+          <display_name>gas</display_name>
+        </choice>
+        <choice>
+          <value>oil</value>
+          <display_name>oil</display_name>
+        </choice>
+        <choice>
+          <value>propane</value>
+          <display_name>propane</display_name>
+        </choice>
+        <choice>
+          <value>electric</value>
+          <display_name>electric</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>dw_annual_kwh</name>
+      <display_name>Dishwasher: Annual kWh</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dw_frac_sens</name>
+      <display_name>Dishwasher: Fraction Sensible</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dw_frac_lat</name>
+      <display_name>Dishwasher: Fraction Latent</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dw_gpd</name>
+      <display_name>Dishwasher: Hot Water Gallons Per Day</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>fridge_annual_kwh</name>
+      <display_name>Refrigerator: Annual kWh</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cook_annual_kwh</name>
+      <display_name>Cooking Range: Annual kWh</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cook_annual_therm</name>
+      <display_name>Cooking Range: Annual therm</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cook_frac_sens</name>
+      <display_name>Cooking Range: Fraction Sensible</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cook_frac_lat</name>
+      <display_name>Cooking Range: Fraction Latent</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>cook_fuel_type</name>
+      <display_name>Cooking Range: Fuel Type</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>gas</value>
+          <display_name>gas</display_name>
+        </choice>
+        <choice>
+          <value>oil</value>
+          <display_name>oil</display_name>
+        </choice>
+        <choice>
+          <value>propane</value>
+          <display_name>propane</display_name>
+        </choice>
+        <choice>
+          <value>electric</value>
+          <display_name>electric</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>fx_gpd</name>
+      <display_name>Fixtures: Mixed Water Gallons Per Day</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dist_type</name>
+      <display_name>Distribution: System Type</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>standard</default_value>
+      <choices>
+        <choice>
+          <value>standard</value>
+          <display_name>standard</display_name>
+        </choice>
+        <choice>
+          <value>recirculation</value>
+          <display_name>recirculation</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>dist_gpd</name>
+      <display_name>Distribution: Mixed Water Gallons Per Day</display_name>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dist_pump_annual_kwh</name>
+      <display_name>Distribution: Recirc Pump Annual kWh</display_name>
+      <description>The annual electric consumption of the recirculation pump.</description>
+      <type>Double</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>dwhr_avail</name>
+      <display_name>Drain Water Heat Recovery</display_name>
+      <type>Boolean</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>true</value>
+          <display_name>true</display_name>
+        </choice>
+        <choice>
+          <value>false</value>
+          <display_name>false</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>dwhr_eff</name>
+      <display_name>Drain Water Heat Recovery: Efficiency</display_name>
+      <description>Rated according to CSA B55.1.</description>
+      <type>Double</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+  </arguments>
+  <outputs/>
+  <provenances/>
+  <tags>
+    <tag>Service Water Heating.Water Use</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>B466251C</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>F43282E8</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3C131B97</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>535A818D</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6BA22437</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>64BC6389</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C144F9B</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8E62158E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>D6AC989C</checksum>
+    </file>
+  </files>
+</measure>

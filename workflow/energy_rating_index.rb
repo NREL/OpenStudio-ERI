@@ -412,6 +412,12 @@ def get_eec_dhw(hpxml_doc)
   return eec_dhw
 end
 
+def dhw_adjustment(hpxml_doc)
+  # FIXME: Double-check this only applies to the Rated Home
+  hwdist = hpxml_doc.elements["//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution"]
+  return Float(XMLHelper.get_value(hwdist, "extension/EnergyConsumptionAdjustmentFactor"))
+end
+
 def calculate_eri(sim_outputs)
 
   rated_output = sim_outputs[Constants.CalcTypeERIRatedHome]
@@ -495,7 +501,7 @@ def calculate_eri(sim_outputs)
   results[:ec_r_cool] = ref_output[:elecCooling]
   results[:ec_r_dhw] = ref_output[:elecHotWater] + ref_output[:fuelHotWater]
   
-  # results[:ec_x_dhw] *= dhw_adjustment(ratedsim.water_distribution) # FIXME
+  results[:ec_x_dhw] *= dhw_adjustment(rated_hpxml_doc)
   
   # DSE_r = REUL/EC_r * EEC_r
   # For simplified system performance methods, DSE_r equals 0.80 for heating and cooling systems and 1.00 

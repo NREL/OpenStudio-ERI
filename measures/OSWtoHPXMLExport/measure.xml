@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>7ff0dcc8-4221-4089-a275-8773662db686</version_id>
-  <version_modified>20171114T164556Z</version_modified>
+  <version_id>0ab7b5ae-3e24-4988-8e34-e2837e177486</version_id>
+  <version_modified>20171114T221237Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -297,7 +297,7 @@
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>636AF018</checksum>
+      <checksum>6F3B8585</checksum>
     </file>
   </files>
 </measure>

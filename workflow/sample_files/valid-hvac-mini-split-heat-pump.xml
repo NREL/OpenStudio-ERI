@@ -423,8 +423,6 @@
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>programmable thermostat</ControlType>
-            <SetpointTempHeatingSeason>67</SetpointTempHeatingSeason>
-            <SetpointTempCoolingSeason>80</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>
@@ -458,13 +456,12 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
-              <Recirculation>
+              <Standard>
                 <LongestPipingLength>30</LongestPipingLength>
-              </Recirculation>
+              </Standard>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>0.0</PipeRValue>
-              <FractionPipeInsulation>1.0</FractionPipeInsulation>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>

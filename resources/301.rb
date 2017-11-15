@@ -1485,6 +1485,8 @@ class EnergyRatingIndex301Ruleset
     new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
     sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
+    sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
+    sys_type = XMLHelper.add_element(sys_type, "Standard")
     extension = XMLHelper.add_element(new_hw_dist, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
     
@@ -1506,6 +1508,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_fixture, "WaterFixtureType", "other")
     extension = XMLHelper.add_element(new_fixture, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
+    XMLHelper.add_element(extension, "LowFlow", false)
     
   end
   
@@ -1618,6 +1621,51 @@ class EnergyRatingIndex301Ruleset
     WDeff = distribution system water use effectiveness from Table 4.2.2.5.2.11(3)
     
     Feff = fixture effectiveness in accordance with Table 4.2.2.5.2.11(1)
+    
+    4.2.2.5.2.11.2 Hot Water System Annual Energy Consumption
+    
+    If the Rated Home includes a hot water recirculation system, the annual electric consumption of the recirculation pump shall be added to the total hot water energy consumption. The recirculation pump kWh/y shall be calculated using Equation 4.2-15
+      pumpkWh/y = pumpW * Efact Eq. 4.2-15
+      where:
+        pumpW = pump power in watts (default pumpW = 50 watts)
+        Efact = factor selected from Table 4.2.2.5.2.11(5)
+      
+    Table 4.2.2.5.2.11(5) Annual electricity consumption factor for hot water recirculation system pumps
+    Recirculation System Description                        Efact
+    --------------------------------                        -----
+    Recirculation without control or with timer control     8.76
+    Recirculation with temperature control                  1.46
+    Recirculation with demand control (presence sensor)     0.15
+    Recirculation with demand control (manual)              0.10
+    
+    Results from standard hot water energy consumption calculations considering only tested Energy Factor data (stdECHW) shall be adjusted to account for the energy delivery effectiveness of the hot water distribution system in accordance with equation 4.2-16.
+      ECHW = stdECHW * (Ewaste + 128) / 160 Eq. 4.2-16
+      where Ewaste is calculated in accordance with equation 4.2-17.
+        Ewaste = oEWfact * (1-oCDeff) + sEWfact * pEratio Eq. 4.2-17
+        where
+          oEWfact = EWfact * oFrac = standard operating condition portion of hot water energy waste
+          where
+            EWfact = energy waste factor in accordance with Table 4.2.2.5.2.11(6)
+          oCDeff is in accordance with Section 4.2.2.5.2.11.1
+          sEWfact = EWfact – oEWfact = structural portion of hot water energy waste
+          pEratio = piping length energy ratio
+          where
+            for standard system: pEratio = PipeL / refpipeL
+            for recirculation systems: pEratio = LoopL / refLoopL
+            and where
+              LoopL = hot water recirculation loop piping length including both supply and return sides of the loop, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements.
+              refLoopL = 2.0*refPipeL - 20
+
+    Table 4.2.2.5.2.11(6) Hot water distribution system relative annual energy waste factors
+                                                                             EWfact
+    Distribution System Description                         ------------------------------------------
+                                                            No pipe insulation    ≥R-3 pipe insulation
+    -------------------------------                         ------------------    --------------------
+    Standard systems                                        32.0                  28.8
+    Recirculation without control or with timer control     500                   250
+    Recirculation with temperature control                  375                   187.5
+    Recirculation with demand control (presence sensor)     64.8                  43.2
+    Recirculation with demand control (manual)              43.2                  28.8
     '''
     
     low_flow_fixtures = true
@@ -1628,58 +1676,50 @@ class EnergyRatingIndex301Ruleset
     end
     
     is_recirc = false
+    recirc_control_type = nil
+    recirc_pump_power = nil
     if not orig_details.elements["Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation"].nil?
       is_recirc = true
-      pipe_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/LongestPipingLength"))
+      recirc_branch_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/LongestBranchPipingLoopLength"))
+      recirc_loop_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/LongestRecirculationPipingLoopLength"))
+      recirc_control_type = XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/ControlType")
+      recirc_pump_power = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/PumpPower"))
     else
       pipe_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Standard/LongestPipingLength"))
     end
+    pipe_ins_rvalue = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/PipeInsulation/PipeRValue"))
     
     bsmnt = 0.0
     if not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?
       bsmnt = 1.0
     end
-    
     nfl = Float(XMLHelper.get_value(orig_details, "BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
     
-    pipe_ins_rvalue = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/PipeInsulation/PipeRValue"))
-    pipe_ins_frac = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/PipeInsulation/FractionPipeInsulation"))
+    # Waste gpd
+    rated_w_gpd = get_waste_gpd_rated(is_recirc, pipe_ins_rvalue, nbeds, pipe_l, recirc_branch_l, cfa, nfl, bsmnt, low_flow_fixtures)
     
-    sys_factor = 1.0
-    if is_recirc and (pipe_ins_rvalue == 0.0 or pipe_ins_frac == 0.0)
-      sys_factor = 1.11
-    else
-      sys_factor = 0.90
-    end
+    # Recirc pump annual electricity consumption
+    recirc_pump_annual_kwh = get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
     
-    ref_w_gpd = get_waste_gpd_reference(nbeds)
-    o_frac = 0.25
-    o_cd_eff = 0.0
-    
-    ref_pipe_l = 2.0 * (cfa / nfl)**0.5 + 10.0 * nfl + 5.0 * bsmnt
-    p_ratio = pipe_l / ref_pipe_l
-    
-    o_w_gpd = ref_w_gpd * o_frac * (1.0 - o_cd_eff)
-    s_w_gpd = (ref_w_gpd - ref_w_gpd * o_frac) * p_ratio * sys_factor
-    
-    wd_eff = 1.0
-    if is_recirc
-      wd_eff = 0.10
-    end
-    
-    f_eff = 1.0
-    if low_flow_fixtures
-      f_eff = 0.95
-    end
-    
-    rated_w_gpd = f_eff * (o_w_gpd + s_w_gpd * wd_eff)
+    # Calculate energy delivery effectiveness adjustment for energy consumption
+    ec_adj = get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_ins_rvalue, pipe_l, recirc_loop_l, cfa, nfl, bsmnt)
     
     # New hot water distribution
     new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
     sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
+    sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
+    if is_recirc
+      XMLHelper.add_element(sys_type, "Recirculation")
+    else
+      XMLHelper.add_element(sys_type, "Standard")
+    end
     extension = XMLHelper.add_element(new_hw_dist, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", rated_w_gpd)
+    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj) # used by energy_rating_index.rb
+    if is_recirc
+      XMLHelper.add_element(extension, "RecircPumpAnnualkWh", recirc_pump_annual_kwh)
+    end
 
     '''
     ANSI/RESNET 301-2014 Addendum A-2015
@@ -1689,8 +1729,7 @@ class EnergyRatingIndex301Ruleset
     refFgpd = reference climate-normalized daily fixture water use calculated in accordance with Section 4.2.2.5.1.4
     '''
     
-    ref_f_gpd = get_fixtures_gpd_reference(nbeds)
-    rated_f_gpd = f_eff * ref_f_gpd
+    rated_f_gpd = get_fixtures_gpd_rated(nbeds, low_flow_fixtures)
     
     # New water fixture
     new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
@@ -1699,6 +1738,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_fixture, "WaterFixtureType", "other")
     extension = XMLHelper.add_element(new_fixture, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
+    XMLHelper.add_element(extension, "LowFlow", low_flow_fixtures)
 
   end
   
@@ -2292,12 +2332,62 @@ class EnergyRatingIndex301Ruleset
     end
   end
   
+  def self.get_pipe_length_reference(cfa, nfl, bsmnt)
+    return 2.0 * (cfa / nfl)**0.5 + 10.0 * nfl + 5.0 * bsmnt
+  end
+  
+  def self.get_fixture_effectiveness_rated(low_flow_fixtures)
+    f_eff = 1.0
+    if low_flow_fixtures
+      f_eff = 0.95
+    end
+    return f_eff
+  end
+  
   def self.get_fixtures_gpd_reference(nbeds)
     return 14.6 + 10.0 * nbeds
   end
   
+  def self.get_fixtures_gpd_rated(nbeds, low_flow_fixtures)
+    ref_f_gpd = get_fixtures_gpd_reference(nbeds)
+    f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
+    return f_eff * ref_f_gpd
+  end
+  
   def self.get_waste_gpd_reference(nbeds)
     return 9.8 * (nbeds**0.43)
+  end
+  
+  def self.get_waste_gpd_rated(is_recirc, pipe_ins_rvalue, nbeds, pipe_l, recirc_branch_l, cfa, nfl, bsmnt, low_flow_fixtures)
+    sys_factor = 1.0
+    if is_recirc and pipe_ins_rvalue == 0.0
+      sys_factor = 1.11
+    else
+      sys_factor = 0.90
+    end
+    
+    ref_w_gpd = get_waste_gpd_reference(nbeds)
+    o_frac = 0.25
+    o_cd_eff = 0.0
+    
+    if is_recirc
+      p_ratio = recirc_branch_l / 10.0
+    else
+      ref_pipe_l = get_pipe_length_reference(cfa, nfl, bsmnt)
+      p_ratio = pipe_l / ref_pipe_l
+    end
+    
+    o_w_gpd = ref_w_gpd * o_frac * (1.0 - o_cd_eff)
+    s_w_gpd = (ref_w_gpd - ref_w_gpd * o_frac) * p_ratio * sys_factor
+    
+    wd_eff = 1.0
+    if is_recirc
+      wd_eff = 0.10
+    end
+    
+    f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
+    
+    return f_eff * (o_w_gpd + s_w_gpd * wd_eff)
   end
   
   def self.get_clothes_washer_sens_lat()
@@ -2360,6 +2450,74 @@ class EnergyRatingIndex301Ruleset
     return ef, re
   end
   
+  def self.get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_ins_rvalue)
+    if is_recirc
+      if recirc_control_type == "no control" or recirc_control_type == "timer"
+        if pipe_ins_rvalue < 3.0
+          return 500.0
+        else
+          return 250.0
+        end
+      elsif recirc_control_type == "temperature"
+        if pipe_ins_rvalue < 3.0
+          return 375.0
+        else
+          return 187.5
+        end
+      elsif recirc_control_type == "presence sensor demand control"
+        if pipe_ins_rvalue < 3.0
+          return 64.8
+        else
+          return 43.2
+        end
+      elsif recirc_control_type == "manual demand control"
+        if pipe_ins_rvalue < 3.0
+          return 43.2
+        else
+          return 28.8
+        end
+      end
+    else # standard distribution
+      if pipe_ins_rvalue < 3.0
+        return 32.0
+      else
+        return 28.8
+      end
+    end
+    return nil
+  end
+  
+  def self.get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
+    if is_recirc
+      if recirc_control_type == "no control" or recirc_control_type == "timer"
+        return 8.76 * recirc_pump_power
+      elsif recirc_control_type == "temperature"
+        return 1.46 * recirc_pump_power
+      elsif recirc_control_type == "presence sensor demand control"
+        return 0.15 * recirc_pump_power
+      elsif recirc_control_type == "manual demand control"
+        return 0.10 * recirc_pump_power
+      end
+    end
+    return nil
+  end
+  
+  def self.get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_ins_rvalue, pipe_l, loop_l, cfa, nfl, bsmnt)
+    ew_fact = get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_ins_rvalue)
+    o_frac = 0.25 # fraction of hot water waste from standard operating conditions
+    oew_fact = ew_fact * o_frac # standard operating condition portion of hot water energy waste
+    ocd_eff = 0.0 # FIXME: Need an HPXML input for this?
+    sew_fact = ew_fact - oew_fact
+    if not is_recirc
+      ref_pipe_l = get_pipe_length_reference(cfa, nfl, bsmnt)
+      pe_ratio = pipe_l / ref_pipe_l
+    else
+      pe_ratio = loop_l / ref_loop_l
+    end
+    e_waste = oew_fact * (1.0 - ocd_eff) + sew_fact * pe_ratio
+    return (e_waste + 128.0) / 160.0
+  end
+
   def self.get_occupants_heat_gain_sens_lat(nbeds)
     '''
     Table 4.2.2(3). Internal Gains for HERS Reference Homes
