@@ -255,7 +255,7 @@
         "name": "2. Hot Water Fixtures",
         "dependencies": "Water Heater",
         "measures": [
-          "ResidentialHotWaterFixtures"
+          "ERIHotWaterAndAppliances"
         ]
       },
       {

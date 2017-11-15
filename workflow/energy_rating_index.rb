@@ -191,7 +191,7 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sim_output[:elecCeilingFan] = get_sql_query_result(sqlFile, query)
   
   # Other - Mechanical Ventilation
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE 'VentFans%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.EndUseMechVentFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   sim_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
   
   # Other - Recirculation pump
@@ -229,26 +229,26 @@ def parse_sql(design, sql_path, output_hpxml_path)
                          sim_output[:elecAppliances] + sim_output[:elecFans] + 
                          sim_output[:elecPumps] + sim_output[:elecHotWater])
   if (sim_output[:elecTotal] - sum_elec_categories).abs > tolerance
-    fail "ERROR: Electric category end uses do not sum to total."
+    fail "ERROR: Electric category end uses do not sum to total.\n#{sim_output.to_s}"
   end
   
   sum_fuel_categories = (sim_output[:fuelHeating] + sim_output[:fuelAppliances] + 
                          sim_output[:fuelHotWater])
   if (sim_output[:fuelTotal] - sum_fuel_categories).abs > tolerance
-    fail "ERROR: Fuel category end uses do not sum to total."
+    fail "ERROR: Fuel category end uses do not sum to total.\n#{sim_output.to_s}"
   end
   
-  sum_elec_equips = (sim_output[:elecFridge] + sim_output[:elecDishwasher] +
+  sum_elec_appliances = (sim_output[:elecFridge] + sim_output[:elecDishwasher] +
                      sim_output[:elecClothesWasher] + sim_output[:elecClothesDryer] +
                      sim_output[:elecMELs] + sim_output[:elecRangeOven] +
                      sim_output[:elecCeilingFan] + sim_output[:elecMechVent])
-  if (sim_output[:elecAppliances] - sum_elec_equips).abs > tolerance
-    fail "ERROR: Electric equipments do not sum to total."
+  if (sim_output[:elecAppliances] - sum_elec_appliances).abs > tolerance
+    fail "ERROR: Electric appliances do not sum to total.\n#{sim_output.to_s}"
   end
   
-  sum_fuel_equips = (sim_output[:fuelClothesDryer] + sim_output[:fuelRangeOven])
-  if (sim_output[:fuelAppliances] - sum_fuel_equips).abs > tolerance
-    fail "ERROR: Fuel equipments do not sum to total."
+  sum_fuel_appliances = (sim_output[:fuelClothesDryer] + sim_output[:fuelRangeOven])
+  if (sim_output[:fuelAppliances] - sum_fuel_appliances).abs > tolerance
+    fail "ERROR: Fuel appliances do not sum to total.\n#{sim_output.to_s}"
   end
   
   return sim_output
