@@ -443,7 +443,7 @@
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
               <Standard>
-                <LongestPipingLength>30</LongestPipingLength>
+                <PipingLength>30</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>

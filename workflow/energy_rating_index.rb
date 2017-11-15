@@ -413,6 +413,7 @@ def get_eec_dhw(hpxml_doc)
 end
 
 def dhw_adjustment(hpxml_doc)
+  # FIXME: Can we modify EF/COP/etc. efficiencies like we do for DSE, so that we don't need to post-process?
   # FIXME: Double-check this only applies to the Rated Home
   hwdist = hpxml_doc.elements["//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution"]
   return Float(XMLHelper.get_value(hwdist, "extension/EnergyConsumptionAdjustmentFactor"))

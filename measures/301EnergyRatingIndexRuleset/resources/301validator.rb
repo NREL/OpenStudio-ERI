@@ -382,13 +382,13 @@ class EnergyRatingIndex301Validator
             ],
             # HotWaterDistribution Standard
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard' => [
-                'LongestPipingLength',
+                'PipingLength',
             ],
             # HotWaterDistribution Recirculation
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => [
                 'ControlType',
-                'LongestRecirculationPipingLoopLength',
-                'LongestBranchPipingLoopLength',
+                'RecirculationPipingLoopLength',
+                'BranchPipingLoopLength',
                 'PumpPower',
             ],
             # DrainWaterHeatRecovery

@@ -210,6 +210,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         # Schedules init
         start_date = model.getYearDescription.makeDate(1,1)
         interval = OpenStudio::Time.new(0, 0, 60)
+        temp_sch_limits = model.getScheduleTypeLimitsByName("Temperature").get
         
         # Get weather
         weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
@@ -266,28 +267,29 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           data_hw = []
           for day in 0..364
             for hr in 0..23
-              data_hw << OpenStudio::convert(norm_daily_fraction[hr], "F", "C").get
+              data_hw << norm_daily_fraction[hr]
             end
           end
           time_series_hw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(data_hw), "")
           schedule_hw = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_hw, model).get
-          schedule_hw.setName("Hot Water")
+          schedule_hw.setName("Hot Water Draw Profile")
           
           # Create mixed water draw profile schedule
           data_mw = []
           for day in 0..364
             for hr in 0..23
-              data_mw << OpenStudio::convert(norm_daily_fraction[hr] * adjFmix[day], "F", "C").get
+              data_mw << norm_daily_fraction[hr] * adjFmix[day]
             end
           end
           time_series_mw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(data_mw), "")
           schedule_mw = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_mw, model).get
-          schedule_mw.setName("Mixed Water")
+          schedule_mw.setName("Mixed Water Draw Profile")
           
           # Hot water target temperature schedule
           hw_temp_schedule = OpenStudio::Model::ScheduleConstant.new(model)
           hw_temp_schedule.setName("Hot Water temperature schedule")
           hw_temp_schedule.setValue(OpenStudio::convert(tHot, "F", "C").get)
+          hw_temp_schedule.setScheduleTypeLimits(temp_sch_limits)
           
           # Clothes washer
           cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)

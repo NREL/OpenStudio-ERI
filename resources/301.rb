@@ -1680,12 +1680,12 @@ class EnergyRatingIndex301Ruleset
     recirc_pump_power = nil
     if not orig_details.elements["Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation"].nil?
       is_recirc = true
-      recirc_branch_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/LongestBranchPipingLoopLength"))
-      recirc_loop_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/LongestRecirculationPipingLoopLength"))
+      recirc_branch_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/BranchPipingLoopLength"))
+      recirc_loop_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/RecirculationPipingLoopLength"))
       recirc_control_type = XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/ControlType")
       recirc_pump_power = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation/PumpPower"))
     else
-      pipe_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Standard/LongestPipingLength"))
+      pipe_l = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/SystemType/Standard/PipingLength"))
     end
     pipe_ins_rvalue = Float(XMLHelper.get_value(orig_details, "Systems/WaterHeating/HotWaterDistribution/PipeInsulation/PipeRValue"))
     
