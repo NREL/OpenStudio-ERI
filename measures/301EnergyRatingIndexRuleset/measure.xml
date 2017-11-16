@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>d5ef12f4-54b2-49ca-99a6-aee257d3a809</version_id>
-  <version_modified>20171116T160545Z</version_modified>
+  <version_id>5afbf40d-60a5-447f-96c2-33503b0ff3f2</version_id>
+  <version_modified>20171116T171605Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -579,12 +579,6 @@
       <checksum>ECD8AB5C</checksum>
     </file>
     <file>
-      <filename>energy_rating_index_301_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B85F9DA7</checksum>
-    </file>
-    <file>
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -606,6 +600,12 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>E43D4AEB</checksum>
+    </file>
+    <file>
+      <filename>energy_rating_index_301_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9AB9980C</checksum>
     </file>
   </files>
 </measure>
