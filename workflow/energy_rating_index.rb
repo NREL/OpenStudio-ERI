@@ -61,6 +61,7 @@ def create_osw(design, basedir, resultsdir, options)
   measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
   if options[:debug]
     measures['301EnergyRatingIndexRuleset']['debug'] = 'true'
+    measures['301EnergyRatingIndexRuleset']['osm_output_file_path'] = output_hpxml_path.gsub(".xml",".osm")
   end
   steps = OpenStudio::WorkflowStepVector.new
   measures.keys.each do |measure|
