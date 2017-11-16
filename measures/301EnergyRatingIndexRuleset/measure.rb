@@ -52,11 +52,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the HPXML file.")
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_file_path", true)
-    arg.setDisplayName("EPW File Path")
-    arg.setDescription("Absolute (or relative) path of the EPW weather file to assign. The corresponding DDY file must also be in the same directory.")
-    args << arg
-    
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("measures_dir", true)
     arg.setDisplayName("Residential Measures Directory")
     arg.setDescription("Absolute path of the residential measures.")
@@ -98,7 +93,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # assign the user inputs to variables
     calc_type = runner.getStringArgumentValue("calc_type", user_arguments)
     hpxml_file_path = runner.getStringArgumentValue("hpxml_file_path", user_arguments)
-    weather_file_path = runner.getStringArgumentValue("weather_file_path", user_arguments)
     measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     hpxml_output_file_path = runner.getOptionalStringArgumentValue("hpxml_output_file_path", user_arguments)
@@ -110,14 +104,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end 
     unless File.exists?(hpxml_file_path) and hpxml_file_path.downcase.end_with? ".xml"
       runner.registerError("'#{hpxml_file_path}' does not exist or is not an .xml file.")
-      return false
-    end
-    
-    unless (Pathname.new weather_file_path).absolute?
-      weather_file_path = File.expand_path(File.join(File.dirname(__FILE__), weather_file_path))
-    end
-    unless File.exists?(weather_file_path) and weather_file_path.downcase.end_with? ".epw"
-      runner.registerError("'#{weather_file_path}' does not exist or is not an .epw file.")
       return false
     end
     
@@ -170,12 +156,21 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     workflow_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
     
+    epw_path = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName")
+    unless (Pathname.new epw_path).absolute?
+      epw_path = File.expand_path(File.join(File.dirname(hpxml_file_path), epw_path))
+    end
+    unless File.exists?(epw_path) and epw_path.downcase.end_with? ".epw"
+      runner.registerError("'#{epw_path}' does not exist or is not an .epw file.")
+      return false
+    end
+    
     # Apply Location measure to obtain weather data
     measures = {}
     measure_subdir = "ResidentialLocation"
     args = {
-            "weather_directory"=>File.dirname(weather_file_path),
-            "weather_file_name"=>File.basename(weather_file_path),
+            "weather_directory"=>File.dirname(epw_path),
+            "weather_file_name"=>File.basename(epw_path),
             "dst_start_date"=>"NA",
             "dst_end_date"=>"NA"
            }
@@ -190,7 +185,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Apply 301 ruleset on HPXML object
-    errors, building = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
+    errors = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
     errors.each do |error|
       runner.registerError(error)
     end
@@ -218,10 +213,10 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Obtain list of OpenStudio measures (and arguments)
-    measures = OSMeasures.build_measures_from_hpxml(building, weather_file_path)
+    measures = OSMeasures.build_measures_from_hpxml(hpxml_doc)
     
     # Create OpenStudio model
-    if not OSModel.create_geometry(building, runner, model)
+    if not OSModel.create_geometry(hpxml_doc, runner, model)
       return false
     end 
 
@@ -305,9 +300,10 @@ end
 
 class OSMeasures    
 
-  def self.build_measures_from_hpxml(building, weather_file_path)
+  def self.build_measures_from_hpxml(hpxml_doc)
 
     measures = {}
+    building = hpxml_doc.elements["//Building"]
     
     # TODO
     # ResidentialGeometryOrientation
@@ -2403,9 +2399,10 @@ class OSModel
     
   end
   
-  def self.create_geometry(building, runner, model)
+  def self.create_geometry(hpxml_doc, runner, model)
 
     geometry_errors = []
+    building = hpxml_doc.elements["//Building"]
   
     # Geometry
     avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]

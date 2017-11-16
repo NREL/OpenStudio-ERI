@@ -5,6 +5,8 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
+# TODO: Merge with simulation tests
+
 class EnergyRatingIndex301Test < MiniTest::Test
 
   def get_args_hash(hpxml_filename, calc_type)

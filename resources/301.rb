@@ -9,13 +9,14 @@ class EnergyRatingIndex301Ruleset
   def self.apply_ruleset(hpxml_doc, calc_type, weather)
   
     errors = []
-    building = nil
     
     # Check for required inputs, etc.
     EnergyRatingIndex301Validator.run_validator(hpxml_doc, errors)
     if errors.size > 0
-      return errors, building
+      return errors
     end
+    
+    building = hpxml_doc.elements["//Building"]
     
     # Update XML type
     header = hpxml_doc.elements["//XMLTransactionHeaderInformation"]
@@ -24,9 +25,6 @@ class EnergyRatingIndex301Ruleset
     else
       header.elements["XMLType"].text += calc_type
     end
-    
-    # Get the building element
-    building = hpxml_doc.elements["//Building"]
     
     cfa, nbeds, nbaths, climate_zone, nstories, cvolume = get_high_level_inputs(building)
         
@@ -39,7 +37,7 @@ class EnergyRatingIndex301Ruleset
         apply_index_adjustment_design_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
     end
     
-    return errors, building
+    return errors
     
   end
 

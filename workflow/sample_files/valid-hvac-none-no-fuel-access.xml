@@ -38,6 +38,13 @@
           <Year>2006</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
+        <WeatherStation>
+          <SystemIdentifier id='Weather_Station'/>
+          <Name>USA_CO_Denver_Intl_AP_725650_TMY3</Name>
+          <extension>
+            <EPWFileName>USA_CO_Denver_Intl_AP_725650_TMY3.epw</EPWFileName>
+          </extension>
+        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>

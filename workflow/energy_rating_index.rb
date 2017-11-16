@@ -56,7 +56,6 @@ def create_osw(design, basedir, resultsdir, options)
   measures['301EnergyRatingIndexRuleset'] = {}
   measures['301EnergyRatingIndexRuleset']['calc_type'] = design
   measures['301EnergyRatingIndexRuleset']['hpxml_file_path'] = options[:hpxml]
-  measures['301EnergyRatingIndexRuleset']['weather_file_path'] = options[:epw]
   measures['301EnergyRatingIndexRuleset']['measures_dir'] = measures_dir
   #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
   measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
@@ -661,16 +660,12 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml -w location.epw\n e.g., #{File.basename(__FILE__)} -x sample_files/valid.xml -e sample_files/denver.epw\n"
+  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/valid.xml\n"
 
   opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
     options[:hpxml] = t
   end
 
-  opts.on('-e', '--epw <FILE>', 'EPW weather file') do |t|
-    options[:epw] = t
-  end
-  
   options[:debug] = false
   opts.on('-d', '--debug', '') do |t|
     options[:debug] = true
@@ -694,18 +689,6 @@ unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xm
   fail "ERROR: '#{options[:hpxml]}' does not exist or is not an .xml file."
 end
 
-if not options[:epw]
-  fail "ERROR: EWP weather file argument is required. Call #{File.basename(__FILE__)} -h for usage."
-end
-
-unless (Pathname.new options[:epw]).absolute?
-  options[:epw] = File.expand_path(File.join(File.dirname(__FILE__), options[:epw]))
-end
-unless File.exists?(options[:epw]) and options[:epw].downcase.end_with? ".epw"
-  fail "ERROR: '#{options[:epw]}' does not exist or is not an .epw file."
-end
-# FIXME: Need to require DDY as well?
-    
 # Create results dir
 resultsdir = File.join(basedir, "results")
 recreate_path(resultsdir)
@@ -713,7 +696,6 @@ recreate_path(resultsdir)
 # Run simulations
 sim_outputs = {}
 puts "HPXML: #{options[:hpxml]}"
-puts "EPW: #{options[:epw]}"
 Parallel.map(designs, in_threads: designs.size) do |design|
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   
