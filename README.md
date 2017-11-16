@@ -25,8 +25,10 @@ Note that the Reference Home and Rated Home workflows/simulations will be execut
 ## ERI Outputs
 
 Upon completion of the ERI calculation, multiple outputs are currently available:
-* results.csv and worksheet.csv files (that mirror the [HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
+* Results.csv and Worksheet.csv files (that mirror the [HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
 * Reference & Rated Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
+* (Pending) Summary annual energy consumption by fuel type and/or end use
+* (Pending) Optional timeseries outputs (e.g., hourly data by fuel type and/or end use)
 * EnergyPlus input/output files
 
 See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results) directory for examples of these outputs.
