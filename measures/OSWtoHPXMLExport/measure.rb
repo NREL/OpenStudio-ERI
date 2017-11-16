@@ -1483,10 +1483,10 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
           if not measures["ResidentialHotWaterDistribution"][0]["recirc_type"] == Constants.RecircTypeNone
             recirc = system_type.add_element "Recirculation"
             XMLHelper.add_element(recirc.add_element "ControlType", os_to_hpxml_recirc(measures["ResidentialHotWaterDistribution"][0]["recirc_type"]))
-            XMLHelper.add_element(recirc, "LongestPipingLength", 30) # TODO: where to get this value?
+            XMLHelper.add_element(recirc, "PipingLength", 30) # TODO: where to get this value?
           else
             standard = system_type.add_element "Standard"
-            XMLHelper.add_element(standard, "LongestPipingLength", 30) # TODO: where to get this value?
+            XMLHelper.add_element(standard, "PipingLength", 30) # TODO: where to get this value?
           end
           pipe_insulation = hot_water_distribution.add_element "PipeInsulation"
           XMLHelper.add_element(pipe_insulation, "PipeRValue", measures["ResidentialHotWaterDistribution"][0]["dist_ins"])

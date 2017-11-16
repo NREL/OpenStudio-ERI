@@ -9,14 +9,6 @@ require 'pp'
 require 'colored'
 require 'json'
 
-# Get latest installed version of openstudio.exe
-os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
-if os_clis.size == 0
-    puts "ERROR: Could not find the openstudio binary. You may need to install the OpenStudio Command Line Interface."
-    exit
-end
-os_cli = os_clis[-1]
-
 namespace :test do
 
   desc 'Run unit tests for all measures'
@@ -113,7 +105,7 @@ task :copy_beopt_files do
   
   # Copy residential measures to resources/measures/
   Dir.foreach(beopt_measures_dir) do |beopt_measure|
-    next if !beopt_measure.include? 'Residential'
+    next if (!beopt_measure.include? 'Residential' and !beopt_measure.include? 'ERI')
     beopt_measure_dir = File.join(beopt_measures_dir, beopt_measure)
     next if not Dir.exist?(beopt_measure_dir)
     puts "Copying #{beopt_measure} measure..."
@@ -143,15 +135,36 @@ task :copy_beopt_files do
   dest_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
   if not FileUtils.compare_file(src_json, dest_json)
     FileUtils.cp(src_json, dest_json)
-    puts puts "Copied #{File.basename(src_json)} to #{File.dirname(dest_json)}."
+    
+    # Insert ERIHotWaterAndAppliances into measure-info.json at the correct location
+    outlines = []
+    lines = File.readlines(dest_json)
+    lines.each do |line|
+      if line.include? "ResidentialHotWaterFixtures"
+        outlines << line.gsub("ResidentialHotWaterFixtures", "ERIHotWaterAndAppliances")
+      else
+        outlines << line
+      end
+    end
+    File.open(dest_json, "w+") do |f|
+      f.puts(outlines)
+    end
+    
+    puts "Copied #{File.basename(src_json)} to #{File.dirname(dest_json)}."
   end
   
   FileUtils.rm_rf(File.join(File.dirname(__FILE__), branch))
+  
+  update_measures()
 
 end
 
 desc 'update all measures (resources, xmls)'
 task :update_measures do
+  update_measures()
+end
+
+def update_measures
 
   puts "Updating measure resources..."
   measures_dir = File.expand_path("../measures/", __FILE__)
@@ -233,17 +246,17 @@ task :update_measures do
   end
   
   # Update measure xmls
+  os_cli = get_os_cli()
   command = "\"#{os_cli}\" measure --update_all #{measures_dir} >> log"
   puts "Updating measure.xml files..."
   system(command)
-  
+
 end
 
 desc 'generate sample outputs'
 task :generate_sample_outputs do
   Dir.chdir('workflow')
-  os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
-  os_cli = os_clis[-1]
+  os_cli = get_os_cli()
   command = "\"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x sample_files/valid.xml -e sample_files/denver.epw"
   system(command)
   
@@ -251,6 +264,16 @@ task :generate_sample_outputs do
   dirs.each do |dir|
     FileUtils.copy_entry dir, "sample_results/#{dir}"
   end
+end
+
+def get_os_cli
+  # Get latest installed version of openstudio.exe
+  os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
+  if os_clis.size == 0
+      puts "ERROR: Could not find the openstudio binary. You may need to install the OpenStudio Command Line Interface."
+      exit
+  end
+  return os_clis[-1]
 end
 
 def get_requires_from_file(filerb)

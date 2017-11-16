@@ -269,7 +269,6 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => [
                 'HeatingSystemType[Furnace|Boiler|ElectricResistance]',
                 '[FractionHeatLoadServed=1.0]',
-                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
             ],
             # HeatingSystem (Furnace)
@@ -295,7 +294,6 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => [
                 '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]',
                 '[FractionCoolLoadServed=1.0]',
-                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
             ],
             # CoolingSystem (CentralAC)
@@ -317,8 +315,6 @@ class EnergyRatingIndex301Validator
                 '[FractionHeatLoadServed=1.0]',
                 '[FractionCoolLoadServed=1.0]',
                 'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
-                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempHeatingSeason',
-                '//Building/BuildingDetails/Systems/HVAC/HVACControl/SetpointTempCoolingSeason',
                 '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
             ],
             # HeatPump (AirSource)
@@ -383,15 +379,23 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [
                 'SystemType',
                 'PipeInsulation/PipeRValue',
-                'PipeInsulation/FractionPipeInsulation',
             ],
             # HotWaterDistribution Standard
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard' => [
-                'LongestPipingLength',
+                'PipingLength',
             ],
             # HotWaterDistribution Recirculation
             '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => [
-                'LongestPipingLength',
+                'ControlType',
+                'RecirculationPipingLoopLength',
+                'BranchPipingLoopLength',
+                'PumpPower',
+            ],
+            # DrainWaterHeatRecovery
+            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => [
+                'FacilitiesConnected',
+                'EqualFlow',
+                'Efficiency',
             ],
             # WaterFixture
             '//Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => [

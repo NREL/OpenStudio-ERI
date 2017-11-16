@@ -402,24 +402,35 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <HeatPump>
-              <SystemIdentifier id='SpaceHeatPump_ID1'/>
+            <HeatingSystem>
+              <SystemIdentifier id='SpaceHeat_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
-              <HeatPumpType>air-to-air</HeatPumpType>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>64000</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.92</Value>
+              </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
+            </HeatingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>48000</CoolingCapacity>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
-              <AnnualCoolEfficiency>
+              <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>19.0</Value>
-              </AnnualCoolEfficiency>
-              <AnnualHeatEfficiency>
-                <Units>HSPF</Units>
-                <Value>10.0</Value>
-              </AnnualHeatEfficiency>
+                <Value>16</Value>
+              </AnnualCoolingEfficiency>
               <extension>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
+                <NumberSpeeds>2-Speed</NumberSpeeds>
               </extension>
-            </HeatPump>
+            </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
@@ -491,13 +502,21 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
-              <Standard>
-                <PipingLength>30</PipingLength>
-              </Standard>
+              <Recirculation>
+                <ControlType>timer</ControlType>
+                <RecirculationPipingLoopLength>30</RecirculationPipingLoopLength>
+                <BranchPipingLoopLength>30</BranchPipingLoopLength>
+                <PumpPower>50</PumpPower>
+              </Recirculation>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
+            <DrainWaterHeatRecovery>
+              <FacilitiesConnected>true</FacilitiesConnected>
+              <EqualFlow>true</EqualFlow>
+              <Efficiency>0.55</Efficiency>
+            </DrainWaterHeatRecovery>
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WF_ID1'/>

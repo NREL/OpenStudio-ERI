@@ -139,7 +139,7 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sim_output[:elecCooling] = get_sql_result(sqlFile.electricityCooling, design)
   sim_output[:elecIntLighting] = get_sql_result(sqlFile.electricityInteriorLighting, design)
   sim_output[:elecExtLighting] = get_sql_result(sqlFile.electricityExteriorLighting, design)
-  sim_output[:elecEquipment] = get_sql_result(sqlFile.electricityInteriorEquipment, design)
+  sim_output[:elecAppliances] = get_sql_result(sqlFile.electricityInteriorEquipment, design)
   sim_output[:elecFans] = get_sql_result(sqlFile.electricityFans, design)
   sim_output[:elecPumps] = get_sql_result(sqlFile.electricityPumps, design)
   sim_output[:elecHotWater] = get_sql_result(sqlFile.electricityWaterSystems, design)
@@ -147,7 +147,7 @@ def parse_sql(design, sql_path, output_hpxml_path)
   # Fuel categories
   sim_output[:fuelTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design) + get_sql_result(sqlFile.otherFuelTotalEndUses, design)
   sim_output[:fuelHeating] = get_sql_result(sqlFile.naturalGasHeating, design) + get_sql_result(sqlFile.otherFuelHeating, design)
-  sim_output[:fuelEquipment] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design) + get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
+  sim_output[:fuelAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design) + get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
   sim_output[:fuelHotWater] = get_sql_result(sqlFile.naturalGasWaterSystems, design) + get_sql_result(sqlFile.otherFuelWaterSystems, design)
 
   # Other - PV
@@ -191,8 +191,15 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sim_output[:elecCeilingFan] = get_sql_query_result(sqlFile, query)
   
   # Other - Mechanical Ventilation
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE 'VentFans%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.EndUseMechVentFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   sim_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
+  
+  # Other - Recirculation pump
+  # Move from appliances end use to hot water end use
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameHotWaterRecircPump}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  sim_output[:elecRecircPump] = get_sql_query_result(sqlFile, query)
+  sim_output[:elecAppliances] -= sim_output[:elecRecircPump]
+  sim_output[:elecHotWater] += sim_output[:elecRecircPump]
   
   # Other - Space Heating Load
   vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
@@ -219,29 +226,29 @@ def parse_sql(design, sql_path, output_hpxml_path)
   
   sum_elec_categories = (sim_output[:elecHeating] + sim_output[:elecCooling] + 
                          sim_output[:elecIntLighting] + sim_output[:elecExtLighting] + 
-                         sim_output[:elecEquipment] + sim_output[:elecFans] + 
+                         sim_output[:elecAppliances] + sim_output[:elecFans] + 
                          sim_output[:elecPumps] + sim_output[:elecHotWater])
   if (sim_output[:elecTotal] - sum_elec_categories).abs > tolerance
-    fail "ERROR: Electric category end uses do not sum to total."
+    fail "ERROR: Electric category end uses do not sum to total.\n#{sim_output.to_s}"
   end
   
-  sum_fuel_categories = (sim_output[:fuelHeating] + sim_output[:fuelEquipment] + 
+  sum_fuel_categories = (sim_output[:fuelHeating] + sim_output[:fuelAppliances] + 
                          sim_output[:fuelHotWater])
   if (sim_output[:fuelTotal] - sum_fuel_categories).abs > tolerance
-    fail "ERROR: Fuel category end uses do not sum to total."
+    fail "ERROR: Fuel category end uses do not sum to total.\n#{sim_output.to_s}"
   end
   
-  sum_elec_equips = (sim_output[:elecFridge] + sim_output[:elecDishwasher] +
+  sum_elec_appliances = (sim_output[:elecFridge] + sim_output[:elecDishwasher] +
                      sim_output[:elecClothesWasher] + sim_output[:elecClothesDryer] +
                      sim_output[:elecMELs] + sim_output[:elecRangeOven] +
                      sim_output[:elecCeilingFan] + sim_output[:elecMechVent])
-  if (sim_output[:elecEquipment] - sum_elec_equips).abs > tolerance
-    fail "ERROR: Electric equipments do not sum to total."
+  if (sim_output[:elecAppliances] - sum_elec_appliances).abs > tolerance
+    fail "ERROR: Electric appliances do not sum to total.\n#{sim_output.to_s}"
   end
   
-  sum_fuel_equips = (sim_output[:fuelClothesDryer] + sim_output[:fuelRangeOven])
-  if (sim_output[:fuelEquipment] - sum_fuel_equips).abs > tolerance
-    fail "ERROR: Fuel equipments do not sum to total."
+  sum_fuel_appliances = (sim_output[:fuelClothesDryer] + sim_output[:fuelRangeOven])
+  if (sim_output[:fuelAppliances] - sum_fuel_appliances).abs > tolerance
+    fail "ERROR: Fuel appliances do not sum to total.\n#{sim_output.to_s}"
   end
   
   return sim_output
@@ -412,6 +419,13 @@ def get_eec_dhw(hpxml_doc)
   return eec_dhw
 end
 
+def dhw_adjustment(hpxml_doc)
+  # FIXME: Can we modify EF/COP/etc. efficiencies like we do for DSE, so that we don't need to post-process?
+  # FIXME: Double-check this only applies to the Rated Home
+  hwdist = hpxml_doc.elements["//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution"]
+  return Float(XMLHelper.get_value(hwdist, "extension/EnergyConsumptionAdjustmentFactor"))
+end
+
 def calculate_eri(sim_outputs)
 
   rated_output = sim_outputs[Constants.CalcTypeERIRatedHome]
@@ -495,7 +509,7 @@ def calculate_eri(sim_outputs)
   results[:ec_r_cool] = ref_output[:elecCooling]
   results[:ec_r_dhw] = ref_output[:elecHotWater] + ref_output[:fuelHotWater]
   
-  # results[:ec_x_dhw] *= dhw_adjustment(ratedsim.water_distribution) # FIXME
+  results[:ec_x_dhw] *= dhw_adjustment(rated_hpxml_doc)
   
   # DSE_r = REUL/EC_r * EEC_r
   # For simplified system performance methods, DSE_r equals 0.80 for heating and cooling systems and 1.00 
@@ -556,12 +570,12 @@ def calculate_eri(sim_outputs)
   # EULLA = The Rated Home end use loads for lighting, appliances and MELs as defined by Section 4.2.2.5.2, 
   # converted to MBtu/y, where MBtu/y = (kWh/y)/293 or (therms/y)/10, as appropriate.
   results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] + 
-                      rated_output[:elecEquipment] + rated_output[:fuelEquipment])
+                      rated_output[:elecAppliances] + rated_output[:fuelAppliances])
   
   # REULLA = The Reference Home end use loads for lighting, appliances and MELs as defined by Section 4.2.2.5.1, 
   # converted to MBtu/y, where MBtu/y = (kWh/y)/293 or (therms/y)/10, as appropriate.
   results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] + 
-                       ref_output[:elecEquipment] + ref_output[:fuelEquipment])
+                       ref_output[:elecAppliances] + ref_output[:fuelAppliances])
   
   # TRL = REULHEAT + REULCOOL + REULHW + REULLA (MBtu/y).
   results[:trl] = results[:reul_heat] + results[:reul_cool] + results[:reul_dhw] + results[:reul_la]
