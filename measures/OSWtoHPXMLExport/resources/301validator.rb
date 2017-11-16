@@ -16,6 +16,7 @@ class EnergyRatingIndex301Validator
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume' => [1],
             '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent' => [1],
             '//Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2006"]' => [1],
+            '//Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName' => [1],
             '//Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage' => [1], # TODO: Allow ACH50, ELA, and/or SLA?
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
             '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],

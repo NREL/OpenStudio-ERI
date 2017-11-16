@@ -17,10 +17,10 @@ Download the latest version of OpenStudio from https://www.openstudio.net/develo
 
 1. Navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory.
 2. Run the ERI calculation on a provided sample HPXML file:  
-```c:/openstudio-2.2.1/bin/openstudio.exe energy_rating_index.rb -x sample_files/valid.xml -e sample_files/denver.epw```  
+```c:/openstudio-2.2.1/bin/openstudio.exe energy_rating_index.rb -x sample_files/valid.xml```  
 Note that the Reference Home and Rated Home workflows/simulations will be executed in parallel on the local machine.
 3. This will generate output as shown below:
-![CLI output](https://user-images.githubusercontent.com/5861765/32755025-942216e6-c890-11e7-966c-0f655582b58f.png)
+![CLI output](https://user-images.githubusercontent.com/5861765/32902123-c12b973c-caae-11e7-8a5e-ebf3aef59e7e.png)
 
 ## ERI Outputs
 

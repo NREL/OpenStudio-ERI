@@ -18,7 +18,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     worksheet_csv = File.join(parent_dir, "results", "worksheet.csv")
     
     Dir["#{parent_dir}/sample_files/*.xml"].each do |xml|
-      command = "cd #{parent_dir} && \"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x #{xml} -e sample_files/denver.epw"
+      command = "cd #{parent_dir} && \"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x #{xml}"
       system(command)
       
       assert(File.exists?(ref_hpxml))
