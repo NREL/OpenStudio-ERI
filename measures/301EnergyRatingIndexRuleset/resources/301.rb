@@ -1665,7 +1665,11 @@ class EnergyRatingIndex301Ruleset
       has_dwhr = true
       eff = Float(XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/Efficiency"))
       equal_flow = Boolean(XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/EqualFlow"))
-      all_showers = Boolean(XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/FacilitiesConnected"))
+      if XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/FacilitiesConnected") == "all"
+        all_showers = true
+      elsif XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/FacilitiesConnected") == "one"
+        all_showers = false
+      end
       dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(nbeds, nfl, bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
     end
     

@@ -366,7 +366,6 @@ class EnergyRatingIndex301Validator
                 '[FractionDHWLoadServed=1.0]',
                 'HeatingCapacity',
                 'EnergyFactor',
-                'RecoveryEfficiency',
             ],
             # Tank WaterHeatingSystem
             '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" or WaterHeaterType="heat pump water heater"]' => [
