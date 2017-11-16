@@ -33,7 +33,7 @@ Upon completion of the ERI calculation, multiple outputs are currently available
 
 See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results) directory for examples of these outputs.
 
-## Disclaimers
+## Status
 
 *	The 301 ruleset and ERI calculation are very much both **works-in-progress**. 
 * The format of the ERI HPXML file is still in flux.
