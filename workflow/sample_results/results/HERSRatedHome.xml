@@ -141,10 +141,10 @@
                 <Floor>
                   <SystemIdentifier id='attic-floor-1'/>
                   <Area>4200</Area>
-                  <Joists>
+                  <FloorJoists>
                     <FramingFactor>0.11</FramingFactor>
                     <Material>wood</Material>
-                  </Joists>
+                  </FloorJoists>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
                     <InsulationGrade>1</InsulationGrade>
@@ -167,7 +167,6 @@
               <Walls>
                 <Wall>
                   <SystemIdentifier id='attic-wall-1'/>
-                  <AtticWallType>other</AtticWallType>
                   <Area>32</Area>
                   <Studs>
                     <FramingFactor>0.1988</FramingFactor>

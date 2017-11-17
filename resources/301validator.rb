@@ -5,55 +5,106 @@ class EnergyRatingIndex301Validator
     # Every file must have this number of elements
     unconditional_counts = {
             '//Building' => [1],
-            '//Building/BuildingDetails/BuildingSummary/Site/AzimuthOfFrontOfHome' => [1],
-            '//Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume' => [1],
-            '//Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent' => [1],
-            '//Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2006"]' => [1],
-            '//Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName' => [1],
-            '//Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage' => [1], # TODO: Allow ACH50, ELA, and/or SLA?
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem|//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [0,1],
-            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => [0,1],
-            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution' => [0,1],
-            '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
-            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [0,1],
-            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [1],
-            '//Building/BuildingDetails/Systems/WaterHeating/WaterFixture[WaterFixtureType="shower head"]' => [1],
-            '//Building/BuildingDetails/Systems/WaterHeating/WaterFixture[WaterFixtureType="faucet"]' => [1],
-            '//Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => [0,1],
-            '//Building/BuildingDetails/Appliances/ClothesWasher' => [1],
-            '//Building/BuildingDetails/Appliances/ClothesDryer' => [1],
-            '//Building/BuildingDetails/Appliances/Dishwasher' => [1],
-            '//Building/BuildingDetails/Appliances/Refrigerator' => [1],
-            '//Building/BuildingDetails/Appliances/CookingRange' => [1],
-            '//Building/BuildingDetails/Appliances/Oven' => [1],
-            '//Building/BuildingDetails/Lighting/LightingFractions' => [1],
+            '//BuildingSummary/Site' => [1],
+            '//BuildingSummary/BuildingConstruction' => [1],
+            '//ClimateandRiskZones' => [1],
+            '//AirInfiltration/' => [1],
+            '//HeatingSystem | //HeatPump' => [0,1],
+            '//CoolingSystem | //HeatPump' => [0,1],
+            '//AirDistribution' => [0,1],
+            '//HydronicDistribution' => [0,1],
+            '//VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
+            '//WaterHeatingSystem' => [0,1],
+            '//HotWaterDistribution' => [1],
+            '//PVSystem' => [0,1],
+            '//ClothesWasher' => [1],
+            '//ClothesDryer' => [1],
+            '//Dishwasher' => [1],
+            '//Refrigerator' => [1],
+            '//CookingRange' => [1],
+            '//Oven' => [1],
+            '//Lighting' => [1],
     }
     
-    # Every file must have 1 or more of these elements
+    # Every file must have 1 (or more) of these elements
     unconditional_has = [
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics',
-            '//Building/BuildingDetails/Enclosure/Foundations',
-            '//Building/BuildingDetails/Enclosure/Walls',
+            '//Enclosure/AtticAndRoof/Attics',
+            '//Enclosure/Foundations',
+            '//Enclosure/Walls',
+            '//WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]',
     ]
     
     # If the key exists, the file must have 1 (or more) of these child elements
     conditional_has = {
-            # Attics
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => [
-                '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]'
+    
+            ## Site
+            '//BuildingSummary/Site' => [
+                'AzimuthOfFrontOfHome',
+                'FuelTypesAvailable',
             ],
-            # Attic Roofs
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Roofs/Roof' => [
+            
+            ## BuildingConstruction
+            '//BuildingSummary/BuildingConstruction' => [
+                'ResidentialFacilityType',
+                'NumberofConditionedFloors',
+                'NumberofConditionedFloorsAboveGrade',
+                'NumberofBedrooms',
+                'NumberofBathrooms',
+                'ConditionedFloorArea',
+                'ConditionedBuildingVolume',
+                'GaragePresent',
+            ],
+            
+            ## Climate
+            '//ClimateandRiskZones/' => [
+                'ClimateZoneIECC[Year="2006"]',
+                'WeatherStation/extension/EPWFileName',
+            ],
+    
+            ## AirInfiltration
+            '//AirInfiltration' => [
+                'AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage', # TODO: Allow ACH50, ELA, and/or SLA?
+            ],
+            
+            ## Attic
+            '//Attic' => [
+                '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]',
+                'Roofs/Roof',
+            ],
+            
+            ## Foundation
+            '//Foundation' => [
+                '[FoundationType/Basement | FoundationType/Crawlspace | FoundationType/SlabOnGrade | FoundationType/Ambient]',
+            ],
+            
+                # Foundation (Basement)
+                '//Foundation[FoundationType/Basement]' => [
+                    'FoundationType/Basement/Conditioned',
+                    'FrameFloor',
+                    'FoundationWall',
+                    'Slab',
+                ],
+                
+                # Foundation (Crawlspace)
+                '//Foundation[FoundationType/Crawlspace]' => [
+                    'FoundationType/Crawlspace/Vented',
+                    'FrameFloor',
+                    'FoundationWall',
+                ],
+                
+                # Foundation (SlabOnGrade)
+                '//Foundation[FoundationType/SlabOnGrade]' => [
+                    'Slab',
+                ],
+                
+                # Foundation (Ambient)
+                '//Foundation[FoundationType/Ambient]' => [
+                    'FrameFloor',
+                ],
+
+            ## Roof
+            '//Roof' => [
                 'Area',
-                'RoofColor',
                 'Rafters/FramingFactor',
                 'Rafters[Material="wood"]',
                 'Pitch',
@@ -61,97 +112,36 @@ class EnergyRatingIndex301Validator
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
+                'SolarAbsorptance',
+                'Emittance',
             ],
-            # Attic Roofs Insulation Layer
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Roofs/Roof/Insulation/Layer' => [
-                'InstallationType',
-                'NominalRValue',
-                'Thickness',
-            ],
-            # Attic Floors (everything but cathedral ceiling and flat roof)
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic" or AtticType="unvented attic" or AtticType="cape cod"]/Floors/Floor' => [
-                'Area',
-                'Joists/FramingFactor',
-                'Joists[Material="wood"]',
-                'Insulation/InsulationGrade',
-                'Insulation/Layer[InstallationType="cavity"]',
-                'Insulation/Layer[InstallationType="continuous"]',
-                'extension[AdjacentTo="living space" or AdjacentTo="garage"]',
-            ],
-            # Attic Floors Insulation Layer
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Floors/Floor/Insulation/Layer' => [
-                'InstallationType',
-                'NominalRValue',
-                'Thickness',
-            ],
-            # Attic Walls
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall' => [
-                'AtticWallType', # FIXME: Shouldn't be required in HPXML schema
+            
+            ## Wall
+            '//Wall' => [
+                'WallType/WoodStud',
                 'Area',
                 '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]',
-                'Color',
-                'extension/WallType/WoodStud',
-                'extension[AdjacentTo="ambient" or AdjacentTo="garage" or AdjacentTo="living space" or AdjacentTo="unvented attic" or AdjacentTo="vented attic" or AdjacentTo="cape cod"]',
+                'SolarAbsorptance',
+                'Emittance',                
+                'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="vented attic" or ExteriorAdjacentTo="unvented attic" or ExteriorAdjacentTo="cape cod" or ExteriorAdjacentTo="ambient"]',
             ],
-            # Attic Walls Insulation Layer
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall/Insulation/Layer' => [
-                'InstallationType',
-                'NominalRValue',
-                'Thickness',
-            ],
-            # Attic Walls WoodStud
-            '//Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall[extension/WallType/WoodStud]' => [
-                'Studs/FramingFactor',
-                'Studs[Material="wood"]',
-                'Insulation/InsulationGrade',
-                'Insulation/Layer[InstallationType="cavity"]',
-                'Insulation/Layer[InstallationType="continuous"]',
-            ],
-            # Foundation
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation' => [
-                '[FoundationType/Basement|FoundationType/Crawlspace|FoundationType/SlabOnGrade|FoundationType/Ambient]',
-            ],
-            # Basement Foundation
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]' => [
-                'FoundationType/Basement/Conditioned',
-                'FrameFloor',
-                'FoundationWall',
-                'Slab',
-            ],
-            # Crawlspace Foundation
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace]' => [
-                'FoundationType/Crawlspace/Vented',
-                'FrameFloor',
-                'FoundationWall',
-            ],
-            # SlabOnGrade Foundation
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/SlabOnGrade]' => [
-                'Slab',
-            ],
-            # Ambient Foundation
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient]' => [
-                'FrameFloor',
-            ],
-            # FrameFloor
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor' => [
-                'FloorJoists/FramingFactor',
-                'FloorJoists[Material="wood"]',
-                'Area',
-                'Insulation/InsulationGrade',
-                'Insulation/Layer[InstallationType="cavity"]',
-                'Insulation/Layer[InstallationType="continuous"]',
-                'extension[AdjacentTo="living space"]',
-                'extension/CarpetFraction',
-                'extension/CarpetRValue',
-            ],
-            # FrameFloor Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor/Insulation/Layer' => [
-                'InstallationType',
-                'NominalRValue',
-                'Thickness',
-            ],
-            # FoundationWall
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall' => [
+            
+                # Wall (not Attic)
+                '//Enclosure/Walls/Wall' => [
+                    'extension[InteriorAdjacentTo="living space" or InteriorAdjacentTo="garage" or InteriorAdjacentTo="vented attic" or InteriorAdjacentTo="unvented attic" or InteriorAdjacentTo="cape cod"]',
+                ],
+            
+                # Wall (WoodStud)
+                '//Wall[WallType/WoodStud]' => [
+                    'Studs/FramingFactor',
+                    'Studs[Material="wood"]',
+                    'Insulation/InsulationGrade',
+                    'Insulation/Layer[InstallationType="cavity"]',
+                    'Insulation/Layer[InstallationType="continuous"]',
+                ],
+                
+            ## FoundationWall
+            '//FoundationWall' => [
                 'Height',
                 'Area',
                 'BelowGradeDepth',
@@ -160,98 +150,75 @@ class EnergyRatingIndex301Validator
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
-                'extension[AdjacentTo="ground" or AdjacentTo="unconditioned basement" or AdjacentTo="conditioned basement" or AdjacentTo="crawlspace"]',
+                'extension[ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="conditioned basement" or ExteriorAdjacentTo="crawlspace"]',
             ],
-            # FoundationWall Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall/Insulation/Layer' => [
-                'InstallationType',
-                'NominalRValue',
-                'Thickness',
+            
+            ## Floor
+            '//Floor' => [
+                'Area',
+                'FloorJoists/FramingFactor',
+                'FloorJoists[Material="wood"]',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
+                'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="ambient"]',
             ],
-            # Basement FoundationWall Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/FoundationWall/Insulation/Layer[InstallationType="continuous"]' => [
-                'extension/InsulationHeight',
+            
+                # Floor (not Attic)
+                'extension/Floors/Floor' => [
+                    'extension/CarpetFraction',
+                    'extension/CarpetRValue',
+                    'extension[InteriorAdjacentTo="living space" or InteriorAdjacentTo="garage"]',
+                ],
+            
+            ## FoundationFloor
+            '//Foundation/FrameFloor' => [
+                'Area',
+                'FloorJoists/FramingFactor',
+                'FloorJoists[Material="wood"]',
+                'Insulation/InsulationGrade',
+                'Insulation/Layer[InstallationType="cavity"]',
+                'Insulation/Layer[InstallationType="continuous"]',
+                'extension/CarpetFraction',
+                'extension/CarpetRValue',
+                'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage"]',
             ],
-            # Slab
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => [
+            
+            ## Slab
+            '//Foundation/Slab' => [
                 'Area',
                 'PerimeterInsulationDepth',
                 'UnderSlabInsulationWidth',
+                'DepthBelowGrade',
                 'PerimeterInsulation/Layer[InstallationType="continuous"]',
                 'UnderSlabInsulation/Layer[InstallationType="continuous"]',
                 'extension/CarpetFraction',
                 'extension/CarpetRValue',
             ],
-            # Basement Slab
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/Slab' => [
-                'DepthBelowGrade',
-            ],
-            # Slab Perimeter Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab/PerimeterInsulation/Layer' => [
+            
+            ## Insulation Layer
+            '//Layer' => [
                 'InstallationType',
                 'NominalRValue',
                 'Thickness',
             ],
-            # Slab UnderSlab Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab/UnderSlabInsulation/Layer' => [
-                'InstallationType',
-                'NominalRValue',
-                'Thickness',
-            ],
-            # Basement Slab Perimeter Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/Slab/PerimeterInsulation/Layer' => [
-                '[NominalRValue=0]',
-            ],
-            # Basement Slab UnderSlab Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/Slab/UnderSlabInsulation/Layer' => [
-                '[NominalRValue=0]',
-            ],
-            # Wall
-            '//Building/BuildingDetails/Enclosure/Walls/Wall' => [
-                'Area',
-                'extension[InteriorAdjacentTo="living space" or InteriorAdjacentTo="garage" or InteriorAdjacentTo="vented attic" or InteriorAdjacentTo="unvented attic" or InteriorAdjacentTo="cape cod"]',
-                'extension[ExteriorAdjacentTo="ambient" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="unvented attic" or ExteriorAdjacentTo="vented attic" or ExteriorAdjacentTo="cape cod"]',
-                'WallType/WoodStud',
-                '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]',
-                'Color',
-            ],
-            # Wall Insulation Layer
-            '//Building/BuildingDetails/Enclosure/Walls/Wall/Insulation/Layer' => [
-                'InstallationType',
-                'NominalRValue',
-                'Thickness',
-            ],
-            # WoodStud Wall
-            '//Building/BuildingDetails/Enclosure/Walls/Wall[WallType/WoodStud]' => [
-                'Studs[Material="wood"]',
-                'Studs/FramingFactor',
-                'Insulation/InsulationGrade',
-                'Insulation/Layer[InstallationType="cavity"]',
-                'Insulation/Layer[InstallationType="continuous"]',
-            ],
-            # Floors
-            '//Building/BuildingDetails/Enclosure/extension/Floors/Floor' => [
-                'Area',
-                'FloorJoists[Material="wood"]',
-                'FloorJoists/FramingFactor',
-                'Insulation/InsulationGrade',
-                'Insulation/Layer[InstallationType="cavity"]',
-                'Insulation/Layer[InstallationType="continuous"]',
-                'CarpetFraction',
-                'CarpetRValue',
-                '[InteriorAdjacentTo="living space"]',
-                '[ExteriorAdjacentTo="garage"]',
-            ],
-            # Window
-            '//Building/BuildingDetails/Enclosure/Windows/Window' => [
+            
+                # InsulationLayer (Basement, Continuous)
+                '//Foundation[FoundationType/Basement]/FoundationWall/Insulation/Layer[InstallationType="continuous"]' => [
+                    'extension/InsulationHeight',
+                ],
+            
+            ## Window
+            '//Enclosure/Windows/Window' => [
                 'Area',
                 'Azimuth',
                 'UFactor',
                 'SHGC',
                 'AttachedToWall',
             ],
-            # Skylight
-            '//Building/BuildingDetails/Enclosure/Skylights/Skylight' => [
+            
+            ## Skylight
+            '//Enclosure/Skylights/Skylight' => [
                 'Area',
                 'Azimuth',
                 'UFactor',
@@ -259,107 +226,129 @@ class EnergyRatingIndex301Validator
                 'Pitch',
                 'AttachedToRoof',
             ],
-            # Door
-            '//Building/BuildingDetails/Enclosure/Doors/Door' => [
+            
+            ## Door
+            '//Enclosure/Doors/Door' => [
                 'AttachedToWall',
                 'Area',
                 'Azimuth',
                 'RValue',
             ],
-            # HeatingSystem
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => [
-                'HeatingSystemType[Furnace|Boiler|ElectricResistance]',
+            
+            ## HeatingSystem
+            '//HeatingSystem' => [
+                'HeatingSystemType[Furnace | Boiler | ElectricResistance]',
                 '[FractionHeatLoadServed=1.0]',
-                '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
+                '//HVACControl',
             ],
-            # HeatingSystem (Furnace)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => [
-                'DistributionSystem',
-                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
-                'AnnualHeatingEfficiency[Units="AFUE"]/Value',
-                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
-            ],
-            # HeatingSystem (Boiler)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => [
-                'DistributionSystem',
-                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
-                'AnnualHeatingEfficiency[Units="AFUE"]/Value',
-                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution',
-            ],
-            # HeatingSystem (ElectricResistance)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/ElectricResistance]' => [
-                '[HeatingSystemFuel="electricity"]',
-                'AnnualHeatingEfficiency[Units="Percent"]/Value',
-            ],
-            # CoolingSystem
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => [
+            
+                # HeatingSystem (Furnace)
+                '//HeatingSystem[HeatingSystemType/Furnace]' => [
+                    'DistributionSystem',
+                    '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
+                    'AnnualHeatingEfficiency[Units="AFUE"]/Value',
+                    '//AirDistribution',
+                ],
+                
+                # HeatingSystem (Boiler)
+                '//HeatingSystem[HeatingSystemType/Boiler]' => [
+                    'DistributionSystem',
+                    '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]',
+                    'AnnualHeatingEfficiency[Units="AFUE"]/Value',
+                    '//HydronicDistribution',
+                ],
+                
+                # HeatingSystem (ElectricResistance)
+                '//HeatingSystem[HeatingSystemType/ElectricResistance]' => [
+                    '[HeatingSystemFuel="electricity"]',
+                    'AnnualHeatingEfficiency[Units="Percent"]/Value',
+                ],
+            
+            ## CoolingSystem
+            '//CoolingSystem' => [
                 '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]',
                 '[FractionCoolLoadServed=1.0]',
-                '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
+                '//HVACControl',
             ],
-            # CoolingSystem (CentralAC)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => [
-                'DistributionSystem',
-                '[CoolingSystemFuel="electricity"]',
-                'AnnualCoolingEfficiency[Units="SEER"]/Value',
-                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
-                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
-            ],
-            # CoolingSystem (RoomAC)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioner"]' => [
-                '[CoolingSystemFuel="electricity"]',
-                'AnnualCoolingEfficiency[Units="EER"]/Value',
-            ],
-            # HeatPump
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => [
+            
+                # CoolingSystem (CentralAC)
+                '//CoolingSystem[CoolingSystemType="central air conditioning"]' => [
+                    'DistributionSystem',
+                    '[CoolingSystemFuel="electricity"]',
+                    'AnnualCoolingEfficiency[Units="SEER"]/Value',
+                    'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]', # FIXME: Remove?
+                    '//AirDistribution',
+                ],
+                
+                # CoolingSystem (RoomAC)
+                '//CoolingSystem[CoolingSystemType="room air conditioner"]' => [
+                    '[CoolingSystemFuel="electricity"]',
+                    'AnnualCoolingEfficiency[Units="EER"]/Value',
+                ],
+            
+            ## HeatPump
+            '//HeatPump' => [
                 '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]',
                 '[FractionHeatLoadServed=1.0]',
                 '[FractionCoolLoadServed=1.0]',
-                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
-                '//Building/BuildingDetails/Systems/HVAC/HVACControl/ControlType',
+                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]', # FIXME: Remove?
+                '//HVACControl',
             ],
-            # HeatPump (AirSource)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => [
-                'DistributionSystem',
-                'AnnualCoolEfficiency[Units="SEER"]/Value',
-                'AnnualHeatEfficiency[Units="HSPF"]/Value',
-                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
+            
+                # HeatPump (AirSource)
+                '//HeatPump[HeatPumpType="air-to-air"]' => [
+                    'DistributionSystem',
+                    'AnnualCoolEfficiency[Units="SEER"]/Value',
+                    'AnnualHeatEfficiency[Units="HSPF"]/Value',
+                    '//AirDistribution',
+                ],
+                
+                # HeatPump (MiniSplit)
+                '//HeatPump[HeatPumpType="mini-split"]' => [
+                    'AnnualCoolEfficiency[Units="SEER"]/Value',
+                    'AnnualHeatEfficiency[Units="HSPF"]/Value',
+                ],
+                
+                # HeatPump (GroundSource)
+                '//HeatPump[HeatPumpType="ground-to-air"]' => [
+                    'DistributionSystem',
+                    'AnnualCoolEfficiency[Units="EER"]/Value',
+                    'AnnualHeatEfficiency[Units="COP"]/Value',
+                    '//AirDistribution',
+                ],
+                
+            ## HVACControl
+            '//HVACControl' => [
+                'ControlType',
             ],
-            # HeatPump (MiniSplit)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="mini-split"]' => [
-                'AnnualCoolEfficiency[Units="SEER"]/Value',
-                'AnnualHeatEfficiency[Units="HSPF"]/Value',
-            ],
-            # HeatPump (GroundSource)
-            '//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => [
-                'DistributionSystem',
-                'AnnualCoolEfficiency[Units="EER"]/Value',
-                'AnnualHeatEfficiency[Units="COP"]/Value',
-                '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution',
-            ],
-            # AirDistribution
-            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => [
+            
+            ## AirDistribution
+            '//AirDistribution' => [
                 'DuctLeakageMeasurement[DuctType="supply"]',
                 'DuctLeakageMeasurement[DuctType="return"]',
                 'Ducts[DuctType="supply" and FractionDuctArea=1.0]',
                 'Ducts[DuctType="return" and FractionDuctArea=1.0]',
             ],
-            # DuctLeakageMeasurement
-            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement' => [
-                'DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value',
-            ],
-            # Ducts
-            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts' => [
+            
+            ## Ducts
+            '//Ducts' => [
                 'DuctInsulationRValue',
                 'DuctLocation', # TODO: Restrict values
                 'DuctSurfaceArea',
             ],
-            # HydronicDistribution
-            '//Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution' => [
+            
+            ## DuctLeakage
+            '//DuctLeakageMeasurement' => [
+                'DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value',
+            ],
+            
+            ## HydronicDistribution
+            '//HydronicDistribution' => [
                 # TODO
             ],
-            # WaterHeatingSystem
-            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => [
+            
+            ## WaterHeatingSystem
+            '//WaterHeatingSystem' => [
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
                 '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]',
                 # TODO: 'Location',
@@ -367,66 +356,78 @@ class EnergyRatingIndex301Validator
                 'HeatingCapacity',
                 'EnergyFactor',
             ],
-            # Tank WaterHeatingSystem
-            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" or WaterHeaterType="heat pump water heater"]' => [
-                'TankVolume',
-            ],
-            # WaterHeatingSystem (FuelStorage)
-            '//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" and FuelType!="electricity"]' => [
-                'RecoveryEfficiency',
-            ],
-            # HotWaterDistribution
-            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [
+            
+                # WaterHeatingSystem (Tank)
+                '//WaterHeatingSystem[WaterHeaterType="storage water heater" or WaterHeaterType="heat pump water heater"]' => [
+                    'TankVolume',
+                ],
+                
+                # WaterHeatingSystem (Fuel, Storage Tank)
+                '//WaterHeatingSystem[WaterHeaterType="storage water heater" and FuelType!="electricity"]' => [
+                    'RecoveryEfficiency',
+                ],
+            
+            ## HotWaterDistribution
+            '//HotWaterDistribution' => [
                 'SystemType',
                 'PipeInsulation/PipeRValue',
             ],
-            # HotWaterDistribution Standard
-            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard' => [
-                'PipingLength',
-            ],
-            # HotWaterDistribution Recirculation
-            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => [
-                'ControlType',
-                'RecirculationPipingLoopLength',
-                'BranchPipingLoopLength',
-                'PumpPower',
-            ],
-            # DrainWaterHeatRecovery
-            '//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => [
+            
+                # HotWaterDistribution (Standard)
+                '//HotWaterDistribution/SystemType/Standard' => [
+                    'PipingLength',
+                ],
+                
+                # HotWaterDistribution (Recirculation)
+                '//HotWaterDistribution/SystemType/Recirculation' => [
+                    'ControlType',
+                    'RecirculationPipingLoopLength',
+                    'BranchPipingLoopLength',
+                    'PumpPower',
+                ],
+            
+            ## DrainWaterHeatRecovery
+            '//DrainWaterHeatRecovery' => [
                 'FacilitiesConnected',
                 'EqualFlow',
                 'Efficiency',
             ],
-            # WaterFixture
-            '//Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => [
+            
+            ## WaterFixture
+            '//WaterFixture' => [
                 'FlowRate'
             ],
-            # VentilationFan
-            '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => [
+            
+            ## WholeHouseVentilationFan
+            '//VentilationFan[UsedForWholeBuildingVentilation="true"]' => [
                 'FanType',
                 'RatedFlowRate',
                 'HoursInOperation',
                 'UsedForWholeBuildingVentilation',
                 'FanPower',
             ],
-            # ERV
-            '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="energy recovery ventilator"]' => [
+            
+            # WholeHouseVentilationFan (ERV)
+            '//VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="energy recovery ventilator"]' => [
                 'TotalRecoveryEfficiency',
                 'SensibleRecoveryEfficiency'
             ],
-            # HRV
-            '//Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="heat recovery ventilator"]' => [
+            
+            # WholeHouseVentilationFan (HRV)
+            '//VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="heat recovery ventilator"]' => [
                 'SensibleRecoveryEfficiency',
             ],
-            # PV
-            '//Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => [
+            
+            ## PV
+            '//PVSystem' => [
                 'ArrayAzimuth',
                 'ArrayTilt',
                 'InverterEfficiency',
                 'MaxPowerOutput',
             ],
-            # ClothesWasher
-            '//Building/BuildingDetails/Appliances/ClothesWasher' => [
+            
+            ## ClothesWasher
+            '//ClothesWasher' => [
                 'ModifiedEnergyFactor',
                 'RatedAnnualkWh',
                 'LabelElectricRate',
@@ -434,36 +435,42 @@ class EnergyRatingIndex301Validator
                 'LabelAnnualGasCost',
                 'Capacity',
             ],
-            # ClothesDryer
-            '//Building/BuildingDetails/Appliances/ClothesDryer' => [
+            
+            ## ClothesDryer
+            '//ClothesDryer' => [
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
                 'EfficiencyFactor',
                 'ControlType',
             ],
-            # Dishwasher
-            '//Building/BuildingDetails/Appliances/Dishwasher' => [
-                '[EnergyFactor|RatedAnnualkWh]',
+            
+            ## Dishwasher
+            '//Dishwasher' => [
+                '[EnergyFactor | RatedAnnualkWh]',
                 'PlaceSettingCapacity',
             ],
-            # Refrigerator
-            '//Building/BuildingDetails/Appliances/Refrigerator' => [
+            
+            ## Refrigerator
+            '//Refrigerator' => [
                 'RatedAnnualkWh',
             ],
-            # CookingRange
-            '//Building/BuildingDetails/Appliances/CookingRange' => [
+            
+            ## CookingRange
+            '//CookingRange' => [
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
                 'IsInduction',
             ],
-            # Oven
-            '//Building/BuildingDetails/Appliances/Oven' => [
+            
+            ## Oven
+            '//Oven' => [
                 'FuelType',
                 'IsConvection',
             ],
-            # Lighting
-            '//Building/BuildingDetails/Lighting/LightingFractions' => [
-                'extension/QualifyingLightFixturesInterior',
-                'extension/QualifyingLightFixturesExterior',
-                'extension/QualifyingLightFixturesGarage',
+            
+            ## Lighting
+            '//Lighting' => [
+                'LightingFractions/extension/QualifyingLightFixturesInterior',
+                'LightingFractions/extension/QualifyingLightFixturesExterior',
+                'LightingFractions/extension/QualifyingLightFixturesGarage',
             ],
     }
     
