@@ -668,7 +668,7 @@ OptionParser.new do |opts|
   end
 
   options[:debug] = false
-  opts.on('-d', '--debug', '') do |t|
+  opts.on('-d', '--debug') do |t|
     options[:debug] = true
   end
   

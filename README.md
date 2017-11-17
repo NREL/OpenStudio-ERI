@@ -20,7 +20,7 @@ Download the latest version of OpenStudio from https://www.openstudio.net/develo
 ```c:/openstudio-2.2.1/bin/openstudio.exe energy_rating_index.rb -x sample_files/valid.xml```  
 Note that the Reference Home and Rated Home workflows/simulations will be executed in parallel on the local machine.
 3. This will generate output as shown below:
-![CLI output](https://user-images.githubusercontent.com/5861765/32902123-c12b973c-caae-11e7-8a5e-ebf3aef59e7e.png)
+![CLI output](https://user-images.githubusercontent.com/5861765/32967108-9c7f0e28-cb99-11e7-955b-f789549b909d.png)
 
 ## ERI Outputs
 

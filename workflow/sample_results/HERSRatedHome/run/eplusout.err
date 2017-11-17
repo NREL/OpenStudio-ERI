@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25,IDD_Version 8.7.0
+Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_Version 8.7.0
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** Site:GroundTemperature:BuildingSurface: Some values fall outside the range of 15-25C.
@@ -147,7 +147,7 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25,IDD_V
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL WINDOW SHADING SCHEDULE ALLDAY9 1", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL WINDOW SHADING SCHEDULE ALLDAY9 2", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL WINDOW SHADING SCHEDULE ALLDAY9 3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 14", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 17", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 18", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 19", Blank Schedule Type Limits Name input -- will not be validated.
@@ -171,8 +171,6 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25,IDD_V
    ** Warning ** ProcessScheduleInput: Schedule:Year="RESIDENTIAL WINDOW SHADING SCHEDULE 1", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="RESIDENTIAL WINDOW SHADING SCHEDULE 2", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="RESIDENTIAL WINDOW SHADING SCHEDULE 3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Constant="RESIDENTIAL CLOTHES WASHER TEMPERATURE SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Constant="RESIDENTIAL DISHWASHER TEMPERATURE SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** GetSurfaceData: WindowProperty:ShadingControl: "WINDOWSHADINGCONTROL" is not referenced by any window.
    ** Warning ** GetSurfaceData: WindowProperty:ShadingControl: "WINDOWSHADINGCONTROL 1" is not referenced by any window.
    ** Warning ** GetSurfaceData: WindowProperty:ShadingControl: "WINDOWSHADINGCONTROL 2" is not referenced by any window.
@@ -200,20 +198,21 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25,IDD_V
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
+   ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1.
+   **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/14 18:00 - 19:00
+   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 8.661E-005 m3/s/W
+   **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
+   **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
    ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2.
-   **   ~~~   **  Environment=RUN PERIOD, at Simulation time=05/20 21:00 - 22:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 2.494E-005 m3/s/W
+   **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/14 18:00 - 19:00
+   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 7.251E-005 m3/s/W
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
    **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
    ************* Simulation Error Summary *************
    ** Warning ** The following Report Variables were requested but not generated
    **   ~~~   ** because IDF did not contain these elements or misspelled variable name -- check .rdd file
    ************* Key=residential furnace gas heating coil, VarName=HEATING COIL TOTAL HEATING ENERGY, Frequency=Annual
-   ************* Key=residential furnace gas heating coil, VarName=HEATING COIL HEATING ENERGY, Frequency=Annual
-   ************* Key=residential furnace gas heating coil, VarName=HEATING COIL TOTAL HEATING ENERGY, Frequency=Annual
    ************* Key=residential furnace gas heating coil, VarName=BOILER HEATING ENERGY, Frequency=Annual
-   ************* Key=residential furnace gas heating coil, VarName=BOILER HEATING ENERGY, Frequency=Annual
-   ************* Key=residential furnace gas heating coil, VarName=BASEBOARD TOTAL HEATING ENERGY, Frequency=Annual
    ************* Key=residential furnace gas heating coil, VarName=BASEBOARD TOTAL HEATING ENERGY, Frequency=Annual
    ************* Key=residential furnace gas heating coil, VarName=HEATING COIL HEATING ENERGY, Frequency=Annual
    ************* There are 2 unused schedules in input.
@@ -224,11 +223,17 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25,IDD_V
    ************* ===== Recurring Error Summary =====
    ************* The following recurring error messages occurred.
    *************
-   *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2 error continues...
-   *************  **   ~~~   **   This error occurred 40572 total times;
+   *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1 error continues...
+   *************  **   ~~~   **   This error occurred 58078 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=2.533849E-005  Min=2.424931E-005
+   *************  **   ~~~   **   Max=8.902371E-005  Min=8.562386E-005
+   *************
+   *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2 error continues...
+   *************  **   ~~~   **   This error occurred 3708 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=7.450019E-005  Min=7.168509E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -240,4 +245,4 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.10.26 14:25,IDD_V
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 40756 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 12.10sec
+   ************* EnergyPlus Completed Successfully-- 61968 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  9.99sec

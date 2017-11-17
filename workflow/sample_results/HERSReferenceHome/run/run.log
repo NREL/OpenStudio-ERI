@@ -1,3 +1,5 @@
-[14:24:51.725021 WARN] No valid weather file defined in either the osm or osw.
-[14:24:53.928233 WARN] Could not load nokogiri, no HPXML validation performed.
-[14:25:00.818119 WARN] Could not load nokogiri, no HPXML validation performed.
+[13:14:49.726142 WARN] No valid weather file defined in either the osm or osw.
+[13:14:50.023035 WARN] Could not load nokogiri, no HPXML validation performed.
+[13:14:51.358483 WARN] No DDY file found; calculating design conditions from EPW weather data.
+[13:14:51.358483 WARN] Could not find DDY file at C:/Users/shorowit/Documents/GitHub/OpenStudio-ERI/workflow/sample_files/USA_CO_Denver_Intl_AP_725650_TMY3.ddy. As a backup, design day information will be calculated from the EPW file.
+[13:14:54.584758 WARN] Could not load nokogiri, no HPXML validation performed.

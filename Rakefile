@@ -256,8 +256,13 @@ end
 desc 'generate sample outputs'
 task :generate_sample_outputs do
   Dir.chdir('workflow')
+  
+  FileUtils.rm_rf("sample_results/.", secure: true)
+  sleep 1
+  FileUtils.mkdir_p("sample_results")
+
   os_cli = get_os_cli()
-  command = "\"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x sample_files/valid.xml -e sample_files/denver.epw"
+  command = "\"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x sample_files/valid.xml"
   system(command)
   
   dirs = ["HERSRatedHome", "HERSReferenceHome", "results"]
