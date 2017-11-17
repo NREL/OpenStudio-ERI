@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_Version 8.7.0
+Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_Version 8.7.0
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** Site:GroundTemperature:BuildingSurface: Some values fall outside the range of 15-25C.
@@ -200,12 +200,12 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_V
    ************* Beginning Simulation
    ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1.
    **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/14 18:00 - 19:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 8.661E-005 m3/s/W
+   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 8.700E-005 m3/s/W
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
    **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
    ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2.
    **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/14 18:00 - 19:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 7.251E-005 m3/s/W
+   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 7.284E-005 m3/s/W
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
    **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
    ************* Simulation Error Summary *************
@@ -224,16 +224,16 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_V
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1 error continues...
-   *************  **   ~~~   **   This error occurred 58078 total times;
+   *************  **   ~~~   **   This error occurred 80815 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=8.902371E-005  Min=8.562386E-005
+   *************  **   ~~~   **   Max=8.922063E-005  Min=8.607406E-005
    *************
    *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2 error continues...
-   *************  **   ~~~   **   This error occurred 3708 total times;
+   *************  **   ~~~   **   This error occurred 5153 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.450019E-005  Min=7.168509E-005
+   *************  **   ~~~   **   Max=7.466835E-005  Min=7.206200E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -245,4 +245,4 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_V
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 61968 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  9.99sec
+   ************* EnergyPlus Completed Successfully-- 86150 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 11.30sec

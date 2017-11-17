@@ -16,8 +16,8 @@ class EnergyRatingIndexTest < MiniTest::Test
     ref_osm = File.join(parent_dir, "results", "HERSReferenceHome.osm")
     rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
     rated_osm = File.join(parent_dir, "results", "HERSRatedHome.osm")
-    results_csv = File.join(parent_dir, "results", "results.csv")
-    worksheet_csv = File.join(parent_dir, "results", "worksheet.csv")
+    results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
+    worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
     
     xmls = Dir["#{parent_dir}/sample_files/*.xml"]
     
