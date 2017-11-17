@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6 N:/Groups/REM/XML/BPI HPXML Standard/schemas/HPXML.xsd' schemaVersion='2.2'>
+<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='2.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
@@ -8,11 +8,9 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo/>
   <Building>
-    <BuildingID id='Diamonds_and_Rust64'>
-      <SendingSystemIdentifierType>SendSysIdType</SendingSystemIdentifierType>
-    </BuildingID>
+    <BuildingID id='MyBuilding'/>
     <ProjectStatus>
-      <EventType>audit</EventType>
+      <EventType>proposed workscope</EventType>
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
@@ -29,8 +27,8 @@
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
-          <ConditionedFloorArea>3500</ConditionedFloorArea>
-          <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
+          <ConditionedFloorArea>7000</ConditionedFloorArea>
+          <ConditionedBuildingVolume>67575</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
       </BuildingSummary>
@@ -66,7 +64,8 @@
                 <Roof>
                   <SystemIdentifier id='attic-roof-1'/>
                   <Area>4200</Area>
-                  <RoofColor>medium</RoofColor>
+                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Emittance>0.9</Emittance>
                   <Rafters>
                     <FramingFactor>0.11</FramingFactor>
                     <Material>wood</Material>
@@ -91,7 +90,8 @@
                 <Roof>
                   <SystemIdentifier id='attic-roof-2'/>
                   <Area>269</Area>
-                  <RoofColor>reflective</RoofColor>
+                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Emittance>0.9</Emittance>
                   <Rafters>
                     <FramingFactor>0.11</FramingFactor>
                     <Material>wood</Material>
@@ -118,10 +118,10 @@
                 <Floor>
                   <SystemIdentifier id='attic-floor-1'/>
                   <Area>4200</Area>
-                  <Joists>
+                  <FloorJoists>
                     <FramingFactor>0.11</FramingFactor>
                     <Material>wood</Material>
-                  </Joists>
+                  </FloorJoists>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
                     <InsulationGrade>1</InsulationGrade>
@@ -137,21 +137,24 @@
                     </Layer>
                   </Insulation>
                   <extension>
-                    <AdjacentTo>living space</AdjacentTo>
+                    <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
                   </extension>
                 </Floor>
               </Floors>
               <Walls>
                 <Wall>
                   <SystemIdentifier id='attic-wall-1'/>
-                  <AtticWallType>other</AtticWallType>
+                  <WallType>
+                    <WoodStud></WoodStud>
+                  </WallType>
                   <Area>32</Area>
                   <Studs>
                     <FramingFactor>0.1988</FramingFactor>
                     <Material>wood</Material>
                   </Studs>
                   <Siding>vinyl siding</Siding>
-                  <Color>light</Color>
+                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
                     <InsulationGrade>1</InsulationGrade>
@@ -167,10 +170,7 @@
                     </Layer>
                   </Insulation>
                   <extension>
-                    <AdjacentTo>living space</AdjacentTo>
-                    <WallType>
-                      <WoodStud></WoodStud>
-                    </WallType>
+                    <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
                   </extension>
                 </Wall>
               </Walls>
@@ -181,15 +181,75 @@
           <Foundation>
             <SystemIdentifier id='Foundation_ID1'/>
             <FoundationType>
-              <SlabOnGrade/>
+              <Basement>
+                <Conditioned>true</Conditioned>
+              </Basement>
             </FoundationType>
+            <FrameFloor>
+              <SystemIdentifier id='Floor_ID1'/>
+              <FloorJoists>
+                <FramingFactor>0.2</FramingFactor>
+                <Material>wood</Material>
+              </FloorJoists>
+              <Area>3500</Area>
+              <Insulation>
+                <SystemIdentifier id='Floor_Ins_ID1'/>
+                <InsulationGrade>1</InsulationGrade>
+                <Layer>
+                  <InstallationType>cavity</InstallationType>
+                  <NominalRValue>21</NominalRValue>
+                  <Thickness>5.5</Thickness>
+                </Layer>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
+                </Layer>
+              </Insulation>
+              <extension>
+                <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
+                <CarpetFraction>0.5</CarpetFraction>
+                <CarpetRValue>2.0</CarpetRValue>
+              </extension>
+            </FrameFloor>
+            <FoundationWall>
+              <SystemIdentifier id='fndwall-1'/>
+              <Height>9</Height>
+              <Area>2160</Area>
+              <BelowGradeDepth>7</BelowGradeDepth>
+              <InteriorStuds>
+                <FramingFactor>0</FramingFactor>
+                <Material>wood</Material>
+              </InteriorStuds>
+              <Insulation>
+                <SystemIdentifier id='FWall_Ins_ID1'/>
+                <InsulationGrade>1</InsulationGrade>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>19</NominalRValue>
+                  <Thickness>5</Thickness>
+                  <extension>
+                    <InsulationHeight>9</InsulationHeight>
+                  </extension>
+                </Layer>
+                <Layer>
+                  <InstallationType>cavity</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
+                </Layer>
+              </Insulation>
+              <extension>
+                <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+              </extension>
+            </FoundationWall>
             <Slab>
-              <SystemIdentifier id='Slab_ID1'/>
+              <SystemIdentifier id='fndslab-1'/>
               <Area>3500</Area>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
-              <UnderSlabInsulationWidth>2</UnderSlabInsulationWidth>
+              <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
+              <DepthBelowGrade>7</DepthBelowGrade>
               <PerimeterInsulation>
-                <SystemIdentifier id='PerimeterInsulation_ID1'/>
+                <SystemIdentifier id='FSlab_PerimIns_ID1'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
@@ -197,16 +257,16 @@
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
-                <SystemIdentifier id='UnderSlabInsulation_ID1'/>
+                <SystemIdentifier id='FSlab_UnderIns_ID1'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
-                  <NominalRValue>5</NominalRValue>
-                  <Thickness>1</Thickness>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
-                <CarpetFraction>1.0</CarpetFraction>
-                <CarpetRValue>2.5</CarpetRValue>
+                <CarpetFraction>0</CarpetFraction>
+                <CarpetRValue>0</CarpetRValue>
               </extension>
             </Slab>
           </Foundation>
@@ -261,7 +321,8 @@
               <Material>wood</Material>
             </Studs>
             <Siding>stucco</Siding>
-            <Color>medium</Color>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
               <InsulationGrade>1</InsulationGrade>

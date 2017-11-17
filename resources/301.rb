@@ -394,6 +394,8 @@ class EnergyRatingIndex301Ruleset
       # Roofs
       new_attic.elements.each("Roofs/Roof") do |new_roof|
         new_roof.elements["RadiantBarrier"].text = false
+        new_roof.elements["SolarAbsorptance"].text = 0.75
+        new_roof.elements["Emittance"].text = 0.90
         new_roof_ins = new_roof.elements["Insulation"]
         new_roof_ins.elements["InsulationGrade"].text = 1
         XMLHelper.delete_element(new_roof_ins, "Layer")
@@ -402,14 +404,6 @@ class EnergyRatingIndex301Ruleset
         else
           XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
         end
-        extension = new_roof.elements["extension"]
-        if extension.nil?
-          extension = XMLHelper.add_element(new_roof, "extension")
-        end
-        XMLHelper.delete_element(extension, "SolarAbsorptance")
-        XMLHelper.add_element(extension, "SolarAbsorptance", 0.85)
-        XMLHelper.delete_element(extension, "Emittance")
-        XMLHelper.add_element(extension, "Emittance", 0.91)
       end
       
       # Floors
@@ -460,27 +454,6 @@ class EnergyRatingIndex301Ruleset
     C-1371 shall be used when available. In cases where the appropriate data are not known, same as the 
     Reference Home.
     '''
-    new_attic_roof.elements.each("Attics/Attic") do |new_attic|
-      new_attic.elements.each("Roofs/Roof") do |new_roof|
-        roof_color = XMLHelper.get_value(new_roof, "RoofColor")
-        extension = new_roof.elements["extension"]
-        if extension.nil?
-          extension = XMLHelper.add_element(new_roof, "extension")
-        end
-        XMLHelper.delete_element(extension, "SolarAbsorptance")
-        if roof_color == "reflective"
-          XMLHelper.add_element(extension, "SolarAbsorptance", 0.20)
-        elsif roof_color == "dark"
-          XMLHelper.add_element(extension, "SolarAbsorptance", 0.92)
-        elsif roof_color == "medium"
-          XMLHelper.add_element(extension, "SolarAbsorptance", 0.75)
-        elsif roof_color == "light"
-          XMLHelper.add_element(extension, "SolarAbsorptance", 0.60)
-        end
-        XMLHelper.delete_element(extension, "Emittance")
-        XMLHelper.add_element(extension, "Emittance", 0.90)
-      end
-    end
     
   end
   
@@ -521,7 +494,7 @@ class EnergyRatingIndex301Ruleset
         extension = XMLHelper.add_element(new_floor, "extension")
         XMLHelper.copy_element(extension, orig_floor, "extension/CarpetFraction", 0.0)
         XMLHelper.copy_element(extension, orig_floor, "extension/CarpetRValue", 2.0)
-        XMLHelper.copy_element(extension, orig_floor, "extension/AdjacentTo")
+        XMLHelper.copy_element(extension, orig_floor, "extension/ExteriorAdjacentTo")
       end
   
       '''
@@ -547,7 +520,7 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(insulation, "InsulationGrade", 1)
         XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
         extension = XMLHelper.add_element(new_wall, "extension")
-        XMLHelper.copy_element(extension, orig_wall, "extension/AdjacentTo")
+        XMLHelper.copy_element(extension, orig_wall, "extension/ExteriorAdjacentTo")
       end
   
       '''
@@ -669,7 +642,8 @@ class EnergyRatingIndex301Ruleset
       # garage that has no exterior wall on one side.
       new_wall.elements["Area"].text = Float(new_wall.elements["Area"].text) - get_wall_subsurface_area(orig_wall, orig_details)
       XMLHelper.add_element(new_wall, "Siding", "vinyl siding")
-      XMLHelper.add_element(new_wall, "Color", "medium")
+      XMLHelper.add_element(new_wall, "SolarAbsorptance", "0.75")
+      XMLHelper.add_element(new_wall, "Emittance", "0.90")
       insulation = XMLHelper.add_element(new_wall, "Insulation")
       XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")
       XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
@@ -701,7 +675,8 @@ class EnergyRatingIndex301Ruleset
       studs = XMLHelper.add_element(new_wall, "Studs")
       XMLHelper.copy_element(studs, orig_wall, "Studs/FramingFactor")
       XMLHelper.copy_element(new_wall, orig_wall, "Siding")
-      XMLHelper.copy_element(new_wall, orig_wall, "Color")
+      XMLHelper.copy_element(new_wall, orig_wall, "SolarAbsorptance")
+      XMLHelper.copy_element(new_wall, orig_wall, "Emittance")
       insulation = XMLHelper.add_element(new_wall, "Insulation")
       XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")
       XMLHelper.copy_element(insulation, orig_wall, "Insulation/InsulationGrade")
@@ -767,7 +742,7 @@ class EnergyRatingIndex301Ruleset
     end
     
     orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned='true']/FoundationWall") do |fwall|
-      adj_to = XMLHelper.get_value(fwall, "extension/AdjacentTo")
+      adj_to = XMLHelper.get_value(fwall, "extension/ExteriorAdjacentTo")
       next if adj_to == "living space"
       height = Float(XMLHelper.get_value(fwall, "Height"))
       bg_depth = Float(XMLHelper.get_value(fwall, "BelowGradeDepth"))

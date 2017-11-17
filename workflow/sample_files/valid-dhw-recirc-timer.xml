@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6 N:/Groups/REM/XML/BPI HPXML Standard/schemas/HPXML.xsd' schemaVersion='2.2'>
+<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='2.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
@@ -8,11 +8,9 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo/>
   <Building>
-    <BuildingID id='Diamonds_and_Rust64'>
-      <SendingSystemIdentifierType>SendSysIdType</SendingSystemIdentifierType>
-    </BuildingID>
+    <BuildingID id='MyBuilding'/>
     <ProjectStatus>
-      <EventType>audit</EventType>
+      <EventType>proposed workscope</EventType>
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
@@ -66,7 +64,8 @@
                 <Roof>
                   <SystemIdentifier id='attic-roof-1'/>
                   <Area>4200</Area>
-                  <RoofColor>medium</RoofColor>
+                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Emittance>0.9</Emittance>
                   <Rafters>
                     <FramingFactor>0.11</FramingFactor>
                     <Material>wood</Material>
@@ -91,7 +90,8 @@
                 <Roof>
                   <SystemIdentifier id='attic-roof-2'/>
                   <Area>269</Area>
-                  <RoofColor>reflective</RoofColor>
+                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Emittance>0.9</Emittance>
                   <Rafters>
                     <FramingFactor>0.11</FramingFactor>
                     <Material>wood</Material>
@@ -118,10 +118,10 @@
                 <Floor>
                   <SystemIdentifier id='attic-floor-1'/>
                   <Area>4200</Area>
-                  <Joists>
+                  <FloorJoists>
                     <FramingFactor>0.11</FramingFactor>
                     <Material>wood</Material>
-                  </Joists>
+                  </FloorJoists>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
                     <InsulationGrade>1</InsulationGrade>
@@ -137,21 +137,24 @@
                     </Layer>
                   </Insulation>
                   <extension>
-                    <AdjacentTo>living space</AdjacentTo>
+                    <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
                   </extension>
                 </Floor>
               </Floors>
               <Walls>
                 <Wall>
                   <SystemIdentifier id='attic-wall-1'/>
-                  <AtticWallType>other</AtticWallType>
+                  <WallType>
+                    <WoodStud></WoodStud>
+                  </WallType>
                   <Area>32</Area>
                   <Studs>
                     <FramingFactor>0.1988</FramingFactor>
                     <Material>wood</Material>
                   </Studs>
                   <Siding>vinyl siding</Siding>
-                  <Color>light</Color>
+                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
                     <InsulationGrade>1</InsulationGrade>
@@ -167,10 +170,7 @@
                     </Layer>
                   </Insulation>
                   <extension>
-                    <AdjacentTo>living space</AdjacentTo>
-                    <WallType>
-                      <WoodStud></WoodStud>
-                    </WallType>
+                    <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
                   </extension>
                 </Wall>
               </Walls>
@@ -207,7 +207,7 @@
                 </Layer>
               </Insulation>
               <extension>
-                <AdjacentTo>living space</AdjacentTo>
+                <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
                 <CarpetFraction>0.5</CarpetFraction>
                 <CarpetRValue>2.0</CarpetRValue>
               </extension>
@@ -239,7 +239,7 @@
                 </Layer>
               </Insulation>
               <extension>
-                <AdjacentTo>ground</AdjacentTo>
+                <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
               </extension>
             </FoundationWall>
             <Slab>
@@ -321,7 +321,8 @@
               <Material>wood</Material>
             </Studs>
             <Siding>stucco</Siding>
-            <Color>medium</Color>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
               <InsulationGrade>1</InsulationGrade>
