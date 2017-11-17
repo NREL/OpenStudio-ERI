@@ -145,10 +145,18 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sim_output[:elecHotWater] = get_sql_result(sqlFile.electricityWaterSystems, design)
   
   # Fuel categories
-  sim_output[:fuelTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design) + get_sql_result(sqlFile.otherFuelTotalEndUses, design)
-  sim_output[:fuelHeating] = get_sql_result(sqlFile.naturalGasHeating, design) + get_sql_result(sqlFile.otherFuelHeating, design)
-  sim_output[:fuelAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design) + get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
-  sim_output[:fuelHotWater] = get_sql_result(sqlFile.naturalGasWaterSystems, design) + get_sql_result(sqlFile.otherFuelWaterSystems, design)
+  sim_output[:ngTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design)
+  sim_output[:ngHeating] = get_sql_result(sqlFile.naturalGasHeating, design)
+  sim_output[:ngAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design)
+  sim_output[:ngHotWater] = get_sql_result(sqlFile.naturalGasWaterSystems, design)
+  sim_output[:otherTotal] = get_sql_result(sqlFile.otherFuelTotalEndUses, design)
+  sim_output[:otherHeating] = get_sql_result(sqlFile.otherFuelHeating, design)
+  sim_output[:otherAppliances] = get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
+  sim_output[:otherHotWater] = get_sql_result(sqlFile.otherFuelWaterSystems, design)
+  sim_output[:fuelTotal] = sim_output[:ngTotal] + sim_output[:otherTotal]
+  sim_output[:fuelHeating] = sim_output[:ngHeating] + sim_output[:otherHeating]
+  sim_output[:fuelAppliances] = sim_output[:ngAppliances] + sim_output[:otherAppliances]
+  sim_output[:fuelHotWater] = sim_output[:ngHotWater] + sim_output[:otherHotWater]
 
   # Other - PV
   query = "SELECT -1*Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
@@ -170,9 +178,10 @@ def parse_sql(design, sql_path, output_hpxml_path)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   sim_output[:elecClothesDryer] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
-  sim_output[:fuelClothesDryer] = get_sql_query_result(sqlFile, query)
+  sim_output[:ngClothesDryer] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Annual Value' AND Units='GJ'"
-  sim_output[:fuelClothesDryer] += get_sql_query_result(sqlFile, query)
+  sim_output[:otherClothesDryer] = get_sql_query_result(sqlFile, query)
+  sim_output[:fuelClothesDryer] = sim_output[:ngClothesDryer] + sim_output[:otherClothesDryer]
   
   # Other - MELS
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMiscPlugLoads}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
@@ -182,9 +191,10 @@ def parse_sql(design, sql_path, output_hpxml_path)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   sim_output[:elecRangeOven] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
-  sim_output[:fuelRangeOven] = get_sql_query_result(sqlFile, query)
+  sim_output[:ngRangeOven] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Annual Value' AND Units='GJ'"
-  sim_output[:fuelRangeOven] += get_sql_query_result(sqlFile, query)
+  sim_output[:otherRangeOven] = get_sql_query_result(sqlFile, query)
+  sim_output[:fuelRangeOven] = sim_output[:ngRangeOven] + sim_output[:otherRangeOven]
   
   # Other - Ceiling Fans
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCeilingFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
@@ -197,9 +207,9 @@ def parse_sql(design, sql_path, output_hpxml_path)
   # Other - Recirculation pump
   # Move from appliances end use to hot water end use
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameHotWaterRecircPump}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
-  sim_output[:elecRecircPump] = get_sql_query_result(sqlFile, query)
-  sim_output[:elecAppliances] -= sim_output[:elecRecircPump]
-  sim_output[:elecHotWater] += sim_output[:elecRecircPump]
+  elecRecircPump = get_sql_query_result(sqlFile, query)
+  sim_output[:elecAppliances] -= elecRecircPump
+  sim_output[:elecHotWater] += elecRecircPump
   
   # Other - Space Heating Load
   vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
@@ -591,10 +601,43 @@ def calculate_eri(sim_outputs)
   return results
 end
 
+def write_results_annual_output(out_csv, sim_output)
+  results_out = {
+                 "Electricity, Total (MBtu)"=>sim_output[:elecTotal],
+                 "Electricity, Net (MBtu)"=>sim_output[:elecTotal]-sim_output[:elecPV],
+                 "Natural Gas, Total (MBtu)"=>sim_output[:ngTotal],
+                 "Other Fuels, Total (MBtu)"=>sim_output[:otherTotal],
+                 ""=>"", # line break
+                 "Electricity, Heating (MBtu)"=>sim_output[:elecHeating],
+                 "Electricity, Cooling (MBtu)"=>sim_output[:elecCooling],
+                 "Electricity, Fans/Pumps (MBtu)"=>sim_output[:elecFans]+sim_output[:elecPumps],
+                 "Electricity, Hot Water (MBtu)"=>sim_output[:elecHotWater],
+                 "Electricity, Lighting (MBtu)"=>sim_output[:elecIntLighting]+sim_output[:elecExtLighting],
+                 "Electricity, Mech Vent (MBtu)"=>sim_output[:elecMechVent],
+                 "Electricity, Refrigerator (MBtu)"=>sim_output[:elecFridge],
+                 "Electricity, Dishwasher (MBtu)"=>sim_output[:elecDishwasher],
+                 "Electricity, Clothes Washer (MBtu)"=>sim_output[:elecClothesWasher],
+                 "Electricity, Clothes Dryer (MBtu)"=>sim_output[:elecClothesDryer],
+                 "Electricity, Range/Oven (MBtu)"=>sim_output[:elecRangeOven],
+                 "Electricity, Ceiling Fan (MBtu)"=>sim_output[:elecCeilingFan],
+                 "Electricity, Plug Loads (MBtu)"=>sim_output[:elecMELs],
+                 "Electricity, PV (MBtu)"=>sim_output[:elecPV],
+                 "Natural Gas, Heating (MBtu)"=>sim_output[:ngHeating],
+                 "Natural Gas, Hot Water (MBtu)"=>sim_output[:ngHotWater],
+                 "Natural Gas, Clothes Dryer (MBtu)"=>sim_output[:ngClothesDryer],
+                 "Natural Gas, Range/Oven (MBtu)"=>sim_output[:ngRangeOven],
+                 "Other Fuels, Heating (MBtu)"=>sim_output[:otherHeating],
+                 "Other Fuels, Hot Water (MBtu)"=>sim_output[:otherHotWater],
+                 "Other Fuels, Clothes Dryer (MBtu)"=>sim_output[:otherClothesDryer],
+                 "Other Fuels, Range/Oven (MBtu)"=>sim_output[:otherRangeOven],
+                }
+  CSV.open(out_csv, "wb") {|csv| results_out.to_a.each {|elem| csv << elem} }
+end
+
 def write_results(results, resultsdir, sim_outputs)
 
   # Results file
-  results_csv = File.join(resultsdir, "results.csv")
+  results_csv = File.join(resultsdir, "ERI_Results.csv")
   results_out = {
                  "HERS Index"=>results[:hers_index],
                  "REUL Heating (MBtu)"=>results[:reul_heat],
@@ -614,7 +657,7 @@ def write_results(results, resultsdir, sim_outputs)
   CSV.open(results_csv, "wb") {|csv| results_out.to_a.each {|elem| csv << elem} }
   
   # Worksheet file
-  worksheet_csv = File.join(resultsdir, "worksheet.csv")
+  worksheet_csv = File.join(resultsdir, "ERI_Worksheet.csv")
   ref_output = sim_outputs[Constants.CalcTypeERIReferenceHome]
   worksheet_out = {
                    "Coeff Heating a"=>results[:coeff_heat_a],
@@ -641,7 +684,7 @@ def write_results(results, resultsdir, sim_outputs)
                    "Total Loads TnML"=>results[:tnml],
                    "Total Loads TRL"=>results[:trl],
                    "HERS Index"=>results[:hers_index],
-                   ""=>"",
+                   ""=>"", # line break
                    "Home CFA"=>results[:cfa],
                    "Home Nbr"=>results[:nbr],
                    "L&A resMELs"=>ref_output[:elecMELs],
@@ -656,6 +699,15 @@ def write_results(results, resultsdir, sim_outputs)
                    "L&A total"=>results[:reul_la],
                   }
   CSV.open(worksheet_csv, "wb") {|csv| worksheet_out.to_a.each {|elem| csv << elem} }
+  
+  # Summary energy results
+  rated_annual_csv = File.join(resultsdir, "HERSRatedHome.csv")
+  rated_output = sim_outputs[Constants.CalcTypeERIRatedHome]
+  write_results_annual_output(rated_annual_csv, rated_output)
+  
+  ref_annual_csv = File.join(resultsdir, "HERSReferenceHome.csv")
+  ref_output = sim_outputs[Constants.CalcTypeERIReferenceHome]
+  write_results_annual_output(ref_annual_csv, ref_output)
   
 end
 

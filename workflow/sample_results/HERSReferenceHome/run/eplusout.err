@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_Version 8.7.0
+Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_Version 8.7.0
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** Site:GroundTemperature:BuildingSurface: Some values fall outside the range of 15-25C.
@@ -201,17 +201,11 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_V
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.972E-005 m3/s/W.
-   **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/06 17:00 - 18:00
+   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.973E-005 m3/s/W.
+   **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/07 17:00 - 18:00
    **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
    **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Full load outlet air dry-bulb temperature < 2C. This indicates the possibility of coil frost/freeze. Outlet temperature = 1.28 C.
-   **   ~~~   **  ...Occurrence info = RUN PERIOD, 06/07 16:36 - 16:48
-   **   ~~~   ** ... Possible reasons for low outlet air dry-bulb temperatures are: This DX coil
-   **   ~~~   **    1) may have a low inlet air dry-bulb temperature. Inlet air temperature = 12.643 C.
-   **   ~~~   **    2) may have a low air flow rate per watt of cooling capacity. Check inputs.
-   **   ~~~   **    3) is used as part of a HX assisted cooling coil which uses a high sensible effectiveness. Check inputs.
    ************* Simulation Error Summary *************
    ** Warning ** The following Report Variables were requested but not generated
    **   ~~~   ** because IDF did not contain these elements or misspelled variable name -- check .rdd file
@@ -232,16 +226,10 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_V
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 25604 total times;
+   *************  **   ~~~   **   This error occurred 21362 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=6.973601E-005  Min=6.713001E-005
-   *************
-   *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Full load outlet temperature indicates a possibility of frost/freeze error continues. Outlet air temperature statistics follow:
-   *************  **   ~~~   **   This error occurred 2 total times;
-   *************  **   ~~~   **   during Warmup 0 times;
-   *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=1.277418  Min=0.127979
+   *************  **   ~~~   **   Max=6.974114E-005  Min=6.713028E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -253,4 +241,4 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 13:15,IDD_V
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 25790 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 10.10sec
+   ************* EnergyPlus Completed Successfully-- 21546 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 11.31sec
