@@ -136,7 +136,7 @@ module OpenStudio
             
             if workflow_json
               begin
-                workflow_json.setEplusoutErr(eplus_err)
+                #workflow_json.setEplusoutErr(eplus_err)
               rescue => e
                 # older versions of OpenStudio did not have the setEplusoutErr method
               end

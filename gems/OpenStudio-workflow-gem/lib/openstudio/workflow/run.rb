@@ -206,7 +206,7 @@ module OpenStudio
         begin
           next_state
           while @current_state != :finished && @current_state != :errored
-            sleep 0.1
+            #sleep 0.1
             step
           end
 
@@ -234,7 +234,7 @@ module OpenStudio
           # save workflow with results
           if @registry[:workflow_json]
             out_path = @registry[:workflow_json].absoluteOutPath
-            @registry[:workflow_json].saveAs(out_path)
+            #@registry[:workflow_json].saveAs(out_path)
           end
 
           # Write out the TimeLogger to the filesystem

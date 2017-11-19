@@ -6,9 +6,9 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require 'openstudio'
-require "#{File.dirname(__FILE__)}/../resources/constants" # FIXME
-require "#{File.dirname(__FILE__)}/../resources/xmlhelper" # FIXME
-require "#{File.dirname(__FILE__)}/../resources/util" # FIXME
+require_relative "../resources/constants"
+require_relative "../resources/xmlhelper"
+require_relative "../resources/util"
 
 # TODO: Rake task to package ERI
 # TODO: Add error-checking
