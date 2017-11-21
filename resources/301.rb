@@ -2,20 +2,11 @@ require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/xmlhelper"
 require "#{File.dirname(__FILE__)}/waterheater"
 require "#{File.dirname(__FILE__)}/airflow"
-require "#{File.dirname(__FILE__)}/301validator"
 
 class EnergyRatingIndex301Ruleset
 
   def self.apply_ruleset(hpxml_doc, calc_type, weather)
   
-    errors = []
-    
-    # Check for required inputs, etc.
-    EnergyRatingIndex301Validator.run_validator(hpxml_doc, errors)
-    if errors.size > 0
-      return errors
-    end
-    
     building = hpxml_doc.elements["//Building"]
     
     # Update XML type
@@ -26,34 +17,33 @@ class EnergyRatingIndex301Ruleset
       header.elements["XMLType"].text += calc_type
     end
     
-    cfa, nbeds, nbaths, climate_zone, nstories, cvolume = get_high_level_inputs(building)
+    cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume = get_high_level_inputs(building)
         
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
-        apply_reference_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
+        apply_reference_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume)
     elsif calc_type == Constants.CalcTypeERIRatedHome
-        apply_rated_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
+        apply_rated_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume)
     elsif calc_type == Constants.CalcTypeERIndexAdjustmentDesign
-        apply_index_adjustment_design_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
+        apply_index_adjustment_design_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume)
     end
-    
-    return errors
     
   end
 
   def self.get_high_level_inputs(building)
   
-    cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    nbeds = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    nbaths = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms"))
-    climate_zone = XMLHelper.get_value(building, "BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2006']/ClimateZone")
-    nstories = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
-    cvolume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
+    cfa = Float(XMLHelper.get_value(building, "//BuildingConstruction/ConditionedFloorArea"))
+    nbeds = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofBedrooms"))
+    nbaths = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofBathrooms"))
+    ncfl = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofConditionedFloors"))
+    ncfl_ag = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
+    cvolume = Float(XMLHelper.get_value(building, "//BuildingConstruction/ConditionedBuildingVolume"))
+    climate_zone = XMLHelper.get_value(building, "//ClimateandRiskZones/ClimateZoneIECC[Year='2006']/ClimateZone")
     
-    return cfa, nbeds, nbaths, climate_zone, nstories, cvolume
+    return cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume
   end
 
-  def self.apply_reference_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
+  def self.apply_reference_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume)
   
     # Create new BuildingDetails element
     orig_details = XMLHelper.delete_element(building, "BuildingDetails")
@@ -73,7 +63,7 @@ class EnergyRatingIndex301Ruleset
     
     # Enclosure
     new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
-    set_enclosure_air_infiltration_reference(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
+    set_enclosure_air_infiltration_reference(new_enclosure, orig_details, cfa, ncfl_ag, cvolume, weather)
     set_enclosure_attics_roofs_reference(new_enclosure, orig_details, climate_zone)
     set_enclosure_foundations_reference(new_enclosure, orig_details, climate_zone)
     set_enclosure_rim_joists_reference(new_enclosure)
@@ -86,7 +76,7 @@ class EnergyRatingIndex301Ruleset
     new_systems = XMLHelper.add_element(new_details, "Systems")
     set_systems_hvac_reference(new_systems, orig_details)
     set_systems_mechanical_ventilation_reference(new_systems, orig_details)
-    set_systems_water_heating_reference(new_systems, orig_details, nbeds, nbaths)
+    set_systems_water_heating_reference(new_systems, orig_details, cfa, nbeds, nbaths, ncfl)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -107,7 +97,7 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.apply_rated_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
+  def self.apply_rated_home_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume)
   
     # Create new BuildingDetails element
     orig_details = XMLHelper.delete_element(building, "BuildingDetails")
@@ -127,7 +117,7 @@ class EnergyRatingIndex301Ruleset
     
     # Enclosure
     new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
-    set_enclosure_air_infiltration_rated(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
+    set_enclosure_air_infiltration_rated(new_enclosure, orig_details, cfa, ncfl_ag, cvolume, weather)
     set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
     set_enclosure_foundations_rated(new_enclosure, orig_details)
     set_enclosure_rim_joists_rated(new_enclosure)
@@ -140,7 +130,7 @@ class EnergyRatingIndex301Ruleset
     new_systems = XMLHelper.add_element(new_details, "Systems")
     set_systems_hvac_rated(new_systems, orig_details)
     set_systems_mechanical_ventilation_rated(new_systems, orig_details)
-    set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds, nbaths)
+    set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds, nbaths, ncfl)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -161,7 +151,7 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.apply_index_adjustment_design_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, nstories, cvolume)
+  def self.apply_index_adjustment_design_ruleset(building, weather, cfa, nbeds, nbaths, climate_zone, ncfl, ncfl_ag, cvolume)
   
   end
   
@@ -185,22 +175,13 @@ class EnergyRatingIndex301Ruleset
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
     XMLHelper.copy_element(new_construction, orig_construction, "ResidentialFacilityType")
-    XMLHelper.copy_element(new_construction, orig_construction, "BuildingHeight")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
-    XMLHelper.copy_element(new_construction, orig_construction, "AverageCeilingHeight")
-    XMLHelper.copy_element(new_construction, orig_construction, "FloorToFloorHeight ")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBathrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedFloorArea")
-    XMLHelper.copy_element(new_construction, orig_construction, "FinishedFloorArea")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofStoriesAboveGrade")
-    XMLHelper.copy_element(new_construction, orig_construction, "BuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedBuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "GaragePresent")
-    XMLHelper.copy_element(new_construction, orig_construction, "GarageLocation")
-    XMLHelper.copy_element(new_construction, orig_construction, "SpaceAboveGarage")
   end
   
   def self.set_summary_rated(new_summary, orig_details, nbeds)
@@ -223,25 +204,16 @@ class EnergyRatingIndex301Ruleset
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
     XMLHelper.copy_element(new_construction, orig_construction, "ResidentialFacilityType")
-    XMLHelper.copy_element(new_construction, orig_construction, "BuildingHeight")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
-    XMLHelper.copy_element(new_construction, orig_construction, "AverageCeilingHeight")
-    XMLHelper.copy_element(new_construction, orig_construction, "FloorToFloorHeight ")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBathrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedFloorArea")
-    XMLHelper.copy_element(new_construction, orig_construction, "FinishedFloorArea")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofStoriesAboveGrade")
-    XMLHelper.copy_element(new_construction, orig_construction, "BuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedBuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "GaragePresent")
-    XMLHelper.copy_element(new_construction, orig_construction, "GarageLocation")
-    XMLHelper.copy_element(new_construction, orig_construction, "SpaceAboveGarage")
   end
   
-  def self.set_enclosure_air_infiltration_reference(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
+  def self.set_enclosure_air_infiltration_reference(new_enclosure, orig_details, cfa, ncfl_ag, cvolume, weather)
     
     new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
     
@@ -255,7 +227,7 @@ class EnergyRatingIndex301Ruleset
     
     # Convert to other forms
     ela = sla * cfa
-    nach = Airflow.get_infiltration_ACH_from_SLA(sla, nstories, weather)
+    nach = Airflow.get_infiltration_ACH_from_SLA(sla, ncfl_ag, weather)
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, cfa, cvolume)
     
     # nACH
@@ -293,17 +265,16 @@ class EnergyRatingIndex301Ruleset
     U-factor: from Table 4.2.2(2) for floors over unconditioned spaces or outdoor environment.
     '''
     
-    # TODO: Use Attic/Foundation extensions instead?
     if not orig_details.elements['Enclosure/AtticAndRoof/Attics'].nil?
       XMLHelper.add_element(extension, "AtticSpecificLeakageArea", 1.0/300.0)
     end
-    if not orig_details.elements['Enclosure/Foundations/FoundationType/Crawlspace'].nil?
+    if not orig_details.elements['Enclosure/Foundations/Foundation/FoundationType/Crawlspace'].nil?
       XMLHelper.add_element(extension, "CrawlspaceSpecificLeakageArea", 1.0/150.0)
     end
 
   end
   
-  def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details, cfa, nstories, cvolume, weather)
+  def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details, cfa, ncfl_ag, cvolume, weather)
     '''
     Table 4.2.2(1) - Air exchange rate
     For residences , without Whole-House Mechanical Ventilation Systems, the measured infiltration rate but 
@@ -317,14 +288,17 @@ class EnergyRatingIndex301Ruleset
     orig_infil = orig_details.elements["Enclosure/AirInfiltration"]
     orig_mv = orig_details.elements["Systems/MechanicalVentilation"]
     
-    whole_house_fan = orig_mv.elements["VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    whole_house_fan = nil
+    if not orig_mv.nil?
+      whole_house_fan = orig_mv.elements["VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    end
     nach = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
     if whole_house_fan.nil? and nach < 0.30
       nach = 0.30
     end
     
     # Convert to other forms
-    sla = Airflow.get_infiltration_SLA_from_ACH(nach, nstories, weather)
+    sla = Airflow.get_infiltration_SLA_from_ACH(nach, ncfl_ag, weather)
     ela = sla * cfa
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, cfa, cvolume)
     
@@ -390,43 +364,41 @@ class EnergyRatingIndex301Ruleset
     
     new_attic_roof.elements.each("Attics/Attic") do |new_attic|
       attic_type = XMLHelper.get_value(new_attic, "AtticType")
+      interior_adjacent_to = attic_type
       
       # Roofs
       new_attic.elements.each("Roofs/Roof") do |new_roof|
         new_roof.elements["RadiantBarrier"].text = false
         new_roof.elements["SolarAbsorptance"].text = 0.75
         new_roof.elements["Emittance"].text = 0.90
-        new_roof_ins = new_roof.elements["Insulation"]
-        new_roof_ins.elements["InsulationGrade"].text = 1
-        XMLHelper.delete_element(new_roof_ins, "Layer")
-        if ["cathedral ceiling", "cape cod"].include? attic_type
+        exterior_adjacent_to = "ambient"
+        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+          new_roof_ins = new_roof.elements["Insulation"]
+          new_roof_ins.elements["InsulationGrade"].text = 1
+          XMLHelper.delete_element(new_roof_ins, "Layer")
           XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
-        else
-          XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
         end
       end
       
       # Floors
       new_attic.elements.each("Floors/Floor") do |new_floor|
-        new_floor_ins = new_floor.elements["Insulation"]
-        new_floor_ins.elements["InsulationGrade"].text = 1
-        XMLHelper.delete_element(new_floor_ins, "Layer")
-        if ["vented attic", "unvented attic"].include? attic_type
+        exterior_adjacent_to = XMLHelper.get_value(new_floor, "extension/ExteriorAdjacentTo")
+        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+          new_floor_ins = new_floor.elements["Insulation"]
+          new_floor_ins.elements["InsulationGrade"].text = 1
+          XMLHelper.delete_element(new_floor_ins, "Layer")
           XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
-        else
-          XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
         end
       end
       
       # Walls
       new_attic.elements.each("Walls/Wall") do |new_wall|
-        new_wall_ins = new_wall.elements["Insulation"]
-        new_wall_ins.elements["InsulationGrade"].text = 1
-        XMLHelper.delete_element(new_wall_ins, "Layer")
-        if ["vented attic", "unvented attic"].include? attic_type
+        exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
+        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+          new_wall_ins = new_wall.elements["Insulation"]
+          new_wall_ins.elements["InsulationGrade"].text = 1
+          XMLHelper.delete_element(new_wall_ins, "Layer")
           XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
-        else
-          XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 0.0) # FIXME uninsulated
         end
       end
       
@@ -459,17 +431,25 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_foundations_reference(new_enclosure, orig_details, climate_zone)
     
-    new_foundations = XMLHelper.add_element(new_enclosure, "Foundations")
+    new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
     
     floor_ufactor = get_reference_component_characteristics(climate_zone, "floor")
     wall_ufactor = get_reference_component_characteristics(climate_zone, "basement_wall")
-    slab_rvalue, slab_depth = get_reference_component_characteristics(climate_zone, "foundation")
+    slab_rvalue, slab_depth = get_reference_component_characteristics(climate_zone, "slab_on_grade")
           
-    orig_details.elements.each("Enclosure/Foundations/Foundation") do |orig_foundation|
-    
-      new_foundation = XMLHelper.add_element(new_foundations, "Foundation")
-      XMLHelper.copy_element(new_foundation, orig_foundation, "SystemIdentifier")
-      XMLHelper.copy_element(new_foundation, orig_foundation, "FoundationType")
+    new_foundations.elements.each("Foundation") do |new_foundation|
+      fnd_type = new_foundation.elements["FoundationType"]
+      if fnd_type.elements["Basement[Conditioned='true']"]
+        interior_adjacent_to = "conditioned basement"
+      elsif fnd_type.elements["Basement[Conditioned='false']"]
+        interior_adjacent_to = "unconditioned basement"
+      elsif fnd_type.elements["Crawlspace"]
+        interior_adjacent_to = "crawlspace"
+      elsif fnd_type.elements["SlabOnGrade"]
+        interior_adjacent_to = "living space"
+      elsif fnd_type.elements["Ambient"]  
+        interior_adjacent_to = "ambient"
+      end
         
       '''
       Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
@@ -480,21 +460,14 @@ class EnergyRatingIndex301Ruleset
       4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
       '''
       
-      # FIXME: Need to check the floor is over unconditioned space or outdoors?
-      
-      orig_foundation.elements.each("FrameFloor") do |orig_floor|
-        # Create new floor
-        new_floor = XMLHelper.add_element(new_foundation, "FrameFloor")
-        XMLHelper.copy_element(new_floor, orig_floor, "SystemIdentifier")
-        XMLHelper.copy_element(new_floor, orig_floor, "Area")
-        insulation = XMLHelper.add_element(new_floor, "Insulation")
-        XMLHelper.copy_element(insulation, orig_floor, "Insulation/SystemIdentifier")
-        XMLHelper.add_element(insulation, "InsulationGrade", 1)
-        XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/floor_ufactor)
-        extension = XMLHelper.add_element(new_floor, "extension")
-        XMLHelper.copy_element(extension, orig_floor, "extension/CarpetFraction", 0.0)
-        XMLHelper.copy_element(extension, orig_floor, "extension/CarpetRValue", 2.0)
-        XMLHelper.copy_element(extension, orig_floor, "extension/ExteriorAdjacentTo")
+      new_foundation.elements.each("FrameFloor") do |new_floor|
+        exterior_adjacent_to = XMLHelper.get_value(new_floor, "extension/ExteriorAdjacentTo")
+        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+          new_floor_ins = new_floor.elements["Insulation"]
+          new_floor_ins.elements["InsulationGrade"].text = 1
+          XMLHelper.delete_element(new_floor_ins, "Layer")
+          XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/floor_ufactor)
+        end
       end
   
       '''
@@ -506,21 +479,14 @@ class EnergyRatingIndex301Ruleset
       4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
       '''
       
-      # FIXME: Need to check if the foundation wall is adjacent to living space?
-    
-      orig_foundation.elements.each("FoundationWall") do |orig_wall|
-        # Create new wall
-        new_wall = XMLHelper.add_element(new_foundation, "FoundationWall")
-        XMLHelper.copy_element(new_wall, orig_wall, "SystemIdentifier")
-        XMLHelper.copy_element(new_wall, orig_wall, "Height")
-        XMLHelper.copy_element(new_wall, orig_wall, "Area")
-        XMLHelper.copy_element(new_wall, orig_wall, "BelowGradeDepth")
-        insulation = XMLHelper.add_element(new_wall, "Insulation")
-        XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")
-        XMLHelper.add_element(insulation, "InsulationGrade", 1)
-        XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
-        extension = XMLHelper.add_element(new_wall, "extension")
-        XMLHelper.copy_element(extension, orig_wall, "extension/ExteriorAdjacentTo")
+      new_foundation.elements.each("FoundationWall") do |new_wall|
+        exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
+        if fnd_type.elements["Basement[Conditioned='true']"] and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+          new_wall_ins = new_wall.elements["Insulation"]
+          new_wall_ins.elements["InsulationGrade"].text = 1
+          XMLHelper.delete_element(new_wall_ins, "Layer")
+          XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
+        end
       end
   
       '''
@@ -531,29 +497,23 @@ class EnergyRatingIndex301Ruleset
       
       4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
       '''
-      # FIXME: Need to check for SlabOnGrade foundation type?
-    
-      orig_foundation.elements.each("Slab") do |orig_slab|
-        # Create new slab
-        new_slab = XMLHelper.add_element(new_foundation, "Slab")
-        XMLHelper.copy_element(new_slab, orig_slab, "SystemIdentifier")
-        XMLHelper.copy_element(new_slab, orig_slab, "Area")
-        XMLHelper.add_element(new_slab, "PerimeterInsulationDepth", slab_depth)
-        XMLHelper.add_element(new_slab, "UnderSlabInsulationWidth", 0)
-        XMLHelper.copy_element(new_slab, orig_slab, "DepthBelowGrade")
-        perim_ins = XMLHelper.add_element(new_slab, "PerimeterInsulation")
-        XMLHelper.copy_element(perim_ins, orig_slab, "PerimeterInsulation/SystemIdentifier")
-        perim_layer = XMLHelper.add_element(perim_ins, "Layer")
-        XMLHelper.add_element(perim_layer, "InstallationType", "continuous")
-        XMLHelper.add_element(perim_layer, "NominalRValue", slab_rvalue)
-        under_ins = XMLHelper.add_element(new_slab, "UnderSlabInsulation")
-        XMLHelper.copy_element(under_ins, orig_slab, "UnderSlabInsulation/SystemIdentifier")
-        under_layer = XMLHelper.add_element(under_ins, "Layer")
-        XMLHelper.add_element(under_layer, "InstallationType", "continuous")
-        XMLHelper.add_element(under_layer, "NominalRValue", 0)
-        extension = XMLHelper.add_element(new_slab, "extension")
-        XMLHelper.add_element(extension, "CarpetFraction", 0.8)
-        XMLHelper.add_element(extension, "CarpetRValue", 2.0)
+      new_foundation.elements.each("Slab") do |new_slab|
+        if fnd_type.elements["SlabOnGrade"] and is_external_thermal_boundary(interior_adjacent_to, "ground")
+          new_slab.elements["PerimeterInsulationDepth"].text = slab_depth
+          new_slab.elements["UnderSlabInsulationWidth"].text = 0
+          perim_ins = new_slab.elements["PerimeterInsulation"]
+          XMLHelper.delete_element(perim_ins, "Layer")
+          perim_layer = XMLHelper.add_element(perim_ins, "Layer")
+          XMLHelper.add_element(perim_layer, "InstallationType", "continuous")
+          XMLHelper.add_element(perim_layer, "NominalRValue", slab_rvalue)
+          under_ins = new_slab.elements["UnderSlabInsulation"]
+          XMLHelper.delete_element(under_ins, "Layer")
+          under_layer = XMLHelper.add_element(under_ins, "Layer")
+          XMLHelper.add_element(under_layer, "InstallationType", "continuous")
+          XMLHelper.add_element(under_layer, "NominalRValue", 0)
+        end
+        new_slab.elements["extension/CarpetFraction"].text = 0.8
+        new_slab.elements["extension/CarpetRValue"].text = 2.0
       end
       
     end
@@ -614,6 +574,8 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_walls_reference(new_enclosure, orig_details, climate_zone)
   
+    new_walls = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Walls")
+  
     '''
     Table 4.2.2(1) - Above-grade walls
     Type: wood frame
@@ -625,31 +587,19 @@ class EnergyRatingIndex301Ruleset
     4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
     '''
     
-    # FIXME: Need to check wall is between living space and outside/unconditioned space?
-    
     ufactor = get_reference_component_characteristics(climate_zone, "frame_wall")
     
-    new_walls = XMLHelper.add_element(new_enclosure, "Walls")
-    orig_details.elements.each("Enclosure/Walls/Wall") do |orig_wall|
-      # Create new wall
-      new_wall = XMLHelper.add_element(new_walls, "Wall")
-      XMLHelper.copy_element(new_wall, orig_wall, "SystemIdentifier")
-      XMLHelper.add_element(new_wall, "WallType/WoodStud") # FIXME?
-      XMLHelper.copy_element(new_wall, orig_wall, "Area")
-      # Convert to net wall area; when windows/doors are added, we will convert back to gross wall area.
-      # This implies that we are preserving net wall area, not gross wall area, in the Reference Home. In theory,
-      # we'd prefer the opposite, but the opposite is not possible -- for example, a Reference Home with an inset attached
-      # garage that has no exterior wall on one side.
-      new_wall.elements["Area"].text = Float(new_wall.elements["Area"].text) - get_wall_subsurface_area(orig_wall, orig_details)
-      XMLHelper.add_element(new_wall, "Siding", "vinyl siding")
-      XMLHelper.add_element(new_wall, "SolarAbsorptance", "0.75")
-      XMLHelper.add_element(new_wall, "Emittance", "0.90")
-      insulation = XMLHelper.add_element(new_wall, "Insulation")
-      XMLHelper.copy_element(insulation, orig_wall, "Insulation/SystemIdentifier")
-      XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
-      extension = XMLHelper.add_element(new_wall, "extension")
-      XMLHelper.copy_element(extension, orig_wall, "extension/ExteriorAdjacentTo")
-      XMLHelper.copy_element(extension, orig_wall, "extension/InteriorAdjacentTo")
+    new_walls.elements.each("Wall") do |new_wall|
+      interior_adjacent_to = XMLHelper.get_value(new_wall, "extension/InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
+      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        new_wall.elements["Siding"].text = "vinyl siding"
+        new_wall.elements["SolarAbsorptance"].text = 0.75
+        new_wall.elements["Emittance"].text = 0.90
+        insulation = new_wall.elements["Insulation"]
+        XMLHelper.delete_element(insulation, "Layer")
+        XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
+      end
     end
     
   end
@@ -674,6 +624,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_wall, orig_wall, "Area")
       studs = XMLHelper.add_element(new_wall, "Studs")
       XMLHelper.copy_element(studs, orig_wall, "Studs/FramingFactor")
+      XMLHelper.copy_element(studs, orig_wall, "Studs/Material")
       XMLHelper.copy_element(new_wall, orig_wall, "Siding")
       XMLHelper.copy_element(new_wall, orig_wall, "SolarAbsorptance")
       XMLHelper.copy_element(new_wall, orig_wall, "Emittance")
@@ -774,8 +725,6 @@ class EnergyRatingIndex301Ruleset
       set_window_interior_shading_reference(new_window)
     end
 
-    # Adjust wall gross area
-    wall.elements["Area"].text = Float(wall.elements["Area"].text) + total_window_area
   end
   
   def self.set_window_interior_shading_reference(window)
@@ -985,6 +934,8 @@ class EnergyRatingIndex301Ruleset
       heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
       sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
+      dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
+      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
       sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
       furnace = XMLHelper.add_element(sys_type, "Furnace")
       XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
@@ -1000,6 +951,8 @@ class EnergyRatingIndex301Ruleset
       heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
       sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
+      dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
+      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
       sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
       boiler = XMLHelper.add_element(sys_type, "Boiler")
       XMLHelper.add_element(boiler, "BoilerType", "hot water")
@@ -1019,6 +972,8 @@ class EnergyRatingIndex301Ruleset
       cool_sys = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
       sys_id = XMLHelper.add_element(cool_sys, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
+      dist = XMLHelper.add_element(cool_sys, "DistributionSystem")
+      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
       XMLHelper.add_element(cool_sys, "CoolingSystemType", "central air conditioning")
       XMLHelper.add_element(cool_sys, "CoolingSystemFuel", "electricity")
       XMLHelper.add_element(cool_sys, "FractionCoolLoadServed", 1.0)
@@ -1039,6 +994,8 @@ class EnergyRatingIndex301Ruleset
       heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
       sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HeatPump")
+      dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
+      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
       XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatEfficiency")
@@ -1070,7 +1027,6 @@ class EnergyRatingIndex301Ruleset
     cooling system efficiencies
     '''
 
-    # FIXME: What about when there is a boiler? Don't write heating DSE?
     new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
     sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACDistribution")
@@ -1128,6 +1084,11 @@ class EnergyRatingIndex301Ruleset
     
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
     
+    dist_id = nil
+    if orig_details.elements["Systems/HVAC/HVACDistribution"]
+      dist_id = orig_details.elements["Systems/HVAC/HVACDistribution/SystemIdentifier"].attributes["id"]
+    end
+    
     # Heating
     heat_type = nil
     if heating_system.nil? and heat_pump_system.nil?
@@ -1157,6 +1118,10 @@ class EnergyRatingIndex301Ruleset
       heating_system = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
       sys_id = XMLHelper.add_element(heating_system, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
+      if not dist_id.nil?
+        dist = XMLHelper.add_element(heating_system, "DistributionSystem")
+        XMLHelper.add_attribute(dist, "idref", dist_id)
+      end
       sys_type = XMLHelper.add_element(heating_system, "HeatingSystemType")
       furnace = XMLHelper.add_element(sys_type, "Furnace")
       XMLHelper.add_element(heating_system, "HeatingSystemFuel", "natural gas")
@@ -1188,6 +1153,10 @@ class EnergyRatingIndex301Ruleset
       cooling_system = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
       sys_id = XMLHelper.add_element(cooling_system, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
+      if not dist_id.nil?
+        dist = XMLHelper.add_element(cooling_system, "DistributionSystem")
+        XMLHelper.add_attribute(dist, "idref", dist_id)
+      end
       XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
       XMLHelper.add_element(cooling_system, "CoolingSystemFuel", "electricity")
       XMLHelper.add_element(cooling_system, "FractionCoolLoadServed", 1.0)
@@ -1222,6 +1191,10 @@ class EnergyRatingIndex301Ruleset
       hspf = 7.7
       heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
       sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
+      if not dist_id.nil?
+        dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
+        XMLHelper.add_attribute(dist, "idref", dist_id)
+      end
       XMLHelper.add_attribute(sys_id, "id", "HeatPump")
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
       XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
@@ -1312,17 +1285,15 @@ class EnergyRatingIndex301Ruleset
       
       fan_type = XMLHelper.get_value(orig_whole_house_fan, "FanType")
       
-      fan_power_w_per_cfm = nil
-      tre = 0.0
-      sre = 0.0
-      if fan_type == 'supply only' or fan_type == 'exhaust only'
-        fan_power_w_per_cfm = 0.35
-      elsif fan_type == 'balanced' # FIXME: Not available in HPXML
-        fan_power_w_per_cfm = 0.70
+      fan_cfm = 50.0 # FIXME: Calculate via 62.2 2013
+      fan_power_w = nil
+      if fan_type == 'supply only' or fan_type == 'exhaust only' or fan_type == 'central fan integrated supply'
+        fan_power_w = 0.35 * fan_cfm
+      elsif fan_type == 'balanced'
+        fan_power_w = 0.70 * fan_cfm
       elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
-        fan_power_w_per_cfm = 1.00
-        fan_type = 'heat recovery ventilator'
-        sre = 0.0001 # Table 4.2.2(1) - Air exchange rate: "assuming no energy recovery"
+        fan_power_w = 1.00 * fan_cfm
+        fan_type = 'balanced'
       end
       
       new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
@@ -1331,13 +1302,10 @@ class EnergyRatingIndex301Ruleset
       sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
       XMLHelper.add_element(new_vent_fan, "FanType", fan_type)
-      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
+      XMLHelper.add_element(new_vent_fan, "RatedFlowRate", fan_cfm)
+      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24) # FIXME: CFIS
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
-      XMLHelper.add_element(new_vent_fan, "TotalRecoveryEfficiency", tre)
-      XMLHelper.add_element(new_vent_fan, "SensibleRecoveryEfficiency", sre)
-      extension = XMLHelper.add_element(new_vent_fan, "extension")
-      XMLHelper.add_element(extension, "FanPowerWperCFM", fan_power_w_per_cfm)
-      XMLHelper.add_element(extension, "Frac2013ASHRAE622", 1.0)
+      XMLHelper.add_element(new_vent_fan, "FanPower", fan_power_w)
       
     end
       
@@ -1358,29 +1326,24 @@ class EnergyRatingIndex301Ruleset
 
     if not orig_vent_fan.nil?
       
-      fan_cfm = Float(XMLHelper.get_value(orig_vent_fan, "RatedFlowRate"))
-      fan_power_w = Float(XMLHelper.get_value(orig_vent_fan, "FanPower"))
-      fan_power_w_per_cfm = fan_power_w / fan_cfm
-      
       new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
       new_vent_fans = XMLHelper.add_element(new_mech_vent, "VentilationFans")
       new_vent_fan = XMLHelper.add_element(new_vent_fans, "VentilationFan")
       sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "FanType")
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "RatedFlowRate") # FIXME
       XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "TotalRecoveryEfficiency")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "SensibleRecoveryEfficiency")
-      extension = XMLHelper.add_element(new_vent_fan, "extension")
-      XMLHelper.add_element(extension, "FanPowerWperCFM", fan_power_w_per_cfm)
-      XMLHelper.add_element(extension, "Frac2013ASHRAE622", 1.0) # FIXME: This is the minimum, not specified, value
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "FanPower")
 
     end
     
   end
   
-  def self.set_systems_water_heating_reference(new_systems, orig_details, nbeds, nbaths)
+  def self.set_systems_water_heating_reference(new_systems, orig_details, cfa, nbeds, nbaths, ncfl)
   
     new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
   
@@ -1434,6 +1397,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
     XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
     XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
+    XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FractionDHWLoadServed")
     XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
     XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
     if not wh_re.nil?
@@ -1453,15 +1417,20 @@ class EnergyRatingIndex301Ruleset
     '''
     
     ref_w_gpd = get_waste_gpd_reference(nbeds)
+    bsmnt = get_conditioned_basement_integer(orig_details)
+    ref_pipe_l = get_pipe_length_reference(cfa, ncfl, bsmnt)
+    ref_loop_l = get_loop_length_reference(ref_pipe_l)
     
     # New hot water distribution
     new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
     sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
     sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
-    sys_type = XMLHelper.add_element(sys_type, "Standard")
+    standard = XMLHelper.add_element(sys_type, "Standard")
+    XMLHelper.add_element(standard, "PipingLength", ref_pipe_l)
     extension = XMLHelper.add_element(new_hw_dist, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
+    XMLHelper.add_element(extension, "RefLoopL", ref_loop_l)
     
     '''
     ANSI/RESNET 301-2014 Addendum A-2015
@@ -1481,11 +1450,10 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_fixture, "WaterFixtureType", "other")
     extension = XMLHelper.add_element(new_fixture, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-    XMLHelper.add_element(extension, "LowFlow", false)
     
   end
   
-  def self.set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds, nbaths)
+  def self.set_systems_water_heating_rated(new_systems, orig_details, cfa, nbeds, nbaths, ncfl)
   
     new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
   
@@ -1520,6 +1488,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FuelType")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "WaterHeaterType")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "TankVolume")
+      XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FractionDHWLoadServed")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "HeatingCapacity")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "EnergyFactor")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
@@ -1546,6 +1515,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
       XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
       XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
+      XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FractionDHWLoadServed")
       XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
       XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       if not wh_re.nil?
@@ -1597,7 +1567,7 @@ class EnergyRatingIndex301Ruleset
     
     '''
     
-    orig_hw_sys = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
+    orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
     
     low_flow_fixtures = true
     orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType!='other']") do |wf|
@@ -1609,43 +1579,39 @@ class EnergyRatingIndex301Ruleset
     is_recirc = false
     recirc_control_type = nil
     recirc_pump_power = nil
-    if not orig_hw_sys.elements["SystemType/Recirculation"].nil?
+    if not orig_hw_dist.elements["SystemType/Recirculation"].nil?
       is_recirc = true
-      recirc_branch_l = Float(XMLHelper.get_value(orig_hw_sys, "SystemType/Recirculation/BranchPipingLoopLength"))
-      recirc_loop_l = Float(XMLHelper.get_value(orig_hw_sys, "SystemType/Recirculation/RecirculationPipingLoopLength"))
-      recirc_control_type = XMLHelper.get_value(orig_hw_sys, "SystemType/Recirculation/ControlType")
-      recirc_pump_power = Float(XMLHelper.get_value(orig_hw_sys, "SystemType/Recirculation/PumpPower"))
+      recirc_branch_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/BranchPipingLoopLength"))
+      recirc_loop_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/RecirculationPipingLoopLength"))
+      recirc_control_type = XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/ControlType")
+      recirc_pump_power = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/PumpPower"))
     else
-      pipe_l = Float(XMLHelper.get_value(orig_hw_sys, "SystemType/Standard/PipingLength"))
+      pipe_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Standard/PipingLength"))
     end
-    pipe_ins_rvalue = Float(XMLHelper.get_value(orig_hw_sys, "PipeInsulation/PipeRValue"))
+    pipe_ins_rvalue = Float(XMLHelper.get_value(orig_hw_dist, "PipeInsulation/PipeRValue"))
     
-    bsmnt = 0.0
-    if not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?
-      bsmnt = 1.0
-    end
-    nfl = Float(XMLHelper.get_value(orig_details, "BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    bsmnt = get_conditioned_basement_integer(orig_details)
     
     # Waste gpd
-    rated_w_gpd = get_waste_gpd_rated(is_recirc, pipe_ins_rvalue, nbeds, pipe_l, recirc_branch_l, cfa, nfl, bsmnt, low_flow_fixtures)
+    rated_w_gpd = get_waste_gpd_rated(is_recirc, pipe_ins_rvalue, nbeds, pipe_l, recirc_branch_l, cfa, ncfl, bsmnt, low_flow_fixtures)
     
     # Recirc pump annual electricity consumption
     recirc_pump_annual_kwh = get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
     
     # Calculate energy delivery effectiveness adjustment for energy consumption
-    ec_adj = get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_ins_rvalue, pipe_l, recirc_loop_l, cfa, nfl, bsmnt)
+    ec_adj = get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_ins_rvalue, pipe_l, recirc_loop_l, cfa, ncfl, bsmnt)
 
     has_dwhr = false
-    if not orig_hw_sys.elements["DrainWaterHeatRecovery"].nil?
+    if not orig_hw_dist.elements["DrainWaterHeatRecovery"].nil?
       has_dwhr = true
-      eff = Float(XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/Efficiency"))
-      equal_flow = Boolean(XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/EqualFlow"))
-      if XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/FacilitiesConnected") == "all"
+      eff = Float(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/Efficiency"))
+      equal_flow = Boolean(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/EqualFlow"))
+      if XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "all"
         all_showers = true
-      elsif XMLHelper.get_value(orig_hw_sys, "DrainWaterHeatRecovery/FacilitiesConnected") == "one"
+      elsif XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "one"
         all_showers = false
       end
-      dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(nbeds, nfl, bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
+      dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(nbeds, bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
     end
     
     # New hot water distribution
@@ -1659,7 +1625,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(sys_type, "Standard")
     end
     if has_dwhr
-      new_dwhr = XMLHelper.copy_element(new_hw_dist, orig_hw_sys, "DrainWaterHeatRecovery")
+      new_dwhr = XMLHelper.copy_element(new_hw_dist, orig_hw_dist, "DrainWaterHeatRecovery")
       extension = XMLHelper.add_element(new_dwhr, "extension")
       XMLHelper.add_element(extension, "EfficiencyAdjustment", dwhr_eff_adj)
       XMLHelper.add_element(extension, "FracImpactedHotWater", dwhr_iFrac)
@@ -1691,7 +1657,6 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_fixture, "WaterFixtureType", "other")
     extension = XMLHelper.add_element(new_fixture, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
-    XMLHelper.add_element(extension, "LowFlow", low_flow_fixtures)
 
   end
   
@@ -1707,7 +1672,7 @@ class EnergyRatingIndex301Ruleset
     '''
   
     clothes_washer_kwh = 38.0 + 0.0 * cfa + 10.0 * nbeds
-    clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat()
+    clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(nbeds, clothes_washer_kwh)
     clothes_washer_gpd = (4.52 * (164.0 + 46.5 * nbeds)) * ((3.0 * 2.08 + 1.59)/(2.874 * 2.08 + 1.59)) / 365.0
     
     new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
@@ -1762,7 +1727,7 @@ class EnergyRatingIndex301Ruleset
     ncy = (3.0 / 2.847) * (164 + nbeds * 46.5)
     acy = ncy * ((3.0 * 2.08 + 1.59) / (cap * 2.08 + 1.59)) #Adjusted Cycles per Year
     clothes_washer_kwh = ((ler / 392.0) - ((ler * elec_rate - agc) / (21.9825 * elec_rate - gas_rate) / 392.0) * 21.9825) * acy
-    clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat()
+    clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(nbeds, clothes_washer_kwh)
     clothes_washer_gpd = 60.0 * ((ler * elec_rate - agc) / (21.9825 * elec_rate - gas_rate) / 392.0) * acy / 365.0
     
     new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
@@ -1789,7 +1754,7 @@ class EnergyRatingIndex301Ruleset
       clothes_dryer_kwh = 41.0 + 0.0 * cfa + 11.7 * nbeds
       clothes_dryer_therm = 18.8 + 0.0 * cfa + 5.3 * nbeds
     end
-    clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat()
+    clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, nbeds, clothes_dryer_kwh, clothes_dryer_therm)
     
     new_clothes_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
     sys_id = XMLHelper.add_element(new_clothes_dryer, "SystemIdentifier")
@@ -1849,7 +1814,7 @@ class EnergyRatingIndex301Ruleset
       clothes_dryer_therm = clothes_dryer_kwh * (3412.0/100000) * 0.93 * (3.01/ef_dry)
       clothes_dryer_kwh = clothes_dryer_kwh * 0.07 * (3.01/ef_dry)
     end
-    clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat()
+    clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, nbeds, clothes_dryer_kwh, clothes_dryer_therm)
     
     new_clothes_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
     sys_id = XMLHelper.add_element(new_clothes_dryer, "SystemIdentifier")
@@ -1874,7 +1839,7 @@ class EnergyRatingIndex301Ruleset
     '''
   
     dishwasher_kwh = 78.0 + 0.0 * cfa + 31.0 * nbeds
-    dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat()
+    dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(nbeds, dishwasher_kwh)
     dishwasher_gpd = ((88.4 + 34.9 * nbeds) * 8.16) / 365.0
     
     new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
@@ -1914,7 +1879,7 @@ class EnergyRatingIndex301Ruleset
     end
     dwcpy = (88.4 + 34.9 * nbeds) * (12.0 / cap)
     dishwasher_kwh = ((86.3 + 47.73 / ef) / 215) * dwcpy
-    dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat()
+    dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(nbeds, dishwasher_kwh)
     dishwasher_gpd = dwcpy * (4.6415 * (1.0 / ef) - 1.9295) / 365.0
   
     new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
@@ -1939,6 +1904,9 @@ class EnergyRatingIndex301Ruleset
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
     XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
+    extension = XMLHelper.add_element(new_fridge, "extension")
+    XMLHelper.add_element(extension, "FracSensible", 1.0)
+    XMLHelper.add_element(extension, "FracLatent", 0.0)
     
   end
   
@@ -1974,7 +1942,7 @@ class EnergyRatingIndex301Ruleset
       cooking_range_kwh = 22.6 + 0.0 * cfa + 2.7 * nbeds
       cooking_range_therm = 22.6 + 0.0 * cfa + 2.7 * nbeds
     end
-    cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel)
+    cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(nbeds, range_fuel, cooking_range_kwh, cooking_range_therm)
     
     new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")
     sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
@@ -2003,7 +1971,6 @@ class EnergyRatingIndex301Ruleset
       Nbr = Number of Bedrooms
     '''
     
-    # FIXME: How to handle different fuel types for CookingRange vs Oven?
     range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
     oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
     range_is_induction = Boolean(XMLHelper.get_value(orig_details, "Appliances/CookingRange/IsInduction"))
@@ -2021,11 +1988,11 @@ class EnergyRatingIndex301Ruleset
     
     cooking_range_kwh = burner_ef * oven_ef * (331 + 39.0 * nbeds)
     cooking_range_therm = 0.0
-    if range_fuel != 'electricity'
+    if range_fuel != 'electricity' or oven_fuel != 'electricity'
       cooking_range_kwh = 22.6 + 2.7 * nbeds
       cooking_range_therm = oven_ef * (22.6 + 2.7 * nbeds)
     end
-    cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel)
+    cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(nbeds, range_fuel, cooking_range_kwh, cooking_range_therm)
     
     new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")
     sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
@@ -2146,8 +2113,8 @@ class EnergyRatingIndex301Ruleset
     '''
     
     # Residual MELs
-    residual_mels_kwh = get_residual_mels_kwh(cfa, nbeds)
-    residual_mels_sens, residual_mels_lat = get_residual_mels_sens_lat(cfa)
+    residual_mels_kwh = get_residual_mels_kwh(cfa)
+    residual_mels_sens, residual_mels_lat = get_residual_mels_sens_lat(cfa, residual_mels_kwh)
     residual_mels = XMLHelper.add_element(new_misc_loads, "PlugLoad")
     sys_id = XMLHelper.add_element(residual_mels, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Residual_MELs")
@@ -2161,6 +2128,7 @@ class EnergyRatingIndex301Ruleset
     
     # Televisions
     televisions_kwh = get_televisions_kwh(cfa, nbeds)
+    televisions_sens, televisions_lat = get_televisions_sens_lat(nbeds, televisions_kwh)
     television = XMLHelper.add_element(new_misc_loads, "PlugLoad")
     sys_id = XMLHelper.add_element(television, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Television")
@@ -2168,6 +2136,9 @@ class EnergyRatingIndex301Ruleset
     television_load = XMLHelper.add_element(television, "Load")
     XMLHelper.add_element(television_load, "Units", "kWh/year")
     XMLHelper.add_element(television_load, "Value", televisions_kwh)
+    extension = XMLHelper.add_element(television, "extension")
+    XMLHelper.add_element(extension, "FracSensible", televisions_sens)
+    XMLHelper.add_element(extension, "FracLatent", televisions_lat)
     
   end
   
@@ -2182,8 +2153,8 @@ class EnergyRatingIndex301Ruleset
     '''
     
     # Residual MELs
-    residual_mels_kwh = get_residual_mels_kwh(cfa, nbeds)
-    residual_mels_sens, residual_mels_lat = get_residual_mels_sens_lat(cfa)
+    residual_mels_kwh = get_residual_mels_kwh(cfa)
+    residual_mels_sens, residual_mels_lat = get_residual_mels_sens_lat(cfa, residual_mels_kwh)
     residual_mels = XMLHelper.add_element(new_misc_loads, "PlugLoad")
     sys_id = XMLHelper.add_element(residual_mels, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Residual_MELs")
@@ -2197,6 +2168,7 @@ class EnergyRatingIndex301Ruleset
     
     # Televisions
     televisions_kwh = get_televisions_kwh(cfa, nbeds)
+    televisions_sens, televisions_lat = get_televisions_sens_lat(nbeds, televisions_kwh)
     television = XMLHelper.add_element(new_misc_loads, "PlugLoad")
     sys_id = XMLHelper.add_element(television, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Television")
@@ -2204,6 +2176,9 @@ class EnergyRatingIndex301Ruleset
     television_load = XMLHelper.add_element(television, "Load")
     XMLHelper.add_element(television_load, "Units", "kWh/year")
     XMLHelper.add_element(television_load, "Value", televisions_kwh)
+    extension = XMLHelper.add_element(television, "extension")
+    XMLHelper.add_element(extension, "FracSensible", televisions_sens)
+    XMLHelper.add_element(extension, "FracLatent", televisions_lat)
     
   end
 
@@ -2269,10 +2244,10 @@ class EnergyRatingIndex301Ruleset
       else
         return nil
       end
-    elsif component_type == "foundation"
+    elsif component_type == "slab_on_grade"
       # Slab-on-Grade R-Value & Depth (ft)
       if ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C"].include? climate_zone
-        return 0.0, nil
+        return 0.0, 0.0
       elsif ["4A", "4B", "4C", "5A", "5B", "5C"].include? climate_zone
         return 10.0, 2.0
       elsif ["6A", "6B", "6C", "7", "8"].include? climate_zone
@@ -2285,8 +2260,12 @@ class EnergyRatingIndex301Ruleset
     end
   end
   
-  def self.get_pipe_length_reference(cfa, nfl, bsmnt)
-    return 2.0 * (cfa / nfl)**0.5 + 10.0 * nfl + 5.0 * bsmnt
+  def self.get_pipe_length_reference(cfa, ncfl, bsmnt)
+    return 2.0 * (cfa / ncfl)**0.5 + 10.0 * ncfl + 5.0 * bsmnt
+  end
+  
+  def self.get_loop_length_reference(ref_pipe_l)
+    return 2.0 * ref_pipe_l - 20.0
   end
   
   def self.get_fixture_effectiveness_rated(low_flow_fixtures)
@@ -2311,7 +2290,7 @@ class EnergyRatingIndex301Ruleset
     return 9.8 * (nbeds**0.43)
   end
   
-  def self.get_waste_gpd_rated(is_recirc, pipe_ins_rvalue, nbeds, pipe_l, recirc_branch_l, cfa, nfl, bsmnt, low_flow_fixtures)
+  def self.get_waste_gpd_rated(is_recirc, pipe_ins_rvalue, nbeds, pipe_l, recirc_branch_l, cfa, ncfl, bsmnt, low_flow_fixtures)
     sys_factor = 1.0
     if is_recirc and pipe_ins_rvalue == 0.0
       sys_factor = 1.11
@@ -2326,7 +2305,7 @@ class EnergyRatingIndex301Ruleset
     if is_recirc
       p_ratio = recirc_branch_l / 10.0
     else
-      ref_pipe_l = get_pipe_length_reference(cfa, nfl, bsmnt)
+      ref_pipe_l = get_pipe_length_reference(cfa, ncfl, bsmnt)
       p_ratio = pipe_l / ref_pipe_l
     end
     
@@ -2343,48 +2322,66 @@ class EnergyRatingIndex301Ruleset
     return f_eff * (o_w_gpd + s_w_gpd * wd_eff)
   end
   
-  def self.get_clothes_washer_sens_lat()
-    sens = 0.3 * 0.9
-    lat = 0.3 * 0.1
-    return sens, lat
+  def self.get_clothes_washer_sens_lat(nbeds, clothes_washer_kwh)
+    load_sens = 95.0 + 26.0 * nbeds # Btu/day
+    load_lat = 11.0 + 3.0 * nbeds # Btu/day
+    total = OpenStudio::convert(clothes_washer_kwh, "kWh", "Btu").get/365.0 # Btu/day
+    return load_sens/total, load_lat/total
   end
   
-  def self.get_clothes_dryer_sens_lat()
-    sens = 0.15 * 0.9
-    lat = 0.15 * 0.1
-    return sens, lat
-  end
-  
-  def self.get_dishwasher_sens_lat()
-    sens = 0.6 * 0.5
-    lat = 0.6 * 0.5
-    return sens, lat
-  end
-  
-  def self.get_cooking_range_sens_lat(range_fuel)
-    sens = 0.8 * 0.9
-    lat = 0.8 * 0.1
-    if range_fuel != 'electricity'
-      sens = 0.8 * 0.8
-      lat = 0.8 * 0.2
+  def self.get_clothes_dryer_sens_lat(dryer_fuel, nbeds, clothes_dryer_kwh, clothes_dryer_therm)
+    if dryer_fuel != 'electricity'
+      load_sens = 738.0 + 209.0 * nbeds # Btu/day
+      load_lat = 91.0 + 26.0 * nbeds # Btu/day
+    else
+      load_sens = 661.0 + 188.0 * nbeds # Btu/day
+      load_lat = 73.0 + 21.0 * nbeds # Btu/day
     end
-    return sens, lat
+    total = OpenStudio::convert(clothes_dryer_kwh, "kWh", "Btu").get/365.0  # Btu/day
+    total += OpenStudio::convert(clothes_dryer_therm, "therm", "Btu").get/365.0 # Btu/day
+    return load_sens/total, load_lat/total
   end
   
-  def self.get_residual_mels_kwh(cfa, nbeds)
-    return 0.0 + 0.91 * cfa + 0.0 * nbeds
+  def self.get_dishwasher_sens_lat(nbeds, dishwasher_kwh)
+    load_sens = 219.0 + 87.0 * nbeds # Btu/day
+    load_lat = 219.0 + 87.0 * nbeds # Btu/day
+    total = OpenStudio::convert(dishwasher_kwh, "kWh", "Btu").get/365.0
+    return load_sens/total, load_lat/total
   end
   
-  def self.get_residual_mels_sens_lat(cfa)
-    load_sens = 7.27 * cfa
-    load_lat = 0.38 * cfa
-    sens = load_sens/(load_sens + load_lat)
-    lat = 1.0 - sens
-    return sens, lat
+  def self.get_cooking_range_sens_lat(nbeds, range_fuel, cooking_range_kwh, cooking_range_therm)
+    if range_fuel != 'electricity'
+      load_sens = 4086.0 + 488.0 * nbeds # Btu/day
+      load_lat = 1037.0 + 124.0 * nbeds # Btu/day
+    else
+      load_sens = 2228.0 + 262.0 * nbeds # Btu/day
+      load_lat = 248.0 + 29.0 * nbeds # Btu/day
+    end
+    total = OpenStudio::convert(cooking_range_kwh, "kWh", "Btu").get/365.0 # Btu/day
+    total += OpenStudio::convert(cooking_range_therm, "therm", "Btu").get/365.0 # Btu/day
+    return load_sens/total, load_lat/total
+  end
+  
+  def self.get_residual_mels_kwh(cfa)
+    return 0.91 * cfa
+  end
+  
+  def self.get_residual_mels_sens_lat(cfa, residual_mels_kwh)
+    load_sens = 7.27 * cfa # Btu/day
+    load_lat = 0.38 * cfa # Btu/day
+    total = OpenStudio::convert(residual_mels_kwh, "kWh", "Btu").get/365.0 # Btu/day
+    return load_sens/total, load_lat/total
   end
   
   def self.get_televisions_kwh(cfa, nbeds)
     return 413.0 + 0.0 * cfa + 69.0 * nbeds
+  end
+  
+  def self.get_televisions_sens_lat(nbeds, televisions_kwh)
+    load_sens = 3861.0 + 645.0 * nbeds # Btu/day
+    load_lat = 0.0 # Btu/day
+    total = OpenStudio::convert(televisions_kwh, "kWh", "Btu").get/365.0 # Btu/day
+    return load_sens/total, load_lat/total
   end
   
   def self.get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
@@ -2485,7 +2482,7 @@ class EnergyRatingIndex301Ruleset
     return nil
   end
   
-  def self.get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_ins_rvalue, pipe_l, loop_l, cfa, nfl, bsmnt)
+  def self.get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_ins_rvalue, pipe_l, loop_l, cfa, ncfl, bsmnt)
     '''
     Results from standard hot water energy consumption calculations considering only tested Energy Factor data (stdECHW) shall be adjusted to account for the energy delivery effectiveness of the hot water distribution system in accordance with equation 4.2-16.
       ECHW = stdECHW * (Ewaste + 128) / 160 Eq. 4.2-16
@@ -2510,18 +2507,18 @@ class EnergyRatingIndex301Ruleset
     oew_fact = ew_fact * o_frac # standard operating condition portion of hot water energy waste
     ocd_eff = 0.0 # FIXME: Need an HPXML input for this?
     sew_fact = ew_fact - oew_fact
-    ref_pipe_l = get_pipe_length_reference(cfa, nfl, bsmnt)
+    ref_pipe_l = get_pipe_length_reference(cfa, ncfl, bsmnt)
     if not is_recirc
       pe_ratio = pipe_l / ref_pipe_l
     else
-      ref_loop_l = 2.0 * ref_pipe_l - 20.0
+      ref_loop_l = get_loop_length_reference(ref_pipe_l)
       pe_ratio = loop_l / ref_loop_l
     end
     e_waste = oew_fact * (1.0 - ocd_eff) + sew_fact * pe_ratio
     return (e_waste + 128.0) / 160.0
   end
   
-  def self.get_dwhr_factors(nbeds, nfl, bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
+  def self.get_dwhr_factors(nbeds, bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
     '''
     4.2.2.5.2.11.1 Drain Water Heat Recovery (DWHR) Units
     
@@ -2567,7 +2564,7 @@ class EnergyRatingIndex301Ruleset
     if is_recirc
       pLength = recirc_branch_l
     else
-      pLength = pipe_l + 10.0 * nfl + 5.0 * bsmnt
+      pLength = pipe_l
     end
     plc = 1 - 0.0002 * pLength # piping loss coefficient
     
@@ -2600,8 +2597,8 @@ class EnergyRatingIndex301Ruleset
     present in the home 16.5 hours per day.
     '''
     
-    sens_gains = 3716
-    lat_gains = 2884
+    sens_gains = 3716.0
+    lat_gains = 2884.0
     tot_gains = sens_gains + lat_gains
     
     num_occ = nbeds
@@ -2642,6 +2639,47 @@ class EnergyRatingIndex301Ruleset
       end
     end
     return false
+  end
+  
+  def self.get_conditioned_basement_integer(orig_details)
+    bsmnt = 0.0
+    if not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?
+      bsmnt = 1.0
+    end
+    return bsmnt
+  end
+  
+  def self.is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+    interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
+    exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
+    return (interior_conditioned != exterior_conditioned)
+  end
+  
+  def self.is_adjacent_to_conditioned(adjacent_to)
+    if adjacent_to == "living space"
+      return true
+    elsif adjacent_to == "garage"
+      return false
+    elsif adjacent_to == "vented attic"
+      return false
+    elsif adjacent_to == "unvented attic"
+      return false
+    elsif adjacent_to == "cape cod"
+      return true
+    elsif adjacent_to == "cathedral ceiling"
+      return true
+    elsif adjacent_to == "unconditioned basement"
+      return false
+    elsif adjacent_to == "conditioned basement"
+      return true
+    elsif adjacent_to == "crawlspace"
+      return false
+    elsif adjacent_to == "ambient"
+      return false
+    elsif adjacent_to == "ground"
+      return false
+    end
+    fail "Unexpected adjacent_to (#{adjacent_to})."
   end
   
 end

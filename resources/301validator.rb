@@ -1,6 +1,11 @@
 class EnergyRatingIndex301Validator
 
-  def self.run_validator(hpxml_doc, errors)
+  # TODO: Combine has/counts into, e.g., {foo=>[], foo=>[0,1]};
+  # TODO: Separate out OS/E+ limitations from ERI Use Case
+
+  def self.run_validator(hpxml_doc)
+  
+    errors = []
   
     # Every file must have this number of elements
     unconditional_counts = {
@@ -13,8 +18,9 @@ class EnergyRatingIndex301Validator
             '//CoolingSystem | //HeatPump' => [0,1],
             '//AirDistribution' => [0,1],
             '//HydronicDistribution' => [0,1],
+            '//HVACControl' => [0,1],
             '//VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
-            '//WaterHeatingSystem' => [0,1],
+            '//WaterHeatingSystem' => [1],
             '//HotWaterDistribution' => [1],
             '//PVSystem' => [0,1],
             '//ClothesWasher' => [1],
@@ -22,7 +28,6 @@ class EnergyRatingIndex301Validator
             '//Dishwasher' => [1],
             '//Refrigerator' => [1],
             '//CookingRange' => [1],
-            '//Oven' => [1],
             '//Lighting' => [1],
     }
     
@@ -71,6 +76,11 @@ class EnergyRatingIndex301Validator
                 '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]',
                 'Roofs/Roof',
             ],
+              
+              # Attic (Vented)
+              '//Attic[AtticType="vented attic"]' => [
+                  '//AirInfiltration/extension/AtticSpecificLeakageArea',
+              ],
             
             ## Foundation
             '//Foundation' => [
@@ -92,6 +102,11 @@ class EnergyRatingIndex301Validator
                     'FoundationWall',
                 ],
                 
+                # Foundation (Vented Crawlspace)
+                '//Foundation/FoundationType/Crawlspace[Vented="true"]' => [
+                    '//AirInfiltration/extension/CrawlspaceSpecificLeakageArea',
+                ],
+                
                 # Foundation (SlabOnGrade)
                 '//Foundation[FoundationType/SlabOnGrade]' => [
                     'Slab',
@@ -105,8 +120,7 @@ class EnergyRatingIndex301Validator
             ## Roof
             '//Roof' => [
                 'Area',
-                'Rafters/FramingFactor',
-                'Rafters[Material="wood"]',
+                'Rafters[Material="wood"]/FramingFactor',
                 'Pitch',
                 'RadiantBarrier',
                 'Insulation/InsulationGrade',
@@ -133,8 +147,7 @@ class EnergyRatingIndex301Validator
             
                 # Wall (WoodStud)
                 '//Wall[WallType/WoodStud]' => [
-                    'Studs/FramingFactor',
-                    'Studs[Material="wood"]',
+                    'Studs[Material="wood"]/FramingFactor',
                     'Insulation/InsulationGrade',
                     'Insulation/Layer[InstallationType="cavity"]',
                     'Insulation/Layer[InstallationType="continuous"]',
@@ -145,8 +158,7 @@ class EnergyRatingIndex301Validator
                 'Height',
                 'Area',
                 'BelowGradeDepth',
-                'InteriorStuds/FramingFactor',
-                'InteriorStuds[Material="wood"]',
+                'InteriorStuds[Material="wood"]/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
@@ -156,35 +168,24 @@ class EnergyRatingIndex301Validator
             ## Floor
             '//Floor' => [
                 'Area',
-                'FloorJoists/FramingFactor',
-                'FloorJoists[Material="wood"]',
+                'FloorJoists[Material="wood"]/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
                 'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="ambient"]',
             ],
             
-                # Floor (not Attic)
-                'extension/Floors/Floor' => [
-                    'extension/CarpetFraction',
-                    'extension/CarpetRValue',
-                    'extension[InteriorAdjacentTo="living space" or InteriorAdjacentTo="garage"]',
-                ],
-            
-            ## FoundationFloor
+            ## FoundationCeiling
             '//Foundation/FrameFloor' => [
                 'Area',
-                'FloorJoists/FramingFactor',
-                'FloorJoists[Material="wood"]',
+                'FloorJoists[Material="wood"]/FramingFactor',
                 'Insulation/InsulationGrade',
                 'Insulation/Layer[InstallationType="cavity"]',
                 'Insulation/Layer[InstallationType="continuous"]',
-                'extension/CarpetFraction',
-                'extension/CarpetRValue',
                 'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage"]',
             ],
             
-            ## Slab
+            ## FoundationSlab
             '//Foundation/Slab' => [
                 'Area',
                 'PerimeterInsulationDepth',
@@ -276,7 +277,7 @@ class EnergyRatingIndex301Validator
                     'DistributionSystem',
                     '[CoolingSystemFuel="electricity"]',
                     'AnnualCoolingEfficiency[Units="SEER"]/Value',
-                    'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]', # FIXME: Remove?
+                    'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
                     '//AirDistribution',
                 ],
                 
@@ -291,7 +292,7 @@ class EnergyRatingIndex301Validator
                 '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]',
                 '[FractionHeatLoadServed=1.0]',
                 '[FractionCoolLoadServed=1.0]',
-                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]', # FIXME: Remove?
+                'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]',
                 '//HVACControl',
             ],
             
@@ -329,7 +330,7 @@ class EnergyRatingIndex301Validator
                 'Ducts[DuctType="supply" and FractionDuctArea=1.0]',
                 'Ducts[DuctType="return" and FractionDuctArea=1.0]',
             ],
-            
+                
             ## Ducts
             '//Ducts' => [
                 'DuctInsulationRValue',
@@ -395,7 +396,7 @@ class EnergyRatingIndex301Validator
             
             ## WaterFixture
             '//WaterFixture' => [
-                'FlowRate'
+                '[FlowRate | extension/MixedWaterGPD]',
             ],
             
             ## WholeHouseVentilationFan
@@ -428,50 +429,93 @@ class EnergyRatingIndex301Validator
             
             ## ClothesWasher
             '//ClothesWasher' => [
-                'ModifiedEnergyFactor',
-                'RatedAnnualkWh',
-                'LabelElectricRate',
-                'LabelGasRate',
-                'LabelAnnualGasCost',
-                'Capacity',
+                '[ModifiedEnergyFactor | extension/AnnualkWh]',
             ],
+            
+                # ClothesWasher (Detailed)
+                '//ClothesWasher[ModifiedEnergyFactor]' => [
+                    'RatedAnnualkWh',
+                    'LabelElectricRate',
+                    'LabelGasRate',
+                    'LabelAnnualGasCost',
+                    'Capacity',
+                ],
+                
+                # ClothesWasher (Simplified)
+                '//ClothesWasher[extension/AnnualkWh]' => [
+                    'extension/HotWaterGPD',
+                ],
             
             ## ClothesDryer
             '//ClothesDryer' => [
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
-                'EfficiencyFactor',
-                'ControlType',
+                '[EfficiencyFactor | extension/AnnualkWh]',
             ],
+            
+                # ClothesDryer (Detailed)
+                '//ClothesDryer[EfficiencyFactor]' => [
+                    'ControlType',
+                ],
+                
+                # ClothesDryer (Simplified)
+                '//ClothesDryer[extension/AnnualkWh]' => [
+                    'extension/AnnualTherm',
+                ],
             
             ## Dishwasher
             '//Dishwasher' => [
-                '[EnergyFactor | RatedAnnualkWh]',
-                'PlaceSettingCapacity',
+                '[EnergyFactor | RatedAnnualkWh | extension/AnnualkWh]',
             ],
+            
+                # Dishwasher (Detailed)
+                '//Dishwasher[EnergyFactor | RatedAnnualkWh]' => [
+                    'PlaceSettingCapacity',
+                ],
+                
+                # Dishwasher (Simplified)
+                '//Dishwasher[extension/AnnualkWh]' => [
+                    'extension/HotWaterGPD',
+                ],
             
             ## Refrigerator
             '//Refrigerator' => [
                 'RatedAnnualkWh',
             ],
             
-            ## CookingRange
+            ## CookingRange/Oven
             '//CookingRange' => [
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]',
-                'IsInduction',
+                '[IsInduction | extension/AnnualkWh]',
             ],
             
-            ## Oven
-            '//Oven' => [
-                'FuelType',
-                'IsConvection',
-            ],
+                # CookingRange/Oven (Detailed)
+                '//CookingRange[IsInduction]' => [
+                    '//Oven/FuelType',
+                    '//Oven/IsConvection',
+                ],
+                
+                # CookingRange/Oven (Simplified)
+                '//CookingRange[extension/AnnualkWh]' => [
+                    'extension/AnnualTherm',
+                ],
             
             ## Lighting
             '//Lighting' => [
-                'LightingFractions/extension/QualifyingLightFixturesInterior',
-                'LightingFractions/extension/QualifyingLightFixturesExterior',
-                'LightingFractions/extension/QualifyingLightFixturesGarage',
+                '[LightingFractions | extension/AnnualInteriorkWh]',
             ],
+            
+                # Lighting (Detailed)
+                '//Lighting/LightingFractions' => [
+                    'extension/QualifyingLightFixturesInterior',
+                    'extension/QualifyingLightFixturesExterior',
+                    'extension/QualifyingLightFixturesGarage',
+                ],
+                
+                # Lighting (Simplified)
+                '//Lighting[extension/AnnualInteriorkWh]' => [
+                    'extension/AnnualExteriorkWh',
+                    'extension/AnnualGaragekWh',
+                ],
     }
     
     # Check each unconditional "count"
@@ -504,6 +548,8 @@ class EnergyRatingIndex301Validator
         end
       end
     end
+    
+    return errors
     
   end
   

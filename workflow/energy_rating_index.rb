@@ -760,6 +760,8 @@ Parallel.map(designs, in_threads: designs.size) do |design|
   
   print "[#{design}] Gathering results...\n"
   sim_outputs[design] = parse_sql(design, sql_path, output_hpxml_path)
+  
+  print "[#{design}] Done.\n"
 end
 
 # Calculate and write results

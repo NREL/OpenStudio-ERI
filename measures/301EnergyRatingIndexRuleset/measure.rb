@@ -6,6 +6,7 @@ require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname'
 require "#{File.dirname(__FILE__)}/resources/301"
+require "#{File.dirname(__FILE__)}/resources/301validator"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 require "#{File.dirname(__FILE__)}/resources/meta_measure"
@@ -139,7 +140,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       apply_measures_osw2 = "apply_measures2.osw"
     end
     
-    # Validate input HPXML
+    # Validate input HPXML against schema
     if not schemas_dir.nil?
       has_errors = false
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
@@ -149,10 +150,20 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       if has_errors
         return false
       end
-      runner.registerInfo("Validated input HPXML.")
+      runner.registerInfo("Validated input HPXML against schema.")
     else
       runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
     end
+    
+    # Validate input HPXML against ERI Use Case
+    errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
+    errors.each do |error|
+      runner.registerError(error)
+    end
+    unless errors.empty?
+      return false
+    end
+    runner.registerInfo("Validated input HPXML against ERI Use Case.")
     
     workflow_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
     
@@ -185,10 +196,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Apply 301 ruleset on HPXML object
-    errors = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
-    errors.each do |error|
-      runner.registerError(error)
-    end
+    EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
     if hpxml_output_file_path.is_initialized
       XMLHelper.write_file(hpxml_doc, hpxml_output_file_path.get)
       runner.registerInfo("Wrote file: #{hpxml_output_file_path.get}")
@@ -197,7 +205,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    # Validate new HPXML
+    # Validate output HPXML against schema
     if not schemas_dir.nil?
       has_errors = false
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
@@ -347,6 +355,8 @@ class OSMeasures
     return measures
 
   end
+  
+  private
   
   def self.to_beopt_fuel(fuel)
     conv = {"natural gas"=>Constants.FuelTypeGas, 
@@ -650,7 +660,7 @@ class OSMeasures
     
       name = fnd_wall.elements["SystemIdentifier"].attributes["id"]
   
-      if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue") # Reference Home
+      if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue")
       
         wall_R = Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
         
@@ -662,7 +672,7 @@ class OSMeasures
         wall_cont_r = wall_R - Material.Concrete8in.rvalue - Material.DefaultWallSheathing.rvalue - Material.AirFilmVertical.rvalue
         wall_cont_depth = 1.0
       
-      else # Rated Home
+      else
     
         fnd_wall_cavity = fnd_wall.elements["Insulation/Layer[InstallationType='cavity']"]
         wall_cav_r = Float(XMLHelper.get_value(fnd_wall_cavity, "NominalRValue"))
@@ -746,7 +756,7 @@ class OSMeasures
     
       name = fnd_floor.elements["SystemIdentifier"].attributes["id"]
 
-      if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue") # Reference Home
+      if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue")
       
         # FIXME
         floor_cav_r = 0.0
@@ -756,7 +766,7 @@ class OSMeasures
         floor_cont_r = 0.0
         floor_cont_depth = 0.0
       
-      else # Rated Home
+      else
     
         fnd_floor_cavity = fnd_floor.elements["Insulation/Layer[InstallationType='cavity']"]
         floor_cav_r = Float(XMLHelper.get_value(fnd_floor_cavity, "NominalRValue"))
@@ -866,17 +876,6 @@ class OSMeasures
                }
         update_args_hash(measures, measure_subdir, args)
       end
-      
-      carpet_frac = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetFraction"))
-      carpet_r = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetRValue"))
-      
-      measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
-      args = {
-              "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-              "covering_frac"=>carpet_frac,
-              "covering_r"=>carpet_r
-             }
-      update_args_hash(measures, measure_subdir, args)
       
     end
       
@@ -2003,12 +2002,8 @@ class OSMeasures
     lat_kWhs = 0
     building.elements.each("BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other' or PlugLoadType='TV other']") do |pl|
       kWhs = Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value"))
-      if XMLHelper.has_element(pl, "extension/FracSensible") and XMLHelper.has_element(pl, "extension/FracLatent")
-        sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
-        lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
-      else # No fractions; all sensible
-        sens_kWhs += kWhs
-      end
+      sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
+      lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
     end
     tot_kWhs = sens_kWhs + lat_kWhs
     
@@ -2043,6 +2038,7 @@ class OSMeasures
       mech_vent_fan_power = 0
       mech_vent_frac_62_2 = 0
     else
+      # FIXME: HoursInOperation isn't being used
       fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
       if fan_type == "supply only"
         mech_vent_type = Constants.VentTypeSupply
@@ -2059,8 +2055,10 @@ class OSMeasures
       if fan_type == "energy recovery ventilator"
         mech_vent_total_efficiency = Float(XMLHelper.get_value(whole_house_fan, "TotalRecoveryEfficiency"))
       end
-      mech_vent_fan_power = Float(XMLHelper.get_value(whole_house_fan, "extension/FanPowerWperCFM"))
-      mech_vent_frac_62_2 = Float(XMLHelper.get_value(whole_house_fan, "extension/Frac2013ASHRAE622"))
+      mech_vent_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
+      mech_vent_w = Float(XMLHelper.get_value(whole_house_fan, "FanPower"))
+      mech_vent_fan_power = mech_vent_w/mech_vent_cfm
+      mech_vent_frac_62_2 = 1.0 # FIXME
     end
     
     natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
@@ -2249,134 +2247,6 @@ end
 
 class OSModel
 
-  def self.create_spaces_and_zones(model, spaces, space_name, thermal_zone_name)
-    if not spaces.keys.include? space_name
-      thermal_zone = create_zone(model, thermal_zone_name)
-      create_space(model, space_name, spaces, thermal_zone)
-    end
-  end
-
-  def self.create_zone(model, name)
-    thermal_zone = OpenStudio::Model::ThermalZone.new(model)
-    thermal_zone.setName(name)
-    return thermal_zone
-  end
-  
-  def self.create_space(model, name, spaces, thermal_zone)
-    space = OpenStudio::Model::Space.new(model)
-    space.setName(name)
-    space.setThermalZone(thermal_zone)
-    spaces[name] = space
-  end
-
-  def self.get_all_spaces_and_zones(model, building, spaces)
-    
-    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
-    
-      attic_type = attic.elements["AtticType"].text
-      if ["vented attic", "unvented attic"].include? attic_type
-        create_spaces_and_zones(model, spaces, Constants.UnfinishedAtticSpace, Constants.UnfinishedAtticZone)
-      elsif attic_type == "cape cod"
-        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.FinishedAtticZone)
-      elsif attic_type != "flat roof" and attic_type != "cathedral ceiling"
-        fail "Unhandled value (#{attic_type})."
-      end
-    
-      floors = attic.elements["Floors"]
-      floors.elements.each("Floor") do |floor|
-    
-        exterior_adjacent_to = floor.elements["extension/ExteriorAdjacentTo"].text
-        if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
-        elsif exterior_adjacent_to == "garage"
-          create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
-        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
-          fail "Unhandled value (#{exterior_adjacent_to})."
-        end
-        
-      end
-      
-      walls = attic.elements["Walls"]
-      walls.elements.each("Wall") do |wall|
-      
-        exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
-        if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
-        elsif exterior_adjacent_to == "garage"
-          create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
-        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
-          fail "Unhandled value (#{exterior_adjacent_to})."
-        end        
-
-      end
-      
-    end
-    
-    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-      
-      foundation_type = foundation.elements["FoundationType"]      
-      if foundation_type.elements["Basement/Conditioned/text()='true'"]        
-        create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
-      elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
-        create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
-      elsif foundation_type.elements["Crawlspace"]
-        create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
-      elsif not foundation_type.elements["SlabOnGrade"]
-        fail "Unhandled value (#{foundation_type})."
-      end
-      
-      foundation.elements.each("FrameFloor") do |frame_floor|
-        
-        exterior_adjacent_to = frame_floor.elements["extension/ExteriorAdjacentTo"].text
-        if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
-        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
-          fail "Unhandled value (#{exterior_adjacent_to})."
-        end
-        
-      end
-      
-      foundation.elements.each("FoundationWall") do |foundation_wall|
-        
-        exterior_adjacent_to = foundation_wall.elements["extension/ExteriorAdjacentTo"].text
-        if exterior_adjacent_to == "unconditioned basement"
-          create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
-        elsif exterior_adjacent_to == "conditioned basement"
-          create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
-        elsif exterior_adjacent_to == "crawlspace"
-          create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
-        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
-          fail "Unhandled value (#{exterior_adjacent_to})."
-        end
-        
-      end
-    
-    end
-
-    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
-    
-      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
-      if interior_adjacent_to == "living space"
-        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
-      elsif interior_adjacent_to == "garage"
-        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
-      else
-        fail "Unhandled value (#{interior_adjacent_to})."
-      end
-      
-      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
-      if exterior_adjacent_to == "garage"
-        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
-      elsif exterior_adjacent_to == "living space"
-        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
-      elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
-        fail "Unhandled value (#{exterior_adjacent_to})."
-      end      
-      
-    end
-    
-  end
-  
   def self.create_geometry(hpxml_doc, runner, model)
 
     geometry_errors = []
@@ -2390,8 +2260,7 @@ class OSModel
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
     
-    spaces = {}
-    get_all_spaces_and_zones(model, building, spaces)
+    spaces = get_all_spaces_and_zones(model, building)
 
     fenestration_areas = {}
     add_windows(model, building, geometry_errors, spaces, fenestration_areas)
@@ -2401,8 +2270,8 @@ class OSModel
     foundation_ceiling_area = add_foundation_ceilings(model, building, spaces)
     add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
     add_above_grade_walls(model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
-    add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, spaces)    
-    add_attic_ceilings(model, building, geometry_errors, avg_ceil_hgt, spaces)
+    add_attic_floors(model, building, geometry_errors, spaces)    
+    add_attic_ceilings(model, building, geometry_errors, spaces)
     
     geometry_errors.each do |error|
       runner.registerError(error)
@@ -2552,7 +2421,143 @@ class OSModel
     return true
     
   end
+  
+  private
+  
+  def self.create_spaces_and_zones(model, spaces, space_name, thermal_zone_name)
+    if not spaces.keys.include? space_name
+      thermal_zone = create_zone(model, thermal_zone_name)
+      create_space(model, space_name, spaces, thermal_zone)
+    end
+  end
 
+  def self.create_zone(model, name)
+    thermal_zone = OpenStudio::Model::ThermalZone.new(model)
+    thermal_zone.setName(name)
+    return thermal_zone
+  end
+  
+  def self.create_space(model, name, spaces, thermal_zone)
+    space = OpenStudio::Model::Space.new(model)
+    space.setName(name)
+    space.setThermalZone(thermal_zone)
+    spaces[name] = space
+  end
+
+  def self.get_all_spaces_and_zones(model, building)
+    
+    spaces = {}
+    
+    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
+    
+      attic_type = attic.elements["AtticType"].text
+      if ["vented attic", "unvented attic"].include? attic_type
+        create_spaces_and_zones(model, spaces, Constants.UnfinishedAtticSpace, Constants.UnfinishedAtticZone)
+      elsif attic_type == "cape cod"
+        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.FinishedAtticZone)
+      elsif attic_type != "flat roof" and attic_type != "cathedral ceiling"
+        fail "Unhandled value (#{attic_type})."
+      end
+    
+      floors = attic.elements["Floors"]
+      floors.elements.each("Floor") do |floor|
+    
+        exterior_adjacent_to = floor.elements["extension/ExteriorAdjacentTo"].text
+        if exterior_adjacent_to == "living space"
+          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+        elsif exterior_adjacent_to == "garage"
+          create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
+          fail "Unhandled value (#{exterior_adjacent_to})."
+        end
+        
+      end
+      
+      walls = attic.elements["Walls"]
+      walls.elements.each("Wall") do |wall|
+      
+        exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
+        if exterior_adjacent_to == "living space"
+          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+        elsif exterior_adjacent_to == "garage"
+          create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
+          fail "Unhandled value (#{exterior_adjacent_to})."
+        end        
+
+      end
+      
+    end
+    
+    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
+      
+      foundation_type = foundation.elements["FoundationType"]      
+      if foundation_type.elements["Basement/Conditioned/text()='true'"]        
+        create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
+      elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
+        create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
+      elsif foundation_type.elements["Crawlspace"]
+        create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
+      elsif foundation_type.elements["Ambient"]
+        create_spaces_and_zones(model, spaces, Constants.PierBeamSpace, Constants.PierBeamZone)
+      elsif not foundation_type.elements["SlabOnGrade"]
+        fail "Unhandled value (#{foundation_type})."
+      end
+      
+      foundation.elements.each("FrameFloor") do |frame_floor|
+        
+        exterior_adjacent_to = frame_floor.elements["extension/ExteriorAdjacentTo"].text
+        if exterior_adjacent_to == "living space"
+          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
+          fail "Unhandled value (#{exterior_adjacent_to})."
+        end
+        
+      end
+      
+      foundation.elements.each("FoundationWall") do |foundation_wall|
+        
+        exterior_adjacent_to = foundation_wall.elements["extension/ExteriorAdjacentTo"].text
+        if exterior_adjacent_to == "unconditioned basement"
+          create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
+        elsif exterior_adjacent_to == "conditioned basement"
+          create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
+        elsif exterior_adjacent_to == "crawlspace"
+          create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
+        elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
+          fail "Unhandled value (#{exterior_adjacent_to})."
+        end
+        
+      end
+    
+    end
+
+    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
+    
+      interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
+      if interior_adjacent_to == "living space"
+        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+      elsif interior_adjacent_to == "garage"
+        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+      else
+        fail "Unhandled value (#{interior_adjacent_to})."
+      end
+      
+      exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
+      if exterior_adjacent_to == "garage"
+        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+      elsif exterior_adjacent_to == "living space"
+        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+      elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
+        fail "Unhandled value (#{exterior_adjacent_to})."
+      end      
+      
+    end
+    
+    return spaces
+    
+  end
+  
   def self.get_surface_transformation(offset, x, y, z)
   
     m = OpenStudio::Matrix.new(4, 4, 0)
@@ -2621,6 +2626,12 @@ class OSModel
       return Constants.UnfinishedBasementSpace
     elsif foundation_type.elements["Crawlspace"]
       return Constants.CrawlSpace
+    elsif foundation_type.elements["SlabOnGrade"]
+      return Constants.LivingSpace
+    elsif foundation_type.elements["Ambient"]
+      return Constants.PierBeamSpace
+    else
+      fail "Unhandled value (#{foundation_type})."
     end
   end
   
@@ -2646,11 +2657,7 @@ class OSModel
         surface.setName(slab_id)
         surface.setSurfaceType("Floor") 
         surface.setOutsideBoundaryCondition("Ground")
-        if z_origin == 0
-          surface.setSpace(spaces[Constants.LivingSpace])
-        else
-          surface.setSpace(spaces[foundation_space_name])
-        end
+        surface.setSpace(spaces[foundation_space_name])
         
       end
       
@@ -2789,7 +2796,7 @@ class OSModel
     
   end
   
-  def self.add_attic_floors(model, building, errors, avg_ceil_hgt, spaces)
+  def self.add_attic_floors(model, building, errors, spaces)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -2830,7 +2837,7 @@ class OSModel
       
   end
 
-  def self.add_attic_ceilings(model, building, errors, avg_ceil_hgt, spaces)
+  def self.add_attic_ceilings(model, building, errors, spaces)
   
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
