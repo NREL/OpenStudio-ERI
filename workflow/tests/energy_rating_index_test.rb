@@ -9,7 +9,7 @@ class EnergyRatingIndexTest < MiniTest::Test
   def test_sample_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     Dir["#{parent_dir}/sample_files/*.xml"].each do |xml|
-      ref_hpxml, rated_hpxml = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
     end
   end
   
@@ -20,16 +20,20 @@ class EnergyRatingIndexTest < MiniTest::Test
   def test_resnet_hers_reference_home_auto_generation
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     test_num = 0
-    Dir["#{parent_dir}/sample_files/RESNET_Tests/4.2_Test_HERS_Reference_Home/*.xml"].each do |xml|
+    xmldir = "#{parent_dir}/sample_files/RESNET_Tests/4.2_Test_HERS_Reference_Home"
+    Dir["#{xmldir}/*.xml"].each do |xml|
+      next if xml.end_with? "HERSReferenceHome.xml"
       test_num += 1
-      ref_hpxml, rated_hpxml = run_and_check(xml, parent_dir)
+      
+      # Run test
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       _check_reference_home_components(ref_hpxml, test_num)
-      # FIXME: Re-simulate reference HPXML file
-      # ref_hpxml2, rated_hpxml2 = run_and_check(rated_hpxml, parent_dir)
-      # _check_reference_home_components(ref_hpxml2, test_num)
-      # FIXME: eRatio
-      # e-Ratio = (Total normalized Modified Loads) / (Total Reference Loads)
-      # assert_in_epsilon(1.0, e_ratio, 0.005)
+      
+      # Re-simulate reference HPXML file
+      FileUtils.cp(ref_hpxml, xmldir)
+      ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
+      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir)
+      _check_e_ratio(results_csv2)
     end
   end
   
@@ -97,7 +101,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     _test_schema_validation(parent_dir, ref_hpxml)
     _test_schema_validation(parent_dir, rated_hpxml)
     
-    return ref_hpxml, rated_hpxml
+    return ref_hpxml, rated_hpxml, results_csv
   end
   
   def _test_schema_validation(parent_dir, xml)
@@ -264,14 +268,11 @@ class EnergyRatingIndexTest < MiniTest::Test
     if test_num == 1
       assert_in_epsilon(0.0, mv_kwh, mv_epsilon)
     elsif test_num == 2
-      # FIXME: assert_in_epsilon(77.9, mv_kwh, mv_epsilon)
-      pass
+      assert_in_epsilon(77.9, mv_kwh, mv_epsilon)
     elsif test_num == 3
-      # FIXME: assert_in_epsilon(140.4, mv_kwh, mv_epsilon)
-      pass
+      assert_in_epsilon(140.4, mv_kwh, mv_epsilon)
     else
-      # FIXME: assert_in_epsilon(379.1, mv_kwh, mv_epsilon)
-      pass
+      assert_in_epsilon(379.1, mv_kwh, mv_epsilon)
     end
     
     # Domestic hot water
@@ -548,7 +549,9 @@ class EnergyRatingIndexTest < MiniTest::Test
   def _get_hpxml_mech_vent(hpxml_doc)
     mv_kwh = 0.0
     hpxml_doc.elements.each("//VentilationFan[UsedForWholeBuildingVentilation='true']") do |mv|
-      mv_kwh += Float(XMLHelper.get_value(mv, "FanPower")) * 8760
+      hours = Float(XMLHelper.get_value(mv, "HoursInOperation"))
+      fan_w = Float(XMLHelper.get_value(mv, "FanPower"))
+      mv_kwh += fan_w * 8.76 * hours/24.0
     end
     return mv_kwh
   end
@@ -565,6 +568,17 @@ class EnergyRatingIndexTest < MiniTest::Test
       end
     end
     return ref_pipe_l, ref_loop_l
+  end
+  
+  def _check_e_ratio(results_csv)
+    require 'csv'
+    hers_index = nil
+    CSV.foreach(results_csv) do |row|
+      next if row[0] != "HERS Index"
+      hers_index = Float(row[1])
+      break
+    end
+    #FIXME: assert_in_epsilon(100, hers_index, 0.005) # 0.5%
   end
   
 end

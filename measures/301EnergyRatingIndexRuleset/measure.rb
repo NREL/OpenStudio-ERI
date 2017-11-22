@@ -1357,7 +1357,7 @@ class OSMeasures
     cook_fuel_type = XMLHelper.get_value(cook, "FuelType")
     
     # Fixtures
-    fx = wh.elements["WaterFixture[WaterFixtureType='other']"]
+    fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
     fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
     
     # Distribution
