@@ -877,7 +877,7 @@ class EnergyRatingIndex301Ruleset
     then be added together to obtain the total energy uses for heating and cooling.
     '''
     
-    prevent_hp_and_ac = true # FIXME: Eventually allow this...
+    prevent_hp_and_ac = true # TODO: Eventually allow this...
     
     has_boiler = false
     fuel_type = nil
@@ -1325,7 +1325,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
       XMLHelper.add_element(new_vent_fan, "FanType", fan_type)
       XMLHelper.add_element(new_vent_fan, "RatedFlowRate", q_fan_airflow)
-      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24) # FIXME: CFIS
+      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24) # TODO: CFIS
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.add_element(new_vent_fan, "FanPower", fan_power_w)
       
@@ -1654,9 +1654,9 @@ class EnergyRatingIndex301Ruleset
     systype = XMLHelper.add_element(new_hw_dist, "SystemType")
     if is_recirc
       recirc = XMLHelper.add_element(systype, "Recirculation")
-      XMLHelper.add_element(recirc, "BranchPipingLoopLength", recirc_branch_l)
-      XMLHelper.add_element(recirc, "RecirculationPipingLoopLength", recirc_loop_l)
       XMLHelper.add_element(recirc, "ControlType", recirc_control_type)
+      XMLHelper.add_element(recirc, "RecirculationPipingLoopLength", recirc_loop_l)
+      XMLHelper.add_element(recirc, "BranchPipingLoopLength", recirc_branch_l)
       XMLHelper.add_element(recirc, "PumpPower", recirc_pump_power)
     else
       standard = XMLHelper.add_element(systype, "Standard")
@@ -2002,17 +2002,17 @@ class EnergyRatingIndex301Ruleset
     Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
     '''
     
-    # FIXME: How to handle different fuel types for CookingRange vs Oven?
+    # TODO: How to handle different fuel types for CookingRange vs Oven?
     range_fuel = XMLHelper.get_value(orig_details, "//CookingRange/FuelType")
     oven_fuel = XMLHelper.get_value(orig_details, "//Oven/FuelType")
     
     cooking_range_kwh = 331.0 + 0.0 * @cfa + 39.0 * @nbeds
     cooking_range_therm = 0.0
-    if range_fuel != 'electricity'
+    if range_fuel != 'electricity' or oven_fuel != 'electricity'
       cooking_range_kwh = 22.6 + 0.0 * @cfa + 2.7 * @nbeds
       cooking_range_therm = 22.6 + 0.0 * @cfa + 2.7 * @nbeds
     end
-    cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, cooking_range_kwh, cooking_range_therm)
+    cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
     
     new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")
     sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
@@ -2064,7 +2064,7 @@ class EnergyRatingIndex301Ruleset
         cooking_range_kwh = 22.6 + 2.7 * @nbeds
         cooking_range_therm = oven_ef * (22.6 + 2.7 * @nbeds)
       end
-      cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, cooking_range_kwh, cooking_range_therm)
+      cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
     else
       # Simplified
       cooking_range_kwh = Float(XMLHelper.get_value(orig_details, "//CookingRange/extension/AnnualkWh"))
@@ -2446,8 +2446,8 @@ class EnergyRatingIndex301Ruleset
     return load_sens/total, load_lat/total
   end
   
-  def self.get_cooking_range_sens_lat(range_fuel, cooking_range_kwh, cooking_range_therm)
-    if range_fuel != 'electricity'
+  def self.get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
+    if range_fuel != 'electricity' or oven_fuel != 'electricity'
       load_sens = 4086.0 + 488.0 * @nbeds # Btu/day
       load_lat = 1037.0 + 124.0 * @nbeds # Btu/day
     else
@@ -2602,7 +2602,7 @@ class EnergyRatingIndex301Ruleset
     ew_fact = get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_rvalue)
     o_frac = 0.25 # fraction of hot water waste from standard operating conditions
     oew_fact = ew_fact * o_frac # standard operating condition portion of hot water energy waste
-    ocd_eff = 0.0 # FIXME: Need an HPXML input for this?
+    ocd_eff = 0.0 # TODO: Need an HPXML input for this?
     sew_fact = ew_fact - oew_fact
     ref_pipe_l = get_pipe_length_reference(bsmnt)
     if not is_recirc
