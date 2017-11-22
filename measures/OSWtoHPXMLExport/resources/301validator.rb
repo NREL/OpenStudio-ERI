@@ -1,7 +1,7 @@
 class EnergyRatingIndex301Validator
 
   # TODO: Combine has/counts into, e.g., {foo=>[], foo=>[0,1]};
-  # TODO: Separate out OS/E+ limitations from ERI Use Case
+  # TODO: Separate out modeling limitations from ERI Use Case
 
   def self.run_validator(hpxml_doc)
   
@@ -20,8 +20,8 @@ class EnergyRatingIndex301Validator
             '//HydronicDistribution' => [0,1],
             '//HVACControl' => [0,1],
             '//VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
-            '//WaterHeatingSystem' => [1],
-            '//HotWaterDistribution' => [1],
+            '//WaterHeatingSystem' => [0,1],
+            '//HotWaterDistribution' => [0,1],
             '//PVSystem' => [0,1],
             '//ClothesWasher' => [1],
             '//ClothesDryer' => [1],
@@ -36,7 +36,6 @@ class EnergyRatingIndex301Validator
             '//Enclosure/AtticAndRoof/Attics',
             '//Enclosure/Foundations',
             '//Enclosure/Walls',
-            '//WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]',
     ]
     
     # If the key exists, the file must have 1 (or more) of these child elements
@@ -50,8 +49,6 @@ class EnergyRatingIndex301Validator
             
             ## BuildingConstruction
             '//BuildingSummary/BuildingConstruction' => [
-                'ResidentialFacilityType',
-                'BuildingHeight',
                 'NumberofConditionedFloors',
                 'NumberofConditionedFloorsAboveGrade',
                 'NumberofBedrooms',
@@ -384,6 +381,8 @@ class EnergyRatingIndex301Validator
                 '[FractionDHWLoadServed=1.0]',
                 'HeatingCapacity',
                 'EnergyFactor',
+                '//WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]',
+                '//HotWaterDistribution',
             ],
             
                 # WaterHeatingSystem (Tank)

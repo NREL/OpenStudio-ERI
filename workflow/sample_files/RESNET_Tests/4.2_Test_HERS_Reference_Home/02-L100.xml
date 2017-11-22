@@ -22,8 +22,6 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
-          <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
-          <BuildingHeight>12.5</BuildingHeight>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
@@ -404,39 +402,6 @@
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
-        <WaterHeating>
-          <WaterHeatingSystem>
-            <SystemIdentifier id='DHW_ID1'/>
-            <FuelType>electricity</FuelType>
-            <WaterHeaterType>storage water heater</WaterHeaterType>
-            <TankVolume>80</TankVolume>
-            <FractionDHWLoadServed>1</FractionDHWLoadServed>
-            <HeatingCapacity>15000</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-            <RecoveryEfficiency>0.98</RecoveryEfficiency>
-          </WaterHeatingSystem>
-          <HotWaterDistribution>
-            <SystemIdentifier id='HWDist_ID1'/>
-            <SystemType>
-              <Standard>
-                <PipingLength>30</PipingLength>
-              </Standard>
-            </SystemType>
-            <PipeInsulation>
-              <PipeRValue>0.0</PipeRValue>
-            </PipeInsulation>
-          </HotWaterDistribution>
-          <WaterFixture>
-            <SystemIdentifier id='WF_ID1'/>
-            <WaterFixtureType>shower head</WaterFixtureType>
-            <FlowRate>1.5</FlowRate>
-          </WaterFixture>
-          <WaterFixture>
-            <SystemIdentifier id='WF_ID2'/>
-            <WaterFixtureType>faucet</WaterFixtureType>
-            <FlowRate>1.5</FlowRate>
-          </WaterFixture>
-        </WaterHeating>
       </Systems>
       <Appliances>
         <ClothesWasher>

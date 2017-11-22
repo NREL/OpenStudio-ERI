@@ -369,7 +369,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       area += Float(XMLHelper.get_value(attc_floor, "Area"))
     end
     if area > 0
-      sla = Float(XMLHelper.get_value(hpxml_doc, "//BuildingDetails/Enclosure/AirInfiltration/extension/AtticSpecificLeakageArea"))
+      sla = Float(XMLHelper.get_value(hpxml_doc, "//AtticSpecificLeakageArea"))
     else
       sla = 0.0
     end
@@ -382,7 +382,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       area += Float(XMLHelper.get_value(crawl_ceil, "Area"))
     end
     if area > 0
-      sla = Float(XMLHelper.get_value(hpxml_doc, "//BuildingDetails/Enclosure/AirInfiltration/extension/CrawlspaceSpecificLeakageArea"))
+      sla = Float(XMLHelper.get_value(hpxml_doc, "//CrawlspaceSpecificLeakageArea"))
     else
       sla = 0.0
     end
@@ -422,8 +422,8 @@ class EnergyRatingIndexTest < MiniTest::Test
   end
   
   def _get_hpxml_sla(hpxml_doc)
-    ela = Float(XMLHelper.get_value(hpxml_doc, "//BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/EffectiveLeakageArea"))
-    area = Float(XMLHelper.get_value(hpxml_doc, "//BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    ela = Float(XMLHelper.get_value(hpxml_doc, "//AirInfiltrationMeasurement/EffectiveLeakageArea"))
+    area = Float(XMLHelper.get_value(hpxml_doc, "//ConditionedFloorArea"))
     return ela / area
   end
   
@@ -578,7 +578,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       hers_index = Float(row[1])
       break
     end
-    #FIXME: assert_in_epsilon(100, hers_index, 0.005) # 0.5%
+    assert_in_epsilon(100, hers_index, 0.01) # FIXME: Should be 0.5%, but off due to mech vent
   end
   
 end

@@ -152,7 +152,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       end
       runner.registerInfo("Validated input HPXML against schema.")
     else
-      runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
+      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
     
     # Validate input HPXML against ERI Use Case
@@ -217,7 +217,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       end
       runner.registerInfo("Validated output HPXML.")
     else
-      runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
+      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
     
     # Obtain list of OpenStudio measures (and arguments)
@@ -228,6 +228,11 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
 
+    if osm_output_file_path.is_initialized
+      File.write(osm_output_file_path.get, model.to_s)
+      runner.registerInfo("Wrote file: #{osm_output_file_path.get}")
+    end
+    
     if not apply_measures(measures_dir, measures, runner, model, workflow_json, apply_measures_osw2, show_measure_calls)
       return false
     end
@@ -1213,8 +1218,6 @@ class OSMeasures
 
     dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
     
-    return if dhw.nil?
-    
     setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
     tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
@@ -1255,6 +1258,10 @@ class OSMeasures
                }
         update_args_hash(measures, measure_subdir, args)
         
+      else
+      
+        fail "Unhandled water heater (#{wh_type}, #{fuel})."
+        
       end      
       
     elsif wh_type == "instantaneous water heater"
@@ -1288,6 +1295,10 @@ class OSMeasures
                }
         update_args_hash(measures, measure_subdir, args)
         
+      else
+      
+        fail "Unhandled water heater (#{wh_type}, #{fuel})."
+        
       end
       
     elsif wh_type == "heat pump water heater"
@@ -1312,6 +1323,10 @@ class OSMeasures
               "temp_depress"=>0
              }
       update_args_hash(measures, measure_subdir, args)
+      
+    else
+    
+      fail "Unhandled water heater (#{wh_type})."
       
     end
 
@@ -2058,7 +2073,7 @@ class OSMeasures
       mech_vent_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
       mech_vent_w = Float(XMLHelper.get_value(whole_house_fan, "FanPower"))
       mech_vent_fan_power = mech_vent_w/mech_vent_cfm
-      mech_vent_frac_62_2 = 1.0 # FIXME
+      mech_vent_frac_62_2 = 1.0 # FIXME: Would prefer to provide airflow rate as measure input...
     end
     
     natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
@@ -2260,7 +2275,7 @@ class OSModel
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
     
-    spaces = get_all_spaces_and_zones(model, building)
+    spaces = create_all_spaces_and_zones(model, building)
 
     fenestration_areas = {}
     add_windows(model, building, geometry_errors, spaces, fenestration_areas)
@@ -2304,7 +2319,7 @@ class OSModel
     # Explode the walls
     wall_offset = 10.0
     surfaces_moved = []
-    model.getSurfaces.each do |surface|
+    model.getSurfaces.sort.each do |surface|
 
       next unless surface.surfaceType.downcase == "wall"
       next if surface.subSurfaces.any? { |subsurface| subsurface.subSurfaceType.downcase == "fixedwindow" }
@@ -2332,9 +2347,10 @@ class OSModel
     end
     
     # Explode the above-grade floors
+    # FIXME: Need to fix heights for airflow measure
     floor_offset = 0.5
     surfaces_moved = []
-    model.getSurfaces.each do |surface|
+    model.getSurfaces.sort.each do |surface|
 
       next unless surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling"
       next if surface.outsideBoundaryCondition.downcase == "ground"
@@ -2358,7 +2374,7 @@ class OSModel
     
     # Explode the windows TODO: calculate window_offset dynamically
     window_offset = 50.0
-    model.getSubSurfaces.each do |sub_surface|
+    model.getSubSurfaces.sort.each do |sub_surface|
 
       next unless sub_surface.subSurfaceType.downcase == "fixedwindow"
       
@@ -2375,9 +2391,6 @@ class OSModel
       
     end
     
-    # Store building name
-    model.getBuilding.setName("FIXME")
-        
     # Store building unit information
     unit = OpenStudio::Model::BuildingUnit.new(model)
     unit.setBuildingUnitType(Constants.BuildingUnitTypeResidential)
@@ -2409,10 +2422,6 @@ class OSModel
     end
     model.getBuilding.setStandardsNumberOfStories(num_floors)
     
-    # Store the building type
-    facility_types_map = {"single-family detached"=>Constants.BuildingTypeSingleFamilyDetached}
-    model.getBuilding.setStandardsBuildingType(facility_types_map[building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType"].text])
-
     # Store info for HVAC Sizing measure
     if building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"].text == "true"
       unit.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 1.0) # FIXME: assumption
@@ -2444,7 +2453,7 @@ class OSModel
     spaces[name] = space
   end
 
-  def self.get_all_spaces_and_zones(model, building)
+  def self.create_all_spaces_and_zones(model, building)
     
     spaces = {}
     

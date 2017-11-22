@@ -45,11 +45,11 @@ def create_osw(design, basedir, resultsdir, options)
   osw_path = File.join(designdir, "run.osw")
   osw = OpenStudio::WorkflowJSON.new
   osw.setOswPath(osw_path)
-  osw.addMeasurePath("../../measures") # FIXME
-  osw.setSeedFile("../../seeds/EmptySeedModel.osm") # FIXME
+  osw.addMeasurePath("../../measures")
+  osw.setSeedFile("../../seeds/EmptySeedModel.osm")
   
   # Add measures (w/args) to OSW
-  measures_dir = File.absolute_path(File.join(basedir, "..", "resources", "measures")) # FIXME
+  measures_dir = File.absolute_path(File.join(basedir, "..", "resources", "measures")) 
   schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
   measures = {}
@@ -266,7 +266,7 @@ def parse_sql(design, sql_path, output_hpxml_path)
 end
 
 def get_cfa(hpxml_doc)
-  cfa = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea")
+  cfa = XMLHelper.get_value(hpxml_doc, "//ConditionedFloorArea")
   
   if cfa.nil?
     fail "ERROR: Conditioned floor area not found."
@@ -276,7 +276,7 @@ def get_cfa(hpxml_doc)
 end
 
 def get_nbr(hpxml_doc)
-  nbr = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
+  nbr = XMLHelper.get_value(hpxml_doc, "//NumberofBedrooms")
   
   if nbr.nil?
     fail "ERROR: Number of bedrooms not found."
@@ -288,8 +288,8 @@ end
 def get_heating_fuel(hpxml_doc)
   heat_fuel = nil
   
-  heating_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
-  heat_pump_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
+  heating_system = hpxml_doc.elements["//HeatingSystem"]
+  heat_pump_system = hpxml_doc.elements["//HeatPump"]
   
   if heating_system.nil? and heat_pump_system.nil?
     fail "ERROR: No heating system found."
@@ -311,7 +311,7 @@ end
 def get_dhw_fuel(hpxml_doc)
   dhw_fuel = nil
   
-  dhw_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
+  dhw_system = hpxml_doc.elements["//WaterHeatingSystem"]
   
   if dhw_system.nil?
     fail "ERROR: No water heating system found."
@@ -328,8 +328,8 @@ end
 
 def get_dse_heat_cool(hpxml_doc)
   
-  dse_heat = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
-  dse_cool = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
+  dse_heat = XMLHelper.get_value(hpxml_doc, "//AnnualHeatingDistributionSystemEfficiency")
+  dse_cool = XMLHelper.get_value(hpxml_doc, "//AnnualCoolingDistributionSystemEfficiency")
   
   if dse_heat.nil?
     fail "ERROR: Heating distribution system efficiency not found."
@@ -353,8 +353,8 @@ end
 def get_eec_heat(hpxml_doc)
   eec_heat = nil
   
-  heating_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
-  heat_pump_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
+  heating_system = hpxml_doc.elements["//HeatingSystem"]
+  heat_pump_system = hpxml_doc.elements["//HeatPump"]
   
   [heating_system, heat_pump_system].each do |sys|
     next if sys.nil?
@@ -382,8 +382,8 @@ end
 def get_eec_cool(hpxml_doc)
   eec_cool = nil
   
-  cooling_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
-  heat_pump_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
+  cooling_system = hpxml_doc.elements["//CoolingSystem"]
+  heat_pump_system = hpxml_doc.elements["//HeatPump"]
   
   [cooling_system, heat_pump_system].each do |sys|
     next if sys.nil?
@@ -411,7 +411,7 @@ end
 def get_eec_dhw(hpxml_doc)
   eec_dhw = nil
   
-  dhw_system = hpxml_doc.elements["//Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
+  dhw_system = hpxml_doc.elements["//WaterHeatingSystem"]
   
   [dhw_system].each do |sys|
     next if sys.nil?
@@ -432,7 +432,7 @@ end
 def dhw_adjustment(hpxml_doc)
   # FIXME: Can we modify EF/COP/etc. efficiencies like we do for DSE, so that we don't need to post-process?
   # FIXME: Double-check this only applies to the Rated Home
-  hwdist = hpxml_doc.elements["//Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution"]
+  hwdist = hpxml_doc.elements["//HotWaterDistribution"]
   return Float(XMLHelper.get_value(hwdist, "extension/EnergyConsumptionAdjustmentFactor"))
 end
 
