@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>7c92529e-92fc-4570-8a99-915e0ba0782b</version_id>
-  <version_modified>20171122T203329Z</version_modified>
+  <version_id>96791ebc-db6b-4dff-8671-7810de67a304</version_id>
+  <version_modified>20171122T215134Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -247,12 +247,6 @@
       <checksum>03B1CA23</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B466251C</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -269,12 +263,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>757823D0</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F43282E8</checksum>
     </file>
     <file>
       <filename>measure-info.json</filename>
@@ -298,6 +286,18 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>41FC797C</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C03B21F5</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EF3CCE9D</checksum>
     </file>
   </files>
 </measure>

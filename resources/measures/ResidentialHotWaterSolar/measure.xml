@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_solar</name>
   <uid>b969f216-f3c0-4301-9b85-34ce2b45f551</uid>
-  <version_id>95ee6ce1-3248-43cb-bfc6-6dc617ad5487</version_id>
-  <version_modified>20171030T152912Z</version_modified>
+  <version_id>9c78b4ed-649d-4eac-8373-86a91c821244</version_id>
+  <version_modified>20171122T214222Z</version_modified>
   <xml_checksum>F33F6E26</xml_checksum>
   <class_name>ResidentialHotWaterSolar</class_name>
   <display_name>Set Residential Solar Water Heating</display_name>
@@ -225,12 +225,6 @@
       <checksum>C9C319CF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B466251C</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.0</identifier>
@@ -258,12 +252,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>535A818D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F43282E8</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_3Beds_2Baths_Denver_ElecWHTank.osm</filename>
@@ -318,6 +306,18 @@
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>E051BE20</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C03B21F5</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EF3CCE9D</checksum>
     </file>
   </files>
 </measure>

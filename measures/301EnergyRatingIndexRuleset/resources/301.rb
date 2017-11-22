@@ -1318,11 +1318,6 @@ class EnergyRatingIndex301Ruleset
         fan_type = 'balanced'
       end
       
-      if nach < 0.67
-        # FIXME: Temporary
-        #fan_power_w = 16.023
-      end
-      
       new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
       new_vent_fans = XMLHelper.add_element(new_mech_vent, "VentilationFans")
       new_vent_fan = XMLHelper.add_element(new_vent_fans, "VentilationFan")

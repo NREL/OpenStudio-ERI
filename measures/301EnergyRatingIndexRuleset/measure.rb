@@ -228,6 +228,29 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
 
+    finished_floor_surfaces = []
+    model.getSpaces.each do |space|
+        runner.registerWarning("space #{space.name.to_s}")
+        next if Geometry.space_is_unfinished(space)
+        runner.registerWarning("1")
+        space.surfaces.each do |surface|
+            runner.registerWarning("surface #{surface.name.to_s}")
+            next if surface.construction.is_initialized
+            runner.registerWarning("1")
+            next if surface.surfaceType.downcase != "floor"
+            runner.registerWarning("2")
+            next if not surface.adjacentSurface.is_initialized
+            runner.registerWarning("3")
+            next if not surface.adjacentSurface.get.space.is_initialized
+            runner.registerWarning("4")
+            adjacent_space = surface.adjacentSurface.get.space.get
+            next if Geometry.space_is_unfinished(adjacent_space)
+            runner.registerWarning("5")
+            # Floor between two finished spaces
+            finished_floor_surfaces << surface
+        end
+    end
+    
     if osm_output_file_path.is_initialized
       File.write(osm_output_file_path.get, model.to_s)
       runner.registerInfo("Wrote file: #{osm_output_file_path.get}")
@@ -2268,7 +2291,7 @@ class OSModel
     building = hpxml_doc.elements["//Building"]
   
     # Geometry
-    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
+    avg_ceil_hgt = building.elements["//AverageCeilingHeight"]
     if avg_ceil_hgt.nil?
       avg_ceil_hgt = 8.0
     else
@@ -2286,7 +2309,7 @@ class OSModel
     add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
     add_above_grade_walls(model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
     add_attic_floors(model, building, geometry_errors, spaces)    
-    add_attic_ceilings(model, building, geometry_errors, spaces)
+    add_attic_roofs(model, building, geometry_errors, spaces)
     
     geometry_errors.each do |error|
       runner.registerError(error)
@@ -2463,7 +2486,7 @@ class OSModel
       if ["vented attic", "unvented attic"].include? attic_type
         create_spaces_and_zones(model, spaces, Constants.UnfinishedAtticSpace, Constants.UnfinishedAtticZone)
       elsif attic_type == "cape cod"
-        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.FinishedAtticZone)
+        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.LivingZone)
       elsif attic_type != "flat roof" and attic_type != "cathedral ceiling"
         fail "Unhandled value (#{attic_type})."
       end
@@ -2846,7 +2869,7 @@ class OSModel
       
   end
 
-  def self.add_attic_ceilings(model, building, errors, spaces)
+  def self.add_attic_roofs(model, building, errors, spaces)
   
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     

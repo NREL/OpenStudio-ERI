@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>eri_hot_water_and_appliances</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>1ab8ef9f-35e9-414f-95d7-43ca73520845</version_id>
-  <version_modified>20171115T215403Z</version_modified>
+  <version_id>1bbf7452-4255-4427-8465-704ea442d308</version_id>
+  <version_modified>20171122T214215Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ERIHotWaterAndAppliances</class_name>
   <display_name>Set ERI Hot Water &amp; Appliances</display_name>
@@ -304,18 +304,6 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B466251C</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F43282E8</checksum>
-    </file>
-    <file>
       <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -361,6 +349,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>4ABB7645</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C03B21F5</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EF3CCE9D</checksum>
     </file>
   </files>
 </measure>
