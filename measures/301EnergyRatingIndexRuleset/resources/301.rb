@@ -2024,6 +2024,11 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(extension, "FracSensible", cooking_range_sens)
     XMLHelper.add_element(extension, "FracLatent", cooking_range_lat)
     
+    new_cooking_range = XMLHelper.add_element(new_appliances, "Oven")
+    sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Oven")
+    XMLHelper.add_element(new_cooking_range, "FuelType", oven_fuel)
+    
   end
   
   def self.set_appliances_cooking_range_oven_rated(new_appliances, orig_details)
@@ -2083,6 +2088,11 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(extension, "FracSensible", cooking_range_sens)
     XMLHelper.add_element(extension, "FracLatent", cooking_range_lat)
     
+    new_cooking_range = XMLHelper.add_element(new_appliances, "Oven")
+    sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "Oven")
+    XMLHelper.add_element(new_cooking_range, "FuelType", oven_fuel)
+
   end
 
   def self.set_lighting_reference(new_lighting, orig_details)
