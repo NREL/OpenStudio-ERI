@@ -7,7 +7,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.apply_ruleset(hpxml_doc, calc_type, weather)
   
-    building = hpxml_doc.elements["//Building"]
+    building = hpxml_doc.elements["/HPXML/Building"]
     
     # Update XML type
     header = hpxml_doc.elements["//XMLTransactionHeaderInformation"]
@@ -19,13 +19,13 @@ class EnergyRatingIndex301Ruleset
     
     # Set class variables
     @weather = weather
-    @cfa = Float(XMLHelper.get_value(building, "//BuildingConstruction/ConditionedFloorArea"))
-    @nbeds = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofBedrooms"))
-    @nbaths = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofBathrooms"))
-    @ncfl = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofConditionedFloors"))
-    @ncfl_ag = Float(XMLHelper.get_value(building, "//BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
-    @cvolume = Float(XMLHelper.get_value(building, "//BuildingConstruction/ConditionedBuildingVolume"))
-    @climate_zone = XMLHelper.get_value(building, "//ClimateandRiskZones/ClimateZoneIECC[Year='2006']/ClimateZone")
+    @cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    @nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    @nbaths = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms"))
+    @ncfl = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    @ncfl_ag = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
+    @cvolume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
+    @climate_zone = XMLHelper.get_value(building, "BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2006']/ClimateZone")
         
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
@@ -260,12 +260,12 @@ class EnergyRatingIndex301Ruleset
     U-factor: from Table 4.2.2(2) for floors over unconditioned spaces or outdoor environment.
     '''
     
-    if orig_details.elements["//Attic[AtticType='unvented attic' or AtticType='vented attic']"]
-      orig_details.elements["//Attic/AtticType"].text = "vented attic"
+    if orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic[AtticType='unvented attic' or AtticType='vented attic']"]
+      orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic/AtticType"].text = "vented attic"
       XMLHelper.add_element(extension, "AtticSpecificLeakageArea", 1.0/300.0)
     end
-    if orig_details.elements["//FoundationType/Crawlspace"]
-      orig_details.elements["//FoundationType/Crawlspace/Vented"].text = true
+    if orig_details.elements["Enclosure/Foundations/Foundation/FoundationType/Crawlspace"]
+      orig_details.elements["Enclosure/Foundations/Foundation/FoundationType/Crawlspace/Vented"].text = true
       XMLHelper.add_element(extension, "CrawlspaceSpecificLeakageArea", 1.0/150.0)
     end
 
@@ -287,7 +287,7 @@ class EnergyRatingIndex301Ruleset
     
     whole_house_fan = nil
     if not orig_mv.nil?
-      whole_house_fan = orig_mv.elements["//VentilationFan[UsedForWholeBuildingVentilation='true']"]
+      whole_house_fan = orig_mv.elements["VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     end
     nach = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
     if whole_house_fan.nil? and nach < 0.30
@@ -334,10 +334,10 @@ class EnergyRatingIndex301Ruleset
     as the Rated Home down to a minimum net free vent area of 1ft2 per 1,500 ft2 of crawlspace floor area.
     '''
     
-    if orig_details.elements["//Attic[AtticType='vented attic']"]
+    if orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic[AtticType='vented attic']"]
       XMLHelper.copy_element(extension, orig_infil, "extension/AtticSpecificLeakageArea")
     end
-    if orig_details.elements["//FoundationType/Crawlspace[Vented='true']"]
+    if orig_details.elements["Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='true']"]
       XMLHelper.copy_element(extension, orig_infil, "extension/CrawlspaceSpecificLeakageArea")
     end
     
@@ -749,7 +749,7 @@ class EnergyRatingIndex301Ruleset
     during hours when natural ventilation will reduce annual cooling energy use.
     '''
     
-    orig_details.elements.each("//Window") do |orig_window|
+    orig_details.elements.each("Enclosure/Windows/Window") do |orig_window|
       new_window = XMLHelper.add_element(new_windows, "Window")
       XMLHelper.copy_element(new_window, orig_window, "SystemIdentifier")
       XMLHelper.copy_element(new_window, orig_window, "Area")
@@ -881,8 +881,8 @@ class EnergyRatingIndex301Ruleset
     
     has_boiler = false
     fuel_type = nil
-    heating_system = orig_details.elements["//HeatingSystem"]
-    heat_pump_system = orig_details.elements["//HeatPump"]
+    heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
+    heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
     if not heating_system.nil?
       has_boiler = XMLHelper.has_element(heating_system, "HeatingSystemType/Boiler")
       fuel_type = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
@@ -1076,15 +1076,15 @@ class EnergyRatingIndex301Ruleset
     then be added together to obtain the total energy uses for heating and cooling.
     '''
     
-    heating_system = orig_details.elements["//HeatingSystem"]
-    heat_pump_system = orig_details.elements["//HeatPump"]
-    cooling_system = orig_details.elements["//CoolingSystem"]
+    heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
+    heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
+    cooling_system = orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"]
     
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
     
     dist_id = nil
-    if orig_details.elements["//HVACDistribution"]
-      dist_id = orig_details.elements["//HVACDistribution/SystemIdentifier"].attributes["id"]
+    if orig_details.elements["Systems/HVAC/HVACDistribution"]
+      dist_id = orig_details.elements["Systems/HVAC/HVACDistribution/SystemIdentifier"].attributes["id"]
     end
     
     # Heating
@@ -1107,7 +1107,7 @@ class EnergyRatingIndex301Ruleset
     if not heating_system.nil?
       
       # Retain heating system
-      heating_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "//HeatingSystem")
+      heating_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
       
     elsif heat_type == "GasFurnace"
     
@@ -1134,7 +1134,7 @@ class EnergyRatingIndex301Ruleset
     if not cooling_system.nil?
       
       # Retain cooling system
-      cooling_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "//CoolingSystem")
+      cooling_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
       extension = cooling_system.elements["extension"]
       if extension.nil?
         extension = XMLHelper.add_element(cooling_system, "extension")
@@ -1169,7 +1169,7 @@ class EnergyRatingIndex301Ruleset
     if not heat_pump_system.nil?
     
       # Retain heating system
-      heat_pump_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "//HeatPump")
+      heat_pump_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
       extension = heat_pump_system.elements["extension"]
       if extension.nil?
         extension = XMLHelper.add_element(heat_pump_system, "extension")
@@ -1214,7 +1214,7 @@ class EnergyRatingIndex301Ruleset
     '''
     
     has_programmable_tstat = false
-    control_type = XMLHelper.get_value(orig_details, "//HVACControl/ControlType")
+    control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType")
     if control_type == "programmable thermostat"
       has_programmable_tstat = true
     end
@@ -1251,7 +1251,7 @@ class EnergyRatingIndex301Ruleset
     # Retain distribution system
     # FIXME: There can be no distribution system when HVAC prescribed via above
     #        e.g., no cooling system => AC w/o ducts
-    XMLHelper.copy_element(new_hvac, orig_details, "//HVACDistribution")
+    XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
 
   end
   
@@ -1272,7 +1272,7 @@ class EnergyRatingIndex301Ruleset
     # Init
     fan_type = nil
     
-    orig_whole_house_fan = orig_details.elements["//VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    orig_whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     
     if not orig_whole_house_fan.nil?
       
@@ -1294,7 +1294,7 @@ class EnergyRatingIndex301Ruleset
       
       # Calculate fan cfm for fan power using Rated Home infiltration
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
-      nach = Float(XMLHelper.get_value(orig_details, "//AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
+      nach = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
       sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
       # TODO: Merge with Airflow measure and move this code to airflow.rb
       nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
@@ -1344,7 +1344,7 @@ class EnergyRatingIndex301Ruleset
     0.03 x CFA + 7.5 x (Nbr+1) cfm and with energy loads calculated in quadrature
     '''
     
-    orig_vent_fan = orig_details.elements["//VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    orig_vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
     if not orig_vent_fan.nil?
       
@@ -1389,7 +1389,7 @@ class EnergyRatingIndex301Ruleset
     2001 for water heaters manufactured after January 20, 2004.
     '''
     
-    orig_wh_sys = orig_details.elements["//WaterHeatingSystem"]
+    orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
 
     wh_type = nil
     wh_tank_vol = nil
@@ -1403,7 +1403,7 @@ class EnergyRatingIndex301Ruleset
     if orig_wh_sys.nil?
       wh_type = 'storage water heater'
       wh_tank_vol = 40.0
-      wh_fuel_type = XMLHelper.get_value(orig_details, "//HeatingSystem/HeatingSystemFuel")
+      wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
       if wh_fuel_type.nil?
         # Electric heat pump or no heating system
         wh_fuel_type = 'electricity'
@@ -1502,7 +1502,7 @@ class EnergyRatingIndex301Ruleset
     Wednesday, January 17, 2001 for water heaters manufactured after January 20, 2004.
     '''
     
-    orig_wh_sys = orig_details.elements["//WaterHeatingSystem"]
+    orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
     
     if not orig_wh_sys.nil?
       
@@ -1528,7 +1528,7 @@ class EnergyRatingIndex301Ruleset
     
       wh_type = 'storage water heater'
       wh_tank_vol = 40.0
-      wh_fuel_type = XMLHelper.get_value(orig_details, "//HeatingSystem/HeatingSystemFuel")
+      wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
       if wh_fuel_type.nil?
         # Electric heat pump or no heating system
         wh_fuel_type = 'electricity'
@@ -1758,13 +1758,13 @@ class EnergyRatingIndex301Ruleset
       therms/cyc = (LER * $/kWh - AGC) / (21.9825 * $/kWh - $/therm) / 392
     '''
     
-    if orig_details.elements["//ClothesWasher/ModifiedEnergyFactor"]
+    if orig_details.elements["Appliances/ClothesWasher/ModifiedEnergyFactor"]
       # Detailed
-      ler = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/RatedAnnualkWh"))
-      elec_rate = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/LabelElectricRate"))
-      gas_rate = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/LabelGasRate"))
-      agc = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/LabelAnnualGasCost"))
-      cap = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/Capacity"))
+      ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
+      elec_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelElectricRate"))
+      gas_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelGasRate"))
+      agc = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelAnnualGasCost"))
+      cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
       
       ncy = (3.0 / 2.847) * (164 + @nbeds * 46.5)
       acy = ncy * ((3.0 * 2.08 + 1.59) / (cap * 2.08 + 1.59)) #Adjusted Cycles per Year
@@ -1773,10 +1773,10 @@ class EnergyRatingIndex301Ruleset
       clothes_washer_gpd = 60.0 * ((ler * elec_rate - agc) / (21.9825 * elec_rate - gas_rate) / 392.0) * acy / 365.0
     else
       # Simplified
-      clothes_washer_kwh = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/extension/AnnualkWh"))
-      clothes_washer_sens = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/extension/FracSensible"))
-      clothes_washer_lat = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/extension/FracLatent"))
-      clothes_washer_gpd = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/extension/HotWaterGPD"))
+      clothes_washer_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/AnnualkWh"))
+      clothes_washer_sens = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/FracSensible"))
+      clothes_washer_lat = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/FracLatent"))
+      clothes_washer_gpd = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/HotWaterGPD"))
     end
     
     new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
@@ -1796,7 +1796,7 @@ class EnergyRatingIndex301Ruleset
     Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
     '''
   
-    dryer_fuel = XMLHelper.get_value(orig_details, "//ClothesDryer/FuelType")
+    dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
     clothes_dryer_kwh = 524.0 + 0.0 * @cfa + 149.0 * @nbeds
     clothes_dryer_therm = 0.0
     if dryer_fuel != 'electricity'
@@ -1843,15 +1843,15 @@ class EnergyRatingIndex301Ruleset
       EFdry-g = Efficiency Factor for gas clothes dryer from the CEC database1 or the default value of 2.67.
     '''
     
-    dryer_fuel = XMLHelper.get_value(orig_details, "//ClothesDryer/FuelType")
-    if orig_details.elements["//ClothesDryer/EfficiencyFactor"]
+    dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
+    if orig_details.elements["Appliances/ClothesDryer/EfficiencyFactor"]
       # Detailed
-      ef_dry = Float(XMLHelper.get_value(orig_details, "//ClothesDryer/EfficiencyFactor"))
-      has_timer_control = Boolean(XMLHelper.get_value(orig_details, "//ClothesDryer[ControlType='timer']"))
+      ef_dry = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/EfficiencyFactor"))
+      has_timer_control = Boolean(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer[ControlType='timer']"))
       
-      ler = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/RatedAnnualkWh"))
-      cap = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/Capacity"))
-      mef = Float(XMLHelper.get_value(orig_details, "//ClothesWasher/ModifiedEnergyFactor"))
+      ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
+      cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
+      mef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/ModifiedEnergyFactor"))
       
       field_util_factor = nil
       if has_timer_control
@@ -1868,10 +1868,10 @@ class EnergyRatingIndex301Ruleset
       clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
     else
       # Simplified
-      clothes_dryer_kwh = Float(XMLHelper.get_value(orig_details, "//ClothesDryer/extension/AnnualkWh"))
-      clothes_dryer_therm = Float(XMLHelper.get_value(orig_details, "//ClothesDryer/extension/AnnualTherm"))
-      clothes_dryer_sens = Float(XMLHelper.get_value(orig_details, "//ClothesDryer/extension/FracSensible"))
-      clothes_dryer_lat = Float(XMLHelper.get_value(orig_details, "//ClothesDryer/extension/FracLatent"))
+      clothes_dryer_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/AnnualkWh"))
+      clothes_dryer_therm = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/AnnualTherm"))
+      clothes_dryer_sens = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/FracSensible"))
+      clothes_dryer_lat = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/FracLatent"))
     end
     
     new_clothes_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
@@ -1927,12 +1927,12 @@ class EnergyRatingIndex301Ruleset
       ΔGPDDW = [(88.4+34.9*Nbr)*8.16 - (88.4+34.9*Nbr)*12/dWcap*(4.6415*(1/EF) - 1.9295)]/365 (Eq 4.2-8b)
     '''
     
-    if orig_details.elements["//Dishwasher/EnergyFactor"] or orig_details.elements["//Dishwasher/RatedAnnualkWh"]
+    if orig_details.elements["Appliances/Dishwasher/EnergyFactor"] or orig_details.elements["Appliances/Dishwasher/RatedAnnualkWh"]
       # Detailed
-      cap = Float(XMLHelper.get_value(orig_details, "//Dishwasher/PlaceSettingCapacity"))
-      ef = XMLHelper.get_value(orig_details, "//Dishwasher/EnergyFactor")
+      cap = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/PlaceSettingCapacity"))
+      ef = XMLHelper.get_value(orig_details, "Appliances/Dishwasher/EnergyFactor")
       if ef.nil?
-        rated_annual_kwh = Float(XMLHelper.get_value(orig_details, "//Dishwasher/RatedAnnualkWh"))
+        rated_annual_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/RatedAnnualkWh"))
         ef = 215.0 / rated_annual_kwh
       else
         ef = ef.to_f
@@ -1943,10 +1943,10 @@ class EnergyRatingIndex301Ruleset
       dishwasher_gpd = dwcpy * (4.6415 * (1.0 / ef) - 1.9295) / 365.0
     else
       # Simplified
-      dishwasher_kwh = Float(XMLHelper.get_value(orig_details, "//Dishwasher/extension/AnnualkWh"))
-      dishwasher_sens = Float(XMLHelper.get_value(orig_details, "//Dishwasher/extension/FracSensible"))
-      dishwasher_lat = Float(XMLHelper.get_value(orig_details, "//Dishwasher/extension/FracLatent"))
-      dishwasher_gpd = Float(XMLHelper.get_value(orig_details, "//Dishwasher/extension/HotWaterGPD"))
+      dishwasher_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/AnnualkWh"))
+      dishwasher_sens = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/FracSensible"))
+      dishwasher_lat = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/FracLatent"))
+      dishwasher_gpd = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/HotWaterGPD"))
     end
   
     new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
@@ -1984,7 +1984,7 @@ class EnergyRatingIndex301Ruleset
     4.2.2.5.2.5(1).
     '''
     
-    refrigerator_kwh = Float(XMLHelper.get_value(orig_details, "//Refrigerator/RatedAnnualkWh"))
+    refrigerator_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Refrigerator/RatedAnnualkWh"))
     
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
@@ -2003,8 +2003,8 @@ class EnergyRatingIndex301Ruleset
     '''
     
     # TODO: How to handle different fuel types for CookingRange vs Oven?
-    range_fuel = XMLHelper.get_value(orig_details, "//CookingRange/FuelType")
-    oven_fuel = XMLHelper.get_value(orig_details, "//Oven/FuelType")
+    range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
+    oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
     
     cooking_range_kwh = 331.0 + 0.0 * @cfa + 39.0 * @nbeds
     cooking_range_therm = 0.0
@@ -2046,12 +2046,12 @@ class EnergyRatingIndex301Ruleset
       Nbr = Number of Bedrooms
     '''
     
-    range_fuel = XMLHelper.get_value(orig_details, "//CookingRange/FuelType")
-    oven_fuel = XMLHelper.get_value(orig_details, "//Oven/FuelType")
-    if orig_details.elements["//CookingRange/IsInduction"]
+    range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
+    oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
+    if orig_details.elements["Appliances/CookingRange/IsInduction"]
       # Detailed
-      range_is_induction = Boolean(XMLHelper.get_value(orig_details, "//CookingRange/IsInduction"))
-      oven_is_convection = Boolean(XMLHelper.get_value(orig_details, "//Oven/IsConvection"))
+      range_is_induction = Boolean(XMLHelper.get_value(orig_details, "Appliances/CookingRange/IsInduction"))
+      oven_is_convection = Boolean(XMLHelper.get_value(orig_details, "Appliances/Oven/IsConvection"))
       
       burner_ef = 1.0
       if range_is_induction
@@ -2072,10 +2072,10 @@ class EnergyRatingIndex301Ruleset
       cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
     else
       # Simplified
-      cooking_range_kwh = Float(XMLHelper.get_value(orig_details, "//CookingRange/extension/AnnualkWh"))
-      cooking_range_therm = Float(XMLHelper.get_value(orig_details, "//CookingRange/extension/AnnualTherm"))
-      cooking_range_sens = Float(XMLHelper.get_value(orig_details, "//CookingRange/extension/FracSensible"))
-      cooking_range_lat = Float(XMLHelper.get_value(orig_details, "//CookingRange/extension/FracLatent"))
+      cooking_range_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/AnnualkWh"))
+      cooking_range_therm = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/AnnualTherm"))
+      cooking_range_sens = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/FracSensible"))
+      cooking_range_lat = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/FracLatent"))
     end
     
     new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")

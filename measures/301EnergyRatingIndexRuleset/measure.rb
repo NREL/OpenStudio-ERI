@@ -167,7 +167,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     workflow_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
     
-    epw_path = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName")
+    epw_path = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName")
     unless (Pathname.new epw_path).absolute?
       epw_path = File.expand_path(File.join(File.dirname(hpxml_file_path), epw_path))
     end
@@ -228,29 +228,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
 
-    finished_floor_surfaces = []
-    model.getSpaces.each do |space|
-        runner.registerWarning("space #{space.name.to_s}")
-        next if Geometry.space_is_unfinished(space)
-        runner.registerWarning("1")
-        space.surfaces.each do |surface|
-            runner.registerWarning("surface #{surface.name.to_s}")
-            next if surface.construction.is_initialized
-            runner.registerWarning("1")
-            next if surface.surfaceType.downcase != "floor"
-            runner.registerWarning("2")
-            next if not surface.adjacentSurface.is_initialized
-            runner.registerWarning("3")
-            next if not surface.adjacentSurface.get.space.is_initialized
-            runner.registerWarning("4")
-            adjacent_space = surface.adjacentSurface.get.space.get
-            next if Geometry.space_is_unfinished(adjacent_space)
-            runner.registerWarning("5")
-            # Floor between two finished spaces
-            finished_floor_surfaces << surface
-        end
-    end
-    
     if osm_output_file_path.is_initialized
       File.write(osm_output_file_path.get, model.to_s)
       runner.registerInfo("Wrote file: #{osm_output_file_path.get}")
@@ -269,7 +246,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     if not generate_building_loads(model, runner)
       return false
     end
-
+    
     return true
 
   end
@@ -339,7 +316,7 @@ class OSMeasures
   def self.build_measures_from_hpxml(hpxml_doc)
 
     measures = {}
-    building = hpxml_doc.elements["//Building"]
+    building = hpxml_doc.elements["/HPXML/Building"]
     
     # TODO
     # ResidentialGeometryOrientation
@@ -2288,10 +2265,10 @@ class OSModel
   def self.create_geometry(hpxml_doc, runner, model)
 
     geometry_errors = []
-    building = hpxml_doc.elements["//Building"]
+    building = hpxml_doc.elements["/HPXML/Building"]
   
     # Geometry
-    avg_ceil_hgt = building.elements["//AverageCeilingHeight"]
+    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
     if avg_ceil_hgt.nil?
       avg_ceil_hgt = 8.0
     else
