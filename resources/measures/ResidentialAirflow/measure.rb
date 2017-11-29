@@ -460,7 +460,6 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     duct_locations << Constants.Auto
     duct_locations << Constants.LivingZone
     duct_locations << Constants.AtticZone
-    duct_locations << Constants.FinishedAtticZone
     duct_locations << Constants.UnfinishedAtticZone
     duct_locations << Constants.BasementZone
     duct_locations << Constants.FinishedBasementZone
@@ -2827,7 +2826,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         duct_location_zone = unit.living_zone
         duct_location_name = unit.living_zone.name.to_s
       end
-    elsif duct_location == Constants.LivingZone or duct_location == Constants.FinishedAtticZone
+    elsif duct_location == Constants.LivingZone
       duct_location_zone = unit.living_zone
       duct_location_name = unit.living_zone.name.to_s
     elsif duct_location == Constants.GarageZone

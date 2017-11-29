@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>5c58088e-5a8d-4e7f-9289-1a3890a0899a</version_id>
-  <version_modified>20171117T175610Z</version_modified>
+  <version_id>e49093f5-ea7d-4ca0-9c3f-f16be38b4112</version_id>
+  <version_modified>20171128T160429Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -247,12 +247,6 @@
       <checksum>03B1CA23</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B466251C</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -271,10 +265,10 @@
       <checksum>757823D0</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
+      <filename>measure-info.json</filename>
+      <filetype>json</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F43282E8</checksum>
+      <checksum>E679C386</checksum>
     </file>
     <file>
       <version>
@@ -285,19 +279,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4781B03A</checksum>
+      <checksum>2B599BDC</checksum>
     </file>
     <file>
-      <filename>measure-info.json</filename>
-      <filetype>json</filetype>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E679C386</checksum>
+      <checksum>C03B21F5</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EF3CCE9D</checksum>
     </file>
     <file>
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>B16113F2</checksum>
+      <checksum>F81785FA</checksum>
     </file>
   </files>
 </measure>

@@ -93,7 +93,7 @@
                     <Material>wood</Material>
                   </Rafters>
                   <Pitch>6</Pitch>
-                  <RadiantBarrier>true</RadiantBarrier>
+                  <RadiantBarrier>false</RadiantBarrier>
                   <Insulation>
                     <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
                     <InsulationGrade>1</InsulationGrade>
@@ -119,7 +119,7 @@
                     <Material>wood</Material>
                   </Rafters>
                   <Pitch>6</Pitch>
-                  <RadiantBarrier>true</RadiantBarrier>
+                  <RadiantBarrier>false</RadiantBarrier>
                   <Insulation>
                     <SystemIdentifier id='Attic_Roof_Ins_ID2'/>
                     <InsulationGrade>1</InsulationGrade>

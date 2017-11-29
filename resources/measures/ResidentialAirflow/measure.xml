@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_airflow</name>
   <uid>7d2adf5c-9995-49be-b662-a23d2452bb36</uid>
-  <version_id>72589d7a-a6c7-4275-9e94-720556b7bd01</version_id>
-  <version_modified>20171110T192601Z</version_modified>
+  <version_id>7c001c15-3592-4ff6-8f0b-2336939f2dde</version_id>
+  <version_modified>20171122T214216Z</version_modified>
   <xml_checksum>19EEDBBB</xml_checksum>
   <class_name>ResidentialAirflow</class_name>
   <display_name>Set Residential Airflow</display_name>
@@ -479,10 +479,6 @@
           <display_name>attic zone</display_name>
         </choice>
         <choice>
-          <value>finished attic zone</value>
-          <display_name>finished attic zone</display_name>
-        </choice>
-        <choice>
           <value>unfinished attic zone</value>
           <display_name>unfinished attic zone</display_name>
         </choice>
@@ -699,12 +695,6 @@
       <checksum>C9C319CF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B466251C</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -715,12 +705,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>535A818D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F43282E8</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_3Beds_2Baths_Denver.osm</filename>
@@ -813,6 +797,18 @@
       <checksum>41E98AD3</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>C03B21F5</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EF3CCE9D</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.13.1</identifier>
@@ -821,7 +817,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>51E48175</checksum>
+      <checksum>380DA29A</checksum>
     </file>
   </files>
 </measure>

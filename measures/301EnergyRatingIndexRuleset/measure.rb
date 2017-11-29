@@ -6,6 +6,7 @@ require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname'
 require "#{File.dirname(__FILE__)}/resources/301"
+require "#{File.dirname(__FILE__)}/resources/301validator"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 require "#{File.dirname(__FILE__)}/resources/meta_measure"
@@ -139,7 +140,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       apply_measures_osw2 = "apply_measures2.osw"
     end
     
-    # Validate input HPXML
+    # Validate input HPXML against schema
     if not schemas_dir.nil?
       has_errors = false
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
@@ -149,14 +150,24 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       if has_errors
         return false
       end
-      runner.registerInfo("Validated input HPXML.")
+      runner.registerInfo("Validated input HPXML against schema.")
     else
-      runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
+      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
+    
+    # Validate input HPXML against ERI Use Case
+    errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
+    errors.each do |error|
+      runner.registerError(error)
+    end
+    unless errors.empty?
+      return false
+    end
+    runner.registerInfo("Validated input HPXML against ERI Use Case.")
     
     workflow_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
     
-    epw_path = XMLHelper.get_value(hpxml_doc, "//Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName")
+    epw_path = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName")
     unless (Pathname.new epw_path).absolute?
       epw_path = File.expand_path(File.join(File.dirname(hpxml_file_path), epw_path))
     end
@@ -185,10 +196,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Apply 301 ruleset on HPXML object
-    errors = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
-    errors.each do |error|
-      runner.registerError(error)
-    end
+    EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
     if hpxml_output_file_path.is_initialized
       XMLHelper.write_file(hpxml_doc, hpxml_output_file_path.get)
       runner.registerInfo("Wrote file: #{hpxml_output_file_path.get}")
@@ -197,7 +205,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    # Validate new HPXML
+    # Validate output HPXML against schema
     if not schemas_dir.nil?
       has_errors = false
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
@@ -209,7 +217,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       end
       runner.registerInfo("Validated output HPXML.")
     else
-      runner.registerWarning("Could not load nokogiri, no HPXML validation performed.")
+      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
     
     # Obtain list of OpenStudio measures (and arguments)
@@ -220,6 +228,11 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
 
+    if osm_output_file_path.is_initialized
+      File.write(osm_output_file_path.get, model.to_s)
+      runner.registerInfo("Wrote file: #{osm_output_file_path.get}")
+    end
+    
     if not apply_measures(measures_dir, measures, runner, model, workflow_json, apply_measures_osw2, show_measure_calls)
       return false
     end
@@ -233,7 +246,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     if not generate_building_loads(model, runner)
       return false
     end
-
+    
     return true
 
   end
@@ -303,7 +316,7 @@ class OSMeasures
   def self.build_measures_from_hpxml(hpxml_doc)
 
     measures = {}
-    building = hpxml_doc.elements["//Building"]
+    building = hpxml_doc.elements["/HPXML/Building"]
     
     # TODO
     # ResidentialGeometryOrientation
@@ -336,7 +349,7 @@ class OSMeasures
     get_dehumidifier(building, measures)
     
     # Plug Loads and Lighting
-    # get_lighting(building, measures)
+    get_lighting(building, measures)
     get_mels(building, measures)
     
     # Other
@@ -347,6 +360,8 @@ class OSMeasures
     return measures
 
   end
+  
+  private
   
   def self.to_beopt_fuel(fuel)
     conv = {"natural gas"=>Constants.FuelTypeGas, 
@@ -400,9 +415,10 @@ class OSMeasures
   def self.get_num_occupants(building, measures)
 
     num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
-    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainPerPerson"))
+    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr"))
     sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
     lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
+    hrs_per_day = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay")) # TODO
     
     measure_subdir = "ResidentialGeometryNumOccupants"  
     args = {
@@ -650,7 +666,7 @@ class OSMeasures
     
       name = fnd_wall.elements["SystemIdentifier"].attributes["id"]
   
-      if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue") # Reference Home
+      if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue")
       
         wall_R = Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
         
@@ -662,7 +678,7 @@ class OSMeasures
         wall_cont_r = wall_R - Material.Concrete8in.rvalue - Material.DefaultWallSheathing.rvalue - Material.AirFilmVertical.rvalue
         wall_cont_depth = 1.0
       
-      else # Rated Home
+      else
     
         fnd_wall_cavity = fnd_wall.elements["Insulation/Layer[InstallationType='cavity']"]
         wall_cav_r = Float(XMLHelper.get_value(fnd_wall_cavity, "NominalRValue"))
@@ -746,7 +762,7 @@ class OSMeasures
     
       name = fnd_floor.elements["SystemIdentifier"].attributes["id"]
 
-      if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue") # Reference Home
+      if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue")
       
         # FIXME
         floor_cav_r = 0.0
@@ -756,7 +772,7 @@ class OSMeasures
         floor_cont_r = 0.0
         floor_cont_depth = 0.0
       
-      else # Rated Home
+      else
     
         fnd_floor_cavity = fnd_floor.elements["Insulation/Layer[InstallationType='cavity']"]
         floor_cav_r = Float(XMLHelper.get_value(fnd_floor_cavity, "NominalRValue"))
@@ -866,17 +882,6 @@ class OSMeasures
                }
         update_args_hash(measures, measure_subdir, args)
       end
-      
-      carpet_frac = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetFraction"))
-      carpet_r = Float(XMLHelper.get_value(fnd_floor, "extension/CarpetRValue"))
-      
-      measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
-      args = {
-              "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-              "covering_frac"=>carpet_frac,
-              "covering_r"=>carpet_r
-             }
-      update_args_hash(measures, measure_subdir, args)
       
     end
       
@@ -1214,8 +1219,6 @@ class OSMeasures
 
     dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
     
-    return if dhw.nil?
-    
     setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
     tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
@@ -1256,6 +1259,10 @@ class OSMeasures
                }
         update_args_hash(measures, measure_subdir, args)
         
+      else
+      
+        fail "Unhandled water heater (#{wh_type}, #{fuel})."
+        
       end      
       
     elsif wh_type == "instantaneous water heater"
@@ -1289,6 +1296,10 @@ class OSMeasures
                }
         update_args_hash(measures, measure_subdir, args)
         
+      else
+      
+        fail "Unhandled water heater (#{wh_type}, #{fuel})."
+        
       end
       
     elsif wh_type == "heat pump water heater"
@@ -1313,6 +1324,10 @@ class OSMeasures
               "temp_depress"=>0
              }
       update_args_hash(measures, measure_subdir, args)
+      
+    else
+    
+      fail "Unhandled water heater (#{wh_type})."
       
     end
 
@@ -1358,8 +1373,10 @@ class OSMeasures
     cook_fuel_type = XMLHelper.get_value(cook, "FuelType")
     
     # Fixtures
-    fx = wh.elements["WaterFixture[WaterFixtureType='other']"]
+    fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
     fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
+    sens_gain = Float(XMLHelper.get_value(fx, "extension/SensibleGainsBtu"))
+    lat_gain = Float(XMLHelper.get_value(fx, "extension/LatentGainsBtu"))
     
     # Distribution
     dist = wh.elements["HotWaterDistribution"]
@@ -1413,6 +1430,8 @@ class OSMeasures
             "cook_frac_lat"=>cook_frac_lat,
             "cook_fuel_type"=>to_beopt_fuel(cook_fuel_type),
             "fx_gpd"=>fx_gpd,
+            "fx_sens_btu"=>sens_gain,
+            "fx_lat_btu"=>lat_gain,
             "dist_type"=>dist_type,
             "dist_gpd"=>dist_gpd,
             "dist_pump_annual_kwh"=>dist_pump_annual_kwh,
@@ -2003,12 +2022,8 @@ class OSMeasures
     lat_kWhs = 0
     building.elements.each("BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other' or PlugLoadType='TV other']") do |pl|
       kWhs = Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value"))
-      if XMLHelper.has_element(pl, "extension/FracSensible") and XMLHelper.has_element(pl, "extension/FracLatent")
-        sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
-        lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
-      else # No fractions; all sensible
-        sens_kWhs += kWhs
-      end
+      sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
+      lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
     end
     tot_kWhs = sens_kWhs + lat_kWhs
     
@@ -2043,6 +2058,7 @@ class OSMeasures
       mech_vent_fan_power = 0
       mech_vent_frac_62_2 = 0
     else
+      # FIXME: HoursInOperation isn't being used
       fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
       if fan_type == "supply only"
         mech_vent_type = Constants.VentTypeSupply
@@ -2059,8 +2075,10 @@ class OSMeasures
       if fan_type == "energy recovery ventilator"
         mech_vent_total_efficiency = Float(XMLHelper.get_value(whole_house_fan, "TotalRecoveryEfficiency"))
       end
-      mech_vent_fan_power = Float(XMLHelper.get_value(whole_house_fan, "extension/FanPowerWperCFM"))
-      mech_vent_frac_62_2 = Float(XMLHelper.get_value(whole_house_fan, "extension/Frac2013ASHRAE622"))
+      mech_vent_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
+      mech_vent_w = Float(XMLHelper.get_value(whole_house_fan, "FanPower"))
+      mech_vent_fan_power = mech_vent_w/mech_vent_cfm
+      mech_vent_frac_62_2 = 1.0 # FIXME: Would prefer to provide airflow rate as measure input...
     end
     
     natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
@@ -2249,6 +2267,177 @@ end
 
 class OSModel
 
+  def self.create_geometry(hpxml_doc, runner, model)
+
+    geometry_errors = []
+    building = hpxml_doc.elements["/HPXML/Building"]
+  
+    # Geometry
+    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
+    if avg_ceil_hgt.nil?
+      avg_ceil_hgt = 8.0
+    else
+      avg_ceil_hgt = avg_ceil_hgt.text.to_f
+    end
+    
+    spaces = create_all_spaces_and_zones(model, building)
+
+    fenestration_areas = {}
+    add_windows(model, building, geometry_errors, spaces, fenestration_areas)
+    add_doors(model, building, geometry_errors, spaces, fenestration_areas)
+    add_foundation_floors(model, building, spaces)
+    add_foundation_walls(model, building, spaces, fenestration_areas)
+    foundation_ceiling_area = add_foundation_ceilings(model, building, spaces)
+    add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
+    add_above_grade_walls(model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
+    add_attic_floors(model, building, geometry_errors, spaces)    
+    add_attic_roofs(model, building, geometry_errors, spaces)
+    
+    geometry_errors.each do |error|
+      runner.registerError(error)
+    end
+
+    unless geometry_errors.empty?
+      return false
+    end    
+    
+    # FIXME: Set the zone volumes based on the sum of space volumes
+    model.getThermalZones.each do |thermal_zone|
+      zone_volume = 0
+      if not Geometry.get_volume_from_spaces(thermal_zone.spaces) > 0 # space doesn't have a floor
+        if thermal_zone.name.to_s == Constants.CrawlZone
+          floor_area = nil
+          thermal_zone.spaces.each do |space|
+            space.surfaces.each do |surface|
+              next unless surface.surfaceType.downcase == "roofceiling"
+              floor_area = surface.grossArea
+            end
+          end
+          zone_volume = OpenStudio.convert(floor_area,"m^2","ft^2").get * Geometry.get_height_of_spaces(thermal_zone.spaces)
+        end
+      else # space has a floor
+        zone_volume = Geometry.get_volume_from_spaces(thermal_zone.spaces)
+      end
+      thermal_zone.setVolume(OpenStudio.convert(zone_volume,"ft^3","m^3").get)
+    end
+    
+    # Explode the walls
+    wall_offset = 10.0
+    surfaces_moved = []
+    model.getSurfaces.sort.each do |surface|
+
+      next unless surface.surfaceType.downcase == "wall"
+      next if surface.subSurfaces.any? { |subsurface| subsurface.subSurfaceType.downcase == "fixedwindow" }
+      
+      if surface.adjacentSurface.is_initialized
+        next if surfaces_moved.include? surface.adjacentSurface.get
+      end
+      
+      transformation = get_surface_transformation(wall_offset, surface.outwardNormal.x, surface.outwardNormal.y, 0)   
+      
+      if surface.adjacentSurface.is_initialized
+        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+      end
+      surface.setVertices(transformation * surface.vertices)
+      
+      surface.subSurfaces.each do |subsurface|
+        next unless subsurface.subSurfaceType.downcase == "door"
+        subsurface.setVertices(transformation * subsurface.vertices)
+      end
+      
+      wall_offset += 2.5
+      
+      surfaces_moved << surface
+      
+    end
+    
+    # Explode the above-grade floors
+    # FIXME: Need to fix heights for airflow measure
+    floor_offset = 0.5
+    surfaces_moved = []
+    model.getSurfaces.sort.each do |surface|
+
+      next unless surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling"
+      next if surface.outsideBoundaryCondition.downcase == "ground"
+      
+      if surface.adjacentSurface.is_initialized
+        next if surfaces_moved.include? surface.adjacentSurface.get
+      end
+      
+      transformation = get_surface_transformation(floor_offset, 0, 0, surface.outwardNormal.z)
+
+      if surface.adjacentSurface.is_initialized
+        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+      end
+      surface.setVertices(transformation * surface.vertices)
+      
+      floor_offset += 2.5
+      
+      surfaces_moved << surface
+      
+    end
+    
+    # Explode the windows TODO: calculate window_offset dynamically
+    window_offset = 50.0
+    model.getSubSurfaces.sort.each do |sub_surface|
+
+      next unless sub_surface.subSurfaceType.downcase == "fixedwindow"
+      
+      transformation = get_surface_transformation(window_offset, sub_surface.outwardNormal.x, sub_surface.outwardNormal.y, 0)
+
+      surface = sub_surface.surface.get
+      sub_surface.setVertices(transformation * sub_surface.vertices)      
+      if surface.adjacentSurface.is_initialized
+        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
+      end
+      surface.setVertices(transformation * surface.vertices)
+      
+      window_offset += 2.5
+      
+    end
+    
+    # Store building unit information
+    unit = OpenStudio::Model::BuildingUnit.new(model)
+    unit.setBuildingUnitType(Constants.BuildingUnitTypeResidential)
+    unit.setName(Constants.ObjectNameBuildingUnit)
+    model.getSpaces.each do |space|
+      space.setBuildingUnit(unit)
+    end    
+    
+    # Store number of units
+    model.getBuilding.setStandardsNumberOfLivingUnits(1)    
+    
+    # Store number of stories TODO: Review this
+    num_floors = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
+    if num_floors.nil?
+      num_floors = 1
+    else
+      num_floors = num_floors.text.to_i
+    end    
+    
+    if (REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cape cod'])")) > 0
+      num_floors += 1
+    end
+    model.getBuilding.setStandardsNumberOfAboveGroundStories(num_floors)
+    model.getSpaces.each do |space|
+      if space.name.to_s == Constants.FinishedBasementSpace
+        num_floors += 1  
+        break
+      end
+    end
+    model.getBuilding.setStandardsNumberOfStories(num_floors)
+    
+    # Store info for HVAC Sizing measure
+    if building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"].text == "true"
+      unit.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 1.0) # FIXME: assumption
+    end
+
+    return true
+    
+  end
+  
+  private
+  
   def self.create_spaces_and_zones(model, spaces, space_name, thermal_zone_name)
     if not spaces.keys.include? space_name
       thermal_zone = create_zone(model, thermal_zone_name)
@@ -2269,7 +2458,9 @@ class OSModel
     spaces[name] = space
   end
 
-  def self.get_all_spaces_and_zones(model, building, spaces)
+  def self.create_all_spaces_and_zones(model, building)
+    
+    spaces = {}
     
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -2277,7 +2468,7 @@ class OSModel
       if ["vented attic", "unvented attic"].include? attic_type
         create_spaces_and_zones(model, spaces, Constants.UnfinishedAtticSpace, Constants.UnfinishedAtticZone)
       elsif attic_type == "cape cod"
-        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.FinishedAtticZone)
+        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.LivingZone)
       elsif attic_type != "flat roof" and attic_type != "cathedral ceiling"
         fail "Unhandled value (#{attic_type})."
       end
@@ -2321,6 +2512,8 @@ class OSModel
         create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
       elsif foundation_type.elements["Crawlspace"]
         create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
+      elsif foundation_type.elements["Ambient"]
+        create_spaces_and_zones(model, spaces, Constants.PierBeamSpace, Constants.PierBeamZone)
       elsif not foundation_type.elements["SlabOnGrade"]
         fail "Unhandled value (#{foundation_type})."
       end
@@ -2375,184 +2568,10 @@ class OSModel
       
     end
     
-  end
-  
-  def self.create_geometry(hpxml_doc, runner, model)
-
-    geometry_errors = []
-    building = hpxml_doc.elements["//Building"]
-  
-    # Geometry
-    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
-    if avg_ceil_hgt.nil?
-      avg_ceil_hgt = 8.0
-    else
-      avg_ceil_hgt = avg_ceil_hgt.text.to_f
-    end
-    
-    spaces = {}
-    get_all_spaces_and_zones(model, building, spaces)
-
-    fenestration_areas = {}
-    add_windows(model, building, geometry_errors, spaces, fenestration_areas)
-    add_doors(model, building, geometry_errors, spaces, fenestration_areas)
-    add_foundation_floors(model, building, spaces)
-    add_foundation_walls(model, building, spaces, fenestration_areas)
-    foundation_ceiling_area = add_foundation_ceilings(model, building, spaces)
-    add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
-    add_above_grade_walls(model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
-    add_attic_floors(model, building, geometry_errors, avg_ceil_hgt, spaces)    
-    add_attic_ceilings(model, building, geometry_errors, avg_ceil_hgt, spaces)
-    
-    geometry_errors.each do |error|
-      runner.registerError(error)
-    end
-
-    unless geometry_errors.empty?
-      return false
-    end    
-    
-    # FIXME: Set the zone volumes based on the sum of space volumes
-    model.getThermalZones.each do |thermal_zone|
-      zone_volume = 0
-      if not Geometry.get_volume_from_spaces(thermal_zone.spaces) > 0 # space doesn't have a floor
-        if thermal_zone.name.to_s == Constants.CrawlZone
-          floor_area = nil
-          thermal_zone.spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "roofceiling"
-              floor_area = surface.grossArea
-            end
-          end
-          zone_volume = OpenStudio.convert(floor_area,"m^2","ft^2").get * Geometry.get_height_of_spaces(thermal_zone.spaces)
-        end
-      else # space has a floor
-        zone_volume = Geometry.get_volume_from_spaces(thermal_zone.spaces)
-      end
-      thermal_zone.setVolume(OpenStudio.convert(zone_volume,"ft^3","m^3").get)
-    end
-    
-    # Explode the walls
-    wall_offset = 10.0
-    surfaces_moved = []
-    model.getSurfaces.each do |surface|
-
-      next unless surface.surfaceType.downcase == "wall"
-      next if surface.subSurfaces.any? { |subsurface| subsurface.subSurfaceType.downcase == "fixedwindow" }
-      
-      if surface.adjacentSurface.is_initialized
-        next if surfaces_moved.include? surface.adjacentSurface.get
-      end
-      
-      transformation = get_surface_transformation(wall_offset, surface.outwardNormal.x, surface.outwardNormal.y, 0)   
-      
-      if surface.adjacentSurface.is_initialized
-        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
-      end
-      surface.setVertices(transformation * surface.vertices)
-      
-      surface.subSurfaces.each do |subsurface|
-        next unless subsurface.subSurfaceType.downcase == "door"
-        subsurface.setVertices(transformation * subsurface.vertices)
-      end
-      
-      wall_offset += 2.5
-      
-      surfaces_moved << surface
-      
-    end
-    
-    # Explode the above-grade floors
-    floor_offset = 0.5
-    surfaces_moved = []
-    model.getSurfaces.each do |surface|
-
-      next unless surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling"
-      next if surface.outsideBoundaryCondition.downcase == "ground"
-      
-      if surface.adjacentSurface.is_initialized
-        next if surfaces_moved.include? surface.adjacentSurface.get
-      end
-      
-      transformation = get_surface_transformation(floor_offset, 0, 0, surface.outwardNormal.z)
-
-      if surface.adjacentSurface.is_initialized
-        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
-      end
-      surface.setVertices(transformation * surface.vertices)
-      
-      floor_offset += 2.5
-      
-      surfaces_moved << surface
-      
-    end
-    
-    # Explode the windows TODO: calculate window_offset dynamically
-    window_offset = 50.0
-    model.getSubSurfaces.each do |sub_surface|
-
-      next unless sub_surface.subSurfaceType.downcase == "fixedwindow"
-      
-      transformation = get_surface_transformation(window_offset, sub_surface.outwardNormal.x, sub_surface.outwardNormal.y, 0)
-
-      surface = sub_surface.surface.get
-      sub_surface.setVertices(transformation * sub_surface.vertices)      
-      if surface.adjacentSurface.is_initialized
-        surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
-      end
-      surface.setVertices(transformation * surface.vertices)
-      
-      window_offset += 2.5
-      
-    end
-    
-    # Store building name
-    model.getBuilding.setName("FIXME")
-        
-    # Store building unit information
-    unit = OpenStudio::Model::BuildingUnit.new(model)
-    unit.setBuildingUnitType(Constants.BuildingUnitTypeResidential)
-    unit.setName(Constants.ObjectNameBuildingUnit)
-    model.getSpaces.each do |space|
-      space.setBuildingUnit(unit)
-    end    
-    
-    # Store number of units
-    model.getBuilding.setStandardsNumberOfLivingUnits(1)    
-    
-    # Store number of stories TODO: Review this
-    num_floors = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
-    if num_floors.nil?
-      num_floors = 1
-    else
-      num_floors = num_floors.text.to_i
-    end    
-    
-    if (REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cape cod'])")) > 0
-      num_floors += 1
-    end
-    model.getBuilding.setStandardsNumberOfAboveGroundStories(num_floors)
-    model.getSpaces.each do |space|
-      if space.name.to_s == Constants.FinishedBasementSpace
-        num_floors += 1  
-        break
-      end
-    end
-    model.getBuilding.setStandardsNumberOfStories(num_floors)
-    
-    # Store the building type
-    facility_types_map = {"single-family detached"=>Constants.BuildingTypeSingleFamilyDetached}
-    model.getBuilding.setStandardsBuildingType(facility_types_map[building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType"].text])
-
-    # Store info for HVAC Sizing measure
-    if building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"].text == "true"
-      unit.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 1.0) # FIXME: assumption
-    end
-
-    return true
+    return spaces
     
   end
-
+  
   def self.get_surface_transformation(offset, x, y, z)
   
     m = OpenStudio::Matrix.new(4, 4, 0)
@@ -2621,6 +2640,12 @@ class OSModel
       return Constants.UnfinishedBasementSpace
     elsif foundation_type.elements["Crawlspace"]
       return Constants.CrawlSpace
+    elsif foundation_type.elements["SlabOnGrade"]
+      return Constants.LivingSpace
+    elsif foundation_type.elements["Ambient"]
+      return Constants.PierBeamSpace
+    else
+      fail "Unhandled value (#{foundation_type})."
     end
   end
   
@@ -2646,11 +2671,7 @@ class OSModel
         surface.setName(slab_id)
         surface.setSurfaceType("Floor") 
         surface.setOutsideBoundaryCondition("Ground")
-        if z_origin == 0
-          surface.setSpace(spaces[Constants.LivingSpace])
-        else
-          surface.setSpace(spaces[foundation_space_name])
-        end
+        surface.setSpace(spaces[foundation_space_name])
         
       end
       
@@ -2789,7 +2810,7 @@ class OSModel
     
   end
   
-  def self.add_attic_floors(model, building, errors, avg_ceil_hgt, spaces)
+  def self.add_attic_floors(model, building, errors, spaces)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -2830,7 +2851,7 @@ class OSModel
       
   end
 
-  def self.add_attic_ceilings(model, building, errors, avg_ceil_hgt, spaces)
+  def self.add_attic_roofs(model, building, errors, spaces)
   
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     

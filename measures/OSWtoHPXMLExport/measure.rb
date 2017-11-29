@@ -161,7 +161,6 @@ class OSWtoHPXMLExport < OpenStudio::Measure::ModelMeasure
     end
     XMLHelper.add_element(building_occupancy, "NumberofResidents", num_people.round)
     building_construction = building_summary.add_element "BuildingConstruction"
-    XMLHelper.add_element(building_construction, "ResidentialFacilityType", {Constants.BuildingTypeSingleFamilyDetached=>"single-family detached"}[model.getBuilding.standardsBuildingType.to_s])
     XMLHelper.add_element(building_construction, "NumberofUnits", model.getBuilding.standardsNumberOfLivingUnits)
     model.getBuildingUnits.each do |unit|
       XMLHelper.add_element(building_construction, "NumberofConditionedFloors", Geometry.get_building_stories(unit.spaces))

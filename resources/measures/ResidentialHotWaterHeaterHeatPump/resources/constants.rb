@@ -296,13 +296,6 @@ class Constants
   def self.FinishedAtticType
     return 'finished attic'
   end
-  def self.FinishedAtticZone(unit_name=self.ObjectNameBuildingUnit)
-    s_unit = ""
-    if unit_name != self.ObjectNameBuildingUnit
-      s_unit = "|#{unit_name}"
-    end
-    return "finished attic zone#{s_unit}"
-  end
   def self.FinishedBasementFoundationType
     return 'finished basement'
   end
