@@ -123,6 +123,16 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         fx_gpd.setDisplayName("Fixtures: Mixed Water Gallons Per Day")
         args << fx_gpd
         
+        # Fixtures Sensible Gains
+        fx_sens_btu = OpenStudio::Measure::OSArgument::makeDoubleArgument("fx_sens_btu", true)
+        fx_sens_btu.setDisplayName("Fixtures: Annual Sensible Gains")
+        args << fx_sens_btu
+        
+        # Fixtures Latent Gains
+        fx_lat_btu = OpenStudio::Measure::OSArgument::makeDoubleArgument("fx_lat_btu", true)
+        fx_lat_btu.setDisplayName("Fixtures: Annual Latent Gains")
+        args << fx_lat_btu
+        
         # Distribution System Type
         choices = OpenStudio::StringVector.new
         choices << "standard"
@@ -217,6 +227,8 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         cook_frac_lat = runner.getDoubleArgumentValue("cook_frac_lat",user_arguments)
         cook_fuel_type = runner.getStringArgumentValue("cook_fuel_type",user_arguments)
         fx_gpd = runner.getDoubleArgumentValue("fx_gpd",user_arguments)
+        fx_sens_btu = runner.getDoubleArgumentValue("fx_sens_btu",user_arguments)
+        fx_lat_btu = runner.getDoubleArgumentValue("fx_lat_btu",user_arguments)
         dist_type = runner.getStringArgumentValue("dist_type",user_arguments)
         dist_gpd = runner.getDoubleArgumentValue("dist_gpd",user_arguments)
         dist_pump_annual_kwh = runner.getDoubleArgumentValue("dist_pump_annual_kwh",user_arguments)
@@ -379,8 +391,16 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           
           # Fixtures (showers, sinks, baths)
           fx_obj_name = Constants.ObjectNameShower(unit.name.to_s)
+          fx_obj_name_sens = "#{fx_obj_name} Sensible"
+          fx_obj_name_lat = "#{fx_obj_name} Latent"
           fx_peak_flow_gpm = fx_gpd/sum_fractions_hw/timestep_minutes*365.0
+          fx_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          fx_schedule = cd_schedule
+          fx_design_level_sens = fx_schedule.calcDesignLevelFromDailykWh(OpenStudio::convert(fx_sens_btu, "Btu", "kWh").get/365.0)
+          fx_design_level_lat = fx_schedule.calcDesignLevelFromDailykWh(OpenStudio::convert(fx_lat_btu, "Btu", "kWh").get/365.0)
           add_water_use_equipment(model, fx_obj_name, fx_peak_flow_gpm, schedule_mw, hw_temp_schedule, water_use_connection)
+          add_other_equipment(model, fx_obj_name_sens, fx_space, fx_design_level_sens, 1.0, 0.0, fx_schedule.schedule, nil)
+          add_other_equipment(model, fx_obj_name_lat, fx_space, fx_design_level_lat, 0.0, 1.0, fx_schedule.schedule, nil)
           
           # Distribution losses
           dist_obj_name = Constants.ObjectNameHotWaterDistribution(unit.name.to_s)
@@ -401,7 +421,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
     end
     
     def add_electric_equipment(model, obj_name, space, design_level_w, frac_sens, frac_lat, schedule)
-        return if design_level_w <= 0.0
+        return if design_level_w == 0.0
         ee_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         ee = OpenStudio::Model::ElectricEquipment.new(ee_def)
         ee.setName(obj_name)
@@ -416,12 +436,16 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
     end
     
     def add_other_equipment(model, obj_name, space, design_level_w, frac_sens, frac_lat, schedule, fuel_type)
-        return if design_level_w <= 0.0
+        return if design_level_w == 0.0
         oe_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
         oe = OpenStudio::Model::OtherEquipment.new(oe_def)
         oe.setName(obj_name)
         oe.setEndUseSubcategory(obj_name)
-        oe.setFuelType(fuel_type)
+        if fuel_type.nil?
+          oe.setFuelType("None")
+        else
+          oe.setFuelType(fuel_type)
+        end
         oe.setSpace(space)
         oe_def.setName(obj_name)
         oe_def.setDesignLevel(design_level_w)
@@ -432,7 +456,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
     end
     
     def add_water_use_equipment(model, obj_name, peak_flow_gpm, schedule, temp_schedule, water_use_connection)
-        return if peak_flow_gpm <= 0.0
+        return if peak_flow_gpm == 0.0
         wu_def = OpenStudio::Model::WaterUseEquipmentDefinition.new(model)
         wu = OpenStudio::Model::WaterUseEquipment.new(wu_def)
         wu.setName(obj_name)

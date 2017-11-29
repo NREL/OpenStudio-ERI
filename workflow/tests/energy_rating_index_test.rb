@@ -3,13 +3,15 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require_relative '../../resources/xmlhelper.rb'
+require_relative '../../resources/schedules.rb'
+require_relative '../../resources/constants.rb'
 
 class EnergyRatingIndexTest < MiniTest::Test
 
   def test_sample_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     Dir["#{parent_dir}/sample_files/*.xml"].each do |xml|
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
     end
   end
   
@@ -26,13 +28,13 @@ class EnergyRatingIndexTest < MiniTest::Test
       test_num += 1
       
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
-      _check_reference_home_components(ref_hpxml, test_num)
+      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      _check_reference_home_components(ref_hpxml, ref_osm, test_num)
       
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
       ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
-      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir)
+      ref_hpxml2, rated_hpxml2, ref_osm2, rated_osm2, results_csv2 = run_and_check(ref_hpxml, parent_dir)
       _check_e_ratio(results_csv2)
     end
   end
@@ -101,7 +103,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     _test_schema_validation(parent_dir, ref_hpxml)
     _test_schema_validation(parent_dir, rated_hpxml)
     
-    return ref_hpxml, rated_hpxml, results_csv
+    return ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv
   end
   
   def _test_schema_validation(parent_dir, xml)
@@ -115,15 +117,18 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_equal(errors.size, 0)
   end
   
-  def _check_reference_home_components(ref_hpxml, test_num)
+  def _check_reference_home_components(ref_hpxml, ref_osm, test_num)
     hpxml_doc = REXML::Document.new(File.read(ref_hpxml))
+
+    translator = OpenStudio::OSVersion::VersionTranslator.new
+    model = translator.loadModel(OpenStudio::Path.new(ref_osm)).get
     
     # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 – 4
     
     epsilon = 0.0005 # 0.05%
     
     # Above-grade walls
-    wall_u, wall_solar_abs, wall_emiss = _get_hpxml_above_grade_wall(hpxml_doc)
+    wall_u, wall_solar_abs, wall_emiss = _get_above_grade_walls(hpxml_doc)
     if test_num <= 3
       assert_in_delta(0.082, wall_u, 0.001)
     else
@@ -133,7 +138,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_equal(0.90, wall_emiss)
     
     # Basement walls
-    bsmt_wall_u = _get_hpxml_basement_wall(hpxml_doc)
+    bsmt_wall_u = _get_basement_walls(hpxml_doc)
     if test_num == 4
       assert_in_delta(0.059, bsmt_wall_u, 0.001)
     else
@@ -141,7 +146,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
     
     # Above-grade floors
-    floors_u = _get_hpxml_above_grade_floors(hpxml_doc)
+    floors_u = _get_above_grade_floors(hpxml_doc)
     if test_num <= 2
       assert_in_delta(0.047, floors_u, 0.001)
     else
@@ -157,7 +162,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
     
     # Ceilings
-    ceil_u = _get_hpxml_ceilings(hpxml_doc)
+    ceil_u = _get_ceilings(hpxml_doc)
     if test_num == 1 or test_num == 4
       assert_in_delta(0.030, ceil_u, 0.001)
     else
@@ -165,16 +170,16 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
     
     # Roofs
-    roof_solar_abs, roof_emiss = _get_hpxml_roof(hpxml_doc)
+    roof_solar_abs, roof_emiss = _get_roof(hpxml_doc)
     assert_equal(0.75, roof_solar_abs)
     assert_equal(0.90, roof_emiss)
     
     # Attic vent area
-    attic_vent_area = _get_hpxml_attic_vent_area(hpxml_doc)
+    attic_vent_area = _get_attic_vent_area(hpxml_doc)
     assert_in_epsilon(5.13, attic_vent_area, epsilon)
     
     # Crawlspace vent area
-    crawl_vent_area = _get_hpxml_crawl_vent_area(hpxml_doc)
+    crawl_vent_area = _get_crawl_vent_area(hpxml_doc)
     if test_num == 2
       assert_in_epsilon(10.26, crawl_vent_area, epsilon)
     else
@@ -191,7 +196,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
     
     # Doors
-    door_u, door_area = _get_hpxml_doors(hpxml_doc)
+    door_u, door_area = _get_doors(hpxml_doc)
     assert_equal(40, door_area)
     if test_num == 1
       assert_in_delta(0.40, door_u, 0.01)
@@ -204,7 +209,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
     
     # Windows
-    win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_hpxml_windows(hpxml_doc)
+    win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_doc)
     win_areas.values.each do |win_area|
       if test_num <= 3
         assert_in_epsilon(69.26, win_area, epsilon)
@@ -225,27 +230,35 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_in_delta(0.28, win_shgc_clg, 0.01)
     
     # SLA
-    sla = _get_hpxml_sla(hpxml_doc)
+    sla = _get_sla(hpxml_doc)
     assert_in_delta(0.00036, sla, 0.00001)
     
     # Internal gains
-    it_sens, it_lat = _get_hpxml_internal_gains(hpxml_doc)
+    xml_it_sens, xml_it_lat, osm_it_sens, osm_it_lat = _get_internal_gains(hpxml_doc, model)
     if test_num == 1
-      assert_in_epsilon(55470, it_sens, epsilon)
-      assert_in_epsilon(13807, it_lat, epsilon)
+      assert_in_epsilon(55470, xml_it_sens, epsilon)
+      assert_in_epsilon(55470, osm_it_sens, epsilon*2.0)
+      assert_in_epsilon(13807, xml_it_lat, epsilon)
+      assert_in_epsilon(13807, osm_it_lat, epsilon*2.0)
     elsif test_num == 2
-      assert_in_epsilon(52794, it_sens, epsilon)
-      assert_in_epsilon(12698, it_lat, epsilon)
+      assert_in_epsilon(52794, xml_it_sens, epsilon)
+      assert_in_epsilon(52794, osm_it_sens, epsilon*2.0)
+      assert_in_epsilon(12698, xml_it_lat, epsilon)
+      assert_in_epsilon(12698, osm_it_lat, epsilon*2.0)
     elsif test_num == 3
-      assert_in_epsilon(48111, it_sens, epsilon)
-      assert_in_epsilon(9259, it_lat, epsilon)
+      assert_in_epsilon(48111, xml_it_sens, epsilon)
+      assert_in_epsilon(48111, osm_it_sens, epsilon*2.0)
+      assert_in_epsilon(9259, xml_it_lat, epsilon)
+      assert_in_epsilon(9259, osm_it_lat, epsilon*2.0)
     else
-      assert_in_epsilon(83103, it_sens, epsilon)
-      assert_in_epsilon(17934, it_lat, epsilon)
+      assert_in_epsilon(83103, xml_it_sens, epsilon)
+      assert_in_epsilon(83103, osm_it_sens, epsilon*2.0)
+      assert_in_epsilon(17934, xml_it_lat, epsilon)
+      assert_in_epsilon(17934, osm_it_lat, epsilon*2.0)
     end
     
     # HVAC
-    afue, hspf, seer, dse = _get_hpxml_hvac(hpxml_doc)
+    afue, hspf, seer, dse = _get_hvac(hpxml_doc)
     if test_num == 1 or test_num == 4
       assert_equal(0.78, afue)
     else
@@ -255,7 +268,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_equal(0.80, dse)
     
     # Thermostat
-    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_hpxml_tstat(hpxml_doc)
+    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
     assert_equal("manual", tstat)
     assert_equal(68, htg_sp)
     assert_equal(0, htg_setback)
@@ -263,7 +276,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_equal(0, clg_setup)
     
     # Mechanical ventilation
-    mv_kwh = _get_hpxml_mech_vent(hpxml_doc)
+    mv_kwh = _get_mech_vent(hpxml_doc)
     mv_epsilon = 0.001 # 0.1%
     if test_num == 1
       assert_in_epsilon(0.0, mv_kwh, mv_epsilon)
@@ -276,7 +289,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
     
     # Domestic hot water
-    ref_pipe_l, ref_loop_l = _get_hpxml_dhw(hpxml_doc)
+    ref_pipe_l, ref_loop_l = _get_dhw(hpxml_doc)
     dhw_epsilon = 0.1 # 0.1 ft
     if test_num <= 3
       assert_in_delta(88.5, ref_pipe_l, dhw_epsilon)
@@ -288,7 +301,7 @@ class EnergyRatingIndexTest < MiniTest::Test
            
   end
   
-  def _get_hpxml_above_grade_wall(hpxml_doc)
+  def _get_above_grade_walls(hpxml_doc)
     u_factor = 0.0
     solar_abs = 0.0
     emittance = 0.0
@@ -302,7 +315,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return u_factor/num, solar_abs/num, emittance/num
   end
   
-  def _get_hpxml_basement_wall(hpxml_doc)
+  def _get_basement_walls(hpxml_doc)
     u_factor = 0.0
     num = 0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/FoundationWall") do |fnd_wall|
@@ -312,7 +325,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return u_factor/num
   end
 
-  def _get_hpxml_above_grade_floors(hpxml_doc)
+  def _get_above_grade_floors(hpxml_doc)
     u_factor = 0.0
     num = 0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient|FoundationType/Crawlspace]/FrameFloor") do |amb_ceil|
@@ -341,7 +354,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return r_value/r_num, carpet_r_value/carpet_num, exp_area
   end
   
-  def _get_hpxml_ceilings(hpxml_doc)
+  def _get_ceilings(hpxml_doc)
     u_factor = 0.0
     num = 0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Floors/Floor") do |attc_floor|
@@ -351,7 +364,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return u_factor/num
   end
   
-  def _get_hpxml_roof(hpxml_doc)
+  def _get_roof(hpxml_doc)
     solar_abs = 0.0
     emittance = 0.0
     num = 0
@@ -363,7 +376,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return solar_abs/num, emittance/num
   end
   
-  def _get_hpxml_attic_vent_area(hpxml_doc)
+  def _get_attic_vent_area(hpxml_doc)
     area = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Floors/Floor") do |attc_floor|
       area += Float(XMLHelper.get_value(attc_floor, "Area"))
@@ -376,7 +389,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return sla*area
   end
   
-  def _get_hpxml_crawl_vent_area(hpxml_doc)
+  def _get_crawl_vent_area(hpxml_doc)
     area = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace]/FrameFloor") do |crawl_ceil|
       area += Float(XMLHelper.get_value(crawl_ceil, "Area"))
@@ -389,7 +402,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return sla*area
   end
   
-  def _get_hpxml_doors(hpxml_doc)
+  def _get_doors(hpxml_doc)
     area = 0.0
     u_factor = 0.0
     num = 0
@@ -401,7 +414,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return u_factor/num, area
   end
   
-  def _get_hpxml_windows(hpxml_doc)
+  def _get_windows(hpxml_doc)
     areas = {0=>0.0, 90=>0.0, 180=>0.0, 270=>0.0}
     u_factor = 0.0
     shgc_htg = 0.0
@@ -421,28 +434,42 @@ class EnergyRatingIndexTest < MiniTest::Test
     return areas, u_factor/num, shgc_htg/num, shgc_clg/num
   end
   
-  def _get_hpxml_sla(hpxml_doc)
+  def _get_sla(hpxml_doc)
     ela = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/EffectiveLeakageArea"))
     area = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
     return ela / area
   end
   
-  def _get_hpxml_internal_gains(hpxml_doc)
+  def _get_internal_gains(hpxml_doc, model)
+  
+    s = ""
   
     # Plug loads
-    pl_sens = 0.0
-    pl_lat = 0.0
+    xml_pl_sens = 0.0
+    xml_pl_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad") do |pl|
       frac_sens = Float(XMLHelper.get_value(pl, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(pl, "extension/FracLatent"))
       btu = OpenStudio::convert(Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value")), "kWh", "Btu").get
-      pl_sens += (frac_sens * btu)
-      pl_lat += (frac_lat * btu)
+      xml_pl_sens += (frac_sens * btu)
+      xml_pl_lat += (frac_lat * btu)
     end
+    osm_pl_sens = 0.0
+    osm_pl_lat = 0.0
+    model.getElectricEquipments.each do |ee|
+      next if not ee.name.to_s.start_with?(Constants.ObjectNameMiscPlugLoads)
+      frac_lat = ee.electricEquipmentDefinition.fractionLatent
+      frac_sens = 1.0 - frac_lat - ee.electricEquipmentDefinition.fractionLost
+      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ee.schedule.get)
+      ee_w = ee.designLevel.get
+      osm_pl_sens += OpenStudio::convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu").get
+      osm_pl_lat += OpenStudio::convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu").get
+    end
+    s += "#{xml_pl_sens} #{osm_pl_sens} #{xml_pl_lat} #{osm_pl_lat}\n"
     
     # Range, ClothesWasher, ClothesDryer, Dishwasher, Refrigerator
-    appl_sens = 0.0
-    appl_lat = 0.0
+    xml_appl_sens = 0.0
+    xml_appl_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange | /HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher | /HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
       frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
@@ -454,41 +481,98 @@ class EnergyRatingIndexTest < MiniTest::Test
           btu += OpenStudio::convert(Float(XMLHelper.get_value(appl, "extension/AnnualTherm")), "therm", "Btu").get
         end
       end
-      appl_sens += (frac_sens * btu)
-      appl_lat += (frac_lat * btu)
+      xml_appl_sens += (frac_sens * btu)
+      xml_appl_lat += (frac_lat * btu)
     end
+    osm_appl_sens = 0.0
+    osm_appl_lat = 0.0
+    model.getElectricEquipments.each do |ee|
+      next if not ee.name.to_s.start_with?(Constants.ObjectNameCookingRange(nil)) and not ee.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not ee.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not ee.name.to_s.start_with?(Constants.ObjectNameClothesDryer(nil)) and not ee.name.to_s.start_with?(Constants.ObjectNameDishwasher) and not ee.name.to_s.start_with?(Constants.ObjectNameRefrigerator)
+      frac_lat = ee.electricEquipmentDefinition.fractionLatent
+      frac_sens = 1.0 - frac_lat - ee.electricEquipmentDefinition.fractionLost
+      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ee.schedule.get)
+      ee_w = ee.designLevel.get
+      osm_appl_sens += OpenStudio::convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu").get
+      osm_appl_lat += OpenStudio::convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu").get
+    end
+    model.getOtherEquipments.each do |oe|
+      next if not oe.name.to_s.start_with?(Constants.ObjectNameCookingRange(nil)) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesDryer(nil)) and not oe.name.to_s.start_with?(Constants.ObjectNameDishwasher) and not oe.name.to_s.start_with?(Constants.ObjectNameRefrigerator)
+      frac_lat = oe.otherEquipmentDefinition.fractionLatent
+      frac_sens = 1.0 - frac_lat - oe.otherEquipmentDefinition.fractionLost
+      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, oe.schedule.get)
+      oe_w = oe.otherEquipmentDefinition.designLevel.get
+      osm_appl_sens += OpenStudio::convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu").get
+      osm_appl_lat += OpenStudio::convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu").get
+    end
+    s += "#{xml_appl_sens} #{osm_appl_sens} #{xml_appl_lat} #{osm_appl_lat}\n"
     
-    # FIXME: Water Use
-    nbr = Integer(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    water_sens = ((-1227.0-409.0*nbr)*365.0)
-    water_lat = ((1245.0+415.0*nbr)*365.0)
+    # Water Use
+    xml_water_sens = 0.0
+    xml_water_lat = 0.0
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture") do |wf|
+      xml_water_sens += Float(XMLHelper.get_value(wf, "extension/SensibleGainsBtu"))
+      xml_water_lat += Float(XMLHelper.get_value(wf, "extension/LatentGainsBtu"))
+    end
+    osm_water_sens = 0.0
+    osm_water_lat = 0.0
+    model.getOtherEquipments.each do |oe|
+      next if not oe.name.to_s.start_with?(Constants.ObjectNameShower)
+      frac_lat = oe.otherEquipmentDefinition.fractionLatent
+      frac_sens = 1.0 - frac_lat - oe.otherEquipmentDefinition.fractionLost
+      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, oe.schedule.get)
+      oe_w = oe.otherEquipmentDefinition.designLevel.get
+      osm_water_sens += OpenStudio::convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu").get
+      osm_water_lat += OpenStudio::convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu").get
+    end
+    s += "#{xml_water_sens} #{osm_water_sens} #{xml_water_lat} #{osm_water_lat}\n"
     
     # Occupants
-    occ_sens = 0.0
-    occ_lat = 0.0
+    xml_occ_sens = 0.0
+    xml_occ_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy") do |occ|
       frac_sens = Float(XMLHelper.get_value(occ, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(occ, "extension/FracLatent"))
-      btu = Float(XMLHelper.get_value(occ, "NumberofResidents")) * Float(XMLHelper.get_value(occ, "extension/HeatGainPerPerson"))
-      btu = btu * 8760.0 * 16.5/24.0 # FIXME
-      occ_sens += (frac_sens * btu)
-      occ_lat += (frac_lat * btu)
+      btu = Float(XMLHelper.get_value(occ, "NumberofResidents")) * Float(XMLHelper.get_value(occ, "extension/HeatGainBtuPerPersonPerHr")) * Float(XMLHelper.get_value(occ, "extension/PersonHrsPerDay")) * 365.0
+      xml_occ_sens += (frac_sens * btu)
+      xml_occ_lat += (frac_lat * btu)
     end
+    osm_occ_sens = 0.0
+    osm_occ_lat = 0.0
+    model.getPeoples.each do |occ|
+      frac_sens = occ.peopleDefinition.sensibleHeatFraction.get
+      frac_lat = 1.0 - frac_sens
+      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, occ.numberofPeopleSchedule.get)
+      but_per_occ_per_hr = OpenStudio.convert(Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, occ.activityLevelSchedule.get)/8760.0, "W", "Btu/h").get
+      btu = occ.peopleDefinition.numberofPeople.get * but_per_occ_per_hr * hrs_per_year
+      osm_occ_sens += (frac_sens * btu)
+      osm_occ_lat += (frac_lat * btu)
+    end
+    s += "#{xml_occ_sens} #{osm_occ_sens} #{xml_occ_lat} #{osm_occ_lat}\n"
     
     # Lighting
-    ltg_sens = 0.0
+    xml_ltg_sens = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting") do |ltg|
       ltg_kwh = Float(XMLHelper.get_value(ltg, "extension/AnnualInteriorkWh")) + Float(XMLHelper.get_value(ltg, "extension/AnnualGaragekWh"))
-      ltg_sens += OpenStudio::convert(ltg_kwh, "kWh", "Btu").get
+      xml_ltg_sens += OpenStudio::convert(ltg_kwh, "kWh", "Btu").get
     end
+    osm_ltg_sens = 0.0
+    model.getLightss.each do |ltg|
+      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ltg.schedule.get)
+      ltg_w = ltg.lightsDefinition.lightingLevel.get
+      osm_ltg_sens += OpenStudio::convert(ltg_w*hrs_per_year, "Wh", "Btu").get
+    end
+    s += "#{xml_ltg_sens} #{osm_ltg_sens}\n"
     
-    btu_sens = pl_sens + appl_sens + water_sens + occ_sens + ltg_sens
-    btu_lat = pl_lat + appl_lat + water_lat + occ_lat
+    xml_btu_sens = (xml_pl_sens + xml_appl_sens + xml_water_sens + xml_occ_sens + xml_ltg_sens)/365.0
+    xml_btu_lat = (xml_pl_lat + xml_appl_lat + xml_water_lat + xml_occ_lat)/365.0
     
-    return btu_sens/365.0, btu_lat/365.0
+    osm_btu_sens = (osm_pl_sens + osm_appl_sens + osm_water_sens + osm_occ_sens + osm_ltg_sens)/365.0
+    osm_btu_lat = (osm_pl_lat + osm_appl_lat + osm_water_lat + osm_occ_lat)/365.0
+    
+    return xml_btu_sens, xml_btu_lat, osm_btu_sens, osm_btu_lat
   end
   
-  def _get_hpxml_hvac(hpxml_doc)
+  def _get_hvac(hpxml_doc)
     afue = 0.0
     hspf = 0.0
     seer = 0.0
@@ -524,7 +608,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return afue/num_afue, hspf/num_hspf, seer/num_seer, dse/num_dse
   end
   
-  def _get_hpxml_tstat(hpxml_doc)
+  def _get_tstat(hpxml_doc)
     tstat = ""
     htg_sp = 0.0
     htg_setback = 0.0
@@ -546,7 +630,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return tstat, htg_sp/num, htg_setback/num, clg_sp/num, clg_setup/num
   end
   
-  def _get_hpxml_mech_vent(hpxml_doc)
+  def _get_mech_vent(hpxml_doc)
     mv_kwh = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']") do |mv|
       hours = Float(XMLHelper.get_value(mv, "HoursInOperation"))
@@ -556,7 +640,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return mv_kwh
   end
   
-  def _get_hpxml_dhw(hpxml_doc)
+  def _get_dhw(hpxml_doc)
     ref_pipe_l = 0.0
     ref_loop_l = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution") do |hwdist|
@@ -578,7 +662,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       hers_index = Float(row[1])
       break
     end
-    assert_in_epsilon(100, hers_index, 0.02) # FIXME: Should be 0.5% (0.005)
+    assert_in_epsilon(100, hers_index, 0.01) # FIXME: Should be 0.5% (0.005)
   end
   
 end

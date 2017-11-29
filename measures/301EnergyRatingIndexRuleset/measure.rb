@@ -349,7 +349,7 @@ class OSMeasures
     get_dehumidifier(building, measures)
     
     # Plug Loads and Lighting
-    # get_lighting(building, measures)
+    get_lighting(building, measures)
     get_mels(building, measures)
     
     # Other
@@ -415,9 +415,10 @@ class OSMeasures
   def self.get_num_occupants(building, measures)
 
     num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
-    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainPerPerson"))
+    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr"))
     sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
     lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
+    hrs_per_day = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay")) # TODO
     
     measure_subdir = "ResidentialGeometryNumOccupants"  
     args = {
@@ -1374,6 +1375,8 @@ class OSMeasures
     # Fixtures
     fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
     fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
+    sens_gain = Float(XMLHelper.get_value(fx, "extension/SensibleGainsBtu"))
+    lat_gain = Float(XMLHelper.get_value(fx, "extension/LatentGainsBtu"))
     
     # Distribution
     dist = wh.elements["HotWaterDistribution"]
@@ -1427,6 +1430,8 @@ class OSMeasures
             "cook_frac_lat"=>cook_frac_lat,
             "cook_fuel_type"=>to_beopt_fuel(cook_fuel_type),
             "fx_gpd"=>fx_gpd,
+            "fx_sens_btu"=>sens_gain,
+            "fx_lat_btu"=>lat_gain,
             "dist_type"=>dist_type,
             "dist_gpd"=>dist_gpd,
             "dist_pump_annual_kwh"=>dist_pump_annual_kwh,
