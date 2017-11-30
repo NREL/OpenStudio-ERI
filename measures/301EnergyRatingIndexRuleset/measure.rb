@@ -1220,7 +1220,10 @@ class OSMeasures
     dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
     
     setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
-    tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
+    tank_vol = nil
+    if dhw.elements["TankVolume"]
+      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
+    end
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
     fuel = XMLHelper.get_value(dhw, "FuelType")
     capacity_kw = Constants.Auto
@@ -1292,6 +1295,7 @@ class OSMeasures
         
         measure_subdir = "ResidentialHotWaterHeaterTanklessFuel"
         args = {
+                "setpoint_temp"=>setpoint_temp,
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "location"=>Constants.Auto,
                 "capacity"=>100000000.0,

@@ -1398,7 +1398,9 @@ class EnergyRatingIndex301Ruleset
     wh_fuel_type = nil
     if not orig_wh_sys.nil?
       wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
-      wh_tank_vol = Float(XMLHelper.get_value(orig_wh_sys, "TankVolume"))
+      if orig_wh_sys.elements["TankVolume"]
+        wh_tank_vol = Float(XMLHelper.get_value(orig_wh_sys, "TankVolume"))
+      end
       wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
     end
 
