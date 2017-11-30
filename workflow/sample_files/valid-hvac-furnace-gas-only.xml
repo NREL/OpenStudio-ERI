@@ -382,11 +382,9 @@
             <SystemIdentifier id='DHW_ID1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <TankVolume>80</TankVolume>
+            <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
-            <HeatingCapacity>15354</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
-            <RecoveryEfficiency>0.98</RecoveryEfficiency>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>

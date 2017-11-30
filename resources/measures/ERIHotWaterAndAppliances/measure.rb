@@ -252,7 +252,8 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         # Schedules init
         timestep_minutes = (60.0/model.getTimestep.numberOfTimestepsPerHour).to_i
         start_date = model.getYearDescription.makeDate(1,1)
-        interval = OpenStudio::Time.new(0, 0, timestep_minutes)
+        timestep_interval = OpenStudio::Time.new(0, 0, timestep_minutes)
+        timestep_day = OpenStudio::Time.new(0, 0, 60*24)
         temp_sch_limits = model.getScheduleTypeLimitsByName("Temperature").get
         
         # Get weather
@@ -267,7 +268,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
         if units.nil?
           return false
         end
-
+        
         units.each do |unit|
           # Get unit beds/baths
           nbeds, nbaths = Geometry.get_unit_beds_baths(model, unit, runner)
@@ -289,16 +290,24 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           water_use_connection = OpenStudio::Model::WaterUseConnections.new(model)
           plant_loop.addDemandBranchForComponent(water_use_connection)
           
+          # Get water heater setpoint schedule
+          setpoint_sched = Waterheater.get_water_heater_setpoint_schedule(model, plant_loop, runner)
+          if setpoint_sched.nil?
+            return false
+          end
+          
           tHot = 125.0 # F, Water heater set point temperature
           tMix = 105.0 # F, Temperature of mixed water at fixtures
           
           # Calculate adjFmix
           dwhr_inT = 97.0 # F
           adjFmix = [0.0] * 365
+          dwhr_WHinT_C = []
           if dwhr_avail
             for day in 0..364
               dwhr_WHinTadj = dwhr_iFrac * (dwhr_inT - tmains_daily[day]) * dwhr_eff * dwhr_eff_adj * dwhr_plc * dwhr_locF * dwhr_fixF
               dwhr_WHinT = tmains_daily[day] + dwhr_WHinTadj
+              dwhr_WHinT_C << OpenStudio::convert(dwhr_WHinT, "F", "C").get
               adjFmix[day] = 1.0 - ((tHot - tMix) / (tHot - dwhr_WHinT))
             end
           else
@@ -317,7 +326,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
             end
           end
           sum_fractions_hw = fractions_hw.reduce(:+).to_f
-          time_series_hw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(fractions_hw), "")
+          time_series_hw = OpenStudio::TimeSeries.new(start_date, timestep_interval, OpenStudio::createVector(fractions_hw), "")
           schedule_hw = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_hw, model).get
           schedule_hw.setName("Hot Water Draw Profile")
           
@@ -330,23 +339,24 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
               end
             end
           end
-          time_series_mw = OpenStudio::TimeSeries.new(start_date, interval, OpenStudio::createVector(fractions_mw), "")
+          time_series_mw = OpenStudio::TimeSeries.new(start_date, timestep_interval, OpenStudio::createVector(fractions_mw), "")
           schedule_mw = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_mw, model).get
           schedule_mw.setName("Mixed Water Draw Profile")
           
-          # Hot water target temperature schedule
-          hw_temp_schedule = OpenStudio::Model::ScheduleConstant.new(model)
-          hw_temp_schedule.setName("Hot Water temperature schedule")
-          hw_temp_schedule.setValue(OpenStudio::convert(tHot, "F", "C").get)
-          hw_temp_schedule.setScheduleTypeLimits(temp_sch_limits)
-          
+          if dwhr_avail
+            # Replace mains water temperature schedule
+            time_series_tmains = OpenStudio::TimeSeries.new(start_date, timestep_day, OpenStudio::createVector(dwhr_WHinT_C), "")
+            schedule_tmains = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_tmains, model).get
+            model.getSiteWaterMainsTemperature.setTemperatureSchedule(schedule_tmains)
+          end
+
           # Clothes washer
           cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
           cw_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
           cw_peak_flow_gpm = cw_gpd/sum_fractions_hw/timestep_minutes*365.0
           cw_design_level_w = OpenStudio::convert(cw_annual_kwh*60.0/(cw_gpd*365.0/cw_peak_flow_gpm), "kW", "W").get
           add_electric_equipment(model, cw_name, cw_space, cw_design_level_w, cw_frac_sens, cw_frac_lat, schedule_hw)
-          add_water_use_equipment(model, cw_name, cw_peak_flow_gpm, schedule_hw, hw_temp_schedule, water_use_connection)
+          add_water_use_equipment(model, cw_name, cw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
           
           # Clothes dryer
           cd_name_e = Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric, unit.name.to_s)
@@ -366,7 +376,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           dw_peak_flow_gpm = dw_gpd/sum_fractions_hw/timestep_minutes*365.0
           dw_design_level_w = OpenStudio::convert(dw_annual_kwh*60.0/(dw_gpd*365.0/dw_peak_flow_gpm), "kW", "W").get
           add_electric_equipment(model, dw_name, dw_space, dw_design_level_w, dw_frac_sens, dw_frac_lat, schedule_hw)
-          add_water_use_equipment(model, dw_name, dw_peak_flow_gpm, schedule_hw, hw_temp_schedule, water_use_connection)
+          add_water_use_equipment(model, dw_name, dw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
           
           # Refrigerator
           fridge_name = Constants.ObjectNameRefrigerator(unit.name.to_s)
@@ -398,14 +408,14 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           fx_schedule = cd_schedule
           fx_design_level_sens = fx_schedule.calcDesignLevelFromDailykWh(OpenStudio::convert(fx_sens_btu, "Btu", "kWh").get/365.0)
           fx_design_level_lat = fx_schedule.calcDesignLevelFromDailykWh(OpenStudio::convert(fx_lat_btu, "Btu", "kWh").get/365.0)
-          add_water_use_equipment(model, fx_obj_name, fx_peak_flow_gpm, schedule_mw, hw_temp_schedule, water_use_connection)
+          add_water_use_equipment(model, fx_obj_name, fx_peak_flow_gpm, schedule_mw, setpoint_sched, water_use_connection)
           add_other_equipment(model, fx_obj_name_sens, fx_space, fx_design_level_sens, 1.0, 0.0, fx_schedule.schedule, nil)
           add_other_equipment(model, fx_obj_name_lat, fx_space, fx_design_level_lat, 0.0, 1.0, fx_schedule.schedule, nil)
           
           # Distribution losses
           dist_obj_name = Constants.ObjectNameHotWaterDistribution(unit.name.to_s)
           dist_peak_flow_gpm = dist_gpd/sum_fractions_hw/timestep_minutes*365.0
-          add_water_use_equipment(model, dist_obj_name, dist_peak_flow_gpm, schedule_mw, hw_temp_schedule, water_use_connection)
+          add_water_use_equipment(model, dist_obj_name, dist_peak_flow_gpm, schedule_mw, setpoint_sched, water_use_connection)
           
           # Recirculation pump
           dist_pump_obj_name = Constants.ObjectNameHotWaterRecircPump(unit.name.to_s)

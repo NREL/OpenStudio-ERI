@@ -205,11 +205,9 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sim_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
   
   # Other - Recirculation pump
-  # Move from appliances end use to hot water end use
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameHotWaterRecircPump}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
-  elecRecircPump = get_sql_query_result(sqlFile, query)
-  sim_output[:elecAppliances] -= elecRecircPump
-  sim_output[:elecHotWater] += elecRecircPump
+  sim_output[:elecRecircPump] = get_sql_query_result(sqlFile, query)
+  sim_output[:elecAppliances] -= sim_output[:elecRecircPump]
   
   # Other - Space Heating Load
   vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
@@ -237,7 +235,8 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sum_elec_categories = (sim_output[:elecHeating] + sim_output[:elecCooling] + 
                          sim_output[:elecIntLighting] + sim_output[:elecExtLighting] + 
                          sim_output[:elecAppliances] + sim_output[:elecFans] + 
-                         sim_output[:elecPumps] + sim_output[:elecHotWater])
+                         sim_output[:elecPumps] + sim_output[:elecHotWater] + 
+                         sim_output[:elecRecircPump])
   if (sim_output[:elecTotal] - sum_elec_categories).abs > tolerance
     fail "ERROR: Electric category end uses do not sum to total.\n#{sim_output.to_s}"
   end
@@ -511,15 +510,13 @@ def calculate_eri(sim_outputs)
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_x_heat] = rated_output[:elecHeating] + rated_output[:fuelHeating]
   results[:ec_x_cool] = rated_output[:elecCooling]
-  results[:ec_x_dhw] = rated_output[:elecHotWater] + rated_output[:fuelHotWater]
+  results[:ec_x_dhw] = (rated_output[:elecHotWater] + rated_output[:fuelHotWater]) * dhw_adjustment(rated_hpxml_doc) + rated_output[:elecRecircPump]
   
   # EC_r = estimated Energy Consumption for the Reference Home’s end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_r_heat] = ref_output[:elecHeating] + ref_output[:fuelHeating]
   results[:ec_r_cool] = ref_output[:elecCooling]
   results[:ec_r_dhw] = ref_output[:elecHotWater] + ref_output[:fuelHotWater]
-  
-  results[:ec_x_dhw] *= dhw_adjustment(rated_hpxml_doc)
   
   # DSE_r = REUL/EC_r * EEC_r
   # For simplified system performance methods, DSE_r equals 0.80 for heating and cooling systems and 1.00 
@@ -611,7 +608,7 @@ def write_results_annual_output(out_csv, sim_output)
                  "Electricity, Heating (MBtu)"=>sim_output[:elecHeating],
                  "Electricity, Cooling (MBtu)"=>sim_output[:elecCooling],
                  "Electricity, Fans/Pumps (MBtu)"=>sim_output[:elecFans]+sim_output[:elecPumps],
-                 "Electricity, Hot Water (MBtu)"=>sim_output[:elecHotWater],
+                 "Electricity, Hot Water (MBtu)"=>sim_output[:elecHotWater]+sim_output[:elecRecircPump],
                  "Electricity, Lighting (MBtu)"=>sim_output[:elecIntLighting]+sim_output[:elecExtLighting],
                  "Electricity, Mech Vent (MBtu)"=>sim_output[:elecMechVent],
                  "Electricity, Refrigerator (MBtu)"=>sim_output[:elecFridge],

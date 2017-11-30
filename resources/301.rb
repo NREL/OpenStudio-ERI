@@ -1426,7 +1426,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
     XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
     XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
-    XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
+    XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "HeatingCapacity")
     XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
     if not wh_re.nil?
       XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
@@ -1539,7 +1539,6 @@ class EnergyRatingIndex301Ruleset
         wh_fuel_type = 'electricity'
       end
       wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-      wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), @nbeds, @nbaths) * 1000.0 # Btuh
     
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1549,7 +1548,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
       XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
       XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
-      XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
       XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       if not wh_re.nil?
         XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)

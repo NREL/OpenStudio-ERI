@@ -84,25 +84,16 @@ class Waterheater
         spaces.each do |space|
             next if !space.thermalZone.is_initialized
             zone = space.thermalZone.get
-            wh_type = "none" #TODO: 2 tank SHW might have both mixed and stratified tanks
             plant_loops.each do |pl|
                 pl.supplyComponents.each do |wh|
                     if wh.to_WaterHeaterMixed.is_initialized
                         waterHeater = wh.to_WaterHeaterMixed.get
-                        wh_type = "mixed" 
-                    elsif wh.to_WaterHeaterStratified.is_initialized
-                      if not wh.to_WaterHeaterStratified.get.secondaryPlantLoop.is_initialized
-                        waterHeater = wh.to_WaterHeaterStratified.get
-                        wh_type = "stratified"
-                      end
-                    else
-                        next
-                    end
-                    if wh_type == "mixed"
                         next if !waterHeater.ambientTemperatureThermalZone.is_initialized
                         next if waterHeater.ambientTemperatureThermalZone.get.name.to_s != zone.name.to_s
                         return pl
-                    elsif wh_type == "stratified"
+                    elsif wh.to_WaterHeaterStratified.is_initialized
+                      if not wh.to_WaterHeaterStratified.get.secondaryPlantLoop.is_initialized
+                        waterHeater = wh.to_WaterHeaterStratified.get
                         #Check if the water heater has a thermal zone attached to it, if not check if it has a schedule and the schedule name matches what we expect
                         if waterHeater.ambientTemperatureThermalZone.is_initialized
                             next if waterHeater.ambientTemperatureThermalZone.get.name.to_s != zone.name.to_s
@@ -112,6 +103,7 @@ class Waterheater
                                 return pl
                             end
                         end
+                      end
                     end
                 end
             end
@@ -189,8 +181,8 @@ class Waterheater
     end
 
     def self.calc_capacity(cap, fuel, num_beds, num_baths)
-    #Calculate the capacity of the water heater based on the fuel type and number of bedrooms and bathrooms in a home
-    #returns the capacity in kBtu/hr
+        #Calculate the capacity of the water heater based on the fuel type and number of bedrooms and bathrooms in a home
+        #returns the capacity in kBtu/hr
         if cap == Constants.Auto
             if fuel != Constants.FuelTypeElectric
                 if num_beds <= 3
@@ -235,7 +227,7 @@ class Waterheater
     end
 
     def self.calc_actual_tankvol(vol, fuel, tanktype)
-    #Convert the nominal tank volume to an actual volume
+        #Convert the nominal tank volume to an actual volume
         if tanktype == Constants.WaterHeaterTypeTankless
             act_vol = 1 #gal
         else
@@ -249,7 +241,7 @@ class Waterheater
     end
     
     def self.calc_ef(ef, vol, fuel)
-    #Calculate the energy factor as a function of the tank volume and fuel type
+        #Calculate the energy factor as a function of the tank volume and fuel type
         if ef == Constants.Auto
             if fuel == Constants.FuelTypePropane or fuel == Constants.FuelTypeGas
                 return 0.67 - (0.0019 * vol)
@@ -264,9 +256,9 @@ class Waterheater
     end
 
     def self.calc_tank_UA(vol, fuel, ef, re, pow, tanktype, cyc_derate)
-    #Calculates the U value, UA of the tank and conversion efficiency (eta_c)
-    #based on the Energy Factor and recovery efficiency of the tank
-    #Source: Burch and Erickson 2004 - http://www.nrel.gov/docs/gen/fy04/36035.pdf
+        #Calculates the U value, UA of the tank and conversion efficiency (eta_c)
+        #based on the Energy Factor and recovery efficiency of the tank
+        #Source: Burch and Erickson 2004 - http://www.nrel.gov/docs/gen/fy04/36035.pdf
         if tanktype == Constants.WaterHeaterTypeTankless
             eta_c = ef * (1 - cyc_derate)
             ua = 0
@@ -436,47 +428,58 @@ class Waterheater
         return loop
     end
     
-    def self.get_water_heater_setpoint(model, plant_loop, runner)
-        waterHeater = nil
-        wh_type = nil
-        hpwh = model.getWaterHeaterHeatPumpWrappedCondensers
-        len_wh_array = 0 #TODO: what to do for MF cases with multiple HPWHs? presumably this method will be called with a unit number and the # of hpwhs should be 1
-        if hpwh.size > 0
-            wh_type = "hpwh"
-            for wh in hpwh
-                waterHeater = wh
-                len_wh_array += 1
-            end
-        end
-        if wh_type.nil?
-            plant_loop.supplyComponents.each do |wh|
-                if wh.to_WaterHeaterMixed.is_initialized
-                    waterHeater = wh.to_WaterHeaterMixed.get
-                    wh_type = "mixed"
-                    break
+    def self.get_water_heater(model, plant_loop, runner)
+        plant_loop.supplyComponents.each do |wh|
+            if wh.to_WaterHeaterMixed.is_initialized
+                return wh.to_WaterHeaterMixed.get
+            elsif wh.to_WaterHeaterStratified.is_initialized
+                waterHeater = wh.to_WaterHeaterStratified.get
+                # Look for attached HPWH
+                model.getWaterHeaterHeatPumpWrappedCondensers.each do |hpwh|
+                    next if not hpwh.tank.to_WaterHeaterStratified.is_initialized
+                    next if hpwh.tank.to_WaterHeaterStratified.get != waterHeater
+                    return hpwh
                 end
             end
         end
-        if wh_type == "mixed"
+        runner.registerError("No water heater found; add a residential water heater first.")
+        return nil
+    end
+    
+    def self.get_water_heater_setpoint(model, plant_loop, runner)
+        waterHeater = get_water_heater(model, plant_loop, runner)
+        if waterHeater.is_a? OpenStudio::Model::WaterHeaterMixed
             if waterHeater.setpointTemperatureSchedule.nil?
                 runner.registerError("Water heater found without a setpoint temperature schedule.")
                 return nil
             end
-        elsif wh_type == "hpwh"
+            return OpenStudio.convert(waterHeater.setpointTemperatureSchedule.get.to_ScheduleConstant.get.value - waterHeater.deadbandTemperatureDifference/2.0,"C","F").get
+        elsif waterHeater.is_a? OpenStudio::Model::WaterHeaterHeatPumpWrappedCondenser
             if waterHeater.compressorSetpointTemperatureSchedule.nil?
                 runner.registerError("Heat pump water heater found without a setpoint temperature schedule.")
                 return nil
             end
-        end
-        if waterHeater.nil?
-            runner.registerError("No water heater found; add a residential water heater first.")
-            return nil
-        end
-        if wh_type == "mixed"
-            return OpenStudio.convert(waterHeater.setpointTemperatureSchedule.get.to_ScheduleConstant.get.value - waterHeater.deadbandTemperatureDifference/2.0,"C","F").get
-        else #wh_type == "hpwh"
             return OpenStudio.convert(waterHeater.compressorSetpointTemperatureSchedule.to_ScheduleConstant.get.value,"C","F").get
         end
+        return nil
+    end
+    
+    def self.get_water_heater_setpoint_schedule(model, plant_loop, runner)
+        waterHeater = get_water_heater(model, plant_loop, runner)
+        if waterHeater.is_a? OpenStudio::Model::WaterHeaterMixed
+            if waterHeater.setpointTemperatureSchedule.nil?
+                runner.registerError("Water heater found without a setpoint temperature schedule.")
+                return nil
+            end
+            return waterHeater.setpointTemperatureSchedule.get
+        elsif waterHeater.is_a? OpenStudio::Model::WaterHeaterHeatPumpWrappedCondenser
+            if waterHeater.compressorSetpointTemperatureSchedule.nil?
+                runner.registerError("Heat pump water heater found without a setpoint temperature schedule.")
+                return nil
+            end
+            return waterHeater.compressorSetpointTemperatureSchedule
+        end
+        return nil
     end
     
     def self.get_water_heater_location_auto(model, spaces, runner)

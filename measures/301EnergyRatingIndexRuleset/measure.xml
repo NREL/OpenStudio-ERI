@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>25429176-8391-40f6-b534-6241628cb645</version_id>
-  <version_modified>20171128T233917Z</version_modified>
+  <version_id>0f825c3a-69ac-4cd4-a4f6-52d5445b9e98</version_id>
+  <version_modified>20171130T182643Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -141,18 +141,6 @@
       <checksum>64BC6389</checksum>
     </file>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>696FBE04</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C144F9B</checksum>
-    </file>
-    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -198,7 +186,13 @@
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F81785FA</checksum>
+      <checksum>829BF2E3</checksum>
+    </file>
+    <file>
+      <filename>301.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>6F4A69A8</checksum>
     </file>
     <file>
       <version>
@@ -209,13 +203,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F3C6DBC1</checksum>
+      <checksum>CE97D565</checksum>
     </file>
     <file>
-      <filename>301.rb</filename>
+      <filename>xmlhelper.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>847D325D</checksum>
+      <checksum>805D6B21</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FE3E2995</checksum>
     </file>
   </files>
 </measure>

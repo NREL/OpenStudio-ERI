@@ -1223,11 +1223,17 @@ class OSMeasures
     tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
     fuel = XMLHelper.get_value(dhw, "FuelType")
+    capacity_kw = Constants.Auto
+    capacity_kbtuh = Constants.Auto
+    if dhw.elements["HeatingCapacity"]
+      capacity = Float(XMLHelper.get_value(dhw, "HeatingCapacity"))
+      capacity_kw = OpenStudio::convert(capacity, "Btu/hr", "kW").get
+      capacity_kbtuh = capacity/1000.0
+    end
     
     if wh_type == "storage water heater"
     
       ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
-      cap_btuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity"))
       
       if fuel == "electricity"
       
@@ -1236,7 +1242,7 @@ class OSMeasures
                 "tank_volume"=>tank_vol,
                 "setpoint_temp"=>setpoint_temp,
                 "location"=>Constants.Auto,
-                "capacity"=>OpenStudio::convert(cap_btuh,"Btu/h","kW").get,
+                "capacity"=>capacity_kw,
                 "energy_factor"=>ef
                }
         update_args_hash(measures, measure_subdir, args)
@@ -1251,7 +1257,7 @@ class OSMeasures
                 "tank_volume"=>tank_vol,
                 "setpoint_temp"=>setpoint_temp,
                 "location"=>Constants.Auto,
-                "capacity"=>cap_btuh/1000.0,
+                "capacity"=>capacity_kbtuh,
                 "energy_factor"=>ef,
                 "recovery_efficiency"=>re,
                 "offcyc_power"=>0,
@@ -2140,7 +2146,7 @@ class OSMeasures
       duct_dse = "NA"
     else
       # DSE or no ducts
-      if hvac_distribution.elements["AnnualHeatingDistributionSystemEfficiency"].nil? and hvac_distribution.elements["AnnualCoolingDistributionSystemEfficiency"].nil?
+      if hvac_distribution.nil? or (hvac_distribution.elements["AnnualHeatingDistributionSystemEfficiency"].nil? and hvac_distribution.elements["AnnualCoolingDistributionSystemEfficiency"].nil?)
         # No ducts
         duct_location = "none"
         duct_total_leakage = 0

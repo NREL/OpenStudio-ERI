@@ -10,7 +10,8 @@ class EnergyRatingIndexTest < MiniTest::Test
 
   def test_sample_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    Dir["#{parent_dir}/sample_files/*.xml"].each do |xml|
+    xmldir = "#{parent_dir}/sample_files"
+    Dir["#{xmldir}/*.xml"].each do |xml|
       ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
     end
   end
@@ -40,35 +41,63 @@ class EnergyRatingIndexTest < MiniTest::Test
   end
   
   def test_resnet_hers_method
-  
+    # TODO
   end
   
   def test_resnet_hers_method_proposed
-    
+    # TODO
   end
   
   def test_resnet_hvac
-  
+    # TODO
   end
   
   def test_resnet_dse
-  
+    # TODO
   end
   
   def test_resnet_hot_water
-  
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    test_num = 0
+    base_vals = {}
+    mn_vals = {}
+    all_results = {}
+    xmldir = "#{parent_dir}/sample_files/RESNET_Tests/4.6_Test_Hot_Water"
+    Dir["#{xmldir}/*.xml"].each do |xml|
+      test_num += 1
+      
+      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      
+      base_val = nil
+      if [2,3].include? test_num
+        base_val = all_results[1]
+      elsif [4,5,6,7].include? test_num
+        base_val = all_results[2]
+      elsif [9,10].include? test_num
+        base_val = all_results[8]
+      elsif [11,12,13,14].include? test_num
+        base_val = all_results[9]
+      end
+
+      mn_val = nil
+      if test_num >= 8
+        mn_val = all_results[test_num-7]
+      end
+      
+      all_results[test_num] = _check_hot_water(results_csv, test_num, base_val, mn_val)
+    end
   end
   
   def test_resnet_verification_building_attributes
-  
+    # TODO
   end
   
   def test_resnet_verification_mechanical_ventilation
-  
+    # TODO
   end
   
   def test_resnet_verification_appliances
-  
+    # TODO
   end
 
   private
@@ -663,6 +692,94 @@ class EnergyRatingIndexTest < MiniTest::Test
       break
     end
     assert_in_epsilon(100, hers_index, 0.01) # FIXME: Should be 0.5% (0.005)
+  end
+  
+  def _check_hot_water(results_csv, test_num, base_val=nil, mn_val=nil)
+    require 'csv'
+    rated_dhw = nil
+    CSV.foreach(results_csv) do |row|
+      next if row[0] != "EC_x Hot Water (MBtu)"
+      rated_dhw = Float(row[1])
+      break
+    end
+    
+    # Table 4.6.2(1): Acceptance Criteria for Hot Water Tests
+    
+    min_max_abs = nil
+    min_max_base_delta = nil
+    min_max_mn_delta = nil
+    if test_num == 1
+      min_max_abs = [19.11, 19.73]
+    elsif test_num == 2
+      min_max_abs = [25.54, 26.36]
+      min_max_base_delta = [-34.01, -32.49]
+    elsif test_num == 3
+      min_max_abs = [17.03, 17.50]
+      min_max_base_delta = [10.60, 11.57] # FIXME: Minimum should be 10.74
+    elsif test_num == 4
+      min_max_abs = [24.75, 25.52]
+      min_max_base_delta = [3.06, 3.22]
+    elsif test_num == 5
+      min_max_abs = [55.43, 57.15]
+      min_max_base_delta = [-118.52, -115.63]
+    elsif test_num == 6
+      min_max_abs = [22.39, 23.09]
+      min_max_base_delta = [12.17, 12.51]
+    elsif test_num == 7
+      min_max_abs = [20.29, 20.94]
+      min_max_base_delta = [20.15, 20.78]
+    elsif test_num == 8
+      min_max_abs = [10.59, 11.03]
+      min_max_mn_delta = [43.35, 45.00]
+    elsif test_num == 9
+      min_max_abs = [13.17, 13.68]
+      min_max_base_delta = [-24.54, -23.47]
+      min_max_mn_delta = [47.26, 48.93]
+    elsif test_num == 10
+      min_max_abs = [8.81, 9.13]
+      min_max_base_delta = [16.65, 18.12]
+      min_max_mn_delta = [47.38, 48.74]
+    elsif test_num == 11
+      min_max_abs = [12.87, 13.36]
+      min_max_base_delta = [2.20, 2.38]
+      min_max_mn_delta = [46.81, 48.48]
+    elsif test_num == 12
+      min_max_abs = [30.19, 31.31]
+      min_max_base_delta = [-130.88, -127.52]
+      min_max_mn_delta = [44.41, 45.99]
+    elsif test_num == 13
+      min_max_abs = [11.90, 12.38]
+      min_max_base_delta = [9.38, 9.74]
+      min_max_mn_delta = [45.60, 47.33]
+    elsif test_num == 14
+      min_max_abs = [11.68, 12.14]
+      min_max_base_delta = [11.00, 11.40]
+      min_max_mn_delta = [41.32, 42.86]
+    else
+      fail "Unexpected test."
+    end
+    
+    base_delta = nil
+    mn_delta = nil
+    if not min_max_base_delta.nil? and not base_val.nil?
+      base_delta = (base_val-rated_dhw)/base_val*100.0
+    end
+    if not min_max_mn_delta.nil? and not mn_val.nil?
+      mn_delta = (mn_val-rated_dhw)/mn_val*100.0
+    end
+    
+    assert(rated_dhw >= min_max_abs[0])
+    assert(rated_dhw <= min_max_abs[1])
+    if not base_delta.nil?
+      assert(base_delta >= min_max_base_delta[0])
+      assert(base_delta <= min_max_base_delta[1])
+    end
+    if not mn_delta.nil?
+      assert(mn_delta >= min_max_mn_delta[0])
+      assert(mn_delta <= min_max_mn_delta[1])
+    end
+    
+    return rated_dhw
   end
   
 end

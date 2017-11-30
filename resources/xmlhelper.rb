@@ -63,6 +63,7 @@ class XMLHelper
   
   # Copies the element if it exists
   def self.copy_element(dest, src, element_name, backup_val=nil)
+    return if src.nil?
     if not src.elements[element_name].nil?
       dest << src.elements[element_name].dup
     elsif not backup_val.nil?

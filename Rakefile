@@ -85,10 +85,10 @@ task :copy_beopt_files do
 
   puts "Extracting latest residential measures..."
   unzip_file = OpenStudio::UnzipFile.new(File.join(File.dirname(__FILE__), "#{branch}.zip"))
-  unzip_file.extractAllFiles(OpenStudio::toPath(File.join(File.dirname(__FILE__), branch)))
+  unzip_file.extractAllFiles(OpenStudio::toPath(File.join(File.dirname(__FILE__))))
 
   
-  beopt_dir = File.join(File.dirname(__FILE__), branch, "OpenStudio-BEopt-#{branch}")
+  beopt_dir = File.join(File.dirname(__FILE__), "OpenStudio-BEopt-#{branch}")
   beopt_measures_dir = File.join(beopt_dir, "measures")
   resource_measures_dir = File.join(File.dirname(__FILE__), "resources", "measures")
   if not Dir.exist?(beopt_measures_dir)
@@ -153,7 +153,7 @@ task :copy_beopt_files do
     puts "Copied #{File.basename(src_json)} to #{File.dirname(dest_json)}."
   end
   
-  FileUtils.rm_rf(File.join(File.dirname(__FILE__), branch))
+  FileUtils.rm_rf(File.join(File.dirname(__FILE__), "OpenStudio-BEopt-#{branch}"))
   
   update_measures()
 

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>os_wto_hpxml_export</name>
   <uid>6e73e20d-f1e4-418d-9fd8-1df681b8734b</uid>
-  <version_id>e49093f5-ea7d-4ca0-9c3f-f16be38b4112</version_id>
-  <version_modified>20171128T160429Z</version_modified>
+  <version_id>73bc96ba-1d11-4084-91f8-cec6337c4b73</version_id>
+  <version_modified>20171130T170556Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>OSWtoHPXMLExport</class_name>
   <display_name>OSW to HPXML Export</display_name>
@@ -53,12 +53,6 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>64BC6389</checksum>
-    </file>
-    <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>696FBE04</checksum>
     </file>
     <file>
       <filename>BoilerElectric.osw</filename>
@@ -297,7 +291,13 @@
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>F81785FA</checksum>
+      <checksum>829BF2E3</checksum>
+    </file>
+    <file>
+      <filename>xmlhelper.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>805D6B21</checksum>
     </file>
   </files>
 </measure>

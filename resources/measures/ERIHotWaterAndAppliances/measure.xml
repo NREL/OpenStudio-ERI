@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>eri_hot_water_and_appliances</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>ddd40302-bcb7-4d30-939c-7adb4b7381db</version_id>
-  <version_modified>20171128T235201Z</version_modified>
+  <version_id>5c2e0d6f-9e7c-419f-929b-3888a852d94c</version_id>
+  <version_modified>20171130T181053Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ERIHotWaterAndAppliances</class_name>
   <display_name>Set ERI Hot Water &amp; Appliances</display_name>
@@ -342,12 +342,6 @@
       <checksum>64BC6389</checksum>
     </file>
     <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C144F9B</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -366,6 +360,12 @@
       <checksum>EF3CCE9D</checksum>
     </file>
     <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>FE3E2995</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.4.1</identifier>
@@ -374,7 +374,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4427A2ED</checksum>
+      <checksum>537F0851</checksum>
     </file>
   </files>
 </measure>
