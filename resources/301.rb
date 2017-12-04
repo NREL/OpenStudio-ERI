@@ -1405,7 +1405,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     if orig_wh_sys.nil?
-      wh_type = 'storage water heater'
       wh_tank_vol = 40.0
       wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
       if wh_fuel_type.nil?
@@ -1413,9 +1412,9 @@ class EnergyRatingIndex301Ruleset
         wh_fuel_type = 'electricity'
       end
     elsif wh_type == 'instantaneous water heater'
-      wh_type = 'storage water heater'
       wh_tank_vol = 40.0
     end
+    wh_type = 'storage water heater'
     
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
     wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), @nbeds, @nbaths) * 1000.0 # Btuh
