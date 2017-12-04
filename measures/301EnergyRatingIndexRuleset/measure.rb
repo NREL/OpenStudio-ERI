@@ -341,9 +341,10 @@ class OSMeasures
     get_hot_water_and_appliances(building, measures)
     
     # HVAC
-    get_heating_system(building, measures)
-    get_cooling_system(building, measures)
-    get_heat_pump(building, measures)
+    dse = get_dse(building)
+    get_heating_system(building, measures, dse)
+    get_cooling_system(building, measures, dse)
+    get_heat_pump(building, measures, dse)
     get_setpoints(building, measures)
     get_ceiling_fan(building, measures)
     get_dehumidifier(building, measures)
@@ -1456,8 +1457,20 @@ class OSMeasures
     update_args_hash(measures, measure_subdir, args)
     
   end
+  
+  def self.get_dse(building)
+    dse_cool = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
+    dse_heat = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
+    # FIXME: Error if dse_cool != dse_heat
+    if dse_cool.nil?
+      dse_cool = "NA"
+    else
+      dse_cool = Float(dse_cool)
+    end
+    return dse_cool
+  end
 
-  def self.get_heating_system(building, measures)
+  def self.get_heating_system(building, measures, dse)
 
     htgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
     
@@ -1484,7 +1497,8 @@ class OSMeasures
         args = {
                 "afue"=>afue,
                 "fan_power_installed"=>0.5,
-                "capacity"=>heat_capacity_kbtuh
+                "capacity"=>heat_capacity_kbtuh,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1495,7 +1509,8 @@ class OSMeasures
                 "fuel_type"=>to_beopt_fuel(fuel),
                 "afue"=>afue,
                 "fan_power_installed"=>0.5,
-                "capacity"=>heat_capacity_kbtuh
+                "capacity"=>heat_capacity_kbtuh,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1517,7 +1532,8 @@ class OSMeasures
                 "oat_hwst_high"=>nil, # FIXME
                 "oat_hwst_low"=>nil, # FIXME
                 "design_temp"=>180, # FIXME
-                "capacity"=>heat_capacity_kbtuh
+                "capacity"=>heat_capacity_kbtuh,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1535,7 +1551,8 @@ class OSMeasures
                 "oat_hwst_low"=>nil, # FIXME
                 "design_temp"=>180, # FIXME
                 "modulation"=>false,
-                "capacity"=>heat_capacity_kbtuh
+                "capacity"=>heat_capacity_kbtuh,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1556,7 +1573,7 @@ class OSMeasures
 
   end
 
-  def self.get_cooling_system(building, measures)
+  def self.get_cooling_system(building, measures, dse)
   
     clgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
     
@@ -1598,7 +1615,8 @@ class OSMeasures
                 "eer_capacity_derate_3ton"=>1,
                 "eer_capacity_derate_4ton"=>1,
                 "eer_capacity_derate_5ton"=>1,
-                "capacity"=>cool_capacity_tons
+                "capacity"=>cool_capacity_tons,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1624,7 +1642,8 @@ class OSMeasures
                 "eer_capacity_derate_3ton"=>1,
                 "eer_capacity_derate_4ton"=>1,
                 "eer_capacity_derate_5ton"=>1,
-                "capacity"=>cool_capacity_tons
+                "capacity"=>cool_capacity_tons,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1658,7 +1677,8 @@ class OSMeasures
                 "eer_capacity_derate_3ton"=>1,
                 "eer_capacity_derate_4ton"=>1,
                 "eer_capacity_derate_5ton"=>1,
-                "capacity"=>cool_capacity_tons
+                "capacity"=>cool_capacity_tons,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1685,7 +1705,7 @@ class OSMeasures
 
   end
 
-  def self.get_heat_pump(building, measures)
+  def self.get_heat_pump(building, measures, dse)
 
     hp = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
     
@@ -1753,7 +1773,8 @@ class OSMeasures
                 "cop_capacity_derate_5ton"=>1,
                 "heat_pump_capacity"=>cool_capacity_tons,
                 "supplemental_efficiency"=>1,
-                "supplemental_capacity"=>backup_heat_capacity_kbtuh
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1791,7 +1812,8 @@ class OSMeasures
                 "cop_capacity_derate_4ton"=>1,
                 "cop_capacity_derate_5ton"=>1,
                 "heat_pump_capacity"=>cool_capacity_tons,
-                "supplemental_capacity"=>backup_heat_capacity_kbtuh
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1841,7 +1863,8 @@ class OSMeasures
                 "cop_capacity_derate_4ton"=>1,
                 "cop_capacity_derate_5ton"=>1,
                 "heat_pump_capacity"=>cool_capacity_tons,
-                "supplemental_capacity"=>backup_heat_capacity_kbtuh
+                "supplemental_capacity"=>backup_heat_capacity_kbtuh,
+                "dse"=>dse,
                }
         update_args_hash(measures, measure_subdir, args)
         
@@ -1880,7 +1903,8 @@ class OSMeasures
               "fan_power"=>0.07,
               "heat_pump_capacity"=>cool_capacity_tons,
               "supplemental_efficiency"=>1,
-              "supplemental_capacity"=>backup_heat_capacity_kbtuh
+              "supplemental_capacity"=>backup_heat_capacity_kbtuh,
+              "dse"=>nil, # FIXME: Check if ducted MSHP
              }
       update_args_hash(measures, measure_subdir, args)
              
@@ -1912,7 +1936,8 @@ class OSMeasures
               "fan_power"=>0.5,
               "heat_pump_capacity"=>cool_capacity_tons,
               "supplemental_efficiency"=>1,
-              "supplemental_capacity"=>backup_heat_capacity_kbtuh
+              "supplemental_capacity"=>backup_heat_capacity_kbtuh,
+              "dse"=>dse,
              }
       update_args_hash(measures, measure_subdir, args)
              
@@ -2147,40 +2172,18 @@ class OSMeasures
       duct_supply_area_mult = 1
       duct_return_area_mult = 1
       duct_r = 4.0
-      duct_dse = "NA"
     else
-      # DSE or no ducts
-      if hvac_distribution.nil? or (hvac_distribution.elements["AnnualHeatingDistributionSystemEfficiency"].nil? and hvac_distribution.elements["AnnualCoolingDistributionSystemEfficiency"].nil?)
-        # No ducts
-        duct_location = "none"
-        duct_total_leakage = 0
-        duct_supply_frac = 0
-        duct_return_frac = 0
-        duct_ah_supply_frac = 0
-        duct_ah_return_frac = 0
-        duct_location_frac = Constants.Auto
-        duct_num_returns = Constants.Auto
-        duct_supply_area_mult = 1
-        duct_return_area_mult = 1
-        duct_r = 0
-        duct_dse = "NA"
-      else
-        heat_dse = Float(XMLHelper.get_value(hvac_distribution, "AnnualHeatingDistributionSystemEfficiency"))
-        cool_dse = Float(XMLHelper.get_value(hvac_distribution, "AnnualCoolingDistributionSystemEfficiency"))
-        # FIXME: error if heat_dse != cool_dse
-        duct_location = "none"
-        duct_total_leakage = 0
-        duct_supply_frac = 0
-        duct_return_frac = 0
-        duct_ah_supply_frac = 0
-        duct_ah_return_frac = 0
-        duct_location_frac = Constants.Auto
-        duct_num_returns = Constants.Auto
-        duct_supply_area_mult = 1
-        duct_return_area_mult = 1
-        duct_r = 0
-        duct_dse = heat_dse
-      end
+      duct_location = "none"
+      duct_total_leakage = 0
+      duct_supply_frac = 0
+      duct_return_frac = 0
+      duct_ah_supply_frac = 0
+      duct_ah_return_frac = 0
+      duct_location_frac = Constants.Auto
+      duct_num_returns = Constants.Auto
+      duct_supply_area_mult = 1
+      duct_return_area_mult = 1
+      duct_r = 0
     end
   
     measure_subdir = "ResidentialAirflow"
@@ -2229,7 +2232,6 @@ class OSMeasures
             "duct_supply_area_mult"=>duct_supply_area_mult,
             "duct_return_area_mult"=>duct_return_area_mult,
             "duct_r"=>duct_r,
-            "duct_dse"=>duct_dse,
            }  
     update_args_hash(measures, measure_subdir, args) # FIXME (need to figure out approach for dealing with volumes)
 

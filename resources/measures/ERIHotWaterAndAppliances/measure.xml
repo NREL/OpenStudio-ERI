@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>eri_hot_water_and_appliances</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>5c2e0d6f-9e7c-419f-929b-3888a852d94c</version_id>
-  <version_modified>20171130T181053Z</version_modified>
+  <version_id>10988b1c-ed23-4f54-bbad-fd9d3b8f72ac</version_id>
+  <version_modified>20171204T215134Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ERIHotWaterAndAppliances</class_name>
   <display_name>Set ERI Hot Water &amp; Appliances</display_name>
@@ -348,22 +348,10 @@
       <checksum>8E62158E</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C03B21F5</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EF3CCE9D</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>FE3E2995</checksum>
     </file>
     <file>
       <version>
@@ -375,6 +363,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>537F0851</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8D7273C5</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>260EF643</checksum>
     </file>
   </files>
 </measure>

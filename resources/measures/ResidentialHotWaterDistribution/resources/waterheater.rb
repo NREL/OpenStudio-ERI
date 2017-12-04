@@ -114,8 +114,8 @@ class Waterheater
         return nil
     end
 
-    def self.deadband(tank_type)
-        if tank_type == Constants.WaterHeaterTypeTank
+    def self.deadband(wh_type)
+        if wh_type == Constants.WaterHeaterTypeTank
             return 2.0 # deg-C
         else
             return 0.0 # deg-C
@@ -226,9 +226,9 @@ class Waterheater
         end
     end
 
-    def self.calc_actual_tankvol(vol, fuel, tanktype)
+    def self.calc_actual_tankvol(vol, fuel, wh_type)
         #Convert the nominal tank volume to an actual volume
-        if tanktype == Constants.WaterHeaterTypeTankless
+        if wh_type == Constants.WaterHeaterTypeTankless
             act_vol = 1 #gal
         else
             if fuel == Constants.FuelTypeElectric
@@ -255,11 +255,11 @@ class Waterheater
         end
     end
 
-    def self.calc_tank_UA(vol, fuel, ef, re, pow, tanktype, cyc_derate)
+    def self.calc_tank_UA(vol, fuel, ef, re, pow, wh_type, cyc_derate)
         #Calculates the U value, UA of the tank and conversion efficiency (eta_c)
         #based on the Energy Factor and recovery efficiency of the tank
         #Source: Burch and Erickson 2004 - http://www.nrel.gov/docs/gen/fy04/36035.pdf
-        if tanktype == Constants.WaterHeaterTypeTankless
+        if wh_type == Constants.WaterHeaterTypeTankless
             eta_c = ef * (1 - cyc_derate)
             ua = 0
             surface_area = 1
@@ -305,18 +305,14 @@ class Waterheater
         return pump
     end
     
-    def self.create_new_schedule_manager(t_set, model, wh_type="tank")
+    def self.create_new_schedule_manager(t_set, model, wh_type)
         new_schedule = OpenStudio::Model::ScheduleConstant.new(model)
         new_schedule.setName("dhw temp")
-        if wh_type == "tank"
-            new_schedule.setValue(OpenStudio::convert(t_set,"F","C").get + 1)
-        else #tankless
-            new_schedule.setValue(OpenStudio::convert(t_set,"F","C").get)
-        end
+        new_schedule.setValue(OpenStudio::convert(t_set,"F","C").get + self.deadband(wh_type)/2.0)
         OpenStudio::Model::SetpointManagerScheduled.new(model, new_schedule)
     end 
     
-    def self.create_new_heater(name, cap, fuel, vol, nbeds, nbaths, ef, re, t_set, thermal_zone, oncycle_p, offcycle_p, tanktype, cyc_derate, measure_dir, model, runner)
+    def self.create_new_heater(name, cap, fuel, vol, nbeds, nbaths, ef, re, t_set, thermal_zone, oncycle_p, offcycle_p, wh_type, cyc_derate, measure_dir, model, runner)
     
         new_heater = OpenStudio::Model::WaterHeaterMixed.new(model)
         new_heater.setName(name)
@@ -328,17 +324,17 @@ class Waterheater
             capacity_w = OpenStudio::convert(capacity,"kW","W").get
         end
         nom_vol = self.calc_nom_tankvol(vol, fuel, nbeds, nbaths)
-        act_vol = self.calc_actual_tankvol(nom_vol, fuel, tanktype)
+        act_vol = self.calc_actual_tankvol(nom_vol, fuel, wh_type)
         energy_factor = self.calc_ef(ef, nom_vol, fuel)
-        u, ua, eta_c = self.calc_tank_UA(act_vol, fuel, energy_factor, re, capacity, tanktype, cyc_derate)
-        self.configure_setpoint_schedule(new_heater, t_set, tanktype, model)
+        u, ua, eta_c = self.calc_tank_UA(act_vol, fuel, energy_factor, re, capacity, wh_type, cyc_derate)
+        self.configure_setpoint_schedule(new_heater, t_set, wh_type, model)
         new_heater.setMaximumTemperatureLimit(99.0)
-        if tanktype == Constants.WaterHeaterTypeTankless
+        if wh_type == Constants.WaterHeaterTypeTankless
             new_heater.setHeaterControlType("Modulate")
         else
             new_heater.setHeaterControlType("Cycle")
         end
-        new_heater.setDeadbandTemperatureDifference(self.deadband(tanktype))
+        new_heater.setDeadbandTemperatureDifference(self.deadband(wh_type))
         
         vol_m3 = OpenStudio::convert(act_vol, "gal", "m^3").get
         new_heater.setHeaterMinimumCapacity(0.0)
@@ -348,7 +344,7 @@ class Waterheater
         new_heater.setTankVolume(vol_m3)
         
         #Set parasitic power consumption
-        if tanktype == Constants.WaterHeaterTypeTankless 
+        if wh_type == Constants.WaterHeaterTypeTankless 
             # Tankless WHs are set to "modulate", not "cycle", so they end up
             # effectively always on. Thus, we need to use a weighted-average of
             # on-cycle and off-cycle parasitics.
@@ -371,7 +367,7 @@ class Waterheater
         #Set fraction of heat loss from tank to ambient (vs out flue)
         #Based on lab testing done by LBNL
         skinlossfrac = 1.0
-        if fuel != Constants.FuelTypeElectric and tanktype == Constants.WaterHeaterTypeTank
+        if fuel != Constants.FuelTypeElectric and wh_type == Constants.WaterHeaterTypeTank
             if oncycle_p == 0
                 skinlossfrac = 0.64
             elsif energy_factor < 0.8
@@ -395,8 +391,8 @@ class Waterheater
         return new_heater
     end 
   
-    def self.configure_setpoint_schedule(new_heater, t_set, tanktype, model)
-        set_temp_c = OpenStudio::convert(t_set,"F","C").get + self.deadband(tanktype)/2.0 #Half the deadband to account for E+ deadband
+    def self.configure_setpoint_schedule(new_heater, t_set, wh_type, model)
+        set_temp_c = OpenStudio::convert(t_set,"F","C").get + self.deadband(wh_type)/2.0 #Half the deadband to account for E+ deadband
         new_schedule = OpenStudio::Model::ScheduleConstant.new(model)
         new_schedule.setName("WH Setpoint Temp")
         new_schedule.setValue(set_temp_c)
@@ -406,15 +402,11 @@ class Waterheater
         new_heater.setSetpointTemperatureSchedule(new_schedule)
     end
     
-    def self.create_new_loop(model, name, t_set, wh_type="tank")
+    def self.create_new_loop(model, name, t_set, wh_type)
         #Create a new plant loop for the water heater
         loop = OpenStudio::Model::PlantLoop.new(model)
         loop.setName(name)
-        if wh_type == "tank"
-            loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get + 1)
-        else #tankless
-            loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get)
-        end
+        loop.sizingPlant.setDesignLoopExitTemperature(OpenStudio::convert(t_set,"F","C").get + self.deadband(wh_type)/2.0)
         loop.sizingPlant.setLoopDesignTemperatureDifference(OpenStudio::convert(10,"R","K").get)
         loop.setPlantLoopVolume(0.003) #~1 gal
         loop.setMaximumLoopFlowRate(0.01) # This size represents the physical limitations to flow due to losses in the piping system. For BEopt we assume that the pipes are always adequately sized

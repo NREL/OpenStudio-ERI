@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_hot_water_heater_tank_fuel</name>
   <uid>0f2214ac-12ca-4350-9942-8d1fb1277608</uid>
-  <version_id>70a363cd-f5ee-415a-80e0-8fe3374a958c</version_id>
-  <version_modified>20171130T180614Z</version_modified>
+  <version_id>8dba4006-7417-4f98-8b5f-24411a841180</version_id>
+  <version_modified>20171204T215139Z</version_modified>
   <xml_checksum>9882CBDB</xml_checksum>
   <class_name>ResidentialHotWaterHeaterTankFuel</class_name>
   <display_name>Set Residential Fuel Tank Water Heater</display_name>
@@ -179,17 +179,6 @@
       <checksum>5CD21305</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>1.4.1</identifier>
-        <min_compatible>2.0.4</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>F3F96847</checksum>
-    </file>
-    <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -304,22 +293,33 @@
       <checksum>422045B1</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C03B21F5</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EF3CCE9D</checksum>
     </file>
     <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.4.1</identifier>
+        <min_compatible>2.0.4</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>EC1DCB56</checksum>
+    </file>
+    <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>FE3E2995</checksum>
+      <checksum>8D7273C5</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>260EF643</checksum>
     </file>
   </files>
 </measure>

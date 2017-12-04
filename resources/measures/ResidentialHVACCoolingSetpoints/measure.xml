@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_cooling_setpoints</name>
   <uid>2daa9d28-8891-4074-a1d1-bce3cb3d7ac6</uid>
-  <version_id>c5116d25-9fd9-4cc8-a221-1aa5b2bb9ef5</version_id>
-  <version_modified>20171122T214223Z</version_modified>
+  <version_id>06ee50a1-a652-4bc5-b653-42aa704576ea</version_id>
+  <version_modified>20171204T215141Z</version_modified>
   <xml_checksum>356BE47F</xml_checksum>
   <class_name>ProcessCoolingSetpoints</class_name>
   <display_name>Set Residential Cooling Setpoints and Schedules</display_name>
@@ -233,12 +233,6 @@
       <checksum>8E62158E</checksum>
     </file>
     <file>
-      <filename>hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C9C319CF</checksum>
-    </file>
-    <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -305,12 +299,6 @@
       <checksum>68407DB7</checksum>
     </file>
     <file>
-      <filename>process_cooling_setpoints_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2EBB38EE</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.11.5</identifier>
@@ -322,16 +310,28 @@
       <checksum>2B94BFAA</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C03B21F5</checksum>
-    </file>
-    <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>EF3CCE9D</checksum>
+    </file>
+    <file>
+      <filename>process_cooling_setpoints_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2EBB38EE</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>260EF643</checksum>
+    </file>
+    <file>
+      <filename>hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E5BFC75D</checksum>
     </file>
   </files>
 </measure>
