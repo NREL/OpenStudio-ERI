@@ -1904,7 +1904,7 @@ class OSMeasures
               "heat_pump_capacity"=>cool_capacity_tons,
               "supplemental_efficiency"=>1,
               "supplemental_capacity"=>backup_heat_capacity_kbtuh,
-              "dse"=>nil, # FIXME: Check if ducted MSHP
+              "dse"=>"NA", # FIXME: Check if ducted MSHP
              }
       update_args_hash(measures, measure_subdir, args)
              

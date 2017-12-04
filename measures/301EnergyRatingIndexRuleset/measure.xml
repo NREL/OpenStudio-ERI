@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>3b38e49e-f6a4-433d-89dc-1a4fb34e0035</version_id>
-  <version_modified>20171204T220955Z</version_modified>
+  <version_id>2e92e678-5abc-4f84-ab73-b8477e721fd0</version_id>
+  <version_modified>20171204T231219Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Generate Energy Rating Index Model</display_name>
@@ -215,7 +215,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D99567FD</checksum>
+      <checksum>C552DBF5</checksum>
     </file>
   </files>
 </measure>
