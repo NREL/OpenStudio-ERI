@@ -140,27 +140,13 @@ class ProcessCoolingSetpoints < OpenStudio::Measure::ModelMeasure
     end
 
     # assign the availability schedules to the equipment objects
-    has_clg_equip = false
     model.getThermalZones.each do |thermal_zone|
       cooling_equipment = HVAC.existing_cooling_equipment(model, runner, thermal_zone)
       cooling_equipment.each do |clg_equip|
-        has_clg_equip = true
-        clg_obj = nil
-        if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-          if clg_equip.coolingCoil.is_initialized
-            clg_obj = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
-          end
-        elsif clg_equip.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner
-          clg_obj = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
-        elsif clg_equip.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
-          clg_obj = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
-        else
-          runner.registerError("Unexpected cooling system: '#{clg_equip.name}'.")
-          return false
-        end
-        unless clg_obj.nil? or clg_obj.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
-          clg_obj.setAvailabilitySchedule(coolingseasonschedule.schedule)
-          runner.registerInfo("Added availability schedule to #{clg_obj.name}.")
+        clg_coil, htg_coil, supp_htg_coil = HVAC.get_coils_from_hvac_equip(clg_equip)
+        unless clg_coil.nil? or clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
+          clg_coil.setAvailabilitySchedule(coolingseasonschedule.schedule)
+          runner.registerInfo("Added availability schedule to #{clg_coil.name}.")
         end
       end
     end
