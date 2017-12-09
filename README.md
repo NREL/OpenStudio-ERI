@@ -3,7 +3,7 @@ OpenStudio-ERI
 
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
 
-The ERI is defined by the ANSI/RESNET 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using the HERS Index".
+The ERI is defined by ANSI/RESNET 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using the HERS Index".
 
 **Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI)
 
@@ -11,13 +11,13 @@ The ERI is defined by the ANSI/RESNET 301-2014 "Standard for the Calculation and
 
 ## Setup
 
-Download the latest version of OpenStudio from https://www.openstudio.net/developers. At a minimum, install the "Command Line Interface".
+Download OpenStudio 2.3.1 from https://www.openstudio.net. At a minimum, install the "Command Line Interface".
 
 ## Running
 
 1. Navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory.
 2. Run the ERI calculation on a provided sample HPXML file:  
-```c:/openstudio-2.2.1/bin/openstudio.exe energy_rating_index.rb -x sample_files/valid.xml```  
+```c:/openstudio-2.3.1/bin/openstudio.exe energy_rating_index.rb -x sample_files/valid.xml```  
 Note that the Reference Home and Rated Home workflows/simulations will be executed in parallel on the local machine.
 3. This will generate output as shown below:
 ![CLI output](https://user-images.githubusercontent.com/5861765/32967108-9c7f0e28-cb99-11e7-955b-f789549b909d.png)

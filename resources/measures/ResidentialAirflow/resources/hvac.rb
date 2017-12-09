@@ -443,9 +443,38 @@ class HVAC
         heating_equipment << system
       end
       return heating_equipment
-    end  
+    end
+    
+    def self.get_coils_from_hvac_equip(hvac_equip)
+      # Returns the clg coil, htg coil, and supp htg coil as applicable
+      clg_coil = nil
+      htg_coil = nil
+      supp_htg_coil = nil
+      if hvac_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
+        htg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.heatingCoil)
+        clg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.coolingCoil)
+        supp_htg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.supplementalHeatingCoil)
+      elsif hvac_equip.to_ZoneHVACTerminalUnitVariableRefrigerantFlow.is_initialized
+        htg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.heatingCoil)
+        clg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.coolingCoil)
+      elsif hvac_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveWater
+        htg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.heatingCoil)
+      elsif hvac_equip.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner
+        htg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.heatingCoil)
+        clg_coil = HVAC.get_coil_from_hvac_component(hvac_equip.coolingCoil)
+      end
+      return clg_coil, htg_coil, supp_htg_coil
+    end
 
     def self.get_coil_from_hvac_component(hvac_component)
+      # Check for optional objects
+      if (hvac_component.is_a? OpenStudio::Model::OptionalHVACComponent or
+          hvac_component.is_a? OpenStudio::Model::OptionalCoilHeatingDXVariableRefrigerantFlow or
+          hvac_component.is_a? OpenStudio::Model::OptionalCoilCoolingDXVariableRefrigerantFlow)
+        return nil if not hvac_component.is_initialized
+        hvac_component = hvac_component.get
+      end
+    
       # Cooling coils
       if hvac_component.to_CoilCoolingDXSingleSpeed.is_initialized
         return hvac_component.to_CoilCoolingDXSingleSpeed.get

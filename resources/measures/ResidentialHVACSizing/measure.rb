@@ -1294,7 +1294,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         design_level = nil
         
         # Get design level
-        if gain.is_a?(OpenStudio::Model::OtherEquipment)
+        if gain.is_a? OpenStudio::Model::OtherEquipment
             design_level_obj = gain.otherEquipmentDefinition
         else
             design_level_obj = gain
@@ -1308,13 +1308,13 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         next if design_level == 0
         
         # Get sensible/latent fractions
-        if gain.is_a?(OpenStudio::Model::ElectricEquipment)
+        if gain.is_a? OpenStudio::Model::ElectricEquipment
             sensible_frac = 1.0 - gain.electricEquipmentDefinition.fractionLost - gain.electricEquipmentDefinition.fractionLatent
             latent_frac = gain.electricEquipmentDefinition.fractionLatent
-        elsif gain.is_a?(OpenStudio::Model::GasEquipment)
+        elsif gain.is_a? OpenStudio::Model::GasEquipment
             sensible_frac = 1.0 - gain.gasEquipmentDefinition.fractionLost - gain.gasEquipmentDefinition.fractionLatent
             latent_frac = gain.gasEquipmentDefinition.fractionLatent
-        elsif gain.is_a?(OpenStudio::Model::OtherEquipment)
+        elsif gain.is_a? OpenStudio::Model::OtherEquipment
             sensible_frac = 1.0 - gain.otherEquipmentDefinition.fractionLost - gain.otherEquipmentDefinition.fractionLatent
             latent_frac = gain.otherEquipmentDefinition.fractionLatent
         else
@@ -1342,11 +1342,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         next if sched.nil?
         
         # Get schedule hourly values
-        if sched.is_a?(OpenStudio::Model::ScheduleRuleset)
+        if sched.is_a? OpenStudio::Model::ScheduleRuleset
             sched_values = sched.getDaySchedules(july_dates[0], july_dates[1])[0].values
-        elsif sched.is_a?(OpenStudio::Model::ScheduleConstant)
+        elsif sched.is_a? OpenStudio::Model::ScheduleConstant
             sched_values = [sched.value]*24
-        elsif sched.is_a?(OpenStudio::Model::ScheduleFixedInterval)
+        elsif sched.is_a? OpenStudio::Model::ScheduleFixedInterval
             # Override with smoothed schedules
             # TODO: Is there a better approach here?
             if gain.name.to_s.start_with?(Constants.ObjectNameShower)
@@ -2999,18 +2999,11 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             return nil
         end
         clg_equip = clg_equips[0]
+        clg_coil, htg_coil, supp_htg_coil = HVAC.get_coils_from_hvac_equip(clg_equip)
         
-        if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
+        if (clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem or
+            clg_equip.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
             hvac.HasForcedAirCooling = true
-            clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
-        elsif clg_equip.to_ZoneHVACComponent.is_initialized
-            clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
-            if clg_equip.is_a?(OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
-                hvac.HasForcedAirCooling = true
-            end
-        else
-            runner.registerError("Unexpected cooling equipment: #{clg_equip.name}.")
-            return nil
         end
         
         # Cooling coil
@@ -3155,18 +3148,17 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     if htg_equips.size > 0
         hvac.HasHeating = true
         
-        htg_coil = nil
-        supp_htg_coil = nil
+        baseboard = nil
         
         if htg_equips.size == 2
             # If MSHP & Baseboard, remove Baseboard to allow this combination
             baseboard = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric
             mshp = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
-            if htg_equips[0].is_a?(baseboard) and htg_equips[1].is_a?(mshp)
-                supp_htg_coil = htg_equips[0]
+            if htg_equips[0].is_a? baseboard and htg_equips[1].is_a? mshp
+                baseboard = htg_equips[0]
                 htg_equips.delete_at(0)
-            elsif htg_equips[0].is_a?(mshp) and htg_equips[1].is_a?(baseboard)
-                supp_htg_coil = htg_equips[1]
+            elsif htg_equips[0].is_a? mshp and htg_equips[1].is_a? baseboard
+                baseboard = htg_equips[1]
                 htg_equips.delete_at(1)
             end
         end
@@ -3179,26 +3171,14 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
             return nil
         end
         htg_equip = htg_equips[0]
+        clg_coil, htg_coil, supp_htg_coil = HVAC.get_coils_from_hvac_equip(htg_equip)
+        if not baseboard.nil?
+            supp_htg_coil = baseboard
+        end
         
-        if htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
+        if (htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem or 
+            htg_equip.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
             hvac.HasForcedAirHeating = true
-            htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
-            if htg_equip.supplementalHeatingCoil.is_initialized
-                supp_htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
-            end
-            
-        elsif htg_equip.to_ZoneHVACComponent.is_initialized
-            if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
-                htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
-            end
-            if htg_equip.is_a?(OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
-                hvac.HasForcedAirHeating = true
-            end
-            
-        else
-            runner.registerError("Unexpected heating equipment: #{htg_equip.name}.")
-            return nil
-            
         end
         
         # Heating coil
@@ -3283,12 +3263,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
         end
         
         # Supplemental heating
-        if htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+        if htg_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric
             if htg_equip.nominalCapacity.is_initialized
                 hvac.FixedSuppHeatingCapacity = OpenStudio::convert(htg_equip.nominalCapacity.get,"W","ton").get
             end
             
-        elsif supp_htg_coil.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+        elsif supp_htg_coil.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric
             if supp_htg_coil.nominalCapacity.is_initialized
                 hvac.FixedSuppHeatingCapacity = OpenStudio::convert(supp_htg_coil.nominalCapacity.get,"W","ton").get
             end
@@ -4045,20 +4025,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     clg_equip = nil
     if clg_equips.size == 1
         clg_equip = clg_equips[0]
-        
-        # Get coils
-        clg_coil = nil
-        if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-            clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
-            
-        elsif clg_equip.to_ZoneHVACComponent.is_initialized
-            clg_coil = HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
-            
-        else
-            runner.registerError("Unexpected cooling equipment: #{clg_equip.name}.")
-            return false
-            
-        end
+        clg_coil, htg_coil, supp_htg_coil = HVAC.get_coils_from_hvac_equip(clg_equip)
         
         # Set cooling values
         ratedCFMperTonCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonCooling, 'string', false)
@@ -4102,22 +4069,7 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     htg_equip = nil
     if htg_equips.size == 1
         htg_equip = htg_equips[0]
-        
-        # Get coils
-        htg_coil = nil
-        supp_htg_coil = nil
-        if htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-            htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
-            if htg_equip.supplementalHeatingCoil.is_initialized
-                supp_htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.supplementalHeatingCoil.get)
-            end
-            
-        elsif htg_equip.to_ZoneHVACComponent.is_initialized
-            if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
-                htg_coil = HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
-            end
-            
-        end
+        clg_coil, htg_coil, supp_htg_coil = HVAC.get_coils_from_hvac_equip(htg_equip)
         
         # Set heating values
         ratedCFMperTonHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonHeating, 'string', false)
@@ -4265,10 +4217,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
                 terminal.setOutdoorAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
                 
                 # Coils
-                terminal.heatingCoil.setRatedTotalHeatingCapacity(htg_cap)
-                terminal.coolingCoil.setRatedTotalCoolingCapacity(clg_cap)
-                terminal.heatingCoil.setRatedAirFlowRate(htg_coil_airflow)
-                terminal.coolingCoil.setRatedAirFlowRate(clg_coil_airflow)
+                terminalHeatingCoil = HVAC.get_coil_from_hvac_component(terminal.heatingCoil)
+                terminalHeatingCoil.setRatedTotalHeatingCapacity(htg_cap)
+                terminalHeatingCoil.setRatedAirFlowRate(htg_coil_airflow)
+                terminalCoolingCoil = HVAC.get_coil_from_hvac_component(terminal.coolingCoil)
+                terminalCoolingCoil.setRatedTotalCoolingCapacity(clg_cap)
+                terminalCoolingCoil.setRatedAirFlowRate(clg_coil_airflow)
                 
                 # Fan
                 fanonoff = terminal.supplyAirFan.to_FanOnOff.get
@@ -4281,12 +4235,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     baseboards = []
     control_and_slave_zones.each do |control_zone, slave_zones|
         HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
-            next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+            next if not htg_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric
             baseboards << htg_equip
         end
         slave_zones.each do |slave_zone|
             HVAC.existing_heating_equipment(model, runner, slave_zone).each do |htg_equip|
-                 next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
+                 next if not htg_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric
                  baseboards << htg_equip
             end
         end
@@ -4304,12 +4258,12 @@ class ProcessHVACSizing < OpenStudio::Measure::ModelMeasure
     has_hw_baseboards = false
     control_and_slave_zones.each do |control_zone, slave_zones|
         HVAC.existing_heating_equipment(model, runner, control_zone).each do |htg_equip|
-            next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveWater)
+            next if not htg_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveWater
             hw_baseboards << htg_equip
         end
         slave_zones.each do |slave_zone|
             HVAC.existing_heating_equipment(model, runner, slave_zone).each do |htg_equip|
-                 next if !htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveWater)
+                 next if not htg_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveWater
                  hw_baseboards << htg_equip
             end
         end

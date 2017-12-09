@@ -245,6 +245,9 @@ class ResidentialHotWaterSolar < OpenStudio::Measure::ModelMeasure
             end
             component.remove
           end
+          plant_loop.availabilityManagers.each do |am|
+            am.remove
+          end
           plant_loop.remove
         end    
     
