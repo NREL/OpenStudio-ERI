@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_thermal_mass_furniture</name>
   <uid>5665361d-fa13-4341-8776-185ede476540</uid>
-  <version_id>a7f4f7f1-3f07-46c9-8118-791f8d723235</version_id>
-  <version_modified>20171207T022040Z</version_modified>
+  <version_id>91c72726-ff8c-4008-850d-9993ae389e7b</version_id>
+  <version_modified>20171209T140650Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessThermalMassFurniture</class_name>
   <display_name>Set Residential Furniture Thermal Mass</display_name>
@@ -88,10 +88,22 @@
   </attributes>
   <files>
     <file>
-      <filename>util.rb</filename>
+      <filename>FurnitureThermalMass_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>547A84E7</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>260EF643</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
       <version>
@@ -102,25 +114,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B86981B2</checksum>
+      <checksum>ADE62CF3</checksum>
     </file>
     <file>
-      <filename>FurnitureThermalMass_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>547A84E7</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_UB_GRG_UA.osm</filename>
