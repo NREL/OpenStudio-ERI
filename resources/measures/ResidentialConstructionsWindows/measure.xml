@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_windows</name>
   <uid>648dc42f-f079-4d97-913e-6dc3e19560b1</uid>
-  <version_id>af73a0bf-fc6a-4334-bd99-d14b129365fe</version_id>
-  <version_modified>20171207T184410Z</version_modified>
+  <version_id>8e390aac-a96f-4814-84be-17216e43c0ee</version_id>
+  <version_modified>20171209T140651Z</version_modified>
   <xml_checksum>6FAFA9DE</xml_checksum>
   <class_name>ProcessConstructionsWindows</class_name>
   <display_name>Set Residential Window Construction</display_name>
@@ -110,28 +110,40 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>psychrometrics.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3C131B97</checksum>
+      <checksum>260EF643</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6BA22437</checksum>
+      <checksum>836D6EBC</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>35121F90</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
       <filename>process_constructions_windows_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>BF53AE39</checksum>
+      <checksum>70A372F8</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>11E27E42</checksum>
     </file>
     <file>
       <version>
@@ -142,31 +154,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>60DBFE4B</checksum>
+      <checksum>061AB870</checksum>
     </file>
     <file>
-      <filename>weather.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8E62158E</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
-      <filename>schedules.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>535A818D</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver_Windows.osm</filename>
@@ -190,7 +190,7 @@
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA80E866</checksum>
+      <checksum>3A9A4850</checksum>
     </file>
   </files>
 </measure>

@@ -709,19 +709,19 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     model.getThermalZones.each do |thermal_zone|
       if Geometry.is_garage(thermal_zone)
         building.garage_zone = thermal_zone
-        building.garage = Garage.new(Geometry.get_height_of_spaces(building.garage_zone.spaces), OpenStudio.convert(building.garage_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.garage = Garage.new(Geometry.get_height_of_spaces(building.garage_zone.spaces), UnitConversions.convert(building.garage_zone.floorArea,"m^2","ft^2"), Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_unfinished_basement(thermal_zone)
         building.unfinished_basement_zone = thermal_zone
-        building.unfinished_basement = UnfinBasement.new(ufbsmtACH, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces), OpenStudio.convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.unfinished_basement = UnfinBasement.new(ufbsmtACH, Geometry.get_height_of_spaces(building.unfinished_basement_zone.spaces), UnitConversions.convert(building.unfinished_basement_zone.floorArea,"m^2","ft^2"), Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_crawl(thermal_zone)
         building.crawlspace_zone = thermal_zone
-        building.crawlspace = Crawl.new(crawlACH, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces), OpenStudio.convert(building.crawlspace_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.crawlspace = Crawl.new(crawlACH, Geometry.get_height_of_spaces(building.crawlspace_zone.spaces), UnitConversions.convert(building.crawlspace_zone.floorArea,"m^2","ft^2"), Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_pier_beam(thermal_zone)
         building.pierbeam_zone = thermal_zone
-        building.pierbeam = PierBeam.new(pierbeamACH, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces), OpenStudio.convert(building.pierbeam_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.pierbeam = PierBeam.new(pierbeamACH, Geometry.get_height_of_spaces(building.pierbeam_zone.spaces), UnitConversions.convert(building.pierbeam_zone.floorArea,"m^2","ft^2"), Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       elsif Geometry.is_unfinished_attic(thermal_zone)
         building.unfinished_attic_zone = thermal_zone
-        building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces), OpenStudio.convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+        building.unfinished_attic = UnfinAttic.new(uaSLA, Geometry.get_height_of_spaces(building.unfinished_attic_zone.spaces), UnitConversions.convert(building.unfinished_attic_zone.floorArea,"m^2","ft^2"), Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
       end
     end
 
@@ -748,9 +748,9 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
           leakage_area.setName(obj_name)
           leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-          leakage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.garage.ELA,"ft^2","cm^2").get)
-          leakage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.garage.C_s_SG))
-          leakage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.garage.C_w_SG))
+          leakage_area.setEffectiveAirLeakageArea(UnitConversions.convert(building.garage.ELA,"ft^2","cm^2"))
+          leakage_area.setStackCoefficient(UnitConversions.convert(building.garage.C_s_SG,"ft^2/(s^2*R)","L^2/(s^2*cm^4*K)"))
+          leakage_area.setWindCoefficient(building.garage.C_w_SG*0.01)
           leakage_area.setSpace(space)
         end
       end
@@ -815,9 +815,9 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
         leakage_area.setName(obj_name)
         leakage_area.setSchedule(model.alwaysOnDiscreteSchedule)
-        leakage_area.setEffectiveAirLeakageArea(OpenStudio.convert(building.unfinished_attic.ELA,"ft^2","cm^2").get)
-        leakage_area.setStackCoefficient(UnitConversion.ft2_s2R2L2_s2cm4K(building.unfinished_attic.C_s_SG))
-        leakage_area.setWindCoefficient(UnitConversion._2L2s2_s2cm4m2(building.unfinished_attic.C_w_SG))
+        leakage_area.setEffectiveAirLeakageArea(UnitConversions.convert(building.unfinished_attic.ELA,"ft^2","cm^2"))
+        leakage_area.setStackCoefficient(UnitConversions.convert(building.unfinished_attic.C_s_SG,"ft^2/(s^2*R)","L^2/(s^2*cm^4*K)"))
+        leakage_area.setWindCoefficient(building.unfinished_attic.C_w_SG*0.01)
         leakage_area.setSpace(space)
       end
     end
@@ -911,10 +911,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       Geometry.get_thermal_zones_from_spaces(building_unit.spaces).each do |thermal_zone|
         if Geometry.is_living(thermal_zone) or not /#{Constants.URBANoptFinishedZoneIdentifier} [1-9]\d*/.match(thermal_zone.name.to_s).nil?
           unit.living_zone = thermal_zone
-          unit.living = LivingSpace.new(Geometry.get_height_of_spaces(unit.living_zone.spaces), OpenStudio.convert(unit.living_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+          unit.living = LivingSpace.new(Geometry.get_height_of_spaces(unit.living_zone.spaces), UnitConversions.convert(unit.living_zone.floorArea,"m^2","ft^2"), Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
         elsif Geometry.is_finished_basement(thermal_zone) or thermal_zone.name.to_s.start_with? "#{Constants.URBANoptFinishedZoneIdentifier} 0"
           unit.finished_basement_zone = thermal_zone
-          unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces), OpenStudio.convert(unit.finished_basement_zone.floorArea,"m^2","ft^2").get, Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
+          unit.finished_basement = FinBasement.new(fbsmtACH, Geometry.get_height_of_spaces(unit.finished_basement_zone.spaces), UnitConversions.convert(unit.finished_basement_zone.floorArea,"m^2","ft^2"), Geometry.get_volume_from_spaces(thermal_zone.spaces), Geometry.get_z_origin_for_zone(thermal_zone))
         end
       end
 
@@ -1301,8 +1301,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       infil_program.addLine("Set p_s = #{wind_speed.ashrae_site_terrain_exponent}")
       infil_program.addLine("Set s_m = #{wind_speed.ashrae_terrain_thickness}")
       infil_program.addLine("Set s_s = #{wind_speed.ashrae_site_terrain_thickness}")
-      infil_program.addLine("Set z_m = #{OpenStudio.convert(wind_speed.height,"ft","m").get}")
-      infil_program.addLine("Set z_s = #{OpenStudio.convert(unit.living.height,"ft","m").get}")
+      infil_program.addLine("Set z_m = #{UnitConversions.convert(wind_speed.height,"ft","m")}")
+      infil_program.addLine("Set z_s = #{UnitConversions.convert(unit.living.height,"ft","m")}")
       infil_program.addLine("Set f_t = (((s_m/z_m)^p_m)*((z_s/s_s)^p_s))")
       infil_program.addLine("Set #{building_unit.name.to_s.gsub("unit", "u").gsub(" ","_")}_VwindL = (f_t*#{vwind_sensor.name})")
       
@@ -1310,9 +1310,9 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         if unit.living.SLA > 0
           infil_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
           infil_program.addLine("Set dT = @Abs Tdiff")
-          infil_program.addLine("Set c = #{((OpenStudio.convert(infil.C_i,"cfm","m^3/s").get / (UnitConversion.inH2O2Pa(1.0) ** infil.n_i))).round(4)}")
-          infil_program.addLine("Set Cs = #{(infil.stack_coef * (UnitConversion.inH2O_R2Pa_K(1.0) ** infil.n_i)).round(4)}")
-          infil_program.addLine("Set Cw = #{(infil.wind_coef * (UnitConversion.inH2O_mph2Pas2_m2(1.0) ** infil.n_i)).round(4)}")
+          infil_program.addLine("Set c = #{((UnitConversions.convert(infil.C_i,"cfm","m^3/s") / (UnitConversions.convert(1.0,"inH2O","Pa") ** infil.n_i))).round(4)}")
+          infil_program.addLine("Set Cs = #{(infil.stack_coef * (UnitConversions.convert(1.0,"inH2O/R","Pa/K") ** infil.n_i)).round(4)}")
+          infil_program.addLine("Set Cw = #{(infil.wind_coef * (UnitConversions.convert(1.0,"inH2O/mph^2","Pa*s^2/m^2") ** infil.n_i)).round(4)}")
           infil_program.addLine("Set n = #{infil.n_i}")
           infil_program.addLine("Set sft = (f_t*#{(((wind_speed.S_wo * (1.0 - infil.Y_i)) + (infil.S_wflue * (1.5 * infil.Y_i))))})")
           infil_program.addLine("Set temp1 = ((c*Cw)*((sft*#{vwind_sensor.name})^(2*n)))^2")
@@ -1321,15 +1321,15 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           infil_program.addLine("Set Qn = 0")
         end
       elsif unit.living.inf_method == @infMethodRes
-        infil_program.addLine("Set Qn = #{unit.living.ACH * OpenStudio.convert(unit.living.volume,"ft^3","m^3").get / OpenStudio.convert(1.0,"hr","s").get}")
+        infil_program.addLine("Set Qn = #{unit.living.ACH * UnitConversions.convert(unit.living.volume,"ft^3","m^3") / UnitConversions.convert(1.0,"hr","s")}")
       end
       
       infil_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
       infil_program.addLine("Set dT = @Abs Tdiff")
-      infil_program.addLine("Set QWHV = #{wh_sch_sensor.name}*#{OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get.round(4)}")
-      infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{OpenStudio.convert(mech_vent.range_hood_hour_avg_exhaust,"cfm","m^3/s").get.round(4)}")
-      infil_program.addLine("Set Qdryer = #{clothes_dryer_sch_sensor.name}*#{OpenStudio.convert(mech_vent.clothes_dryer_hour_avg_exhaust,"cfm","m^3/s").get}")
-      infil_program.addLine("Set Qbath = #{bath_sch_sensor.name}*#{OpenStudio.convert(mech_vent.bathroom_hour_avg_exhaust,"cfm","m^3/s").get.round(4)}")
+      infil_program.addLine("Set QWHV = #{wh_sch_sensor.name}*#{UnitConversions.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").round(4)}")
+      infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{UnitConversions.convert(mech_vent.range_hood_hour_avg_exhaust,"cfm","m^3/s").round(4)}")
+      infil_program.addLine("Set Qdryer = #{clothes_dryer_sch_sensor.name}*#{UnitConversions.convert(mech_vent.clothes_dryer_hour_avg_exhaust,"cfm","m^3/s")}")
+      infil_program.addLine("Set Qbath = #{bath_sch_sensor.name}*#{UnitConversions.convert(mech_vent.bathroom_hour_avg_exhaust,"cfm","m^3/s").round(4)}")
       infil_program.addLine("Set QhpwhOut = 0")
       infil_program.addLine("Set QhpwhIn = 0")
       infil_program.addLine("Set QductsOut = #{duct_lk_exhaust_fan_equiv}")
@@ -1354,7 +1354,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           infil_program.addLine("Set Qb = (@Min Qout Qin)")
         end
         if mech_vent.MechVentHouseFanPower !=  0
-          infil_program.addLine("Set faneff_wh = #{OpenStudio.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get}")
+          infil_program.addLine("Set faneff_wh = #{UnitConversions.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s")}")
         else
           infil_program.addLine("Set faneff_wh = 1")
         end
@@ -1362,7 +1362,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       end
 
       if mech_vent.MechVentSpotFanPower !=  0
-        infil_program.addLine("Set faneff_sp = #{OpenStudio.convert(300.0 / mech_vent.MechVentSpotFanPower,"cfm","m^3/s").get}")
+        infil_program.addLine("Set faneff_sp = #{UnitConversions.convert(300.0 / mech_vent.MechVentSpotFanPower,"cfm","m^3/s")}")
       else
         infil_program.addLine("Set faneff_sp = 1")
       end
@@ -1384,10 +1384,10 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       nat_vent_program.addLine("Set Tdiff = #{tin_sensor.name}-#{tout_sensor.name}")
       nat_vent_program.addLine("Set dT = (@Abs Tdiff)")
       nat_vent_program.addLine("Set pt = (@RhFnTdbWPb #{tout_sensor.name} #{wout_sensor.name} #{pbar_sensor.name})")
-      nat_vent_program.addLine("Set NVA = #{OpenStudio.convert(nat_vent.area,"ft^2","cm^2").get}")
-      nat_vent_program.addLine("Set Cs = #{UnitConversion.ft2_s2R2L2_s2cm4K(nat_vent.C_s)}")
-      nat_vent_program.addLine("Set Cw = #{UnitConversion._2L2s2_s2cm4m2(nat_vent.C_w)}")
-      nat_vent_program.addLine("Set MNV = #{OpenStudio.convert(nat_vent.max_flow_rate,"cfm","m^3/s").get}")
+      nat_vent_program.addLine("Set NVA = #{UnitConversions.convert(nat_vent.area,"ft^2","cm^2")}")
+      nat_vent_program.addLine("Set Cs = #{UnitConversions.convert(nat_vent.C_s,"ft^2/(s^2*R)","L^2/(s^2*cm^4*K)")}")
+      nat_vent_program.addLine("Set Cw = #{nat_vent.C_w*0.01}")
+      nat_vent_program.addLine("Set MNV = #{UnitConversions.convert(nat_vent.max_flow_rate,"cfm","m^3/s")}")
       nat_vent_program.addLine("Set MHR = #{nat_vent.NatVentMaxOAHumidityRatio}")
       nat_vent_program.addLine("Set MRH = #{nat_vent.NatVentMaxOARelativeHumidity}")
       nat_vent_program.addLine("Set temp1 = (#{nvavail_sensor.name}*NVA)")
@@ -1413,11 +1413,11 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       if mech_vent.MechVentType == Constants.VentTypeBalanced
       
-        balanced_flow_rate = [OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get,0.0000001].max
+        balanced_flow_rate = [UnitConversions.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s"),0.0000001].max
       
         supply_fan = OpenStudio::Model::FanOnOff.new(model)
         supply_fan.setName(obj_name_mechvent + " erv supply fan")
-        supply_fan.setFanEfficiency(OpenStudio.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get)
+        supply_fan.setFanEfficiency(UnitConversions.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s"))
         supply_fan.setPressureRise(300.0)
         supply_fan.setMaximumFlowRate(balanced_flow_rate)
         supply_fan.setMotorEfficiency(1)
@@ -1426,7 +1426,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
         exhaust_fan = OpenStudio::Model::FanOnOff.new(model)
         exhaust_fan.setName(obj_name_mechvent + " erv exhaust fan")
-        exhaust_fan.setFanEfficiency(OpenStudio.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s").get)
+        exhaust_fan.setFanEfficiency(UnitConversions.convert(300.0 / mech_vent.MechVentHouseFanPower,"cfm","m^3/s"))
         exhaust_fan.setPressureRise(300.0)
         exhaust_fan.setMaximumFlowRate(balanced_flow_rate)
         exhaust_fan.setMotorEfficiency(1)
@@ -1470,7 +1470,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       
       ra_duct_zone = OpenStudio::Model::ThermalZone.new(model)
       ra_duct_zone.setName(obj_name_ducts + " ret air zone")
-      ra_duct_zone.setVolume(OpenStudio.convert(ducts.return_duct_volume,"ft^3","m^3").get)
+      ra_duct_zone.setVolume(UnitConversions.convert(ducts.return_duct_volume,"ft^3","m^3"))
       
       sw_point = OpenStudio::Point3d.new(0, 74, 0)
       nw_point = OpenStudio::Point3d.new(0, 75, 0)
@@ -1744,7 +1744,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           duct_lkage_subroutine.addLine("Set temp1 = h_fg*(#{return_air_w_sensor.name}-#{air_handler_wout_sensor.name})")
           duct_lkage_subroutine.addLine("Set #{supply_latent_lkage_to_living} = f_sup*#{air_handler_mfr_sensor.name}*temp1")
           duct_lkage_subroutine.addLine("Set #{supply_sensible_lkage_to_living} = SALeakageQtot-#{supply_latent_lkage_to_living}")
-          duct_lkage_subroutine.addLine("Set eTm = (#{fan_rtf_sensor.name}/(#{air_handler_mfr_sensor.name}*1006.0))*#{OpenStudio.convert(ducts.unconditioned_duct_ua,"Btu/hr*R","W/K").get.round(3)}")
+          duct_lkage_subroutine.addLine("Set eTm = (#{fan_rtf_sensor.name}/(#{air_handler_mfr_sensor.name}*1006.0))*#{UnitConversions.convert(ducts.unconditioned_duct_ua,"Btu/(hr*F)","W/K").round(3)}")
           duct_lkage_subroutine.addLine("Set eTm = 0-eTm")
           duct_lkage_subroutine.addLine("If eTm<-1000")
           duct_lkage_subroutine.addLine("Set tsup = #{air_handler_t_sensor.name}")
@@ -1755,7 +1755,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
           duct_lkage_subroutine.addLine("Set temp5 = tsup-#{air_handler_tout_sensor.name}")
           duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_living} = #{air_handler_mfr_sensor.name}*1006.0*temp5")
           duct_lkage_subroutine.addLine("Set #{supply_duct_conduction_to_air_handler} = 0-#{supply_duct_conduction_to_living}")
-          duct_lkage_subroutine.addLine("Set eTm = (#{fan_rtf_sensor.name}/(#{air_handler_mfr_sensor.name}*1006.0))*#{OpenStudio.convert(ducts.return_duct_ua,"Btu/hr*R","W/K").get.round(3)}")
+          duct_lkage_subroutine.addLine("Set eTm = (#{fan_rtf_sensor.name}/(#{air_handler_mfr_sensor.name}*1006.0))*#{UnitConversions.convert(ducts.return_duct_ua,"Btu/(hr*F)","W/K").round(3)}")
           duct_lkage_subroutine.addLine("Set eTm = 0-eTm")
           duct_lkage_subroutine.addLine("If eTm<-1000")
           duct_lkage_subroutine.addLine("Set tret = #{air_handler_t_sensor.name}")
@@ -1989,22 +1989,22 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       building.garage.neutral_level = 0.5 # DOE-2 Default
       building.garage.SLA = Airflow.get_infiltration_SLA_from_ACH50(infil.InfiltrationGarageACH50, 0.67, building.garage.area, building.garage.volume)
       building.garage.ACH = Airflow.get_infiltration_ACH_from_SLA(building.garage.SLA, 1.0, @weather)
-      building.garage.inf_flow = building.garage.ACH / OpenStudio.convert(1.0,"hr","min").get * building.garage.volume # cfm          
+      building.garage.inf_flow = building.garage.ACH / UnitConversions.convert(1.0,"hr","min") * building.garage.volume # cfm          
     end
 
     unless building.unfinished_basement_zone.nil?
       building.unfinished_basement.inf_method = @infMethodRes # Used for constant ACH
-      building.unfinished_basement.inf_flow = building.unfinished_basement.ACH / OpenStudio.convert(1.0,"hr","min").get * building.unfinished_basement.volume
+      building.unfinished_basement.inf_flow = building.unfinished_basement.ACH / UnitConversions.convert(1.0,"hr","min") * building.unfinished_basement.volume
     end
 
     unless building.crawlspace_zone.nil?
       building.crawlspace.inf_method = @infMethodRes
-      building.crawlspace.inf_flow = building.crawlspace.ACH / OpenStudio.convert(1.0,"hr","min").get * building.crawlspace.volume
+      building.crawlspace.inf_flow = building.crawlspace.ACH / UnitConversions.convert(1.0,"hr","min") * building.crawlspace.volume
     end
 
     unless building.pierbeam_zone.nil?
       building.pierbeam.inf_method = @infMethodRes
-      building.pierbeam.inf_flow = building.pierbeam.ACH / OpenStudio.convert(1.0,"hr","min").get * building.pierbeam.volume
+      building.pierbeam.inf_flow = building.pierbeam.ACH / UnitConversions.convert(1.0,"hr","min") * building.pierbeam.volume
     end
 
     unless building.unfinished_attic_zone.nil?
@@ -2012,7 +2012,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       building.unfinished_attic.hor_lk_frac = 0.75 # Same as Energy Gauge USA Attic Model
       building.unfinished_attic.neutral_level = 0.5 # DOE-2 Default
       building.unfinished_attic.ACH = Airflow.get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0, @weather)
-      building.unfinished_attic.inf_flow = building.unfinished_attic.ACH / OpenStudio.convert(1.0,"hr","min").get * building.unfinished_attic.volume
+      building.unfinished_attic.inf_flow = building.unfinished_attic.ACH / UnitConversions.convert(1.0,"hr","min") * building.unfinished_attic.volume
     end
   
     spaces.each do |space|
@@ -2046,7 +2046,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       spaces << unit.finished_basement
     end
   
-    outside_air_density = UnitConversion.atm2Btu_ft3(@weather.header.LocalPressure) / (Gas.Air.r * (@weather.data.AnnualAvgDrybulb + 460.0))
+    outside_air_density = UnitConversions.convert(@weather.header.LocalPressure,"atm","Btu/ft^3") / (Gas.Air.r * (@weather.data.AnnualAvgDrybulb + 460.0))
     inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
     delta_pref = 0.016 # inH2O
 
@@ -2150,7 +2150,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
           infil.f_s = ((1.0 + infil.n_i * infil.R_i) / (infil.n_i + 1.0)) * (0.5 - 0.5 * infil.M_i ** (1.2)) ** (infil.n_i + 1.0) + infil.F_i
 
-          infil.stack_coef = infil.f_s * (UnitConversion.lbm_fts22inH2O(outside_air_density * Constants.g * unit.living.height) / (infil.assumed_inside_temp + 460.0)) ** infil.n_i # inH2O^n/R^n
+          infil.stack_coef = infil.f_s * (UnitConversions.convert(outside_air_density * Constants.g * unit.living.height,"lbm/(ft*s^2)","inH2O") / (infil.assumed_inside_temp + 460.0)) ** infil.n_i # inH2O^n/R^n
 
           # Calculate wind coefficient
           if vented_crawl
@@ -2178,12 +2178,12 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
           end
 
-          infil.wind_coef = infil.f_w * UnitConversion.lbm_ft32inH2O_mph2(outside_air_density / 2.0) ** infil.n_i # inH2O^n/mph^2n
+          infil.wind_coef = infil.f_w * UnitConversions.convert(outside_air_density / 2.0,"lbm/ft^3","inH2O/mph^2") ** infil.n_i # inH2O^n/mph^2n
 
           unit.living.ACH = Airflow.get_infiltration_ACH_from_SLA(unit.living.SLA, building.stories, @weather)
 
           # Convert living space ACH to cfm:
-          unit.living.inf_flow = unit.living.ACH / OpenStudio.convert(1.0,"hr","min").get * unit.living.volume # cfm
+          unit.living.inf_flow = unit.living.ACH / UnitConversions.convert(1.0,"hr","min") * unit.living.volume # cfm
           
       end
           
@@ -2191,7 +2191,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     
     unless unit.finished_basement_zone.nil?
       unit.finished_basement.inf_method = @infMethodRes # Used for constant ACH
-      unit.finished_basement.inf_flow = unit.finished_basement.ACH / OpenStudio.convert(1.0,"hr","min").get * unit.finished_basement.volume
+      unit.finished_basement.inf_flow = unit.finished_basement.ACH / UnitConversions.convert(1.0,"hr","min") * unit.finished_basement.volume
     end
 
     spaces.each do |space|
@@ -2283,15 +2283,15 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     mech_vent.range_hood_hour_avg_exhaust = mech_vent.MechVentRangeHoodExhaust * mech_vent.range_hood_exhaust_operation / 60.0 # cfm
     mech_vent.clothes_dryer_hour_avg_exhaust = unit.dryer_exhaust * mech_vent.clothes_dryer_exhaust_operation / 60.0 # cfm
 
-    mech_vent.max_power = [mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans, mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans].max / OpenStudio.convert(1.0,"kW","W").get # kW
+    mech_vent.max_power = [mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans, mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans].max / UnitConversions.convert(1.0,"kW","W") # kW
 
     # Fan energy schedule (as fraction of maximum power). Bathroom
     # exhaust at 7:00am and range hood exhaust at 6:00pm. Clothes
     # dryer exhaust not included in mech vent power.
     if mech_vent.max_power > 0
-      mech_vent.hourly_energy_schedule = Array.new(24, mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans / OpenStudio.convert(1.0,"kW","W").get / mech_vent.max_power)
-      mech_vent.hourly_energy_schedule[6] = ((mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / OpenStudio.convert(1.0,"kW","W").get / mech_vent.max_power)
-      mech_vent.hourly_energy_schedule[17] = ((mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / OpenStudio.convert(1.0,"kW","W").get / mech_vent.max_power)
+      mech_vent.hourly_energy_schedule = Array.new(24, mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans / UnitConversions.convert(1.0,"kW","W") / mech_vent.max_power)
+      mech_vent.hourly_energy_schedule[6] = ((mech_vent.bathroom_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / UnitConversions.convert(1.0,"kW","W") / mech_vent.max_power)
+      mech_vent.hourly_energy_schedule[17] = ((mech_vent.range_hood_hour_avg_exhaust * mech_vent.MechVentSpotFanPower + mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans) / UnitConversions.convert(1.0,"kW","W") / mech_vent.max_power)
       mech_vent.average_vent_fan_eff = ((mech_vent.whole_house_vent_rate * 24.0 * mech_vent.MechVentHouseFanPower * mech_vent.num_vent_fans + (mech_vent.bathroom_hour_avg_exhaust + mech_vent.range_hood_hour_avg_exhaust) * mech_vent.MechVentSpotFanPower) / (mech_vent.whole_house_vent_rate * 24.0 + mech_vent.bathroom_hour_avg_exhaust + mech_vent.range_hood_hour_avg_exhaust))
     else
       mech_vent.hourly_energy_schedule = Array.new(24, 0.0)
@@ -2327,7 +2327,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       cp_a = 1006
       p_fan = mech_vent.whole_house_vent_rate * mech_vent.MechVentHouseFanPower # Watts
 
-      m_fan = OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get * 16.02 * Psychrometrics.rhoD_fT_w_P(OpenStudio.convert(t_sup_in,"C","F").get, w_sup_in, 14.7) # kg/s
+      m_fan = UnitConversions.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s") * 16.02 * Psychrometrics.rhoD_fT_w_P(UnitConversions.convert(t_sup_in,"C","F"), w_sup_in, 14.7) # kg/s
 
       # The following is derived from (taken from CSA 439):
       #    E_SHR = (m_sup,fan * Cp * (Tsup,out - Tsup,in) - P_sup,fan) / (m_exh,fan * Cp * (Texh,in - Tsup,in) + P_exh,fan)
@@ -2354,7 +2354,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         t_exh_in = 24.0
         w_exh_in = 0.0092
 
-        m_fan = OpenStudio.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s").get * UnitConversion.lbm_ft32kg_m3(Psychrometrics.rhoD_fT_w_P(OpenStudio.convert(t_sup_in,"C","F").get, w_sup_in, 14.7)) # kg/s
+        m_fan = UnitConversions.convert(mech_vent.whole_house_vent_rate,"cfm","m^3/s") * UnitConversions.convert(Psychrometrics.rhoD_fT_w_P(UnitConversions.convert(t_sup_in,"C","F"), w_sup_in, 14.7),"lbm/ft^3","kg/m^3") # kg/s
 
         t_sup_out_gross = t_sup_in - mech_vent.MechVentHXCoreSensibleEffectiveness * (t_sup_in - t_exh_in)
         t_sup_out = t_sup_out_gross + p_fan / (m_fan * cp_a)
@@ -2397,14 +2397,14 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value > heatingSetpointWeekday[hour]
-              heatingSetpointWeekday[hour] = OpenStudio.convert(value,"C","F").get
+              heatingSetpointWeekday[hour] = UnitConversions.convert(value,"C","F")
             end
           end
         end
         if rule.applySaturday and rule.applySunday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value > heatingSetpointWeekend[hour]
-              heatingSetpointWeekend[hour] = OpenStudio.convert(value,"C","F").get
+              heatingSetpointWeekend[hour] = UnitConversions.convert(value,"C","F")
             end
           end
         end
@@ -2419,14 +2419,14 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value < coolingSetpointWeekday[hour]
-              coolingSetpointWeekday[hour] = OpenStudio.convert(value,"C","F").get
+              coolingSetpointWeekday[hour] = UnitConversions.convert(value,"C","F")
             end
           end
         end
         if rule.applySaturday and rule.applySunday
           rule.daySchedule.values.each_with_index do |value, hour|
             if value < coolingSetpointWeekend[hour]
-              coolingSetpointWeekend[hour] = OpenStudio.convert(value,"C","F").get
+              coolingSetpointWeekend[hour] = UnitConversions.convert(value,"C","F")
             end
           end
         end
@@ -2435,9 +2435,9 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
     if heatingSetpointWeekday.all? {|x| x == Constants.NoHeatingSetpoint}
       runner.registerWarning("No heating setpoint schedule found. Assuming #{Constants.DefaultHeatingSetpoint} F for natural ventilation calculations.")
-      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
+      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, UnitConversions.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C"))
     else
-      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, OpenStudio.convert([heatingSetpointWeekday.max, heatingSetpointWeekend.max].max + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C").get)
+      nat_vent.ovlp_ssn_hourly_temp = Array.new(24, UnitConversions.convert([heatingSetpointWeekday.max, heatingSetpointWeekend.max].max + nat_vent.NatVentOvlpSsnSetpointOffset,"F","C"))
     end
     if coolingSetpointWeekday.all? {|x| x == Constants.NoCoolingSetpoint}
       runner.registerWarning("No cooling setpoint schedule found. Assuming #{Constants.DefaultCoolingSetpoint} F for natural ventilation calculations.")
@@ -2454,34 +2454,34 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
     nat_vent.htg_ssn_hourly_temp = Array.new
     coolingSetpointWeekday.each do |x|
       if x == Constants.NoCoolingSetpoint
-        nat_vent.htg_ssn_hourly_temp << OpenStudio.convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_temp << UnitConversions.convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C")
       else
-        nat_vent.htg_ssn_hourly_temp << OpenStudio.convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_temp << UnitConversions.convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C")
       end
     end
     nat_vent.htg_ssn_hourly_weekend_temp = Array.new
     coolingSetpointWeekend.each do |x|
       if x == Constants.NoCoolingSetpoint
-        nat_vent.htg_ssn_hourly_weekend_temp << OpenStudio.convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_weekend_temp << UnitConversions.convert(Constants.DefaultCoolingSetpoint - nat_vent.NatVentHtgSsnSetpointOffset,"F","C")
       else
-        nat_vent.htg_ssn_hourly_weekend_temp << OpenStudio.convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C").get
+        nat_vent.htg_ssn_hourly_weekend_temp << UnitConversions.convert(x - nat_vent.NatVentHtgSsnSetpointOffset,"F","C")
       end
     end
 
     nat_vent.clg_ssn_hourly_temp = Array.new
     heatingSetpointWeekday.each do |x|
       if x == Constants.NoHeatingSetpoint
-        nat_vent.clg_ssn_hourly_temp << OpenStudio.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_temp << UnitConversions.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C")
       else
-        nat_vent.clg_ssn_hourly_temp << OpenStudio.convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_temp << UnitConversions.convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C")
       end
     end
     nat_vent.clg_ssn_hourly_weekend_temp = Array.new
     heatingSetpointWeekend.each do |x|
       if x == Constants.NoHeatingSetpoint
-        nat_vent.clg_ssn_hourly_weekend_temp << OpenStudio.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_weekend_temp << UnitConversions.convert(Constants.DefaultHeatingSetpoint + nat_vent.NatVentClgSsnSetpointOffset,"F","C")
       else
-        nat_vent.clg_ssn_hourly_weekend_temp << OpenStudio.convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C").get
+        nat_vent.clg_ssn_hourly_weekend_temp << UnitConversions.convert(x + nat_vent.NatVentClgSsnSetpointOffset,"F","C")
       end
     end
 
@@ -2493,7 +2493,7 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
 
     nat_vent.area = 0.6 * unit.window_area * nat_vent.NatVentFractionWindowsOpen * nat_vent.NatVentFractionWindowAreaOpen # ft^2 (For S-G, this is 0.6*(open window area))
     nat_vent.max_rate = 20.0 # Air Changes per hour
-    nat_vent.max_flow_rate = nat_vent.max_rate * unit.living.volume / OpenStudio.convert(1.0,"hr","min").get
+    nat_vent.max_flow_rate = nat_vent.max_rate * unit.living.volume / UnitConversions.convert(1.0,"hr","min")
     nv_neutral_level = 0.5
     nat_vent.hor_vent_frac = 0.0
     f_s_nv = 2.0 / 3.0 * (1.0 + nat_vent.hor_vent_frac / 2.0) * (2.0 * nv_neutral_level * (1 - nv_neutral_level)) ** 0.5 / (nv_neutral_level ** 0.5 + (1 - nv_neutral_level) ** 0.5)

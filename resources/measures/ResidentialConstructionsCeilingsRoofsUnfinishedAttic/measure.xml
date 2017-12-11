@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>d7b682f4-167c-46f4-8586-4abbabec1bf1</version_id>
-  <version_modified>20171207T022039Z</version_modified>
+  <version_id>e5e2c455-88a1-4ac4-a302-c17f971686b4</version_id>
+  <version_modified>20171209T140650Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
   <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>
@@ -171,10 +171,16 @@
   </attributes>
   <files>
     <file>
-      <filename>util.rb</filename>
+      <filename>UnfinishedAttic_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D92619E6</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>260EF643</checksum>
     </file>
     <file>
       <version>
@@ -185,25 +191,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A4A5370B</checksum>
-    </file>
-    <file>
-      <filename>UnfinishedAttic_Test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D92619E6</checksum>
+      <checksum>13D38702</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>BE5BF810</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>

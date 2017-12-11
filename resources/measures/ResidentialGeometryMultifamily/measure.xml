@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_multifamily_geometry</name>
   <uid>9bc07973-98a4-46fc-b643-e280628817c5</uid>
-  <version_id>7fea0659-ba9d-48fa-a04c-5f3adff5cccc</version_id>
-  <version_modified>20171207T022041Z</version_modified>
+  <version_id>cfcdc05c-f758-46ef-8d95-bb1859904412</version_id>
+  <version_modified>20171209T140652Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialMultifamilyGeometry</class_name>
   <display_name>Create Residential Multifamily Geometry</display_name>
@@ -247,10 +247,16 @@
   </attributes>
   <files>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>260EF643</checksum>
+    </file>
+    <file>
       <filename>create_residential_multifamily_geometry_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D54FD74A</checksum>
+      <checksum>43AFE41C</checksum>
     </file>
     <file>
       <version>
@@ -261,19 +267,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>CDB8B4B7</checksum>
+      <checksum>F1AC486F</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>

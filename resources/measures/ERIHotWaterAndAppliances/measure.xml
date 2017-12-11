@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>eri_hot_water_and_appliances</name>
   <uid>6159fd36-6bfa-4907-9200-9cb852d50799</uid>
-  <version_id>10988b1c-ed23-4f54-bbad-fd9d3b8f72ac</version_id>
-  <version_modified>20171204T215134Z</version_modified>
+  <version_id>1ef91d36-6ddb-42f6-9a0d-504af9fb2fa5</version_id>
+  <version_modified>20171208T221645Z</version_modified>
   <xml_checksum>A6ACD89C</xml_checksum>
   <class_name>ERIHotWaterAndAppliances</class_name>
   <display_name>Set ERI Hot Water &amp; Appliances</display_name>
@@ -318,40 +318,28 @@
   </attributes>
   <files>
     <file>
-      <filename>psychrometrics.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3C131B97</checksum>
+      <checksum>260EF643</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>535A818D</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6BA22437</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>35121F90</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8E62158E</checksum>
+      <checksum>836D6EBC</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
       <version>
@@ -362,19 +350,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>537F0851</checksum>
+      <checksum>37694183</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>11E27E42</checksum>
     </file>
     <file>
       <filename>waterheater.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8D7273C5</checksum>
+      <checksum>A9CCB075</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>BE5BF810</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
     </file>
   </files>
 </measure>

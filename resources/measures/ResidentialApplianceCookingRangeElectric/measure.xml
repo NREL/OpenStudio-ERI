@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>residential_cooking_range</name>
   <uid>246da4be-4924-41f5-8de0-177b42b7d6b5</uid>
-  <version_id>c268c2cb-9ebd-4e55-bc60-2630fa586e2f</version_id>
-  <version_modified>20171207T022038Z</version_modified>
+  <version_id>a545958a-c5d5-4c7b-ae40-b43cce56e8bf</version_id>
+  <version_modified>20171209T140649Z</version_modified>
   <xml_checksum>126F1C43</xml_checksum>
   <class_name>ResidentialCookingRange</class_name>
   <display_name>Set Residential Electric Cooking Range</display_name>
@@ -99,10 +99,16 @@
   </attributes>
   <files>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>260EF643</checksum>
+    </file>
+    <file>
       <filename>ResidentialCookingRange_Test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>09AEDCFF</checksum>
+      <checksum>5BA31014</checksum>
     </file>
     <file>
       <version>
@@ -113,25 +119,25 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>29A6B9F7</checksum>
+      <checksum>1A4FAFF8</checksum>
     </file>
     <file>
       <filename>schedules.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>535A818D</checksum>
+      <checksum>35121F90</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_GRG_UA.osm</filename>

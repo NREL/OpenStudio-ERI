@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_ground_source_heat_pump_vertical_bore</name>
   <uid>2151a447-b1d8-44dc-b297-90cb7e1223c1</uid>
-  <version_id>4f581217-6a99-41ba-ac7b-2fdd6b089592</version_id>
-  <version_modified>20171207T184412Z</version_modified>
+  <version_id>7e241d7a-ab8b-4d9c-a392-147ba54615ba</version_id>
+  <version_modified>20171209T140656Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessGroundSourceHeatPumpVerticalBore</class_name>
   <display_name>Set Residential Ground Source Heat Pump Vertical Bore</display_name>
@@ -376,34 +376,28 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>psychrometrics.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3C131B97</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6BA22437</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>260EF643</checksum>
     </file>
     <file>
       <filename>weather.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>8E62158E</checksum>
+      <checksum>836D6EBC</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>A9382DBC</checksum>
+    </file>
+    <file>
+      <filename>psychrometrics.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>11E27E42</checksum>
     </file>
     <file>
       <version>
@@ -414,19 +408,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>007BE1A8</checksum>
+      <checksum>0B1F01F7</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
-      <filename>process_ground_source_heat_pump_vertical_bore_test.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>96960D19</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
@@ -555,10 +549,16 @@
       <checksum>991549B8</checksum>
     </file>
     <file>
+      <filename>process_ground_source_heat_pump_vertical_bore_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>96960D19</checksum>
+    </file>
+    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA80E866</checksum>
+      <checksum>3A9A4850</checksum>
     </file>
   </files>
 </measure>

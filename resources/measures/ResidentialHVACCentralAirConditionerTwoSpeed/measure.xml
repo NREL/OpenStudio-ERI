@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_two_speed_central_air_conditioner</name>
   <uid>fd979c79-79d9-4c99-8cc8-abd7935d636b</uid>
-  <version_id>4eaef72f-712b-49f2-95ce-c3668bcbf647</version_id>
-  <version_modified>20171207T184412Z</version_modified>
+  <version_id>c5ca1ee7-23e4-40ce-8d31-386a86568a5a</version_id>
+  <version_modified>20171209T140655Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessTwoSpeedCentralAirConditioner</class_name>
   <display_name>Set Residential Two-Speed Central Air Conditioner</display_name>
@@ -240,22 +240,16 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6BA22437</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>260EF643</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
       <version>
@@ -266,19 +260,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4047D414</checksum>
+      <checksum>AF89EEF5</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
-      <filename>process_two_speed_central_air_conditioner_test.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C31AFBCA</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
@@ -407,10 +401,16 @@
       <checksum>991549B8</checksum>
     </file>
     <file>
+      <filename>process_two_speed_central_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>4DDC9F75</checksum>
+    </file>
+    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA80E866</checksum>
+      <checksum>3A9A4850</checksum>
     </file>
   </files>
 </measure>

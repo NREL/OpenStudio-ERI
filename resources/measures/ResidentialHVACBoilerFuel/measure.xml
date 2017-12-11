@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_boiler_fuel</name>
   <uid>42909b35-edc9-41b3-ba59-de138eac3c85</uid>
-  <version_id>00c546c3-ce33-4454-9b36-2d4dbb978579</version_id>
-  <version_modified>20171207T184411Z</version_modified>
+  <version_id>42a0aba7-c170-4327-853f-c26cfb78f10e</version_id>
+  <version_modified>20171209T140655Z</version_modified>
   <xml_checksum>470FC630</xml_checksum>
   <class_name>ProcessBoilerFuel</class_name>
   <display_name>Set Residential Boiler Fuel</display_name>
@@ -211,16 +211,16 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>260EF643</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
       <version>
@@ -231,19 +231,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>AB1C72FC</checksum>
+      <checksum>BF86F2C6</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
-      <filename>process_boiler_fuel_test.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>AAE4ABCC</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
@@ -366,10 +366,16 @@
       <checksum>991549B8</checksum>
     </file>
     <file>
+      <filename>process_boiler_fuel_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AAE4ABCC</checksum>
+    </file>
+    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA80E866</checksum>
+      <checksum>3A9A4850</checksum>
     </file>
   </files>
 </measure>

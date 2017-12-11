@@ -12,6 +12,7 @@ require "#{File.dirname(__FILE__)}/resources/weather"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/schedules"
 require "#{File.dirname(__FILE__)}/resources/hvac"
+require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 
 #start the measure
 class ProcessHeatingSetpoints < OpenStudio::Measure::ModelMeasure
@@ -170,8 +171,8 @@ class ProcessHeatingSetpoints < OpenStudio::Measure::ModelMeasure
       htg_wked = Array.new(24, htg_wked).join(", ")
     end
 
-    htg_wkdy = htg_wkdy.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}
-    htg_wked = htg_wked.split(",").map {|i| OpenStudio::convert(i.to_f,"F","C").get}   
+    htg_wkdy = htg_wkdy.split(",").map {|i| UnitConversions.convert(i.to_f,"F","C")}
+    htg_wked = htg_wked.split(",").map {|i| UnitConversions.convert(i.to_f,"F","C")}   
     
     finished_zones = []
     model.getThermalZones.each do |thermal_zone|

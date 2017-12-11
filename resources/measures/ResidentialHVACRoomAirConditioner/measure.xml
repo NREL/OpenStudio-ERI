@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_room_air_conditioner</name>
   <uid>eae61440-6574-4568-88d7-c735f9c3ea9f</uid>
-  <version_id>2be5e478-e27d-4d43-978c-449ca4d8fbab</version_id>
-  <version_modified>20171207T184413Z</version_modified>
+  <version_id>2fb6aef0-e7ca-44e4-b295-31cfd3b4bbe8</version_id>
+  <version_modified>20171209T140656Z</version_modified>
   <xml_checksum>D48F381B</xml_checksum>
   <class_name>ProcessRoomAirConditioner</class_name>
   <display_name>Set Residential Room Air Conditioner</display_name>
@@ -90,10 +90,16 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>64BC6389</checksum>
+      <checksum>260EF643</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A9382DBC</checksum>
     </file>
     <file>
       <version>
@@ -104,25 +110,19 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B40226AC</checksum>
+      <checksum>1F8C801F</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EF3CCE9D</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
-    </file>
-    <file>
-      <filename>process_room_air_conditioner_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2BE6DA1B</checksum>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Denver.osm</filename>
@@ -245,10 +245,16 @@
       <checksum>991549B8</checksum>
     </file>
     <file>
+      <filename>process_room_air_conditioner_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2BE6DA1B</checksum>
+    </file>
+    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>AA80E866</checksum>
+      <checksum>3A9A4850</checksum>
     </file>
   </files>
 </measure>
