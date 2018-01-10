@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_uninsulated_surfaces</name>
   <uid>ffe06b80-3296-436e-98b2-fe79b4c936de</uid>
-  <version_id>2c846127-2cce-400a-8d15-3791f1ff26cd</version_id>
-  <version_modified>20171209T140651Z</version_modified>
+  <version_id>2b1e18d1-8a93-4f3b-a905-3080e276f708</version_id>
+  <version_modified>20180109T153038Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsUninsulatedSurfaces</class_name>
   <display_name>Set Residential Uninsulated Surfaces</display_name>
@@ -51,10 +51,10 @@
       <checksum>3D7710FF</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
       <version>
@@ -74,10 +74,10 @@
       <checksum>A9382DBC</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BE5BF810</checksum>
+      <checksum>022C15E2</checksum>
     </file>
     <file>
       <filename>unit_conversions.rb</filename>
@@ -89,31 +89,31 @@
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>2C25DA33</checksum>
+      <checksum>BBE2B82A</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Inset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>C7D9D102</checksum>
+      <checksum>B7FB4AD9</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Offset.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>78877DEE</checksum>
+      <checksum>044BF77F</checksum>
     </file>
     <file>
       <filename>SFD_1000sqft_1story_FB_GRG_UA_DoorArea.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>921AADC9</checksum>
+      <checksum>F42214EE</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_GRG_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5E8E0087</checksum>
+      <checksum>AC730FBC</checksum>
     </file>
   </files>
 </measure>

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_thermal_mass</name>
   <uid>b2da04af-0f9f-4a30-b2a0-cc2dbc20d5aa</uid>
-  <version_id>c3077e96-3bf7-4256-abf1-275248f68d59</version_id>
-  <version_modified>20171209T140651Z</version_modified>
+  <version_id>f30b96e0-b69f-4ab0-a186-1bd0beb715bd</version_id>
+  <version_modified>20180109T153038Z</version_modified>
   <xml_checksum>5091078B</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorThermalMass</class_name>
   <display_name>Set Residential Walls - Exterior Thermal Mass</display_name>
@@ -127,10 +127,10 @@
       <checksum>CEB01EFD</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
+      <checksum>BE5BF810</checksum>
     </file>
     <file>
       <version>
@@ -150,10 +150,10 @@
       <checksum>A9382DBC</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BE5BF810</checksum>
+      <checksum>022C15E2</checksum>
     </file>
     <file>
       <filename>unit_conversions.rb</filename>
@@ -165,13 +165,13 @@
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallThermalMass_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>130AFA72</checksum>
+      <checksum>67D20D7E</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>E37C5EC3</checksum>
+      <checksum>D7C4966C</checksum>
     </file>
   </files>
 </measure>

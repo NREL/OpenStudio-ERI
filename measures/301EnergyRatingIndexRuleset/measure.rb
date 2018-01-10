@@ -1901,6 +1901,7 @@ class OSMeasures
               "cap_retention_temp"=>-5,
               "pan_heater_power"=>0,
               "fan_power"=>0.07,
+              "is_ducted"=>false,
               "heat_pump_capacity"=>cool_capacity_tons,
               "supplemental_efficiency"=>1,
               "supplemental_capacity"=>backup_heat_capacity_kbtuh,

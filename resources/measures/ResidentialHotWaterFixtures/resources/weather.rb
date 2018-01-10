@@ -75,7 +75,7 @@ class WeatherProcess
       end
       return actual_timestamps
     end
-    return nil
+    return []
   end
   
   def error?

@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_orientation</name>
   <uid>4bf5a7c5-bce4-404a-bc7b-72dc02b379f8</uid>
-  <version_id>6d9b3d28-20a9-401a-8805-935483319539</version_id>
-  <version_modified>20171209T140652Z</version_modified>
+  <version_id>b6c7205f-856b-41fb-ad94-881a92323b65</version_id>
+  <version_modified>20180109T153040Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialOrientation</class_name>
   <display_name>Set Residential Orientation</display_name>
@@ -68,12 +68,6 @@
       <checksum>8CEA79BD</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>260EF643</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -85,6 +79,12 @@
       <checksum>96F7011D</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>022C15E2</checksum>
+    </file>
+    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -94,19 +94,19 @@
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>92BE5D1D</checksum>
+      <checksum>5E29CC86</checksum>
     </file>
     <file>
       <filename>MF_8units_1story_SL_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>9D5DA32A</checksum>
+      <checksum>390A792F</checksum>
     </file>
     <file>
       <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>82B3FA69</checksum>
+      <checksum>21D8AA9E</checksum>
     </file>
   </files>
 </measure>
