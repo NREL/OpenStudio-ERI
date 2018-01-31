@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_sip</name>
   <uid>d3c6d46a-2ebe-41a9-b218-d4c2a7d0f530</uid>
-  <version_id>8aa1c63f-106b-4d18-a7e3-154bab88e4d5</version_id>
-  <version_modified>20180109T153038Z</version_modified>
+  <version_id>c443e76f-5992-4da6-8d6c-cbe0d7b1d31a</version_id>
+  <version_modified>20180130T221030Z</version_modified>
   <xml_checksum>2609226D</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorSIP</class_name>
   <display_name>Set Residential Walls - SIP Construction</display_name>
@@ -109,6 +109,12 @@
       <checksum>38CF702C</checksum>
     </file>
     <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -117,43 +123,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DABE7D9D</checksum>
+      <checksum>A5DA32DD</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BE5BF810</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A9382DBC</checksum>
+      <checksum>B25EFCDD</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>022C15E2</checksum>
+      <checksum>4F67EEBB</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>31924A51</checksum>
+      <checksum>9B96D48D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BF889D56</checksum>
+      <checksum>6A6B104F</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D7C4966C</checksum>
+      <checksum>0378C6FF</checksum>
     </file>
   </files>
 </measure>

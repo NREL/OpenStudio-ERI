@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_ceilings_roofs_unfinished_attic</name>
   <uid>235ba3ce-dd83-4287-aa0e-435dc1cbf1a7</uid>
-  <version_id>a783da45-ef47-45b5-a06a-51443b6ceddd</version_id>
-  <version_modified>20180109T153037Z</version_modified>
+  <version_id>2d9eabd3-d58a-4b9f-ae40-6756120bc3f5</version_id>
+  <version_modified>20180130T221029Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsCeilingsRoofsUnfinishedAttic</class_name>
   <display_name>Set Residential Ceilings/Roofs - Unfinished Attic Constructions</display_name>
@@ -177,10 +177,10 @@
       <checksum>D92619E6</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BE5BF810</checksum>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <version>
@@ -191,37 +191,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>13D38702</checksum>
+      <checksum>5AF64D8F</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A9382DBC</checksum>
+      <checksum>B25EFCDD</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>022C15E2</checksum>
+      <checksum>4F67EEBB</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>31924A51</checksum>
+      <checksum>9B96D48D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_FB_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>96D71114</checksum>
+      <checksum>5D560DEF</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_FA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BD389B88</checksum>
+      <checksum>80A06EEA</checksum>
     </file>
   </files>
 </measure>

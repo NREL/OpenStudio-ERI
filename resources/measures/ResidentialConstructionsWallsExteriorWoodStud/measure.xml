@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>process_constructions_walls_exterior_wood_stud</name>
   <uid>76193c5c-d1a6-4a57-864a-c8a32e67adcb</uid>
-  <version_id>4af7a8ff-d47f-4319-a3e1-16b45eb635f4</version_id>
-  <version_modified>20180109T153039Z</version_modified>
+  <version_id>c1b3930d-5560-41ac-b071-1f0b998f7cc0</version_id>
+  <version_modified>20180130T221030Z</version_modified>
   <xml_checksum>1E963D9C</xml_checksum>
   <class_name>ProcessConstructionsWallsExteriorWoodStud</class_name>
   <display_name>Set Residential Walls - Wood Stud Construction</display_name>
@@ -123,10 +123,10 @@
       <checksum>328B516C</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>BE5BF810</checksum>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <version>
@@ -137,37 +137,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>1D685238</checksum>
+      <checksum>45044F2F</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A9382DBC</checksum>
+      <checksum>B25EFCDD</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>022C15E2</checksum>
+      <checksum>4F67EEBB</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>31924A51</checksum>
+      <checksum>9B96D48D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_AllLayersButWallInsulation_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BF889D56</checksum>
+      <checksum>6A6B104F</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_CeilingIns.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D7C4966C</checksum>
+      <checksum>0378C6FF</checksum>
     </file>
   </files>
 </measure>

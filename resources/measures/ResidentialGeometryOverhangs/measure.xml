@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_overhangs</name>
   <uid>0821dae4-c0b6-4295-a7a5-ccaf9407dc77</uid>
-  <version_id>1708bb36-d6cc-4812-9b20-c6029264b8ac</version_id>
-  <version_modified>20180109T153040Z</version_modified>
+  <version_id>5e9fb219-1ca2-4bc5-baf6-09a0dd396a1a</version_id>
+  <version_modified>20180130T225535Z</version_modified>
   <xml_checksum>9C8A26EB</xml_checksum>
   <class_name>CreateResidentialOverhangs</class_name>
   <display_name>Set Residential Overhangs</display_name>
@@ -151,12 +151,6 @@
   </attributes>
   <files>
     <file>
-      <filename>create_residential_overhangs.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A4558D06</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.9.0</identifier>
@@ -168,58 +162,64 @@
       <checksum>7E96F5A7</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A9382DBC</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>022C15E2</checksum>
-    </file>
-    <file>
       <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>31924A51</checksum>
     </file>
     <file>
+      <filename>create_residential_overhangs.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>504112A7</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4F67EEBB</checksum>
+    </file>
+    <file>
+      <filename>geometry.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9B96D48D</checksum>
+    </file>
+    <file>
       <filename>SFD_2000sqft_2story_SL_UA_Windows.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D610DF1E</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B8F8578A</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CEFAB298</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>390A792F</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>21D8AA9E</checksum>
+      <checksum>A6A3D00D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BBE2B82A</checksum>
+      <checksum>3F6A2F1A</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>673456FB</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F8CD7AE0</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>763078B1</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>59FD2FD4</checksum>
     </file>
   </files>
 </measure>

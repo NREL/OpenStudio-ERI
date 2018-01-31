@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_neighbors</name>
   <uid>11051b4a-4f5b-43b5-8c78-6303e084dbd9</uid>
-  <version_id>9db613a0-91f3-42ba-9228-7ac94a476638</version_id>
-  <version_modified>20180109T153039Z</version_modified>
+  <version_id>f1b09bb4-4618-4e97-812f-7385329ccf04</version_id>
+  <version_modified>20180130T225535Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialNeighbors</class_name>
   <display_name>Set Residential Neighbors</display_name>
@@ -92,10 +92,10 @@
       <checksum>E23378AA</checksum>
     </file>
     <file>
-      <filename>create_residential_neighbors_test.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>DE26B79C</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <version>
@@ -106,67 +106,67 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>3AF69198</checksum>
+      <checksum>AF24CAC9</checksum>
     </file>
     <file>
-      <filename>geometry.rb</filename>
+      <filename>create_residential_neighbors_test.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A9382DBC</checksum>
+      <usage_type>test</usage_type>
+      <checksum>F1E8D477</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>022C15E2</checksum>
+      <checksum>4F67EEBB</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>31924A51</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B8F8578A</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>CEFAB298</checksum>
-    </file>
-    <file>
-      <filename>MF_8units_1story_SL_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>390A792F</checksum>
-    </file>
-    <file>
-      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>21D8AA9E</checksum>
+      <checksum>9B96D48D</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Eaves.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>98C08EAE</checksum>
+      <checksum>561F3791</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Overhangs.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>D3300C1E</checksum>
+      <checksum>BC118205</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA_Denver.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>5E29CC86</checksum>
+      <checksum>A6312858</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>673456FB</checksum>
+    </file>
+    <file>
+      <filename>MF_8units_1story_SL_Inset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F8CD7AE0</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Offset_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>763078B1</checksum>
+    </file>
+    <file>
+      <filename>SFA_4units_1story_SL_UA_Windows.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>59FD2FD4</checksum>
     </file>
   </files>
 </measure>

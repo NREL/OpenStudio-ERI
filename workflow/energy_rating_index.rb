@@ -760,7 +760,7 @@ Parallel.map(designs, in_threads: designs.size) do |design|
 end
 
 # Calculate and write results
-puts "Calcuting ERI..."
+puts "Calculating ERI..."
 results = calculate_eri(sim_outputs)
 
 puts "Writing output files..."

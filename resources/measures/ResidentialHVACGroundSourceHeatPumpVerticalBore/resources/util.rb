@@ -13,6 +13,8 @@ class HelperMethods
             return "FuelOil#1"
         elsif fuel == Constants.FuelTypePropane
             return "PropaneGas"
+        elsif fuel == Constants.FuelTypeWood
+            return "OtherFuel1"
         end
     end
     
@@ -25,6 +27,8 @@ class HelperMethods
             return Constants.FuelTypeOil
         elsif fuel == "PropaneGas"
             return Constants.FuelTypePropane
+        elsif fuel == "OtherFuel1"
+            return Constants.FuelTypeWood
         end
     end    
     
@@ -436,59 +440,59 @@ class Material
         return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
-    def self.AirFilmSlopeEnhanced(highest_roof_pitch)
+    def self.AirFilmSlopeEnhanced(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
-        rvalue = 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
+        rvalue = 0.002 * Math::exp(0.0398 * roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
         return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
-    def self.AirFilmSlopeReduced(highest_roof_pitch)
+    def self.AirFilmSlopeReduced(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
-        rvalue = 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
+        rvalue = 0.32 * Math::exp(-0.0154 * roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
         return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
-    def self.AirFilmSlopeEnhancedReflective(highest_roof_pitch)
+    def self.AirFilmSlopeEnhancedReflective(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
-        rvalue = 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
+        rvalue = 0.00893 * Math::exp(0.0419 * roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
         return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
-    def self.AirFilmSlopeReducedReflective(highest_roof_pitch)
+    def self.AirFilmSlopeReducedReflective(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
-        rvalue = 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
+        rvalue = 2.999 * Math::exp(-0.0333 * roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
         return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
-    def self.AirFilmRoof(highest_roof_pitch)
+    def self.AirFilmRoof(roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return self.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue * hdd_frac + self.AirFilmSlopeReduced(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
+        #return self.AirFilmSlopeEnhanced(roof_pitch).rvalue * hdd_frac + self.AirFilmSlopeReduced(roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        rvalue = (self.AirFilmSlopeEnhanced(highest_roof_pitch).rvalue + self.AirFilmSlopeReduced(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
+        rvalue = (self.AirFilmSlopeEnhanced(roof_pitch).rvalue + self.AirFilmSlopeReduced(roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
         return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
-    def self.AirFilmRoofRadiantBarrier(highest_roof_pitch)
+    def self.AirFilmRoofRadiantBarrier(roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return self.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue * hdd_frac + self.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
+        #return self.AirFilmSlopeEnhancedReflective(roof_pitch).rvalue * hdd_frac + self.AirFilmSlopeReducedReflective(roof_pitch).rvalue * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        rvalue = (self.AirFilmSlopeEnhancedReflective(highest_roof_pitch).rvalue + self.AirFilmSlopeReducedReflective(highest_roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
+        rvalue = (self.AirFilmSlopeEnhancedReflective(roof_pitch).rvalue + self.AirFilmSlopeReducedReflective(roof_pitch).rvalue) / 2.0 # hr-ft-F/Btu
         return self.new(name=nil, thick_in=1.0, mat_base=nil, k_in=1.0/rvalue)
     end
 
@@ -1498,54 +1502,54 @@ class AirFilms
         return self.FlatReducedR # hr-ft-F/Btu
     end
   
-    def self.SlopeEnhancedR(highest_roof_pitch)
+    def self.SlopeEnhancedR(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
-        return 0.002 * Math::exp(0.0398 * highest_roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
+        return 0.002 * Math::exp(0.0398 * roof_pitch) + 0.608 # hr-ft-F/Btu (evaluates to film_flat_enhanced at 0 degrees, 0.62 at 45 degrees, and film_vertical at 90 degrees)
     end
   
-    def self.SlopeReducedR(highest_roof_pitch)
+    def self.SlopeReducedR(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for non-reflective materials of 
         # emissivity = 0.90.
-        return 0.32 * Math::exp(-0.0154 * highest_roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
+        return 0.32 * Math::exp(-0.0154 * roof_pitch) + 0.6 # hr-ft-F/Btu (evaluates to film_flat_reduced at 0 degrees, 0.76 at 45 degrees, and film_vertical at 90 degrees)
     end
   
-    def self.SlopeEnhancedReflectiveR(highest_roof_pitch)
+    def self.SlopeEnhancedReflectiveR(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
-        return 0.00893 * Math::exp(0.0419 * highest_roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
+        return 0.00893 * Math::exp(0.0419 * roof_pitch) + 1.311 # hr-ft-F/Btu (evaluates to 1.32 at 0 degrees, 1.37 at 45 degrees, and 1.70 at 90 degrees)
     end
   
-    def self.SlopeReducedReflectiveR(highest_roof_pitch)
+    def self.SlopeReducedReflectiveR(roof_pitch)
         # Correlation functions used to interpolate between values provided
         # in ASHRAE 2005, F25.2, Table 1 - which only provides values for
         # 0, 45, and 90 degrees. Values are for reflective materials of 
         # emissivity = 0.05.
-        return 2.999 * Math::exp(-0.0333 * highest_roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
+        return 2.999 * Math::exp(-0.0333 * roof_pitch) + 1.551 # hr-ft-F/Btu (evaluates to 4.55 at 0 degrees, 2.22 at 45 degrees, and 1.70 at 90 degrees)
     end
   
-    def self.RoofR(highest_roof_pitch)
+    def self.RoofR(roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return self.SlopeEnhancedR(highest_roof_pitch) * hdd_frac + self.SlopeReducedR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        #return self.SlopeEnhancedR(roof_pitch) * hdd_frac + self.SlopeReducedR(roof_pitch) * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        return (self.SlopeEnhancedR(highest_roof_pitch) + self.SlopeReducedR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
+        return (self.SlopeEnhancedR(roof_pitch) + self.SlopeReducedR(roof_pitch)) / 2.0 # hr-ft-F/Btu
     end
   
-    def self.RoofRadiantBarrierR(highest_roof_pitch)
+    def self.RoofRadiantBarrierR(roof_pitch)
         # Use weighted average between enhanced and reduced convection based on degree days.
         #hdd_frac = hdd65f / (hdd65f + cdd65f)
         #cdd_frac = cdd65f / (hdd65f + cdd65f)
-        #return self.SlopeEnhancedReflectiveR(highest_roof_pitch) * hdd_frac + self.SlopeReducedReflectiveR(highest_roof_pitch) * cdd_frac # hr-ft-F/Btu
+        #return self.SlopeEnhancedReflectiveR(roof_pitch) * hdd_frac + self.SlopeReducedReflectiveR(roof_pitch) * cdd_frac # hr-ft-F/Btu
         # Simplification to not depend on weather
-        return (self.SlopeEnhancedReflectiveR(highest_roof_pitch) + self.SlopeReducedReflectiveR(highest_roof_pitch)) / 2.0 # hr-ft-F/Btu
+        return (self.SlopeEnhancedReflectiveR(roof_pitch) + self.SlopeReducedReflectiveR(roof_pitch)) / 2.0 # hr-ft-F/Btu
     end
     
 end

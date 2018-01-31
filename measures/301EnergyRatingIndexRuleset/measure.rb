@@ -1320,7 +1320,7 @@ class OSMeasures
       args = {
               "storage_tank_volume"=>tank_vol,
               "setpoint_temp"=>setpoint_temp,
-              "space"=>Constants.Auto,
+              "location"=>Constants.Auto,
               "element_capacity"=>4.5,
               "min_temp"=>45,
               "max_temp"=>120,
@@ -2208,6 +2208,8 @@ class OSMeasures
             "mech_vent_frac_62_2"=>mech_vent_frac_62_2,
             "mech_vent_ashrae_std"=>2013,
             "mech_vent_infil_credit"=>true,
+            "mech_vent_cfis_open_time"=>20.0,
+            "mech_vent_cfis_airflow_frac"=>1.0,
             "is_existing_home"=>false, # FIXME
             "clothes_dryer_exhaust"=>0,
             "nat_vent_htg_offset"=>nat_vent_htg_offset,
@@ -2433,7 +2435,7 @@ class OSModel
     end
     model.getBuilding.setStandardsNumberOfAboveGroundStories(num_floors)
     model.getSpaces.each do |space|
-      if space.name.to_s == Constants.FinishedBasementSpace
+      if space.name.to_s == Constants.SpaceTypeFinishedBasement
         num_floors += 1  
         break
       end
@@ -2451,10 +2453,10 @@ class OSModel
   
   private
   
-  def self.create_spaces_and_zones(model, spaces, space_name, thermal_zone_name)
-    if not spaces.keys.include? space_name
-      thermal_zone = create_zone(model, thermal_zone_name)
-      create_space(model, space_name, spaces, thermal_zone)
+  def self.create_spaces_and_zones(model, spaces, space_type)
+    if not spaces.keys.include? space_type
+      thermal_zone = create_zone(model, space_type)
+      create_space(model, space_type, spaces, thermal_zone)
     end
   end
 
@@ -2464,11 +2466,14 @@ class OSModel
     return thermal_zone
   end
   
-  def self.create_space(model, name, spaces, thermal_zone)
+  def self.create_space(model, space_type, spaces, thermal_zone)
     space = OpenStudio::Model::Space.new(model)
-    space.setName(name)
+    space.setName(space_type)
+    st = OpenStudio::Model::SpaceType.new(model)
+    st.setStandardsSpaceType(space_type)
+    space.setSpaceType(st)
     space.setThermalZone(thermal_zone)
-    spaces[name] = space
+    spaces[space_type] = space
   end
 
   def self.create_all_spaces_and_zones(model, building)
@@ -2479,9 +2484,9 @@ class OSModel
     
       attic_type = attic.elements["AtticType"].text
       if ["vented attic", "unvented attic"].include? attic_type
-        create_spaces_and_zones(model, spaces, Constants.UnfinishedAtticSpace, Constants.UnfinishedAtticZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedAttic)
       elsif attic_type == "cape cod"
-        create_spaces_and_zones(model, spaces, Constants.FinishedAtticSpace, Constants.LivingZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
       elsif attic_type != "flat roof" and attic_type != "cathedral ceiling"
         fail "Unhandled value (#{attic_type})."
       end
@@ -2491,9 +2496,9 @@ class OSModel
     
         exterior_adjacent_to = floor.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
         elsif exterior_adjacent_to == "garage"
-          create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
@@ -2505,9 +2510,9 @@ class OSModel
       
         exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
         elsif exterior_adjacent_to == "garage"
-          create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end        
@@ -2520,13 +2525,13 @@ class OSModel
       
       foundation_type = foundation.elements["FoundationType"]      
       if foundation_type.elements["Basement/Conditioned/text()='true'"]        
-        create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeFinishedBasement)
       elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
-        create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedBasement)
       elsif foundation_type.elements["Crawlspace"]
-        create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeCrawl)
       elsif foundation_type.elements["Ambient"]
-        create_spaces_and_zones(model, spaces, Constants.PierBeamSpace, Constants.PierBeamZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypePierBeam)
       elsif not foundation_type.elements["SlabOnGrade"]
         fail "Unhandled value (#{foundation_type})."
       end
@@ -2535,7 +2540,7 @@ class OSModel
         
         exterior_adjacent_to = frame_floor.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
@@ -2546,11 +2551,11 @@ class OSModel
         
         exterior_adjacent_to = foundation_wall.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "unconditioned basement"
-          create_spaces_and_zones(model, spaces, Constants.UnfinishedBasementSpace, Constants.UnfinishedBasementZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedBasement)
         elsif exterior_adjacent_to == "conditioned basement"
-          create_spaces_and_zones(model, spaces, Constants.FinishedBasementSpace, Constants.FinishedBasementZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeFinishedBasement)
         elsif exterior_adjacent_to == "crawlspace"
-          create_spaces_and_zones(model, spaces, Constants.CrawlSpace, Constants.CrawlZone)
+          create_spaces_and_zones(model, spaces, Constants.SpaceTypeCrawl)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
@@ -2563,18 +2568,18 @@ class OSModel
     
       interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
       if interior_adjacent_to == "living space"
-        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
       elsif interior_adjacent_to == "garage"
-        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
       else
         fail "Unhandled value (#{interior_adjacent_to})."
       end
       
       exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
       if exterior_adjacent_to == "garage"
-        create_spaces_and_zones(model, spaces, Constants.GarageSpace, Constants.GarageZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
       elsif exterior_adjacent_to == "living space"
-        create_spaces_and_zones(model, spaces, Constants.LivingSpace, Constants.LivingZone)
+        create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
       elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
         fail "Unhandled value (#{exterior_adjacent_to})."
       end      
@@ -2648,15 +2653,15 @@ class OSModel
 
   def self.get_foundation_space_name(foundation_type)
     if foundation_type.elements["Basement/Conditioned/text()='true'"]        
-      return Constants.FinishedBasementSpace
+      return Constants.SpaceTypeFinishedBasement
     elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
-      return Constants.UnfinishedBasementSpace
+      return Constants.SpaceTypeUnfinishedBasement
     elsif foundation_type.elements["Crawlspace"]
-      return Constants.CrawlSpace
+      return Constants.SpaceTypeCrawl
     elsif foundation_type.elements["SlabOnGrade"]
-      return Constants.LivingSpace
+      return Constants.SpaceTypeLiving
     elsif foundation_type.elements["Ambient"]
-      return Constants.PierBeamSpace
+      return Constants.SpaceTypePierBeam
     else
       fail "Unhandled value (#{foundation_type})."
     end
@@ -2746,7 +2751,7 @@ class OSModel
         surface.setName(floor_id)
         surface.setSurfaceType("RoofCeiling")
         surface.setSpace(spaces[foundation_space_name])
-        surface.createAdjacentSurface(spaces[Constants.LivingSpace])
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
         
         foundation_ceiling_area += framefloor.elements["Area"].text.to_f
       
@@ -2776,7 +2781,7 @@ class OSModel
     surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model)
     surface.setName("inferred finished floor")
     surface.setSurfaceType("Floor")
-    surface.setSpace(spaces[Constants.LivingSpace])
+    surface.setSpace(spaces[Constants.SpaceTypeLiving])
     surface.setOutsideBoundaryCondition("Adiabatic")
 
   end
@@ -2797,24 +2802,24 @@ class OSModel
       surface.setName(wall_id)
       surface.setSurfaceType("Wall") 
       if ["living space"].include? interior_adjacent_to
-        surface.setSpace(spaces[Constants.LivingSpace])
+        surface.setSpace(spaces[Constants.SpaceTypeLiving])
       elsif ["garage"].include? interior_adjacent_to
-        surface.setSpace(spaces[Constants.GarageSpace])
+        surface.setSpace(spaces[Constants.SpaceTypeGarage])
       elsif ["unvented attic", "vented attic"].include? interior_adjacent_to
-        surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+        surface.setSpace(spaces[Constants.SpaceTypeUnfinishedAttic])
       elsif ["cape cod"].include? interior_adjacent_to
-        surface.setSpace(spaces[Constants.FinishedAtticSpace])
+        surface.setSpace(spaces[Constants.SpaceTypeFinishedAttic])
       else
         fail "Unhandled value (#{interior_adjacent_to})."
       end
       if ["ambient"].include? exterior_adjacent_to
         surface.setOutsideBoundaryCondition("Outdoors")
       elsif ["garage"].include? exterior_adjacent_to
-        surface.createAdjacentSurface(spaces[Constants.GarageSpace])
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeGarage])
       elsif ["unvented attic", "vented attic"].include? exterior_adjacent_to
-        surface.createAdjacentSurface(spaces[Constants.UnfinishedAtticSpace])
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeUnfinishedAttic])
       elsif ["cape cod"].include? exterior_adjacent_to
-        surface.createAdjacentSurface(spaces[Constants.FinishedAtticSpace])
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeFinishedAttic])
       elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
         fail "Unhandled value (#{exterior_adjacent_to})."
       end
@@ -2844,16 +2849,16 @@ class OSModel
         surface.setName(floor_id)
         surface.setSurfaceType("Floor")
         if ["vented attic", "unvented attic"].include? attic_type
-          surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeUnfinishedAttic])
         elsif ["cape cod"].include? attic_type
-          surface.setSpace(spaces[Constants.FinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeFinishedAttic])
         elsif attic_type != "flat roof" and attic_type != "cathedral ceiling"
           fail "Unhandled value (#{attic_type})."
         end
         if ["living space"].include? exterior_adjacent_to
-          surface.createAdjacentSurface(spaces[Constants.LivingSpace])
+          surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
         elsif ["garage"].include? exterior_adjacent_to
-          surface.createAdjacentSurface(spaces[Constants.GarageSpace])
+          surface.createAdjacentSurface(spaces[Constants.SpaceTypeGarage])
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
@@ -2883,11 +2888,11 @@ class OSModel
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")
         if ["unvented attic", "vented attic"].include? attic_type
-          surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeUnfinishedAttic])
         elsif ["flat roof", "cathedral ceiling"].include? attic_type
-          surface.setSpace(spaces[Constants.LivingSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeLiving])
         elsif ["cape cod"].include? attic_type
-          surface.setSpace(spaces[Constants.FinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeFinishedAttic])
         end
         
       end
@@ -2918,13 +2923,13 @@ class OSModel
         next unless wall.elements["SystemIdentifier"].attributes["id"] == window.elements["AttachedToWall"].attributes["idref"]
         interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
         if interior_adjacent_to == "living space"
-          surface.setSpace(spaces[Constants.LivingSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeLiving])
         elsif interior_adjacent_to == "garage"
-          surface.setSpace(spaces[Constants.GarageSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeGarage])
         elsif interior_adjacent_to == "vented attic" or interior_adjacent_to == "unvented attic"
-          surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeUnfinishedAttic])
         elsif interior_adjacent_to == "cape cod"
-          surface.setSpace(spaces[Constants.FinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeFinishedAttic])
         else
           fail "Unhandled value (#{interior_adjacent_to})."
         end
@@ -2962,13 +2967,13 @@ class OSModel
         next unless wall.elements["SystemIdentifier"].attributes["id"] == door.elements["AttachedToWall"].attributes["idref"]
         interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
         if interior_adjacent_to == "living space"
-          surface.setSpace(spaces[Constants.LivingSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeLiving])
         elsif interior_adjacent_to == "garage"
-          surface.setSpace(spaces[Constants.GarageSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeGarage])
         elsif interior_adjacent_to == "vented attic" or interior_adjacent_to == "unvented attic"
-          surface.setSpace(spaces[Constants.UnfinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeUnfinishedAttic])
         elsif interior_adjacent_to == "cape cod"
-          surface.setSpace(spaces[Constants.FinishedAtticSpace])
+          surface.setSpace(spaces[Constants.SpaceTypeFinishedAttic])
         else
           fail "Unhandled value (#{interior_adjacent_to})."
         end

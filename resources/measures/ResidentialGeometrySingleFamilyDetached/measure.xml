@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>create_residential_single_family_detached_geometry</name>
   <uid>a1248ef4-c1ef-46ed-a9ea-4d8fbf719b6f</uid>
-  <version_id>f10efe41-e7a6-4200-a098-b68c27a4cbb6</version_id>
-  <version_modified>20180109T153040Z</version_modified>
+  <version_id>8f1735c8-fb4a-46d1-92db-de700cca1160</version_id>
+  <version_modified>20180130T221031Z</version_modified>
   <xml_checksum>2AF3A68E</xml_checksum>
   <class_name>CreateResidentialSingleFamilyDetachedGeometry</class_name>
   <display_name>Create Residential Single-Family Detached Geometry</display_name>
@@ -21,7 +21,7 @@
       <default_value>2000</default_value>
     </argument>
     <argument>
-      <name>living_height</name>
+      <name>wall_height</name>
       <display_name>Wall Height (Per Floor)</display_name>
       <description>The height of the living space (and garage) walls.</description>
       <type>Double</type>
@@ -271,10 +271,10 @@
   </attributes>
   <files>
     <file>
-      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
+      <filename>unit_conversions.rb</filename>
       <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BE22B946</checksum>
+      <usage_type>resource</usage_type>
+      <checksum>31924A51</checksum>
     </file>
     <file>
       <version>
@@ -285,31 +285,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9A36E174</checksum>
-    </file>
-    <file>
-      <filename>geometry.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>A9382DBC</checksum>
+      <checksum>20227D29</checksum>
     </file>
     <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>022C15E2</checksum>
+      <checksum>4F67EEBB</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>31924A51</checksum>
+      <checksum>9B96D48D</checksum>
+    </file>
+    <file>
+      <filename>create_residential_single_family_detached_geometry_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>99F43808</checksum>
     </file>
     <file>
       <filename>SFD_2000sqft_2story_SL_UA.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
-      <checksum>BBE2B82A</checksum>
+      <checksum>3F6A2F1A</checksum>
     </file>
   </files>
 </measure>

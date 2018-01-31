@@ -284,7 +284,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           end
           
           # Get plant loop
-          plant_loop = Waterheater.get_plant_loop_from_string(model.getPlantLoops, Constants.Auto, unit.spaces, Constants.ObjectNameWaterHeater(unit.name.to_s.gsub("unit", "u")).gsub("|","_"), runner)
+          plant_loop = Waterheater.get_plant_loop_from_string(model.getPlantLoops, Constants.Auto, unit, Constants.ObjectNameWaterHeater(unit.name.to_s.gsub("unit ", "")).gsub("|","_"), runner)
           if plant_loop.nil?
             return false
           end
@@ -350,10 +350,13 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
             schedule_tmains = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_tmains, model).get
             model.getSiteWaterMainsTemperature.setTemperatureSchedule(schedule_tmains)
           end
+          
+          location_hierarchy = [Constants.SpaceTypeLiving,
+                                Constants.SpaceTypeFinishedBasement]
 
           # Clothes washer
           cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
-          cw_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          cw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
           cw_peak_flow_gpm = cw_gpd/sum_fractions_hw/timestep_minutes*365.0
           cw_design_level_w = UnitConversions.convert(cw_annual_kwh*60.0/(cw_gpd*365.0/cw_peak_flow_gpm), "kW", "W")
           add_electric_equipment(model, cw_name, cw_space, cw_design_level_w, cw_frac_sens, cw_frac_lat, schedule_hw)
@@ -364,7 +367,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           cd_name_f = Constants.ObjectNameClothesDryer(Constants.FuelTypeGas, unit.name.to_s)
           cd_weekday_sch = "0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024"
           cd_monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
-          cd_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          cd_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
           cd_schedule = MonthWeekdayWeekendSchedule.new(model, runner, cd_name_e, cd_weekday_sch, cd_weekday_sch, cd_monthly_sch, 1.0, 1.0)
           cd_design_level_e = cd_schedule.calcDesignLevelFromDailykWh(cd_annual_kwh/365.0)
           cd_design_level_f = cd_schedule.calcDesignLevelFromDailyTherm(cd_annual_therm/365.0)
@@ -373,7 +376,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           
           # Dishwasher
           dw_name = Constants.ObjectNameDishwasher(unit.name.to_s)
-          dw_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          dw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
           dw_peak_flow_gpm = dw_gpd/sum_fractions_hw/timestep_minutes*365.0
           dw_design_level_w = UnitConversions.convert(dw_annual_kwh*60.0/(dw_gpd*365.0/dw_peak_flow_gpm), "kW", "W")
           add_electric_equipment(model, dw_name, dw_space, dw_design_level_w, dw_frac_sens, dw_frac_lat, schedule_hw)
@@ -383,7 +386,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           fridge_name = Constants.ObjectNameRefrigerator(unit.name.to_s)
           fridge_weekday_sch = "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041"
           fridge_monthly_sch = "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837"
-          fridge_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          fridge_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
           fridge_schedule = MonthWeekdayWeekendSchedule.new(model, runner, fridge_name, fridge_weekday_sch, fridge_weekday_sch, fridge_monthly_sch, 1.0, 1.0)
           fridge_design_level = fridge_schedule.calcDesignLevelFromDailykWh(fridge_annual_kwh/365.0)
           add_electric_equipment(model, fridge_name, fridge_space, fridge_design_level, 1.0, 0.0, fridge_schedule.schedule)
@@ -393,7 +396,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           cook_name_f = Constants.ObjectNameCookingRange(Constants.FuelTypeGas, unit.name.to_s)
           cook_weekday_sch = "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011"
           cook_monthly_sch = "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097"
-          cook_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          cook_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
           cook_schedule = MonthWeekdayWeekendSchedule.new(model, runner, cook_name_e, cook_weekday_sch, cook_weekday_sch, cook_monthly_sch, 1.0, 1.0)
           cook_design_level_e = cook_schedule.calcDesignLevelFromDailykWh(cook_annual_kwh/365.0)
           cook_design_level_f = cook_schedule.calcDesignLevelFromDailyTherm(cook_annual_therm/365.0)
@@ -405,7 +408,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           fx_obj_name_sens = "#{fx_obj_name} Sensible"
           fx_obj_name_lat = "#{fx_obj_name} Latent"
           fx_peak_flow_gpm = fx_gpd/sum_fractions_hw/timestep_minutes*365.0
-          fx_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          fx_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
           fx_schedule = cd_schedule
           fx_design_level_sens = fx_schedule.calcDesignLevelFromDailykWh(UnitConversions.convert(fx_sens_btu, "Btu", "kWh")/365.0)
           fx_design_level_lat = fx_schedule.calcDesignLevelFromDailykWh(UnitConversions.convert(fx_lat_btu, "Btu", "kWh")/365.0)
@@ -420,7 +423,7 @@ class ERIHotWaterAndAppliances < OpenStudio::Measure::ModelMeasure
           
           # Recirculation pump
           dist_pump_obj_name = Constants.ObjectNameHotWaterRecircPump(unit.name.to_s)
-          dist_pump_space = Geometry.get_space_from_string(unit.spaces, Constants.Auto)
+          dist_pump_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
           dist_pump_schedule = cd_schedule
           dist_pump_design_level = dist_pump_schedule.calcDesignLevelFromDailykWh(dist_pump_annual_kwh/365.0)
           add_electric_equipment(model, dist_pump_obj_name, dist_pump_space, dist_pump_design_level, 0.0, 0.0, dist_pump_schedule.schedule)
