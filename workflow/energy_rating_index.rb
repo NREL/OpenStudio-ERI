@@ -83,14 +83,6 @@ end
 
 def run_osw(osw_path, show_debug=false)
 
-  # FIXME: Get latest installed version of openstudio.exe
-  os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
-  if os_clis.size == 0
-    puts "ERROR: Could not find the openstudio binary. You may need to install the OpenStudio Command Line Interface."
-    exit
-  end
-  os_cli = os_clis[-1]
-
   log_str = ''
   if not show_debug
     # Redirect to a log file
@@ -100,7 +92,8 @@ def run_osw(osw_path, show_debug=false)
   # FIXME: Push changes upstream to OpenStudio-workflow gem
   gem_str = '-I ../gems/OpenStudio-workflow-gem/lib/ '
 
-  command = "\"#{os_cli}\" #{gem_str}run -w \"#{osw_path}\"#{log_str}"
+  cli_path = OpenStudio.getOpenStudioCLI
+  command = "\"#{cli_path}\" #{gem_str}run -w \"#{osw_path}\"#{log_str}"
   system(command)
   
   return File.join(File.dirname(osw_path), "run", "eplusout.sql")

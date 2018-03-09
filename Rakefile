@@ -246,8 +246,8 @@ def update_measures
   end
   
   # Update measure xmls
-  os_cli = get_os_cli()
-  command = "\"#{os_cli}\" measure --update_all #{measures_dir} >> log"
+  cli_path = OpenStudio.getOpenStudioCLI
+  command = "\"#{cli_path}\" measure --update_all #{measures_dir} >> log"
   puts "Updating measure.xml files..."
   system(command)
 
@@ -261,24 +261,14 @@ task :generate_sample_outputs do
   sleep 1
   FileUtils.mkdir_p("sample_results")
 
-  os_cli = get_os_cli()
-  command = "\"#{os_cli}\" execute_ruby_script energy_rating_index.rb -x sample_files/valid.xml"
+  cli_path = OpenStudio.getOpenStudioCLI
+  command = "\"#{cli_path}\" execute_ruby_script energy_rating_index.rb -x sample_files/valid.xml"
   system(command)
   
   dirs = ["HERSRatedHome", "HERSReferenceHome", "results"]
   dirs.each do |dir|
     FileUtils.copy_entry dir, "sample_results/#{dir}"
   end
-end
-
-def get_os_cli
-  # Get latest installed version of openstudio.exe
-  os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
-  if os_clis.size == 0
-      puts "ERROR: Could not find the openstudio binary. You may need to install the OpenStudio Command Line Interface."
-      exit
-  end
-  return os_clis[-1]
 end
 
 def get_requires_from_file(filerb)
