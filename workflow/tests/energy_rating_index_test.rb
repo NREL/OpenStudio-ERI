@@ -8,11 +8,19 @@ require_relative '../../resources/constants.rb'
 
 class EnergyRatingIndexTest < MiniTest::Test
 
-  def test_sample_simulations
+  def test_valid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
-    Dir["#{xmldir}/*.xml"].each do |xml|
-      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+    Dir["#{xmldir}/valid*.xml"].each do |xml|
+      run_and_check(xml, parent_dir)
+    end
+  end
+  
+  def test_invalid_simulations
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    xmldir = "#{parent_dir}/sample_files"
+    Dir["#{xmldir}/invalid*.xml"].each do |xml|
+      run_and_check(xml, parent_dir, false)
     end
   end
   
@@ -102,16 +110,18 @@ class EnergyRatingIndexTest < MiniTest::Test
 
   private
   
-  def run_and_check(xml, parent_dir)
-    os_clis = Dir["C:/openstudio-*/bin/openstudio.exe"] + Dir["/usr/bin/openstudio"] + Dir["/usr/local/bin/openstudio"]
-    os_cli = os_clis[-1]
-    
+  def run_and_check(xml, parent_dir, expect_valid=true)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
-    _test_schema_validation(parent_dir, xml)
+    _test_schema_validation(parent_dir, xml, expect_valid)
   
+    if not expect_valid
+      return
+    end
+    
     # Run energy_rating_index workflow
-    command = "cd #{parent_dir} && \"#{os_cli}\" energy_rating_index.rb -x #{xml} --debug"
+    cli_path = OpenStudio.getOpenStudioCLI
+    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml} --debug"
     system(command)
   
     # Check all output files exist
@@ -127,15 +137,15 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert(File.exists?(rated_osm))
     assert(File.exists?(results_csv))
     assert(File.exists?(worksheet_csv))
-  
+    
     # Check Reference/Rated HPXMLs are valid
     _test_schema_validation(parent_dir, ref_hpxml)
     _test_schema_validation(parent_dir, rated_hpxml)
-    
+  
     return ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv
   end
   
-  def _test_schema_validation(parent_dir, xml)
+  def _test_schema_validation(parent_dir, xml, expect_valid=true)
     # TODO: Remove this when schema validation is included with CLI calls
     schemas_dir = File.absolute_path(File.join(parent_dir, "..", "hpxml_schemas"))
     hpxml_doc = REXML::Document.new(File.read(xml))
@@ -143,7 +153,12 @@ class EnergyRatingIndexTest < MiniTest::Test
     if errors.size > 0
       puts "#{xml}: #{errors.to_s}"
     end
-    assert_equal(errors.size, 0)
+    if expect_valid
+      assert_equal(errors.size, 0)
+    else
+      assert(errors.size > 0)
+      assert(errors[0].to_s.include? "Element '{http://hpxmlonline.com/2014/6}Building': Missing child element(s). Expected is ( {http://hpxmlonline.com/2014/6}BuildingDetails")
+    end
   end
   
   def _check_reference_home_components(ref_hpxml, ref_osm, test_num)
