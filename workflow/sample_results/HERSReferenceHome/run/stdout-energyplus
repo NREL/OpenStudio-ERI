@@ -1,8 +1,7 @@
 EnergyPlus Starting
-EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14
-Processing Data Dictionary
-Processing Input File
-Auto-extending object="SCHEDULE:COMPACT", input processing may be slow.
+EnergyPlus, Version 8.9.0-497bb3e71c, YMD=2018.03.11 09:29
+Adjusting Air System Sizing
+Adjusting Standard 62.1 Ventilation Sizing
 Initializing Simulation
 Reporting Surfaces
 Beginning Primary Simulation
@@ -13,6 +12,8 @@ Warming up {3}
 Warming up {4}
 Warming up {5}
 Warming up {6}
+Warming up {7}
+Warming up {8}
 Starting Simulation at 01/01 for RUN PERIOD
 Updating Shadowing Calculations, Start Date=01/21
 Continuing Simulation at 01/21 for RUN PERIOD
@@ -51,6 +52,4 @@ Continuing Simulation at 12/07 for RUN PERIOD
 Updating Shadowing Calculations, Start Date=12/27
 Continuing Simulation at 12/27 for RUN PERIOD
 Writing tabular output file results using HTML format.
-Computing Life Cycle Costs and Reporting
-Writing final SQL reports
-EnergyPlus Run Time=00hr 00min 11.31sec
+EnergyPlus Completed Successfully.

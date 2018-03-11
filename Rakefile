@@ -255,6 +255,7 @@ end
 
 desc 'generate sample outputs'
 task :generate_sample_outputs do
+  require 'openstudio'
   Dir.chdir('workflow')
   
   FileUtils.rm_rf("sample_results/.", secure: true)

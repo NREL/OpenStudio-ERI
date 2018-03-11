@@ -733,7 +733,7 @@ unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xm
 end
 
 # Check for correct versions of OS
-os_version = "2.4.0"
+os_version = "2.4.3"
 if OpenStudio.openStudioVersion != os_version
   fail "ERROR: OpenStudio version #{os_version} is required."
 end

@@ -3,36 +3,6 @@ Shadowing Combinations
 ..In the following, only the first 10 reference surfaces will be shown.
 ..But all surfaces are used in the calculations.
 ==================================
-Surface=SURFACE 2 is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=SURFACE 3 is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=SURFACE 4 is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=SURFACE 5 is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=SURFACE 1 is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=SURFACE 6 is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
 Surface=AGWALL-1 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
@@ -73,42 +43,42 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=LIVING SPACE PARTITION is not used as Receiving Surface in calculations.
+Surface=LIVING PARTITION is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=RESIDENTIAL FURNITURE MASS LIVING SPACE is not used as Receiving Surface in calculations.
+Surface=RESIDENTIAL FURNITURE MASS LIVING is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE 10 is not used as Receiving Surface in calculations.
+Surface=SURFACE 2 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE 11 is not used as Receiving Surface in calculations.
+Surface=SURFACE 3 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE 8 is not used as Receiving Surface in calculations.
+Surface=SURFACE 4 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE 9 is not used as Receiving Surface in calculations.
+Surface=SURFACE 5 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE 7 is not used as Receiving Surface in calculations.
+Surface=SURFACE 1 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE 12 is not used as Receiving Surface in calculations.
+Surface=SURFACE 6 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
@@ -119,11 +89,6 @@ Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
 Surface=ATTIC-ROOF-1 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=ATTIC-ROOF-2 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0

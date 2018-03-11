@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?> 
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='2.2'>
   <XMLTransactionHeaderInformation>
-    <XMLType>HPXMLHERS Rated Home</XMLType>
+    <XMLType>HPXML, HERS Rated Home</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
@@ -16,20 +16,24 @@
       <BuildingSummary>
         <Site>
           <AzimuthOfFrontOfHome>90</AzimuthOfFrontOfHome>
+          <FuelTypesAvailable>
+            <Fuel>electricity</Fuel>
+            <Fuel>natural gas</Fuel>
+          </FuelTypesAvailable>
           <extension>
             <ShelterCoefficient>0.5</ShelterCoefficient>
           </extension>
         </Site>
         <BuildingOccupancy>
-          <NumberofResidents>4</NumberofResidents>
+          <NumberofResidents>4.0</NumberofResidents>
           <extension>
-            <HeatGainPerPerson>400.0</HeatGainPerPerson>
-            <FracSensible>0</FracSensible>
-            <FracLatent>0</FracLatent>
+            <HeatGainBtuPerPersonPerHr>400.0</HeatGainBtuPerPersonPerHr>
+            <PersonHrsPerDay>16.5</PersonHrsPerDay>
+            <FracSensible>0.563030303030303</FracSensible>
+            <FracLatent>0.43696969696969695</FracLatent>
           </extension>
         </BuildingOccupancy>
         <BuildingConstruction>
-          <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
@@ -71,10 +75,10 @@
           </AirInfiltrationMeasurement>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='Infiltration_ELA_SLA'/>
-            <EffectiveLeakageArea>0.06825305982994084</EffectiveLeakageArea>
+            <EffectiveLeakageArea>0.06825305982994086</EffectiveLeakageArea>
           </AirInfiltrationMeasurement>
           <extension>
-            <BuildingSpecificLeakageArea>1.9500874237125956e-05</BuildingSpecificLeakageArea>
+            <BuildingSpecificLeakageArea>1.950087423712596e-05</BuildingSpecificLeakageArea>
           </extension>
         </AirInfiltration>
         <AtticAndRoof>
@@ -96,32 +100,6 @@
                   <RadiantBarrier>false</RadiantBarrier>
                   <Insulation>
                     <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                  </Insulation>
-                </Roof>
-                <Roof>
-                  <SystemIdentifier id='attic-roof-2'/>
-                  <Area>269</Area>
-                  <SolarAbsorptance>0.75</SolarAbsorptance>
-                  <Emittance>0.9</Emittance>
-                  <Rafters>
-                    <FramingFactor>0.11</FramingFactor>
-                    <Material>wood</Material>
-                  </Rafters>
-                  <Pitch>6</Pitch>
-                  <RadiantBarrier>false</RadiantBarrier>
-                  <Insulation>
-                    <SystemIdentifier id='Attic_Roof_Ins_ID2'/>
                     <InsulationGrade>1</InsulationGrade>
                     <Layer>
                       <InstallationType>cavity</InstallationType>
@@ -243,6 +221,7 @@
             <Area>3796</Area>
             <Studs>
               <FramingFactor>0.1988</FramingFactor>
+              <Material>wood</Material>
             </Studs>
             <Siding>stucco</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
@@ -358,12 +337,12 @@
               <extension>
                 <NumberSpeeds>2-Speed</NumberSpeeds>
                 <PerformanceAdjustmentSEER>1.0626992561105209</PerformanceAdjustmentSEER>
-                <PerformanceAdjustmentHSPF>1.718213058419244</PerformanceAdjustmentHSPF>
               </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
+            <ControlType>programmable thermostat</ControlType>
             <SetpointTempHeatingSeason>68</SetpointTempHeatingSeason>
             <SetbackTempHeatingSeason>66</SetbackTempHeatingSeason>
             <TotalSetbackHoursperWeekHeating>49</TotalSetbackHoursperWeekHeating>
@@ -413,15 +392,28 @@
             </DistributionSystemType>
           </HVACDistribution>
         </HVAC>
+        <MechanicalVentilation>
+          <VentilationFans>
+            <VentilationFan>
+              <SystemIdentifier id='VentilationFan'/>
+              <FanType>energy recovery ventilator</FanType>
+              <RatedFlowRate>247</RatedFlowRate>
+              <HoursInOperation>24</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <TotalRecoveryEfficiency>0.48</TotalRecoveryEfficiency>
+              <SensibleRecoveryEfficiency>0.72</SensibleRecoveryEfficiency>
+              <FanPower>123.5</FanPower>
+            </VentilationFan>
+          </VentilationFans>
+        </MechanicalVentilation>
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='DHW_ID1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <TankVolume>80</TankVolume>
-            <HeatingCapacity>15354</HeatingCapacity>
+            <TankVolume>40</TankVolume>
+            <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <EnergyFactor>0.95</EnergyFactor>
-            <RecoveryEfficiency>0.98</RecoveryEfficiency>
             <HotWaterTemperature>125</HotWaterTemperature>
             <extension>
               <PerformanceAdjustmentEnergyFactor>1.0</PerformanceAdjustmentEnergyFactor>
@@ -430,19 +422,25 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution'/>
             <SystemType>
-              <Standard/>
+              <Standard>
+                <PipingLength>30.0</PipingLength>
+              </Standard>
             </SystemType>
+            <PipeInsulation>
+              <PipeRValue>0.0</PipeRValue>
+            </PipeInsulation>
             <extension>
-              <MixedWaterGPD>8.110594677699027</MixedWaterGPD>
+              <MixedWaterGPD>8.091794196682153</MixedWaterGPD>
               <EnergyConsumptionAdjustmentFactor>0.8957721742421562</EnergyConsumptionAdjustmentFactor>
             </extension>
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
-            <WaterFixtureType>other</WaterFixtureType>
+            <WaterFixtureType>shower head</WaterFixtureType>
             <extension>
-              <MixedWaterGPD>54.6</MixedWaterGPD>
-              <LowFlow>false</LowFlow>
+              <MixedWaterGPD>51.87</MixedWaterGPD>
+              <SensibleGainsBtu>-1044995.0</SensibleGainsBtu>
+              <LatentGainsBtu>1060325.0</LatentGainsBtu>
             </extension>
           </WaterFixture>
         </WaterHeating>
@@ -452,8 +450,8 @@
           <SystemIdentifier id='ClothesWasher'/>
           <extension>
             <AnnualkWh>64.73207773783562</AnnualkWh>
-            <FracSensible>0.27</FracSensible>
-            <FracLatent>0.03</FracLatent>
+            <FracSensible>0.3288511341806826</FracSensible>
+            <FracLatent>0.038007920030933166</FracLatent>
             <HotWaterGPD>1.9194494998024507</HotWaterGPD>
           </extension>
         </ClothesWasher>
@@ -463,22 +461,26 @@
           <extension>
             <AnnualkWh>919.7140580084878</AnnualkWh>
             <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.135</FracSensible>
-            <FracLatent>0.015</FracLatent>
+            <FracSensible>0.16434449138818952</FracSensible>
+            <FracLatent>0.018260499043132167</FracLatent>
           </extension>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
           <extension>
             <AnnualkWh>115.06046511627906</AnnualkWh>
-            <FracSensible>0.3</FracSensible>
-            <FracLatent>0.3</FracLatent>
+            <FracSensible>0.5271360868061619</FracSensible>
+            <FracLatent>0.5271360868061619</FracLatent>
             <HotWaterGPD>0.14325721567378133</HotWaterGPD>
           </extension>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
           <RatedAnnualkWh>609.0</RatedAnnualkWh>
+          <extension>
+            <FracSensible>1.0</FracSensible>
+            <FracLatent>0.0</FracLatent>
+          </extension>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange'/>
@@ -486,10 +488,14 @@
           <extension>
             <AnnualkWh>421.01149999999996</AnnualkWh>
             <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.7200000000000001</FracSensible>
-            <FracLatent>0.08000000000000002</FracLatent>
+            <FracSensible>0.8323687154572571</FracSensible>
+            <FracLatent>0.09248541282858413</FracLatent>
           </extension>
         </CookingRange>
+        <Oven>
+          <SystemIdentifier id='Oven'/>
+          <FuelType>electricity</FuelType>
+        </Oven>
       </Appliances>
       <Lighting>
         <extension>
@@ -507,8 +513,8 @@
             <Value>3185.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.9503267973856209</FracSensible>
-            <FracLatent>0.04967320261437913</FracLatent>
+            <FracSensible>0.8545920200609892</FracSensible>
+            <FracLatent>0.04466918399218376</FracLatent>
           </extension>
         </PlugLoad>
         <PlugLoad>
@@ -518,6 +524,10 @@
             <Units>kWh/year</Units>
             <Value>689.0</Value>
           </Load>
+          <extension>
+            <FracSensible>0.9999997510703024</FracSensible>
+            <FracLatent>0.0</FracLatent>
+          </extension>
         </PlugLoad>
       </MiscLoads>
     </BuildingDetails>

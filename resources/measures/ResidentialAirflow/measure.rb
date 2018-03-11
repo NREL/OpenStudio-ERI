@@ -1327,7 +1327,8 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
       tout_sensor.setKeyName(unit.living_zone.name.to_s)
       
       pbar_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, outdoor_air_barometric_pressure_output_var)
-      pbar_sensor.setName("#{obj_name_natvent} pb s")      
+      pbar_sensor.setName("#{obj_name_natvent} pb s")   
+      pbar_sensor.setKeyName("*")
 
       phiin_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, zone_air_relative_humidity_output_var)
       phiin_sensor.setName("#{obj_name_natvent} phiin s")
@@ -1339,9 +1340,11 @@ class ResidentialAirflow < OpenStudio::Measure::ModelMeasure
         
       wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, outdoor_air_humidity_ratio_output_var)
       wout_sensor.setName("#{obj_name_natvent} wt s")
+      wout_sensor.setKeyName("*")
    
       vwind_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, wind_speed_output_var)
       vwind_sensor.setName("#{obj_name_airflow} vw s")
+      vwind_sensor.setKeyName("*")
       
       wh_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, schedule_value_output_var)
       wh_sch_sensor.setName("#{obj_name_infil} wh sch s")
