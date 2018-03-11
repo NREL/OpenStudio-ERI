@@ -166,6 +166,8 @@ end
 
 def update_measures
 
+  require 'openstudio'
+
   puts "Updating measure resources..."
   measures_dir = File.expand_path("../measures/", __FILE__)
   
