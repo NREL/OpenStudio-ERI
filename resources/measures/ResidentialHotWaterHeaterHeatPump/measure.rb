@@ -773,7 +773,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
                 hpwh_ducting_program.addLine("Set HPWHOn_#{unit_index} = HPWHOn_#{unit_index} + #{timestep_minutes}")
                 hpwh_ducting_program.addLine("ElseIf (HPWH_last_#{unit_index} <> 0) && (HPWH_now_#{unit_index}<>0)") #HPWH has been running for more than 1 timestep
                 hpwh_ducting_program.addLine("Set exp = -(HPWHOn_#{unit_index} / 9.4) * num")
-                hpwh_ducting_program.addLine("If exp < -20")
+                hpwh_ducting_program.addLine("If exp <= -20")
                 hpwh_ducting_program.addLine("Set exponent = 0")
                 hpwh_ducting_program.addLine("Else")
                 hpwh_ducting_program.addLine("Set exponent = (@Exp exp)")
@@ -789,7 +789,7 @@ class ResidentialHotWaterHeaterHeatPump < OpenStudio::Measure::ModelMeasure
                 hpwh_ducting_program.addLine("Set HPWHOn_#{unit_index} = 0")
                 hpwh_ducting_program.addLine("EndIf")
                 hpwh_ducting_program.addLine("Set exp = -(HPWHOn_#{unit_index} / 9.4) * num")
-                hpwh_ducting_program.addLine("If exp < -20")
+                hpwh_ducting_program.addLine("If exp <= -20")
                 hpwh_ducting_program.addLine("Set exponent = 0")
                 hpwh_ducting_program.addLine("Else")
                 hpwh_ducting_program.addLine("Set exponent = (@Exp exp)")

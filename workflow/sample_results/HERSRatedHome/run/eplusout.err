@@ -1,92 +1,92 @@
-Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_Version 8.7.0
+Program Version,EnergyPlus, Version 8.9.0-497bb3e71c, YMD=2018.03.11 09:29,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** Site:GroundTemperature:BuildingSurface: Some values fall outside the range of 15-25C.
    **   ~~~   ** These values may be inappropriate.  Please consult the Input Output Reference for more details.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 BATH EXHAUST SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_U 1 RANGE HOOD SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 ENERGY SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_U 1 SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 AVAILABILITY SCHEDULE ALLDAY1 ON 9", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_U 1 TEMP SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 BATH EXHAUST SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES INFIL_1 RANGE HOOD SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 ENERGY SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 1", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 10", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 2", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 3", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 4", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 5", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 6", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 7", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 8", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 AVAILABILITY SCHEDULE ALLDAY1 ON 9", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
@@ -148,24 +148,24 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_V
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL WINDOW SHADING SCHEDULE ALLDAY9 2", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL WINDOW SHADING SCHEDULE ALLDAY9 3", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 14", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 17", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 18", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 19", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 20", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 21", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 22", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 23", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 24", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 3", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 4", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 5", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RES INFIL_U 1 BATH EXHAUST SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RES INFIL_U 1 CLOTHES DRYER EXHAUST SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RES INFIL_U 1 RANGE HOOD SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RES MV_U 1 ENERGY SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RES MV_U 1 SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RES NV_U 1 AVAIL SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RES NV_U 1 TEMP SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Year="RES INFIL_1 BATH EXHAUST SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Year="RES INFIL_1 CLOTHES DRYER EXHAUST SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Year="RES INFIL_1 RANGE HOOD SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Year="RES MV_1 ENERGY SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Year="RES MV_1 SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Year="RES NV_1 AVAIL SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Year="RES NV_1 TEMP SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="RESIDENTIAL CEILING FAN SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="RESIDENTIAL WINDOW SHADING SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="RESIDENTIAL WINDOW SHADING SCHEDULE 1", Blank Schedule Type Limits Name input -- will not be validated.
@@ -178,18 +178,16 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_V
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
    ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
    **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
+   ** Warning ** CalculateZoneVolume: 2 zones are not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
    ** Warning ** CheckUsedConstructions: There are 5 nominally unused constructions in input.
    **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
-   ** Warning ** Surfaces in Zone="UNFINISHED ATTIC ZONE" do not define an enclosure.
+   ** Warning ** Surfaces in Zone="UNFINISHED ATTIC" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
-   ** Warning ** Output:Meter: invalid Name="DISTRICTCOOLING:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Name="DISTRICTHEATING:FACILITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly requested for "Electricity:Facility" (TimeStep), already on "Output:Meter". Will report to both eplusout.eso and eplusout.mtr
    ************* Testing Individual Branch Integrity
    ************* All Branches passed integrity testing
    ************* Testing Individual Supply Air Path Integrity
@@ -199,22 +197,28 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_V
    ************* No node connection errors were found.
    ************* Beginning Simulation
    ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1.
-   **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/14 18:00 - 19:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 8.700E-005 m3/s/W
+   **   ~~~   **  During Warmup, Environment=RUN PERIOD, at Simulation time=01/01 00:00 - 00:02
+   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 6.750E-005 m3/s/W
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
    **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
-   ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2.
-   **   ~~~   **  Environment=RUN PERIOD, at Simulation time=06/14 18:00 - 19:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 7.284E-005 m3/s/W
-   **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
-   **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
+   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-ELECTRICITY" has no energy cost. 
+   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
+   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-DISTILLATE OIL" has no energy cost. 
+   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
+   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-RESIDUAL OIL" has no energy cost. 
+   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
+   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-NATURAL GAS" has no energy cost. 
+   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
+   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-COAL" has no energy cost. 
+   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
    ************* Simulation Error Summary *************
-   ** Warning ** The following Report Variables were requested but not generated
-   **   ~~~   ** because IDF did not contain these elements or misspelled variable name -- check .rdd file
-   ************* Key=residential furnace gas heating coil, VarName=HEATING COIL TOTAL HEATING ENERGY, Frequency=Annual
-   ************* Key=residential furnace gas heating coil, VarName=BOILER HEATING ENERGY, Frequency=Annual
-   ************* Key=residential furnace gas heating coil, VarName=BASEBOARD TOTAL HEATING ENERGY, Frequency=Annual
-   ************* Key=residential furnace gas heating coil, VarName=HEATING COIL HEATING ENERGY, Frequency=Annual
+   ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
+   **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
+   **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
+   ************* Key=residential furnace gas heating coil, VarName=HEATING COIL TOTAL HEATING ENERGY, Frequency=
+   ************* Key=residential furnace gas heating coil, VarName=HEATING COIL AIR HEATING ENERGY, Frequency=
+   ************* Key=residential furnace gas heating coil, VarName=BOILER HEATING ENERGY, Frequency=
+   ************* Key=residential furnace gas heating coil, VarName=BASEBOARD TOTAL HEATING ENERGY, Frequency=
    ************* There are 2 unused schedules in input.
    ************* There are 42 unused week schedules in input.
    ************* There are 26 unused day schedules in input.
@@ -224,16 +228,10 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_V
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1 error continues...
-   *************  **   ~~~   **   This error occurred 80815 total times;
-   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   This error occurred 305064 total times;
+   *************  **   ~~~   **   during Warmup 1923 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=8.922063E-005  Min=8.607406E-005
-   *************
-   *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2 error continues...
-   *************  **   ~~~   **   This error occurred 5153 total times;
-   *************  **   ~~~   **   during Warmup 0 times;
-   *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.466835E-005  Min=7.206200E-005
+   *************  **   ~~~   **   Max=7.013869E-005  Min=6.749732E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -245,4 +243,4 @@ Program Version,EnergyPlus, Version 8.7.0-78a111df4a, YMD=2017.11.17 14:14,IDD_V
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 86150 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 11.30sec
+   ************* EnergyPlus Completed Successfully-- 305249 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 11.47sec

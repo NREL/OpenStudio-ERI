@@ -166,6 +166,8 @@ end
 
 def update_measures
 
+  require 'openstudio'
+
   puts "Updating measure resources..."
   measures_dir = File.expand_path("../measures/", __FILE__)
   
@@ -255,6 +257,7 @@ end
 
 desc 'generate sample outputs'
 task :generate_sample_outputs do
+  require 'openstudio'
   Dir.chdir('workflow')
   
   FileUtils.rm_rf("sample_results/.", secure: true)
