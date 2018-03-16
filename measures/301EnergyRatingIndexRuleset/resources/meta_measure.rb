@@ -153,7 +153,7 @@ def get_argument_map(model, measure, provided_args, lookup_file, measure_name, r
     argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(measure_args)
     measure_args.each do |arg|
         temp_arg_var = arg.clone
-        if provided_args[arg.name]
+        if !provided_args[arg.name].nil?
             temp_arg_var.setValue(provided_args[arg.name])
         end
         argument_map[arg.name] = temp_arg_var

@@ -13,6 +13,8 @@ require "#{File.dirname(__FILE__)}/resources/meta_measure"
 require "#{File.dirname(__FILE__)}/resources/geometry"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/hvac"
+require "#{File.dirname(__FILE__)}/resources/location"
+require "#{File.dirname(__FILE__)}/resources/constructions"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -53,11 +55,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the HPXML file.")
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("measures_dir", true)
-    arg.setDisplayName("Residential Measures Directory")
-    arg.setDescription("Absolute path of the residential measures.")
-    args << arg
-    
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", false)
     arg.setDisplayName("HPXML Schemas Directory")
     arg.setDescription("Absolute path of the hpxml schemas.")
@@ -94,7 +91,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # assign the user inputs to variables
     calc_type = runner.getStringArgumentValue("calc_type", user_arguments)
     hpxml_file_path = runner.getStringArgumentValue("hpxml_file_path", user_arguments)
-    measures_dir = runner.getStringArgumentValue("measures_dir", user_arguments)
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     hpxml_output_file_path = runner.getOptionalStringArgumentValue("hpxml_output_file_path", user_arguments)
     osm_output_file_path = runner.getOptionalStringArgumentValue("osm_output_file_path", user_arguments)
@@ -105,14 +101,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end 
     unless File.exists?(hpxml_file_path) and hpxml_file_path.downcase.end_with? ".xml"
       runner.registerError("'#{hpxml_file_path}' does not exist or is not an .xml file.")
-      return false
-    end
-    
-    unless (Pathname.new measures_dir).absolute?
-      measures_dir = File.expand_path(File.join(File.dirname(__FILE__), measures_dir))
-    end
-    unless Dir.exists?(measures_dir)
-      runner.registerError("'#{measures_dir}' does not exist.")
       return false
     end
     
@@ -176,20 +164,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    # Apply Location measure to obtain weather data
-    measures = {}
-    measure_subdir = "ResidentialLocation"
-    args = {
-            "weather_directory"=>File.dirname(epw_path),
-            "weather_file_name"=>File.basename(epw_path),
-            "dst_start_date"=>"NA",
-            "dst_end_date"=>"NA"
-           }
-    update_args_hash(measures, measure_subdir, args)
-
-    if not apply_measures(measures_dir, measures, runner, model, workflow_json, apply_measures_osw1, show_measure_calls)
-      return false
-    end
+    # Apply Location to obtain weather data
+    success = Location.apply(model, runner, epw_path, "NA", "NA")
+    return false if not success
     weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
     if weather.error?
       return false
@@ -220,22 +197,10 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
     
-    # Obtain list of OpenStudio measures (and arguments)
-    measures = OSMeasures.build_measures_from_hpxml(hpxml_doc)
-    
     # Create OpenStudio model
-    if not OSModel.create_geometry(hpxml_doc, runner, model)
+    if not OSModel.create(hpxml_doc, runner, model, weather)
       return false
     end 
-
-    if osm_output_file_path.is_initialized
-      File.write(osm_output_file_path.get, model.to_s)
-      runner.registerInfo("Wrote file: #{osm_output_file_path.get}")
-    end
-    
-    if not apply_measures(measures_dir, measures, runner, model, workflow_json, apply_measures_osw2, show_measure_calls)
-      return false
-    end
     
     if osm_output_file_path.is_initialized
       File.write(osm_output_file_path.get, model.to_s)
@@ -313,7 +278,7 @@ end
 
 class OSMeasures    
 
-  def self.build_measures_from_hpxml(hpxml_doc)
+  def self.build_measures_from_hpxml(hpxml_doc, model, runner, weather)
 
     measures = {}
     building = hpxml_doc.elements["/HPXML/Building"]
@@ -321,18 +286,11 @@ class OSMeasures
     # TODO
     # ResidentialGeometryOrientation
     # ResidentialGeometryEaves
-    get_overhangs(building, measures) # TODO
     # ResidentialGeometryNeighbors
     
-    get_beds_and_baths(building, measures)
-    get_num_occupants(building, measures)
     
     # Envelope
-    get_windows(building, measures)
-    get_doors(building, measures)
-    get_ceiling_roof_constructions(building, measures)
     get_foundation_constructions(building, measures)
-    get_wall_constructions(building, measures)
     get_other_constructions(building, measures)
 
     # Water Heating & Appliances
@@ -372,295 +330,6 @@ class OSMeasures
     return conv[fuel]
   end
       
-  def self.get_overhangs(building, measures)
-    
-    depth = 0
-    offset = 0
-    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
-
-      overhangs = window.elements["Overhangs"]
-      next if overhangs.nil?
-      name = window.elements["SystemIdentifier"].attributes["id"]
-      depth = Float(XMLHelper.get_value(overhangs, "Depth"))
-      offset = Float(XMLHelper.get_value(overhangs, "DistanceToTopOfWindow"))
-      
-      measure_subdir = "ResidentialGeometryOverhangs"
-      args = {
-              "sub_surface"=>name,
-              "depth"=>OpenStudio.convert(depth,"in","ft").get,
-              "offset"=>OpenStudio.convert(offset,"in","ft").get,
-              "front_facade"=>true,
-              "back_facade"=>true,
-              "left_facade"=>true,
-              "right_facade"=>true
-             }
-      update_args_hash(measures, measure_subdir, args)      
-      
-    end
-
-  end
-      
-  def self.get_beds_and_baths(building, measures)
-
-    measure_subdir = "ResidentialGeometryNumBedsAndBaths"  
-    num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    args = {
-            "num_bedrooms"=>num_bedrooms,
-            "num_bathrooms"=>num_bathrooms
-           }  
-    update_args_hash(measures, measure_subdir, args)
-    
-  end
-      
-  def self.get_num_occupants(building, measures)
-
-    num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
-    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr"))
-    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
-    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
-    hrs_per_day = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay")) # TODO
-    
-    measure_subdir = "ResidentialGeometryNumOccupants"  
-    args = {
-            "num_occ"=>num_occ,
-            "occ_gain"=>occ_gain,
-            "sens_frac"=>sens_frac,
-            "lat_frac"=>lat_frac,
-            "weekday_sch"=>"1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
-            "weekend_sch"=>"1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000",
-            "monthly_sch"=>"1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
-           }
-    update_args_hash(measures, measure_subdir, args)
-    
-  end
-      
-  def self.get_windows(building, measures)
-
-    # FIXME
-  
-    building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
-  
-      name = window.elements["SystemIdentifier"].attributes["id"]
-      ufactor = XMLHelper.get_value(window, "UFactor")
-      shgc = XMLHelper.get_value(window, "SHGC")
-      cooling_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer")
-      heating_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter")
-  
-      measure_subdir = "ResidentialConstructionsWindows"
-      args = {
-              "sub_surface"=>name,
-              "ufactor"=>ufactor,
-              "shgc"=>shgc,
-              "heating_shade_mult"=>heating_shade_mult,
-              "cooling_shade_mult"=>cooling_shade_mult
-             }  
-      update_args_hash(measures, measure_subdir, args)
-      
-    end
-
-  end
-  
-  def self.get_doors(building, measures)
-  
-    # FIXME
-
-    building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
-    
-      name = door.elements["SystemIdentifier"].attributes["id"]
-      area = Float(XMLHelper.get_value(door, "Area"))
-      ua = area/Float(XMLHelper.get_value(door, "RValue"))
-      
-      if area > 0
-        measure_subdir = "ResidentialConstructionsDoors"
-        args = {
-                "sub_surface"=>name,
-                "door_ufactor"=>ua/area
-               }  
-        update_args_hash(measures, measure_subdir, args)
-      end
-
-    end
-    
-  end
-
-  def self.get_ceiling_roof_constructions(building, measures)
-  
-    # FIXME
-
-    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
-
-      attic_type = XMLHelper.get_value(attic, "AtticType")
-
-      floors = attic.elements["Floors"]
-      floors.elements.each("Floor") do |floor|
-      
-        name = floor.elements["SystemIdentifier"].attributes["id"]
-        framing_factor = Float(XMLHelper.get_value(floor, "FloorJoists/FramingFactor"))
-        install_grade = Integer(XMLHelper.get_value(floor, "Insulation/InsulationGrade"))
-        
-        exterior_adjacent_to = floor.elements["extension/ExteriorAdjacentTo"].text
-
-        if ["vented attic", "unvented attic"].include? attic_type
-        
-          if exterior_adjacent_to == "living space"
-        
-            measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
-            args = {
-                    "surface"=>name,
-                    "ceil_r"=>30,
-                    "ceil_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                    "ceil_ins_thick_in"=>8.55,
-                    "ceil_ff"=>framing_factor,
-                    "ceil_joist_height"=>3.5,
-                    "roof_cavity_r"=>0,
-                    "roof_cavity_grade"=>"I",
-                    "roof_cavity_ins_thick_in"=>0,
-                    "roof_ff"=>0.07,
-                    "roof_fram_thick_in"=>7.25
-                   }  
-            update_args_hash(measures, measure_subdir, args)
-            
-            measure_subdir = "ResidentialConstructionsCeilingsRoofsThermalMass"
-            args = {
-                    "surface"=>"#{name} Reversed", # FIXME: I can't rename the adjacent roofceiling to the id in the hpxml because then the unfinished attic measure gets the wrong surface name. Can we modify this measure to input the floor instead of the roofceiling?
-                    "thick_in1"=>0.5,
-                    "thick_in2"=>nil,
-                    "cond1"=>1.1112,
-                    "cond2"=>nil,
-                    "dens1"=>50.0,
-                    "dens2"=>nil,
-                    "specheat1"=>0.2,
-                    "specheat2"=>nil
-                   }
-            update_args_hash(measures, measure_subdir, args)          
-            
-          elsif exterior_adjacent_to == "garage"
-          
-            measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
-            args = {
-                    "surface"=>name
-                    }
-            update_args_hash(measures, measure_subdir, args)        
-          
-          elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
-          
-            fail "Unhandled value (#{exterior_adjacent_to})."
-          
-          end
-         
-        elsif ["cape cod"].include? attic_type
-
-          if exterior_adjacent_to == "living space"
-          
-            measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
-            args = {
-                    "surface"=>name
-                    }
-            update_args_hash(measures, measure_subdir, args)
-          
-          elsif exterior_adjacent_to == "garage"
-          
-            measure_subdir = "ResidentialConstructionsFoundationsFloorsInterzonalFloors"
-            args = {
-                    "surface"=>name,
-                    "cavity_r"=>19,
-                    "install_grade"=>"I",
-                    "framing_factor"=>0.13
-                   }
-            update_args_hash(measures, measure_subdir, args)  
-
-          elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
-          
-            fail "Unhandled value (#{exterior_adjacent_to})."
-          
-          end
-          
-        end
-        
-      end
-      
-    end
-
-    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
-    
-      attic_type = attic.elements["AtticType"].text
-      
-      roofs = attic.elements["Roofs"]
-      roofs.elements.each("Roof") do |roof|
-      
-        name = roof.elements["SystemIdentifier"].attributes["id"]
-        has_rb = Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))        
-        solar_abs = Float(XMLHelper.get_value(roof, "SolarAbsorptance"))
-        emittance = Float(XMLHelper.get_value(roof, "Emittance"))
-        framing_factor = Float(XMLHelper.get_value(roof, "Rafters/FramingFactor"))
-        install_grade = Integer(XMLHelper.get_value(roof, "Insulation/InsulationGrade"))
-
-        measure_subdir = "ResidentialConstructionsCeilingsRoofsRoofingMaterial"
-        args = {
-                "surface"=>name,
-                "solar_abs"=>solar_abs,
-                "emissivity"=>emittance,
-                "material"=>Constants.RoofMaterialAsphaltShingles,
-                "color"=>Constants.ColorMedium # FIXME
-               }  
-        update_args_hash(measures, measure_subdir, args)
-        
-        measure_subdir = "ResidentialConstructionsCeilingsRoofsSheathing"
-        args = {
-                "surface"=>name,
-                "osb_thick_in"=>0.75,
-                "rigid_r"=>0.0,
-                "rigid_thick_in"=>0.0,
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-        if ["vented attic", "unvented attic"].include? attic_type
-        
-          measure_subdir = "ResidentialConstructionsCeilingsRoofsUnfinishedAttic"
-          args = {
-                  "surface"=>name,
-                  "ceil_r"=>30,
-                  "ceil_grade"=>"I",
-                  "ceil_ins_thick_in"=>8.55,
-                  "ceil_ff"=>0.07,
-                  "ceil_joist_height"=>3.5,
-                  "roof_cavity_r"=>0,
-                  "roof_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                  "roof_cavity_ins_thick_in"=>0,
-                  "roof_ff"=>framing_factor,
-                  "roof_fram_thick_in"=>7.25
-                 }  
-          update_args_hash(measures, measure_subdir, args)        
-        
-          measure_subdir = "ResidentialConstructionsCeilingsRoofsRadiantBarrier"
-          args = {
-                  "surface"=>name,
-                  "has_rb"=>has_rb
-                 }
-          update_args_hash(measures, measure_subdir, args)
-          
-        else
-        
-          measure_subdir = "ResidentialConstructionsCeilingsRoofsFinishedRoof"
-          args = {
-                  "surface"=>name,
-                  "cavity_r"=>30,
-                  "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                  "cavity_depth"=>9.25,
-                  "ins_fills_cavity"=>false,
-                  "framing_factor"=>framing_factor
-                 }  
-          update_args_hash(measures, measure_subdir, args)      
-        
-        end
-        
-      end
-      
-    end
-    
-  end
-  
   def self.get_foundation_wall_properties(foundation, measures)
   
     foundation.elements.each("FoundationWall") do |fnd_wall|
@@ -972,227 +641,6 @@ class OSMeasures
 
   end
   
-  def self.get_siding_material(siding, solar_abs, emitt)
-    
-    if siding == "stucco"    
-      k_in = 4.5
-      rho = 80.0
-      cp = 0.21
-      thick_in = 1.0
-    elsif siding == "brick veneer"
-      k_in = 5.5
-      rho = 110.0
-      cp = 0.19
-      thick_in = 4.0
-    elsif siding == "wood siding"
-      k_in = 0.71
-      rho = 34.0
-      cp = 0.28
-      thick_in = 1.0
-    elsif siding == "aluminum siding"
-      k_in = 0.61
-      rho = 10.9
-      cp = 0.29
-      thick_in = 0.375
-    elsif siding == "vinyl siding"
-      k_in = 0.62
-      rho = 11.1
-      cp = 0.25
-      thick_in = 0.375
-    elsif siding == "fiber cement siding"
-      k_in = 1.79
-      rho = 21.7
-      cp = 0.24
-      thick_in = 0.375
-    else
-      fail "Unexpected siding type: #{siding}."
-    end
-    
-    return Material.new(name="Siding", thick_in=thick_in, mat_base=nil, k_in=k_in, rho=rho, cp=cp, tAbs=emitt, sAbs=solar_abs, vAbs=solar_abs)
-    
-  end
-
-  def self.get_wall_constructions(building, measures)
-  
-    mat_mass = Material.DefaultWallMass
-    mat_sheath = Material.DefaultWallSheathing
-  
-    building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
-    
-      name = wall.elements["SystemIdentifier"].attributes["id"]
-      interior_adjacent_to = XMLHelper.get_value(wall, "extension/InteriorAdjacentTo")
-      exterior_adjacent_to = XMLHelper.get_value(wall, "extension/ExteriorAdjacentTo")
-      material = XMLHelper.get_value(wall, "Siding")
-      solar_abs = XMLHelper.get_value(wall, "SolarAbsorptance")
-      emitt = XMLHelper.get_value(wall, "Emittance")
-      mat_siding = get_siding_material(material, solar_abs, emitt)
-        
-      # TODO: Handle other wall types
-      if XMLHelper.has_element(wall, "WallType/WoodStud")
-      
-        if XMLHelper.has_element(wall, "Insulation/AssemblyEffectiveRValue")
-        
-          wall_R = Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
-          layer_R = wall_R - mat_mass.rvalue - mat_sheath.rvalue - mat_siding.rvalue - Material.AirFilmVertical.rvalue - Material.AirFilmOutside.rvalue
-          layer_t = 3.5
-          layer_k = layer_t/layer_R
-          framing_factor = 0.23
-          mat_ins = BaseMaterial.InsulationGenericDensepack
-          mat_wood = BaseMaterial.Wood
-          rho = (1.0 - framing_factor) * mat_ins.rho + framing_factor * mat_wood.rho
-          cp = (1.0 - framing_factor) * mat_ins.cp + framing_factor * mat_wood.cp
-          cont_r = 0.0
-          cont_depth = 0.0
-
-          if exterior_adjacent_to == "ambient" and ["living space", "cape cod"].include? interior_adjacent_to
-
-            measure_subdir = "ResidentialConstructionsWallsExteriorGeneric"
-            args = {
-                    "surface"=>name,
-                    "thick_in_1"=>layer_t,
-                    "conductivity_1"=>layer_k,
-                    "density_1"=>rho,
-                    "specific_heat_1"=>cp
-                   }
-            update_args_hash(measures, measure_subdir, args)
-            
-            measure_subdir = "ResidentialConstructionsWallsSheathing"
-            args = {
-                    "surface"=>name,
-                    "osb_thick_in"=>mat_sheath.thick_in,
-                    "rigid_r"=>0.0,
-                    "rigid_thick_in"=>0.0
-                   }
-            update_args_hash(measures, measure_subdir, args)
-
-          elsif exterior_adjacent_to != "ambient" and ["living space"].include? interior_adjacent_to
-          
-            measure_subdir = "ResidentialConstructionsWallsInterzonal"
-            args = {
-                    "surface"=>name,
-                    "cavity_r"=>layer_R,
-                    "install_grade"=>"I",
-                    "cavity_depth"=>layer_t,
-                    "ins_fills_cavity"=>true,
-                    "framing_factor"=>framing_factor
-                   }
-            update_args_hash(measures, measure_subdir, args)
-            
-          else
-          
-              fail "Unhandled values (#{exterior_adjacent_to} and #{interior_adjacent_to})."
-          
-          end
-
-        else
-      
-          cavity_layer = wall.elements["Insulation/Layer[InstallationType='cavity']"]
-          cavity_r = Float(XMLHelper.get_value(cavity_layer, "NominalRValue"))
-          cavity_depth = Float(XMLHelper.get_value(cavity_layer, "Thickness"))
-          install_grade = Integer(XMLHelper.get_value(wall, "Insulation/InsulationGrade"))
-          framing_factor = Float(XMLHelper.get_value(wall, "Studs/FramingFactor"))
-          ins_fills_cavity = true # FIXME
-          cont_layer = wall.elements["Insulation/Layer[InstallationType='continuous']"]
-          cont_r = Float(XMLHelper.get_value(cont_layer, "NominalRValue"))
-          cont_depth = Float(XMLHelper.get_value(cont_layer, "Thickness"))
-
-          if exterior_adjacent_to == "ambient" and ["living space", "cape cod"].include? interior_adjacent_to
-
-            measure_subdir = "ResidentialConstructionsWallsExteriorWoodStud"
-            args = {
-                    "surface"=>name,
-                    "cavity_r"=>cavity_r,
-                    "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                    "cavity_depth"=>cavity_depth,
-                    "ins_fills_cavity"=>ins_fills_cavity,
-                    "framing_factor"=>framing_factor
-                   }
-            update_args_hash(measures, measure_subdir, args)
-
-            measure_subdir = "ResidentialConstructionsWallsSheathing"
-            args = {
-                    "surface"=>name,
-                    "osb_thick_in"=>mat_sheath.thick_in,
-                    "rigid_r"=>cont_r,
-                    "rigid_thick_in"=>cont_depth
-                   }
-            update_args_hash(measures, measure_subdir, args)
-            
-          elsif exterior_adjacent_to != "ambient" and ["living space"].include? interior_adjacent_to
-          
-            measure_subdir = "ResidentialConstructionsWallsInterzonal"
-            args = {
-                    "surface"=>name,
-                    "cavity_r"=>cavity_r,
-                    "install_grade"=>{1=>"I",2=>"II",3=>"III"}[install_grade],
-                    "cavity_depth"=>cavity_depth,
-                    "ins_fills_cavity"=>ins_fills_cavity,
-                    "framing_factor"=>framing_factor
-                   }
-            update_args_hash(measures, measure_subdir, args)          
-          
-          end
-          
-        end
-
-        if exterior_adjacent_to == "ambient"
-
-          measure_subdir = "ResidentialConstructionsWallsExteriorFinish"
-          args = {
-                  "surface"=>name,
-                  "solar_abs"=>mat_siding.sAbs,
-                  "conductivity"=>mat_siding.k_in,
-                  "density"=>mat_siding.rho,
-                  "specific_heat"=>mat_siding.cp,
-                  "thick_in"=>mat_siding.thick_in,
-                  "emissivity"=>mat_siding.tAbs
-                 }          
-          update_args_hash(measures, measure_subdir, args)
-
-          if ["living space", "cape cod"].include? interior_adjacent_to
-          
-            measure_subdir = "ResidentialConstructionsWallsExteriorThermalMass"
-            args = {
-                    "surface"=>name,
-                    "thick_in1"=>mat_mass.thick_in,
-                    "thick_in2"=>nil,
-                    "cond1"=>mat_mass.k_in,
-                    "cond2"=>nil,
-                    "dens1"=>mat_mass.rho,
-                    "dens2"=>nil,
-                    "specheat1"=>mat_mass.cp,
-                    "specheat2"=>nil
-                   }
-            update_args_hash(measures, measure_subdir, args)
-          
-          end
-          
-        end
-      
-      else
-      
-        fail "Unexpected wall type."
-        
-      end
-      
-    end
-
-    measure_subdir = "ResidentialConstructionsWallsPartitionThermalMass"
-    args = {
-            "frac"=>1.0,
-            "thick_in1"=>mat_mass.thick_in,
-            "thick_in2"=>nil,
-            "cond1"=>mat_mass.k_in,
-            "cond2"=>nil,
-            "dens1"=>mat_mass.rho,
-            "dens2"=>nil,
-            "specheat1"=>mat_mass.cp,
-            "specheat2"=>nil
-           }
-    update_args_hash(measures, measure_subdir, args)
-
-  end
-
   def self.get_other_constructions(building, measures)
   
     # FIXME
@@ -2282,7 +1730,7 @@ end
 
 class OSModel
 
-  def self.create_geometry(hpxml_doc, runner, model)
+  def self.create(hpxml_doc, runner, model, weather)
 
     geometry_errors = []
     building = hpxml_doc.elements["/HPXML/Building"]
@@ -2298,15 +1746,26 @@ class OSModel
     spaces = create_all_spaces_and_zones(model, building)
 
     fenestration_areas = {}
-    add_windows(model, building, geometry_errors, spaces, fenestration_areas)
-    add_doors(model, building, geometry_errors, spaces, fenestration_areas)
+    
+    success = add_windows(runner, model, building, geometry_errors, spaces, fenestration_areas, weather)
+    return false if not success
+    
+    success = add_doors(runner, model, building, geometry_errors, spaces, fenestration_areas)
+    return false if not success
+    
     add_foundation_floors(model, building, spaces)
     add_foundation_walls(model, building, spaces, fenestration_areas)
     foundation_ceiling_area = add_foundation_ceilings(model, building, spaces)
     add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
-    add_above_grade_walls(model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
-    add_attic_floors(model, building, geometry_errors, spaces)    
-    add_attic_roofs(model, building, geometry_errors, spaces)
+    
+    success = add_above_grade_walls(runner, model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
+    return false if not success
+    
+    success = add_attic_floors(runner, model, building, geometry_errors, spaces)
+    return false if not success
+    
+    success = add_attic_roofs(runner, model, building, geometry_errors, spaces)
+    return false if not success
     
     geometry_errors.each do |error|
       runner.registerError(error)
@@ -2320,7 +1779,7 @@ class OSModel
     model.getThermalZones.each do |thermal_zone|
       zone_volume = 0
       if not Geometry.get_volume_from_spaces(thermal_zone.spaces) > 0 # space doesn't have a floor
-        if thermal_zone.name.to_s == Constants.CrawlZone
+        if Geometry.is_crawl(thermal_zone)
           floor_area = nil
           thermal_zone.spaces.each do |space|
             space.surfaces.each do |surface|
@@ -2446,6 +1905,24 @@ class OSModel
     if building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"].text == "true"
       unit.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 1.0) # FIXME: assumption
     end
+    
+    # Num Bedrooms/Bathrooms
+    num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    success = Geometry.process_beds_and_baths(model, runner, [num_bedrooms], [num_bathrooms])
+    return false if not success
+    
+    # Occupants
+    num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
+    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr"))
+    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
+    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
+    hrs_per_day = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay")) # TODO
+    weekday_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+    weekend_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+    monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
+    success = Geometry.process_occupants(model, runner, num_occ.to_s, occ_gain, sens_frac, lat_frac, weekday_sch, weekend_sch, monthly_sch)
+    return false if not success
 
     return true
     
@@ -2786,7 +2263,7 @@ class OSModel
 
   end
 
-  def self.add_above_grade_walls(model, building, errors, avg_ceil_hgt, spaces, fenestration_areas)
+  def self.add_above_grade_walls(runner, model, building, errors, avg_ceil_hgt, spaces, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
@@ -2824,11 +2301,116 @@ class OSModel
         fail "Unhandled value (#{exterior_adjacent_to})."
       end
       
+      # Apply construction
+      
+      material = XMLHelper.get_value(wall, "Siding")
+      solar_abs = Float(XMLHelper.get_value(wall, "SolarAbsorptance"))
+      emitt = Float(XMLHelper.get_value(wall, "Emittance"))
+      mat_ext_finish = get_siding_material(material, solar_abs, emitt)
+
+      if XMLHelper.has_element(wall, "WallType/WoodStud")
+      
+        if XMLHelper.has_element(wall, "Insulation/AssemblyEffectiveRValue")
+        
+          wall_r = Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
+          osb_thick_in = 0.5
+          drywall_thick_in = 0.5
+          layer_r = wall_r - Material.GypsumWall(drywall_thick_in).rvalue - Material.Plywood(osb_thick_in).rvalue - mat_ext_finish.rvalue - Material.AirFilmVertical.rvalue - Material.AirFilmOutside.rvalue
+          layer_depth_in = 3.5
+          install_grade = 1
+          cavity_filled = true
+          mat_ins = BaseMaterial.InsulationGenericDensepack
+          mat_wood = BaseMaterial.Wood
+          framing_factor = 0.23 # Only for purposes of calculating rho & cp
+          rho = (1.0 - framing_factor) * mat_ins.rho + framing_factor * mat_wood.rho
+          cp = (1.0 - framing_factor) * mat_ins.cp + framing_factor * mat_wood.cp
+          rigid_r = 0.0
+          
+          success = WallConstructions.apply_wood_stud(runner, model, [surface],
+                                                      "WallConstruction",
+                                                      layer_r, install_grade, layer_depth_in,
+                                                      cavity_filled, 0.0,
+                                                      drywall_thick_in, osb_thick_in,
+                                                      rigid_r, mat_ext_finish)
+          return false if not success
+        
+        else
+        
+          cavity_layer = wall.elements["Insulation/Layer[InstallationType='cavity']"]
+          cavity_r = Float(XMLHelper.get_value(cavity_layer, "NominalRValue"))
+          install_grade = Integer(XMLHelper.get_value(wall, "Insulation/InsulationGrade"))
+          cavity_depth_in = Float(XMLHelper.get_value(cavity_layer, "Thickness"))
+          cavity_filled = true # FIXME
+          framing_factor = Float(XMLHelper.get_value(wall, "Studs/FramingFactor"))
+          drywall_thick_in = 0.5 # FIXME
+          osb_thick_in = 0.5 # FIXME
+          rigid_layer = wall.elements["Insulation/Layer[InstallationType='continuous']"]
+          rigid_r = Float(XMLHelper.get_value(rigid_layer, "NominalRValue"))
+          
+          success = WallConstructions.apply_wood_stud(runner, model, [surface],
+                                                      "WallConstruction",
+                                                      cavity_r, install_grade, cavity_depth_in,
+                                                      cavity_filled, framing_factor,
+                                                      drywall_thick_in, osb_thick_in,
+                                                      rigid_r, mat_ext_finish)
+          return false if not success
+                                                      
+        
+        end
+        
+      else
+      
+        fail "Unexpected wall type."
+        
+      end
+      
     end
+    
+    return true
     
   end
   
-  def self.add_attic_floors(model, building, errors, spaces)
+  def self.get_siding_material(siding, solar_abs, emitt)
+    
+    if siding == "stucco"    
+      k_in = 4.5
+      rho = 80.0
+      cp = 0.21
+      thick_in = 1.0
+    elsif siding == "brick veneer"
+      k_in = 5.5
+      rho = 110.0
+      cp = 0.19
+      thick_in = 4.0
+    elsif siding == "wood siding"
+      k_in = 0.71
+      rho = 34.0
+      cp = 0.28
+      thick_in = 1.0
+    elsif siding == "aluminum siding"
+      k_in = 0.61
+      rho = 10.9
+      cp = 0.29
+      thick_in = 0.375
+    elsif siding == "vinyl siding"
+      k_in = 0.62
+      rho = 11.1
+      cp = 0.25
+      thick_in = 0.375
+    elsif siding == "fiber cement siding"
+      k_in = 1.79
+      rho = 21.7
+      cp = 0.24
+      thick_in = 0.375
+    else
+      fail "Unexpected siding type: #{siding}."
+    end
+    
+    return Material.new(name="Siding", thick_in=thick_in, mat_base=nil, k_in=k_in, rho=rho, cp=cp, tAbs=emitt, sAbs=solar_abs, vAbs=solar_abs)
+    
+  end
+  
+  def self.add_attic_floors(runner, model, building, errors, spaces)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -2863,13 +2445,32 @@ class OSModel
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
         
+        # Apply construction
+        ceiling_r = 30 # FIXME
+        ceiling_install_grade = Integer(XMLHelper.get_value(floor, "Insulation/InsulationGrade"))
+        ceiling_ins_thick_in = 8.55 # FIXME
+        ceiling_framing_factor = Float(XMLHelper.get_value(floor, "FloorJoists/FramingFactor"))
+        ceiling_joist_height_in = 3.5 # FIXME
+        ceiling_drywall_thick_in = 0.5 # FIXME
+        # FIXME: Unfinished vs finished
+        success = FloorConstructions.apply_unfinished_attic(runner, model, [surface],
+                                                            "FloorConstruction",
+                                                            ceiling_r, ceiling_install_grade,
+                                                            ceiling_ins_thick_in,
+                                                            ceiling_framing_factor,
+                                                            ceiling_joist_height_in,
+                                                            ceiling_drywall_thick_in)
+        return false if not success
+        
       end
       
     end
+    
+    return true
       
   end
 
-  def self.add_attic_roofs(model, building, errors, spaces)
+  def self.add_attic_roofs(runner, model, building, errors, spaces)
   
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -2895,13 +2496,39 @@ class OSModel
           surface.setSpace(spaces[Constants.SpaceTypeFinishedAttic])
         end
         
+        # Apply construction
+        roof_cavity_r = 30 # FIXME
+        roof_install_grade = Integer(XMLHelper.get_value(roof, "Insulation/InsulationGrade"))
+        roof_cavity_ins_thick_in = 8.55 # FIXME
+        roof_framing_factor = Float(XMLHelper.get_value(roof, "Rafters/FramingFactor"))
+        roof_framing_thick_in = 9.25 # FIXME
+        roof_osb_thick_in = 0.75 # FIXME
+        roof_rigid_r = 0.0 # FIXME
+        mat_roofing = Material.RoofingAsphaltShinglesDark # FIXME
+        has_radiant_barrier = Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))
+        # FIXME: Unfinished vs finished
+        success = RoofConstructions.apply_unfinished_attic(runner, model, [surface],
+                                                           "RoofConstruction",
+                                                           roof_cavity_r, roof_install_grade, 
+                                                           roof_cavity_ins_thick_in,
+                                                           roof_framing_factor, 
+                                                           roof_framing_thick_in,
+                                                           roof_osb_thick_in, roof_rigid_r,
+                                                           mat_roofing, has_radiant_barrier)
+        return false if not success
+        
       end
 
     end
         
   end
   
-  def self.add_windows(model, building, errors, spaces, fenestration_areas)
+  def self.add_windows(runner, model, building, errors, spaces, fenestration_areas, weather)
+  
+    heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
+    if heating_season.nil? or cooling_season.nil?
+        return false
+    end
   
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
     
@@ -2941,11 +2568,36 @@ class OSModel
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("FixedWindow")
       
+      overhangs = window.elements["Overhangs"]
+      if not overhangs.nil?
+        name = window.elements["SystemIdentifier"].attributes["id"]
+        depth = Float(XMLHelper.get_value(overhangs, "Depth"))
+        offset = Float(XMLHelper.get_value(overhangs, "DistanceToTopOfWindow"))
+      
+        # TODO apply_overhang.....
+      end
+      
+      # Apply construction
+      ufactor = Float(XMLHelper.get_value(window, "UFactor"))
+      shgc = Float(XMLHelper.get_value(window, "SHGC"))
+      cool_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer"))
+      heat_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter"))
+      
+      # TODO - Check cooling_season
+      success = SubsurfaceConstructions.apply_window(runner, model, [sub_surface],
+                                                     "WindowConstruction",
+                                                     weather, cooling_season, ufactor, shgc,
+                                                     heat_shade_mult, cool_shade_mult)
+      return false if not success
+
+      
     end
+    
+    return true
    
   end
   
-  def self.add_doors(model, building, errors, spaces, fenestration_areas)
+  def self.add_doors(runner, model, building, errors, spaces, fenestration_areas)
   
     building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
     
@@ -2985,7 +2637,18 @@ class OSModel
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("Door")
       
+      # Apply construction
+      name = door.elements["SystemIdentifier"].attributes["id"]
+      area = Float(XMLHelper.get_value(door, "Area"))
+      ua = area/Float(XMLHelper.get_value(door, "RValue"))
+      ufactor = ua/area
+      
+      success = SubsurfaceConstructions.apply_door(runner, model, [sub_surface], "Door", ufactor)
+      return false if not success
+
     end
+    
+    return true
    
   end  
   

@@ -6,9 +6,9 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require 'openstudio'
-require_relative "../resources/constants"
-require_relative "../resources/xmlhelper"
-require_relative "../resources/util"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/util"
 
 # TODO: Rake task to package ERI
 # TODO: Add error-checking
@@ -49,14 +49,12 @@ def create_osw(design, basedir, resultsdir, options)
   osw.setSeedFile("../../seeds/EmptySeedModel.osm")
   
   # Add measures (w/args) to OSW
-  measures_dir = File.absolute_path(File.join(basedir, "..", "resources", "measures")) 
   schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
   measures = {}
   measures['301EnergyRatingIndexRuleset'] = {}
   measures['301EnergyRatingIndexRuleset']['calc_type'] = design
   measures['301EnergyRatingIndexRuleset']['hpxml_file_path'] = options[:hpxml]
-  measures['301EnergyRatingIndexRuleset']['measures_dir'] = measures_dir
   #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
   measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
   if options[:debug]

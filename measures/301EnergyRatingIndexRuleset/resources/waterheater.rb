@@ -163,21 +163,21 @@ class Waterheater
             
             else
                 if num_beds == 1
-                    input_power = 2.5
+                    input_power = UnitConversions.convert(2.5,"kW","kBtu/hr")
                 elsif num_beds == 2
                     if num_baths <= 1.5
-                        input_power = 3.5
+                        input_power = UnitConversions.convert(3.5,"kW","kBtu/hr")
                     else
-                        input_power = 4.5
+                        input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
                     end
                 elsif num_beds == 3
                     if num_baths <= 1.5
-                        input_power = 4.5
+                        input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
                     else
-                        input_power = 5.5
+                        input_power = UnitConversions.convert(5.5,"kW","kBtu/hr")
                     end
                 else
-                    input_power = 5.5
+                    input_power = UnitConversions.convert(5.5,"kW","kBtu/hr")
                 end
                 return input_power
             end
@@ -277,13 +277,8 @@ class Waterheater
     
         new_heater = OpenStudio::Model::WaterHeaterMixed.new(model)
         new_heater.setName(name)
-        fuel_eplus = HelperMethods.eplus_fuel_map(fuel)
         capacity = self.calc_capacity(cap, fuel, nbeds, nbaths)
-        if fuel != Constants.FuelTypeElectric
-            capacity_w = UnitConversions.convert(capacity,"kBtu/hr","W")
-        else
-            capacity_w = UnitConversions.convert(capacity,"kW","W")
-        end
+        capacity_w = UnitConversions.convert(capacity,"kBtu/hr","W")
         nom_vol = self.calc_nom_tankvol(vol, fuel, nbeds, nbaths)
         act_vol = self.calc_actual_tankvol(nom_vol, fuel, wh_type)
         energy_factor = self.calc_ef(ef, nom_vol, fuel)
@@ -297,12 +292,11 @@ class Waterheater
         end
         new_heater.setDeadbandTemperatureDifference(self.deadband(wh_type))
         
-        vol_m3 = UnitConversions.convert(act_vol, "gal", "m^3")
         new_heater.setHeaterMinimumCapacity(0.0)
         new_heater.setHeaterMaximumCapacity(capacity_w)
-        new_heater.setHeaterFuelType(fuel_eplus)
+        new_heater.setHeaterFuelType(HelperMethods.eplus_fuel_map(fuel))
         new_heater.setHeaterThermalEfficiency(eta_c)
-        new_heater.setTankVolume(vol_m3)
+        new_heater.setTankVolume(UnitConversions.convert(act_vol, "gal", "m^3"))
         
         #Set parasitic power consumption
         if wh_type == Constants.WaterHeaterTypeTankless 
