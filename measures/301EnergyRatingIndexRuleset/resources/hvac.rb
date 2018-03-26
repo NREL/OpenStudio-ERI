@@ -3,7 +3,6 @@ require "#{File.dirname(__FILE__)}/geometry"
 require "#{File.dirname(__FILE__)}/util"
 require "#{File.dirname(__FILE__)}/unit_conversions"
 require "#{File.dirname(__FILE__)}/psychrometrics"
-require "#{File.dirname(__FILE__)}/weather"
 
 class HVAC
 
@@ -1386,8 +1385,267 @@ class HVAC
       return true
     end
     
-    def self.apply_gshp() # TODO
+    def self.apply_gshp(model, unit, runner, weather, cop, eer, shr,
+                        ground_conductivity, grout_conductivity,
+                        bore_config, bore_holes, bore_depth,
+                        bore_spacing, bore_diameter, pipe_size,
+                        ground_diffusivity, fluid_type, frac_glycol,
+                        design_delta_t, pump_head, 
+                        u_tube_leg_spacing, u_tube_spacing_type,
+                        fan_power, heat_pump_capacity, supplemental_efficiency,
+                        supplemental_capacity, dse)
     
+      if frac_glycol == 0
+        fluid_type = Constants.FluidWater
+        runner.registerWarning("Specified #{fluid_type} fluid type and 0 fraction of glycol, so assuming #{Constants.FluidWater} fluid type.")
+      end
+      
+      # Ground Loop Heat Exchanger
+      pipe_od, pipe_id = get_gshp_hx_pipe_diameters(pipe_size)
+      
+      # Thermal Resistance of Pipe
+      pipe_cond = 0.23 # Pipe thermal conductivity, default to high density polyethylene
+    
+      chw_design = get_gshp_HXCHWDesign(weather)
+      hw_design = get_gshp_HXHWDesign(weather, fluid_type)
+
+      # Cooling Coil
+      cOOL_CAP_FT_SPEC = [0.39039063, 0.01382596, 0.00000000, -0.00445738, 0.00000000, 0.00000000]
+      cOOL_SH_FT_SPEC = [4.27136253, -0.04678521, 0.00000000, -0.00219031, 0.00000000, 0.00000000]
+      cOOL_POWER_FT_SPEC = [0.01717338, 0.00316077, 0.00000000, 0.01043792, 0.00000000, 0.00000000]
+      cOIL_BF_FT_SPEC = [1.21005458, -0.00664200, 0.00000000, 0.00348246, 0.00000000, 0.00000000]
+      coilBF = 0.08060000
+      
+      # Heating Coil
+      hEAT_CAP_FT_SEC = [0.67104926, -0.00210834, 0.00000000, 0.01491424, 0.00000000, 0.00000000]
+      hEAT_POWER_FT_SPEC = [-0.46308105, 0.02008988, 0.00000000, 0.00300222, 0.00000000, 0.00000000]
+      
+      fanKW_Adjust = get_gshp_FanKW_Adjust(UnitConversions.convert(400.0,"Btu/hr","ton"))
+      pumpKW_Adjust = get_gshp_PumpKW_Adjust(UnitConversions.convert(3.0,"Btu/hr","ton"))
+      coolingEIR = get_gshp_cooling_eir(eer, fanKW_Adjust, pumpKW_Adjust)
+      
+      # Supply Fan
+      static = UnitConversions.convert(0.5,"inH2O","Pa")
+      
+      # Heating Coil
+      heatingEIR = get_gshp_heating_eir(cop, fanKW_Adjust, pumpKW_Adjust)
+      min_hp_temp = -30.0
+    
+      obj_name = Constants.ObjectNameGroundSourceHeatPumpVerticalBore(unit.name.to_s)
+      
+      ground_heat_exch_vert = OpenStudio::Model::GroundHeatExchangerVertical.new(model)
+      ground_heat_exch_vert.setName(obj_name + " exchanger")
+      ground_heat_exch_vert.setBoreHoleRadius(UnitConversions.convert(bore_diameter/2.0,"in","m"))
+      ground_heat_exch_vert.setGroundThermalConductivity(UnitConversions.convert(ground_conductivity,"Btu/(hr*ft*R)","W/(m*K)"))
+      ground_heat_exch_vert.setGroundThermalHeatCapacity(UnitConversions.convert(ground_conductivity / ground_diffusivity,"Btu/(ft^3*F)","J/(m^3*K)"))
+      ground_heat_exch_vert.setGroundTemperature(UnitConversions.convert(weather.data.AnnualAvgDrybulb,"F","C"))
+      ground_heat_exch_vert.setGroutThermalConductivity(UnitConversions.convert(grout_conductivity,"Btu/(hr*ft*R)","W/(m*K)"))
+      ground_heat_exch_vert.setPipeThermalConductivity(UnitConversions.convert(pipe_cond,"Btu/(hr*ft*R)","W/(m*K)"))
+      ground_heat_exch_vert.setPipeOutDiameter(UnitConversions.convert(pipe_od,"in","m"))
+      ground_heat_exch_vert.setUTubeDistance(UnitConversions.convert(u_tube_leg_spacing,"in","m"))
+      ground_heat_exch_vert.setPipeThickness(UnitConversions.convert((pipe_od - pipe_id)/2.0,"in","m"))
+      ground_heat_exch_vert.setMaximumLengthofSimulation(1)
+      ground_heat_exch_vert.setGFunctionReferenceRatio(0.0005)
+      
+      plant_loop = OpenStudio::Model::PlantLoop.new(model)
+      plant_loop.setName(obj_name + " condenser loop")
+      if fluid_type == Constants.FluidWater
+        plant_loop.setFluidType('Water')
+      else
+        plant_loop.setFluidType({Constants.FluidPropyleneGlycol=>'PropyleneGlycol', Constants.FluidEthyleneGlycol=>'EthyleneGlycol'}[fluid_type])
+        plant_loop.setGlycolConcentration((frac_glycol * 100).to_i)
+      end
+      plant_loop.setMaximumLoopTemperature(48.88889)
+      plant_loop.setMinimumLoopTemperature(UnitConversions.convert(hw_design,"F","C"))
+      plant_loop.setMinimumLoopFlowRate(0)
+      plant_loop.setLoadDistributionScheme('SequentialLoad')
+      runner.registerInfo("Added '#{plant_loop.name}' to model.")
+      
+      sizing_plant = plant_loop.sizingPlant
+      sizing_plant.setLoopType('Condenser')
+      sizing_plant.setDesignLoopExitTemperature(UnitConversions.convert(chw_design,"F","C"))
+      sizing_plant.setLoopDesignTemperatureDifference(UnitConversions.convert(design_delta_t,"R","K"))
+      
+      setpoint_mgr_follow_ground_temp = OpenStudio::Model::SetpointManagerFollowGroundTemperature.new(model)
+      setpoint_mgr_follow_ground_temp.setName(obj_name + " condenser loop temp")
+      setpoint_mgr_follow_ground_temp.setControlVariable('Temperature')
+      setpoint_mgr_follow_ground_temp.setMaximumSetpointTemperature(48.88889)
+      setpoint_mgr_follow_ground_temp.setMinimumSetpointTemperature(UnitConversions.convert(hw_design,"F","C"))
+      setpoint_mgr_follow_ground_temp.setReferenceGroundTemperatureObjectType('Site:GroundTemperature:Deep')
+      setpoint_mgr_follow_ground_temp.addToNode(plant_loop.supplyOutletNode)
+      
+      pump = OpenStudio::Model::PumpVariableSpeed.new(model)
+      pump.setName(obj_name + " pump")
+      pump.setRatedPumpHead(pump_head)
+      pump.setMotorEfficiency(dse * 0.77 * 0.6)
+      pump.setFractionofMotorInefficienciestoFluidStream(0)
+      pump.setCoefficient1ofthePartLoadPerformanceCurve(0)
+      pump.setCoefficient2ofthePartLoadPerformanceCurve(1)
+      pump.setCoefficient3ofthePartLoadPerformanceCurve(0)
+      pump.setCoefficient4ofthePartLoadPerformanceCurve(0)
+      pump.setMinimumFlowRate(0)
+      pump.setPumpControlType('Intermittent')
+      pump.addToNode(plant_loop.supplyInletNode)
+      
+      plant_loop.addSupplyBranchForComponent(ground_heat_exch_vert)
+      
+      chiller_bypass_pipe = OpenStudio::Model::PipeAdiabatic.new(model)
+      plant_loop.addSupplyBranchForComponent(chiller_bypass_pipe)
+      coil_bypass_pipe = OpenStudio::Model::PipeAdiabatic.new(model)
+      plant_loop.addDemandBranchForComponent(coil_bypass_pipe)
+      supply_outlet_pipe = OpenStudio::Model::PipeAdiabatic.new(model)
+      supply_outlet_pipe.addToNode(plant_loop.supplyOutletNode)    
+      demand_inlet_pipe = OpenStudio::Model::PipeAdiabatic.new(model)
+      demand_inlet_pipe.addToNode(plant_loop.demandInletNode) 
+      demand_outlet_pipe = OpenStudio::Model::PipeAdiabatic.new(model)
+      demand_outlet_pipe.addToNode(plant_loop.demandOutletNode)
+    
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+      
+      control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
+      control_slave_zones_hash.each do |control_zone, slave_zones|
+      
+        # Remove existing equipment
+        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameGroundSourceHeatPumpVerticalBore, control_zone, false, unit)
+
+        gshp_HEAT_CAP_fT_coeff = HVAC.convert_curve_gshp(hEAT_CAP_FT_SEC, false)
+        gshp_HEAT_POWER_fT_coeff = HVAC.convert_curve_gshp(hEAT_POWER_FT_SPEC, false)
+        
+        htg_coil = OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit.new(model)
+        htg_coil.setName(obj_name + " heating coil")
+        if heat_pump_capacity != Constants.SizingAuto
+          htg_coil.setRatedHeatingCapacity(OpenStudio::OptionalDouble.new(UnitConversions.convert(heat_pump_capacity,"Btu/hr","W"))) # Used by HVACSizing measure
+        end
+        htg_coil.setRatedHeatingCoefficientofPerformance(dse / heatingEIR)
+        htg_coil.setHeatingCapacityCoefficient1(gshp_HEAT_CAP_fT_coeff[0])
+        htg_coil.setHeatingCapacityCoefficient2(gshp_HEAT_CAP_fT_coeff[1])
+        htg_coil.setHeatingCapacityCoefficient3(gshp_HEAT_CAP_fT_coeff[2])
+        htg_coil.setHeatingCapacityCoefficient4(gshp_HEAT_CAP_fT_coeff[3])
+        htg_coil.setHeatingCapacityCoefficient5(gshp_HEAT_CAP_fT_coeff[4])
+        htg_coil.setHeatingPowerConsumptionCoefficient1(gshp_HEAT_POWER_fT_coeff[0])
+        htg_coil.setHeatingPowerConsumptionCoefficient2(gshp_HEAT_POWER_fT_coeff[1])
+        htg_coil.setHeatingPowerConsumptionCoefficient3(gshp_HEAT_POWER_fT_coeff[2])
+        htg_coil.setHeatingPowerConsumptionCoefficient4(gshp_HEAT_POWER_fT_coeff[3])
+        htg_coil.setHeatingPowerConsumptionCoefficient5(gshp_HEAT_POWER_fT_coeff[4])
+        
+        plant_loop.addDemandBranchForComponent(htg_coil)
+        
+        supp_htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model, model.alwaysOnDiscreteSchedule)
+        supp_htg_coil.setName(obj_name + " supp heater")
+        supp_htg_coil.setEfficiency(dse * supplemental_efficiency)
+        if supplemental_capacity != Constants.SizingAuto
+          supp_htg_coil.setNominalCapacity(UnitConversions.convert(supplemental_capacity,"Btu/hr","W")) # Used by HVACSizing measure
+        end        
+        
+        gshp_COOL_CAP_fT_coeff = HVAC.convert_curve_gshp(cOOL_CAP_FT_SPEC, false)
+        gshp_COOL_POWER_fT_coeff = HVAC.convert_curve_gshp(cOOL_POWER_FT_SPEC, false)
+        gshp_COOL_SH_fT_coeff = HVAC.convert_curve_gshp(cOOL_SH_FT_SPEC, false)
+        
+        clg_coil = OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit.new(model)
+        clg_coil.setName(obj_name + " cooling coil")
+        if heat_pump_capacity != Constants.SizingAuto
+          clg_coil.setRatedTotalCoolingCapacity(UnitConversions.convert(heat_pump_capacity,"Btu/hr","W")) # Used by HVACSizing measure
+        end
+        clg_coil.setRatedCoolingCoefficientofPerformance(dse / coolingEIR)
+        clg_coil.setTotalCoolingCapacityCoefficient1(gshp_COOL_CAP_fT_coeff[0])
+        clg_coil.setTotalCoolingCapacityCoefficient2(gshp_COOL_CAP_fT_coeff[1])
+        clg_coil.setTotalCoolingCapacityCoefficient3(gshp_COOL_CAP_fT_coeff[2])
+        clg_coil.setTotalCoolingCapacityCoefficient4(gshp_COOL_CAP_fT_coeff[3])
+        clg_coil.setTotalCoolingCapacityCoefficient5(gshp_COOL_CAP_fT_coeff[4])
+        clg_coil.setSensibleCoolingCapacityCoefficient1(gshp_COOL_SH_fT_coeff[0])
+        clg_coil.setSensibleCoolingCapacityCoefficient2(0)
+        clg_coil.setSensibleCoolingCapacityCoefficient3(gshp_COOL_SH_fT_coeff[1])
+        clg_coil.setSensibleCoolingCapacityCoefficient4(gshp_COOL_SH_fT_coeff[2])
+        clg_coil.setSensibleCoolingCapacityCoefficient5(gshp_COOL_SH_fT_coeff[3])
+        clg_coil.setSensibleCoolingCapacityCoefficient6(gshp_COOL_SH_fT_coeff[4])
+        clg_coil.setCoolingPowerConsumptionCoefficient1(gshp_COOL_POWER_fT_coeff[0])
+        clg_coil.setCoolingPowerConsumptionCoefficient2(gshp_COOL_POWER_fT_coeff[1])
+        clg_coil.setCoolingPowerConsumptionCoefficient3(gshp_COOL_POWER_fT_coeff[2])
+        clg_coil.setCoolingPowerConsumptionCoefficient4(gshp_COOL_POWER_fT_coeff[3])
+        clg_coil.setCoolingPowerConsumptionCoefficient5(gshp_COOL_POWER_fT_coeff[4])
+        clg_coil.setNominalTimeforCondensateRemovaltoBegin(1000)
+        clg_coil.setRatioofInitialMoistureEvaporationRateandSteadyStateLatentCapacity(1.5)
+          
+        plant_loop.addDemandBranchForComponent(clg_coil)
+
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+        fan.setName(obj_name + " #{control_zone.name} supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setFanEfficiency(dse * HVAC.calculate_fan_efficiency(static, fan_power))
+        fan.setPressureRise(static)
+        fan.setMotorEfficiency(dse * 1.0)
+        fan.setMotorInAirstreamFraction(1.0)
+          
+        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        air_loop_unitary.setName(obj_name + " unitary system")
+        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        air_loop_unitary.setSupplyFan(fan)
+        air_loop_unitary.setHeatingCoil(htg_coil)
+        air_loop_unitary.setCoolingCoil(clg_coil)
+        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        air_loop_unitary.setFanPlacement("BlowThrough")
+        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
+        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
+          
+        air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
+        air_loop.setName(obj_name + " central air system")
+        air_supply_inlet_node = air_loop.supplyInletNode
+        air_supply_outlet_node = air_loop.supplyOutletNode
+        air_demand_inlet_node = air_loop.demandInletNode
+        air_demand_outlet_node = air_loop.demandOutletNode    
+        
+        air_loop_unitary.addToNode(air_supply_inlet_node)
+        
+        runner.registerInfo("Added '#{clg_coil.name}' and '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        
+        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        
+        zone_splitter = air_loop.zoneSplitter
+        zone_splitter.setName(obj_name + " zone splitter")
+        
+        zone_mixer = air_loop.zoneMixer
+        zone_mixer.setName(obj_name + " zone mixer")
+
+        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+        diffuser_living.setName(obj_name + " #{control_zone.name} direct air")
+        air_loop.addBranchForZone(control_zone, diffuser_living.to_StraightComponent)
+
+        air_loop.addBranchForZone(control_zone)
+        runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
+
+        HVAC.prioritize_zone_hvac(model, runner, control_zone)
+        
+        slave_zones.each do |slave_zone|
+
+          # Remove existing equipment
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameGroundSourceHeatPumpVerticalBore, slave_zone, false, unit)
+      
+          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
+          air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
+
+          air_loop.addBranchForZone(slave_zone)
+          runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
+
+          HVAC.prioritize_zone_hvac(model, runner, slave_zone)
+          
+        end        
+      
+      end
+      
+      # Store info for HVAC Sizing measure
+      unit.setFeature(Constants.SizingInfoHVACSHR, shr.to_s)
+      unit.setFeature(Constants.SizingInfoGSHPCoil_BF_FT_SPEC, cOIL_BF_FT_SPEC.join(","))
+      unit.setFeature(Constants.SizingInfoGSHPCoilBF, coilBF)
+      unit.setFeature(Constants.SizingInfoGSHPBoreSpacing, bore_spacing)
+      unit.setFeature(Constants.SizingInfoGSHPBoreHoles, bore_holes)
+      unit.setFeature(Constants.SizingInfoGSHPBoreDepth, bore_depth)
+      unit.setFeature(Constants.SizingInfoGSHPBoreConfig, bore_config)
+      unit.setFeature(Constants.SizingInfoGSHPUTubeSpacingType, u_tube_spacing_type)
+    
+      return true
     end
     
     def self.apply_room_ac(model, unit, runner, eer, shr,
@@ -1605,8 +1863,193 @@ class HVAC
       return true
     end
     
-    def self.apply_boiler() # TODO
+    def self.apply_boiler(model, unit, runner, fuel_type, system_type, afue,
+                          oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
+                          capacity, design_temp, is_modulating, dse)
     
+      boilerIsCondensing = false
+      if system_type == Constants.BoilerTypeCondensing
+        boilerIsCondensing = true
+      end
+      
+      if fuel_type != Constants.FuelTypeElectric and boilerIsCondensing and not is_modulating
+        runner.registerWarning("A non modulating, condensing fuel boiler has been selected. These types of units are very uncommon, double check inputs.")
+      end
+      
+      # _processHydronicSystem
+      
+      if system_type == Constants.BoilerTypeSteam
+        runner.registerError("Cannot currently model steam boilers.")
+        return false
+      end
+      
+      # Installed equipment adjustments
+      boiler_hir = 1.0 / afue
+      
+      if system_type == Constants.BoilerTypeCondensing
+        # Efficiency curves are normalized using 80F return water temperature, at 0.254PLR
+        condensingBlr_TE_FT_coefficients = [1.058343061, 0.052650153, 0.0087272, 0.001742217, 0.00000333715, 0.000513723]
+      end
+          
+      if oat_reset_enabled
+        if oat_high.nil? or oat_low.nil? or oat_hwst_low.nil? or oat_hwst_high.nil?
+          runner.registerWarning("Boiler outdoor air temperature (OAT) reset is enabled but no setpoints were specified so OAT reset is being disabled.")
+          oat_reset_enabled = false
+        end
+      end
+      
+      # Parasitic Electricity (Source: DOE. (2007). Technical Support Document: Energy Efficiency Program for Consumer Products: "Energy Conservation Standards for Residential Furnaces and Boilers". www.eere.energy.gov/buildings/appliance_standards/residential/furnaces_boilers.html)
+      boilerParasiticElecDict = {Constants.FuelTypeGas=>76.0, # W during operation
+                                 Constants.FuelTypePropane=>76.0,
+                                 Constants.FuelTypeOil=>220.0,
+                                 Constants.FuelTypeElectric=>0.0}
+      boiler_aux = boilerParasiticElecDict[fuel_type]
+      
+      # _processCurvesBoiler
+      
+      boiler_eff_curve = HVAC.get_boiler_curve(model, boilerIsCondensing)
+      
+      obj_name = Constants.ObjectNameBoiler(fuel_type, unit.name.to_s)
+      
+      # _processSystemHydronic
+      
+      plant_loop = OpenStudio::Model::PlantLoop.new(model)
+      plant_loop.setName(obj_name + " hydronic heat loop")
+      plant_loop.setFluidType("Water")
+      plant_loop.setMaximumLoopTemperature(100)
+      plant_loop.setMinimumLoopTemperature(0)
+      plant_loop.setMinimumLoopFlowRate(0)
+      plant_loop.autocalculatePlantLoopVolume()
+      runner.registerInfo("Added '#{plant_loop.name}' to model.")
+      
+      loop_sizing = plant_loop.sizingPlant
+      loop_sizing.setLoopType("Heating")
+      loop_sizing.setDesignLoopExitTemperature(UnitConversions.convert(design_temp - 32.0,"R","K"))
+      loop_sizing.setLoopDesignTemperatureDifference(UnitConversions.convert(20.0,"R","K"))
+      
+      pump = OpenStudio::Model::PumpVariableSpeed.new(model)
+      pump.setName(obj_name + " hydronic pump")
+      pump.setRatedPumpHead(179352)
+      pump.setMotorEfficiency(dse * 0.9)
+      pump.setFractionofMotorInefficienciestoFluidStream(0)
+      pump.setCoefficient1ofthePartLoadPerformanceCurve(0)
+      pump.setCoefficient2ofthePartLoadPerformanceCurve(1)
+      pump.setCoefficient3ofthePartLoadPerformanceCurve(0)
+      pump.setCoefficient4ofthePartLoadPerformanceCurve(0)
+      pump.setPumpControlType("Intermittent")
+          
+      boiler = OpenStudio::Model::BoilerHotWater.new(model)
+      boiler.setName(obj_name)
+      boiler.setFuelType(HelperMethods.eplus_fuel_map(fuel_type))
+      if capacity != Constants.SizingAuto
+        boiler.setNominalCapacity(UnitConversions.convert(capacity,"Btu/hr","W")) # Used by HVACSizing measure
+      end
+      if system_type == Constants.BoilerTypeCondensing
+        # Convert Rated Efficiency at 80F and 1.0PLR where the performance curves are derived from to Design condition as input
+        boiler_RatedHWRT = UnitConversions.convert(80.0-32.0,"R","K")
+        plr_Rated = 1.0
+        plr_Design = 1.0
+        boiler_DesignHWRT = UnitConversions.convert(design_temp - 20.0 - 32.0,"R","K")
+        condBlr_TE_Coeff = condensingBlr_TE_FT_coefficients   # The coefficients are normalized at 80F HWRT
+        boilerEff_Norm = 1.0 / boiler_hir / (condBlr_TE_Coeff[0] - condBlr_TE_Coeff[1] * plr_Rated - condBlr_TE_Coeff[2] * plr_Rated**2 - condBlr_TE_Coeff[3] * boiler_RatedHWRT + condBlr_TE_Coeff[4] * boiler_RatedHWRT**2 + condBlr_TE_Coeff[5] * boiler_RatedHWRT * plr_Rated)
+        boilerEff_Design = boilerEff_Norm * (condBlr_TE_Coeff[0] - condBlr_TE_Coeff[1] * plr_Design - condBlr_TE_Coeff[2] * plr_Design**2 - condBlr_TE_Coeff[3] * boiler_DesignHWRT + condBlr_TE_Coeff[4] * boiler_DesignHWRT**2 + condBlr_TE_Coeff[5] * boiler_DesignHWRT * plr_Design)
+        boiler.setNominalThermalEfficiency(dse * boilerEff_Design)
+        boiler.setEfficiencyCurveTemperatureEvaluationVariable("EnteringBoiler")
+        boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
+        boiler.setDesignWaterOutletTemperature(UnitConversions.convert(design_temp - 32.0,"R","K"))
+        if is_modulating
+          boiler.setMinimumPartLoadRatio(0.0) 
+          boiler.setMaximumPartLoadRatio(1.0)
+          boiler.setBoilerFlowMode("LeavingSetpointModulated")
+        else
+          boiler.setMinimumPartLoadRatio(0.99) 
+          boiler.setMaximumPartLoadRatio(1.0)
+          boiler.setBoilerFlowMode("ConstantFlow")
+        end
+      else
+        boiler.setNominalThermalEfficiency(dse / boiler_hir)
+        boiler.setEfficiencyCurveTemperatureEvaluationVariable("LeavingBoiler")
+        boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
+        boiler.setDesignWaterOutletTemperature(UnitConversions.convert(design_temp - 32.0,"R","K"))
+        if is_modulating
+          boiler.setMinimumPartLoadRatio(0.0) 
+          boiler.setMaximumPartLoadRatio(1.0)
+          boiler.setBoilerFlowMode("LeavingSetpointModulated")
+        else
+          boiler.setMinimumPartLoadRatio(0.99) 
+          boiler.setMaximumPartLoadRatio(1.0)
+          boiler.setBoilerFlowMode("ConstantFlow")
+        end
+      end
+      boiler.setOptimumPartLoadRatio(1.0)
+      boiler.setWaterOutletUpperTemperatureLimit(99.9)
+      boiler.setParasiticElectricLoad(boiler_aux)
+         
+      if system_type == Constants.BoilerTypeCondensing and oat_reset_enabled
+        setpoint_manager_oar = OpenStudio::Model::SetpointManagerOutdoorAirReset.new(model)
+        setpoint_manager_oar.setName(obj_name + " outdoor reset")
+        setpoint_manager_oar.setControlVariable("Temperature")
+        setpoint_manager_oar.setSetpointatOutdoorLowTemperature(UnitConversions.convert(oat_hwst_low,"F","C"))
+        setpoint_manager_oar.setOutdoorLowTemperature(UnitConversions.convert(oat_low,"F","C"))
+        setpoint_manager_oar.setSetpointatOutdoorHighTemperature(UnitConversions.convert(oat_hwst_high,"F","C"))
+        setpoint_manager_oar.setOutdoorHighTemperature(UnitConversions.convert(oat_high,"F","C"))
+        setpoint_manager_oar.addToNode(plant_loop.supplyOutletNode)      
+      end
+      
+      hydronic_heat_supply_setpoint = OpenStudio::Model::ScheduleConstant.new(model)
+      hydronic_heat_supply_setpoint.setName(obj_name + " hydronic heat supply setpoint")
+      hydronic_heat_supply_setpoint.setValue(UnitConversions.convert(design_temp,"F","C"))    
+      
+      setpoint_manager_scheduled = OpenStudio::Model::SetpointManagerScheduled.new(model, hydronic_heat_supply_setpoint)
+      setpoint_manager_scheduled.setName(obj_name + " hydronic heat loop setpoint manager")
+      setpoint_manager_scheduled.setControlVariable("Temperature")
+      
+      pipe_supply_bypass = OpenStudio::Model::PipeAdiabatic.new(model)
+      pipe_supply_outlet = OpenStudio::Model::PipeAdiabatic.new(model)
+      pipe_demand_bypass = OpenStudio::Model::PipeAdiabatic.new(model)
+      pipe_demand_inlet = OpenStudio::Model::PipeAdiabatic.new(model)
+      pipe_demand_outlet = OpenStudio::Model::PipeAdiabatic.new(model)    
+      
+      plant_loop.addSupplyBranchForComponent(boiler)
+      plant_loop.addSupplyBranchForComponent(pipe_supply_bypass)
+      pump.addToNode(plant_loop.supplyInletNode)
+      pipe_supply_outlet.addToNode(plant_loop.supplyOutletNode)
+      setpoint_manager_scheduled.addToNode(plant_loop.supplyOutletNode)
+      plant_loop.addDemandBranchForComponent(pipe_demand_bypass)
+      pipe_demand_inlet.addToNode(plant_loop.demandInletNode)
+      pipe_demand_outlet.addToNode(plant_loop.demandOutletNode)
+    
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+
+      control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
+      control_slave_zones_hash.each do |control_zone, slave_zones|
+
+        ([control_zone] + slave_zones).each do |zone|
+      
+          # Remove existing equipment
+          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameBoiler, zone, false, unit)
+        
+          baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
+          baseboard_coil.setName(obj_name + " #{zone.name} heating coil")
+          if capacity != Constants.SizingAuto
+            baseboard_coil.setHeatingDesignCapacity(UnitConversions.convert(capacity,"Btu/hr","W")) # Used by HVACSizing measure
+          end
+          baseboard_coil.setConvergenceTolerance(0.001)
+          
+          baseboard_heater = OpenStudio::Model::ZoneHVACBaseboardConvectiveWater.new(model, model.alwaysOnDiscreteSchedule, baseboard_coil)
+          baseboard_heater.setName(obj_name + " #{zone.name} convective water")
+          baseboard_heater.addToThermalZone(zone)
+          runner.registerInfo("Added '#{baseboard_heater.name}' to '#{zone.name}' of #{unit.name}")
+          
+          HVAC.prioritize_zone_hvac(model, runner, zone)
+          
+          plant_loop.addDemandBranchForComponent(baseboard_coil)
+          
+        end
+        
+      end
+      
+      return true
     end
     
     def self.apply_electric_baseboard(model, unit, runner, efficiency, capacity)
@@ -1748,6 +2191,50 @@ class HVAC
     end
     
     private
+    
+    def self.get_gshp_hx_pipe_diameters(pipe_size)
+      # Pipe norminal size convertion to pipe outside diameter and inside diameter, 
+      # only pipe sizes <= 2" are used here with DR11 (dimension ratio),
+      if pipe_size == 0.75 # 3/4" pipe
+        pipe_od = 1.050
+        pipe_id = 0.859
+      elsif pipe_size == 1.0 # 1" pipe
+        pipe_od = 1.315
+        pipe_id = 1.076
+      elsif pipe_size == 1.25 # 1-1/4" pipe
+        pipe_od = 1.660
+        pipe_id = 1.358
+      end
+      return pipe_od, pipe_id      
+    end
+      
+    def self.get_gshp_HXCHWDesign(weather)
+      return [85.0, weather.design.CoolingDrybulb - 15.0, weather.data.AnnualAvgDrybulb + 10.0].max # Temperature of water entering indoor coil,use 85F as lower bound
+    end
+    
+    def self.get_gshp_HXHWDesign(weather, fluid_type)
+      if fluid_type == Constants.FluidWater
+        return [45.0, weather.design.HeatingDrybulb + 35.0, weather.data.AnnualAvgDrybulb - 10.0].max # Temperature of fluid entering indoor coil, use 45F as lower bound for water
+      else
+        return [35.0, weather.design.HeatingDrybulb + 35.0, weather.data.AnnualAvgDrybulb - 10.0].min # Temperature of fluid entering indoor coil, use 35F as upper bound
+      end
+    end
+    
+    def self.get_gshp_cooling_eir(eer, fanKW_Adjust, pumpKW_Adjust)
+      return UnitConversions.convert((1.0 - eer * (fanKW_Adjust + pumpKW_Adjust)) / (eer * (1 + UnitConversions.convert(fanKW_Adjust,"Wh","Btu"))),"Wh","Btu")
+    end
+    
+    def self.get_gshp_heating_eir(cop, fanKW_Adjust, pumpKW_Adjust)
+      return (1.0 - cop * (fanKW_Adjust + pumpKW_Adjust)) / (cop * (1 - fanKW_Adjust))
+    end
+    
+    def self.get_gshp_FanKW_Adjust(cfm_btuh)
+      return cfm_btuh * UnitConversions.convert(1.0,"cfm","m^3/s") * 1000.0 * 0.35 * 249.0 / 300.0 # Adjustment per ISO 13256-1 Internal pressure drop across heat pump assumed to be 0.5 in. w.g.
+    end
+    
+    def self.get_gshp_PumpKW_Adjust(gpm_btuh)
+      return gpm_btuh * UnitConversions.convert(1.0,"gal/min","m^3/s") * 1000.0 * 6.0 * 2990.0 / 3000.0 # Adjustment per ISO 13256-1 Internal Pressure drop across heat pump coil assumed to be 11ft w.g.
+    end
 
     def self.calc_EIR_from_COP(cop, supplyFanPower_Rated)
       return UnitConversions.convert((UnitConversions.convert(1,"Btu","Wh") + supplyFanPower_Rated * 0.03333) / cop - supplyFanPower_Rated * 0.03333,"Wh","Btu")
@@ -1816,9 +2303,9 @@ class HVAC
         ip_coeff << 25.0/81.0 * coeff[5]
         return ip_coeff
       end
-  end
+    end
   
-  def self.convert_curve_gshp(coeff, gshp_to_biquadratic)
+    def self.convert_curve_gshp(coeff, gshp_to_biquadratic)
       m1 = 32 - 273.15 * 1.8
       m2 = 283 * 1.8
       if gshp_to_biquadratic
@@ -2493,7 +2980,6 @@ class HVAC
       return true
     end
     
-    
     def self.remove_ashp(model, runner, thermal_zone)
       # Returns true if the object was removed
       return false if not self.has_ashp(model, runner, thermal_zone)
@@ -2510,6 +2996,7 @@ class HVAC
       # Returns true if the object was removed
       return false if not self.has_gshp(model, runner, thermal_zone)
       system, clg_coil, htg_coil, air_loop = self.get_unitary_system_air_loop(model, runner, thermal_zone)
+      self.remove_boiler_and_gshp_loops(model, runner, thermal_zone)
       runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from '#{air_loop.name}'.")
       system.resetHeatingCoil
       system.resetCoolingCoil              
@@ -2596,6 +3083,7 @@ class HVAC
     def self.remove_boiler(model, runner, thermal_zone)
       # Returns true if the object was removed
       return false if not self.has_boiler(model, runner, thermal_zone)
+      self.remove_boiler_and_gshp_loops(model, runner, thermal_zone)
       baseboard = self.get_baseboard_water(model, runner, thermal_zone)
       runner.registerInfo("Removed '#{baseboard.name}' from #{thermal_zone.name}.")
       baseboard.remove
@@ -2625,10 +3113,38 @@ class HVAC
       return true
     end
     
-    def self.remove_boiler_and_gshp_loops(model, runner)
-      # TODO: Add a BuildingUnit argument
+    def self.remove_boiler_and_gshp_loops(model, runner, thermal_zone)
       model.getPlantLoops.each do |plant_loop|
         remove = false
+        
+        # Ensure we're operating on the right plant loop
+        is_specified_zone = false
+        plant_loop.demandComponents.each do |demand_component|
+          demand_coil = nil
+          if demand_component.to_CoilHeatingWaterBaseboard.is_initialized
+            demand_coil = demand_component.to_CoilHeatingWaterBaseboard.get
+          elsif demand_component.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
+            demand_coil = demand_component.to_CoilHeatingWaterToAirHeatPumpEquationFit.get
+          elsif demand_component.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
+            demand_coil = demand_component.to_CoilCoolingWaterToAirHeatPumpEquationFit.get
+          end
+          next if demand_coil.nil?
+          if demand_coil.containingZoneHVACComponent.is_initialized
+            demand_hvac = demand_coil.containingZoneHVACComponent.get
+            next if not demand_hvac.thermalZone.is_initialized or demand_hvac.thermalZone.get != thermal_zone
+            is_specified_zone = true
+          elsif demand_coil.containingHVACComponent.is_initialized
+            demand_hvac = demand_coil.containingHVACComponent.get
+            next if not demand_hvac.airLoopHVAC.is_initialized
+            demand_air_loop = demand_hvac.airLoopHVAC.get
+            demand_air_loop.thermalZones.each do |thermalZone|
+              next if thermal_zone.handle.to_s != thermalZone.handle.to_s
+              is_specified_zone = true
+            end
+          end
+        end
+        next if not is_specified_zone
+        
         plant_loop.supplyComponents.each do |supply_component|
           if supply_component.to_BoilerHotWater.is_initialized or supply_component.to_GroundHeatExchangerVertical.is_initialized or supply_component.to_GroundHeatExchangerHorizontalTrench.is_initialized
             remove = true
@@ -2714,9 +3230,6 @@ class HVAC
         if counterpart_equip or removed_ac or removed_ashp or removed_gshp
           self.remove_air_loop(model, runner, thermal_zone)
         end
-        if removed_gshp
-          self.remove_boiler_and_gshp_loops(model, runner)
-        end
       when Constants.ObjectNameRoomAirConditioner
         removed_ashp = self.remove_ashp(model, runner, thermal_zone)
         removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
@@ -2729,9 +3242,6 @@ class HVAC
         if removed_ac or removed_ashp or removed_gshp
           self.remove_air_loop(model, runner, thermal_zone)
         end
-        if removed_gshp
-          self.remove_boiler_and_gshp_loops(model, runner)
-        end        
       when Constants.ObjectNameFurnace
         removed_ashp = self.remove_ashp(model, runner, thermal_zone)
         removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)

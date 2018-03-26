@@ -14,6 +14,7 @@ require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/location"
 require "#{File.dirname(__FILE__)}/resources/constructions"
+require "#{File.dirname(__FILE__)}/resources/misc_loads"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -304,10 +305,8 @@ class OSMeasures
     
     # Plug Loads and Lighting
     get_lighting(building, measures)
-    get_mels(building, measures)
     
     # Other
-    get_airflow(building, measures)
     get_hvac_sizing(building, measures)
     get_photovoltaics(building, measures)
 
@@ -997,196 +996,6 @@ class OSMeasures
 
   end
   
-  def self.get_mels(building, measures)
-  
-    # TODO: Split apart residual MELs and TVs for reporting
-    
-    sens_kWhs = 0
-    lat_kWhs = 0
-    building.elements.each("BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other' or PlugLoadType='TV other']") do |pl|
-      kWhs = Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value"))
-      sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
-      lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
-    end
-    tot_kWhs = sens_kWhs + lat_kWhs
-    
-    measure_subdir = "ResidentialMiscPlugLoads"
-    args = {
-            "option_type"=>Constants.OptionTypePlugLoadsEnergyUse,
-            "mult"=>0, # not used
-            "energy_use"=>tot_kWhs,
-            "sens_frac"=>(sens_kWhs/tot_kWhs),
-            "lat_frac"=>(lat_kWhs/tot_kWhs),
-            "weekday_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
-            "weekend_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
-            "monthly_sch"=>"1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248",
-           }  
-    update_args_hash(measures, measure_subdir, args)  
-  
-  end
-
-  def self.get_airflow(building, measures)
-  
-    infil = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
-    whole_house_fan = building.elements["BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    
-    infil_ach50 = Float(XMLHelper.get_value(infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
-    attic_sla = XMLHelper.get_value(infil, "extension/AtticSpecificLeakageArea").to_f
-    crawl_sla = XMLHelper.get_value(infil, "extension/CrawlspaceSpecificLeakageArea").to_f
-
-    if whole_house_fan.nil?
-      mech_vent_type = Constants.VentTypeNone
-      mech_vent_total_efficiency = 0
-      mech_vent_sensible_efficiency = 0
-      mech_vent_fan_power = 0
-      mech_vent_frac_62_2 = 0
-    else
-      # FIXME: HoursInOperation isn't being used
-      fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
-      if fan_type == "supply only"
-        mech_vent_type = Constants.VentTypeSupply
-      elsif fan_type == "exhaust only"
-        mech_vent_type = Constants.VentTypeExhaust
-      else
-        mech_vent_type = Constants.VentTypeBalanced
-      end
-      mech_vent_total_efficiency = 0
-      mech_vent_sensible_efficiency = 0
-      if fan_type == "energy recovery ventilator" or fan_type == "heat recovery ventilator"
-        mech_vent_sensible_efficiency = Float(XMLHelper.get_value(whole_house_fan, "SensibleRecoveryEfficiency"))
-      end
-      if fan_type == "energy recovery ventilator"
-        mech_vent_total_efficiency = Float(XMLHelper.get_value(whole_house_fan, "TotalRecoveryEfficiency"))
-      end
-      mech_vent_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
-      mech_vent_w = Float(XMLHelper.get_value(whole_house_fan, "FanPower"))
-      mech_vent_fan_power = mech_vent_w/mech_vent_cfm
-      mech_vent_frac_62_2 = 1.0 # FIXME: Would prefer to provide airflow rate as measure input...
-    end
-    
-    natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
-    
-    if natural_ventilation.nil?
-      nat_vent_htg_offset = 1
-      nat_vent_clg_offset = 1
-      nat_vent_ovlp_offset = 1
-      nat_vent_htg_season = true
-      nat_vent_clg_season = true
-      nat_vent_ovlp_season = true
-      nat_vent_num_weekdays = 5
-      nat_vent_num_weekends = 2
-      nat_vent_frac_windows_open = 0.33
-      nat_vent_frac_window_area_openable = 0.2
-      nat_vent_max_oa_hr = 0.0115
-      nat_vent_max_oa_rh = 0.7
-    else
-      nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_offset")
-      nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_offset")
-      nat_vent_ovlp_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_offset")
-      nat_vent_htg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_season")
-      nat_vent_clg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_season")
-      nat_vent_ovlp_season = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_season")
-      nat_vent_num_weekdays = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekdays")
-      nat_vent_num_weekends = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekends")
-      nat_vent_frac_windows_open = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_windows_open")
-      nat_vent_frac_window_area_openable = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_window_area_openable")
-      nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_hr")
-      nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_rh")
-    end
-  
-    hvac_distribution = building.elements["BuildingDetails/Systems/HVAC/HVACDistribution"]
-    air_distribution = nil
-    if not hvac_distribution.nil?
-      air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
-    end
-    
-    if not air_distribution.nil?
-      # Ducts
-      supply_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
-      return_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
-      supply_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctInsulationRValue"))
-      return_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue"))
-      supply_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctSurfaceArea"))
-      return_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctSurfaceArea"))
-      # FIXME: Values below
-      duct_location = Constants.Auto
-      duct_total_leakage = 0.3
-      duct_supply_frac = 0.6
-      duct_return_frac = 0.067
-      duct_ah_supply_frac = 0.067
-      duct_ah_return_frac = 0.267
-      duct_location_frac = Constants.Auto
-      duct_num_returns = 1
-      duct_supply_area_mult = 1
-      duct_return_area_mult = 1
-      duct_r = 4.0
-    else
-      duct_location = "none"
-      duct_total_leakage = 0
-      duct_supply_frac = 0
-      duct_return_frac = 0
-      duct_ah_supply_frac = 0
-      duct_ah_return_frac = 0
-      duct_location_frac = Constants.Auto
-      duct_num_returns = Constants.Auto
-      duct_supply_area_mult = 1
-      duct_return_area_mult = 1
-      duct_r = 0
-    end
-  
-    measure_subdir = "ResidentialAirflow"
-    args = {
-            "living_ach50"=>infil_ach50,
-            "garage_ach50"=>infil_ach50,
-            "finished_basement_ach"=>0, # TODO: Need to handle above-grade basement
-            "unfinished_basement_ach"=>0.1, # TODO: Need to handle above-grade basement
-            "crawl_ach"=>crawl_sla,
-            "pier_beam_ach"=>100,
-            "unfinished_attic_sla"=>attic_sla,
-            "shelter_coef"=>Constants.Auto,
-            "has_hvac_flue"=>false, # FIXME
-            "has_water_heater_flue"=>false, # FIXME
-            "has_fireplace_chimney"=>false, # FIXME
-            "terrain"=>Constants.TerrainSuburban,
-            "mech_vent_type"=>mech_vent_type,
-            "mech_vent_total_efficiency"=>mech_vent_total_efficiency,
-            "mech_vent_sensible_efficiency"=>mech_vent_sensible_efficiency,
-            "mech_vent_fan_power"=>mech_vent_fan_power,
-            "mech_vent_frac_62_2"=>mech_vent_frac_62_2,
-            "mech_vent_ashrae_std"=>2013,
-            "mech_vent_infil_credit"=>true,
-            "mech_vent_cfis_open_time"=>20.0,
-            "mech_vent_cfis_airflow_frac"=>1.0,
-            "is_existing_home"=>false, # FIXME
-            "clothes_dryer_exhaust"=>0,
-            "nat_vent_htg_offset"=>nat_vent_htg_offset,
-            "nat_vent_clg_offset"=>nat_vent_clg_offset,
-            "nat_vent_ovlp_offset"=>nat_vent_ovlp_offset,
-            "nat_vent_htg_season"=>nat_vent_htg_season,
-            "nat_vent_clg_season"=>nat_vent_clg_season,
-            "nat_vent_ovlp_season"=>nat_vent_ovlp_season,
-            "nat_vent_num_weekdays"=>nat_vent_num_weekdays,
-            "nat_vent_num_weekends"=>nat_vent_num_weekends,
-            "nat_vent_frac_windows_open"=>nat_vent_frac_windows_open,
-            "nat_vent_frac_window_area_openable"=>nat_vent_frac_window_area_openable,
-            "nat_vent_max_oa_hr"=>nat_vent_max_oa_hr,
-            "nat_vent_max_oa_rh"=>nat_vent_max_oa_rh,
-            "duct_location"=>duct_location,
-            "duct_total_leakage"=>duct_total_leakage,
-            "duct_supply_frac"=>duct_supply_frac,
-            "duct_return_frac"=>duct_return_frac,
-            "duct_ah_supply_frac"=>duct_ah_supply_frac,
-            "duct_ah_return_frac"=>duct_ah_return_frac,
-            "duct_location_frac"=>duct_location_frac,
-            "duct_num_returns"=>duct_num_returns,
-            "duct_supply_area_mult"=>duct_supply_area_mult,
-            "duct_return_area_mult"=>duct_return_area_mult,
-            "duct_r"=>duct_r,
-           }  
-    update_args_hash(measures, measure_subdir, args) # FIXME (need to figure out approach for dealing with volumes)
-
-  end
-
   def self.get_hvac_sizing(building, measures)
     
     measure_subdir = "ResidentialHVACSizing"
@@ -1235,49 +1044,58 @@ class OSModel
     building = hpxml_doc.elements["/HPXML/Building"]
   
     # Geometry
+    
     avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
     if avg_ceil_hgt.nil?
       avg_ceil_hgt = 8.0
     else
       avg_ceil_hgt = avg_ceil_hgt.text.to_f
     end
-    
     spaces = create_all_spaces_and_zones(model, building)
-    
     success, unit = add_building_info(model, building)
     return false if not success
     
-    fenestration_areas = {}
+    # Envelope
     
+    fenestration_areas = {}
     success = add_windows(runner, model, building, geometry_errors, spaces, fenestration_areas, weather)
     return false if not success
-    
     success = add_doors(runner, model, building, geometry_errors, spaces, fenestration_areas)
     return false if not success
-    
     add_foundation_floors(model, building, spaces)
     add_foundation_walls(model, building, spaces, fenestration_areas)
     foundation_ceiling_area = add_foundation_ceilings(model, building, spaces)
     add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
-    
     success = add_above_grade_walls(runner, model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
     return false if not success
-    
     success = add_attic_floors(runner, model, building, geometry_errors, spaces)
     return false if not success
-    
     success = add_attic_roofs(runner, model, building, geometry_errors, spaces)
     return false if not success
     
-    dse = get_dse(building)
+    # Beds, Baths, Occupants
     
+    success = add_num_beds_baths_occupants(model, building, runner)
+    return false if not success
+    
+    # HVAC
+    
+    dse = get_dse(building)
     success = add_cooling_system(runner, model, building, unit, dse)
     return false if not success
-    
     success = add_heating_system(runner, model, building, unit, dse)
     return false if not success
+    success = add_heat_pump(runner, model, building, unit, dse, weather)
+    return false if not success
+
+    # Plug Loads & Lighting
     
-    success = add_heat_pump(runner, model, building, unit, dse)
+    success = add_mels(runner, model, building, unit)
+    return false if not success
+    
+    # Other
+    
+    success = add_airflow(runner, model, building, unit)
     return false if not success
     
     geometry_errors.each do |error|
@@ -1382,24 +1200,6 @@ class OSModel
       window_offset += 2.5
       
     end
-    
-    # Num Bedrooms/Bathrooms
-    num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    success = Geometry.process_beds_and_baths(model, runner, [num_bedrooms], [num_bathrooms])
-    return false if not success
-    
-    # Occupants
-    num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
-    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr"))
-    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
-    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
-    hrs_per_day = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay")) # TODO
-    weekday_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
-    weekend_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
-    monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
-    success = Geometry.process_occupants(model, runner, num_occ.to_s, occ_gain, sens_frac, lat_frac, weekday_sch, weekend_sch, monthly_sch)
-    return false if not success
 
     return true
     
@@ -1660,6 +1460,26 @@ class OSModel
     else
       fail "Unhandled value (#{foundation_type})."
     end
+  end
+  
+  def self.add_num_beds_baths_occupants(model, building, runner)
+    # Bedrooms/Bathrooms
+    num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    success = Geometry.process_beds_and_baths(model, runner, [num_bedrooms], [num_bathrooms])
+    return false if not success
+    
+    # Occupants
+    num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
+    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr"))
+    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
+    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
+    hrs_per_day = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay")) # TODO
+    weekday_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+    weekend_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+    monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
+    success = Geometry.process_occupants(model, runner, num_occ.to_s, occ_gain, sens_frac, lat_frac, weekday_sch, weekend_sch, monthly_sch)
+    return false if not success
   end
   
   def self.add_foundation_floors(model, building, spaces)
@@ -2048,6 +1868,7 @@ class OSModel
         return false
     end
   
+    surfaces = []
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
     
       window_id = window.elements["SystemIdentifier"].attributes["id"]
@@ -2080,7 +1901,8 @@ class OSModel
         end
       end
       surface.setOutsideBoundaryCondition("Adiabatic")
-
+      surfaces << surface
+      
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
       sub_surface.setName(window_id)
       sub_surface.setSurface(surface)
@@ -2108,15 +1930,18 @@ class OSModel
                                                      heat_shade_mult, cool_shade_mult)
       return false if not success
 
-      
     end
     
+    success = apply_adiabatic_construction(runner, model, surfaces)
+    return false if not success
+      
     return true
    
   end
   
   def self.add_doors(runner, model, building, errors, spaces, fenestration_areas)
   
+    surfaces = []
     building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
     
       door_id = door.elements["SystemIdentifier"].attributes["id"]
@@ -2149,6 +1974,7 @@ class OSModel
         end
       end
       surface.setOutsideBoundaryCondition("Adiabatic")
+      surfaces << surface
 
       sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0, 0, 0]), model) # offsets B, L, T, R
       sub_surface.setName(door_id)
@@ -2166,9 +1992,30 @@ class OSModel
 
     end
     
+    success = apply_adiabatic_construction(runner, model, surfaces)
+    return false if not success
+    
     return true
    
   end  
+  
+  def self.apply_adiabatic_construction(runner, model, surfaces)
+    # Arbitrary construction
+    framing_factor = Constants.DefaultFramingFactorInterior
+    cavity_r = 0.0
+    install_grade = 1
+    cavity_depth_in = 3.5
+    cavity_filled = false
+    rigid_r = 0.0
+    drywall_thick_in = 0.5
+    mat_ext_finish = Material.ExtFinishStuccoMedDark
+    success = WallConstructions.apply_wood_stud(runner, model, surfaces,
+                                                "AdiabaticConstruction", 
+                                                cavity_r, install_grade, cavity_depth_in, 
+                                                cavity_filled, framing_factor,
+                                                drywall_thick_in, 0, rigid_r, mat_ext_finish)
+    return false if not success
+  end
   
   def self.add_cooling_system(runner, model, building, unit, dse)
   
@@ -2203,11 +2050,11 @@ class OSModel
         fan_power_rated = 0.365
         fan_power_installed = 0.5
         eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-        HVAC.apply_central_ac_1speed(model, unit, runner, seer, eers, shrs,
-                                     fan_power_rated, fan_power_installed,
-                                     crankcase_kw, crankcase_temp,
-                                     eer_capacity_derates, cool_capacity_tons, 
-                                     dse)
+        success = HVAC.apply_central_ac_1speed(model, unit, runner, seer, eers, shrs,
+                                               fan_power_rated, fan_power_installed,
+                                               crankcase_kw, crankcase_temp,
+                                               eer_capacity_derates, cool_capacity_tons, 
+                                               dse)
         return false if not success
       
       elsif num_speeds == "2-Speed"
@@ -2219,12 +2066,12 @@ class OSModel
         fan_power_rated = 0.14
         fan_power_installed = 0.3
         eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-        HVAC.apply_central_ac_2speed(model, unit, runner, seer, eers, shrs,
-                                     capacity_ratios, fan_speed_ratios,
-                                     fan_power_rated, fan_power_installed,
-                                     crankcase_kw, crankcase_temp,
-                                     eer_capacity_derates, cool_capacity_tons, 
-                                     dse)
+        success = HVAC.apply_central_ac_2speed(model, unit, runner, seer, eers, shrs,
+                                               capacity_ratios, fan_speed_ratios,
+                                               fan_power_rated, fan_power_installed,
+                                               crankcase_kw, crankcase_temp,
+                                               eer_capacity_derates, cool_capacity_tons, 
+                                               dse)
         return false if not success
         
       elsif num_speeds == "Variable-Speed"
@@ -2236,12 +2083,12 @@ class OSModel
         fan_power_rated = 0.14
         fan_power_installed = 0.3
         eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-        HVAC.apply_central_ac_4speed(model, unit, runner, seer, eers, shrs,
-                                     capacity_ratios, fan_speed_ratios,
-                                     fan_power_rated, fan_power_installed,
-                                     crankcase_kw, crankcase_temp,
-                                     eer_capacity_derates, cool_capacity_tons, 
-                                     dse)
+        successs = HVAC.apply_central_ac_4speed(model, unit, runner, seer, eers, shrs,
+                                                capacity_ratios, fan_speed_ratios,
+                                                fan_power_rated, fan_power_installed,
+                                                crankcase_kw, crankcase_temp,
+                                                eer_capacity_derates, cool_capacity_tons, 
+                                                dse)
         return false if not success
                                      
       else
@@ -2294,46 +2141,19 @@ class OSModel
       
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
     
+      system_type = Constants.BoilerTypeForcedDraft
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
+      oat_reset_enabled = false
+      oat_high = nil
+      oat_low = nil
+      oat_hwst_high = nil
+      oat_hwst_low = nil
+      design_temp = 180.0
+      success = HVAC.apply_boiler(model, unit, runner, to_beopt_fuel(fuel), system_type, afue,
+                                  oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
+                                  heat_capacity_kbtuh, design_temp, is_modulating, dse)
+      return false if not success
     
-      if fuel == "electricity"
-      
-        measure_subdir = "ResidentialHVACBoilerElectric"
-        args = {
-                "system_type"=>Constants.BoilerTypeForcedDraft,
-                "afue"=>afue,
-                "oat_reset_enabled"=>false,
-                "oat_high"=>nil, # FIXME
-                "oat_low"=>nil, # FIXME
-                "oat_hwst_high"=>nil, # FIXME
-                "oat_hwst_low"=>nil, # FIXME
-                "design_temp"=>180, # FIXME
-                "capacity"=>heat_capacity_kbtuh,
-                "dse"=>dse,
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-      elsif ["natural gas", "fuel oil", "propane"].include? fuel
-      
-        measure_subdir = "ResidentialHVACBoilerFuel"
-        args = {
-                "fuel_type"=>to_beopt_fuel(fuel),
-                "system_type"=>Constants.BoilerTypeForcedDraft,
-                "afue"=>afue,
-                "oat_reset_enabled"=>false, # FIXME
-                "oat_high"=>nil, # FIXME
-                "oat_low"=>nil, # FIXME
-                "oat_hwst_high"=>nil, # FIXME
-                "oat_hwst_low"=>nil, # FIXME
-                "design_temp"=>180, # FIXME
-                "modulation"=>false,
-                "capacity"=>heat_capacity_kbtuh,
-                "dse"=>dse,
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-      end
-      
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
     
       efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
@@ -2353,7 +2173,7 @@ class OSModel
 
   end
 
-  def self.add_heat_pump(runner, model, building, unit, dse)
+  def self.add_heat_pump(runner, model, building, unit, dse, weather)
 
     hp = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
     
@@ -2506,36 +2326,38 @@ class OSModel
              
     elsif hp_type == "ground-to-air"
     
-      eer = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='EER']/Value"))
       cop = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='COP']/Value"))
-    
-      measure_subdir = "ResidentialHVACGroundSourceHeatPumpVerticalBore"
-      args = {
-              "cop"=>cop,
-              "eer"=>eer,
-              "ground_conductivity"=>0.6,
-              "grout_conductivity"=>0.4,
-              "bore_config"=>Constants.SizingAuto,
-              "bore_holes"=>Constants.SizingAuto,
-              "bore_depth"=>Constants.SizingAuto,
-              "bore_spacing"=>20.0,
-              "bore_diameter"=>5.0,
-              "pipe_size"=>0.75,
-              "ground_diffusivity"=>0.0208,
-              "fluid_type"=>Constants.FluidPropyleneGlycol,
-              "frac_glycol"=>0.3,
-              "design_delta_t"=>10.0,
-              "pump_head"=>50.0,
-              "u_tube_leg_spacing"=>0.9661,
-              "u_tube_spacing_type"=>"b",
-              "rated_shr"=>0.732,
-              "fan_power"=>0.5,
-              "heat_pump_capacity"=>cool_capacity_tons,
-              "supplemental_efficiency"=>1,
-              "supplemental_capacity"=>backup_heat_capacity_kbtuh,
-              "dse"=>dse,
-             }
-      update_args_hash(measures, measure_subdir, args)
+      eer = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='EER']/Value"))
+      shr = 0.732
+      ground_conductivity = 0.6
+      grout_conductivity = 0.4
+      bore_config = Constants.SizingAuto
+      bore_holes = Constants.SizingAuto
+      bore_depth = Constants.SizingAuto
+      bore_spacing = 20.0
+      bore_diameter = 5.0
+      pipe_size = 0.75
+      ground_diffusivity = 0.0208
+      fluid_type = Constants.FluidPropyleneGlycol
+      frac_glycol = 0.3
+      design_delta_t = 10.0
+      pump_head = 50.0
+      u_tube_leg_spacing = 0.9661
+      u_tube_spacing_type = "b"
+      fan_power = 0.5
+      heat_pump_capacity = cool_capacity_tons
+      supplemental_efficiency = 1
+      supplemental_capacity = backup_heat_capacity_kbtuh
+      success = HVAC.apply_gshp(model, unit, runner, weather, cop, eer, shr,
+                                ground_conductivity, grout_conductivity,
+                                bore_config, bore_holes, bore_depth,
+                                bore_spacing, bore_diameter, pipe_size,
+                                ground_diffusivity, fluid_type, frac_glycol,
+                                design_delta_t, pump_head,
+                                u_tube_leg_spacing, u_tube_spacing_type,
+                                fan_power, heat_pump_capacity, supplemental_efficiency,
+                                supplemental_capacity, dse)
+      return false if not success
              
     end
     
@@ -2561,6 +2383,171 @@ class OSModel
             "propane"=>Constants.FuelTypePropane, 
             "electricity"=>Constants.FuelTypeElectric}
     return conv[fuel]
+  end
+  
+  def self.add_mels(runner, model, building, unit)
+  
+    # TODO: Split apart residual MELs and TVs for reporting
+    
+    sens_kWhs = 0
+    lat_kWhs = 0
+    building.elements.each("BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other' or PlugLoadType='TV other']") do |pl|
+      kWhs = Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value"))
+      sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
+      lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
+    end
+    tot_kWhs = sens_kWhs + lat_kWhs
+    
+    sens_frac = sens_kWhs/tot_kWhs
+    lat_frac = lat_kWhs/tot_kWhs
+    weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
+    weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
+    monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
+    success, sch = MiscLoads.apply_plug(model, unit, runner, tot_kWhs, 
+                                        sens_frac, lat_frac, weekday_sch, 
+                                        weekend_sch, monthly_sch, nil)
+    
+    return false if not success
+    
+    return true
+  
+  end  
+  
+  def self.add_airflow(runner, model, building, unit)
+  
+    # Infiltration
+    infiltration = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
+    infil_ach50 = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+    attic_sla = XMLHelper.get_value(infiltration, "extension/AtticSpecificLeakageArea").to_f
+    crawl_sla = XMLHelper.get_value(infiltration, "extension/CrawlspaceSpecificLeakageArea").to_f
+    living_ach50 = infil_ach50
+    garage_ach50 = infil_ach50
+    finished_basement_ach = 0 # TODO: Need to handle above-grade basement
+    unfinished_basement_ach = 0.1 # TODO: Need to handle above-grade basement
+    crawl_ach = crawl_sla # FIXME: sla vs ach
+    pier_beam_ach = 100
+    unfinished_attic_sla = attic_sla
+    shelter_coef = Constants.Auto
+    has_flue_chimney = false # FIXME
+    is_existing_home = false # FIXME
+    terrain = Constants.TerrainSuburban
+    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, unfinished_attic_sla, unfinished_basement_ach, finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
+
+    # Mechanical Ventilation
+    whole_house_fan = building.elements["BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    if whole_house_fan.nil?
+      mech_vent_type = Constants.VentTypeNone
+      mech_vent_total_efficiency = 0.0
+      mech_vent_sensible_efficiency = 0.0
+      mech_vent_fan_power = 0.0
+      mech_vent_frac_62_2 = 0.0
+    else
+      # FIXME: HoursInOperation isn't being used
+      fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
+      if fan_type == "supply only"
+        mech_vent_type = Constants.VentTypeSupply
+      elsif fan_type == "exhaust only"
+        mech_vent_type = Constants.VentTypeExhaust
+      else
+        mech_vent_type = Constants.VentTypeBalanced
+      end
+      mech_vent_total_efficiency = 0.0
+      mech_vent_sensible_efficiency = 0.0
+      if fan_type == "energy recovery ventilator" or fan_type == "heat recovery ventilator"
+        mech_vent_sensible_efficiency = Float(XMLHelper.get_value(whole_house_fan, "SensibleRecoveryEfficiency"))
+      end
+      if fan_type == "energy recovery ventilator"
+        mech_vent_total_efficiency = Float(XMLHelper.get_value(whole_house_fan, "TotalRecoveryEfficiency"))
+      end
+      mech_vent_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
+      mech_vent_w = Float(XMLHelper.get_value(whole_house_fan, "FanPower"))
+      mech_vent_fan_power = mech_vent_w/mech_vent_cfm
+      mech_vent_frac_62_2 = 1.0 # FIXME: Would prefer to provide airflow rate as measure input...
+    end
+    mech_vent_ashrae_std = 2013
+    mech_vent_infil_credit = true
+    mech_vent_cfis_open_time = 20.0
+    mech_vent_cfis_airflow_frac = 1.0
+    clothes_dryer_exhaust = 0.0
+    mech_vent = MechanicalVentilation.new(mech_vent_type, mech_vent_infil_credit, mech_vent_total_efficiency, mech_vent_frac_62_2, mech_vent_fan_power, mech_vent_sensible_efficiency, mech_vent_ashrae_std, mech_vent_cfis_open_time, mech_vent_cfis_airflow_frac, clothes_dryer_exhaust)
+
+    # Natural Ventilation
+    natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
+    if natural_ventilation.nil?
+      nat_vent_htg_offset = 1.0
+      nat_vent_clg_offset = 1.0
+      nat_vent_ovlp_offset = 1.0
+      nat_vent_htg_season = true
+      nat_vent_clg_season = true
+      nat_vent_ovlp_season = true
+      nat_vent_num_weekdays = 5
+      nat_vent_num_weekends = 2
+      nat_vent_frac_windows_open = 0.33
+      nat_vent_frac_window_area_openable = 0.2
+      nat_vent_max_oa_hr = 0.0115
+      nat_vent_max_oa_rh = 0.7
+    else
+      nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_offset")
+      nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_offset")
+      nat_vent_ovlp_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_offset")
+      nat_vent_htg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_season")
+      nat_vent_clg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_season")
+      nat_vent_ovlp_season = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_season")
+      nat_vent_num_weekdays = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekdays")
+      nat_vent_num_weekends = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekends")
+      nat_vent_frac_windows_open = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_windows_open")
+      nat_vent_frac_window_area_openable = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_window_area_openable")
+      nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_hr")
+      nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_rh")
+    end
+    nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season, nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays, nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable, nat_vent_max_oa_hr, nat_vent_max_oa_rh)
+  
+    # Ducts
+    hvac_distribution = building.elements["BuildingDetails/Systems/HVAC/HVACDistribution"]
+    air_distribution = nil
+    if not hvac_distribution.nil?
+      air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
+    end
+    if not air_distribution.nil?
+      # Ducts
+      supply_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+      return_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+      supply_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctInsulationRValue"))
+      return_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue"))
+      supply_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctSurfaceArea"))
+      return_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctSurfaceArea"))
+      # FIXME: Values below
+      duct_location = Constants.Auto
+      duct_total_leakage = 0.3
+      duct_supply_frac = 0.6
+      duct_return_frac = 0.067
+      duct_ah_supply_frac = 0.067
+      duct_ah_return_frac = 0.267
+      duct_location_frac = Constants.Auto
+      duct_num_returns = 1
+      duct_supply_area_mult = 1.0
+      duct_return_area_mult = 1.0
+      duct_r = 4.0
+    else
+      duct_location = "none"
+      duct_total_leakage = 0.0
+      duct_supply_frac = 0.0
+      duct_return_frac = 0.0
+      duct_ah_supply_frac = 0.0
+      duct_ah_return_frac = 0.0
+      duct_location_frac = Constants.Auto
+      duct_num_returns = Constants.Auto
+      duct_supply_area_mult = 1.0
+      duct_return_area_mult = 1.0
+      duct_r = 0.0
+    end
+    duct_norm_leakage_25pa = nil
+    ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, duct_num_returns, duct_location)
+
+    success = Airflow.apply(model, runner, infil, mech_vent, nat_vent, ducts)
+    return false if not success
+    
+    return true
   end
   
 end
