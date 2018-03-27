@@ -1280,6 +1280,7 @@ class Geometry
     sub_surfaces = []
     model.getSubSurfaces.each do |sub_surface|
       next unless sub_surface.subSurfaceType.downcase.include? "window"
+      next if (90 - sub_surface.tilt*180/Math::PI).abs > 0.01 # not a vertical subsurface
       sub_surfaces << sub_surface
     end
     return sub_surfaces

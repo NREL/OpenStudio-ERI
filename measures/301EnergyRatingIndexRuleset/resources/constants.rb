@@ -224,6 +224,9 @@ class Constants
   def self.FacadeRight
     return 'right'
   end
+  def self.FacadeNone
+    return 'none'
+  end
   def self.FluidWater
     return 'water'
   end
@@ -590,8 +593,12 @@ class Constants
     end
     return "residential refrigerator#{s_unit}"
   end
-  def self.ObjectNameRelativeHumiditySetpoint
-    return 'residential relative humidity setpoint'
+  def self.ObjectNameRelativeHumiditySetpoint(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "residential rh setpoint#{s_unit}"
   end
   def self.ObjectNameRoomAirConditioner(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
@@ -655,9 +662,6 @@ class Constants
       s_unit = "|#{unit_name}"
     end
     return "residential well pump#{s_unit}"
-  end
-  def self.ObjectNameWindowShading
-    return 'residential window shading'
   end
   def self.OptionTypeLightingFractions
     return 'Lamp Fractions'

@@ -1615,8 +1615,7 @@ class SubsurfaceConstructions
 
     # Container class for door/window constructions
 
-    def self.apply_door(runner, model, subsurfaces, constr_name, 
-                        ufactor)
+    def self.apply_door(runner, model, subsurfaces, constr_name, ufactor)
         
         return true if subsurfaces.empty?
         
@@ -1646,19 +1645,40 @@ class SubsurfaceConstructions
         return true
     end
     
-    def self.apply_window(runner, model, subsurfaces, constr_name,
-                          weather, cooling_season, ufactor, shgc,
-                          heat_shade_mult, cool_shade_mult)
+    def self.apply_window(runner, model, subsurfaces, constr_name, weather, 
+                          cooling_season, ufactor, shgc, heat_shade_mult, cool_shade_mult)
     
+      success = apply_window_skylight(runner, model, "Window", subsurfaces, constr_name, weather,
+                                      cooling_season, ufactor, shgc, heat_shade_mult, cool_shade_mult)
+      return false if not success
+    
+      return true
+    end
+    
+    def self.apply_skylight(runner, model, subsurfaces, constr_name, weather, 
+                            cooling_season, ufactor, shgc, heat_shade_mult, cool_shade_mult)
+    
+      success = apply_window_skylight(runner, model, "Skylight", subsurfaces, constr_name, weather,
+                                      cooling_season, ufactor, shgc, heat_shade_mult, cool_shade_mult)
+      return false if not success
+    
+      return true
+    end
+    
+    private
+    
+    def self.apply_window_skylight(runner, model, type, subsurfaces, constr_name, weather,
+                                   cooling_season, ufactor, shgc, heat_shade_mult, cool_shade_mult)
+
         return true if subsurfaces.empty?
-        
+
         # Validate Inputs
         if ufactor <= 0
-          runner.registerError("Window U-factor must be greater than zero.")
+          runner.registerError("#{type} U-factor must be greater than zero.")
           return false
         end
         if shgc <= 0
-          runner.registerError("Window SHGC must be greater than zero.")
+          runner.registerError("#{type} SHGC must be greater than zero.")
           return false
         end      
         if heat_shade_mult < 0 or heat_shade_mult > 1
@@ -1686,7 +1706,7 @@ class SubsurfaceConstructions
             total_shade_ref = 1 - total_shade_trans - total_shade_abs
 
             day_startm = [0, 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
-            day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]    
+            day_endm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
 
             # WindowShadingSchedule
             sched_type = OpenStudio::Model::ScheduleTypeLimits.new(model)
@@ -1696,7 +1716,7 @@ class SubsurfaceConstructions
             sched_type.setNumericType("Continuous")
             
             # Interior Shading Schedule
-            sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameWindowShading + " schedule", Array.new(24, 1), Array.new(24, 1), cooling_season)
+            sch = MonthWeekdayWeekendSchedule.new(model, runner, "#{type} shading schedule", Array.new(24, 1), Array.new(24, 1), cooling_season)
             if not sch.validated?
                 return false
             end
@@ -1719,17 +1739,26 @@ class SubsurfaceConstructions
             sm.setRightSideOpeningMultiplier(0)
             sm.setAirflowPermeability(0)
 
-            # WindowShadingControl
-            sc = OpenStudio::Model::ShadingControl.new(sm)
-            sc.setName("WindowShadingControl")
-            sc.setShadingType("InteriorShade")
-            sc.setShadingControlType("OnIfScheduleAllows")
-            sc.setSchedule(sch.schedule)
+            if type == "Window"
+              # WindowShadingControl
+              sc = OpenStudio::Model::ShadingControl.new(sm)
+              sc.setName("#{type}ShadingControl")
+              sc.setShadingType("InteriorShade")
+              sc.setShadingControlType("OnIfScheduleAllows")
+              sc.setSchedule(sch.schedule)
+            elsif type == "Skylight"
+              # SkylightShadingControl
+              sc = OpenStudio::Model::ShadingControl.new(sm)
+              sc.setName("#{type}ShadingControl")
+              sc.setShadingType("InteriorShade")
+              sc.setShadingControlType("AlwaysOff")
+              # sc.setSchedule(model.alwaysOffDiscreteSchedule)
+            end
             
         end
 
         # Define materials
-        glaz_mat = GlazingMaterial.new(name="WindowMaterial", ufactor=ufactor, shgc=shgc * heat_shade_mult)
+        glaz_mat = GlazingMaterial.new(name="#{type}Material", ufactor=ufactor, shgc=shgc * heat_shade_mult)
         
         # Set paths
         path_fracs = [1]
@@ -1774,7 +1803,7 @@ class SubsurfaceConstructions
             end
         end
         
-        runner.registerInfo("Construction#{sc_msg} added to #{subsurfaces.size.to_s} window(s).")
+        runner.registerInfo("Construction#{sc_msg} added to #{subsurfaces.size.to_s} #{constr_name.gsub("Construction", "").downcase}(s).")
 
         return true
     end

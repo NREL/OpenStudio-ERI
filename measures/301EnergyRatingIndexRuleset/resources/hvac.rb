@@ -3,13 +3,15 @@ require "#{File.dirname(__FILE__)}/geometry"
 require "#{File.dirname(__FILE__)}/util"
 require "#{File.dirname(__FILE__)}/unit_conversions"
 require "#{File.dirname(__FILE__)}/psychrometrics"
+require "#{File.dirname(__FILE__)}/schedules"
 
 class HVAC
 
     def self.apply_central_ac_1speed(model, unit, runner, seer, eers, shrs,
                                      fan_power_rated, fan_power_installed,
                                      crankcase_capacity, crankcase_temp,
-                                     eer_capacity_derates, capacity, dse)
+                                     eer_capacity_derates, capacity, dse, 
+                                     existing_objects={})
     
       num_speeds = 1
 
@@ -39,8 +41,7 @@ class HVAC
       control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
-        # Remove existing equipment
-        htg_coil, _perf = remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, control_zone, false, unit)
+        htg_coil, perf = existing_objects[control_zone]
 
         # _processCurvesDXCooling
         
@@ -141,9 +142,6 @@ class HVAC
         
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, slave_zone, false, unit)
-      
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -169,7 +167,8 @@ class HVAC
                                      capacity_ratios, fan_speed_ratios,
                                      fan_power_rated, fan_power_installed,
                                      crankcase_capacity, crankcase_temp,
-                                     eer_capacity_derates, capacity, dse)
+                                     eer_capacity_derates, capacity, dse,
+                                     existing_objects={})
     
       num_speeds = 2
       
@@ -200,8 +199,7 @@ class HVAC
       control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
-        # Remove existing equipment
-        htg_coil, _perf = remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, control_zone, false, unit)
+        htg_coil, perf = existing_objects[control_zone]
 
         # _processCurvesDXCooling
         
@@ -308,9 +306,6 @@ class HVAC
         
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, slave_zone, false, unit)
-      
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -337,7 +332,8 @@ class HVAC
                                      capacity_ratios, fan_speed_ratios,
                                      fan_power_rated, fan_power_installed,
                                      crankcase_capacity, crankcase_temp,
-                                     eer_capacity_derates, capacity, dse)
+                                     eer_capacity_derates, capacity, dse,
+                                     existing_objects={})
        
       num_speeds = 4
       
@@ -370,8 +366,7 @@ class HVAC
       control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
-        # Remove existing equipment
-        htg_coil, _perf = remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, control_zone, false, unit)
+        htg_coil, perf = existing_objects[control_zone]
 
         # _processCurvesDXCooling
         
@@ -478,9 +473,6 @@ class HVAC
         
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameCentralAirConditioner, slave_zone, false, unit)
-      
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -555,9 +547,6 @@ class HVAC
       control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
-        # Remove existing equipment
-        remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, control_zone, false, unit)
-      
         # _processCurvesDXHeating
         htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
       
@@ -669,9 +658,6 @@ class HVAC
         
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, slave_zone, false, unit)
-      
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -750,9 +736,6 @@ class HVAC
       control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
-        # Remove existing equipment
-        remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, control_zone, false, unit)
-      
         # _processCurvesDXHeating
         htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
       
@@ -871,9 +854,6 @@ class HVAC
         
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, slave_zone, false, unit)
-      
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -957,9 +937,6 @@ class HVAC
       control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
-        # Remove existing equipment
-        remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, control_zone, false, unit)
-      
         # _processCurvesDXHeating
         
         htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
@@ -1079,9 +1056,6 @@ class HVAC
         
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameAirSourceHeatPump, slave_zone, false, unit)
-      
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -1203,9 +1177,6 @@ class HVAC
       
         ([control_zone] + slave_zones).each do |zone|
         
-            # Remove existing equipment
-            remove_existing_hvac_equipment(model, runner, Constants.ObjectNameMiniSplitHeatPump, zone, false, unit)
-          
             # _processSystemHeatingCoil
             
             htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
@@ -1502,14 +1473,11 @@ class HVAC
     
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
       
-      control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
+      control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
       
-        # Remove existing equipment
-        HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameGroundSourceHeatPumpVerticalBore, control_zone, false, unit)
-
-        gshp_HEAT_CAP_fT_coeff = HVAC.convert_curve_gshp(hEAT_CAP_FT_SEC, false)
-        gshp_HEAT_POWER_fT_coeff = HVAC.convert_curve_gshp(hEAT_POWER_FT_SPEC, false)
+        gshp_HEAT_CAP_fT_coeff = convert_curve_gshp(hEAT_CAP_FT_SEC, false)
+        gshp_HEAT_POWER_fT_coeff = convert_curve_gshp(hEAT_POWER_FT_SPEC, false)
         
         htg_coil = OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit.new(model)
         htg_coil.setName(obj_name + " heating coil")
@@ -1537,9 +1505,9 @@ class HVAC
           supp_htg_coil.setNominalCapacity(UnitConversions.convert(supplemental_capacity,"Btu/hr","W")) # Used by HVACSizing measure
         end        
         
-        gshp_COOL_CAP_fT_coeff = HVAC.convert_curve_gshp(cOOL_CAP_FT_SPEC, false)
-        gshp_COOL_POWER_fT_coeff = HVAC.convert_curve_gshp(cOOL_POWER_FT_SPEC, false)
-        gshp_COOL_SH_fT_coeff = HVAC.convert_curve_gshp(cOOL_SH_FT_SPEC, false)
+        gshp_COOL_CAP_fT_coeff = convert_curve_gshp(cOOL_CAP_FT_SPEC, false)
+        gshp_COOL_POWER_fT_coeff = convert_curve_gshp(cOOL_POWER_FT_SPEC, false)
+        gshp_COOL_SH_fT_coeff = convert_curve_gshp(cOOL_SH_FT_SPEC, false)
         
         clg_coil = OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit.new(model)
         clg_coil.setName(obj_name + " cooling coil")
@@ -1571,7 +1539,7 @@ class HVAC
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan.setName(obj_name + " #{control_zone.name} supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACFan)
-        fan.setFanEfficiency(dse * HVAC.calculate_fan_efficiency(static, fan_power))
+        fan.setFanEfficiency(dse * calculate_fan_efficiency(static, fan_power))
         fan.setPressureRise(static)
         fan.setMotorEfficiency(dse * 1.0)
         fan.setMotorInAirstreamFraction(1.0)
@@ -1615,13 +1583,10 @@ class HVAC
         air_loop.addBranchForZone(control_zone)
         runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
 
-        HVAC.prioritize_zone_hvac(model, runner, control_zone)
+        prioritize_zone_hvac(model, runner, control_zone)
         
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameGroundSourceHeatPumpVerticalBore, slave_zone, false, unit)
-      
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -1629,7 +1594,7 @@ class HVAC
           air_loop.addBranchForZone(slave_zone)
           runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
 
-          HVAC.prioritize_zone_hvac(model, runner, slave_zone)
+          prioritize_zone_hvac(model, runner, slave_zone)
           
         end        
       
@@ -1676,9 +1641,6 @@ class HVAC
     
         next unless Geometry.zone_is_above_grade(control_zone)
 
-        # Remove existing equipment
-        remove_existing_hvac_equipment(model, runner, Constants.ObjectNameRoomAirConditioner, control_zone, false, unit)
-      
         # _processSystemRoomAC
       
         clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, model.alwaysOnDiscreteSchedule, roomac_cap_ft_curve, roomac_cap_fff_curve, roomac_eir_ft_curve, roomcac_eir_fff_curve, roomac_plf_fplr_curve)
@@ -1714,9 +1676,6 @@ class HVAC
       
         slave_zones.each do |slave_zone|
 
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameRoomAirConditioner, slave_zone, false, unit)
-
           prioritize_zone_hvac(model, runner, slave_zone)
           
         end # slave_zone
@@ -1731,7 +1690,8 @@ class HVAC
     end
     
     def self.apply_furnace(model, unit, runner, fuel_type, afue,
-                           capacity, fan_power_installed, dse)
+                           capacity, fan_power_installed, dse,
+                           existing_objects={})
     
       # _processAirSystem
       
@@ -1752,8 +1712,7 @@ class HVAC
       control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
       
-        # Remove existing equipment
-        clg_coil, perf = remove_existing_hvac_equipment(model, runner, Constants.ObjectNameFurnace, control_zone, true, unit)
+        clg_coil, perf = existing_objects[control_zone]
         
         # _processSystemHeatingCoil
 
@@ -1844,9 +1803,6 @@ class HVAC
       
         slave_zones.each do |slave_zone|
         
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameFurnace, slave_zone, false, unit)
-        
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
           diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
           air_loop.addBranchForZone(slave_zone, diffuser_fbsmt.to_StraightComponent)
@@ -1907,7 +1863,7 @@ class HVAC
       
       # _processCurvesBoiler
       
-      boiler_eff_curve = HVAC.get_boiler_curve(model, boilerIsCondensing)
+      boiler_eff_curve = get_boiler_curve(model, boilerIsCondensing)
       
       obj_name = Constants.ObjectNameBoiler(fuel_type, unit.name.to_s)
       
@@ -2021,14 +1977,11 @@ class HVAC
     
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
 
-      control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
+      control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash.each do |control_zone, slave_zones|
 
         ([control_zone] + slave_zones).each do |zone|
       
-          # Remove existing equipment
-          HVAC.remove_existing_hvac_equipment(model, runner, Constants.ObjectNameBoiler, zone, false, unit)
-        
           baseboard_coil = OpenStudio::Model::CoilHeatingWaterBaseboard.new(model)
           baseboard_coil.setName(obj_name + " #{zone.name} heating coil")
           if capacity != Constants.SizingAuto
@@ -2041,7 +1994,7 @@ class HVAC
           baseboard_heater.addToThermalZone(zone)
           runner.registerInfo("Added '#{baseboard_heater.name}' to '#{zone.name}' of #{unit.name}")
           
-          HVAC.prioritize_zone_hvac(model, runner, zone)
+          prioritize_zone_hvac(model, runner, zone)
           
           plant_loop.addDemandBranchForComponent(baseboard_coil)
           
@@ -2062,9 +2015,6 @@ class HVAC
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         ([control_zone] + slave_zones).each do |zone|
-        
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameElectricBaseboard, zone, false, unit)
         
           htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
           htg_coil.setName(obj_name + " #{zone.name} convective electric")
@@ -2105,9 +2055,6 @@ class HVAC
       
         ([control_zone] + slave_zones).each do |zone|
       
-          # Remove existing equipment
-          remove_existing_hvac_equipment(model, runner, Constants.ObjectNameUnitHeater, zone, true, unit)
-          
           # _processSystemHeatingCoil
 
           htg_coil = OpenStudio::Model::CoilHeatingGas.new(model)
@@ -2170,23 +2117,609 @@ class HVAC
       return true
     end
     
-    def self.apply_heating_setpoints() # TODO
+    def self.remove_hvac_equipment(model, runner, thermal_zone, unit, new_equip)
+      # TODO: Split into remove_heating and remove_cooling
+      counterpart_equip = nil
+      perf = nil
+      case new_equip
+      when Constants.ObjectNameCentralAirConditioner
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        counterpart_equip = self.reset_furnace(model, runner, thermal_zone)
+        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
+        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_mshp
+          removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        end
+        if counterpart_equip or removed_ac or removed_ashp or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      when Constants.ObjectNameRoomAirConditioner
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
+        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_mshp
+          removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        end        
+        if removed_ac or removed_ashp or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      when Constants.ObjectNameFurnace
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        counterpart_equip = self.reset_central_ac(model, runner, thermal_zone)
+        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
+        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
+        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
+        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if counterpart_equip or removed_furnace or removed_ashp or removed_gshp
+          if removed_ashp or removed_gshp
+            self.remove_air_loop(model, runner, thermal_zone)
+          else
+            perf = self.remove_air_loop(model, runner, thermal_zone, true)
+          end
+        end
+      when Constants.ObjectNameBoiler
+        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
+        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
+        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
+        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_furnace or removed_ashp or removed_mshp or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      when Constants.ObjectNameElectricBaseboard
+        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
+        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
+        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_furnace or removed_ashp or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      when Constants.ObjectNameAirSourceHeatPump
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
+        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
+        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
+        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
+        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
+        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_ashp or removed_ac or removed_furnace or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      when Constants.ObjectNameMiniSplitHeatPump
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
+        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
+        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
+        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
+        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
+        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_ac or removed_furnace or removed_ashp or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      when Constants.ObjectNameGroundSourceHeatPumpVerticalBore
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
+        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
+        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
+        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
+        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
+        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_ashp or removed_ac or removed_furnace or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      when Constants.ObjectNameUnitHeater
+        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
+        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
+        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
+        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
+        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
+        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
+        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
+        if removed_furnace or removed_ashp or removed_gshp
+          self.remove_air_loop(model, runner, thermal_zone)
+        end
+      end
+      return counterpart_equip, perf
+    end   
     
+    def self.apply_heating_setpoints(model, runner, weather, weekday_setpoints, weekend_setpoints,
+                                     use_auto_season, season_start_month, season_end_month)
+    
+      # Get heating season
+      if use_auto_season
+        heating_season, cooling_season = calc_heating_and_cooling_seasons(model, weather, runner)
+      else
+        if season_start_month <= season_end_month
+          heating_season = Array.new(season_start_month-1, 0) + Array.new(season_end_month-season_start_month+1, 1) + Array.new(12-season_end_month, 0)
+        elsif season_start_month > season_end_month
+          heating_season = Array.new(season_end_month, 1) + Array.new(season_start_month-season_end_month-1, 0) + Array.new(12-season_start_month+1, 1)
+        end
+      end
+      if heating_season.nil?
+        return false
+      end
+      
+      # Remove existing heating season schedule
+      model.getScheduleRulesets.each do |sch|
+        next unless sch.name.to_s == Constants.ObjectNameHeatingSeason
+        sch.remove
+      end
+      
+      heating_season_schedule = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSeason, Array.new(24, 1), Array.new(24, 1), heating_season, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+      unless heating_season_schedule.validated?
+        return false
+      end
+
+      # assign the availability schedules to the equipment objects
+      model.getThermalZones.each do |thermal_zone|
+        heating_equipment = existing_heating_equipment(model, runner, thermal_zone)
+        heating_equipment.each do |htg_equip|
+          htg_obj = nil
+          supp_htg_obj = nil
+          if (htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem or
+              htg_equip.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
+            clg_obj, htg_obj, supp_htg_obj = get_coils_from_hvac_equip(htg_equip)
+          elsif htg_equip.to_ZoneHVACComponent.is_initialized
+            htg_obj = htg_equip
+          end
+          unless htg_obj.nil? or htg_obj.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
+            htg_obj.setAvailabilitySchedule(heating_season_schedule.schedule)
+            runner.registerInfo("Added availability schedule to #{htg_obj.name}.")
+          end
+          unless supp_htg_obj.nil?
+            supp_htg_obj.setAvailabilitySchedule(heating_season_schedule.schedule)
+            runner.registerInfo("Added availability schedule to #{supp_htg_obj.name}.")
+          end
+        end
+      end
+      
+      weekday_setpoints = weekday_setpoints.map {|i| UnitConversions.convert(i,"F","C")}
+      weekend_setpoints = weekend_setpoints.map {|i| UnitConversions.convert(i,"F","C")}   
+      
+      finished_zones = []
+      model.getThermalZones.each do |thermal_zone|
+        if Geometry.zone_is_finished(thermal_zone)
+          finished_zones << thermal_zone
+        end
+      end
+      
+      # Remove existing heating setpoint schedule
+      model.getScheduleRulesets.each do |sch|
+        next unless sch.name.to_s == Constants.ObjectNameHeatingSetpoint
+        sch.remove
+      end
+      
+      # Make the setpoint schedules
+      heating_setpoint = nil
+      cooling_setpoint = nil
+      finished_zones.each do |finished_zone|
+      
+        thermostat_setpoint = finished_zone.thermostatSetpointDualSetpoint
+        if thermostat_setpoint.is_initialized
+        
+          thermostat_setpoint = thermostat_setpoint.get
+          runner.registerInfo("Found existing thermostat #{thermostat_setpoint.name} for #{finished_zone.name}.")
+          
+          clg_wkdy = Array.new(24, Constants.NoCoolingSetpoint)
+          clg_wked = Array.new(24, Constants.NoCoolingSetpoint)
+          cooling_season = Array.new(12, 0.0)
+          thermostat_setpoint.coolingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
+            if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
+              rule.daySchedule.values.each_with_index do |value, hour|
+                if value < clg_wkdy[hour]
+                  clg_wkdy[hour] = value
+                end
+              end
+            end
+            if rule.applySaturday and rule.applySunday
+              rule.daySchedule.values.each_with_index do |value, hour|
+                if value < clg_wked[hour]
+                  clg_wked[hour] = value
+                end
+                if value < 50
+                  cooling_season[rule.startDate.get.monthOfYear.value-1] = 1.0
+                end
+              end
+            end
+          end
+          
+          htg_wkdy_monthly = []
+          htg_wked_monthly = []
+          clg_wkdy_monthly = []
+          clg_wked_monthly = []
+          (0..11).to_a.each do |i|        
+            if cooling_season[i] == 1 and heating_season[i] == 1
+              htg_wkdy_monthly << weekday_setpoints.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              htg_wked_monthly << weekend_setpoints.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              clg_wkdy_monthly << weekday_setpoints.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : c}
+              clg_wked_monthly << weekend_setpoints.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : c}
+            elsif heating_season[i] == 1
+              htg_wkdy_monthly << weekday_setpoints
+              htg_wked_monthly << weekend_setpoints
+              clg_wkdy_monthly << Array.new(24, Constants.NoCoolingSetpoint)
+              clg_wked_monthly << Array.new(24, Constants.NoCoolingSetpoint)
+            else
+              htg_wkdy_monthly << Array.new(24, Constants.NoHeatingSetpoint)
+              htg_wked_monthly << Array.new(24, Constants.NoHeatingSetpoint)
+              clg_wkdy_monthly << clg_wkdy
+              clg_wked_monthly << clg_wked
+            end          
+          end
+          
+          model.getScheduleRulesets.each do |sch|
+            next unless sch.name.to_s == Constants.ObjectNameCoolingSetpoint
+            sch.remove
+          end
+          
+          heating_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
+          cooling_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
+
+          unless heating_setpoint.validated? and cooling_setpoint.validated?
+            return false
+          end
+          
+        else
+          
+          htg_monthly_sch = Array.new(12, 1)
+          for m in 1..12
+            if heating_season[m-1] == 1
+              htg_monthly_sch[m-1] = 1
+            else
+              htg_monthly_sch[m-1] = Constants.NoHeatingSetpoint
+            end
+          end        
+          clg_monthly_sch = Array.new(12, 1)
+          for m in 1..12
+            clg_monthly_sch[m-1] = Constants.NoCoolingSetpoint
+          end
+          
+          heating_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, weekday_setpoints, weekend_setpoints, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+          cooling_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, Array.new(24, 1), Array.new(24, 1), clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+
+          unless heating_setpoint.validated? and cooling_setpoint.validated?
+            return false
+          end             
+        
+        end
+        break # assume all finished zones have the same schedules
+        
+      end    
+      
+      # Set the setpoint schedules
+      finished_zones.each do |finished_zone|
+      
+        thermostat_setpoint = finished_zone.thermostatSetpointDualSetpoint
+        if thermostat_setpoint.is_initialized
+          
+          thermostat_setpoint = thermostat_setpoint.get
+          thermostat_setpoint.setHeatingSetpointTemperatureSchedule(heating_setpoint.schedule)
+          thermostat_setpoint.setCoolingSetpointTemperatureSchedule(cooling_setpoint.schedule)
+          
+        else
+          
+          thermostat_setpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
+          thermostat_setpoint.setName("#{finished_zone.name} temperature setpoint")
+          runner.registerInfo("Created new thermostat #{thermostat_setpoint.name} for #{finished_zone.name}.")
+          thermostat_setpoint.setHeatingSetpointTemperatureSchedule(heating_setpoint.schedule)
+          thermostat_setpoint.setCoolingSetpointTemperatureSchedule(cooling_setpoint.schedule)
+          finished_zone.setThermostatSetpointDualSetpoint(thermostat_setpoint)        
+          runner.registerInfo("Set a dummy cooling setpoint schedule for #{thermostat_setpoint.name}.")              
+        
+        end
+        
+        runner.registerInfo("Set the heating setpoint schedule for #{thermostat_setpoint.name}.")
+
+      end
+
+      model.getScheduleDays.each do |obj| # remove orphaned summer and winter design day schedules
+        next if obj.directUseCount > 0
+        obj.remove
+      end
+      
+      return true
     end
     
-    def self.apply_cooling_setpoints() # TODO
+    def self.apply_cooling_setpoints(model, runner, weather, weekday_setpoints, weekend_setpoints,
+                                     use_auto_season, season_start_month, season_end_month)
     
+      # Get cooling season
+      if use_auto_season
+        heating_season, cooling_season = calc_heating_and_cooling_seasons(model, weather, runner)
+      else
+        if season_start_month <= season_end_month
+          cooling_season = Array.new(season_start_month-1, 0) + Array.new(season_end_month-season_start_month+1, 1) + Array.new(12-season_end_month, 0)
+        elsif season_start_month > season_end_month
+          cooling_season = Array.new(season_end_month, 1) + Array.new(season_start_month-season_end_month-1, 0) + Array.new(12-season_start_month+1, 1)
+        end
+      end
+      if cooling_season.nil?
+        return false
+      end
+      
+      # Remove existing cooling season schedule
+      model.getScheduleRulesets.each do |sch|
+        next unless sch.name.to_s == Constants.ObjectNameCoolingSeason
+        sch.remove
+      end    
+
+      cooling_season_sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSeason, Array.new(24, 1), Array.new(24, 1), cooling_season, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)  
+      unless cooling_season_sch.validated?
+        return false
+      end
+      
+      # assign the availability schedules to the equipment objects
+      model.getThermalZones.each do |thermal_zone|
+        cooling_equipment = existing_cooling_equipment(model, runner, thermal_zone)
+        cooling_equipment.each do |clg_equip|
+          clg_coil, htg_coil, supp_htg_coil = get_coils_from_hvac_equip(clg_equip)
+          unless clg_coil.nil? or clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized
+            clg_coil.setAvailabilitySchedule(cooling_season_sch.schedule)
+            runner.registerInfo("Added availability schedule to #{clg_coil.name}.")
+          end
+        end
+      end
+      
+      weekday_setpoints = weekday_setpoints.map {|i| UnitConversions.convert(i,"F","C")}
+      weekend_setpoints = weekend_setpoints.map {|i| UnitConversions.convert(i,"F","C")}  
+      
+      finished_zones = []
+      model.getThermalZones.each do |thermal_zone|
+        if Geometry.zone_is_finished(thermal_zone)
+          finished_zones << thermal_zone
+        end
+      end
+      
+      # Remove existing cooling setpoint schedule
+      model.getScheduleRulesets.each do |sch|
+        next unless sch.name.to_s == Constants.ObjectNameCoolingSetpoint
+        sch.remove
+      end    
+      
+      # Make the setpoint schedules
+      heating_setpoint = nil
+      cooling_setpoint = nil
+      finished_zones.each do |finished_zone|
+      
+        thermostat_setpoint = finished_zone.thermostatSetpointDualSetpoint
+        if thermostat_setpoint.is_initialized
+          
+          thermostat_setpoint = thermostat_setpoint.get
+          runner.registerInfo("Found existing thermostat #{thermostat_setpoint.name} for #{finished_zone.name}.")        
+          
+          htg_wkdy = Array.new(24, Constants.NoHeatingSetpoint)
+          htg_wked = Array.new(24, Constants.NoHeatingSetpoint)
+          heating_season = Array.new(12, 0.0)
+          thermostat_setpoint.heatingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
+            if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
+              rule.daySchedule.values.each_with_index do |value, hour|
+                if value > htg_wkdy[hour]
+                  htg_wkdy[hour] = value
+                end
+              end
+            end
+            if rule.applySaturday and rule.applySunday
+              rule.daySchedule.values.each_with_index do |value, hour|
+                if value > htg_wked[hour]
+                  htg_wked[hour] = value
+                end
+                if value > -50
+                  heating_season[rule.startDate.get.monthOfYear.value-1] = 1.0
+                end
+              end
+            end
+          end
+          
+          htg_wkdy_monthly = []
+          htg_wked_monthly = []
+          clg_wkdy_monthly = []
+          clg_wked_monthly = []
+          (0..11).to_a.each do |i|       
+            if cooling_season[i] == 1 and heating_season[i] == 1
+              htg_wkdy_monthly << htg_wkdy.zip(weekday_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              htg_wked_monthly << htg_wked.zip(weekend_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              clg_wkdy_monthly << htg_wkdy.zip(weekday_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : c}
+              clg_wked_monthly << htg_wked.zip(weekend_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : c}
+            elsif cooling_season[i] == 1
+              htg_wkdy_monthly << Array.new(24, Constants.NoHeatingSetpoint)
+              htg_wked_monthly << Array.new(24, Constants.NoHeatingSetpoint)
+              clg_wkdy_monthly << weekday_setpoints
+              clg_wked_monthly << weekend_setpoints          
+            else
+              htg_wkdy_monthly << htg_wkdy
+              htg_wked_monthly << htg_wked
+              clg_wkdy_monthly << Array.new(24, Constants.NoCoolingSetpoint)
+              clg_wked_monthly << Array.new(24, Constants.NoCoolingSetpoint)
+            end          
+          end
+          
+          model.getScheduleRulesets.each do |sch|
+            next unless sch.name.to_s == Constants.ObjectNameHeatingSetpoint
+            sch.remove
+          end        
+          
+          heating_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
+          cooling_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
+
+          unless heating_setpoint.validated? and cooling_setpoint.validated?
+            return false
+          end
+          
+        else
+          
+          clg_monthly_sch = Array.new(12, 1)
+          for m in 1..12
+            if cooling_season[m-1] == 1
+              clg_monthly_sch[m-1] = 1
+            else
+              clg_monthly_sch[m-1] = Constants.NoCoolingSetpoint
+            end
+          end        
+          htg_monthly_sch = Array.new(12, 1)
+          for m in 1..12
+            htg_monthly_sch[m-1] = Constants.NoHeatingSetpoint
+          end
+          
+          heating_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, Array.new(24, 1), Array.new(24, 1), htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+          cooling_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, weekday_setpoints, weekend_setpoints, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+
+          unless heating_setpoint.validated? and cooling_setpoint.validated?
+            return false
+          end
+        
+        end
+        break # assume all finished zones have the same schedules
+        
+      end    
+      
+      # Set the setpoint schedules
+      finished_zones.each do |finished_zone|
+      
+        thermostat_setpoint = finished_zone.thermostatSetpointDualSetpoint
+        if thermostat_setpoint.is_initialized
+          
+          thermostat_setpoint = thermostat_setpoint.get
+          thermostat_setpoint.setHeatingSetpointTemperatureSchedule(heating_setpoint.schedule)
+          thermostat_setpoint.setCoolingSetpointTemperatureSchedule(cooling_setpoint.schedule)
+          
+        else       
+          
+          thermostat_setpoint = OpenStudio::Model::ThermostatSetpointDualSetpoint.new(model)
+          thermostat_setpoint.setName("#{finished_zone.name} temperature setpoint")
+          runner.registerInfo("Created new thermostat #{thermostat_setpoint.name} for #{finished_zone.name}.")
+          thermostat_setpoint.setHeatingSetpointTemperatureSchedule(heating_setpoint.schedule)
+          thermostat_setpoint.setCoolingSetpointTemperatureSchedule(cooling_setpoint.schedule)        
+          finished_zone.setThermostatSetpointDualSetpoint(thermostat_setpoint)        
+          runner.registerInfo("Set a dummy heating setpoint schedule for #{thermostat_setpoint.name}.")              
+        
+        end
+        
+        runner.registerInfo("Set the cooling setpoint schedule for #{thermostat_setpoint.name}.")      
+
+      end
+
+      model.getScheduleDays.each do |obj| # remove orphaned summer and winter design day schedules
+        next if obj.directUseCount > 0
+        obj.remove
+      end
+
+      return true
     end
     
-    def self.apply_dehumidifier() # TODO
+    def self.apply_dehumidifier(model, unit, runner, energy_factor,
+                                water_removal_rate, air_flow_rate, humidity_setpoint)
     
+      # error checking
+      if humidity_setpoint < 0 or humidity_setpoint > 1
+        runner.registerError("Invalid humidity setpoint value entered.")
+        return false
+      end
+      if water_removal_rate != Constants.Auto and water_removal_rate.to_f <= 0
+        runner.registerError("Invalid water removal rate value entered.")
+        return false
+      end    
+      if energy_factor != Constants.Auto and energy_factor.to_f < 0
+        runner.registerError("Invalid energy factor value entered.")
+        return false
+      end
+      if air_flow_rate != Constants.Auto and air_flow_rate.to_f < 0
+        runner.registerError("Invalid air flow rate value entered.")
+        return false
+      end
+
+      obj_name = Constants.ObjectNameDehumidifier(unit.name.to_s)    
+    
+      avg_rh_setpoint = humidity_setpoint * 100.0 # (EnergyPlus uses 60 for 60% RH)
+      relative_humidity_setpoint_sch = OpenStudio::Model::ScheduleConstant.new(model)
+      relative_humidity_setpoint_sch.setName(Constants.ObjectNameRelativeHumiditySetpoint(unit.name.to_s))
+      relative_humidity_setpoint_sch.setValue(avg_rh_setpoint)
+      
+      # Dehumidifier coefficients
+      # Generic model coefficients from Winkler, Christensen, and Tomerlin (2011)
+      water_removal_curve = create_curve_biquadratic(model, [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -0.0000693034, 0.000378843], "DXDH-WaterRemove-Cap-fT", -100, 100, -100, 100)
+      energy_factor_curve = create_curve_biquadratic(model, [-1.902154518, 0.063466565, -0.000622839, 0.039540407, -0.000125637, -0.000176722], "DXDH-EnergyFactor-fT", -100, 100, -100, 100)
+      part_load_frac_curve = create_curve_quadratic(model, [0.90, 0.10, 0.0], "DXDH-PLF-fPLR", 0, 1, 0.7, 1)
+
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+      
+      control_slave_zones_hash = get_control_and_slave_zones(thermal_zones)
+      control_slave_zones_hash.each do |control_zone, slave_zones|
+
+        humidistat = OpenStudio::Model::ZoneControlHumidistat.new(model)
+        humidistat.setName(obj_name + " #{control_zone.name} humidistat")
+        humidistat.setHumidifyingRelativeHumiditySetpointSchedule(relative_humidity_setpoint_sch)
+        humidistat.setDehumidifyingRelativeHumiditySetpointSchedule(relative_humidity_setpoint_sch)
+        control_zone.setZoneControlHumidistat(humidistat)  
+      
+        zone_hvac = OpenStudio::Model::ZoneHVACDehumidifierDX.new(model, water_removal_curve, energy_factor_curve, part_load_frac_curve)
+        zone_hvac.setName(obj_name + " #{control_zone.name} dx")
+        zone_hvac.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        if water_removal_rate != Constants.Auto
+          zone_hvac.setRatedWaterRemoval(UnitConversions.convert(water_removal_rate.to_f,"pint","L"))
+        else
+          zone_hvac.setRatedWaterRemoval(Constants.small) # Autosize flag for HVACSizing measure
+        end
+        if energy_factor != Constants.Auto
+          zone_hvac.setRatedEnergyFactor(energy_factor.to_f)
+        else
+          zone_hvac.setRatedEnergyFactor(Constants.small) # Autosize flag for HVACSizing measure
+        end
+        if air_flow_rate != Constants.Auto
+          zone_hvac.setRatedAirFlowRate(UnitConversions.convert(air_flow_rate.to_f,"cfm","m^3/s"))
+        else
+          zone_hvac.setRatedAirFlowRate(Constants.small) # Autosize flag for HVACSizing measure
+        end
+        zone_hvac.setMinimumDryBulbTemperatureforDehumidifierOperation(10)
+        zone_hvac.setMaximumDryBulbTemperatureforDehumidifierOperation(40)
+        
+        zone_hvac.addToThermalZone(control_zone)
+        runner.registerInfo("Added '#{zone_hvac.name}' to '#{control_zone.name}' of #{unit.name}")
+        
+        prioritize_zone_hvac(model, runner, control_zone)
+              
+      end
+    
+      return true
+    end
+    
+    def self.remove_dehumidifier(runner, model, zone, unit)
+      
+      # FIXME: Needs to be zone specific...
+      model.getScheduleConstants.each do |sch|
+        next unless sch.name.to_s == Constants.ObjectNameRelativeHumiditySetpoint(unit.name.to_s)
+        sch.remove
+      end
+    
+      model.getZoneHVACDehumidifierDXs.each do |dehumidifier|
+        next unless zone.handle.to_s == dehumidifier.thermalZone.get.handle.to_s
+        runner.registerInfo("Removed '#{dehumidifier.name}' from #{zone.name}.")
+        dehumidifier.remove
+        
+        humidistat = zone.zoneControlHumidistat
+        if humidistat.is_initialized
+          humidistat.get.remove
+        end
+      end
+      
     end
     
     def self.apply_ceiling_fans() # TODO
-    
-    end
-    
-    def self.apply_sizing() # TODO (in separate file...)
     
     end
     
@@ -3213,126 +3746,6 @@ class HVAC
       return cloned_htg_coil
     end
     
-    def self.remove_existing_hvac_equipment(model, runner, new_equip, thermal_zone, clone_perf, unit)
-      counterpart_equip = nil
-      perf = nil
-      case new_equip
-      when Constants.ObjectNameCentralAirConditioner
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        counterpart_equip = self.reset_furnace(model, runner, thermal_zone)
-        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_mshp
-          removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        end
-        if counterpart_equip or removed_ac or removed_ashp or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameRoomAirConditioner
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
-        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_mshp
-          removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        end        
-        if removed_ac or removed_ashp or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameFurnace
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        counterpart_equip = self.reset_central_ac(model, runner, thermal_zone)
-        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
-        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
-        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
-        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if counterpart_equip or removed_furnace or removed_ashp or removed_gshp
-          if removed_ashp or removed_gshp
-            clone_perf = false
-          end
-          perf = self.remove_air_loop(model, runner, thermal_zone, clone_perf)
-        end
-      when Constants.ObjectNameBoiler
-        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
-        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
-        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
-        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_furnace or removed_ashp or removed_mshp or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameElectricBaseboard
-        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
-        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
-        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_furnace or removed_ashp or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameAirSourceHeatPump
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
-        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
-        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
-        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
-        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_ashp or removed_ac or removed_furnace or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameMiniSplitHeatPump
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
-        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
-        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
-        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
-        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_ac or removed_furnace or removed_ashp or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameGroundSourceHeatPumpVerticalBore
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        removed_ac = self.remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = self.remove_room_ac(model, runner, thermal_zone)
-        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
-        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
-        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
-        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_ashp or removed_ac or removed_furnace or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameUnitHeater
-        removed_elec_baseboard = self.remove_electric_baseboard(model, runner, thermal_zone)
-        removed_furnace = self.remove_furnace(model, runner, thermal_zone)
-        removed_boiler = self.remove_boiler(model, runner, thermal_zone)
-        removed_heater = self.remove_unit_heater(model, runner, thermal_zone)
-        removed_ashp = self.remove_ashp(model, runner, thermal_zone)
-        removed_mshp = self.remove_mshp(model, runner, thermal_zone, unit)
-        removed_gshp = self.remove_gshp(model, runner, thermal_zone)
-        if removed_furnace or removed_ashp or removed_gshp
-          self.remove_air_loop(model, runner, thermal_zone)
-        end
-      end
-      return counterpart_equip, perf
-    end   
-    
     def self.prioritize_zone_hvac(model, runner, zone)
       zone_hvac_priority_list = [
                                  "ZoneHVACEnergyRecoveryVentilator", 
@@ -3359,8 +3772,9 @@ class HVAC
       end
     end
     
-    # Calculates heating/cooling seasons from BAHSP definition
     def self.calc_heating_and_cooling_seasons(model, weather, runner=nil)
+      # Calculates heating/cooling seasons from BAHSP definition
+      
       monthly_temps = weather.data.MonthlyAvgDrybulbs
       heat_design_db = weather.design.HeatingDrybulb
       

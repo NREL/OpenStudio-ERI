@@ -15,6 +15,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/location"
 require "#{File.dirname(__FILE__)}/resources/constructions"
 require "#{File.dirname(__FILE__)}/resources/misc_loads"
+require "#{File.dirname(__FILE__)}/resources/hvac_sizing"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -199,6 +200,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     # Create OpenStudio model
     if not OSModel.create(hpxml_doc, runner, model, weather)
+      runner.registerError("Unsuccessful creation of OpenStudio model.")
       return false
     end 
     
@@ -280,14 +282,10 @@ class OSMeasures
 
   def self.build_measures_from_hpxml(hpxml_doc, model, runner, weather)
 
-    measures = {}
-    building = hpxml_doc.elements["/HPXML/Building"]
-    
     # TODO
     # ResidentialGeometryOrientation
     # ResidentialGeometryEaves
     # ResidentialGeometryNeighbors
-    
     
     # Envelope
     get_foundation_constructions(building, measures)
@@ -299,18 +297,13 @@ class OSMeasures
     get_hot_water_and_appliances(building, measures)
     
     # HVAC
-    get_setpoints(building, measures)
     get_ceiling_fan(building, measures)
-    get_dehumidifier(building, measures)
     
     # Plug Loads and Lighting
     get_lighting(building, measures)
     
     # Other
-    get_hvac_sizing(building, measures)
     get_photovoltaics(building, measures)
-
-    return measures
 
   end
   
@@ -892,37 +885,6 @@ class OSMeasures
     
   end
   
-  def self.get_setpoints(building, measures) 
-
-    control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
-    
-    # TODO: Setbacks and setups
-  
-    htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
-    clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
-    
-    measure_subdir = "ResidentialHVACHeatingSetpoints"
-    args = {
-            "weekday_setpoint"=>htg_sp,
-            "weekend_setpoint"=>htg_sp,
-            "use_auto_season"=>false,
-            "season_start_month"=>"Jan",
-            "season_end_month"=>"Dec"
-           }  
-    update_args_hash(measures, measure_subdir, args)
-    
-    measure_subdir = "ResidentialHVACCoolingSetpoints"
-    args = {
-            "weekday_setpoint"=>clg_sp,
-            "weekend_setpoint"=>clg_sp,
-            "use_auto_season"=>false,
-            "season_start_month"=>"Jan",
-            "season_end_month"=>"Dec"
-           }  
-    update_args_hash(measures, measure_subdir, args)
-
-  end
-
   def self.get_ceiling_fan(building, measures)
 
     # FIXME
@@ -945,28 +907,6 @@ class OSMeasures
 
   end
 
-  def self.get_dehumidifier(building, measures)
-  
-    dehumidifier = building.elements["BuildingDetails/Systems/HVAC/extension/dehumidifier"]
-    
-    return if dehumidifier.nil?
-    
-    air_flow_rate = XMLHelper.get_value(dehumidifier, "air_flow_rate")
-    energy_factor = XMLHelper.get_value(dehumidifier, "energy_factor")
-    humidity_setpoint = XMLHelper.get_value(dehumidifier, "humidity_setpoint")
-    water_removal_rate = XMLHelper.get_value(dehumidifier, "water_removal_rate")
-  
-    measure_subdir = "ResidentialHVACDehumidifier"
-    args = {
-            "air_flow_rate"=>air_flow_rate,
-            "energy_factor"=>energy_factor,
-            "humidity_setpoint"=>humidity_setpoint,
-            "water_removal_rate"=>water_removal_rate
-           }  
-    update_args_hash(measures, measure_subdir, args)    
-  
-  end
-  
   def self.get_lighting(building, measures)
   
     lighting = building.elements["BuildingDetails/Lighting"]
@@ -996,16 +936,6 @@ class OSMeasures
 
   end
   
-  def self.get_hvac_sizing(building, measures)
-    
-    measure_subdir = "ResidentialHVACSizing"
-    args = {
-            "show_debug_info"=>false
-           }  
-    update_args_hash(measures, measure_subdir, args) # FIXME (need to figure out approach for dealing with volumes)
-
-  end
-
   def self.get_photovoltaics(building, measures)
 
     pvsys = building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"]
@@ -1072,6 +1002,15 @@ class OSModel
     return false if not success
     success = add_attic_roofs(runner, model, building, geometry_errors, spaces)
     return false if not success
+    success = explode_surfaces(runner, model)
+    return false if not success
+
+    geometry_errors.each do |error|
+      runner.registerError(error)
+    end
+    unless geometry_errors.empty?
+      return false
+    end    
     
     # Beds, Baths, Occupants
     
@@ -1087,6 +1026,10 @@ class OSModel
     return false if not success
     success = add_heat_pump(runner, model, building, unit, dse, weather)
     return false if not success
+    success = add_setpoints(runner, model, building, weather) 
+    return false if not success
+    success = add_dehumidifier(runner, model, building, unit)
+    return false if not success
 
     # Plug Loads & Lighting
     
@@ -1097,15 +1040,17 @@ class OSModel
     
     success = add_airflow(runner, model, building, unit)
     return false if not success
+    success = add_hvac_sizing(runner, model, unit, weather)
+    return false if not success
     
-    geometry_errors.each do |error|
-      runner.registerError(error)
-    end
-
-    unless geometry_errors.empty?
-      return false
-    end    
+    return true
     
+  end
+  
+  private
+  
+  def self.explode_surfaces(runner, model)
+  
     # FIXME: Set the zone volumes based on the sum of space volumes
     model.getThermalZones.each do |thermal_zone|
       zone_volume = 0
@@ -1200,12 +1145,10 @@ class OSModel
       window_offset += 2.5
       
     end
-
+    
     return true
     
   end
-  
-  private
   
   def self.create_spaces_and_zones(model, spaces, space_type)
     if not spaces.keys.include? space_type
@@ -1463,6 +1406,7 @@ class OSModel
   end
   
   def self.add_num_beds_baths_occupants(model, building, runner)
+    
     # Bedrooms/Bathrooms
     num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
@@ -1480,6 +1424,8 @@ class OSModel
     monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
     success = Geometry.process_occupants(model, runner, num_occ.to_s, occ_gain, sens_frac, lat_frac, weekday_sch, weekend_sch, monthly_sch)
     return false if not success
+    
+    return true
   end
   
   def self.add_foundation_floors(model, building, spaces)
@@ -1865,7 +1811,7 @@ class OSModel
   
     heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
     if heating_season.nil? or cooling_season.nil?
-        return false
+      return false
     end
   
     surfaces = []
@@ -2000,6 +1946,7 @@ class OSModel
   end  
   
   def self.apply_adiabatic_construction(runner, model, surfaces)
+    
     # Arbitrary construction
     framing_factor = Constants.DefaultFramingFactorInterior
     cavity_r = 0.0
@@ -2015,6 +1962,8 @@ class OSModel
                                                 cavity_filled, framing_factor,
                                                 drywall_thick_in, 0, rigid_r, mat_ext_finish)
     return false if not success
+    
+    return true
   end
   
   def self.add_cooling_system(runner, model, building, unit, dse)
@@ -2130,13 +2079,33 @@ class OSModel
       heat_capacity_kbtuh = OpenStudio.convert(heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr").get
     end
     
+    # FIXME: THIS SHOULD NOT BE NEEDED
+    # ==================================
+    objname = nil
+    if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
+      objname = Constants.ObjectNameFurnace
+    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
+      objname = Constants.ObjectNameBoiler
+    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
+      objname = Constants.ObjectNameElectricBaseboard
+    end
+    existing_objects = {}
+    thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+    HVAC.get_control_and_slave_zones(thermal_zones).each do |control_zone, slave_zones|
+      ([control_zone] + slave_zones).each do |zone|
+        existing_objects[zone] = HVAC.remove_hvac_equipment(model, runner, zone, unit, objname)
+      end
+    end
+    # ==================================
+    
     if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
     
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
     
       fan_power_installed = 0.5
       success = HVAC.apply_furnace(model, unit, runner, to_beopt_fuel(fuel), afue,
-                                   heat_capacity_kbtuh, fan_power_installed, dse)
+                                   heat_capacity_kbtuh, fan_power_installed, dse,
+                                   existing_objects)
       return false if not success
       
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
@@ -2151,14 +2120,16 @@ class OSModel
       design_temp = 180.0
       success = HVAC.apply_boiler(model, unit, runner, to_beopt_fuel(fuel), system_type, afue,
                                   oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                                  heat_capacity_kbtuh, design_temp, is_modulating, dse)
+                                  heat_capacity_kbtuh, design_temp, is_modulating, dse,
+                                  existing_objects)
       return false if not success
     
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
     
       efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
       success = HVAC.apply_electric_baseboard(model, unit, runner, efficiency, 
-                                              heat_capacity_kbtuh)
+                                              heat_capacity_kbtuh,
+                                              existing_objects)
       return false if not success
 
     # TODO
@@ -2365,6 +2336,53 @@ class OSModel
 
   end
   
+    def self.add_setpoints(runner, model, building, weather) 
+
+    control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
+    
+    # TODO: Setbacks and setups
+  
+    htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
+    weekday_setpoints = [htg_sp]*24
+    weekend_setpoints = [htg_sp]*24
+    use_auto_season = false
+    season_start_month = 1
+    season_end_month = 12
+    success = HVAC.apply_heating_setpoints(model, runner, weather, weekday_setpoints, weekend_setpoints,
+                                           use_auto_season, season_start_month, season_end_month)
+    return false if not success
+    
+    clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
+    weekday_setpoints = [clg_sp]*24
+    weekend_setpoints = [clg_sp]*24
+    use_auto_season = false
+    season_start_month = 1
+    season_end_month = 12
+    success = HVAC.apply_cooling_setpoints(model, runner, weather, weekday_setpoints, weekend_setpoints,
+                                           use_auto_season, season_start_month, season_end_month)
+    return false if not success
+
+    return true
+    
+  end
+
+  def self.add_dehumidifier(runner, model, building, unit)
+  
+    dehumidifier = building.elements["BuildingDetails/Systems/HVAC/extension/dehumidifier"]
+    return true if dehumidifier.nil?
+    
+    energy_factor = XMLHelper.get_value(dehumidifier, "energy_factor")
+    water_removal_rate = XMLHelper.get_value(dehumidifier, "water_removal_rate")
+    air_flow_rate = XMLHelper.get_value(dehumidifier, "air_flow_rate")
+    humidity_setpoint = XMLHelper.get_value(dehumidifier, "humidity_setpoint")
+    success = HVAC.apply_dehumidifier(model, unit, runner, energy_factor, 
+                                      water_removal_rate, air_flow_rate, humidity_setpoint)
+    return false if not success
+  
+    return true
+    
+  end
+  
   def self.get_dse(building)
     dse_cool = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
     dse_heat = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
@@ -2548,6 +2566,17 @@ class OSModel
     return false if not success
     
     return true
+    
+  end
+  
+  def self.add_hvac_sizing(runner, model, unit, weather)
+    
+    # FIXME (need to figure out approach for dealing with volumes)
+    success = HVACSizing.apply(model, unit, runner, weather, false)
+    return false if not success
+    
+    return true
+
   end
   
 end
