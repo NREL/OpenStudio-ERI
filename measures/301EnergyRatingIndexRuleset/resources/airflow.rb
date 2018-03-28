@@ -74,12 +74,15 @@ class Airflow
     
     pbar_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Site Outdoor Air Barometric Pressure"])
     pbar_sensor.setName("#{Constants.ObjectNameNaturalVentilation} pb s")
+    pbar_sensor.setKeyName("*")
 
     vwind_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Site Wind Speed"])
     vwind_sensor.setName("#{Constants.ObjectNameAirflow} vw s")
+    vwind_sensor.setKeyName("*")
     
     wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Site Outdoor Air Humidity Ratio"])
     wout_sensor.setName("#{Constants.ObjectNameNaturalVentilation} wt s")
+    wout_sensor.setKeyName("*")
     
     # Adiabatic construction for ducts
     

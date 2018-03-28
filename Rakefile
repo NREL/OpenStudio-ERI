@@ -11,22 +11,6 @@ require 'json'
 
 namespace :test do
 
-  desc 'Run unit tests for all measures'
-  Rake::TestTask.new('measures') do |t|
-    t.libs << 'test'
-    t.test_files = Dir['measures/*/tests/*.rb']
-    t.warning = false
-    t.verbose = true
-  end
-  
-  desc 'Run simulation tests for all sample files'
-  Rake::TestTask.new('simulations') do |t|
-    t.libs << 'test'
-    t.test_files = Dir['workflow/tests/*.rb']
-    t.warning = false
-    t.verbose = true
-  end
-  
   desc 'Run all tests'
   Rake::TestTask.new('all') do |t|
     t.libs << 'test'

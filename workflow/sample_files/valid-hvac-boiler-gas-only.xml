@@ -159,6 +159,7 @@
             <Slab>
               <SystemIdentifier id='Slab_ID1'/>
               <Area>3500</Area>
+              <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>2</UnderSlabInsulationWidth>
               <DepthBelowGrade>0</DepthBelowGrade>

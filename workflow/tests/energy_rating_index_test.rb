@@ -2,9 +2,10 @@ require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
-require_relative '../../resources/xmlhelper.rb'
-require_relative '../../resources/schedules.rb'
-require_relative '../../resources/constants.rb'
+require_relative '../../measures/301EnergyRatingIndexRuleset/resources/xmlhelper'
+require_relative '../../measures/301EnergyRatingIndexRuleset/resources/schedules'
+require_relative '../../measures/301EnergyRatingIndexRuleset/resources/constants'
+require_relative '../../measures/301EnergyRatingIndexRuleset/resources/unit_conversions'
 
 class EnergyRatingIndexTest < MiniTest::Test
 
@@ -494,7 +495,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad") do |pl|
       frac_sens = Float(XMLHelper.get_value(pl, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(pl, "extension/FracLatent"))
-      btu = OpenStudio::convert(Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value")), "kWh", "Btu").get
+      btu = UnitConversions.convert(Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value")), "kWh", "Btu")
       xml_pl_sens += (frac_sens * btu)
       xml_pl_lat += (frac_lat * btu)
     end
@@ -506,8 +507,8 @@ class EnergyRatingIndexTest < MiniTest::Test
       frac_sens = 1.0 - frac_lat - ee.electricEquipmentDefinition.fractionLost
       hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ee.schedule.get)
       ee_w = ee.designLevel.get
-      osm_pl_sens += OpenStudio::convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu").get
-      osm_pl_lat += OpenStudio::convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu").get
+      osm_pl_sens += UnitConversions.convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu")
+      osm_pl_lat += UnitConversions.convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu")
     end
     s += "#{xml_pl_sens} #{osm_pl_sens} #{xml_pl_lat} #{osm_pl_lat}\n"
     
@@ -518,11 +519,11 @@ class EnergyRatingIndexTest < MiniTest::Test
       frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
       if appl.elements["RatedAnnualkWh"]
-        btu = OpenStudio::convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu").get
+        btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu")
       else
-        btu = OpenStudio::convert(Float(XMLHelper.get_value(appl, "extension/AnnualkWh")), "kWh", "Btu").get
+        btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualkWh")), "kWh", "Btu")
         if appl.elements["extension/AnnualTherm"]
-          btu += OpenStudio::convert(Float(XMLHelper.get_value(appl, "extension/AnnualTherm")), "therm", "Btu").get
+          btu += UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualTherm")), "therm", "Btu")
         end
       end
       xml_appl_sens += (frac_sens * btu)
@@ -536,8 +537,8 @@ class EnergyRatingIndexTest < MiniTest::Test
       frac_sens = 1.0 - frac_lat - ee.electricEquipmentDefinition.fractionLost
       hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ee.schedule.get)
       ee_w = ee.designLevel.get
-      osm_appl_sens += OpenStudio::convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu").get
-      osm_appl_lat += OpenStudio::convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu").get
+      osm_appl_sens += UnitConversions.convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu")
+      osm_appl_lat += UnitConversions.convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu")
     end
     model.getOtherEquipments.each do |oe|
       next if not oe.name.to_s.start_with?(Constants.ObjectNameCookingRange(nil)) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesDryer(nil)) and not oe.name.to_s.start_with?(Constants.ObjectNameDishwasher) and not oe.name.to_s.start_with?(Constants.ObjectNameRefrigerator)
@@ -545,8 +546,8 @@ class EnergyRatingIndexTest < MiniTest::Test
       frac_sens = 1.0 - frac_lat - oe.otherEquipmentDefinition.fractionLost
       hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, oe.schedule.get)
       oe_w = oe.otherEquipmentDefinition.designLevel.get
-      osm_appl_sens += OpenStudio::convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu").get
-      osm_appl_lat += OpenStudio::convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu").get
+      osm_appl_sens += UnitConversions.convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu")
+      osm_appl_lat += UnitConversions.convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu")
     end
     s += "#{xml_appl_sens} #{osm_appl_sens} #{xml_appl_lat} #{osm_appl_lat}\n"
     
@@ -565,8 +566,8 @@ class EnergyRatingIndexTest < MiniTest::Test
       frac_sens = 1.0 - frac_lat - oe.otherEquipmentDefinition.fractionLost
       hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, oe.schedule.get)
       oe_w = oe.otherEquipmentDefinition.designLevel.get
-      osm_water_sens += OpenStudio::convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu").get
-      osm_water_lat += OpenStudio::convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu").get
+      osm_water_sens += UnitConversions.convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu")
+      osm_water_lat += UnitConversions.convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu")
     end
     s += "#{xml_water_sens} #{osm_water_sens} #{xml_water_lat} #{osm_water_lat}\n"
     
@@ -586,7 +587,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       frac_sens = occ.peopleDefinition.sensibleHeatFraction.get
       frac_lat = 1.0 - frac_sens
       hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, occ.numberofPeopleSchedule.get)
-      but_per_occ_per_hr = OpenStudio.convert(Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, occ.activityLevelSchedule.get)/8760.0, "W", "Btu/h").get
+      but_per_occ_per_hr = UnitConversions.convert(Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, occ.activityLevelSchedule.get)/8760.0, "W", "Btu/hr")
       btu = occ.peopleDefinition.numberofPeople.get * but_per_occ_per_hr * hrs_per_year
       osm_occ_sens += (frac_sens * btu)
       osm_occ_lat += (frac_lat * btu)
@@ -597,13 +598,13 @@ class EnergyRatingIndexTest < MiniTest::Test
     xml_ltg_sens = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting") do |ltg|
       ltg_kwh = Float(XMLHelper.get_value(ltg, "extension/AnnualInteriorkWh")) + Float(XMLHelper.get_value(ltg, "extension/AnnualGaragekWh"))
-      xml_ltg_sens += OpenStudio::convert(ltg_kwh, "kWh", "Btu").get
+      xml_ltg_sens += UnitConversions.convert(ltg_kwh, "kWh", "Btu")
     end
     osm_ltg_sens = 0.0
     model.getLightss.each do |ltg|
       hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ltg.schedule.get)
       ltg_w = ltg.lightsDefinition.lightingLevel.get
-      osm_ltg_sens += OpenStudio::convert(ltg_w*hrs_per_year, "Wh", "Btu").get
+      osm_ltg_sens += UnitConversions.convert(ltg_w*hrs_per_year, "Wh", "Btu")
     end
     s += "#{xml_ltg_sens} #{osm_ltg_sens}\n"
     

@@ -2,6 +2,7 @@ require "#{File.dirname(__FILE__)}/constants"
 require "#{File.dirname(__FILE__)}/xmlhelper"
 require "#{File.dirname(__FILE__)}/waterheater"
 require "#{File.dirname(__FILE__)}/airflow"
+require "#{File.dirname(__FILE__)}/unit_conversions"
 
 class EnergyRatingIndex301Ruleset
 
@@ -2439,7 +2440,7 @@ class EnergyRatingIndex301Ruleset
   def self.get_clothes_washer_sens_lat(clothes_washer_kwh)
     load_sens = 95.0 + 26.0 * @nbeds # Btu/day
     load_lat = 11.0 + 3.0 * @nbeds # Btu/day
-    total = OpenStudio::convert(clothes_washer_kwh, "kWh", "Btu").get/365.0 # Btu/day
+    total = UnitConversions.convert(clothes_washer_kwh, "kWh", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   
@@ -2451,15 +2452,15 @@ class EnergyRatingIndex301Ruleset
       load_sens = 661.0 + 188.0 * @nbeds # Btu/day
       load_lat = 73.0 + 21.0 * @nbeds # Btu/day
     end
-    total = OpenStudio::convert(clothes_dryer_kwh, "kWh", "Btu").get/365.0  # Btu/day
-    total += OpenStudio::convert(clothes_dryer_therm, "therm", "Btu").get/365.0 # Btu/day
+    total = UnitConversions.convert(clothes_dryer_kwh, "kWh", "Btu")/365.0  # Btu/day
+    total += UnitConversions.convert(clothes_dryer_therm, "therm", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   
   def self.get_dishwasher_sens_lat(dishwasher_kwh)
     load_sens = 219.0 + 87.0 * @nbeds # Btu/day
     load_lat = 219.0 + 87.0 * @nbeds # Btu/day
-    total = OpenStudio::convert(dishwasher_kwh, "kWh", "Btu").get/365.0
+    total = UnitConversions.convert(dishwasher_kwh, "kWh", "Btu")/365.0
     return load_sens/total, load_lat/total
   end
   
@@ -2471,8 +2472,8 @@ class EnergyRatingIndex301Ruleset
       load_sens = 2228.0 + 262.0 * @nbeds # Btu/day
       load_lat = 248.0 + 29.0 * @nbeds # Btu/day
     end
-    total = OpenStudio::convert(cooking_range_kwh, "kWh", "Btu").get/365.0 # Btu/day
-    total += OpenStudio::convert(cooking_range_therm, "therm", "Btu").get/365.0 # Btu/day
+    total = UnitConversions.convert(cooking_range_kwh, "kWh", "Btu")/365.0 # Btu/day
+    total += UnitConversions.convert(cooking_range_therm, "therm", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   
@@ -2483,7 +2484,7 @@ class EnergyRatingIndex301Ruleset
   def self.get_residual_mels_sens_lat(residual_mels_kwh)
     load_sens = 7.27 * @cfa # Btu/day
     load_lat = 0.38 * @cfa # Btu/day
-    total = OpenStudio::convert(residual_mels_kwh, "kWh", "Btu").get/365.0 # Btu/day
+    total = UnitConversions.convert(residual_mels_kwh, "kWh", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   
@@ -2494,7 +2495,7 @@ class EnergyRatingIndex301Ruleset
   def self.get_televisions_sens_lat(televisions_kwh)
     load_sens = 3861.0 + 645.0 * @nbeds # Btu/day
     load_lat = 0.0 # Btu/day
-    total = OpenStudio::convert(televisions_kwh, "kWh", "Btu").get/365.0 # Btu/day
+    total = UnitConversions.convert(televisions_kwh, "kWh", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   

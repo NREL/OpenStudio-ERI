@@ -27,7 +27,7 @@ class Location
         success = apply_ground_temp(model, runner, weather)
         return false if not success
 
-        return true
+        return true, weather
     end
     
     private

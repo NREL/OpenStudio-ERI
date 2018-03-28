@@ -16,6 +16,7 @@ require "#{File.dirname(__FILE__)}/resources/location"
 require "#{File.dirname(__FILE__)}/resources/constructions"
 require "#{File.dirname(__FILE__)}/resources/misc_loads"
 require "#{File.dirname(__FILE__)}/resources/hvac_sizing"
+require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -27,7 +28,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
   # human readable description
   def description
-    return "Generates a model from a HPXML building description as defined by the ANSI/RESNET 301-2014 ruleset. Used as part of the caclulation of an Energy Rating Index."
+    return "Generates a model from a HPXML building description as defined by the ANSI/RESNET 301-2014 ruleset. Used as part of the calculation of an Energy Rating Index."
   end
 
   # human readable description of modeling approach
@@ -166,12 +167,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # Apply Location to obtain weather data
-    success = Location.apply(model, runner, epw_path, "NA", "NA")
+    success, weather = Location.apply(model, runner, epw_path, "NA", "NA")
     return false if not success
-    weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
-    if weather.error?
-      return false
-    end
     
     # Apply 301 ruleset on HPXML object
     EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
@@ -282,13 +279,7 @@ class OSMeasures
 
   def self.build_measures_from_hpxml(hpxml_doc, model, runner, weather)
 
-    # TODO
-    # ResidentialGeometryOrientation
-    # ResidentialGeometryEaves
-    # ResidentialGeometryNeighbors
-    
     # Envelope
-    get_foundation_constructions(building, measures)
     get_other_constructions(building, measures)
 
     # HVAC
@@ -303,317 +294,6 @@ class OSMeasures
   end
   
   private
-  
-  def self.get_foundation_wall_properties(foundation, measures)
-  
-    foundation.elements.each("FoundationWall") do |fnd_wall|
-    
-      name = fnd_wall.elements["SystemIdentifier"].attributes["id"]
-  
-      if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue")
-      
-        wall_R = Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
-        
-        wall_cav_r = 0.0
-        wall_cav_depth = 0.0
-        wall_grade = 1
-        wall_ff = 0.0        
-        wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
-        wall_cont_r = wall_R - Material.Concrete8in.rvalue - Material.DefaultWallSheathing.rvalue - Material.AirFilmVertical.rvalue
-        wall_cont_depth = 1.0
-      
-      else
-    
-        fnd_wall_cavity = fnd_wall.elements["Insulation/Layer[InstallationType='cavity']"]
-        wall_cav_r = Float(XMLHelper.get_value(fnd_wall_cavity, "NominalRValue"))
-        wall_cav_depth = Float(XMLHelper.get_value(fnd_wall_cavity, "Thickness"))
-        wall_grade = Integer(XMLHelper.get_value(fnd_wall, "Insulation/InsulationGrade"))
-        wall_ff = Float(XMLHelper.get_value(fnd_wall, "InteriorStuds/FramingFactor"))
-        
-        fnd_wall_cont = fnd_wall.elements["Insulation/Layer[InstallationType='continuous']"]
-        if XMLHelper.has_element(fnd_wall_cont, "extension/InsulationHeight")
-          wall_cont_height = Float(XMLHelper.get_value(fnd_wall_cont, "extension/InsulationHeight")) # For basement
-        else
-          wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height")) # For crawlspace, doesn't matter
-        end
-        wall_cont_r = Float(XMLHelper.get_value(fnd_wall_cont, "NominalRValue"))
-        wall_cont_depth = Float(XMLHelper.get_value(fnd_wall_cont, "Thickness"))
-        
-      end
-      
-      if XMLHelper.has_element(foundation, "FoundationType/Basement")
-        if Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
-          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementFinished"
-          args = {
-                  "surface"=>name,
-                  "wall_ins_height"=>wall_cont_height,
-                  "wall_cavity_r"=>wall_cav_r,
-                  "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
-                  "wall_cavity_depth"=>wall_cav_depth,
-                  "wall_cavity_insfills"=>true, # FIXME
-                  "wall_ff"=>wall_ff,
-                  "wall_rigid_r"=>wall_cont_r,
-                  "wall_rigid_thick_in"=>wall_cont_depth,
-                  "ceil_ff"=>0.13,
-                  "ceil_joist_height"=>9.25,
-                  "exposed_perim"=>get_exposed_perimeter(foundation)
-                 }  
-          update_args_hash(measures, measure_subdir, args)        
-        else
-          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementUnfinished"
-          args = {
-                  "surface"=>name,
-                  "wall_ins_height"=>wall_cont_height,
-                  "wall_cavity_r"=>wall_cav_r,
-                  "wall_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[wall_grade],
-                  "wall_cavity_depth"=>wall_cav_depth,
-                  "wall_cavity_insfills"=>true, # FIXME
-                  "wall_ff"=>wall_ff,
-                  "wall_rigid_r"=>wall_cont_r,
-                  "wall_rigid_thick_in"=>wall_cont_depth,
-                  "ceil_cavity_r"=>0,
-                  "ceil_cavity_grade"=>"I",
-                  "ceil_ff"=>0.13,
-                  "ceil_joist_height"=>9.25,
-                  "exposed_perim"=>get_exposed_perimeter(foundation)
-                 }
-          update_args_hash(measures, measure_subdir, args)      
-        end   
-      elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
-        args = {
-                "surface"=>name,
-                "wall_rigid_r"=>wall_cont_r,
-                "wall_rigid_thick_in"=>wall_cont_depth,
-                "ceil_cavity_r"=>0,
-                "ceil_cavity_grade"=>"I",
-                "ceil_ff"=>0.13,
-                "ceil_joist_height"=>9.25,
-                "exposed_perim"=>get_exposed_perimeter(foundation)
-               }
-        update_args_hash(measures, measure_subdir, args)      
-      elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")      
-      elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
-      end       
-       
-    end
-    
-  end
-  
-  def self.get_foundation_frame_floor_properties(foundation, measures)
-          
-    foundation.elements.each("FrameFloor") do |fnd_floor|
-    
-      name = fnd_floor.elements["SystemIdentifier"].attributes["id"]
-
-      if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue")
-      
-        # FIXME
-        floor_cav_r = 0.0
-        floor_cav_depth = 5.5
-        floor_grade = 1
-        floor_ff = 0.0
-        floor_cont_r = 0.0
-        floor_cont_depth = 0.0
-      
-      else
-    
-        fnd_floor_cavity = fnd_floor.elements["Insulation/Layer[InstallationType='cavity']"]
-        floor_cav_r = Float(XMLHelper.get_value(fnd_floor_cavity, "NominalRValue"))
-        floor_cav_depth = Float(XMLHelper.get_value(fnd_floor_cavity, "Thickness"))
-        floor_grade = Integer(XMLHelper.get_value(fnd_floor, "Insulation/InsulationGrade"))
-        floor_ff = Float(XMLHelper.get_value(fnd_floor, "FloorJoists/FramingFactor"))
-        fnd_floor_cont = fnd_floor.elements["Insulation/Layer[InstallationType='continuous']"]
-        floor_cont_r = Float(XMLHelper.get_value(fnd_floor_cont, "NominalRValue"))
-        floor_cont_depth = Float(XMLHelper.get_value(fnd_floor_cont, "Thickness"))
-      
-      end
-      
-      if XMLHelper.has_element(foundation, "FoundationType/Basement")
-        if Boolean(XMLHelper.get_value(foundation, "FoundationType/Basement/Conditioned"))
-        else
-          measure_subdir = "ResidentialConstructionsFoundationsFloorsBasementUnfinished"
-          args = {
-                  "surface"=>name,
-                  "wall_ins_height"=>8,
-                  "wall_cavity_r"=>0,
-                  "wall_cavity_grade"=>"I",
-                  "wall_cavity_depth"=>0,
-                  "wall_cavity_insfills"=>false,
-                  "wall_ff"=>0,
-                  "wall_rigid_r"=>10,
-                  "wall_rigid_thick_in"=>2,
-                  "ceil_cavity_r"=>floor_cav_r,
-                  "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                  "ceil_ff"=>floor_ff,
-                  "ceil_joist_height"=>floor_cav_depth,
-                  "exposed_perim"=>get_exposed_perimeter(foundation)
-                 }
-          update_args_hash(measures, measure_subdir, args)      
-        end
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
-        args = {
-                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-                "osb_thick_in"=>0.75,
-                "rigid_r"=>floor_cont_r,
-                "rigid_thick_in"=>floor_cont_depth
-               }
-        update_args_hash(measures, measure_subdir, args)
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
-        args = {
-                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-                "thick_in"=>0.625,
-                "cond"=>0.8004,
-                "dens"=>34.0,
-                "specheat"=>0.29
-               }
-        update_args_hash(measures, measure_subdir, args)
-      elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsCrawlspace"
-        args = {
-                "surface"=>name,
-                "wall_rigid_r"=>10,
-                "wall_rigid_thick_in"=>2,
-                "ceil_cavity_r"=>floor_cav_r,
-                "ceil_cavity_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                "ceil_ff"=>floor_ff,
-                "ceil_joist_height"=>floor_cav_depth,
-                "exposed_perim"=>get_exposed_perimeter(foundation)
-               }
-        update_args_hash(measures, measure_subdir, args)
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
-        args = {
-                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-                "osb_thick_in"=>0.75,
-                "rigid_r"=>floor_cont_r,
-                "rigid_thick_in"=>floor_cont_depth
-               }
-        update_args_hash(measures, measure_subdir, args)
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
-        args = {
-                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-                "thick_in"=>0.625,
-                "cond"=>0.8004,
-                "dens"=>34.0,
-                "specheat"=>0.29
-               }
-        update_args_hash(measures, measure_subdir, args)
-      elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
-      elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsPierBeam"
-        args = {
-                "surface"=>name,
-                "cavity_r"=>floor_cav_r,
-                "install_grade"=>{1=>"I",2=>"II",3=>"III"}[floor_grade],
-                "framing_factor"=>floor_ff
-               }
-        update_args_hash(measures, measure_subdir, args)        
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsSheathing"
-        args = {
-                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-                "osb_thick_in"=>0.75,
-                "rigid_r"=>floor_cont_r,
-                "rigid_thick_in"=>floor_cont_depth
-               }
-        update_args_hash(measures, measure_subdir, args)
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsThermalMass"
-        args = {
-                "surface"=>"#{name} Reversed", # FIXME: same issue as with ceilings thermal mass. also, this doesn't assign constructions to "inferred" floors.
-                "thick_in"=>0.625,
-                "cond"=>0.8004,
-                "dens"=>34.0,
-                "specheat"=>0.29
-               }
-        update_args_hash(measures, measure_subdir, args)
-      end
-      
-    end
-      
-  end
-
-  def self.get_foundation_slab_properties(foundation, measures)
-          
-    foundation.elements.each("Slab") do |fnd_slab|
-    
-      name = fnd_slab.elements["SystemIdentifier"].attributes["id"]
-      
-      fnd_slab_perim = fnd_slab.elements["PerimeterInsulation/Layer[InstallationType='continuous']"]
-      ext_r = Float(XMLHelper.get_value(fnd_slab_perim, "NominalRValue"))
-      ext_depth = Float(XMLHelper.get_value(fnd_slab, "PerimeterInsulationDepth"))
-      if ext_r == 0 or ext_depth == 0
-        ext_r = 0
-        ext_depth = 0
-      end
-      
-      fnd_slab_under = fnd_slab.elements["PerimeterInsulation/Layer[InstallationType='continuous']"]
-      perim_r = Float(XMLHelper.get_value(fnd_slab_under, "NominalRValue"))
-      perim_width = Float(XMLHelper.get_value(fnd_slab, "UnderSlabInsulationWidth"))
-      if perim_r == 0 or perim_width == 0
-        perim_r = 0
-        perim_width = 0
-      end
-      
-      if XMLHelper.has_element(foundation, "FoundationType/Basement")
-        # Uninsulated floor assumed in model
-      elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace")
-        # Uninsulated floor assumed in model
-      elsif XMLHelper.has_element(foundation, "FoundationType/SlabOnGrade")
-
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsSlab"
-        args = {
-                "surface"=>name,
-                "perim_r"=>perim_r,
-                "perim_width"=>perim_width,
-                "whole_r"=>0, # FIXME
-                "gap_r"=>0, # FIXME
-                "ext_r"=>ext_r,
-                "ext_depth"=>ext_depth,
-                "mass_thick_in"=>4,
-                "mass_conductivity"=>9.1,
-                "mass_density"=>140,
-                "mass_specific_heat"=>0.2,
-                "exposed_perim"=>get_exposed_perimeter(foundation)
-               }  
-        update_args_hash(measures, measure_subdir, args)
-        
-        carpet_frac = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
-        carpet_r = Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
-        
-        measure_subdir = "ResidentialConstructionsFoundationsFloorsCovering"
-        args = {
-                "surface"=>name,
-                "covering_frac"=>carpet_frac,
-                "covering_r"=>carpet_r
-               }
-        update_args_hash(measures, measure_subdir, args)
-
-      elsif XMLHelper.has_element(foundation, "FoundationType/Ambient")
-      end    
-      
-    end
-    
-  end
-
-  def self.get_exposed_perimeter(foundation)
-    exposed_perim = 0
-    foundation.elements.each("Slab") do |slab|        
-      unless slab.elements["ExposedPerimeter"].nil?
-        exposed_perim += Float(slab.elements["ExposedPerimeter"].text)
-      end
-    end
-    return exposed_perim
-  end
-  
-  def self.get_foundation_constructions(building, measures)
-  
-    # FIXME
-    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-      get_foundation_wall_properties(foundation, measures)
-      get_foundation_frame_floor_properties(foundation, measures)
-      get_foundation_slab_properties(foundation, measures)
-    end
-
-  end
   
   def self.get_other_constructions(building, measures)
   
@@ -723,47 +403,12 @@ class OSModel
 
   def self.create(hpxml_doc, runner, model, weather)
 
-    geometry_errors = []
     building = hpxml_doc.elements["/HPXML/Building"]
   
-    # Geometry
+    # Geometry/Envelope
     
-    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
-    if avg_ceil_hgt.nil?
-      avg_ceil_hgt = 8.0
-    else
-      avg_ceil_hgt = avg_ceil_hgt.text.to_f
-    end
-    spaces = create_all_spaces_and_zones(model, building)
-    success, unit = add_building_info(model, building)
+    success, spaces, unit = add_geometry_envelope(runner, model, building, weather)
     return false if not success
-    
-    # Envelope
-    
-    fenestration_areas = {}
-    success = add_windows(runner, model, building, geometry_errors, spaces, fenestration_areas, weather)
-    return false if not success
-    success = add_doors(runner, model, building, geometry_errors, spaces, fenestration_areas)
-    return false if not success
-    add_foundation_floors(model, building, spaces)
-    add_foundation_walls(model, building, spaces, fenestration_areas)
-    foundation_ceiling_area = add_foundation_ceilings(model, building, spaces)
-    add_living_floors(model, building, geometry_errors, spaces, foundation_ceiling_area)
-    success = add_above_grade_walls(runner, model, building, geometry_errors, avg_ceil_hgt, spaces, fenestration_areas)
-    return false if not success
-    success = add_attic_floors(runner, model, building, geometry_errors, spaces)
-    return false if not success
-    success = add_attic_roofs(runner, model, building, geometry_errors, spaces)
-    return false if not success
-    success = explode_surfaces(runner, model)
-    return false if not success
-
-    geometry_errors.each do |error|
-      runner.registerError(error)
-    end
-    unless geometry_errors.empty?
-      return false
-    end    
     
     # Beds, Baths, Occupants
     
@@ -771,6 +416,7 @@ class OSModel
     return false if not success
     
     # Hot Water
+    
     success = add_water_heater(runner, model, building, unit, weather, spaces)
     return false if not success
     success = add_hot_water_and_appliances(runner, model, building, unit, weather)
@@ -808,7 +454,53 @@ class OSModel
   
   private
   
+  def self.add_geometry_envelope(runner, model, building, weather)
+  
+    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
+    if avg_ceil_hgt.nil?
+      avg_ceil_hgt = 8.0
+    else
+      avg_ceil_hgt = avg_ceil_hgt.text.to_f
+    end
+    
+    spaces = create_all_spaces_and_zones(model, building)
+    return false if spaces.empty?
+    
+    success, unit = add_building_info(model, building)
+    return false if not success
+  
+    fenestration_areas = {}
+    
+    success = add_windows(runner, model, building, spaces, fenestration_areas, weather)
+    return false if not success
+    
+    success = add_doors(runner, model, building, spaces, fenestration_areas)
+    return false if not success
+    
+    success = add_foundations(runner, model, building, spaces, fenestration_areas, unit) # TODO: Don't need to pass unit once slab hvac sizing is updated
+    return false if not success
+    
+    success = add_above_grade_walls(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+    return false if not success
+    
+    success = add_attic_floors(runner, model, building, spaces)
+    return false if not success
+    
+    success = add_attic_roofs(runner, model, building, spaces)
+    return false if not success
+    
+    success = add_finished_floor_area(runner, model, building, spaces)
+    return false if not success
+    
+    success = explode_surfaces(runner, model)
+    return false if not success
+
+    return true, spaces, unit
+  end
+  
   def self.explode_surfaces(runner, model)
+    # Re-position surfaces so as to not shade each other. 
+    # TODO: Might be able to use the new self-shading options in E+ 8.9 ShadowCalculation object
   
     # FIXME: Set the zone volumes based on the sum of space volumes
     model.getThermalZones.each do |thermal_zone|
@@ -822,12 +514,12 @@ class OSModel
               floor_area = surface.grossArea
             end
           end
-          zone_volume = OpenStudio.convert(floor_area,"m^2","ft^2").get * Geometry.get_height_of_spaces(thermal_zone.spaces)
+          zone_volume = UnitConversions.convert(floor_area,"m^2","ft^2") * Geometry.get_height_of_spaces(thermal_zone.spaces)
         end
       else # space has a floor
         zone_volume = Geometry.get_volume_from_spaces(thermal_zone.spaces)
       end
-      thermal_zone.setVolume(OpenStudio.convert(zone_volume,"ft^3","m^3").get)
+      thermal_zone.setVolume(UnitConversions.convert(zone_volume,"ft^3","m^3"))
     end
     
     # Explode the walls
@@ -867,7 +559,7 @@ class OSModel
     model.getSurfaces.sort.each do |surface|
 
       next unless surface.surfaceType.downcase == "floor" or surface.surfaceType.downcase == "roofceiling"
-      next if surface.outsideBoundaryCondition.downcase == "ground"
+      next if surface.outsideBoundaryCondition.downcase == "foundation"
       
       if surface.adjacentSurface.is_initialized
         next if surfaces_moved.include? surface.adjacentSurface.get
@@ -979,17 +671,17 @@ class OSModel
     
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       
-      foundation_type = foundation.elements["FoundationType"]      
-      if foundation_type.elements["Basement/Conditioned/text()='true'"]        
+      foundation_space_type = foundation.elements["FoundationType"]      
+      if foundation_space_type.elements["Basement/Conditioned/text()='true'"]        
         create_spaces_and_zones(model, spaces, Constants.SpaceTypeFinishedBasement)
-      elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
+      elsif foundation_space_type.elements["Basement/Conditioned/text()='false'"]      
         create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedBasement)
-      elsif foundation_type.elements["Crawlspace"]
+      elsif foundation_space_type.elements["Crawlspace"]
         create_spaces_and_zones(model, spaces, Constants.SpaceTypeCrawl)
-      elsif foundation_type.elements["Ambient"]
+      elsif foundation_space_type.elements["Ambient"]
         create_spaces_and_zones(model, spaces, Constants.SpaceTypePierBeam)
-      elsif not foundation_type.elements["SlabOnGrade"]
-        fail "Unhandled value (#{foundation_type})."
+      elsif not foundation_space_type.elements["SlabOnGrade"]
+        fail "Unhandled value (#{foundation_space_type})."
       end
       
       foundation.elements.each("FrameFloor") do |frame_floor|
@@ -1143,24 +835,24 @@ class OSModel
 
   def self.net_wall_area(gross_wall_area, wall_fenestration_areas, wall_id)
     if wall_fenestration_areas.keys.include? wall_id
-      return gross_wall_area - OpenStudio.convert(wall_fenestration_areas[wall_id],"ft^2","m^2").get
+      return gross_wall_area - UnitConversions.convert(wall_fenestration_areas[wall_id],"ft^2","m^2")
     end    
     return gross_wall_area
   end
 
-  def self.get_foundation_space_name(foundation_type)
-    if foundation_type.elements["Basement/Conditioned/text()='true'"]        
+  def self.get_foundation_space_type(foundation_space_type)
+    if foundation_space_type.elements["Basement/Conditioned/text()='true'"]        
       return Constants.SpaceTypeFinishedBasement
-    elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
+    elsif foundation_space_type.elements["Basement/Conditioned/text()='false'"]      
       return Constants.SpaceTypeUnfinishedBasement
-    elsif foundation_type.elements["Crawlspace"]
+    elsif foundation_space_type.elements["Crawlspace"]
       return Constants.SpaceTypeCrawl
-    elsif foundation_type.elements["SlabOnGrade"]
+    elsif foundation_space_type.elements["SlabOnGrade"]
       return Constants.SpaceTypeLiving
-    elsif foundation_type.elements["Ambient"]
+    elsif foundation_space_type.elements["Ambient"]
       return Constants.SpaceTypePierBeam
     else
-      fail "Unhandled value (#{foundation_type})."
+      fail "Unhandled value (#{foundation_space_type})."
     end
   end
   
@@ -1187,126 +879,262 @@ class OSModel
     return true
   end
   
-  def self.add_foundation_floors(model, building, spaces)
+  def self.add_foundations(runner, model, building, spaces, fenestration_areas, unit)
 
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       
-      foundation_space_name = get_foundation_space_name(foundation.elements["FoundationType"])
+      foundation_space_type = get_foundation_space_type(foundation.elements["FoundationType"])
 
-      foundation.elements.each("Slab") do |slab|
+      # Foundation slab surfaces
       
-        slab_id = slab.elements["SystemIdentifier"].attributes["id"]
+      slab_surfaces = []
+      perim_exp = 0.0
+      slab_ext_r, slab_ext_depth, slab_perim_r, slab_perim_width, slab_gap_r = nil
+      slab_whole_r, slab_concrete_thick_in = nil
+      foundation.elements.each("Slab") do |fnd_slab|
       
-        slab_width = OpenStudio.convert(Math::sqrt(slab.elements["Area"].text.to_f),"ft","m").get
-        slab_length = OpenStudio.convert(slab.elements["Area"].text.to_f,"ft^2","m^2").get / slab_width
+        slab_id = fnd_slab.elements["SystemIdentifier"].attributes["id"]
+      
+        slab_area = UnitConversions.convert(fnd_slab.elements["Area"].text.to_f,"ft^2","m^2")
+        slab_width = Math::sqrt(slab_area)
+        slab_length = slab_area / slab_width
         
         z_origin = 0
-        unless slab.elements["DepthBelowGrade"].nil?
-          z_origin = -OpenStudio.convert(slab.elements["DepthBelowGrade"].text.to_f,"ft","m").get
+        unless fnd_slab.elements["DepthBelowGrade"].nil?
+          z_origin = -UnitConversions.convert(fnd_slab.elements["DepthBelowGrade"].text.to_f,"ft","m")
         end
         
         surface = OpenStudio::Model::Surface.new(add_floor_polygon(slab_length, slab_width, z_origin), model)
         surface.setName(slab_id)
         surface.setSurfaceType("Floor") 
-        surface.setOutsideBoundaryCondition("Ground")
-        surface.setSpace(spaces[foundation_space_name])
+        surface.setOutsideBoundaryCondition("Foundation")
+        surface.setSpace(spaces[foundation_space_type])
+        slab_surfaces << surface
+        
+        # FIXME: Need to calculate averages across slab surfaces
+        
+        slab_gap_r = 0.0 # FIXME
+        slab_whole_r = 0.0 # FIXME
+        slab_concrete_thick_in = 4.0 # FIXME
+        
+        fnd_slab_perim = fnd_slab.elements["PerimeterInsulation/Layer[InstallationType='continuous']"]
+        slab_ext_r = Float(XMLHelper.get_value(fnd_slab_perim, "NominalRValue"))
+        slab_ext_depth = Float(XMLHelper.get_value(fnd_slab, "PerimeterInsulationDepth"))
+        if slab_ext_r == 0 or slab_ext_depth == 0
+          slab_ext_r = 0
+          slab_ext_depth = 0
+        end
+        
+        fnd_slab_under = fnd_slab.elements["UnderSlabInsulation/Layer[InstallationType='continuous']"]
+        slab_perim_r = Float(XMLHelper.get_value(fnd_slab_under, "NominalRValue"))
+        slab_perim_width = Float(XMLHelper.get_value(fnd_slab, "UnderSlabInsulationWidth"))
+        if slab_perim_r == 0 or slab_perim_width == 0
+          slab_perim_r = 0
+          slab_perim_width = 0
+        end
+        perim_exp += Float(fnd_slab.elements["ExposedPerimeter"].text)
         
       end
       
-    end
-
-  end
-
-  def self.add_foundation_walls(model, building, spaces, fenestration_areas)
-  
-    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-    
-      foundation_space_name = get_foundation_space_name(foundation.elements["FoundationType"])
+      # Foundation wall surfaces
+      
       fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
+      wall_surfaces = []
+      wall_height, wall_cav_r, wall_cav_depth, wall_grade, wall_ff, wall_cont_height, wall_cont_r = nil
+      wall_cont_depth, walls_filled_cavity, walls_drywall_thick_in, walls_concrete_thick_in = nil
+      foundation.elements.each("FoundationWall") do |fnd_wall|
       
-      foundation.elements.each("FoundationWall") do |wall|
-      
-        wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+        wall_id = fnd_wall.elements["SystemIdentifier"].attributes["id"]
         
-        exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
+        exterior_adjacent_to = fnd_wall.elements["extension/ExteriorAdjacentTo"].text
         
-        wall_height = OpenStudio.convert(wall.elements["Height"].text.to_f,"ft","m").get
-        wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, fnd_id) / wall_height
+        wall_height = UnitConversions.convert(fnd_wall.elements["Height"].text.to_f,"ft","m")
+        wall_length = net_wall_area(UnitConversions.convert(fnd_wall.elements["Area"].text.to_f,"ft^2","m^2"), fenestration_areas, fnd_id) / wall_height
         
-        z_origin = -OpenStudio.convert(wall.elements["BelowGradeDepth"].text.to_f,"ft","m").get
+        z_origin = -UnitConversions.convert(fnd_wall.elements["BelowGradeDepth"].text.to_f,"ft","m")
         
         surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
         surface.setName(wall_id)
         surface.setSurfaceType("Wall")
         if exterior_adjacent_to == "ground"
-          surface.setOutsideBoundaryCondition("Ground")
+          surface.setOutsideBoundaryCondition("Foundation")
         else
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
-        surface.setSpace(spaces[foundation_space_name])
+        surface.setSpace(spaces[foundation_space_type])
+        wall_surfaces << surface
+        
+        # FIXME: Need to calculate averages across slab surfaces
+        
+        walls_filled_cavity = true # FIXME
+        walls_drywall_thick_in = 0.5 # FIXME
+        walls_concrete_thick_in = 8.0 # FIXME
+        
+        if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue")
+        
+          wall_R = Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
+          wall_cav_r = 0.0
+          wall_cav_depth = 0.0
+          wall_grade = 1
+          wall_ff = 0.0        
+          wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
+          wall_cont_r = wall_R - Material.Concrete(8.0).rvalue - Material.GypsumWall(walls_drywall_thick_in).rvalue - Material.AirFilmVertical.rvalue
+          wall_cont_depth = 1.0
+          # FIXME: Verify calculated assembly R-value
+        
+        else
+      
+          fnd_wall_cavity = fnd_wall.elements["Insulation/Layer[InstallationType='cavity']"]
+          wall_cav_r = Float(XMLHelper.get_value(fnd_wall_cavity, "NominalRValue"))
+          wall_cav_depth = Float(XMLHelper.get_value(fnd_wall_cavity, "Thickness"))
+          wall_grade = Integer(XMLHelper.get_value(fnd_wall, "Insulation/InsulationGrade"))
+          wall_ff = Float(XMLHelper.get_value(fnd_wall, "InteriorStuds/FramingFactor"))
+          
+          fnd_wall_cont = fnd_wall.elements["Insulation/Layer[InstallationType='continuous']"]
+          if XMLHelper.has_element(fnd_wall_cont, "extension/InsulationHeight")
+            wall_cont_height = Float(XMLHelper.get_value(fnd_wall_cont, "extension/InsulationHeight")) # For basement
+          else
+            wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height")) # For crawlspace, doesn't matter
+          end
+          wall_cont_r = Float(XMLHelper.get_value(fnd_wall_cont, "NominalRValue"))
+          wall_cont_depth = Float(XMLHelper.get_value(fnd_wall_cont, "Thickness"))
+          
+        end
         
       end
-    
-    end
-
-  end
-
-  def self.add_foundation_ceilings(model, building, spaces)
-       
-    foundation_ceiling_area = 0
-    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-    
-      foundation_space_name = get_foundation_space_name(foundation.elements["FoundationType"])
-     
-      foundation.elements.each("FrameFloor") do |framefloor|
       
-        floor_id = framefloor.elements["SystemIdentifier"].attributes["id"]
+      # Foundation ceiling surfaces
+      
+      ceiling_surfaces = []
+      floor_cav_r, floor_cav_depth, floor_grade, floor_ff, floor_cont_r, floor_cont_depth = nil
+      plywood_thick_in, mat_floor_covering, mat_carpet = nil
+      foundation.elements.each("FrameFloor") do |fnd_floor|
+      
+        floor_id = fnd_floor.elements["SystemIdentifier"].attributes["id"]
 
-        framefloor_width = OpenStudio.convert(Math::sqrt(framefloor.elements["Area"].text.to_f),"ft","m").get
-        framefloor_length = OpenStudio.convert(framefloor.elements["Area"].text.to_f,"ft^2","m^2").get / framefloor_width
+        framefloor_width = UnitConversions.convert(Math::sqrt(fnd_floor.elements["Area"].text.to_f),"ft","m")
+        framefloor_length = UnitConversions.convert(fnd_floor.elements["Area"].text.to_f,"ft^2","m^2") / framefloor_width
         
         z_origin = 0
         
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(framefloor_length, framefloor_width, z_origin), model)
         surface.setName(floor_id)
         surface.setSurfaceType("RoofCeiling")
-        surface.setSpace(spaces[foundation_space_name])
+        surface.setSpace(spaces[foundation_space_type])
         surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
+        ceiling_surfaces << surface
         
-        foundation_ceiling_area += framefloor.elements["Area"].text.to_f
+        # FIXME: Need to calculate averages across slab surfaces
+        
+        plywood_thick_in = 0.75 # FIXME
+        mat_floor_covering = Material.FloorWood # FIXME
+        mat_carpet = Material.CoveringBare # FIXME
+        
+        if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue")
+        
+          # FIXME
+          floor_cav_r = 0.0
+          floor_cav_depth = 5.5
+          floor_grade = 1
+          floor_ff = 0.0
+          floor_cont_r = 0.0
+          floor_cont_depth = 0.0
+          # FIXME: Verify calculated assembly R-value
+        
+        else
       
+          fnd_floor_cavity = fnd_floor.elements["Insulation/Layer[InstallationType='cavity']"]
+          floor_cav_r = Float(XMLHelper.get_value(fnd_floor_cavity, "NominalRValue"))
+          floor_cav_depth = Float(XMLHelper.get_value(fnd_floor_cavity, "Thickness"))
+          floor_grade = Integer(XMLHelper.get_value(fnd_floor, "Insulation/InsulationGrade"))
+          floor_ff = Float(XMLHelper.get_value(fnd_floor, "FloorJoists/FramingFactor"))
+          fnd_floor_cont = fnd_floor.elements["Insulation/Layer[InstallationType='continuous']"]
+          floor_cont_r = Float(XMLHelper.get_value(fnd_floor_cont, "NominalRValue"))
+          floor_cont_depth = Float(XMLHelper.get_value(fnd_floor_cont, "Thickness"))
+        
+        end
+
       end
       
-      foundation.elements.each("Slab") do |slab|
+      # Apply constructions
       
-        foundation_ceiling_area += slab.elements["Area"].text.to_f
+      if wall_surfaces.empty?
       
+        # Foundation slab only
+        slab_surface = slab_surfaces[0] # FIXME
+        success = FoundationConstructions.apply_slab(runner, model, slab_surface, "SlabConstruction",
+                                                     slab_perim_r, slab_perim_width, slab_gap_r, slab_ext_r, slab_ext_depth,
+                                                     slab_whole_r, slab_concrete_thick_in, 
+                                                     false, perim_exp, nil)
+        return false if not success
+        # FIXME: Temporary code for sizing
+        unit.setFeature(Constants.SizingInfoSlabRvalue(slab_surface), 5.0)
+        
+      else
+      
+        # Foundation slab, walls, and ceilings
+        slab_surface = slab_surfaces[0] # FIXME
+        wall_height = UnitConversions.convert(wall_height,"m","ft") # FIXME
+        success = FoundationConstructions.apply_walls_and_slab(runner, model, wall_surfaces, "FndWallConstruction", 
+                                                               wall_cont_height, wall_cav_r, wall_grade,
+                                                               wall_cav_depth, walls_filled_cavity, wall_ff, 
+                                                               wall_cont_r, walls_drywall_thick_in, walls_concrete_thick_in, 
+                                                               wall_height, slab_surface, "SlabConstruction",
+                                                               slab_whole_r, perim_exp)
+        return false if not success
+        
       end
-    
+      
+      # Foundation ceiling
+      success = FloorConstructions.apply_foundation_ceiling(runner, model, ceiling_surfaces, "FndCeilingConstruction",
+                                                            floor_cav_r, floor_grade,
+                                                            floor_ff, floor_cav_depth,
+                                                            plywood_thick_in, mat_floor_covering, 
+                                                            mat_carpet)
+      return false if not success
+        
     end
     
-    return foundation_ceiling_area
-      
+    return true
   end
 
-  def self.add_living_floors(model, building, errors, spaces, foundation_ceiling_area)
-
-    finished_floor_area = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text.to_f
-    above_grade_finished_floor_area = finished_floor_area - foundation_ceiling_area
-    return unless above_grade_finished_floor_area > 0
+  def self.add_finished_floor_area(runner, model, building, spaces)
+  
+    # Add finished floor area (e.g., floors between finished spaces) to ensure model has
+    # the correct ffa as specified.
+  
+    ffa = Float(building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text).round(1)
     
-    finishedfloor_width = OpenStudio.convert(Math::sqrt(above_grade_finished_floor_area),"ft","m").get
-    finishedfloor_length = OpenStudio.convert(above_grade_finished_floor_area,"ft^2","m^2").get / finishedfloor_width
+    # Calculate ffa already added to model
+    model_ffa = Geometry.get_finished_floor_area_from_spaces(model.getSpaces).round(1)
+    
+    if model_ffa > ffa
+      runner.registerError("Sum of conditioned floor surface areas #{model_ffa.to_s} is greater than ConditionedFloorArea specified #{ffa.to_s}.")
+      return false
+    end
+    
+    addtl_ffa = ffa - model_ffa
+    return true unless addtl_ffa > 0
+    
+    runner.registerWarning("Adding adiabatic conditioned floors with #{addtl_ffa.to_s} ft^2 to preserve building total conditioned floor area.")
+      
+    finishedfloor_width = UnitConversions.convert(Math::sqrt(addtl_ffa),"ft","m")
+    finishedfloor_length = UnitConversions.convert(addtl_ffa,"ft^2","m^2") / finishedfloor_width
     
     surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model)
     surface.setName("inferred finished floor")
     surface.setSurfaceType("Floor")
     surface.setSpace(spaces[Constants.SpaceTypeLiving])
     surface.setOutsideBoundaryCondition("Adiabatic")
+    
+    # Apply Construction
+    success = apply_adiabatic_construction(runner, model, [surface], "floor")
+    return false if not success
 
+    return true
   end
 
-  def self.add_above_grade_walls(runner, model, building, errors, avg_ceil_hgt, spaces, fenestration_areas)
+  def self.add_above_grade_walls(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
@@ -1315,8 +1143,8 @@ class OSModel
       
       wall_id = wall.elements["SystemIdentifier"].attributes["id"]
       
-      wall_height = OpenStudio.convert(avg_ceil_hgt,"ft","m").get
-      wall_length = net_wall_area(OpenStudio.convert(wall.elements["Area"].text.to_f,"ft^2","m^2").get, fenestration_areas, wall_id) / wall_height
+      wall_height = UnitConversions.convert(avg_ceil_hgt,"ft","m")
+      wall_length = net_wall_area(UnitConversions.convert(wall.elements["Area"].text.to_f,"ft^2","m^2"), fenestration_areas, wall_id) / wall_height
 
       surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, 0), model)
       surface.setName(wall_id)
@@ -1376,6 +1204,7 @@ class OSModel
                                                       drywall_thick_in, osb_thick_in,
                                                       rigid_r, mat_ext_finish)
           return false if not success
+          # FIXME: Verify calculated assembly R-value
         
         else
         
@@ -1453,7 +1282,7 @@ class OSModel
     
   end
   
-  def self.add_attic_floors(runner, model, building, errors, spaces)
+  def self.add_attic_floors(runner, model, building, spaces)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -1467,8 +1296,8 @@ class OSModel
         floor_id = floor.elements["SystemIdentifier"].attributes["id"]
         exterior_adjacent_to = floor.elements["extension/ExteriorAdjacentTo"].text
         
-        floor_width = OpenStudio.convert(Math::sqrt(floor.elements["Area"].text.to_f),"ft","m").get
-        floor_length = OpenStudio.convert(floor.elements["Area"].text.to_f,"ft^2","m^2").get / floor_width
+        floor_width = UnitConversions.convert(Math::sqrt(floor.elements["Area"].text.to_f),"ft","m")
+        floor_length = UnitConversions.convert(floor.elements["Area"].text.to_f,"ft^2","m^2") / floor_width
        
         surface = OpenStudio::Model::Surface.new(add_floor_polygon(floor_length, floor_width, 0), model)
         surface.setName(floor_id)
@@ -1513,7 +1342,7 @@ class OSModel
       
   end
 
-  def self.add_attic_roofs(runner, model, building, errors, spaces)
+  def self.add_attic_roofs(runner, model, building, spaces)
   
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -1524,8 +1353,8 @@ class OSModel
   
         roof_id = roof.elements["SystemIdentifier"].attributes["id"]
         
-        roof_width = OpenStudio.convert(Math::sqrt(roof.elements["Area"].text.to_f),"ft","m").get
-        roof_length = OpenStudio.convert(roof.elements["Area"].text.to_f,"ft^2","m^2").get / roof_width
+        roof_width = UnitConversions.convert(Math::sqrt(roof.elements["Area"].text.to_f),"ft","m")
+        roof_length = UnitConversions.convert(roof.elements["Area"].text.to_f,"ft^2","m^2") / roof_width
 
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
         surface.setName(roof_id)
@@ -1566,7 +1395,7 @@ class OSModel
         
   end
   
-  def self.add_windows(runner, model, building, errors, spaces, fenestration_areas, weather)
+  def self.add_windows(runner, model, building, spaces, fenestration_areas, weather)
   
     heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
     if heating_season.nil? or cooling_season.nil?
@@ -1578,8 +1407,8 @@ class OSModel
     
       window_id = window.elements["SystemIdentifier"].attributes["id"]
 
-      window_height = OpenStudio.convert(5.0,"ft","m").get
-      window_width = OpenStudio.convert(window.elements["Area"].text.to_f,"ft^2","m^2").get / window_height
+      window_height = UnitConversions.convert(5.0,"ft","m")
+      window_width = UnitConversions.convert(window.elements["Area"].text.to_f,"ft^2","m^2") / window_height
 
       if not fenestration_areas.keys.include? window.elements["AttachedToWall"].attributes["idref"]
         fenestration_areas[window.elements["AttachedToWall"].attributes["idref"]] = window.elements["Area"].text.to_f
@@ -1637,22 +1466,22 @@ class OSModel
 
     end
     
-    success = apply_adiabatic_construction(runner, model, surfaces)
+    success = apply_adiabatic_construction(runner, model, surfaces, "wall")
     return false if not success
       
     return true
    
   end
   
-  def self.add_doors(runner, model, building, errors, spaces, fenestration_areas)
+  def self.add_doors(runner, model, building, spaces, fenestration_areas)
   
     surfaces = []
     building.elements.each("BuildingDetails/Enclosure/Doors/Door") do |door|
     
       door_id = door.elements["SystemIdentifier"].attributes["id"]
 
-      door_height = OpenStudio.convert(6.666,"ft","m").get
-      door_width = OpenStudio.convert(door.elements["Area"].text.to_f,"ft^2","m^2").get / door_height
+      door_height = UnitConversions.convert(6.666,"ft","m")
+      door_width = UnitConversions.convert(door.elements["Area"].text.to_f,"ft^2","m^2") / door_height
     
       if not fenestration_areas.keys.include? door.elements["AttachedToWall"].attributes["idref"]
         fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] = door.elements["Area"].text.to_f
@@ -1697,30 +1526,47 @@ class OSModel
 
     end
     
-    success = apply_adiabatic_construction(runner, model, surfaces)
+    success = apply_adiabatic_construction(runner, model, surfaces, "wall")
     return false if not success
     
     return true
    
   end  
   
-  def self.apply_adiabatic_construction(runner, model, surfaces)
+  def self.apply_adiabatic_construction(runner, model, surfaces, type)
     
-    # Arbitrary construction
-    framing_factor = Constants.DefaultFramingFactorInterior
-    cavity_r = 0.0
-    install_grade = 1
-    cavity_depth_in = 3.5
-    cavity_filled = false
-    rigid_r = 0.0
-    drywall_thick_in = 0.5
-    mat_ext_finish = Material.ExtFinishStuccoMedDark
-    success = WallConstructions.apply_wood_stud(runner, model, surfaces,
-                                                "AdiabaticConstruction", 
-                                                cavity_r, install_grade, cavity_depth_in, 
-                                                cavity_filled, framing_factor,
-                                                drywall_thick_in, 0, rigid_r, mat_ext_finish)
-    return false if not success
+    # Arbitrary constructions, only heat capacitance matters
+    
+    if type == "wall"
+    
+        framing_factor = Constants.DefaultFramingFactorInterior
+        cavity_r = 0.0
+        install_grade = 1
+        cavity_depth_in = 3.5
+        cavity_filled = false
+        rigid_r = 0.0
+        drywall_thick_in = 0.5
+        mat_ext_finish = Material.ExtFinishStuccoMedDark
+        success = WallConstructions.apply_wood_stud(runner, model, surfaces,
+                                                    "AdiabaticWallConstruction", 
+                                                    cavity_r, install_grade, cavity_depth_in, 
+                                                    cavity_filled, framing_factor,
+                                                    drywall_thick_in, 0, rigid_r, mat_ext_finish)
+        return false if not success
+        
+    elsif type == "floor"
+        
+        plywood_thick_in = 0.75
+        drywall_thick_in = 0.0
+        mat_floor_covering = Material.FloorWood
+        mat_carpet = Material.CoveringBare
+        success = FloorConstructions.apply_uninsulated(runner, model, surfaces,
+                                                       "AdiabaticFloorConstruction",
+                                                       plywood_thick_in, drywall_thick_in,
+                                                       mat_floor_covering, mat_carpet)
+        return false if not success
+        
+    end
     
     return true
   end
@@ -1769,7 +1615,7 @@ class OSModel
     
       tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
       e_cap = 4.5 # FIXME
-      min_temp  45.0 # FIXME
+      min_temp = 45.0 # FIXME
       max_temp = 120.0 # FIXME
       cap = 0.5 # FIXME
       cop = 2.8 # FIXME
@@ -1780,11 +1626,12 @@ class OSModel
       tank_ua = 3.9 # FIXME
       int_factor = 1.0 # FIXME
       temp_depress = 0.0 # FIXME
+      ducting = "none"
       success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
                                            e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
                                            cap, cop, shr, airflow_rate, fan_power,
                                            parasitics, tank_ua, int_factor, temp_depress,
-                                           ducting, unit_index)
+                                           ducting, 0)
       return false if not success
       
     else
@@ -1903,7 +1750,7 @@ class OSModel
     if cool_capacity_btuh.nil?
       cool_capacity_tons = Constants.SizingAuto
     else
-      cool_capacity_tons = OpenStudio.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton").get
+      cool_capacity_tons = UnitConversions.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton")
     end
     
     if clg_type == "central air conditioning"
@@ -1999,29 +1846,29 @@ class OSModel
     if heat_capacity_btuh.nil?
       heat_capacity_kbtuh = Constants.SizingAuto
     else
-      heat_capacity_kbtuh = OpenStudio.convert(heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr").get
+      heat_capacity_kbtuh = UnitConversions.convert(heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr")
     end
     
-    # FIXME: THIS SHOULD NOT BE NEEDED
-    # ==================================
-    objname = nil
     if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
-      objname = Constants.ObjectNameFurnace
-    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
-      objname = Constants.ObjectNameBoiler
-    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
-      objname = Constants.ObjectNameElectricBaseboard
-    end
-    existing_objects = {}
-    thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
-    HVAC.get_control_and_slave_zones(thermal_zones).each do |control_zone, slave_zones|
-      ([control_zone] + slave_zones).each do |zone|
-        existing_objects[zone] = HVAC.remove_hvac_equipment(model, runner, zone, unit, objname)
+    
+      # FIXME: THIS SHOULD NOT BE NEEDED
+      # ==================================
+      objname = nil
+      if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
+        objname = Constants.ObjectNameFurnace
+      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
+        objname = Constants.ObjectNameBoiler
+      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
+        objname = Constants.ObjectNameElectricBaseboard
       end
-    end
-    # ==================================
-    
-    if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
+      existing_objects = {}
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+      HVAC.get_control_and_slave_zones(thermal_zones).each do |control_zone, slave_zones|
+        ([control_zone] + slave_zones).each do |zone|
+          existing_objects[zone] = HVAC.remove_hvac_equipment(model, runner, zone, unit, objname)
+        end
+      end
+      # ==================================
     
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
     
@@ -2043,16 +1890,14 @@ class OSModel
       design_temp = 180.0
       success = HVAC.apply_boiler(model, unit, runner, to_beopt_fuel(fuel), system_type, afue,
                                   oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                                  heat_capacity_kbtuh, design_temp, is_modulating, dse,
-                                  existing_objects)
+                                  heat_capacity_kbtuh, design_temp, is_modulating, dse)
       return false if not success
     
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
     
       efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
       success = HVAC.apply_electric_baseboard(model, unit, runner, efficiency, 
-                                              heat_capacity_kbtuh,
-                                              existing_objects)
+                                              heat_capacity_kbtuh)
       return false if not success
 
     # TODO
@@ -2080,14 +1925,14 @@ class OSModel
     if cool_capacity_btuh.nil?
       cool_capacity_tons = Constants.SizingAuto
     else
-      cool_capacity_tons = OpenStudio.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton").get
+      cool_capacity_tons = UnitConversions.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton")
     end
     
     backup_heat_capacity_btuh = XMLHelper.get_value(hp, "BackupHeatingCapacity")
     if backup_heat_capacity_btuh.nil?
       backup_heat_capacity_kbtuh = Constants.SizingAuto
     else
-      backup_heat_capacity_kbtuh = OpenStudio.convert(backup_heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr").get
+      backup_heat_capacity_kbtuh = UnitConversions.convert(backup_heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr")
     end
     
     if hp_type == "air-to-air"        
