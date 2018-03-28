@@ -291,10 +291,6 @@ class OSMeasures
     get_foundation_constructions(building, measures)
     get_other_constructions(building, measures)
 
-    # Water Heating & Appliances
-    # TODO: ResidentialHotWaterSolar
-    get_hot_water_and_appliances(building, measures)
-    
     # HVAC
     get_ceiling_fan(building, measures)
     
@@ -642,120 +638,6 @@ class OSMeasures
     
   end
 
-  def self.get_hot_water_and_appliances(building, measures)
-  
-    wh = building.elements["BuildingDetails/Systems/WaterHeating"]
-    appl = building.elements["BuildingDetails/Appliances"]
-    
-    # Clothes Washer
-    cw = appl.elements["ClothesWasher"]
-    cw_annual_kwh = Float(XMLHelper.get_value(cw, "extension/AnnualkWh"))
-    cw_frac_sens = Float(XMLHelper.get_value(cw, "extension/FracSensible"))
-    cw_frac_lat = Float(XMLHelper.get_value(cw, "extension/FracLatent"))
-    cw_gpd = Float(XMLHelper.get_value(cw, "extension/HotWaterGPD"))
-    
-    # Clothes Dryer
-    cd = appl.elements["ClothesDryer"]
-    cd_annual_kwh = Float(XMLHelper.get_value(cd, "extension/AnnualkWh"))
-    cd_annual_therm = Float(XMLHelper.get_value(cd, "extension/AnnualTherm"))
-    cd_frac_sens = Float(XMLHelper.get_value(cd, "extension/FracSensible"))
-    cd_frac_lat = Float(XMLHelper.get_value(cd, "extension/FracLatent"))
-    cd_fuel_type = XMLHelper.get_value(cd, "FuelType")
-    
-    # Dishwasher
-    dw = appl.elements["Dishwasher"]
-    dw_annual_kwh = Float(XMLHelper.get_value(dw, "extension/AnnualkWh"))
-    dw_frac_sens = Float(XMLHelper.get_value(dw, "extension/FracSensible"))
-    dw_frac_lat = Float(XMLHelper.get_value(dw, "extension/FracLatent"))
-    dw_gpd = Float(XMLHelper.get_value(dw, "extension/HotWaterGPD"))
-  
-    # Refrigerator
-    fridge = appl.elements["Refrigerator"]
-    fridge_annual_kwh = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
-    
-    # Cooking Range
-    cook = appl.elements["CookingRange"]
-    cook_annual_kwh = Float(XMLHelper.get_value(cook, "extension/AnnualkWh"))
-    cook_annual_therm = Float(XMLHelper.get_value(cook, "extension/AnnualTherm"))
-    cook_frac_sens = Float(XMLHelper.get_value(cook, "extension/FracSensible"))
-    cook_frac_lat = Float(XMLHelper.get_value(cook, "extension/FracLatent"))
-    cook_fuel_type = XMLHelper.get_value(cook, "FuelType")
-    
-    # Fixtures
-    fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
-    fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
-    sens_gain = Float(XMLHelper.get_value(fx, "extension/SensibleGainsBtu"))
-    lat_gain = Float(XMLHelper.get_value(fx, "extension/LatentGainsBtu"))
-    
-    # Distribution
-    dist = wh.elements["HotWaterDistribution"]
-    if XMLHelper.has_element(dist, "SystemType/Standard")
-      dist_type = "standard"
-      dist_pump_annual_kwh = 0.0
-    elsif XMLHelper.has_element(dist, "SystemType/Recirculation")
-      dist_type = "recirculation"
-      dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "extension/RecircPumpAnnualkWh"))
-    end
-    dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
-    
-    # Drain Water Heat Recovery
-    dwhr_avail = false
-    dwhr_eff = 0.0
-    dwhr_eff_adj = 0.0
-    dwhr_iFrac = 0.0
-    dwhr_plc = 0.0
-    dwhr_locF = 0.0
-    dwhr_fixF = 0.0
-    if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
-      dwhr_avail = true
-      dwhr_eff = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
-      dwhr_eff_adj = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/EfficiencyAdjustment"))
-      dwhr_iFrac = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FracImpactedHotWater"))
-      dwhr_plc = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/PipingLossCoefficient"))
-      dwhr_locF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/LocationFactor"))
-      dwhr_fixF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FixtureFactor"))
-    end
-    
-    # FIXME: Need to ensure this measure executes at the right time
-    measure_subdir = "ERIHotWaterAndAppliances"
-    args = {
-            "cw_annual_kwh"=>cw_annual_kwh,
-            "cw_frac_sens"=>cw_frac_sens,
-            "cw_frac_lat"=>cw_frac_lat,
-            "cw_gpd"=>cw_gpd,
-            "cd_annual_kwh"=>cd_annual_kwh,
-            "cd_annual_therm"=>cd_annual_therm,
-            "cd_frac_sens"=>cd_frac_sens,
-            "cd_frac_lat"=>cd_frac_lat,
-            "cd_fuel_type"=>to_beopt_fuel(cd_fuel_type),
-            "dw_annual_kwh"=>dw_annual_kwh,
-            "dw_frac_sens"=>dw_frac_sens,
-            "dw_frac_lat"=>dw_frac_lat,
-            "dw_gpd"=>dw_gpd,
-            "fridge_annual_kwh"=>fridge_annual_kwh,
-            "cook_annual_kwh"=>cook_annual_kwh,
-            "cook_annual_therm"=>cook_annual_therm,
-            "cook_frac_sens"=>cook_frac_sens,
-            "cook_frac_lat"=>cook_frac_lat,
-            "cook_fuel_type"=>to_beopt_fuel(cook_fuel_type),
-            "fx_gpd"=>fx_gpd,
-            "fx_sens_btu"=>sens_gain,
-            "fx_lat_btu"=>lat_gain,
-            "dist_type"=>dist_type,
-            "dist_gpd"=>dist_gpd,
-            "dist_pump_annual_kwh"=>dist_pump_annual_kwh,
-            "dwhr_avail"=>dwhr_avail,
-            "dwhr_eff"=>dwhr_eff,
-            "dwhr_eff_adj"=>dwhr_eff_adj,
-            "dwhr_iFrac"=>dwhr_iFrac,
-            "dwhr_plc"=>dwhr_plc,
-            "dwhr_locF"=>dwhr_locF,
-            "dwhr_fixF"=>dwhr_fixF,
-           }
-    update_args_hash(measures, measure_subdir, args)
-    
-  end
-  
   def self.get_ceiling_fan(building, measures)
 
     # FIXME
@@ -890,6 +772,8 @@ class OSModel
     
     # Hot Water
     success = add_water_heater(runner, model, building, unit, weather, spaces)
+    return false if not success
+    success = add_hot_water_and_appliances(runner, model, building, unit, weather)
     return false if not success
     
     # HVAC
@@ -1911,6 +1795,98 @@ class OSModel
     
     return true
 
+  end
+  
+  def self.add_hot_water_and_appliances(runner, model, building, unit, weather)
+  
+    wh = building.elements["BuildingDetails/Systems/WaterHeating"]
+    appl = building.elements["BuildingDetails/Appliances"]
+    
+    # Clothes Washer
+    cw = appl.elements["ClothesWasher"]
+    cw_annual_kwh = Float(XMLHelper.get_value(cw, "extension/AnnualkWh"))
+    cw_frac_sens = Float(XMLHelper.get_value(cw, "extension/FracSensible"))
+    cw_frac_lat = Float(XMLHelper.get_value(cw, "extension/FracLatent"))
+    cw_gpd = Float(XMLHelper.get_value(cw, "extension/HotWaterGPD"))
+    
+    # Clothes Dryer
+    cd = appl.elements["ClothesDryer"]
+    cd_annual_kwh = Float(XMLHelper.get_value(cd, "extension/AnnualkWh"))
+    cd_annual_therm = Float(XMLHelper.get_value(cd, "extension/AnnualTherm"))
+    cd_frac_sens = Float(XMLHelper.get_value(cd, "extension/FracSensible"))
+    cd_frac_lat = Float(XMLHelper.get_value(cd, "extension/FracLatent"))
+    cd_fuel_type = to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
+    
+    # Dishwasher
+    dw = appl.elements["Dishwasher"]
+    dw_annual_kwh = Float(XMLHelper.get_value(dw, "extension/AnnualkWh"))
+    dw_frac_sens = Float(XMLHelper.get_value(dw, "extension/FracSensible"))
+    dw_frac_lat = Float(XMLHelper.get_value(dw, "extension/FracLatent"))
+    dw_gpd = Float(XMLHelper.get_value(dw, "extension/HotWaterGPD"))
+  
+    # Refrigerator
+    fridge = appl.elements["Refrigerator"]
+    fridge_annual_kwh = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
+    
+    # Cooking Range
+    cook = appl.elements["CookingRange"]
+    cook_annual_kwh = Float(XMLHelper.get_value(cook, "extension/AnnualkWh"))
+    cook_annual_therm = Float(XMLHelper.get_value(cook, "extension/AnnualTherm"))
+    cook_frac_sens = Float(XMLHelper.get_value(cook, "extension/FracSensible"))
+    cook_frac_lat = Float(XMLHelper.get_value(cook, "extension/FracLatent"))
+    cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(cook, "FuelType"))
+    
+    # Fixtures
+    fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
+    fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
+    fx_sens_btu = Float(XMLHelper.get_value(fx, "extension/SensibleGainsBtu"))
+    fx_lat_btu = Float(XMLHelper.get_value(fx, "extension/LatentGainsBtu"))
+    
+    # Distribution
+    dist = wh.elements["HotWaterDistribution"]
+    if XMLHelper.has_element(dist, "SystemType/Standard")
+      dist_type = "standard"
+      dist_pump_annual_kwh = 0.0
+    elsif XMLHelper.has_element(dist, "SystemType/Recirculation")
+      dist_type = "recirculation"
+      dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "extension/RecircPumpAnnualkWh"))
+    end
+    dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
+    
+    # Drain Water Heat Recovery
+    dwhr_avail = false
+    dwhr_eff = 0.0
+    dwhr_eff_adj = 0.0
+    dwhr_iFrac = 0.0
+    dwhr_plc = 0.0
+    dwhr_locF = 0.0
+    dwhr_fixF = 0.0
+    if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
+      dwhr_avail = true
+      dwhr_eff = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
+      dwhr_eff_adj = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/EfficiencyAdjustment"))
+      dwhr_iFrac = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FracImpactedHotWater"))
+      dwhr_plc = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/PipingLossCoefficient"))
+      dwhr_locF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/LocationFactor"))
+      dwhr_fixF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FixtureFactor"))
+    end
+    
+    # FIXME: Need to ensure this measure executes at the right time
+    success = Waterheater.apply_eri_hw_appl(model, unit, runner, weather,
+                                            cw_annual_kwh, cw_frac_sens, cw_frac_lat,
+                                            cw_gpd, cd_annual_kwh, cd_annual_therm,
+                                            cd_frac_sens, cd_frac_lat, cd_fuel_type,
+                                            dw_annual_kwh, dw_frac_sens, dw_frac_lat,
+                                            dw_gpd, fridge_annual_kwh, cook_annual_kwh,
+                                            cook_annual_therm, cook_frac_sens, 
+                                            cook_frac_lat, cook_fuel_type, fx_gpd,
+                                            fx_sens_btu, fx_lat_btu, dist_type, 
+                                            dist_gpd, dist_pump_annual_kwh, dwhr_avail,
+                                            dwhr_eff, dwhr_eff_adj, dwhr_iFrac,
+                                            dwhr_plc, dwhr_locF, dwhr_fixF)
+    return false if not success
+    
+    return true
   end
   
   def self.add_cooling_system(runner, model, building, unit, dse)
