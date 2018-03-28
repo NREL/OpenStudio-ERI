@@ -292,7 +292,6 @@ class OSMeasures
     get_other_constructions(building, measures)
 
     # Water Heating & Appliances
-    get_water_heating(building, measures)
     # TODO: ResidentialHotWaterSolar
     get_hot_water_and_appliances(building, measures)
     
@@ -643,134 +642,6 @@ class OSMeasures
     
   end
 
-  def self.get_water_heating(building, measures)
-
-    dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
-    
-    setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
-    tank_vol = nil
-    if dhw.elements["TankVolume"]
-      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
-    end
-    wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
-    fuel = XMLHelper.get_value(dhw, "FuelType")
-    capacity_kw = Constants.Auto
-    capacity_kbtuh = Constants.Auto
-    if dhw.elements["HeatingCapacity"]
-      capacity = Float(XMLHelper.get_value(dhw, "HeatingCapacity"))
-      capacity_kw = OpenStudio::convert(capacity, "Btu/hr", "kW").get
-      capacity_kbtuh = capacity/1000.0
-    end
-    
-    if wh_type == "storage water heater"
-    
-      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
-      
-      if fuel == "electricity"
-      
-        measure_subdir = "ResidentialHotWaterHeaterTankElectric"
-        args = {
-                "tank_volume"=>tank_vol,
-                "setpoint_temp"=>setpoint_temp,
-                "location"=>Constants.Auto,
-                "capacity"=>capacity_kw,
-                "energy_factor"=>ef
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-      elsif ["natural gas", "fuel oil", "propane"].include? fuel
-      
-        re = Float(XMLHelper.get_value(dhw, "RecoveryEfficiency"))
-        
-        measure_subdir = "ResidentialHotWaterHeaterTankFuel"
-        args = {
-                "fuel_type"=>to_beopt_fuel(fuel),
-                "tank_volume"=>tank_vol,
-                "setpoint_temp"=>setpoint_temp,
-                "location"=>Constants.Auto,
-                "capacity"=>capacity_kbtuh,
-                "energy_factor"=>ef,
-                "recovery_efficiency"=>re,
-                "offcyc_power"=>0,
-                "oncyc_power"=>0
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-      else
-      
-        fail "Unhandled water heater (#{wh_type}, #{fuel})."
-        
-      end      
-      
-    elsif wh_type == "instantaneous water heater"
-    
-      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
-      ef_adj = Float(XMLHelper.get_value(dhw, "extension/PerformanceAdjustmentEnergyFactor"))
-      
-      if fuel == "electricity"
-      
-        measure_subdir = "ResidentialHotWaterHeaterTanklessElectric"
-        args = {
-                "setpoint_temp"=>setpoint_temp,
-                "location"=>Constants.Auto,
-                "capacity"=>100000000.0,
-                "energy_factor"=>ef,
-                "cycling_derate"=>ef_adj
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-      elsif ["natural gas", "fuel oil", "propane"].include? fuel
-        
-        measure_subdir = "ResidentialHotWaterHeaterTanklessFuel"
-        args = {
-                "setpoint_temp"=>setpoint_temp,
-                "fuel_type"=>to_beopt_fuel(fuel),
-                "location"=>Constants.Auto,
-                "capacity"=>100000000.0,
-                "energy_factor"=>ef,
-                "cycling_derate"=>ef_adj,
-                "offcyc_power"=>0,
-                "oncyc_power"=>0,
-               }
-        update_args_hash(measures, measure_subdir, args)
-        
-      else
-      
-        fail "Unhandled water heater (#{wh_type}, #{fuel})."
-        
-      end
-      
-    elsif wh_type == "heat pump water heater"
-    
-      measure_subdir = "ResidentialHotWaterHeaterHeatPump"
-      # FIXME
-      args = {
-              "storage_tank_volume"=>tank_vol,
-              "setpoint_temp"=>setpoint_temp,
-              "location"=>Constants.Auto,
-              "element_capacity"=>4.5,
-              "min_temp"=>45,
-              "max_temp"=>120,
-              "cap"=>0.5,
-              "cop"=>2.8,
-              "shr"=>0.88,
-              "airflow_rate"=>181,
-              "fan_power"=>0.0462,
-              "parasitics"=>3,
-              "tank_ua"=>3.9,
-              "int_factor"=>1.0,
-              "temp_depress"=>0
-             }
-      update_args_hash(measures, measure_subdir, args)
-      
-    else
-    
-      fail "Unhandled water heater (#{wh_type})."
-      
-    end
-
-  end
-  
   def self.get_hot_water_and_appliances(building, measures)
   
     wh = building.elements["BuildingDetails/Systems/WaterHeating"]
@@ -1015,6 +886,10 @@ class OSModel
     # Beds, Baths, Occupants
     
     success = add_num_beds_baths_occupants(model, building, runner)
+    return false if not success
+    
+    # Hot Water
+    success = add_water_heater(runner, model, building, unit, weather, spaces)
     return false if not success
     
     # HVAC
@@ -1964,6 +1839,78 @@ class OSModel
     return false if not success
     
     return true
+  end
+  
+  def self.add_water_heater(runner, model, building, unit, weather, spaces)
+
+    dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
+    setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
+    wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
+    fuel = XMLHelper.get_value(dhw, "FuelType")
+    capacity_kbtuh = 40.0 # FIXME
+    if dhw.elements["HeatingCapacity"]
+      capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity"))/1000.0
+    end
+    space = spaces[Constants.SpaceTypeLiving] # FIXME
+    
+    if wh_type == "storage water heater"
+    
+      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
+      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
+      if fuel != "electricity"
+        re = Float(XMLHelper.get_value(dhw, "RecoveryEfficiency"))
+      else
+        re = 0.98
+      end
+      oncycle_power = 0.0
+      offcycle_power = 0.0
+      success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
+                                       capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
+                                       oncycle_power, offcycle_power)
+      return false if not success
+      
+    elsif wh_type == "instantaneous water heater"
+    
+      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
+      ef_adj = Float(XMLHelper.get_value(dhw, "extension/PerformanceAdjustmentEnergyFactor"))
+      capacity_kbtuh = 100000000.0
+      oncycle_power = 0.0
+      offcycle_power = 0.0
+      success = Waterheater.apply_tankless(model, unit, runner, space, to_beopt_fuel(fuel), 
+                                           capacity_kbtuh, ef, ef_adj,
+                                           setpoint_temp, oncycle_power, offcycle_power)
+      return false if not success
+      
+    elsif wh_type == "heat pump water heater"
+    
+      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
+      e_cap = 4.5 # FIXME
+      min_temp  45.0 # FIXME
+      max_temp = 120.0 # FIXME
+      cap = 0.5 # FIXME
+      cop = 2.8 # FIXME
+      shr = 0.88 # FIXME
+      airflow_rate = 181.0 # FIXME
+      fan_power = 0.0462 # FIXME
+      parasitics = 3.0 # FIXME
+      tank_ua = 3.9 # FIXME
+      int_factor = 1.0 # FIXME
+      temp_depress = 0.0 # FIXME
+      success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
+                                           e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
+                                           cap, cop, shr, airflow_rate, fan_power,
+                                           parasitics, tank_ua, int_factor, temp_depress,
+                                           ducting, unit_index)
+      return false if not success
+      
+    else
+    
+      fail "Unhandled water heater (#{wh_type})."
+      
+    end
+    
+    return true
+
   end
   
   def self.add_cooling_system(runner, model, building, unit, dse)
