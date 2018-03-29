@@ -910,7 +910,7 @@ class OSModel
         
         wall_height = Float(fnd_wall.elements["Height"].text)
         wall_gross_area = Float(fnd_wall.elements["Area"].text)
-        wall_net_area = net_wall_area(gross_wall_area, fenestration_areas, fnd_id)
+        wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, fnd_id)
         wall_length = wall_net_area / wall_height
         
         z_origin = -1 * Float(fnd_wall.elements["BelowGradeDepth"].text)
