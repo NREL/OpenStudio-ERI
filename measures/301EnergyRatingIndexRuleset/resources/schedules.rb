@@ -39,6 +39,10 @@ class HourlyByMonthSchedule
     def schedule
         return @schedule
     end
+    
+    def maxval
+        return @maxval
+    end
 
     private
 

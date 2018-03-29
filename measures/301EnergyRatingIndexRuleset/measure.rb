@@ -7,16 +7,18 @@ require 'rexml/xpath'
 require 'pathname'
 require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/301validator"
+require "#{File.dirname(__FILE__)}/resources/airflow"
 require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/xmlhelper"
-require "#{File.dirname(__FILE__)}/resources/geometry"
-require "#{File.dirname(__FILE__)}/resources/util"
-require "#{File.dirname(__FILE__)}/resources/hvac"
-require "#{File.dirname(__FILE__)}/resources/location"
 require "#{File.dirname(__FILE__)}/resources/constructions"
-require "#{File.dirname(__FILE__)}/resources/misc_loads"
+require "#{File.dirname(__FILE__)}/resources/geometry"
+require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/hvac_sizing"
+require "#{File.dirname(__FILE__)}/resources/lighting"
+require "#{File.dirname(__FILE__)}/resources/location"
+require "#{File.dirname(__FILE__)}/resources/misc_loads"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -285,9 +287,6 @@ class OSMeasures
     # HVAC
     get_ceiling_fan(building, measures)
     
-    # Plug Loads and Lighting
-    get_lighting(building, measures)
-    
     # Other
     get_photovoltaics(building, measures)
 
@@ -340,35 +339,6 @@ class OSMeasures
 
   end
 
-  def self.get_lighting(building, measures)
-  
-    lighting = building.elements["BuildingDetails/Lighting"]
-  
-    annual_kwh_interior = Float(XMLHelper.get_value(lighting, "extension/AnnualInteriorkWh"))
-    annual_kwh_exterior = Float(XMLHelper.get_value(lighting, "extension/AnnualExteriorkWh"))
-    annual_kwh_garage = Float(XMLHelper.get_value(lighting, "extension/AnnualGaragekWh"))
-
-    measure_subdir = "ResidentialLighting"
-    args = {
-            "option_type"=>Constants.OptionTypeLightingEnergyUses,
-            "hw_cfl"=>0, # not used
-            "hw_led"=>0, # not used
-            "hw_lfl"=>0, # not used
-            "pg_cfl"=>0, # not used
-            "pg_led"=>0, # not used
-            "pg_lfl"=>0, # not used
-            "in_eff"=>15, # not used
-            "cfl_eff"=>55, # not used
-            "led_eff"=>80, # not used
-            "lfl_eff"=>88, # not used
-            "energy_use_interior"=>annual_kwh_interior,
-            "energy_use_exterior"=>annual_kwh_exterior,
-            "energy_use_garage"=>annual_kwh_garage
-           }  
-    update_args_hash(measures, measure_subdir, args)  
-
-  end
-  
   def self.get_photovoltaics(building, measures)
 
     pvsys = building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"]
@@ -439,6 +409,8 @@ class OSModel
     # Plug Loads & Lighting
     
     success = add_mels(runner, model, building, unit)
+    return false if not success
+    success = add_lighting(runner, model, building, unit, weather)
     return false if not success
     
     # Other
@@ -2198,6 +2170,26 @@ class OSModel
     return true
   
   end  
+  
+  def self.add_lighting(runner, model, building, unit, weather)
+  
+    lighting = building.elements["BuildingDetails/Lighting"]
+  
+    annual_kwh_interior = Float(XMLHelper.get_value(lighting, "extension/AnnualInteriorkWh"))
+    success, sch = Lighting.apply_interior(model, unit, runner, weather, 
+                                                    nil, annual_kwh_interior)
+    return false if not success
+    
+    annual_kwh_garage = Float(XMLHelper.get_value(lighting, "extension/AnnualGaragekWh"))
+    success = Lighting.apply_garage(model, runner, sch, annual_kwh_garage)
+    return false if not success
+
+    annual_kwh_exterior = Float(XMLHelper.get_value(lighting, "extension/AnnualExteriorkWh"))
+    success = Lighting.apply_exterior(model, runner, sch, annual_kwh_exterior)
+    return false if not success
+    
+    return true
+  end
   
   def self.add_airflow(runner, model, building, unit)
   
