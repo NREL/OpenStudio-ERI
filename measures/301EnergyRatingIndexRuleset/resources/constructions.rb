@@ -1815,7 +1815,7 @@ class ThermalMassConstructions
     # Container class for additional thermal mass (partition/furniture) constructions
     
     def self.apply(runner, model, walls_by_type, drywall_thick_in, 
-                   partition_wall_frac_of_ffa=1.0, furniture_frac_of_ffa=1.0)
+                   partition_wall_frac_of_ffa=1.0, furniture_frac_of_ffa=0.4)
     
         if not apply_partition_walls(runner, model, 
                                      walls_by_type[Constants.SurfaceTypeWallIntFinUninsFin],
@@ -1924,12 +1924,9 @@ class ThermalMassConstructions
             furnSolarAbsorptance = 0.6
             furnSpecHeat = mat.cp
             furnDensity = density_lb_per_cuft
-            if finished_spaces.include?(space)
+            if finished_spaces.include?(space) or unfinished_basement_spaces.include?(space)
                 furnAreaFraction = frac_of_ffa
                 furnMass = mass_lb_per_sqft
-            elsif unfinished_basement_spaces.include?(space)
-                furnAreaFraction = 0.4
-                furnMass = 8.0
             elsif garage_spaces.include?(space)
                 furnAreaFraction = 0.1
                 furnMass = 2.0

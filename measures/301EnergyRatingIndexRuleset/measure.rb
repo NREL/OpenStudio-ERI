@@ -442,6 +442,9 @@ class OSModel
     success = add_finished_floor_area(runner, model, building, spaces)
     return false if not success
     
+    success = add_thermal_mass(runner, model, building)
+    return false if not success
+    
     success = set_zone_volumes(runner, model)
     return false if not success
     
@@ -1099,6 +1102,28 @@ class OSModel
     
     # Apply Construction
     success = apply_adiabatic_construction(runner, model, [surface], "floor")
+    return false if not success
+
+    return true
+  end
+  
+  def self.add_thermal_mass(runner, model, building)
+  
+    # FIXME ?
+    drywall_thick_in = 0.5
+    partition_frac_of_ffa = 1.0
+    success = ThermalMassConstructions.apply_partition_walls(runner, model, [], 
+                                                             "PartitionWallConstruction", 
+                                                             drywall_thick_in, partition_frac_of_ffa)
+    return false if not success
+    
+    # FIXME ?
+    furniture_frac_of_ffa = 1.0
+    mass_lb_per_sqft = 8.0
+    density_lb_per_cuft = 40.0
+    mat = BaseMaterial.Wood
+    success = ThermalMassConstructions.apply_furniture(runner, model, furniture_frac_of_ffa, 
+                                                       mass_lb_per_sqft, density_lb_per_cuft, mat)
     return false if not success
 
     return true
@@ -1899,6 +1924,7 @@ class OSModel
       oat_hwst_high = nil
       oat_hwst_low = nil
       design_temp = 180.0
+      is_modulating = false
       success = HVAC.apply_boiler(model, unit, runner, to_beopt_fuel(fuel), system_type, afue,
                                   oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
                                   heat_capacity_btuh, design_temp, is_modulating, dse)
