@@ -18,6 +18,7 @@ require "#{File.dirname(__FILE__)}/resources/location"
 require "#{File.dirname(__FILE__)}/resources/misc_loads"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/util"
+require "#{File.dirname(__FILE__)}/resources/waterheater"
 require "#{File.dirname(__FILE__)}/resources/xmlhelper"
 
 # start the measure
@@ -284,9 +285,6 @@ class OSMeasures
     # Envelope
     get_other_constructions(building, measures)
 
-    # HVAC
-    get_ceiling_fan(building, measures)
-    
     # Other
     get_photovoltaics(building, measures)
 
@@ -315,28 +313,6 @@ class OSMeasures
            }
     update_args_hash(measures, measure_subdir, args)
     
-  end
-
-  def self.get_ceiling_fan(building, measures)
-
-    # FIXME
-    cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
-    
-    measure_subdir = "ResidentialHVACCeilingFan"
-    args = {
-            "coverage"=>"NA",
-            "specified_num"=>1,
-            "power"=>45,
-            "control"=>Constants.CeilingFanControlTypical,
-            "use_benchmark_energy"=>true,
-            "mult"=>1,
-            "cooling_setpoint_offset"=>0,
-            "weekday_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
-            "weekend_sch"=>"0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05",
-            "monthly_sch"=>"1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
-           }  
-    update_args_hash(measures, measure_subdir, args)
-
   end
 
   def self.get_photovoltaics(building, measures)
@@ -404,6 +380,8 @@ class OSModel
     success = add_setpoints(runner, model, building, weather) 
     return false if not success
     success = add_dehumidifier(runner, model, building, unit)
+    return false if not success
+    success = add_ceiling_fans(runner, model, building, unit)
     return false if not success
     
     # Plug Loads & Lighting
@@ -1608,6 +1586,11 @@ class OSModel
     capacity_kbtuh = 40.0 # FIXME
     if dhw.elements["HeatingCapacity"]
       capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity"))/1000.0
+    else
+      # FIXME ?
+      num_bedrooms = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+      num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+      capacity_kbtuh = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(fuel), num_bedrooms, num_bathrooms)
     end
     space = spaces[Constants.SpaceTypeLiving] # FIXME
     
@@ -2179,6 +2162,28 @@ class OSModel
     
   end
   
+  def self.add_ceiling_fans(runner, model, building, unit)
+
+    # FIXME
+    cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
+    coverage = nil
+    specified_num = nil
+    power = nil
+    control = nil
+    use_benchmark_energy = true
+    mult = 1.0
+    cooling_setpoint_offset = 0.0
+    weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
+    weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
+    monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
+    success = HVAC.apply_ceiling_fans(model, unit, runner, coverage, specified_num, power,
+                                      control, use_benchmark_energy, cooling_setpoint_offset,
+                                      mult, weekday_sch, weekend_sch, monthly_sch, sch=nil)
+    return false if not success
+
+    return true
+  end
+  
   def self.get_dse(building)
     dse_cool = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
     dse_heat = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
@@ -2260,12 +2265,11 @@ class OSModel
     unfinished_basement_ach = 0.1 # TODO: Need to handle above-grade basement
     crawl_ach = crawl_sla # FIXME: sla vs ach
     pier_beam_ach = 100
-    unfinished_attic_sla = attic_sla
     shelter_coef = Constants.Auto
     has_flue_chimney = false # FIXME
     is_existing_home = false # FIXME
     terrain = Constants.TerrainSuburban
-    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, unfinished_attic_sla, unfinished_basement_ach, finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
+    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, attic_sla, unfinished_basement_ach, finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
 
     # Mechanical Ventilation
     whole_house_fan = building.elements["BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
