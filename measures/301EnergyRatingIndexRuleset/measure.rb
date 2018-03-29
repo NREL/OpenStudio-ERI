@@ -405,7 +405,7 @@ class OSModel
     return false if not success
     success = add_dehumidifier(runner, model, building, unit)
     return false if not success
-
+    
     # Plug Loads & Lighting
     
     success = add_mels(runner, model, building, unit)
@@ -432,7 +432,7 @@ class OSModel
     if avg_ceil_hgt.nil?
       avg_ceil_hgt = 8.0
     else
-      avg_ceil_hgt = avg_ceil_hgt.text.to_f
+      avg_ceil_hgt = Float(avg_ceil_hgt.text)
     end
     
     spaces = create_all_spaces_and_zones(model, building)
@@ -464,15 +464,16 @@ class OSModel
     success = add_finished_floor_area(runner, model, building, spaces)
     return false if not success
     
+    success = set_zone_volumes(runner, model)
+    return false if not success
+    
     success = explode_surfaces(runner, model)
     return false if not success
 
     return true, spaces, unit
   end
   
-  def self.explode_surfaces(runner, model)
-    # Re-position surfaces so as to not shade each other. 
-    # TODO: Might be able to use the new self-shading options in E+ 8.9 ShadowCalculation object
+  def self.set_zone_volumes(runner, model)
   
     # FIXME: Set the zone volumes based on the sum of space volumes
     model.getThermalZones.each do |thermal_zone|
@@ -483,10 +484,10 @@ class OSModel
           thermal_zone.spaces.each do |space|
             space.surfaces.each do |surface|
               next unless surface.surfaceType.downcase == "roofceiling"
-              floor_area = surface.grossArea
+              floor_area = UnitConversions.convert(surface.grossArea,"m^2","ft^2")
             end
           end
-          zone_volume = UnitConversions.convert(floor_area,"m^2","ft^2") * Geometry.get_height_of_spaces(thermal_zone.spaces)
+          zone_volume = floor_area * Geometry.get_height_of_spaces(thermal_zone.spaces)
         end
       else # space has a floor
         zone_volume = Geometry.get_volume_from_spaces(thermal_zone.spaces)
@@ -494,6 +495,13 @@ class OSModel
       thermal_zone.setVolume(UnitConversions.convert(zone_volume,"ft^3","m^3"))
     end
     
+    return true
+  end
+  
+  def self.explode_surfaces(runner, model)
+    # Re-position surfaces so as to not shade each other. 
+    # TODO: Might be able to use the new self-shading options in E+ 8.9 ShadowCalculation object
+  
     # Explode the walls
     wall_offset = 10.0
     surfaces_moved = []
@@ -807,7 +815,7 @@ class OSModel
 
   def self.net_wall_area(gross_wall_area, wall_fenestration_areas, wall_id)
     if wall_fenestration_areas.keys.include? wall_id
-      return gross_wall_area - UnitConversions.convert(wall_fenestration_areas[wall_id],"ft^2","m^2")
+      return gross_wall_area - wall_fenestration_areas[wall_id]
     end    
     return gross_wall_area
   end
@@ -867,16 +875,19 @@ class OSModel
       
         slab_id = fnd_slab.elements["SystemIdentifier"].attributes["id"]
       
-        slab_area = UnitConversions.convert(fnd_slab.elements["Area"].text.to_f,"ft^2","m^2")
-        slab_width = Math::sqrt(slab_area)
-        slab_length = slab_area / slab_width
+        slab_length = Float(fnd_slab.elements["ExposedPerimeter"].text)
+        perim_exp += slab_length
+        slab_area = Float(fnd_slab.elements["Area"].text)
+        slab_width = slab_area/slab_length
         
         z_origin = 0
         unless fnd_slab.elements["DepthBelowGrade"].nil?
-          z_origin = -UnitConversions.convert(fnd_slab.elements["DepthBelowGrade"].text.to_f,"ft","m")
+          z_origin = -1 * Float(fnd_slab.elements["DepthBelowGrade"].text)
         end
         
-        surface = OpenStudio::Model::Surface.new(add_floor_polygon(slab_length, slab_width, z_origin), model)
+        surface = OpenStudio::Model::Surface.new(add_floor_polygon(UnitConversions.convert(slab_length,"ft","m"), 
+                                                                   UnitConversions.convert(slab_width,"ft","m"), 
+                                                                   UnitConversions.convert(z_origin,"ft","m")), model)
         surface.setName(slab_id)
         surface.setSurfaceType("Floor") 
         surface.setOutsideBoundaryCondition("Foundation")
@@ -904,7 +915,6 @@ class OSModel
           slab_perim_r = 0
           slab_perim_width = 0
         end
-        perim_exp += Float(fnd_slab.elements["ExposedPerimeter"].text)
         
       end
       
@@ -920,12 +930,16 @@ class OSModel
         
         exterior_adjacent_to = fnd_wall.elements["extension/ExteriorAdjacentTo"].text
         
-        wall_height = UnitConversions.convert(fnd_wall.elements["Height"].text.to_f,"ft","m")
-        wall_length = net_wall_area(UnitConversions.convert(fnd_wall.elements["Area"].text.to_f,"ft^2","m^2"), fenestration_areas, fnd_id) / wall_height
+        wall_height = Float(fnd_wall.elements["Height"].text)
+        wall_gross_area = Float(fnd_wall.elements["Area"].text)
+        wall_net_area = net_wall_area(gross_wall_area, fenestration_areas, fnd_id)
+        wall_length = wall_net_area / wall_height
         
-        z_origin = -UnitConversions.convert(fnd_wall.elements["BelowGradeDepth"].text.to_f,"ft","m")
+        z_origin = -1 * Float(fnd_wall.elements["BelowGradeDepth"].text)
         
-        surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, z_origin), model)
+        surface = OpenStudio::Model::Surface.new(add_wall_polygon(UnitConversions.convert(wall_length,"ft","m"), 
+                                                                  UnitConversions.convert(wall_height,"ft","m"), 
+                                                                  UnitConversions.convert(z_origin,"ft","m")), model)
         surface.setName(wall_id)
         surface.setSurfaceType("Wall")
         if exterior_adjacent_to == "ground"
@@ -984,12 +998,15 @@ class OSModel
       
         floor_id = fnd_floor.elements["SystemIdentifier"].attributes["id"]
 
-        framefloor_width = UnitConversions.convert(Math::sqrt(fnd_floor.elements["Area"].text.to_f),"ft","m")
-        framefloor_length = UnitConversions.convert(fnd_floor.elements["Area"].text.to_f,"ft^2","m^2") / framefloor_width
+        framefloor_area = Float(fnd_floor.elements["Area"].text)
+        framefloor_width = Math::sqrt(framefloor_area)
+        framefloor_length = framefloor_area / framefloor_width
         
-        z_origin = 0
+        z_origin = 0 # FIXME
         
-        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(framefloor_length, framefloor_width, z_origin), model)
+        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(UnitConversions.convert(framefloor_length,"ft","m"), 
+                                                                     UnitConversions.convert(framefloor_width,"ft","m"), 
+                                                                     UnitConversions.convert(z_origin,"ft","m")), model)
         surface.setName(floor_id)
         surface.setSurfaceType("RoofCeiling")
         surface.setSpace(spaces[foundation_space_type])
@@ -1046,7 +1063,6 @@ class OSModel
       
         # Foundation slab, walls, and ceilings
         slab_surface = slab_surfaces[0] # FIXME
-        wall_height = UnitConversions.convert(wall_height,"m","ft") # FIXME
         success = FoundationConstructions.apply_walls_and_slab(runner, model, wall_surfaces, "FndWallConstruction", 
                                                                wall_cont_height, wall_cav_r, wall_grade,
                                                                wall_cav_depth, walls_filled_cavity, wall_ff, 
@@ -1090,10 +1106,14 @@ class OSModel
     
     runner.registerWarning("Adding adiabatic conditioned floors with #{addtl_ffa.to_s} ft^2 to preserve building total conditioned floor area.")
       
-    finishedfloor_width = UnitConversions.convert(Math::sqrt(addtl_ffa),"ft","m")
-    finishedfloor_length = UnitConversions.convert(addtl_ffa,"ft^2","m^2") / finishedfloor_width
     
-    surface = OpenStudio::Model::Surface.new(add_floor_polygon(-finishedfloor_width, -finishedfloor_length, 0), model)
+    finishedfloor_width = Math::sqrt(addtl_ffa)
+    finishedfloor_length = addtl_ffa / finishedfloor_width
+    z_origin = 0
+    
+    surface = OpenStudio::Model::Surface.new(add_floor_polygon(-UnitConversions.convert(finishedfloor_width,"ft","m"), 
+                                                               -UnitConversions.convert(finishedfloor_length,"ft","m"), 
+                                                               UnitConversions.convert(z_origin,"ft","m")), model)
     surface.setName("inferred finished floor")
     surface.setSurfaceType("Floor")
     surface.setSpace(spaces[Constants.SpaceTypeLiving])
@@ -1115,10 +1135,15 @@ class OSModel
       
       wall_id = wall.elements["SystemIdentifier"].attributes["id"]
       
-      wall_height = UnitConversions.convert(avg_ceil_hgt,"ft","m")
-      wall_length = net_wall_area(UnitConversions.convert(wall.elements["Area"].text.to_f,"ft^2","m^2"), fenestration_areas, wall_id) / wall_height
+      wall_gross_area = Float(wall.elements["Area"].text)
+      wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, wall_id)
+      wall_height = avg_ceil_hgt
+      wall_length = wall_net_area / wall_height
+      z_origin = 0
 
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(wall_length, wall_height, 0), model)
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(UnitConversions.convert(wall_length,"ft","m"), 
+                                                                UnitConversions.convert(wall_height,"ft","m"), 
+                                                                UnitConversions.convert(z_origin,"ft","m")), model)
       surface.setName(wall_id)
       surface.setSurfaceType("Wall") 
       if ["living space"].include? interior_adjacent_to
@@ -1268,10 +1293,14 @@ class OSModel
         floor_id = floor.elements["SystemIdentifier"].attributes["id"]
         exterior_adjacent_to = floor.elements["extension/ExteriorAdjacentTo"].text
         
-        floor_width = UnitConversions.convert(Math::sqrt(floor.elements["Area"].text.to_f),"ft","m")
-        floor_length = UnitConversions.convert(floor.elements["Area"].text.to_f,"ft^2","m^2") / floor_width
+        floor_area = Float(floor.elements["Area"].text)
+        floor_width = Math::sqrt(floor_area)
+        floor_length = floor_area / floor_width
+        z_origin = 0
        
-        surface = OpenStudio::Model::Surface.new(add_floor_polygon(floor_length, floor_width, 0), model)
+        surface = OpenStudio::Model::Surface.new(add_floor_polygon(UnitConversions.convert(floor_length,"ft","m"), 
+                                                                   UnitConversions.convert(floor_width,"ft","m"), 
+                                                                   UnitConversions.convert(z_origin,"ft","m")), model)
         surface.setName(floor_id)
         surface.setSurfaceType("Floor")
         if ["vented attic", "unvented attic"].include? attic_type
@@ -1324,11 +1353,16 @@ class OSModel
       roofs.elements.each("Roof") do |roof|
   
         roof_id = roof.elements["SystemIdentifier"].attributes["id"]
-        
-        roof_width = UnitConversions.convert(Math::sqrt(roof.elements["Area"].text.to_f),"ft","m")
-        roof_length = UnitConversions.convert(roof.elements["Area"].text.to_f,"ft^2","m^2") / roof_width
+     
+        # FIXME: Calculate net from gross due to skylights
+        roof_area = Float(roof.elements["Area"].text)
+        roof_width = Math::sqrt(roof_area)
+        roof_length = roof_area / roof_width
+        z_origin = 0
 
-        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(roof_length, roof_width, 0), model)
+        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(UnitConversions.convert(roof_length,"ft","m"), 
+                                                                     UnitConversions.convert(roof_width,"ft","m"), 
+                                                                     UnitConversions.convert(z_origin,"ft","m")), model)
         surface.setName(roof_id)
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")
@@ -1369,6 +1403,7 @@ class OSModel
   
   def self.add_windows(runner, model, building, spaces, fenestration_areas, weather)
   
+    # FIXME - Check cooling_season
     heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
     if heating_season.nil? or cooling_season.nil?
       return false
@@ -1379,16 +1414,23 @@ class OSModel
     
       window_id = window.elements["SystemIdentifier"].attributes["id"]
 
-      window_height = UnitConversions.convert(5.0,"ft","m")
-      window_width = UnitConversions.convert(window.elements["Area"].text.to_f,"ft^2","m^2") / window_height
+      window_area = Float(window.elements["Area"].text)
+      window_height = 5.0
+      window_width = window_area / window_height
+      window_azimuth = Float(window.elements["Azimuth"].text)
+      z_origin = 0
 
       if not fenestration_areas.keys.include? window.elements["AttachedToWall"].attributes["idref"]
-        fenestration_areas[window.elements["AttachedToWall"].attributes["idref"]] = window.elements["Area"].text.to_f
+        fenestration_areas[window.elements["AttachedToWall"].attributes["idref"]] = window_area
       else
-        fenestration_areas[window.elements["AttachedToWall"].attributes["idref"]] += window.elements["Area"].text.to_f
+        fenestration_areas[window.elements["AttachedToWall"].attributes["idref"]] += window_area
       end
 
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [0, 0.001, 0.001 * 2, 0.001]), model) # offsets B, L, T, R
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(UnitConversions.convert(window_width,"ft","m"), 
+                                                                UnitConversions.convert(window_height,"ft","m"), 
+                                                                UnitConversions.convert(z_origin,"ft","m"), 
+                                                                window_azimuth,
+                                                                [0, 0.001, 0.001 * 2, 0.001]), model) # offsets B, L, T, R
       surface.setName("surface #{window_id}")
       surface.setSurfaceType("Wall")
       building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
@@ -1406,10 +1448,14 @@ class OSModel
           fail "Unhandled value (#{interior_adjacent_to})."
         end
       end
-      surface.setOutsideBoundaryCondition("Adiabatic")
+      surface.setOutsideBoundaryCondition("Outdoors") # cannot be adiabatic or OS won't create subsurface
       surfaces << surface
       
-      sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(window_width, window_height, 0, window.elements["Azimuth"].text.to_f, [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
+      sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(UnitConversions.convert(window_width,"ft","m"), 
+                                                                       UnitConversions.convert(window_height,"ft","m"), 
+                                                                       UnitConversions.convert(z_origin,"ft","m"), 
+                                                                       window_azimuth, 
+                                                                       [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
       sub_surface.setName(window_id)
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("FixedWindow")
@@ -1429,7 +1475,6 @@ class OSModel
       cool_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer"))
       heat_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter"))
       
-      # TODO - Check cooling_season
       success = SubsurfaceConstructions.apply_window(runner, model, [sub_surface],
                                                      "WindowConstruction",
                                                      weather, cooling_season, ufactor, shgc,
@@ -1452,16 +1497,23 @@ class OSModel
     
       door_id = door.elements["SystemIdentifier"].attributes["id"]
 
-      door_height = UnitConversions.convert(6.666,"ft","m")
-      door_width = UnitConversions.convert(door.elements["Area"].text.to_f,"ft^2","m^2") / door_height
+      door_area = Float(door.elements["Area"].text)
+      door_height = 6.666
+      door_width = door_area / door_height
+      door_azimuth = Float(door.elements["Azimuth"].text)
+      z_origin = 0
     
       if not fenestration_areas.keys.include? door.elements["AttachedToWall"].attributes["idref"]
-        fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] = door.elements["Area"].text.to_f
+        fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] = door_area
       else
-        fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] += door.elements["Area"].text.to_f
+        fenestration_areas[door.elements["AttachedToWall"].attributes["idref"]] += door_area
       end
 
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0.001, 0.001, 0.001]), model) # offsets B, L, T, R
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(UnitConversions.convert(door_width,"ft","m"), 
+                                                                UnitConversions.convert(door_height,"ft","m"), 
+                                                                UnitConversions.convert(z_origin,"ft","m"), 
+                                                                door_azimuth, 
+                                                                [0, 0.001, 0.001, 0.001]), model) # offsets B, L, T, R
       surface.setName("surface #{door_id}")
       surface.setSurfaceType("Wall")
       building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
@@ -1479,10 +1531,14 @@ class OSModel
           fail "Unhandled value (#{interior_adjacent_to})."
         end
       end
-      surface.setOutsideBoundaryCondition("Adiabatic")
+      surface.setOutsideBoundaryCondition("Outdoors") # cannot be adiabatic or OS won't create subsurface
       surfaces << surface
 
-      sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(door_width, door_height, 0, door.elements["Azimuth"].text.to_f, [0, 0, 0, 0]), model) # offsets B, L, T, R
+      sub_surface = OpenStudio::Model::SubSurface.new(add_wall_polygon(UnitConversions.convert(door_width,"ft","m"), 
+                                                                       UnitConversions.convert(door_height,"ft","m"), 
+                                                                       UnitConversions.convert(z_origin,"ft","m"), 
+                                                                       door_azimuth, 
+                                                                       [0, 0, 0, 0]), model) # offsets B, L, T, R
       sub_surface.setName(door_id)
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("Door")
@@ -1720,9 +1776,9 @@ class OSModel
     
     cool_capacity_btuh = XMLHelper.get_value(clgsys, "CoolingCapacity")
     if cool_capacity_btuh.nil?
-      cool_capacity_tons = Constants.SizingAuto
+      cool_capacity_btuh = Constants.SizingAuto
     else
-      cool_capacity_tons = UnitConversions.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton")
+      cool_capacity_btuh = Float(cool_capacity_btuh)
     end
     
     if clg_type == "central air conditioning"
@@ -1744,7 +1800,7 @@ class OSModel
         success = HVAC.apply_central_ac_1speed(model, unit, runner, seer, eers, shrs,
                                                fan_power_rated, fan_power_installed,
                                                crankcase_kw, crankcase_temp,
-                                               eer_capacity_derates, cool_capacity_tons, 
+                                               eer_capacity_derates, cool_capacity_btuh, 
                                                dse)
         return false if not success
       
@@ -1761,7 +1817,7 @@ class OSModel
                                                capacity_ratios, fan_speed_ratios,
                                                fan_power_rated, fan_power_installed,
                                                crankcase_kw, crankcase_temp,
-                                               eer_capacity_derates, cool_capacity_tons, 
+                                               eer_capacity_derates, cool_capacity_btuh, 
                                                dse)
         return false if not success
         
@@ -1778,7 +1834,7 @@ class OSModel
                                                 capacity_ratios, fan_speed_ratios,
                                                 fan_power_rated, fan_power_installed,
                                                 crankcase_kw, crankcase_temp,
-                                                eer_capacity_derates, cool_capacity_tons, 
+                                                eer_capacity_derates, cool_capacity_btuh, 
                                                 dse)
         return false if not success
                                      
@@ -1795,7 +1851,7 @@ class OSModel
       airflow_rate = 350.0
       
       success = HVAC.apply_room_ac(model, unit, runner, eer, shr,
-                                   airflow_rate, cool_capacity_tons)
+                                   airflow_rate, cool_capacity_btuh)
       return false if not success
       
     end  
@@ -1816,9 +1872,9 @@ class OSModel
     
     heat_capacity_btuh = XMLHelper.get_value(htgsys, "HeatingCapacity")
     if heat_capacity_btuh.nil?
-      heat_capacity_kbtuh = Constants.SizingAuto
+      heat_capacity_btuh = Constants.SizingAuto
     else
-      heat_capacity_kbtuh = UnitConversions.convert(heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr")
+      heat_capacity_btuh = Float(heat_capacity_btuh)
     end
     
     if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
@@ -1846,7 +1902,7 @@ class OSModel
     
       fan_power_installed = 0.5
       success = HVAC.apply_furnace(model, unit, runner, to_beopt_fuel(fuel), afue,
-                                   heat_capacity_kbtuh, fan_power_installed, dse,
+                                   heat_capacity_btuh, fan_power_installed, dse,
                                    existing_objects)
       return false if not success
       
@@ -1862,14 +1918,14 @@ class OSModel
       design_temp = 180.0
       success = HVAC.apply_boiler(model, unit, runner, to_beopt_fuel(fuel), system_type, afue,
                                   oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                                  heat_capacity_kbtuh, design_temp, is_modulating, dse)
+                                  heat_capacity_btuh, design_temp, is_modulating, dse)
       return false if not success
     
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
     
       efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
       success = HVAC.apply_electric_baseboard(model, unit, runner, efficiency, 
-                                              heat_capacity_kbtuh)
+                                              heat_capacity_btuh)
       return false if not success
 
     # TODO
@@ -1895,16 +1951,16 @@ class OSModel
     
     cool_capacity_btuh = XMLHelper.get_value(hp, "CoolingCapacity")
     if cool_capacity_btuh.nil?
-      cool_capacity_tons = Constants.SizingAuto
+      cool_capacity_btuh = Constants.SizingAuto
     else
-      cool_capacity_tons = UnitConversions.convert(cool_capacity_btuh.to_f, "Btu/hr", "ton")
+      cool_capacity_btuh = Float(cool_capacity_btuh)
     end
     
     backup_heat_capacity_btuh = XMLHelper.get_value(hp, "BackupHeatingCapacity")
     if backup_heat_capacity_btuh.nil?
-      backup_heat_capacity_kbtuh = Constants.SizingAuto
+      backup_heat_capacity_btuh = Constants.SizingAuto
     else
-      backup_heat_capacity_kbtuh = UnitConversions.convert(backup_heat_capacity_btuh.to_f, "Btu/hr", "kBtu/hr")
+      backup_heat_capacity_btuh = Float(backup_heat_capacity_btuh)
     end
     
     if hp_type == "air-to-air"        
@@ -1941,8 +1997,8 @@ class OSModel
                                                  fan_power_rated, fan_power_installed, min_temp,
                                                  crankcase_kw, crankcase_temp,
                                                  eer_capacity_derates, cop_capacity_derates,
-                                                 cool_capacity_tons, supplemental_efficiency, 
-                                                 backup_heat_capacity_kbtuh, dse)
+                                                 cool_capacity_btuh, supplemental_efficiency, 
+                                                 backup_heat_capacity_btuh, dse)
         return false if not success
         
       elsif num_speeds == "2-Speed"
@@ -1965,8 +2021,8 @@ class OSModel
                                                  fan_power_rated, fan_power_installed, min_temp,
                                                  crankcase_kw, crankcase_temp,
                                                  eer_capacity_derates, cop_capacity_derates,
-                                                 cool_capacity_tons, supplemental_efficiency,
-                                                 backup_heat_capacity_kbtuh, dse)
+                                                 cool_capacity_btuh, supplemental_efficiency,
+                                                 backup_heat_capacity_btuh, dse)
         return false if not success
         
       elsif num_speeds == "Variable-Speed"
@@ -1989,8 +2045,8 @@ class OSModel
                                                  fan_power_rated, fan_power_installed, min_temp,
                                                  crankcase_kw, crankcase_temp,
                                                  eer_capacity_derates, cop_capacity_derates,
-                                                 cool_capacity_tons, supplemental_efficiency,
-                                                 backup_heat_capacity_kbtuh, dse)
+                                                 cool_capacity_btuh, supplemental_efficiency,
+                                                 backup_heat_capacity_btuh, dse)
         return false if not success
         
       else
@@ -2030,8 +2086,8 @@ class OSModel
                                 min_heating_airflow_rate, max_heating_airflow_rate, 
                                 heating_capacity_offset, cap_retention_frac,
                                 cap_retention_temp, pan_heater_power, fan_power,
-                                is_ducted, cool_capacity_tons,
-                                supplemental_efficiency, backup_heat_capacity_kbtuh,
+                                is_ducted, cool_capacity_btuh,
+                                supplemental_efficiency, backup_heat_capacity_btuh,
                                 dse)
       return false if not success
              
@@ -2056,9 +2112,9 @@ class OSModel
       u_tube_leg_spacing = 0.9661
       u_tube_spacing_type = "b"
       fan_power = 0.5
-      heat_pump_capacity = cool_capacity_tons
+      heat_pump_capacity = cool_capacity_btuh
       supplemental_efficiency = 1
-      supplemental_capacity = backup_heat_capacity_kbtuh
+      supplemental_capacity = backup_heat_capacity_btuh
       success = HVAC.apply_gshp(model, unit, runner, weather, cop, eer, shr,
                                 ground_conductivity, grout_conductivity,
                                 bore_config, bore_holes, bore_depth,
