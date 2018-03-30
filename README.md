@@ -11,7 +11,7 @@ The ERI is defined by ANSI/RESNET 301-2014 "Standard for the Calculation and Lab
 
 ## Setup
 
-Download [OpenStudio 2.5.0](https://github.com/NREL/OpenStudio/releases/tag/v2.5.0). At a minimum, install the "Command Line Interface".
+Download [OpenStudio 2.5.0](https://github.com/NREL/OpenStudio/releases/tag/v2.5.0). At a minimum, install the Command Line Interface and EnergyPlus components.
 
 ## Running
 
