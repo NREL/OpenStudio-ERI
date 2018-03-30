@@ -278,73 +278,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
   
 end
 
-class OSMeasures    
-
-  def self.build_measures_from_hpxml(hpxml_doc, model, runner, weather)
-
-    # Envelope
-    get_other_constructions(building, measures)
-
-    # Other
-    get_photovoltaics(building, measures)
-
-  end
-  
-  private
-  
-  def self.get_other_constructions(building, measures)
-  
-    # FIXME
-
-    # measure_subdir = "ResidentialConstructionsUninsulatedSurfaces"
-    # args = {
-            # # "surface"=>name # FIXME: how to apply this to, e.g., adiabatic floors between stories?
-            # }
-    # update_args_hash(measures, measure_subdir, args)
-
-    measure_subdir = "ResidentialConstructionsFurnitureThermalMass"
-    args = {
-            "area_fraction"=>0.4,
-            "mass"=>8.0,
-            "solar_abs"=>0.6,
-            "conductivity"=>BaseMaterial.Wood.k_in,
-            "density"=>40.0,
-            "specific_heat"=>BaseMaterial.Wood.cp,
-           }
-    update_args_hash(measures, measure_subdir, args)
-    
-  end
-
-  def self.get_photovoltaics(building, measures)
-
-    pvsys = building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"]
-    
-    if not pvsys.nil?
-    
-      az = Float(XMLHelper.get_value(pvsys, "ArrayAzimuth"))
-      tilt = Float(XMLHelper.get_value(pvsys, "ArrayTilt"))
-      inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
-      power_kw = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))/1000.0
-      
-      measure_subdir = "ResidentialPhotovoltaics"
-      args = {
-              "size"=>power_kw,
-              "module_type"=>Constants.PVModuleTypeStandard,
-              "system_losses"=>0.14,
-              "inverter_efficiency"=>inv_eff,
-              "azimuth_type"=>Constants.CoordAbsolute,
-              "azimuth"=>az, # TODO: Double-check
-              "tilt_type"=>Constants.CoordAbsolute,
-              "tilt"=>tilt # TODO: Double-check
-             }  
-      update_args_hash(measures, measure_subdir, args)
-      
-    end
-
-  end
-  
-end
-
 class OSModel
 
   def self.create(hpxml_doc, runner, model, weather)
@@ -396,6 +329,8 @@ class OSModel
     success = add_airflow(runner, model, building, unit)
     return false if not success
     success = add_hvac_sizing(runner, model, unit, weather)
+    return false if not success
+    success = add_photovoltaics(runner, model, building)
     return false if not success
     
     return true
@@ -2423,6 +2358,24 @@ class OSModel
     
     return true
 
+  end
+  
+  def self.add_photovoltaics(runner, model, building)
+
+    return true if building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].nil?
+  
+    building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].each do |pvsys|
+    
+      az = Float(XMLHelper.get_value(pvsys, "ArrayAzimuth"))
+      tilt = Float(XMLHelper.get_value(pvsys, "ArrayTilt"))
+      inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
+      power_kw = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))/1000.0
+      
+      # TODO: Hook up to model
+      
+    end
+      
+    return true
   end
   
 end
