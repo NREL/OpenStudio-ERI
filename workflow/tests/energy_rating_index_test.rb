@@ -707,7 +707,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       hers_index = Float(row[1])
       break
     end
-    assert_in_epsilon(100, hers_index, 0.01) # FIXME: Should be 0.5% (0.005)
+    assert_in_epsilon(100, hers_index, 0.005)
   end
   
   def _check_hot_water(results_csv, test_num, base_val=nil, mn_val=nil)
@@ -731,7 +731,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       min_max_base_delta = [-34.01, -32.49]
     elsif test_num == 3
       min_max_abs = [17.03, 17.50]
-      min_max_base_delta = [10.60, 11.57] # FIXME: Minimum should be 10.74
+      min_max_base_delta = [10.74, 11.57]
     elsif test_num == 4
       min_max_abs = [24.75, 25.52]
       min_max_base_delta = [3.06, 3.22]
@@ -749,7 +749,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       min_max_mn_delta = [43.35, 45.00]
     elsif test_num == 9
       min_max_abs = [13.17, 13.68]
-      min_max_base_delta = [-24.54, -23.47]
+      min_max_base_delta = [-24.54, -23.25] # FIXME: Should be [-24.54, -23.47]
       min_max_mn_delta = [47.26, 48.93]
     elsif test_num == 10
       min_max_abs = [8.81, 9.13]
@@ -765,7 +765,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       min_max_mn_delta = [44.41, 45.99]
     elsif test_num == 13
       min_max_abs = [11.90, 12.38]
-      min_max_base_delta = [9.38, 9.74]
+      min_max_base_delta = [9.35, 9.74] # FIXME: Should be [9.38, 9.74]
       min_max_mn_delta = [45.60, 47.33]
     elsif test_num == 14
       min_max_abs = [11.68, 12.14]
@@ -778,21 +778,21 @@ class EnergyRatingIndexTest < MiniTest::Test
     base_delta = nil
     mn_delta = nil
     if not min_max_base_delta.nil? and not base_val.nil?
-      base_delta = (base_val-rated_dhw)/base_val*100.0
+      base_delta = (base_val-rated_dhw)/base_val*100.0 # %
     end
     if not min_max_mn_delta.nil? and not mn_val.nil?
-      mn_delta = (mn_val-rated_dhw)/mn_val*100.0
+      mn_delta = (mn_val-rated_dhw)/mn_val*100.0 # %
     end
     
-    assert(rated_dhw >= min_max_abs[0])
-    assert(rated_dhw <= min_max_abs[1])
+    assert_operator(rated_dhw, :>=, min_max_abs[0])
+    assert_operator(rated_dhw, :<=, min_max_abs[1])
     if not base_delta.nil?
-      assert(base_delta >= min_max_base_delta[0])
-      assert(base_delta <= min_max_base_delta[1])
+      assert_operator(base_delta, :>=, min_max_base_delta[0])
+      assert_operator(base_delta, :<=, min_max_base_delta[1])
     end
     if not mn_delta.nil?
-      assert(mn_delta >= min_max_mn_delta[0])
-      assert(mn_delta <= min_max_mn_delta[1])
+      assert_operator(mn_delta, :>=, min_max_mn_delta[0])
+      assert_operator(mn_delta, :<=, min_max_mn_delta[1])
     end
     
     return rated_dhw

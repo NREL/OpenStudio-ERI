@@ -27,6 +27,7 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
+          <BuildingVolume>87162.5</BuildingVolume>
           <ConditionedBuildingVolume>67575</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>

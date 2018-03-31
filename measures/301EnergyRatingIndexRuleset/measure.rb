@@ -256,6 +256,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
+    # FIXME: Make variables specific to the equipment
     add_output_variables(model, BuildingLoadVars.get_space_heating_load_vars, htg_objs)
     add_output_variables(model, BuildingLoadVars.get_space_cooling_load_vars, clg_objs)
     add_output_variables(model, BuildingLoadVars.get_water_heating_load_vars)
@@ -380,7 +381,7 @@ class OSModel
     success = add_thermal_mass(runner, model, building)
     return false if not success
     
-    success = set_zone_volumes(runner, model)
+    success = set_zone_volumes(runner, model, building)
     return false if not success
     
     success = explode_surfaces(runner, model)
@@ -389,26 +390,63 @@ class OSModel
     return true, spaces, unit
   end
   
-  def self.set_zone_volumes(runner, model)
+  def self.set_zone_volumes(runner, model, building)
   
-    # FIXME: Set the zone volumes based on the sum of space volumes
-    model.getThermalZones.each do |thermal_zone|
-      zone_volume = 0
-      if not Geometry.get_volume_from_spaces(thermal_zone.spaces) > 0 # space doesn't have a floor
-        if Geometry.is_crawl(thermal_zone)
-          floor_area = nil
-          thermal_zone.spaces.each do |space|
-            space.surfaces.each do |surface|
-              next unless surface.surfaceType.downcase == "roofceiling"
-              floor_area = UnitConversions.convert(surface.grossArea,"m^2","ft^2")
-            end
-          end
-          zone_volume = floor_area * Geometry.get_height_of_spaces(thermal_zone.spaces)
+    total_conditioned_volume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
+    total_volume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/BuildingVolume"))
+    thermal_zones = model.getThermalZones
+
+    # init
+    living_volume = total_conditioned_volume
+    attic_volume = total_volume
+    zones_updated = 0
+  
+    # Basements, crawl, garage
+    thermal_zones.each do |thermal_zone|
+      if Geometry.is_finished_basement(thermal_zone) or Geometry.is_unfinished_basement(thermal_zone) or Geometry.is_crawl(thermal_zone) or Geometry.is_garage(thermal_zone)
+        zones_updated += 1
+        
+        zone_volume = Geometry.get_height_of_spaces(thermal_zone.spaces) * Geometry.get_floor_area_from_spaces(thermal_zone.spaces)
+        thermal_zone.setVolume(UnitConversions.convert(zone_volume,"ft^3","m^3"))
+        
+        attic_volume = total_volume - zone_volume
+        if Geometry.is_finished_basement(thermal_zone)
+          living_volume = total_conditioned_volume - zone_volume
         end
-      else # space has a floor
-        zone_volume = Geometry.get_volume_from_spaces(thermal_zone.spaces)
+        
       end
-      thermal_zone.setVolume(UnitConversions.convert(zone_volume,"ft^3","m^3"))
+    end
+    
+    # Conditioned living
+    thermal_zones.each do |thermal_zone|
+      if Geometry.is_living(thermal_zone)
+        zones_updated += 1
+        
+        if living_volume <= 0
+          fail "Calculated negative volume for living zone."
+        end
+        thermal_zone.setVolume(UnitConversions.convert(living_volume,"ft^3","m^3"))
+        
+        attic_volume = total_volume - living_volume
+        
+      end
+    end
+    
+    # Attic
+    thermal_zones.each do |thermal_zone|
+      if Geometry.is_unfinished_attic(thermal_zone)
+        zones_updated += 1
+        
+        if attic_volume <= 0
+          fail "Calculated negative volume for attic zone."
+        end
+        thermal_zone.setVolume(UnitConversions.convert(attic_volume,"ft^3","m^3"))
+      
+      end
+    end
+  
+    if zones_updated != thermal_zones.size
+      fail "Unhandled volume calculations for thermal zones."
     end
     
     return true
@@ -574,9 +612,7 @@ class OSModel
         create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedBasement)
       elsif foundation_space_type.elements["Crawlspace"]
         create_spaces_and_zones(model, spaces, Constants.SpaceTypeCrawl)
-      elsif foundation_space_type.elements["Ambient"]
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypePierBeam)
-      elsif not foundation_space_type.elements["SlabOnGrade"]
+      elsif not foundation_space_type.elements["SlabOnGrade"] and not foundation_space_type.elements["Ambient"]
         fail "Unhandled value (#{foundation_space_type})."
       end
       
@@ -736,22 +772,6 @@ class OSModel
     return gross_wall_area
   end
 
-  def self.get_foundation_space_type(foundation_space_type)
-    if foundation_space_type.elements["Basement/Conditioned/text()='true'"]        
-      return Constants.SpaceTypeFinishedBasement
-    elsif foundation_space_type.elements["Basement/Conditioned/text()='false'"]      
-      return Constants.SpaceTypeUnfinishedBasement
-    elsif foundation_space_type.elements["Crawlspace"]
-      return Constants.SpaceTypeCrawl
-    elsif foundation_space_type.elements["SlabOnGrade"]
-      return Constants.SpaceTypeLiving
-    elsif foundation_space_type.elements["Ambient"]
-      return Constants.SpaceTypePierBeam
-    else
-      fail "Unhandled value (#{foundation_space_type})."
-    end
-  end
-  
   def self.add_num_beds_baths_occupants(model, building, runner)
     
     # Bedrooms/Bathrooms
@@ -779,7 +799,7 @@ class OSModel
 
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       
-      foundation_space_type = get_foundation_space_type(foundation.elements["FoundationType"])
+      foundation_type = foundation.elements["FoundationType"]
 
       # Foundation slab surfaces
       
@@ -807,7 +827,17 @@ class OSModel
         surface.setName(slab_id)
         surface.setSurfaceType("Floor") 
         surface.setOutsideBoundaryCondition("Foundation")
-        surface.setSpace(spaces[foundation_space_type])
+        if foundation_type.elements["Basement/Conditioned/text()='true'"]
+          surface.setSpace(spaces[Constants.SpaceTypeFinishedBasement])
+        elsif foundation_type.elements["Basement/Conditioned/text()='false'"]
+          surface.setSpace(spaces[Constants.SpaceTypeUnfinishedBasement])
+        elsif foundation_type.elements["Crawlspace"]
+          surface.setSpace(spaces[Constants.SpaceTypeCrawl])
+        elsif foundation_type.elements["SlabOnGrade"]
+          surface.setSpace(spaces[Constants.SpaceTypeLiving])
+        else
+          fail "Unhandled foundation type #{foundation_type}."
+        end
         slab_surfaces << surface
         
         # FIXME: Need to calculate averages across slab surfaces
@@ -834,6 +864,10 @@ class OSModel
         
       end
       
+      if slab_surfaces.size > 1
+        fail "Cannot currently handle multiple slab surfaces within a foundation."
+      end
+      
       # Foundation wall surfaces
       
       fnd_id = foundation.elements["SystemIdentifier"].attributes["id"]
@@ -846,7 +880,7 @@ class OSModel
         
         exterior_adjacent_to = fnd_wall.elements["extension/ExteriorAdjacentTo"].text
         
-        wall_height = Float(fnd_wall.elements["Height"].text)
+        wall_height = Float(fnd_wall.elements["Height"].text) # Need to handle above-grade portion
         wall_gross_area = Float(fnd_wall.elements["Area"].text)
         wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, fnd_id)
         wall_length = wall_net_area / wall_height
@@ -863,7 +897,15 @@ class OSModel
         else
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
-        surface.setSpace(spaces[foundation_space_type])
+        if foundation_type.elements["Basement/Conditioned/text()='true'"]        
+          surface.setSpace(spaces[Constants.SpaceTypeFinishedBasement])
+        elsif foundation_type.elements["Basement/Conditioned/text()='false'"]      
+          surface.setSpace(spaces[Constants.SpaceTypeUnfinishedBasement])
+        elsif foundation_type.elements["Crawlspace"]
+          surface.setSpace(spaces[Constants.SpaceTypeCrawl])
+        else
+          fail "Unhandled foundation type #{foundation_type}."
+        end
         wall_surfaces << surface
         
         # FIXME: Need to calculate averages across slab surfaces
@@ -924,9 +966,25 @@ class OSModel
                                                                      UnitConversions.convert(framefloor_width,"ft","m"), 
                                                                      UnitConversions.convert(z_origin,"ft","m")), model)
         surface.setName(floor_id)
-        surface.setSurfaceType("RoofCeiling")
-        surface.setSpace(spaces[foundation_space_type])
-        surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
+        if foundation_type.elements["Basement/Conditioned/text()='true'"]
+          surface.setSurfaceType("RoofCeiling")
+          surface.setSpace(spaces[Constants.SpaceTypeFinishedBasement])
+          surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
+        elsif foundation_type.elements["Basement/Conditioned/text()='false'"]
+          surface.setSurfaceType("RoofCeiling")
+          surface.setSpace(spaces[Constants.SpaceTypeUnfinishedBasement])
+          surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
+        elsif foundation_type.elements["Crawlspace"]
+          surface.setSurfaceType("RoofCeiling")
+          surface.setSpace(spaces[Constants.SpaceTypeCrawl])
+          surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
+        elsif foundation_type.elements["Ambient"]
+          surface.setSurfaceType("Floor")
+          surface.setSpace(spaces[Constants.SpaceTypeLiving])
+          surface.setOutsideBoundaryCondition("Outdoors")
+        else
+          fail "Unhandled foundation type #{foundation_type}."
+        end
         ceiling_surfaces << surface
         
         # FIXME: Need to calculate averages across slab surfaces
