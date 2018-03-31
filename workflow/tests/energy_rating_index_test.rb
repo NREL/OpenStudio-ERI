@@ -50,7 +50,14 @@ class EnergyRatingIndexTest < MiniTest::Test
   end
   
   def test_resnet_hers_method
-    # TODO
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    test_num = 0
+    xmldir = "#{parent_dir}/sample_files/RESNET_Tests/4.3_Test_HERS_Method"
+    Dir["#{xmldir}/*.xml"].each do |xml|
+      test_num += 1
+      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      _check_method_results(results_csv, test_num)
+    end
   end
   
   def test_resnet_hers_method_proposed
@@ -708,6 +715,102 @@ class EnergyRatingIndexTest < MiniTest::Test
       break
     end
     assert_in_epsilon(100, hers_index, 0.005)
+  end
+  
+  def _check_method_results(results_csv, test_num)
+    require 'csv'
+    values = {}
+    CSV.foreach(results_csv) do |row|
+      values[row[0]] = Float(row[1])
+    end
+    
+    mepr = {}
+    mepr['CoolingFuel'] = 'elec'
+    mepr['CoolingMEPR'] = 10.00
+    if test_num == 1
+      mepr['HeatingFuel'] = 'elec'
+      mepr['HeatingMEPR'] = 6.80
+      mepr['HotWaterFuel'] = 'elec'
+      mepr['HotWaterMEPR'] = 0.88
+      ec_x_la = 21.27
+    elsif test_num == 2
+      mepr['HeatingFuel'] = 'elec'
+      mepr['HeatingMEPR'] = 6.80
+      mepr['HotWaterFuel'] = 'gas'
+      mepr['HotWaterMEPR'] = 0.82
+      ec_x_la = 23.33
+    elsif test_num == 3
+      mepr['HeatingFuel'] = 'gas'
+      mepr['HeatingMEPR'] = 0.78
+      mepr['HotWaterFuel'] = 'elec'
+      mepr['HotWaterMEPR'] = 0.88
+      ec_x_la = 22.05
+    elsif test_num == 4
+      mepr['HeatingFuel'] = 'elec'
+      mepr['HeatingMEPR'] = 9.85
+      mepr['HotWaterFuel'] = 'elec'
+      mepr['HotWaterMEPR'] = 0.88
+      ec_x_la = 22.35
+    elsif test_num == 5
+      mepr['HeatingFuel'] = 'gas'
+      mepr['HeatingMEPR'] = 0.96
+      mepr['HotWaterFuel'] = 'elec'
+      mepr['HotWaterMEPR'] = 0.88
+      ec_x_la = 23.33
+    else
+      fail "Unexpected test."
+    end
+    
+    if mepr['HeatingFuel'] == 'gas'
+      heating_a = 1.0943
+      heating_b = 0.403
+      heating_eec_r = 1.0 / 0.78
+      heating_eec_x = 1.0 / mepr['HeatingMEPR']
+    else
+      heating_a = 2.2561
+      heating_b = 0.0
+      heating_eec_r = 3.413 / 7.7
+      heating_eec_x = 3.413 / mepr['HeatingMEPR']
+    end
+    
+    cooling_a = 3.8090
+    cooling_b = 0.0
+    cooling_eec_r = 3.413 / 13.0
+    cooling_eec_x = 3.413 / mepr['CoolingMEPR']
+    
+    if mepr['HotWaterFuel'] == 'gas'
+      hotwater_a = 1.1877
+      hotwater_b = 1.013
+      hotwater_eec_r = 1.0 / 0.59
+    else
+      hotwater_a = 0.92
+      hotwater_b = 0.0
+      hotwater_eec_r = 1.0 / 0.92
+    end
+    if test_num != 2
+      hotwater_eec_x = 1.0 / mepr['HotWaterMEPR']
+    else
+      hotwater_eec_x = 1.0 / (mepr['HotWaterMEPR'] * 0.92)
+    end
+    
+    heating_dse_r = values['REUL Heating (MBtu)'] / values['EC_r Heating (MBtu)'] * heating_eec_r
+    cooling_dse_r = values['REUL Cooling (MBtu)'] / values['EC_r Cooling (MBtu)'] * cooling_eec_r
+    hotwater_dse_r = values['REUL Hot Water (MBtu)'] / values['EC_r Hot Water (MBtu)'] * hotwater_eec_r
+    
+    heating_nec_x = (heating_a * heating_eec_x - heating_b) * (values['EC_x Heating (MBtu)'] * values['EC_r Heating (MBtu)'] * heating_dse_r) / (heating_eec_x * values['REUL Heating (MBtu)'])
+    cooling_nec_x = (cooling_a * cooling_eec_x - cooling_b) * (values['EC_x Cooling (MBtu)'] * values['EC_r Cooling (MBtu)'] * cooling_dse_r) / (cooling_eec_x * values['REUL Cooling (MBtu)'])
+    hotwater_nec_x = (hotwater_a * hotwater_eec_x - hotwater_b) * (values['EC_x Hot Water (MBtu)'] * values['EC_r Hot Water (MBtu)'] * hotwater_dse_r) / (hotwater_eec_x * values['REUL Hot Water (MBtu)'])
+    
+    heating_nmeul = values['REUL Heating (MBtu)'] * (heating_nec_x / values['EC_r Heating (MBtu)'])
+    cooling_nmeul = values['REUL Cooling (MBtu)'] * (cooling_nec_x / values['EC_r Cooling (MBtu)'])
+    hotwater_nmeul = values['REUL Hot Water (MBtu)'] * (hotwater_nec_x / values['EC_r Hot Water (MBtu)'])
+    
+    tnml = heating_nmeul + cooling_nmeul + hotwater_nmeul + values['EC_x L&A (MBtu)']
+    trl = values['REUL Heating (MBtu)'] + values['REUL Cooling (MBtu)'] + values['REUL Hot Water (MBtu)'] + ec_x_la
+    
+    hers_score = 100 * tnml / trl
+    assert_operator((values['HERS Index'] - hers_score).abs / values['HERS Index'], :<, 0.005)
+    
   end
   
   def _check_hot_water(results_csv, test_num, base_val=nil, mn_val=nil)

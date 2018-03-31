@@ -486,17 +486,17 @@ def calculate_eri(sim_outputs)
   # energy consumption per unit load in like units as the load, and as derived from the Manufacturer’s 
   # Equipment Performance Rating (MEPR) such that EEC_x equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_x equals 3.413 / MEPR for HSPF, EER or SEER ratings.
-  results[:eec_x_heat] = get_eec_heat(ref_hpxml_doc)
-  results[:eec_x_cool] = get_eec_cool(ref_hpxml_doc)
-  results[:eec_x_dhw] = get_eec_dhw(ref_hpxml_doc)
+  results[:eec_x_heat] = get_eec_heat(rated_hpxml_doc)
+  results[:eec_x_cool] = get_eec_cool(rated_hpxml_doc)
+  results[:eec_x_dhw] = get_eec_dhw(rated_hpxml_doc)
   
   # EEC_r = Equipment Efficiency Coefficient for the Reference Home’s equipment, such that EEC_r equals the 
   # energy consumption per unit load in like units as the load, and as derived from the Manufacturer’s 
   # Equipment Performance Rating (MEPR) such that EEC_r equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_r equals 3.413 / MEPR for HSPF, EER or SEER ratings
-  results[:eec_r_heat] = get_eec_heat(rated_hpxml_doc)
-  results[:eec_r_cool] = get_eec_cool(rated_hpxml_doc)
-  results[:eec_r_dhw] = get_eec_dhw(rated_hpxml_doc)
+  results[:eec_r_heat] = get_eec_heat(ref_hpxml_doc)
+  results[:eec_r_cool] = get_eec_cool(ref_hpxml_doc)
+  results[:eec_r_dhw] = get_eec_dhw(ref_hpxml_doc)
   
   # EC_x = estimated Energy Consumption for the Rated Home’s end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
@@ -628,20 +628,27 @@ def write_results(results, resultsdir, sim_outputs)
   # Results file
   results_csv = File.join(resultsdir, "ERI_Results.csv")
   results_out = {
-                 "HERS Index"=>results[:hers_index],
-                 "REUL Heating (MBtu)"=>results[:reul_heat],
-                 "REUL Cooling (MBtu)"=>results[:reul_cool],
-                 "REUL Hot Water (MBtu)"=>results[:reul_dhw],
-                 "EC_r Heating (MBtu)"=>results[:ec_r_heat],
-                 "EC_r Cooling (MBtu)"=>results[:ec_r_cool],
-                 "EC_r Hot Water (MBtu)"=>results[:ec_r_dhw],
-                 #"XEUL Heating (MBtu)"=>results[:xeul_heat],
-                 #"XEUL Cooling (MBtu)"=>results[:xeul_cool],
-                 #"XEUL Hot Water (MBtu)"=>results[:xeul_dhw],
-                 "EC_x Heating (MBtu)"=>results[:ec_x_heat],
-                 "EC_x Cooling (MBtu)"=>results[:ec_x_cool],
-                 "EC_x Hot Water (MBtu)"=>results[:ec_x_dhw],
-                 "EC_x L&A (MBtu)"=>results[:eul_la],
+                 "HERS Index"=>results[:hers_index].round(2),
+                 "REUL Heating (MBtu)"=>results[:reul_heat].round(2),
+                 "REUL Cooling (MBtu)"=>results[:reul_cool].round(2),
+                 "REUL Hot Water (MBtu)"=>results[:reul_dhw].round(2),
+                 "EC_r Heating (MBtu)"=>results[:ec_r_heat].round(2),
+                 "EC_r Cooling (MBtu)"=>results[:ec_r_cool].round(2),
+                 "EC_r Hot Water (MBtu)"=>results[:ec_r_dhw].round(2),
+                 #"XEUL Heating (MBtu)"=>results[:xeul_heat].round(2),
+                 #"XEUL Cooling (MBtu)"=>results[:xeul_cool].round(2),
+                 #"XEUL Hot Water (MBtu)"=>results[:xeul_dhw].round(2),
+                 "EC_x Heating (MBtu)"=>results[:ec_x_heat].round(2),
+                 "EC_x Cooling (MBtu)"=>results[:ec_x_cool].round(2),
+                 "EC_x Hot Water (MBtu)"=>results[:ec_x_dhw].round(2),
+                 "EC_x L&A (MBtu)"=>results[:eul_la].round(2),
+                 # TODO:
+                 # Heating Fuel
+                 # Heating MEPR
+                 # Cooling Fuel
+                 # Cooling MEPR
+                 # Hot Water Fuel
+                 # Hot Water MEPR
                 }
   CSV.open(results_csv, "wb") {|csv| results_out.to_a.each {|elem| csv << elem} }
   
@@ -649,43 +656,43 @@ def write_results(results, resultsdir, sim_outputs)
   worksheet_csv = File.join(resultsdir, "ERI_Worksheet.csv")
   ref_output = sim_outputs[Constants.CalcTypeERIReferenceHome]
   worksheet_out = {
-                   "Coeff Heating a"=>results[:coeff_heat_a],
-                   "Coeff Heating b"=>results[:coeff_heat_b],
-                   "Coeff Cooling a"=>results[:coeff_cool_a],
-                   "Coeff Cooling b"=>results[:coeff_cool_b],
-                   "Coeff Hot Water a"=>results[:coeff_dhw_a],
-                   "Coeff Hot Water b"=>results[:coeff_dhw_b],
-                   "DSE_r Heating"=>results[:dse_r_heat],
-                   "DSE_r Cooling"=>results[:dse_r_cool],
-                   "DSE_r Hot Water"=>results[:dse_r_dhw],
-                   "EEC_x Heating"=>results[:eec_x_heat],
-                   "EEC_x Cooling"=>results[:eec_x_cool],
-                   "EEC_x Hot Water"=>results[:eec_x_dhw],
-                   "EEC_r Heating"=>results[:eec_r_heat],
-                   "EEC_r Cooling"=>results[:eec_r_cool],
-                   "EEC_r Hot Water"=>results[:eec_r_dhw],
-                   "nEC_x Heating"=>results[:nec_x_heat],
-                   "nEC_x Cooling"=>results[:nec_x_cool],
-                   "nEC_x Hot Water"=>results[:nec_x_dhw],
-                   "nMEUL Heating"=>results[:nmeul_heat],
-                   "nMEUL Cooling"=>results[:nmeul_cool],
-                   "nMEUL Hot Water"=>results[:nmeul_dhw],
-                   "Total Loads TnML"=>results[:tnml],
-                   "Total Loads TRL"=>results[:trl],
-                   "HERS Index"=>results[:hers_index],
+                   "Coeff Heating a"=>results[:coeff_heat_a].round(4),
+                   "Coeff Heating b"=>results[:coeff_heat_b].round(4),
+                   "Coeff Cooling a"=>results[:coeff_cool_a].round(4),
+                   "Coeff Cooling b"=>results[:coeff_cool_b].round(4),
+                   "Coeff Hot Water a"=>results[:coeff_dhw_a].round(4),
+                   "Coeff Hot Water b"=>results[:coeff_dhw_b].round(4),
+                   "DSE_r Heating"=>results[:dse_r_heat].round(4),
+                   "DSE_r Cooling"=>results[:dse_r_cool].round(4),
+                   "DSE_r Hot Water"=>results[:dse_r_dhw].round(4),
+                   "EEC_x Heating"=>results[:eec_x_heat].round(4),
+                   "EEC_x Cooling"=>results[:eec_x_cool].round(4),
+                   "EEC_x Hot Water"=>results[:eec_x_dhw].round(4),
+                   "EEC_r Heating"=>results[:eec_r_heat].round(4),
+                   "EEC_r Cooling"=>results[:eec_r_cool].round(4),
+                   "EEC_r Hot Water"=>results[:eec_r_dhw].round(4),
+                   "nEC_x Heating"=>results[:nec_x_heat].round(4),
+                   "nEC_x Cooling"=>results[:nec_x_cool].round(4),
+                   "nEC_x Hot Water"=>results[:nec_x_dhw].round(4),
+                   "nMEUL Heating"=>results[:nmeul_heat].round(4),
+                   "nMEUL Cooling"=>results[:nmeul_cool].round(4),
+                   "nMEUL Hot Water"=>results[:nmeul_dhw].round(4),
+                   "Total Loads TnML"=>results[:tnml].round(4),
+                   "Total Loads TRL"=>results[:trl].round(4),
+                   "HERS Index"=>results[:hers_index].round(2),
                    ""=>"", # line break
                    "Home CFA"=>results[:cfa],
                    "Home Nbr"=>results[:nbr],
-                   "L&A resMELs"=>ref_output[:elecMELs],
-                   "L&A intLgt"=>ref_output[:elecIntLighting],
-                   "L&A extLgt"=>ref_output[:elecExtLighting],
-                   "L&A Fridg"=>ref_output[:elecFridge],
-                   "L&A TVs"=>0, # FIXME
-                   "L&A R/O"=>(ref_output[:elecRangeOven]+ref_output[:fuelRangeOven]),
-                   "L&A cDryer"=>(ref_output[:elecClothesDryer]+ref_output[:fuelClothesDryer]),
-                   "L&A dWash"=>ref_output[:elecDishwasher],
-                   "L&A cWash"=>ref_output[:elecClothesWasher],
-                   "L&A total"=>results[:reul_la],
+                   "L&A resMELs"=>ref_output[:elecMELs].round(2),
+                   "L&A intLgt"=>ref_output[:elecIntLighting].round(2),
+                   "L&A extLgt"=>ref_output[:elecExtLighting].round(2),
+                   "L&A Fridg"=>ref_output[:elecFridge].round(2),
+                   "L&A TVs"=>0.round(2), # FIXME
+                   "L&A R/O"=>(ref_output[:elecRangeOven]+ref_output[:fuelRangeOven]).round(2),
+                   "L&A cDryer"=>(ref_output[:elecClothesDryer]+ref_output[:fuelClothesDryer]).round(2),
+                   "L&A dWash"=>ref_output[:elecDishwasher].round(2),
+                   "L&A cWash"=>ref_output[:elecClothesWasher].round(2),
+                   "L&A total"=>results[:reul_la].round(2),
                   }
   CSV.open(worksheet_csv, "wb") {|csv| worksheet_out.to_a.each {|elem| csv << elem} }
   
