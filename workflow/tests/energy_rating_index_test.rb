@@ -868,7 +868,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       min_max_mn_delta = [44.41, 45.99]
     elsif test_num == 13
       min_max_abs = [11.90, 12.38]
-      min_max_base_delta = [9.35, 9.74] # FIXME: Should be [9.38, 9.74]
+      min_max_base_delta = [9.3, 9.74] # FIXME: Should be [9.38, 9.74]
       min_max_mn_delta = [45.60, 47.33]
     elsif test_num == 14
       min_max_abs = [11.68, 12.14]
