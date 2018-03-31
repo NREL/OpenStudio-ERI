@@ -27,7 +27,7 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
-          <BuildingVolume>69662.5</BuildingVolume>
+          <BuildingVolume>55662.5</BuildingVolume>
           <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
@@ -54,9 +54,6 @@
               <AirLeakage>0.02</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <extension>
-            <CrawlspaceSpecificLeakageArea>0.00667</CrawlspaceSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -158,9 +155,7 @@
           <Foundation>
             <SystemIdentifier id='Foundation_ID1'/>
             <FoundationType>
-              <Crawlspace>
-                <Vented>true</Vented>
-              </Crawlspace>
+              <Ambient/>
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Floor_ID1'/>
@@ -185,65 +180,8 @@
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-                <CarpetFraction>0.5</CarpetFraction>
-                <CarpetRValue>2.0</CarpetRValue>
               </extension>
             </FrameFloor>
-            <FoundationWall>
-              <SystemIdentifier id='fndwall-1'/>
-              <Height>4</Height>
-              <Area>960</Area>
-              <BelowGradeDepth>3</BelowGradeDepth>
-              <InteriorStuds>
-                <FramingFactor>0.22</FramingFactor>
-                <Material>wood</Material>
-              </InteriorStuds>
-              <Insulation>
-                <SystemIdentifier id='FWall_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>19</NominalRValue>
-                  <Thickness>5</Thickness>
-                </Layer>
-              </Insulation>
-              <extension>
-                <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-              </extension>
-            </FoundationWall>
-            <Slab>
-              <SystemIdentifier id='Slab_ID1'/>
-              <Area>3500</Area>
-              <ExposedPerimeter>240</ExposedPerimeter>
-              <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
-              <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
-              <DepthBelowGrade>0</DepthBelowGrade>
-              <PerimeterInsulation>
-                <SystemIdentifier id='PerimeterInsulation_ID1'/>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
-              </PerimeterInsulation>
-              <UnderSlabInsulation>
-                <SystemIdentifier id='UnderSlabInsulation_ID1'/>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
-              </UnderSlabInsulation>
-              <extension>
-                <CarpetFraction>0.0</CarpetFraction>
-                <CarpetRValue>2.5</CarpetRValue>
-              </extension>
-            </Slab>
           </Foundation>
         </Foundations>
         <RimJoists>

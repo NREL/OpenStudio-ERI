@@ -73,6 +73,7 @@ class EnergyRatingIndex301Validator
             'NumberofBedrooms' => [1],
             'NumberofBathrooms' => [1],
             'ConditionedFloorArea' => [1],
+            'BuildingVolume' => [1],
             'ConditionedBuildingVolume' => [1],
             'GaragePresent' => [1],
         },
@@ -117,6 +118,7 @@ class EnergyRatingIndex301Validator
                 'FoundationType/Crawlspace/Vented' => [1],
                 'FrameFloor' => [],
                 'FoundationWall' => [],
+                'Slab' => [],
             },
             
             # Foundation (Vented Crawlspace)
@@ -230,6 +232,7 @@ class EnergyRatingIndex301Validator
         ## FoundationSlab
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => {
             'Area' => [1],
+            'ExposedPerimeter' => [1],
             'PerimeterInsulationDepth' => [1],
             'UnderSlabInsulationWidth' => [1],
             'DepthBelowGrade' => [1],

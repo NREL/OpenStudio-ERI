@@ -27,6 +27,7 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
+          <BuildingVolume>87162.5</BuildingVolume>
           <ConditionedBuildingVolume>67575</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
@@ -170,7 +171,7 @@
                 <InsulationGrade>1</InsulationGrade>
                 <Layer>
                   <InstallationType>cavity</InstallationType>
-                  <NominalRValue>21</NominalRValue>
+                  <NominalRValue>0</NominalRValue>
                   <Thickness>5.5</Thickness>
                 </Layer>
                 <Layer>
@@ -218,6 +219,7 @@
             <Slab>
               <SystemIdentifier id='fndslab-1'/>
               <Area>3500</Area>
+              <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
               <DepthBelowGrade>7</DepthBelowGrade>

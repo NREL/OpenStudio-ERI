@@ -6,9 +6,10 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require 'openstudio'
-require_relative "../resources/constants"
-require_relative "../resources/xmlhelper"
-require_relative "../resources/util"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/util"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/unit_conversions"
 
 # TODO: Rake task to package ERI
 # TODO: Add error-checking
@@ -49,14 +50,12 @@ def create_osw(design, basedir, resultsdir, options)
   osw.setSeedFile("../../seeds/EmptySeedModel.osm")
   
   # Add measures (w/args) to OSW
-  measures_dir = File.absolute_path(File.join(basedir, "..", "resources", "measures")) 
   schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
   measures = {}
   measures['301EnergyRatingIndexRuleset'] = {}
   measures['301EnergyRatingIndexRuleset']['calc_type'] = design
   measures['301EnergyRatingIndexRuleset']['hpxml_file_path'] = options[:hpxml]
-  measures['301EnergyRatingIndexRuleset']['measures_dir'] = measures_dir
   #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
   measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
   if options[:debug]
@@ -103,14 +102,14 @@ end
 def get_sql_query_result(sqlFile, query)
   result = sqlFile.execAndReturnFirstDouble(query)
   if result.is_initialized
-    return OpenStudio::convert(result.get, "GJ", "MBtu").get
+    return UnitConversions.convert(result.get, "GJ", "MBtu")
   end
   return 0
 end
 
 def get_sql_result(sqlValue, design)
   if sqlValue.is_initialized
-    return OpenStudio::convert(sqlValue.get, "GJ", "MBtu").get
+    return UnitConversions.convert(sqlValue.get, "GJ", "MBtu")
   end
   fail "ERROR: Simulation unsuccessful for #{design}."
 end
@@ -222,7 +221,7 @@ def parse_sql(design, sql_path, output_hpxml_path)
   
   sum_fuels = (sim_output[:elecTotal] + sim_output[:fuelTotal])
   if (sim_output[:allTotal] - sum_fuels).abs > tolerance
-    fail "ERROR: Fuels do not sum to total."
+    fail "ERROR: Fuels do not sum to total (#{sum_fuels.round(1)} vs #{sim_output[:allTotal].round(1)})."
   end
   
   sum_elec_categories = (sim_output[:elecHeating] + sim_output[:elecCooling] + 
@@ -766,4 +765,4 @@ puts "Writing output files..."
 write_results(results, resultsdir, sim_outputs)
 
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
-puts "Completed in #{Time.now - start_time} seconds."
+puts "Completed in #{(Time.now - start_time).round(1)} seconds."

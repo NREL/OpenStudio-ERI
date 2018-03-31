@@ -27,6 +27,7 @@
           <NumberofBedrooms>2</NumberofBedrooms>
           <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>1539</ConditionedFloorArea>
+          <BuildingVolume>15775</BuildingVolume>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
@@ -188,6 +189,7 @@
             <Slab>
               <SystemIdentifier id='Slab_ID1'/>
               <Area>1539</Area>
+              <ExposedPerimeter>168</ExposedPerimeter>
               <PerimeterInsulationDepth>4</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
               <DepthBelowGrade>0</DepthBelowGrade>
