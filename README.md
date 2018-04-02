@@ -22,16 +22,31 @@ Note that the Reference Home and Rated Home workflows/simulations will be execut
 3. This will generate output as shown below:
 ![CLI output](https://user-images.githubusercontent.com/5861765/38166021-e660b948-34d9-11e8-8789-b8b6d7d4e12d.png)
 
-## ERI Outputs
+## Outputs
 
-Upon completion of the ERI calculation, multiple outputs are currently available:
+Upon completion, multiple outputs are currently available:
 * ERI_Results.csv and ERI_Worksheet.csv files (that mirror the [HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
 * Reference & Rated Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
 * Summary annual energy consumption by fuel type and/or end use
-* (Pending) Optional timeseries outputs (e.g., hourly data by fuel type and/or end use)
 * EnergyPlus input/output files
 
 See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results) directory for examples of these outputs.
+
+## Tests
+
+Continuous integration tests are automatically run for any change to this repository. The current set of tests include:
+- [x] Successful ERI calculations for all sample files
+- [x] RESNET HERS Reference Home auto-generation tests
+- [x] RESNET HERS method tests
+- [x] RESNET Hot water system performance tests
+
+TODO: Describe how to run the tests locally.
+
+## Software Developers
+
+To use this workflow, software tools must be able to produce a valid HPXML file; see the included [schema](https://github.com/NREL/OpenStudio-ERI/tree/master/hpxml_schemas). The primary section of the HPXML file for describing a building is found at `/HPXML/Building/BuildingDetails`.
+
+HPXML is an flexible and extensible format, where all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is under development that specifies the particular HPXML fields required to run this workflow. The [ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in the `workflow/HERSRatedHome.log` and/or `workflow/HERSReferenceHome.log files`.
 
 ## Status
 
