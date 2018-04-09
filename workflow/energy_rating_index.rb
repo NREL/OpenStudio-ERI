@@ -47,7 +47,6 @@ def create_osw(design, basedir, resultsdir, options)
   osw = OpenStudio::WorkflowJSON.new
   osw.setOswPath(osw_path)
   osw.addMeasurePath("../../measures")
-  osw.setSeedFile("../../seeds/EmptySeedModel.osm")
   
   # Add measures (w/args) to OSW
   schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
