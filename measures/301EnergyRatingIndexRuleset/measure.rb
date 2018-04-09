@@ -282,6 +282,10 @@ end
 class OSModel
 
   def self.create(hpxml_doc, runner, model, weather)
+  
+    # Simulation parameters
+    success = add_simulation_params(runner, model)
+    return false if not success
 
     building = hpxml_doc.elements["/HPXML/Building"]
   
@@ -339,6 +343,30 @@ class OSModel
   end
   
   private
+  
+  def self.add_simulation_params(runner, model)
+    
+    sim = model.getSimulationControl
+    sim.setRunSimulationforSizingPeriods(false)
+    
+    tstep = model.getTimestep
+    tstep.setNumberOfTimestepsPerHour(1)
+    
+    shad = model.getShadowCalculation
+    shad.setCalculationFrequency(20)
+    shad.setMaximumFiguresInShadowOverlapCalculations(200)
+    
+    outsurf = model.getOutsideSurfaceConvectionAlgorithm
+    outsurf.setAlgorithm('DOE-2')
+    
+    insurf = model.getInsideSurfaceConvectionAlgorithm
+    insurf.setAlgorithm('TARP')
+    
+    zonecap = model.getZoneCapacitanceMultiplierResearchSpecial
+    zonecap.setHumidityCapacityMultiplier(15)
+    
+    return true
+  end
   
   def self.add_geometry_envelope(runner, model, building, weather)
   
