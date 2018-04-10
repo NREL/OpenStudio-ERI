@@ -46,7 +46,7 @@ TODO: Describe how to run the tests locally.
 
 To use this workflow, software tools must be able to produce a valid HPXML file; see the included [schema](https://github.com/NREL/OpenStudio-ERI/tree/master/hpxml_schemas). The primary section of the HPXML file for describing a building is found at `/HPXML/Building/BuildingDetails`.
 
-HPXML is an flexible and extensible format, where all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is under development that specifies the particular HPXML fields required to run this workflow. The [ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log files`.
+HPXML is an flexible and extensible format, where all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is under development that specifies the particular HPXML fields required to run this workflow. The [ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log` files.
 
 ## Status
 
