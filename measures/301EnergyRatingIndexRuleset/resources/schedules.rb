@@ -421,9 +421,13 @@ class HotWaterSchedule
         @temperature_sch_name = temperature_sch_name
         @days_shift = days_shift
         @nbeds = ([num_bedrooms, 5].min).to_i
-        @file_prefix = file_prefix
         @target_water_temperature = UnitConversions.convert(target_water_temperature, "F", "C")
-
+        if file_prefix == "ClothesDryer"
+          @file_prefix = "ClothesWasher"
+        else
+          @file_prefix = file_prefix
+        end
+        
         timestep_minutes = (60/@model.getTimestep.numberOfTimestepsPerHour).to_i
 
         data = loadMinuteDrawProfileFromFile(timestep_minutes, unit_index, days_shift, measure_dir)
@@ -452,7 +456,11 @@ class HotWaterSchedule
     def calcDailyGpmFromPeakFlow(peak_flow)
         return UnitConversions.convert(@totflow * peak_flow / @maxflow, "m^3/s", "gal/min")
     end
-
+    
+    def calcDesignLevelFromDailyTherm(daily_therm)
+        return calcDesignLevelFromDailykWh(UnitConversions.convert(daily_therm, "therm", "kWh"))
+    end
+    
     def schedule
         return @schedule
     end
@@ -503,7 +511,7 @@ class HotWaterSchedule
                     shifted_min = shifted_min - minutes_in_year
                 end
                 value = linedata[1].to_f
-                items[shifted_min] = value
+                items[shifted_min.to_i] = value
             end
 
             # Aggregate minute schedule up to the timestep level to reduce the size

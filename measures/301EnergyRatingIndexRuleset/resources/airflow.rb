@@ -9,7 +9,9 @@ require "#{File.dirname(__FILE__)}/hvac"
 
 class Airflow
 
-  def self.apply(model, runner, infil, mech_vent, nat_vent, ducts)
+  def self.apply(model, runner, infil, mech_vent, nat_vent, ducts, measure_dir)
+  
+    @measure_dir = measure_dir
   
     weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
     if weather.error?
@@ -105,6 +107,8 @@ class Airflow
       unit_ag_ffa = Geometry.get_above_grade_finished_floor_area_from_spaces(unit.spaces, false, runner)
       unit_ffa = Geometry.get_finished_floor_area_from_spaces(unit.spaces, false, runner)
       unit_window_area = Geometry.get_window_area_from_spaces(unit.spaces, false)
+      
+      sch_unit_index = Geometry.get_unit_dhw_sched_index(model, unit, runner)
 
       # Determine geometry for spaces and zones that are unit specific
       unit_living = nil
@@ -163,7 +167,7 @@ class Airflow
       
       duct_program, cfis_program, cfis_output = create_ducts_objects(model, runner, output_vars, obj_name_ducts, unit_living, unit_finished_basement, ducts, mech_vent, ducts_output, tin_sensor, pbar_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, has_forced_air_equipment, unit_has_mshp, adiabatic_const)
       
-      infil_program = create_infil_mech_vent_objects(model, runner, output_vars, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output)
+      infil_program = create_infil_mech_vent_objects(model, runner, output_vars, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output, sch_unit_index, nbeds)
       
       create_ems_program_managers(model, infil_program, nv_program, cfis_program, 
                                   duct_program, obj_name_airflow, obj_name_ducts)
@@ -342,6 +346,11 @@ class Airflow
         schedule.remove
       end
 
+      model.getScheduleFixedIntervals.each do |schedule|
+        next unless schedule.name.to_s.start_with? obj_name_mech_vent
+        schedule.remove
+      end
+      
       # Remove existing ducts
 
       model.getThermalZones.each do |thermal_zone|
@@ -736,7 +745,6 @@ class Airflow
 
     bath_exhaust_sch_operation = 60.0 # min/day, per HSP
     range_hood_exhaust_operation = 60.0 # min/day, per HSP
-    dryer_exhaust_sch_operation = 60.0 # min/day, per HSP
 
     # Fraction of fan heat that goes to the space
     if mech_vent.type == Constants.VentTypeExhaust
@@ -749,23 +757,31 @@ class Airflow
       frac_fan_heat = 0.0
     end
     
-    # Search for clothes dryer
-    dryer_exhaust = nil
-    unit.spaces.each do |space|
-      (space.electricEquipment + space.otherEquipment).each do |equip|
-        next unless equip.name.to_s.start_with? Constants.ObjectNameClothesDryer(nil)
-        dryer_exhaust = mech_vent.dryer_exhaust
+    #Get the clothes washer so we can use the day shift for the clothes dryer
+    if mech_vent.dryer_exhaust > 0
+      cw_day_shift = 0.0
+      model.getElectricEquipments.each do |ee|
+        next if ee.name.to_s != Constants.ObjectNameClothesWasher(unit.name.to_s)
+        cw_day_shift = unit.getFeatureAsDouble(Constants.ClothesWasherDayShift(ee)).get
         break
       end
+      dryer_exhaust_day_shift = cw_day_shift + 1.0 / 24.0
     end
-    if dryer_exhaust.nil?
+    
+    # Search for clothes dryer
+    has_dryer = false
+    (model.getElectricEquipments + model.getOtherEquipments).each do |equip|
+      next unless equip.name.to_s == Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric, unit.name.to_s) or equip.name.to_s == Constants.ObjectNameClothesDryer(Constants.FuelTypeGas, unit.name.to_s) or equip.name.to_s == Constants.ObjectNameClothesDryer(Constants.FuelTypePropane, unit.name.to_s)
+      has_dryer = true
+      break
+    end
+    
+    if not has_dryer and mech_vent.dryer_exhaust > 0
       runner.registerWarning("No clothes dryer object was found in #{unit.name.to_s} but the clothes dryer exhaust specified is non-zero. Overriding clothes dryer exhaust to be zero.")
-      dryer_exhaust = 0
     end
-
+    
     bathroom_hour_avg_exhaust = bathroom_exhaust * nbaths * bath_exhaust_sch_operation / 60.0 # cfm
     range_hood_hour_avg_exhaust = range_hood_exhaust * range_hood_exhaust_operation / 60.0 # cfm
-    dryer_hour_avg_exhaust = dryer_exhaust * dryer_exhaust_sch_operation / 60.0 # cfm
 
     #--- Calculate HRV/ERV effectiveness values. Calculated here for use in sizing routines.
 
@@ -845,7 +861,7 @@ class Airflow
     unit.setFeature(Constants.SizingInfoMechVentApparentSensibleEffectiveness, apparent_sensible_effectiveness.to_f)
     unit.setFeature(Constants.SizingInfoMechVentWholeHouseRate, whole_house_vent_rate.to_f)
     
-    mv_output = MechanicalVentilationOutput.new(frac_fan_heat, whole_house_vent_rate, bathroom_hour_avg_exhaust, range_hood_hour_avg_exhaust, dryer_hour_avg_exhaust, spot_fan_power, latent_effectiveness, sensible_effectiveness)
+    mv_output = MechanicalVentilationOutput.new(frac_fan_heat, whole_house_vent_rate, bathroom_hour_avg_exhaust, range_hood_hour_avg_exhaust, spot_fan_power, latent_effectiveness, sensible_effectiveness, dryer_exhaust_day_shift, has_dryer)
     return true, mv_output
 
   end
@@ -1780,24 +1796,30 @@ class Airflow
     
   end
   
-  def self.create_infil_mech_vent_objects(model, runner, output_vars, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output)
+  def self.create_infil_mech_vent_objects(model, runner, output_vars, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output, sch_unit_index, nbeds)
 
     # Sensors
   
-    range_hood_sch = HourlyByMonthSchedule.new(model, runner, obj_name_mech_vent + " range hood schedule", [Array.new(17, 0.0) + [1.0] + Array.new(6, 0.0)] * 12, [Array.new(17, 0.0) + [1.0] + Array.new(6, 0.0)] * 12, normalize_values = false)
+    range_array = [0.0] * 24
+    range_array[mech_vent.range_exhaust_hour - 1] = 1.0
+    range_hood_sch = HourlyByMonthSchedule.new(model, runner, obj_name_mech_vent + " range exhaust schedule", [range_array] * 12, [range_array] * 12, normalize_values = false)
     range_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
     range_sch_sensor.setName("#{obj_name_infil} range sch s")
     range_sch_sensor.setKeyName(range_hood_sch.schedule.name.to_s)
 
-    bath_exhaust_sch = HourlyByMonthSchedule.new(model, runner, obj_name_mech_vent + " bath exhaust schedule", [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, [Array.new(6, 0.0) + [1.0] + Array.new(17, 0.0)] * 12, normalize_values = false)
+    bathroom_array = [0.0] * 24
+    bathroom_array[mech_vent.bathroom_exhaust_hour - 1] = 1.0
+    bath_exhaust_sch = HourlyByMonthSchedule.new(model, runner, obj_name_mech_vent + " bath exhaust schedule", [bathroom_array] * 12, [bathroom_array] * 12, normalize_values = false)
     bath_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
     bath_sch_sensor.setName("#{obj_name_infil} bath sch s")
     bath_sch_sensor.setKeyName(bath_exhaust_sch.schedule.name.to_s)
 
-    dryer_exhaust_sch = HourlyByMonthSchedule.new(model, runner, obj_name_mech_vent + " dryer exhaust schedule", [Array.new(10, 0.0) + [1.0] + Array.new(13, 0.0)] * 12, [Array.new(10, 0.0) + [1.0] + Array.new(13, 0.0)] * 12, normalize_values = false)
-    dryer_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
-    dryer_sch_sensor.setName("#{obj_name_infil} dryer sch s")
-    dryer_sch_sensor.setKeyName(dryer_exhaust_sch.schedule.name.to_s)
+    if mv_output.has_dryer and mech_vent.dryer_exhaust > 0
+      dryer_exhaust_sch = HotWaterSchedule.new(model, runner, obj_name_mech_vent + " dryer exhaust schedule", obj_name_mech_vent + " dryer exhaust temperature schedule", nbeds, sch_unit_index, mv_output.dryer_exhaust_day_shift, "ClothesDryerExhaust", 0, @measure_dir)
+      dryer_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
+      dryer_sch_sensor.setName("#{obj_name_infil} dryer sch s")
+      dryer_sch_sensor.setKeyName(dryer_exhaust_sch.schedule.name.to_s)
+    end
     
     wh_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
     wh_sch_sensor.setName("#{obj_name_infil} wh sch s")
@@ -2000,7 +2022,11 @@ class Airflow
     end
 
     infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{UnitConversions.convert(mv_output.range_hood_hour_avg_exhaust,"cfm","m^3/s").round(4)}")
-    infil_program.addLine("Set Qdryer = #{dryer_sch_sensor.name}*#{UnitConversions.convert(mv_output.dryer_hour_avg_exhaust,"cfm","m^3/s").round(4)}")
+    if mv_output.has_dryer and mech_vent.dryer_exhaust > 0
+      infil_program.addLine("Set Qdryer = #{dryer_sch_sensor.name}*#{UnitConversions.convert(mech_vent.dryer_exhaust,"cfm","m^3/s").round(4)}")
+    else
+      infil_program.addLine("Set Qdryer = 0.0")
+    end
     infil_program.addLine("Set Qbath = #{bath_sch_sensor.name}*#{UnitConversions.convert(mv_output.bathroom_hour_avg_exhaust,"cfm","m^3/s").round(4)}")
     infil_program.addLine("Set QhpwhOut = 0")
     infil_program.addLine("Set QhpwhIn = 0")
@@ -2363,7 +2389,7 @@ class NaturalVentilationOutput
 end
 
 class MechanicalVentilation
-  def initialize(type, infil_credit, total_efficiency, frac_62_2, fan_power, sensible_efficiency, ashrae_std, cfis_open_time, cfis_airflow_frac, dryer_exhaust)
+  def initialize(type, infil_credit, total_efficiency, frac_62_2, fan_power, sensible_efficiency, ashrae_std, cfis_open_time, cfis_airflow_frac, dryer_exhaust, range_exhaust_hour, bathroom_exhaust_hour)
     @type = type
     @infil_credit = infil_credit
     @total_efficiency = total_efficiency
@@ -2374,22 +2400,25 @@ class MechanicalVentilation
     @cfis_open_time = cfis_open_time
     @cfis_airflow_frac = cfis_airflow_frac
     @dryer_exhaust = dryer_exhaust
+    @range_exhaust_hour = range_exhaust_hour
+    @bathroom_exhaust_hour = bathroom_exhaust_hour
   end
-  attr_accessor(:type, :infil_credit, :total_efficiency, :frac_62_2, :fan_power, :sensible_efficiency, :ashrae_std, :cfis_open_time, :cfis_airflow_frac, :dryer_exhaust)
+  attr_accessor(:type, :infil_credit, :total_efficiency, :frac_62_2, :fan_power, :sensible_efficiency, :ashrae_std, :cfis_open_time, :cfis_airflow_frac, :dryer_exhaust, :range_exhaust_hour, :bathroom_exhaust_hour)
 end
 
 class MechanicalVentilationOutput
-  def initialize(frac_fan_heat, whole_house_vent_rate, bathroom_hour_avg_exhaust, range_hood_hour_avg_exhaust, dryer_hour_avg_exhaust, spot_fan_power, latent_effectiveness, sensible_effectiveness)
+  def initialize(frac_fan_heat, whole_house_vent_rate, bathroom_hour_avg_exhaust, range_hood_hour_avg_exhaust, spot_fan_power, latent_effectiveness, sensible_effectiveness, dryer_exhaust_day_shift, has_dryer)
     @frac_fan_heat = frac_fan_heat
     @whole_house_vent_rate = whole_house_vent_rate
     @bathroom_hour_avg_exhaust = bathroom_hour_avg_exhaust
     @range_hood_hour_avg_exhaust = range_hood_hour_avg_exhaust
-    @dryer_hour_avg_exhaust = dryer_hour_avg_exhaust
     @spot_fan_power = spot_fan_power
     @latent_effectiveness = latent_effectiveness
     @sensible_effectiveness = sensible_effectiveness
+    @dryer_exhaust_day_shift = dryer_exhaust_day_shift
+    @has_dryer = has_dryer
   end
-  attr_accessor(:frac_fan_heat, :whole_house_vent_rate, :bathroom_hour_avg_exhaust, :range_hood_hour_avg_exhaust, :dryer_hour_avg_exhaust, :spot_fan_power, :latent_effectiveness, :sensible_effectiveness)
+  attr_accessor(:frac_fan_heat, :whole_house_vent_rate, :bathroom_hour_avg_exhaust, :range_hood_hour_avg_exhaust, :spot_fan_power, :latent_effectiveness, :sensible_effectiveness, :dryer_exhaust_day_shift, :has_dryer)
 end
 
 class CFISOutput
