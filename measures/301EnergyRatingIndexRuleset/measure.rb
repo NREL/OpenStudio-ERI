@@ -1055,7 +1055,7 @@ class OSModel
         slab_surface = slab_surfaces[0] # FIXME
         success = FoundationConstructions.apply_slab(runner, model, slab_surface, "SlabConstruction",
                                                      slab_perim_r, slab_perim_width, slab_gap_r, slab_ext_r, slab_ext_depth,
-                                                     slab_whole_r, slab_concrete_thick_in, 
+                                                     slab_whole_r, slab_concrete_thick_in, mat_carpet,
                                                      false, perim_exp, nil)
         return false if not success
         # FIXME: Temporary code for sizing
@@ -2316,7 +2316,8 @@ class OSModel
     has_flue_chimney = false # FIXME
     is_existing_home = false # FIXME
     terrain = Constants.TerrainSuburban
-    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, attic_sla, unfinished_basement_ach, finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
+    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, attic_sla, unfinished_basement_ach, 
+                             finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
 
     # Mechanical Ventilation
     whole_house_fan = building.elements["BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
@@ -2354,7 +2355,12 @@ class OSModel
     mech_vent_cfis_open_time = 20.0
     mech_vent_cfis_airflow_frac = 1.0
     clothes_dryer_exhaust = 0.0
-    mech_vent = MechanicalVentilation.new(mech_vent_type, mech_vent_infil_credit, mech_vent_total_efficiency, mech_vent_frac_62_2, mech_vent_fan_power, mech_vent_sensible_efficiency, mech_vent_ashrae_std, mech_vent_cfis_open_time, mech_vent_cfis_airflow_frac, clothes_dryer_exhaust)
+    range_exhaust_hour = 16
+    bathroom_exhaust_hour = 5
+    mech_vent = MechanicalVentilation.new(mech_vent_type, mech_vent_infil_credit, mech_vent_total_efficiency, 
+                                          mech_vent_frac_62_2, mech_vent_fan_power, mech_vent_sensible_efficiency, 
+                                          mech_vent_ashrae_std, mech_vent_cfis_open_time, mech_vent_cfis_airflow_frac, 
+                                          clothes_dryer_exhaust, range_exhaust_hour, bathroom_exhaust_hour)
 
     # Natural Ventilation
     natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
@@ -2385,7 +2391,10 @@ class OSModel
       nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_hr")
       nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_rh")
     end
-    nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season, nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays, nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable, nat_vent_max_oa_hr, nat_vent_max_oa_rh)
+    nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season,
+                                      nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays, 
+                                      nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable, 
+                                      nat_vent_max_oa_hr, nat_vent_max_oa_rh)
   
     # Ducts
     hvac_distribution = building.elements["BuildingDetails/Systems/HVAC/HVACDistribution"]
@@ -2427,9 +2436,11 @@ class OSModel
       duct_r = 0.0
     end
     duct_norm_leakage_25pa = nil
-    ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, duct_num_returns, duct_location)
+    ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, 
+                      duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, 
+                      duct_num_returns, duct_location)
 
-    success = Airflow.apply(model, runner, infil, mech_vent, nat_vent, ducts)
+    success = Airflow.apply(model, runner, infil, mech_vent, nat_vent, ducts, File.dirname(__FILE__))
     return false if not success
     
     return true

@@ -1125,7 +1125,7 @@ class Waterheater
                     Constants.SpaceTypeCrawl, 
                     Constants.SpaceTypeUnfinishedAttic]
                                   
-        elsif [Constants.BAZoneMarine, Constants.BAZoneMixedHumid, Constants.BAZoneMixedHumid, Constants.BAZoneCold, Constants.BAZoneVeryCold, Constants.BAZoneSubarctic].include? ba_cz_name
+        elsif [Constants.BAZoneMarine, Constants.BAZoneMixedHumid, Constants.BAZoneMixedDry, Constants.BAZoneCold, Constants.BAZoneVeryCold, Constants.BAZoneSubarctic].include? ba_cz_name
             return [Constants.SpaceTypeFinishedBasement,
                     Constants.SpaceTypeUnfinishedBasement, 
                     Constants.SpaceTypeLiving, 

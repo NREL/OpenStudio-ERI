@@ -461,6 +461,7 @@ class ClothesWasher
           unit.setFeature(Constants.ClothesWasherIMEF(cw), imef)
           unit.setFeature(Constants.ClothesWasherRatedAnnualEnergy(cw), rated_annual_energy)
           unit.setFeature(Constants.ClothesWasherDrumVolume(cw), drum_volume)
+          unit.setFeature(Constants.ClothesWasherDayShift(cw), d_sh.to_f)
           
           # Check if there's a clothes dryer that needs to be updated
           cd_unit_obj_name = Constants.ObjectNameClothesDryer(nil)
@@ -480,28 +481,23 @@ class ClothesWasher
               # Get clothes dryer properties
               cd_cef = unit.getFeatureAsDouble(Constants.ClothesDryerCEF(cd))
               cd_mult = unit.getFeatureAsDouble(Constants.ClothesDryerMult(cd))
-              cd_weekday_sch = unit.getFeatureAsString(Constants.ClothesDryerWeekdaySch(cd))
-              cd_weekend_sch = unit.getFeatureAsString(Constants.ClothesDryerWeekendSch(cd))
-              cd_monthly_sch = unit.getFeatureAsString(Constants.ClothesDryerMonthlySch(cd))
               cd_fuel_type = unit.getFeatureAsString(Constants.ClothesDryerFuelType(cd))
               cd_fuel_split = unit.getFeatureAsDouble(Constants.ClothesDryerFuelSplit(cd))
-              if !cd_cef.is_initialized or !cd_mult.is_initialized or !cd_weekday_sch.is_initialized or !cd_weekend_sch.is_initialized or !cd_monthly_sch.is_initialized or !cd_fuel_type.is_initialized or !cd_fuel_split.is_initialized
+              if !cd_cef.is_initialized or !cd_mult.is_initialized or !cd_fuel_type.is_initialized or !cd_fuel_split.is_initialized
                   runner.registerError("Could not find clothes dryer properties.")
                   return false
               end
               cd_cef = cd_cef.get
               cd_mult = cd_mult.get
-              cd_weekday_sch = cd_weekday_sch.get
-              cd_weekend_sch = cd_weekend_sch.get
-              cd_monthly_sch = cd_monthly_sch.get
               cd_fuel_type = cd_fuel_type.get
               cd_fuel_split = cd_fuel_split.get
               
               # Update clothes dryer
               cd_space = cd.space.get
               ClothesDryer.remove(runner, cd_space, cd_unit_obj_name, false)
-              success, cd_ann_e, cd_ann_f, cd_sch = ClothesDryer.apply(model, unit, runner, cd_sch, cd_cef, cd_mult, cd_weekday_sch, cd_weekend_sch, cd_monthly_sch, 
-                                                                       cd_space, cd_fuel_type, cd_fuel_split)
+              success, cd_ann_e, cd_ann_f, cd_sch = ClothesDryer.apply(model, unit, runner, cd_sch, cd_cef, cd_mult, 
+                                                                       cd_space, cd_fuel_type, cd_fuel_split,
+                                                                       measure_dir)
               
               if not success
                   return false
@@ -556,8 +552,7 @@ end
 
 class ClothesDryer
 
-  def self.apply(model, unit, runner, sch, cef, mult, weekday_sch, weekend_sch, monthly_sch, 
-                 space, fuel_type, fuel_split)
+  def self.apply(model, unit, runner, sch, cef, mult, space, fuel_type, fuel_split, measure_dir)
   
       #Check for valid inputs
       if cef <= 0
@@ -592,13 +587,15 @@ class ClothesDryer
       drum_volume = unit.getFeatureAsDouble(Constants.ClothesWasherDrumVolume(cw))
       imef = unit.getFeatureAsDouble(Constants.ClothesWasherIMEF(cw))
       rated_annual_energy = unit.getFeatureAsDouble(Constants.ClothesWasherRatedAnnualEnergy(cw))
-      if !drum_volume.is_initialized or !imef.is_initialized or !rated_annual_energy.is_initialized
+      day_shift = unit.getFeatureAsDouble(Constants.ClothesWasherDayShift(cw))
+      if !drum_volume.is_initialized or !imef.is_initialized or !rated_annual_energy.is_initialized or !day_shift.is_initialized
           runner.registerError("Could not find clothes washer properties.")
           return false
       end
       drum_volume = drum_volume.get
       imef = imef.get
       rated_annual_energy = rated_annual_energy.get
+      day_shift = day_shift.get
       
       unit_obj_name_e = Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric, unit.name.to_s)
       unit_obj_name_f = Constants.ObjectNameClothesDryer(fuel_type, unit.name.to_s)
@@ -678,9 +675,12 @@ class ClothesDryer
       
           if sch.nil?
               # Create schedule
-              mult_weekend = 1.15
-              mult_weekday = 0.94
-              sch = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameClothesDryer(fuel_type) + " schedule", weekday_sch, weekend_sch, monthly_sch, mult_weekday, mult_weekend)
+              hr_shift = day_shift + 1.0 / 24.0
+              sch_unit_index = Geometry.get_unit_dhw_sched_index(model, unit, runner)
+              sch = HotWaterSchedule.new(model, runner, unit_obj_name_f + " schedule", 
+                                         unit_obj_name_f + " temperature schedule", nbeds, 
+                                         sch_unit_index, hr_shift, "ClothesDryer", 0, 
+                                         measure_dir)
               if not sch.validated?
                   return false
               end
@@ -740,9 +740,6 @@ class ClothesDryer
           
           unit.setFeature(Constants.ClothesDryerCEF(cd), cef.to_f)
           unit.setFeature(Constants.ClothesDryerMult(cd), mult.to_f)
-          unit.setFeature(Constants.ClothesDryerWeekdaySch(cd), weekday_sch.to_s)
-          unit.setFeature(Constants.ClothesDryerWeekendSch(cd), weekend_sch.to_s)
-          unit.setFeature(Constants.ClothesDryerMonthlySch(cd), monthly_sch.to_s)
           unit.setFeature(Constants.ClothesDryerFuelType(cd), fuel_type.to_s)
           unit.setFeature(Constants.ClothesDryerFuelSplit(cd), fuel_split.to_f)
           
