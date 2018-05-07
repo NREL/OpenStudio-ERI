@@ -2322,14 +2322,17 @@ class HVAC
           cooling_season = Array.new(12, 0.0)
           thermostat_setpoint.coolingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
             if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
-              rule.daySchedule.values.each_with_index do |value, hour|
+              rule.daySchedule.values.each_with_index do |value, i|
+                hour = rule.daySchedule.times[i].hours - 1
                 if value < clg_wkdy[hour]
                   clg_wkdy[hour] = value
                 end
               end
             end
+            clg_wkdy = backfill_schedule_values(clg_wkdy, Constants.NoCoolingSetpoint)
             if rule.applySaturday and rule.applySunday
-              rule.daySchedule.values.each_with_index do |value, hour|
+              rule.daySchedule.values.each_with_index do |value, i|
+                hour = rule.daySchedule.times[i].hours - 1
                 if value < clg_wked[hour]
                   clg_wked[hour] = value
                 end
@@ -2338,6 +2341,7 @@ class HVAC
                 end
               end
             end
+            clg_wked = backfill_schedule_values(clg_wked, Constants.NoCoolingSetpoint)
           end
           
           htg_wkdy_monthly = []
@@ -2508,14 +2512,17 @@ class HVAC
           heating_season = Array.new(12, 0.0)
           thermostat_setpoint.heatingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
             if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
-              rule.daySchedule.values.each_with_index do |value, hour|
+              rule.daySchedule.values.each_with_index do |value, i|
+                hour = rule.daySchedule.times[i].hours - 1
                 if value > htg_wkdy[hour]
                   htg_wkdy[hour] = value
                 end
               end
             end
+            htg_wkdy = backfill_schedule_values(htg_wkdy, Constants.NoHeatingSetpoint)
             if rule.applySaturday and rule.applySunday
-              rule.daySchedule.values.each_with_index do |value, hour|
+              rule.daySchedule.values.each_with_index do |value, i|
+                hour = rule.daySchedule.times[i].hours - 1
                 if value > htg_wked[hour]
                   htg_wked[hour] = value
                 end
@@ -2524,6 +2531,7 @@ class HVAC
                 end
               end
             end
+            htg_wked = backfill_schedule_values(htg_wked, Constants.NoHeatingSetpoint)
           end
           
           htg_wkdy_monthly = []
@@ -2832,11 +2840,13 @@ class HVAC
       if thermostatsetpointdualsetpoint.is_initialized
         thermostatsetpointdualsetpoint.get.coolingSetpointTemperatureSchedule.get.to_Schedule.get.to_ScheduleRuleset.get.scheduleRules.each do |rule|
           coolingSetpoint = Array.new(24, Constants.NoCoolingSetpoint)
-          rule.daySchedule.values.each_with_index do |value, hour|
+          rule.daySchedule.values.each_with_index do |value, i|
+            hour = rule.daySchedule.times[i].hours - 1
             if value < coolingSetpoint[hour]
               coolingSetpoint[hour] = UnitConversions.convert(value,"C","F") + cooling_setpoint_offset
             end
           end
+          coolingSetpoint = backfill_schedule_values(coolingSetpoint, Constants.NoCoolingSetpoint)
           # weekday
           if rule.applyMonday and rule.applyTuesday and rule.applyWednesday and rule.applyThursday and rule.applyFriday
             unless rule.daySchedule.values.all? {|x| x == Constants.NoCoolingSetpoint}
@@ -3036,6 +3046,20 @@ class HVAC
     end
     
     private
+    
+    def self.backfill_schedule_values(values, no_setpoint)
+      # backfill the array values
+      values = values.reverse 
+      previous_value = values[0]
+      values.each_with_index do |c, i|
+        if values[i+1] == no_setpoint
+          values[i+1] = previous_value
+        end
+        previous_value = values[i+1]
+      end
+      values = values.reverse
+      return values
+    end
     
     def self.get_gshp_hx_pipe_diameters(pipe_size)
       # Pipe norminal size convertion to pipe outside diameter and inside diameter, 
