@@ -499,7 +499,7 @@ class OSModel
     model.getSurfaces.sort.each do |surface|
 
       next unless surface.surfaceType.downcase == "wall"
-      next if surface.subSurfaces.any? { |subsurface| subsurface.subSurfaceType.downcase == "fixedwindow" }
+      next if surface.subSurfaces.any? { |subsurface| ["fixedwindow", "skylight"].include? subsurface.subSurfaceType.downcase }
       
       if surface.adjacentSurface.is_initialized
         next if surfaces_moved.include? surface.adjacentSurface.get
@@ -549,13 +549,13 @@ class OSModel
       
     end
     
-    # Explode the windows TODO: calculate window_offset dynamically
-    window_offset = 50.0
+    # Explode the windows/skylights TODO: calculate glazing_offset dynamically
+    glazing_offset = 50.0
     model.getSubSurfaces.sort.each do |sub_surface|
 
-      next unless sub_surface.subSurfaceType.downcase == "fixedwindow"
+      next unless ["fixedwindow", "skylight"].include? sub_surface.subSurfaceType.downcase
       
-      transformation = get_surface_transformation(window_offset, sub_surface.outwardNormal.x, sub_surface.outwardNormal.y, 0)
+      transformation = get_surface_transformation(glazing_offset, sub_surface.outwardNormal.x, sub_surface.outwardNormal.y, 0)
 
       surface = sub_surface.surface.get
       sub_surface.setVertices(transformation * sub_surface.vertices)      
@@ -564,7 +564,7 @@ class OSModel
       end
       surface.setVertices(transformation * surface.vertices)
       
-      window_offset += 2.5
+      glazing_offset += 2.5
       
     end
     

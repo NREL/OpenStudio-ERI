@@ -304,6 +304,14 @@
             <SHGC>0.45</SHGC>
             <AttachedToRoof idref='attic-roof-1'/>
           </Skylight>
+          <Skylight>
+            <SystemIdentifier id='Skylight_ID2'/>
+            <Area>15</Area>
+            <Azimuth>270</Azimuth>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.47</SHGC>
+            <AttachedToRoof idref='attic-roof-1'/>
+          </Skylight>
         </Skylights>
         <Doors>
           <Door>
