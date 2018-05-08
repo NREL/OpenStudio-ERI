@@ -430,16 +430,15 @@
             <SystemIdentifier id='PV_ID1'/>
             <ArrayAzimuth>180</ArrayAzimuth>
             <ArrayTilt>20</ArrayTilt>
-            <InverterEfficiency>0.96</InverterEfficiency>
             <MaxPowerOutput>4000</MaxPowerOutput>
+            <InverterEfficiency>0.96</InverterEfficiency>
           </PVSystem>
           <PVSystem>
             <SystemIdentifier id='PV_ID2'/>
-            <SystemIdentifier id='PV_ID1'/>
             <ArrayAzimuth>90</ArrayAzimuth>
             <ArrayTilt>20</ArrayTilt>
-            <InverterEfficiency>0.96</InverterEfficiency>
             <MaxPowerOutput>1500</MaxPowerOutput>
+            <InverterEfficiency>0.96</InverterEfficiency>
           </PVSystem>
         </Photovoltaics>
       </Systems>
