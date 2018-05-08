@@ -150,7 +150,7 @@ def parse_sql(design, sql_path, output_hpxml_path)
   sim_output[:fuelHotWater] = sim_output[:ngHotWater] + sim_output[:otherHotWater]
 
   # Other - PV
-  query = "SELECT -1*Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
   sim_output[:elecPV] = get_sql_query_result(sqlFile, query)
   
   # Other - Fridge
@@ -738,7 +738,7 @@ unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xm
 end
 
 # Check for correct versions of OS
-os_version = "2.5.0"
+os_version = "2.5.1"
 if OpenStudio.openStudioVersion != os_version
   fail "ERROR: OpenStudio version #{os_version} is required."
 end

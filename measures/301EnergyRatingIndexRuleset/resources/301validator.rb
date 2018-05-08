@@ -51,7 +51,7 @@ class EnergyRatingIndex301Validator
             'Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
             'Systems/WaterHeating/WaterHeatingSystem' => [0,1],
             'Systems/WaterHeating/HotWaterDistribution' => [0,1],
-            'Systems/Photovoltaics/PVSystem' => [0,1],
+            'Systems/Photovoltaics/PVSystem' => [0,1,2,3,4,5],
             'Appliances/ClothesWasher' => [1],
             'Appliances/ClothesDryer' => [1],
             'Appliances/Dishwasher' => [1],

@@ -39,6 +39,7 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
+          <BuildingVolume>55662.5</BuildingVolume>
           <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
@@ -169,6 +170,7 @@
             <Slab>
               <SystemIdentifier id='Slab_ID1'/>
               <Area>3500</Area>
+              <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>4.0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
               <DepthBelowGrade>0</DepthBelowGrade>
@@ -422,8 +424,8 @@
           <extension>
             <AnnualkWh>487.0</AnnualkWh>
             <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.7195827545127987</FracSensible>
-            <FracLatent>0.07995363939031097</FracLatent>
+            <FracSensible>0.7195827545127989</FracSensible>
+            <FracLatent>0.07995363939031098</FracLatent>
           </extension>
         </CookingRange>
         <Oven>
@@ -459,7 +461,7 @@
             <Value>689.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.9999997510703024</FracSensible>
+            <FracSensible>0.9999997510703025</FracSensible>
             <FracLatent>0.0</FracLatent>
           </extension>
         </PlugLoad>
