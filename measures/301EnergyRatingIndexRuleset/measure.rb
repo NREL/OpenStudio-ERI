@@ -16,6 +16,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac_sizing"
 require "#{File.dirname(__FILE__)}/resources/lighting"
 require "#{File.dirname(__FILE__)}/resources/location"
 require "#{File.dirname(__FILE__)}/resources/misc_loads"
+require "#{File.dirname(__FILE__)}/resources/pv"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/waterheater"
@@ -2461,14 +2462,20 @@ class OSModel
 
     return true if building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].nil?
   
-    building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].each do |pvsys|
+    building.elements.each("BuildingDetails/Systems/Photovoltaics/PVSystem") do |pvsys|
     
+      pv_id = pvsys.elements["SystemIdentifier"].attributes["id"]
       az = Float(XMLHelper.get_value(pvsys, "ArrayAzimuth"))
       tilt = Float(XMLHelper.get_value(pvsys, "ArrayTilt"))
       inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
-      power_kw = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))/1000.0
+      power_w = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))
       
-      # TODO: Hook up to model
+      # FIXME: Need to double-check azimuth/tilt inputs
+      module_type = Constants.PVModuleTypeStandard
+      system_losses = 0.14
+      success = PV.apply(model, runner, pv_id, power_w, module_type, 
+                         system_losses, inv_eff, tilt, az)
+      return false if not success
       
     end
       

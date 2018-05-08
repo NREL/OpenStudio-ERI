@@ -73,6 +73,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_reference(new_systems, orig_details)
     set_systems_mechanical_ventilation_reference(new_systems, orig_details)
     set_systems_water_heating_reference(new_systems, orig_details)
+    set_systems_photovoltaics_reference(new_systems)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -127,6 +128,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_rated(new_systems, orig_details)
     set_systems_mechanical_ventilation_rated(new_systems, orig_details)
     set_systems_water_heating_rated(new_systems, orig_details)
+    set_systems_photovoltaics_rated(new_systems, orig_details)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -1708,6 +1710,14 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
     XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
 
+  end
+  
+  def self.set_systems_photovoltaics_reference(new_systems)
+    # nop
+  end
+  
+  def self.set_systems_photovoltaics_rated(new_systems, orig_details)
+    new_pv = XMLHelper.copy_element(new_systems, orig_details, "Systems/Photovoltaics")
   end
   
   def self.set_appliances_clothes_washer_reference(new_appliances)
