@@ -8,27 +8,57 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE DOOR_ID1 is not used as Receiving Surface in calculations.
+Surface=SURFACE DOOR_ID1 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=1
+....Surface=DOOR_ID1
+==================================
+Surface=DOOR_ID1 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_ID1 is not used as Receiving Surface in calculations.
+Surface=SURFACE WINDOW_ID1 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=1
+....Surface=WINDOW_ID1
+==================================
+Surface=WINDOW_ID1 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_ID2 is not used as Receiving Surface in calculations.
+Surface=SURFACE WINDOW_ID2 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=1
+....Surface=WINDOW_ID2
+==================================
+Surface=WINDOW_ID2 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_ID3 is not used as Receiving Surface in calculations.
+Surface=SURFACE WINDOW_ID3 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=1
+....Surface=WINDOW_ID3
+==================================
+Surface=WINDOW_ID3 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_ID4 is not used as Receiving Surface in calculations.
+Surface=SURFACE WINDOW_ID4 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=1
+....Surface=WINDOW_ID4
+==================================
+Surface=WINDOW_ID4 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
