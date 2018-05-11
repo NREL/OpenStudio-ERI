@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.11 17:09
 ! <Version>, Version ID
  Version, 8.9
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -76,7 +76,7 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  Lights Internal Gains Nominal, RESIDENTIAL LIGHTING LIVING,RESIDENTIAL LIGHTING SCHEDULE,LIVING,325.16,4.0,980.004,3.014,245.001,0.000,0.600,0.200,0.200,1.000,General,0.000,980.004
 ! <ElectricEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,End-Use SubCategory,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 BATH FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
- ElectricEquipment Internal Gains Nominal, RES INFIL_1 HOUSE FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,0.500,0.500,residential mech vent fan,0.000,0.000
+ ElectricEquipment Internal Gains Nominal, RES INFIL_1 HOUSE FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 RANGE FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL CEILING FAN BENCHMARK|LIVING,RESIDENTIAL CEILING FAN BENCHMARK|LIVING SCHEDULE,LIVING,325.16,4.0,53.331,0.164,13.333,0.000,0.558,7.000E-002,0.372,residential ceiling fan,0.000,53.331
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL CEILING FAN NON BENCHMARK EQUIP,RESIDENTIAL CEILING FAN MASTER,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.558,7.000E-002,0.372,General,0.000,0.000
@@ -104,27 +104,21 @@ RoomAir Model,UNFINISHED ATTIC,Mixing/Well-Stirred
 ! <AirflowNetwork Model:Control>, No Multizone or Distribution/Multizone with Distribution/Multizone without Distribution/Multizone with Distribution only during Fan Operation
 AirflowNetwork Model:Control,NoMultizoneOrDistribution
 ! <Component Sizing Information>, Component Type, Component Name, Input Field Description, Value
- Component Sizing Information, Fan:OnOff, RES MV_1 ERV SUPPLY FAN, Design Size Maximum Flow Rate [m3/s], 3.42162E-002
- Component Sizing Information, Fan:OnOff, RES MV_1 ERV SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 3.42162E-002
- Component Sizing Information, Fan:OnOff, RES MV_1 ERV EXHAUST FAN, Design Size Maximum Flow Rate [m3/s], 3.42162E-002
- Component Sizing Information, Fan:OnOff, RES MV_1 ERV EXHAUST FAN, User-Specified Maximum Flow Rate [m3/s], 3.42162E-002
- Component Sizing Information, HeatExchanger:AirToAir:SensibleAndLatent, RES MV_1 ERV HEAT EXCHANGER, Design Size Nominal Supply Air Flow Rate [m3/s], 3.42162E-002
- Component Sizing Information, HeatExchanger:AirToAir:SensibleAndLatent, RES MV_1 ERV HEAT EXCHANGER, User-Specified Nominal Supply Air Flow Rate [m3/s], 3.42162E-002
- Component Sizing Information, AirTerminal:SingleDuct:Uncontrolled, RESIDENTIAL FURNACE GAS AND CENTRAL AC LIVING DIRECT AIR, User-Specified Maximum Air Flow Rate [m3/s], 0.67106
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.67106
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.67106
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.60425
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 9023.53269
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 18873.37884
+ Component Sizing Information, AirTerminal:SingleDuct:Uncontrolled, RESIDENTIAL FURNACE GAS AND CENTRAL AC LIVING DIRECT AIR, User-Specified Maximum Air Flow Rate [m3/s], 0.63139
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.63139
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.63139
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.58149
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 8683.65235
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 17757.47500
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Maximum Supply Air Temperature [C], 48.88889
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
- Component Sizing Information, Fan:OnOff, RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.67107
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Rated Air Flow Rate [m3/s], 0.46754
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Gross Rated Total Cooling Capacity [W], 9023.53269
+ Component Sizing Information, Fan:OnOff, RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.63139
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Rated Air Flow Rate [m3/s], 0.44993
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Gross Rated Total Cooling Capacity [W], 8683.65235
  Component Sizing Information, Coil:Cooling:DX:SingleSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Gross Rated Sensible Heat Ratio, 0.74040
 ! <DX Cooling Coil Standard Rating Information>, Component Type, Component Name, Standard Rating (Net) Cooling Capacity {W}, Standard Rated Net COP {W/W}, EER {Btu/W-h}, SEER {Btu/W-h}, IEER {Btu/W-h}
- DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, 8605.8, 2.72, 9.27, 11.02, 10.36
- Component Sizing Information, Coil:Heating:Fuel, RESIDENTIAL FURNACE GAS HEATING COIL, User-Specified Nominal Capacity [W], 18873.37884
+ DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, 8281.7, 2.72, 9.27, 11.02, 10.36
+ Component Sizing Information, Coil:Heating:Fuel, RESIDENTIAL FURNACE GAS HEATING COIL, User-Specified Nominal Capacity [W], 17757.47500
 ! <Water Heater Information>,Type,Name,Volume {m3},Maximum Capacity {W},Standard Rated Recovery Efficiency, Standard Rated Energy Factor
 Water Heater Information,WaterHeater:Mixed,RES WH,0.1362,5500.0,4.094,0.9477
  Component Sizing Information, WaterHeater:Mixed, RES WH, Use Side Design Flow Rate [m3/s], 6.46429E-006
@@ -134,11 +128,11 @@ Water Heater Information,WaterHeater:Mixed,RES WH,0.1362,5500.0,4.094,0.9477
 ! <Environment:WarmupDays>, NumberofWarmupDays
 Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01,12/31,Monday,365,Use RunPeriod Specified Day,No,No,No,Yes,Yes
 Environment:Daylight Saving,No,RunPeriod Object
-Environment:WarmupDays,  7
+Environment:WarmupDays,  6
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,3.5125148738E-002,3.0143929437E-002,Pass,Pass,0.1362248965,0.1274545315,Pass,Pass
- Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,2.2924804772E-003,2.2960347365E-003,Pass,Pass,0.9609028310,1.2462613350,Pass,Pass
- Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,0.7985369083,0.8208289160,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,3.4300443259E-006,6.0044390626E-006,Pass,Pass,0.1407138629,0.1309946296,Pass,Pass
+ Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,3.7754792124E-003,1.7053688537E-003,Pass,Pass,0.1421127953,0.1472999759,Pass,Pass
+ Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,0.7985438664,0.8202492154,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

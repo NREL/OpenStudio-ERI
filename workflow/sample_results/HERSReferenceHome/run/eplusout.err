@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29,
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.11 17:09,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 BATH EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
@@ -156,8 +156,8 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29,
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.796E-005 m3/s/W.
-   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/04 15:00 - 16:00
+   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.799E-005 m3/s/W.
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/04 15:30 - 15:45
    **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
    **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
@@ -188,11 +188,11 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29,
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 37140 total times;
+   *************  **   ~~~   **   This error occurred 35470 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=6.963913E-005  Min=6.758733E-005
+   *************  **   ~~~   **   Max=6.962067E-005  Min=6.760575E-005
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 37283 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  8.92sec
+   ************* EnergyPlus Completed Successfully-- 35613 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  8.10sec
