@@ -1860,7 +1860,7 @@ class OSModel
         fan_power_rated = 0.14
         fan_power_installed = 0.3
         eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-        successs = HVAC.apply_central_ac_4speed(model, unit, runner, seer, eers, shrs,
+        success = HVAC.apply_central_ac_4speed(model, unit, runner, seer, eers, shrs,
                                                 capacity_ratios, fan_speed_ratios,
                                                 fan_power_rated, fan_power_installed,
                                                 crankcase_kw, crankcase_temp,

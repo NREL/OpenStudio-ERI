@@ -32,7 +32,7 @@ class EnergyRatingIndexTest < MiniTest::Test
   def test_resnet_hers_reference_home_auto_generation
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     test_num = 0
-    xmldir = "#{parent_dir}/sample_files/RESNET_Tests/4.2_Test_HERS_Reference_Home"
+    xmldir = "RESNET_Tests/4.2_Test_HERS_Reference_Home"
     Dir["#{xmldir}/*.xml"].each do |xml|
       next if xml.end_with? "HERSReferenceHome.xml"
       test_num += 1
@@ -51,17 +51,30 @@ class EnergyRatingIndexTest < MiniTest::Test
   
   def test_resnet_hers_method
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    test_num = 0
-    xmldir = "#{parent_dir}/sample_files/RESNET_Tests/4.3_Test_HERS_Method"
+    xmldir = "RESNET_Tests/4.3_Test_HERS_Method"
     Dir["#{xmldir}/*.xml"].each do |xml|
-      test_num += 1
+      test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
       ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
-      _check_method_results(results_csv, test_num)
+      _check_method_results(results_csv, test_num, test_num == 2)
     end
   end
   
   def test_resnet_hers_method_proposed
-    # TODO
+    # Proposed New HERS Method Test Suite
+    # Approved by RESNET Board of Directors June 16, 2016
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    xmldir = "RESNET_Tests/4.3_Test_HERS_Method_Proposed"
+    Dir["#{xmldir}/*.xml"].each do |xml|
+      if xml.include? 'AC'
+        test_num = File.basename(xml).gsub('L100-AC-','').gsub('.xml','').to_i
+        test_loc = 'AC'
+      elsif xml.include? 'AL'
+        test_num = File.basename(xml).gsub('L100-AL-','').gsub('.xml','').to_i
+        test_loc = 'AL'
+      end
+      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      _check_method_proposed_results(results_csv, test_num, test_loc, test_num == 8)
+    end
   end
   
   def test_resnet_hvac
@@ -717,68 +730,74 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_in_epsilon(100, hers_index, 0.005)
   end
   
-  def _check_method_results(results_csv, test_num)
+  def _check_method_results(results_csv, test_num, has_tankless_water_heater)
     require 'csv'
     values = {}
     CSV.foreach(results_csv) do |row|
       values[row[0]] = Float(row[1])
     end
     
-    mepr = {}
-    mepr['CoolingFuel'] = 'elec'
-    mepr['CoolingMEPR'] = 10.00
-    if test_num == 1
-      mepr['HeatingFuel'] = 'elec'
-      mepr['HeatingMEPR'] = 6.80
-      mepr['HotWaterFuel'] = 'elec'
-      mepr['HotWaterMEPR'] = 0.88
-      ec_x_la = 21.27
-    elsif test_num == 2
-      mepr['HeatingFuel'] = 'elec'
-      mepr['HeatingMEPR'] = 6.80
-      mepr['HotWaterFuel'] = 'gas'
-      mepr['HotWaterMEPR'] = 0.82
-      ec_x_la = 23.33
-    elsif test_num == 3
-      mepr['HeatingFuel'] = 'gas'
-      mepr['HeatingMEPR'] = 0.78
-      mepr['HotWaterFuel'] = 'elec'
-      mepr['HotWaterMEPR'] = 0.88
-      ec_x_la = 22.05
-    elsif test_num == 4
-      mepr['HeatingFuel'] = 'elec'
-      mepr['HeatingMEPR'] = 9.85
-      mepr['HotWaterFuel'] = 'elec'
-      mepr['HotWaterMEPR'] = 0.88
-      ec_x_la = 22.35
-    elsif test_num == 5
-      mepr['HeatingFuel'] = 'gas'
-      mepr['HeatingMEPR'] = 0.96
-      mepr['HotWaterFuel'] = 'elec'
-      mepr['HotWaterMEPR'] = 0.88
-      ec_x_la = 23.33
-    else
-      fail "Unexpected test."
+    cooling_fuel =  {1=>'elec', 2=>'elec', 3=>'elec', 4=>'elec', 5=>'elec'}
+    cooling_mepr =  {1=>10.00,  2=>10.00,  3=>10.00,  4=>10.00,  5=>10.00 }
+    heating_fuel =  {1=>'elec', 2=>'elec', 3=>'gas',  4=>'elec', 5=>'gas' }
+    heating_mepr =  {1=>6.80,   2=>6.80,   3=>0.78,   4=>9.85,   5=>0.96  }
+    hotwater_fuel = {1=>'elec', 2=>'gas',  3=>'elec', 4=>'elec', 5=>'elec'}
+    hotwater_mepr = {1=>0.88,   2=>0.82,   3=>0.88,   4=>0.88,   5=>0.88  }
+    ec_x_la =       {1=>21.27,  2=>23.33,  3=>22.05,  4=>22.35,  5=>23.33 }
+    
+    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater)
+    
+  end
+  
+  def _check_method_proposed_results(results_csv, test_num, test_loc, has_tankless_water_heater)
+    require 'csv'
+    values = {}
+    CSV.foreach(results_csv) do |row|
+      values[row[0]] = Float(row[1])
     end
     
-    if mepr['HeatingFuel'] == 'gas'
+    if test_loc == 'AC'
+      cooling_fuel =  {6=>'elec', 7=>'elec', 8=>'elec', 9=>'elec', 10=>'elec', 11=>'elec', 12=>'elec', 13=>'elec', 14=>'elec', 15=>'elec', 16=>'elec', 17=>'elec', 18=>'elec', 19=>'elec', 20=>'elec', 21=>'elec', 22=>'elec'}
+      cooling_mepr =  {6=>13.00,  7=>13.00,  8=>13.00,  9=>13.00,  10=>13.00,  11=>13.00,  12=>13.00,  13=>13.00,  14=>21.00,  15=>13.00,  16=>13.00,  17=>13.00,  18=>13.00,  19=>13.00,  20=>13.00,  21=>13.00,  22=>13.00 }
+      heating_fuel =  {6=>'gas',  7=>'gas',  8=>'gas',  9=>'gas',  10=>'gas',  11=>'gas',  12=>'gas',  13=>'gas',  14=>'gas',  15=>'gas',  16=>'gas',  17=>'gas',  18=>'gas',  19=>'elec', 20=>'elec', 21=>'gas',  22=>'gas' }
+      heating_mepr =  {6=>0.80,   7=>0.96,   8=>0.80,   9=>0.80,   10=>0.80,   11=>0.80,   12=>0.80,   13=>0.80,   14=>0.80,   15=>0.80,   16=>0.80,   17=>0.80,   18=>0.80,   19=>8.20,   20=>12.0,   21=>0.80,   22=>0.80  }
+      hotwater_fuel = {6=>'gas',  7=>'gas',  8=>'gas',  9=>'gas',  10=>'gas',  11=>'gas',  12=>'elec', 13=>'elec', 14=>'gas',  15=>'gas',  16=>'gas',  17=>'gas',  18=>'gas',  19=>'gas',  20=>'gas',  21=>'gas',  22=>'gas' }
+      hotwater_mepr = {6=>0.62,   7=>0.62,   8=>0.83,   9=>0.62,   10=>0.62,   11=>0.62,   12=>0.95,   13=>2.50,   14=>0.62,   15=>0.62,   16=>0.62,   17=>0.62,   18=>0.62,   19=>0.62,   20=>0.62,   21=>0.62,   22=>0.62  }
+      ec_x_la =       {6=>21.86,  7=>21.86,  8=>21.86,  9=>20.70,  10=>23.02,  11=>23.92,  12=>21.86,  13=>21.86,  14=>21.86,  15=>21.86,  16=>21.86,  17=>21.86,  18=>21.86,  19=>21.86,  20=>21.86,  21=>21.86,  22=>21.86}
+    elsif test_loc == 'AL'
+      cooling_fuel =  {6=>'elec', 7=>'elec', 8=>'elec', 9=>'elec', 10=>'elec', 11=>'elec', 12=>'elec', 13=>'elec', 14=>'elec', 15=>'elec', 16=>'elec', 17=>'elec', 18=>'elec', 19=>'elec', 20=>'elec', 21=>'elec', 22=>'elec'}
+      cooling_mepr =  {6=>14.00,  7=>14.00,  8=>14.00,  9=>14.00,  10=>14.00,  11=>14.00,  12=>14.00,  13=>14.00,  14=>21.00,  15=>14.00,  16=>14.00,  17=>14.00,  18=>14.00,  19=>14.00,  20=>14.00,  21=>14.00,  22=>14.00 }
+      heating_fuel =  {6=>'gas',  7=>'gas',  8=>'gas',  9=>'gas',  10=>'gas',  11=>'gas',  12=>'gas',  13=>'gas',  14=>'gas',  15=>'gas',  16=>'gas',  17=>'gas',  18=>'gas',  19=>'elec', 20=>'elec', 21=>'gas',  22=>'gas' }
+      heating_mepr =  {6=>0.80,   7=>0.96,   8=>0.80,   9=>0.80,   10=>0.80,   11=>0.80,   12=>0.80,   13=>0.80,   14=>0.80,   15=>0.80,   16=>0.80,   17=>0.80,   18=>0.80,   19=>8.20,   20=>12.0,   21=>0.80,   22=>0.80  }
+      hotwater_fuel = {6=>'gas',  7=>'gas',  8=>'gas',  9=>'gas',  10=>'gas',  11=>'gas',  12=>'elec', 13=>'elec', 14=>'gas',  15=>'gas',  16=>'gas',  17=>'gas',  18=>'gas',  19=>'gas',  20=>'gas',  21=>'gas',  22=>'gas' }
+      hotwater_mepr = {6=>0.62,   7=>0.62,   8=>0.83,   9=>0.62,   10=>0.62,   11=>0.62,   12=>0.95,   13=>2.50,   14=>0.62,   15=>0.62,   16=>0.62,   17=>0.62,   18=>0.62,   19=>0.62,   20=>0.62,   21=>0.62,   22=>0.62  }
+      ec_x_la =       {6=>21.86,  7=>21.86,  8=>21.86,  9=>20.70,  10=>23.02,  11=>23.92,  12=>21.86,  13=>21.86,  14=>21.86,  15=>21.86,  16=>21.86,  17=>21.86,  18=>21.86,  19=>21.86,  20=>21.86,  21=>21.86,  22=>21.86}
+    end
+    
+    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater)
+    
+  end
+  
+  def _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater)
+                                       
+    if heating_fuel[test_num] == 'gas'
       heating_a = 1.0943
       heating_b = 0.403
       heating_eec_r = 1.0 / 0.78
-      heating_eec_x = 1.0 / mepr['HeatingMEPR']
+      heating_eec_x = 1.0 / heating_mepr[test_num]
     else
       heating_a = 2.2561
       heating_b = 0.0
       heating_eec_r = 3.413 / 7.7
-      heating_eec_x = 3.413 / mepr['HeatingMEPR']
+      heating_eec_x = 3.413 / heating_mepr[test_num]
     end
     
     cooling_a = 3.8090
     cooling_b = 0.0
     cooling_eec_r = 3.413 / 13.0
-    cooling_eec_x = 3.413 / mepr['CoolingMEPR']
+    cooling_eec_x = 3.413 / cooling_mepr[test_num]
     
-    if mepr['HotWaterFuel'] == 'gas'
+    if hotwater_fuel[test_num] == 'gas'
       hotwater_a = 1.1877
       hotwater_b = 1.013
       hotwater_eec_r = 1.0 / 0.59
@@ -787,12 +806,12 @@ class EnergyRatingIndexTest < MiniTest::Test
       hotwater_b = 0.0
       hotwater_eec_r = 1.0 / 0.92
     end
-    if test_num != 2
-      hotwater_eec_x = 1.0 / mepr['HotWaterMEPR']
+    if not has_tankless_water_heater
+      hotwater_eec_x = 1.0 / hotwater_mepr[test_num]
     else
-      hotwater_eec_x = 1.0 / (mepr['HotWaterMEPR'] * 0.92)
+      hotwater_eec_x = 1.0 / (hotwater_mepr[test_num] * 0.92)
     end
-    
+                                       
     heating_dse_r = values['REUL Heating (MBtu)'] / values['EC_r Heating (MBtu)'] * heating_eec_r
     cooling_dse_r = values['REUL Cooling (MBtu)'] / values['EC_r Cooling (MBtu)'] * cooling_eec_r
     hotwater_dse_r = values['REUL Hot Water (MBtu)'] / values['EC_r Hot Water (MBtu)'] * hotwater_eec_r
@@ -806,11 +825,10 @@ class EnergyRatingIndexTest < MiniTest::Test
     hotwater_nmeul = values['REUL Hot Water (MBtu)'] * (hotwater_nec_x / values['EC_r Hot Water (MBtu)'])
     
     tnml = heating_nmeul + cooling_nmeul + hotwater_nmeul + values['EC_x L&A (MBtu)']
-    trl = values['REUL Heating (MBtu)'] + values['REUL Cooling (MBtu)'] + values['REUL Hot Water (MBtu)'] + ec_x_la
+    trl = values['REUL Heating (MBtu)'] + values['REUL Cooling (MBtu)'] + values['REUL Hot Water (MBtu)'] + ec_x_la[test_num]
     
     hers_score = 100 * tnml / trl
     assert_operator((values['HERS Index'] - hers_score).abs / values['HERS Index'], :<, 0.005)
-    
   end
   
   def _check_hot_water(results_csv, test_num, base_val=nil, mn_val=nil)

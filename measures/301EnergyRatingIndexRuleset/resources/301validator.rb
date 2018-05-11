@@ -1,7 +1,5 @@
 class EnergyRatingIndex301Validator
 
-  # TODO: Separate out modeling limitations from ERI Use Case
-
   def self.run_validator(hpxml_doc)
   
     # A hash of hashes that defines the required XML elements.
@@ -86,7 +84,7 @@ class EnergyRatingIndex301Validator
 
         ## AirInfiltration
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration' => {
-            'AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage' => [1], # TODO: Allow ACH50, ELA, and/or SLA?
+            'AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural" or UnitofMeasure="ACH"]/AirLeakage' => [1],
         },
         
         ## Attic
@@ -423,13 +421,13 @@ class EnergyRatingIndex301Validator
         
             # HotWaterDistribution (Standard)
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard' => {
-                'PipingLength' => [1],
+                'PipingLength' => [0,1], # Uses Reference Home if not provided
             },
             
             # HotWaterDistribution (Recirculation)
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => {
                 'ControlType' => [1],
-                'RecirculationPipingLoopLength' => [1],
+                'RecirculationPipingLoopLength' => [0,1], # Uses Reference Home if not provided
                 'BranchPipingLoopLength' => [1],
                 'PumpPower' => [1],
             },
@@ -455,16 +453,16 @@ class EnergyRatingIndex301Validator
             'FanPower' => [1],
         },
         
-        # WholeHouseVentilationFan (ERV)
-        '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="energy recovery ventilator"]' => {
-            'TotalRecoveryEfficiency' => [1],
-            'SensibleRecoveryEfficiency' => [1],
-        },
-        
-        # WholeHouseVentilationFan (HRV)
-        '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="heat recovery ventilator"]' => {
-            'SensibleRecoveryEfficiency' => [1],
-        },
+            # WholeHouseVentilationFan (ERV)
+            '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="energy recovery ventilator"]' => {
+                'TotalRecoveryEfficiency' => [1],
+                'SensibleRecoveryEfficiency' => [1],
+            },
+            
+            # WholeHouseVentilationFan (HRV)
+            '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="heat recovery ventilator"]' => {
+                'SensibleRecoveryEfficiency' => [1],
+            },
         
         ## PV
         '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => {
@@ -476,7 +474,7 @@ class EnergyRatingIndex301Validator
         
         ## ClothesWasher
         '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
-            '[ModifiedEnergyFactor | extension/AnnualkWh]' => [1],
+            '[ModifiedEnergyFactor | extension/AnnualkWh]' => [0,1], # Uses Reference Home if not provided
         },
         
             # ClothesWasher (Detailed)
@@ -498,7 +496,7 @@ class EnergyRatingIndex301Validator
         ## ClothesDryer
         '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => [1],
-            '[EfficiencyFactor | extension/AnnualkWh]' => [1],
+            '[EfficiencyFactor | extension/AnnualkWh]' => [0,1], # Uses Reference Home if not provided
         },
         
             # ClothesDryer (Detailed)
@@ -515,7 +513,7 @@ class EnergyRatingIndex301Validator
         
         ## Dishwasher
         '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
-            '[EnergyFactor | RatedAnnualkWh | extension/AnnualkWh]' => [1],
+            '[EnergyFactor | RatedAnnualkWh | extension/AnnualkWh]' => [0,1], # Uses Reference Home if not provided
         },
         
             # Dishwasher (Detailed)
@@ -532,13 +530,13 @@ class EnergyRatingIndex301Validator
         
         ## Refrigerator
         '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => {
-            'RatedAnnualkWh' => [1],
+            'RatedAnnualkWh' => [0,1],
         },
         
         ## CookingRange/Oven
         '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => [1],
-            '[IsInduction | extension/AnnualkWh]' => [1],
+            '[IsInduction | extension/AnnualkWh]' => [0,1], # Uses Reference Home if not provided
         },
         
             # CookingRange/Oven (Detailed)
@@ -556,7 +554,7 @@ class EnergyRatingIndex301Validator
         
         ## Lighting
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            '[LightingFractions | extension/AnnualInteriorkWh]' => [1],
+            '[LightingFractions | extension/AnnualInteriorkWh]' => [0,1], # Uses Reference Home if not provided
         },
         
             # Lighting (Detailed)
