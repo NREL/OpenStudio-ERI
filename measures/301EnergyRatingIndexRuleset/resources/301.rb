@@ -71,7 +71,7 @@ class EnergyRatingIndex301Ruleset
     # Systems
     new_systems = XMLHelper.add_element(new_details, "Systems")
     set_systems_hvac_reference(new_systems, orig_details)
-    set_systems_mechanical_ventilation_reference(new_systems, orig_details, new_details)
+    set_systems_mechanical_ventilation_reference(new_systems, orig_details)
     set_systems_water_heating_reference(new_systems, orig_details)
     set_systems_photovoltaics_reference(new_systems)
     
@@ -266,7 +266,7 @@ class EnergyRatingIndex301Ruleset
     Type: vented with net free vent aperture = 1ft2 per 150 ft2 of crawlspace floor area.
     U-factor: from Table 4.2.2(2) for floors over unconditioned spaces or outdoor environment.
     '''
-    
+
     if orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic[AtticType='unvented attic' or AtticType='vented attic']"]
       orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic/AtticType"].text = "vented attic"
       XMLHelper.add_element(extension, "AtticSpecificLeakageArea", 1.0/300.0)
@@ -306,8 +306,8 @@ class EnergyRatingIndex301Ruleset
       sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
       ela = sla * @cfa
       ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
-    elsif not orig_infil.elements["AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
-      ach50 = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+    elsif not orig_infil.elements["AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
+      ach50 = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
       # Convert to other forms
       sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
       ela = sla * @cfa
@@ -1270,7 +1270,7 @@ class EnergyRatingIndex301Ruleset
 
   end
   
-  def self.set_systems_mechanical_ventilation_reference(new_systems, orig_details, new_details)
+  def self.set_systems_mechanical_ventilation_reference(new_systems, orig_details)
     '''
     Table 4.2.2(1) - Whole-House Mechanical ventilation
     None, except where a mechanical ventilation system is specified by the Rated Home, in which case:
@@ -1309,8 +1309,13 @@ class EnergyRatingIndex301Ruleset
       
       # Calculate fan cfm for fan power using Rated Home infiltration
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
-      nach = Float(XMLHelper.get_value(new_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
-      sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+      if not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"].nil?
+        nach = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
+        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+      elsif not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
+        ach50 = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+      end
       # TODO: Merge with Airflow measure and move this code to airflow.rb
       nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
       q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a

@@ -84,7 +84,7 @@ class EnergyRatingIndex301Validator
 
         ## AirInfiltration
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration' => {
-            'AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural" or UnitofMeasure="ACH"]/AirLeakage' => [1],
+            '[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => [1],
         },
         
         ## Attic
