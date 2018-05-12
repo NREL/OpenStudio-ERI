@@ -32,7 +32,7 @@ class EnergyRatingIndexTest < MiniTest::Test
   def test_resnet_hers_reference_home_auto_generation
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     test_num = 0
-    xmldir = "RESNET_Tests/4.2_Test_HERS_Reference_Home"
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_Test_HERS_Reference_Home")
     Dir["#{xmldir}/*.xml"].each do |xml|
       next if xml.end_with? "HERSReferenceHome.xml"
       test_num += 1
@@ -51,7 +51,7 @@ class EnergyRatingIndexTest < MiniTest::Test
   
   def test_resnet_hers_method
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    xmldir = "RESNET_Tests/4.3_Test_HERS_Method"
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
       ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
@@ -63,7 +63,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     # Proposed New HERS Method Test Suite
     # Approved by RESNET Board of Directors June 16, 2016
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    xmldir = "RESNET_Tests/4.3_Test_HERS_Method_Proposed"
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_Proposed")
     Dir["#{xmldir}/*.xml"].each do |xml|
       if xml.include? 'AC'
         test_num = File.basename(xml).gsub('L100-AC-','').gsub('.xml','').to_i
@@ -91,7 +91,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     base_vals = {}
     mn_vals = {}
     all_results = {}
-    xmldir = "#{parent_dir}/sample_files/RESNET_Tests/4.6_Test_Hot_Water"
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num += 1
       
