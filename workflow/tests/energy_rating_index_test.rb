@@ -39,7 +39,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       
       # Run test
       ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
-      _check_reference_home_components(ref_hpxml, ref_osm, test_num)
+      _check_reference_home_components(ref_hpxml, test_num)
       
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
@@ -182,12 +182,9 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
   end
   
-  def _check_reference_home_components(ref_hpxml, ref_osm, test_num)
+  def _check_reference_home_components(ref_hpxml, test_num)
     hpxml_doc = REXML::Document.new(File.read(ref_hpxml))
 
-    translator = OpenStudio::OSVersion::VersionTranslator.new
-    model = translator.loadModel(OpenStudio::Path.new(ref_osm)).get
-    
     # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 – 4
     
     epsilon = 0.0005 # 0.05%
@@ -299,27 +296,19 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_in_delta(0.00036, sla, 0.00001)
     
     # Internal gains
-    xml_it_sens, xml_it_lat, osm_it_sens, osm_it_lat = _get_internal_gains(hpxml_doc, model)
+    xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_doc)
     if test_num == 1
       assert_in_epsilon(55470, xml_it_sens, epsilon)
-      assert_in_epsilon(55470, osm_it_sens, epsilon*2.0)
       assert_in_epsilon(13807, xml_it_lat, epsilon)
-      assert_in_epsilon(13807, osm_it_lat, epsilon*2.0)
     elsif test_num == 2
       assert_in_epsilon(52794, xml_it_sens, epsilon)
-      assert_in_epsilon(52794, osm_it_sens, epsilon*2.0)
       assert_in_epsilon(12698, xml_it_lat, epsilon)
-      assert_in_epsilon(12698, osm_it_lat, epsilon*2.0)
     elsif test_num == 3
       assert_in_epsilon(48111, xml_it_sens, epsilon)
-      assert_in_epsilon(48111, osm_it_sens, epsilon*2.0)
       assert_in_epsilon(9259, xml_it_lat, epsilon)
-      assert_in_epsilon(9259, osm_it_lat, epsilon*2.0)
     else
       assert_in_epsilon(83103, xml_it_sens, epsilon)
-      assert_in_epsilon(83103, osm_it_sens, epsilon*2.0)
       assert_in_epsilon(17934, xml_it_lat, epsilon)
-      assert_in_epsilon(17934, osm_it_lat, epsilon*2.0)
     end
     
     # HVAC
@@ -505,7 +494,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     return ela / area
   end
   
-  def _get_internal_gains(hpxml_doc, model)
+  def _get_internal_gains(hpxml_doc)
   
     s = ""
   
@@ -519,18 +508,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       xml_pl_sens += (frac_sens * btu)
       xml_pl_lat += (frac_lat * btu)
     end
-    osm_pl_sens = 0.0
-    osm_pl_lat = 0.0
-    model.getElectricEquipments.each do |ee|
-      next if not ee.name.to_s.start_with?(Constants.ObjectNameMiscPlugLoads)
-      frac_lat = ee.electricEquipmentDefinition.fractionLatent
-      frac_sens = 1.0 - frac_lat - ee.electricEquipmentDefinition.fractionLost
-      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ee.schedule.get)
-      ee_w = ee.designLevel.get
-      osm_pl_sens += UnitConversions.convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu")
-      osm_pl_lat += UnitConversions.convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu")
-    end
-    s += "#{xml_pl_sens} #{osm_pl_sens} #{xml_pl_lat} #{osm_pl_lat}\n"
+    s += "#{xml_pl_sens} #{xml_pl_lat}\n"
     
     # Range, ClothesWasher, ClothesDryer, Dishwasher, Refrigerator
     xml_appl_sens = 0.0
@@ -549,27 +527,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       xml_appl_sens += (frac_sens * btu)
       xml_appl_lat += (frac_lat * btu)
     end
-    osm_appl_sens = 0.0
-    osm_appl_lat = 0.0
-    model.getElectricEquipments.each do |ee|
-      next if not ee.name.to_s.start_with?(Constants.ObjectNameCookingRange(nil)) and not ee.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not ee.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not ee.name.to_s.start_with?(Constants.ObjectNameClothesDryer(nil)) and not ee.name.to_s.start_with?(Constants.ObjectNameDishwasher) and not ee.name.to_s.start_with?(Constants.ObjectNameRefrigerator)
-      frac_lat = ee.electricEquipmentDefinition.fractionLatent
-      frac_sens = 1.0 - frac_lat - ee.electricEquipmentDefinition.fractionLost
-      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ee.schedule.get)
-      ee_w = ee.designLevel.get
-      osm_appl_sens += UnitConversions.convert(frac_sens * ee_w * hrs_per_year, "Wh", "Btu")
-      osm_appl_lat += UnitConversions.convert(frac_lat * ee_w * hrs_per_year, "Wh", "Btu")
-    end
-    model.getOtherEquipments.each do |oe|
-      next if not oe.name.to_s.start_with?(Constants.ObjectNameCookingRange(nil)) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesWasher) and not oe.name.to_s.start_with?(Constants.ObjectNameClothesDryer(nil)) and not oe.name.to_s.start_with?(Constants.ObjectNameDishwasher) and not oe.name.to_s.start_with?(Constants.ObjectNameRefrigerator)
-      frac_lat = oe.otherEquipmentDefinition.fractionLatent
-      frac_sens = 1.0 - frac_lat - oe.otherEquipmentDefinition.fractionLost
-      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, oe.schedule.get)
-      oe_w = oe.otherEquipmentDefinition.designLevel.get
-      osm_appl_sens += UnitConversions.convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu")
-      osm_appl_lat += UnitConversions.convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu")
-    end
-    s += "#{xml_appl_sens} #{osm_appl_sens} #{xml_appl_lat} #{osm_appl_lat}\n"
+    s += "#{xml_appl_sens} #{xml_appl_lat}\n"
     
     # Water Use
     xml_water_sens = 0.0
@@ -578,18 +536,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       xml_water_sens += Float(XMLHelper.get_value(wf, "extension/SensibleGainsBtu"))
       xml_water_lat += Float(XMLHelper.get_value(wf, "extension/LatentGainsBtu"))
     end
-    osm_water_sens = 0.0
-    osm_water_lat = 0.0
-    model.getOtherEquipments.each do |oe|
-      next if not oe.name.to_s.start_with?(Constants.ObjectNameShower)
-      frac_lat = oe.otherEquipmentDefinition.fractionLatent
-      frac_sens = 1.0 - frac_lat - oe.otherEquipmentDefinition.fractionLost
-      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, oe.schedule.get)
-      oe_w = oe.otherEquipmentDefinition.designLevel.get
-      osm_water_sens += UnitConversions.convert(frac_sens * oe_w * hrs_per_year, "Wh", "Btu")
-      osm_water_lat += UnitConversions.convert(frac_lat * oe_w * hrs_per_year, "Wh", "Btu")
-    end
-    s += "#{xml_water_sens} #{osm_water_sens} #{xml_water_lat} #{osm_water_lat}\n"
+    s += "#{xml_water_sens} #{xml_water_lat}\n"
     
     # Occupants
     xml_occ_sens = 0.0
@@ -601,18 +548,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       xml_occ_sens += (frac_sens * btu)
       xml_occ_lat += (frac_lat * btu)
     end
-    osm_occ_sens = 0.0
-    osm_occ_lat = 0.0
-    model.getPeoples.each do |occ|
-      frac_sens = occ.peopleDefinition.sensibleHeatFraction.get
-      frac_lat = 1.0 - frac_sens
-      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, occ.numberofPeopleSchedule.get)
-      but_per_occ_per_hr = UnitConversions.convert(Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, occ.activityLevelSchedule.get)/8760.0, "W", "Btu/hr")
-      btu = occ.peopleDefinition.numberofPeople.get * but_per_occ_per_hr * hrs_per_year
-      osm_occ_sens += (frac_sens * btu)
-      osm_occ_lat += (frac_lat * btu)
-    end
-    s += "#{xml_occ_sens} #{osm_occ_sens} #{xml_occ_lat} #{osm_occ_lat}\n"
+    s += "#{xml_occ_sens} #{xml_occ_lat}\n"
     
     # Lighting
     xml_ltg_sens = 0.0
@@ -620,21 +556,12 @@ class EnergyRatingIndexTest < MiniTest::Test
       ltg_kwh = Float(XMLHelper.get_value(ltg, "extension/AnnualInteriorkWh")) + Float(XMLHelper.get_value(ltg, "extension/AnnualGaragekWh"))
       xml_ltg_sens += UnitConversions.convert(ltg_kwh, "kWh", "Btu")
     end
-    osm_ltg_sens = 0.0
-    model.getLightss.each do |ltg|
-      hrs_per_year = Schedule.annual_equivalent_full_load_hrs(model.yearDescription.get.assumedYear, ltg.schedule.get)
-      ltg_w = ltg.lightsDefinition.lightingLevel.get
-      osm_ltg_sens += UnitConversions.convert(ltg_w*hrs_per_year, "Wh", "Btu")
-    end
-    s += "#{xml_ltg_sens} #{osm_ltg_sens}\n"
+    s += "#{xml_ltg_sens}\n"
     
     xml_btu_sens = (xml_pl_sens + xml_appl_sens + xml_water_sens + xml_occ_sens + xml_ltg_sens)/365.0
     xml_btu_lat = (xml_pl_lat + xml_appl_lat + xml_water_lat + xml_occ_lat)/365.0
     
-    osm_btu_sens = (osm_pl_sens + osm_appl_sens + osm_water_sens + osm_occ_sens + osm_ltg_sens)/365.0
-    osm_btu_lat = (osm_pl_lat + osm_appl_lat + osm_water_lat + osm_occ_lat)/365.0
-    
-    return xml_btu_sens, xml_btu_lat, osm_btu_sens, osm_btu_lat
+    return xml_btu_sens, xml_btu_lat
   end
   
   def _get_hvac(hpxml_doc)

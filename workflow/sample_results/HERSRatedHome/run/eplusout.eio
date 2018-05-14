@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.11 17:09
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.14 09:44
 ! <Version>, Version ID
  Version, 8.9
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -67,7 +67,7 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  Zone Information, RES DS_1 RET AIR ZONE,0.0,0.00,0.00,0.00,0.50,74.50,0.50,1,1,1,0.00,1.00,74.00,75.00,0.00,1.00,1.00,1.86,TARP,DOE-2,1.00,0.00,0.00,0.00,6,0,0,Yes
  Zone Information, UNFINISHED ATTIC,0.0,0.00,0.00,0.00,0.00,0.00,1.75,1,1,1,-9.88,9.88,-9.88,9.88,0.50,3.00,2.50,619.43,TARP,DOE-2,390.19,0.00,0.00,0.00,2,0,0,Yes
 ! <Zone Internal Gains Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
- Zone Internal Gains Nominal, LIVING,325.16,4.0,81.290,1.230E-002,2.232,4.438,0.000,3.069E-003,0.000,0.000,6.673,No
+ Zone Internal Gains Nominal, LIVING,325.16,4.0,81.290,1.230E-002,2.232,4.515,0.000,3.069E-003,0.000,0.000,6.750,No
  Zone Internal Gains Nominal, RES DS_1 RET AIR ZONE,1.00,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
  Zone Internal Gains Nominal, UNFINISHED ATTIC,390.19,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
 ! <People Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Number of People {},People/Floor Area {person/m2},Floor Area per person {m2/person},Fraction Radiant,Fraction Convected,Sensible Fraction Calculation,Activity level,ASHRAE 55 Warnings,Carbon Dioxide Generation Rate,Nominal Minimum Number of People,Nominal Maximum Number of People
@@ -78,12 +78,11 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 BATH FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 HOUSE FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 RANGE FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
- ElectricEquipment Internal Gains Nominal, RESIDENTIAL CEILING FAN BENCHMARK|LIVING,RESIDENTIAL CEILING FAN BENCHMARK|LIVING SCHEDULE,LIVING,325.16,4.0,53.331,0.164,13.333,0.000,0.558,7.000E-002,0.372,residential ceiling fan,0.000,53.331
- ElectricEquipment Internal Gains Nominal, RESIDENTIAL CEILING FAN NON BENCHMARK EQUIP,RESIDENTIAL CEILING FAN MASTER,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.558,7.000E-002,0.372,General,0.000,0.000
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL CLOTHES DRYER ELECTRIC,RESIDENTIAL CLOTHES DRYER ELECTRIC,LIVING,325.16,4.0,204.305,0.628,51.076,1.826E-002,9.861E-002,0.817,6.574E-002,residential clothes dryer electric,0.000,204.305
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL CLOTHES WASHER,HOT WATER DRAW PROFILE,LIVING,325.16,4.0,13.301,4.091E-002,3.325,3.801E-002,0.197,0.633,0.132,residential clothes washer,1.507,13.301
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL DISHWASHER,HOT WATER DRAW PROFILE,LIVING,325.16,4.0,23.643,7.271E-002,5.911,0.527,0.316,0.000,0.157,residential dishwasher,2.679,23.643
- ElectricEquipment Internal Gains Nominal, RESIDENTIAL MISC PLUG LOADS|LIVING,RESIDENTIAL MISC PLUG LOADS SCHEDULE,LIVING,325.16,4.0,867.848,2.669,216.962,4.004E-002,0.576,0.000,0.384,residential misc plug loads,0.000,867.848
+ ElectricEquipment Internal Gains Nominal, RESIDENTIAL MISC PLUG LOADS|LIVING,RESIDENTIAL MISC PLUG LOADS SCHEDULE,LIVING,325.16,4.0,777.929,2.392,194.482,4.467E-002,0.513,0.101,0.342,residential misc plug loads,0.000,777.929
+ ElectricEquipment Internal Gains Nominal, RESIDENTIAL MISC TELEVISION,RESIDENTIAL MISC PLUG LOADS SCHEDULE,LIVING,325.16,4.0,168.287,0.518,42.072,0.000,0.600,0.000,0.400,residential misc television,0.000,168.287
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL RANGE ELECTRIC,RESIDENTIAL RANGE ELECTRIC,LIVING,325.16,4.0,189.202,0.582,47.300,9.249E-002,0.499,7.515E-002,0.333,residential range electric,0.000,189.202
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL REFRIGERATOR,RESIDENTIAL REFRIGERATOR,LIVING,325.16,4.0,91.334,0.281,22.834,0.000,0.600,0.000,0.400,residential refrigerator,0.000,91.334
 ! <OtherEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
@@ -119,7 +118,7 @@ AirflowNetwork Model:Control,NoMultizoneOrDistribution
  Component Sizing Information, AirTerminal:SingleDuct:Uncontrolled, RESIDENTIAL FURNACE GAS AND CENTRAL AC LIVING DIRECT AIR, User-Specified Maximum Air Flow Rate [m3/s], 0.66691
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.66691
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.66691
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.62349
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.62120
  Component Sizing Information, Coil:Cooling:DX:MultiSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Speed 2 Rated Air Flow Rate [m3/s], 0.67054
  Component Sizing Information, Coil:Cooling:DX:MultiSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, Design Size Speed 1 Rated Air Flow Rate [m3/s], 0.33527
  Component Sizing Information, Coil:Cooling:DX:MultiSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Speed 1 Rated Air Flow Rate [m3/s], 0.57667
@@ -148,9 +147,9 @@ Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01,12/31,Monday,365,Use RunPeri
 Environment:Daylight Saving,No,RunPeriod Object
 Environment:WarmupDays,  6
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,3.2382954559E-006,6.3614792029E-006,Pass,Pass,0.1412419888,0.1489429320,Pass,Pass
- Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,3.3900815416E-003,2.2600794875E-003,Pass,Pass,0.1219382368,0.1412792801,Pass,Pass
- Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,0.2986558034,0.1911657081,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,3.2368228601E-006,6.3646240676E-006,Pass,Pass,0.1205555298,0.1488257338,Pass,Pass
+ Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,3.0947735531E-003,1.5592379585E-003,Pass,Pass,0.1154948922,0.1345333894,Pass,Pass
+ Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,0.2673079179,0.1944688630,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data
