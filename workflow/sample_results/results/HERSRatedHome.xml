@@ -39,6 +39,7 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
+          <BuildingVolume>55662.5</BuildingVolume>
           <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
@@ -62,7 +63,7 @@
             <SystemIdentifier id='Infiltration_ACHnatural'/>
             <BuildingAirLeakage>
               <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <AirLeakage>0.02</AirLeakage>
+              <AirLeakage>0.3</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
           <AirInfiltrationMeasurement>
@@ -70,15 +71,15 @@
             <HousePressure>50</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>0.3343924437278115</AirLeakage>
+              <AirLeakage>5.015886655917173</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='Infiltration_ELA_SLA'/>
-            <EffectiveLeakageArea>0.06825305982994086</EffectiveLeakageArea>
+            <EffectiveLeakageArea>1.023795897449113</EffectiveLeakageArea>
           </AirInfiltrationMeasurement>
           <extension>
-            <BuildingSpecificLeakageArea>1.950087423712596e-05</BuildingSpecificLeakageArea>
+            <BuildingSpecificLeakageArea>0.0002925131135568894</BuildingSpecificLeakageArea>
           </extension>
         </AirInfiltration>
         <AtticAndRoof>
@@ -186,6 +187,7 @@
             <Slab>
               <SystemIdentifier id='Slab_ID1'/>
               <Area>3500</Area>
+              <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>2</UnderSlabInsulationWidth>
               <DepthBelowGrade>0</DepthBelowGrade>
@@ -392,20 +394,6 @@
             </DistributionSystemType>
           </HVACDistribution>
         </HVAC>
-        <MechanicalVentilation>
-          <VentilationFans>
-            <VentilationFan>
-              <SystemIdentifier id='VentilationFan'/>
-              <FanType>energy recovery ventilator</FanType>
-              <RatedFlowRate>247</RatedFlowRate>
-              <HoursInOperation>24</HoursInOperation>
-              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
-              <TotalRecoveryEfficiency>0.48</TotalRecoveryEfficiency>
-              <SensibleRecoveryEfficiency>0.72</SensibleRecoveryEfficiency>
-              <FanPower>123.5</FanPower>
-            </VentilationFan>
-          </VentilationFans>
-        </MechanicalVentilation>
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='DHW_ID1'/>
@@ -477,10 +465,6 @@
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
           <RatedAnnualkWh>609.0</RatedAnnualkWh>
-          <extension>
-            <FracSensible>1.0</FracSensible>
-            <FracLatent>0.0</FracLatent>
-          </extension>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange'/>
@@ -525,7 +509,7 @@
             <Value>689.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.9999997510703024</FracSensible>
+            <FracSensible>0.9999997510703025</FracSensible>
             <FracLatent>0.0</FracLatent>
           </extension>
         </PlugLoad>

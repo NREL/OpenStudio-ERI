@@ -73,6 +73,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_reference(new_systems, orig_details)
     set_systems_mechanical_ventilation_reference(new_systems, orig_details)
     set_systems_water_heating_reference(new_systems, orig_details)
+    set_systems_photovoltaics_reference(new_systems)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -127,6 +128,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_rated(new_systems, orig_details)
     set_systems_mechanical_ventilation_rated(new_systems, orig_details)
     set_systems_water_heating_rated(new_systems, orig_details)
+    set_systems_photovoltaics_rated(new_systems, orig_details)
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
@@ -264,7 +266,7 @@ class EnergyRatingIndex301Ruleset
     Type: vented with net free vent aperture = 1ft2 per 150 ft2 of crawlspace floor area.
     U-factor: from Table 4.2.2(2) for floors over unconditioned spaces or outdoor environment.
     '''
-    
+
     if orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic[AtticType='unvented attic' or AtticType='vented attic']"]
       orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic/AtticType"].text = "vented attic"
       XMLHelper.add_element(extension, "AtticSpecificLeakageArea", 1.0/300.0)
@@ -294,15 +296,23 @@ class EnergyRatingIndex301Ruleset
     if not orig_mv.nil?
       whole_house_fan = orig_mv.elements["VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     end
-    nach = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
-    if whole_house_fan.nil? and nach < 0.30
-      nach = 0.30
-    end
     
-    # Convert to other forms
-    sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
-    ela = sla * @cfa
-    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
+    if not orig_infil.elements["AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"].nil?
+      nach = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
+      if whole_house_fan.nil? and nach < 0.30
+        nach = 0.30
+      end
+      # Convert to other forms
+      sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+      ela = sla * @cfa
+      ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
+    elsif not orig_infil.elements["AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
+      ach50 = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+      # Convert to other forms
+      sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+      ela = sla * @cfa
+      nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
+    end
     
     # nACH
     new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
@@ -1299,8 +1309,13 @@ class EnergyRatingIndex301Ruleset
       
       # Calculate fan cfm for fan power using Rated Home infiltration
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
-      nach = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
-      sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+      if not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"].nil?
+        nach = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
+        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+      elsif not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
+        ach50 = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+      end
       # TODO: Merge with Airflow measure and move this code to airflow.rb
       nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
       q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
@@ -1623,11 +1638,19 @@ class EnergyRatingIndex301Ruleset
       if not orig_hw_dist.elements["SystemType/Recirculation"].nil?
         is_recirc = true
         recirc_branch_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/BranchPipingLoopLength"))
-        recirc_loop_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/RecirculationPipingLoopLength"))
+        if not orig_hw_dist.elements["SystemType/Recirculation/RecirculationPipingLoopLength"].nil?
+          recirc_loop_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/RecirculationPipingLoopLength"))
+        else
+          recirc_loop_l = get_loop_length_reference(get_pipe_length_reference(bsmnt))
+        end
         recirc_control_type = XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/ControlType")
         recirc_pump_power = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/PumpPower"))
       else
-        pipe_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Standard/PipingLength"))
+        if not orig_hw_dist.elements["SystemType/Standard/PipingLength"].nil?
+          pipe_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Standard/PipingLength"))
+        else
+          pipe_l = get_pipe_length_reference(bsmnt)
+        end
       end
       pipe_rvalue = Float(XMLHelper.get_value(orig_hw_dist, "PipeInsulation/PipeRValue"))
     end
@@ -1710,6 +1733,14 @@ class EnergyRatingIndex301Ruleset
 
   end
   
+  def self.set_systems_photovoltaics_reference(new_systems)
+    # nop
+  end
+  
+  def self.set_systems_photovoltaics_rated(new_systems, orig_details)
+    new_pv = XMLHelper.copy_element(new_systems, orig_details, "Systems/Photovoltaics")
+  end
+  
   def self.set_appliances_clothes_washer_reference(new_appliances)
   
     '''
@@ -1781,12 +1812,16 @@ class EnergyRatingIndex301Ruleset
       clothes_washer_kwh = ((ler / 392.0) - ((ler * elec_rate - agc) / (21.9825 * elec_rate - gas_rate) / 392.0) * 21.9825) * acy
       clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
       clothes_washer_gpd = 60.0 * ((ler * elec_rate - agc) / (21.9825 * elec_rate - gas_rate) / 392.0) * acy / 365.0
-    else
+    elsif orig_details.elements["Appliances/ClothesWasher/extension/AnnualkWh"]
       # Simplified
       clothes_washer_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/AnnualkWh"))
       clothes_washer_sens = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/FracSensible"))
       clothes_washer_lat = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/FracLatent"))
       clothes_washer_gpd = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/HotWaterGPD"))
+    else
+      # Reference
+      set_appliances_clothes_washer_reference(new_appliances)
+      return
     end
     
     new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
@@ -1876,12 +1911,16 @@ class EnergyRatingIndex301Ruleset
         clothes_dryer_kwh = clothes_dryer_kwh * 0.07 * (3.01/ef_dry)
       end
       clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
-    else
+    elsif orig_details.elements["Appliances/ClothesDryer/extension/AnnualkWh"]
       # Simplified
       clothes_dryer_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/AnnualkWh"))
       clothes_dryer_therm = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/AnnualTherm"))
       clothes_dryer_sens = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/FracSensible"))
       clothes_dryer_lat = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/FracLatent"))
+    else
+      # Reference
+      set_appliances_clothes_dryer_reference(new_appliances, orig_details)
+      return
     end
     
     new_clothes_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
@@ -1951,12 +1990,16 @@ class EnergyRatingIndex301Ruleset
       dishwasher_kwh = ((86.3 + 47.73 / ef) / 215) * dwcpy
       dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(dishwasher_kwh)
       dishwasher_gpd = dwcpy * (4.6415 * (1.0 / ef) - 1.9295) / 365.0
-    else
+    elsif orig_details.elements["Appliances/Dishwasher/extension/AnnualkWh"]
       # Simplified
       dishwasher_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/AnnualkWh"))
       dishwasher_sens = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/FracSensible"))
       dishwasher_lat = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/FracLatent"))
       dishwasher_gpd = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/HotWaterGPD"))
+    else
+      # Reference
+      set_appliances_dishwasher_reference(new_appliances)
+      return
     end
   
     new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
@@ -1994,15 +2037,19 @@ class EnergyRatingIndex301Ruleset
     4.2.2.5.2.5(1).
     '''
     
-    refrigerator_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Refrigerator/RatedAnnualkWh"))
+    if orig_details.elements["Appliances/Refrigerator/RatedAnnualkWh"]
+      # Detailed
+      refrigerator_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Refrigerator/RatedAnnualkWh"))
+    else
+      # Reference
+      set_appliances_refrigerator_reference(new_appliances)
+      return
+    end
     
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
     XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
-    extension = XMLHelper.add_element(new_fridge, "extension")
-    XMLHelper.add_element(extension, "FracSensible", 1.0)
-    XMLHelper.add_element(extension, "FracLatent", 0.0)
     
   end
 
@@ -2080,12 +2127,16 @@ class EnergyRatingIndex301Ruleset
         cooking_range_therm = oven_ef * (22.6 + 2.7 * @nbeds)
       end
       cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
-    else
+    elsif orig_details.elements["Appliances/CookingRange/extension/AnnualkWh"]
       # Simplified
       cooking_range_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/AnnualkWh"))
       cooking_range_therm = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/AnnualTherm"))
       cooking_range_sens = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/FracSensible"))
       cooking_range_lat = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/FracLatent"))
+    else
+      # Reference
+      set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
+      return
     end
     
     new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")
@@ -2112,29 +2163,22 @@ class EnergyRatingIndex301Ruleset
     to the energy use of the Reference Home to account for garage lighting.
     '''
     
-    extension = XMLHelper.add_element(new_lighting, "extension")
-    
-    # Interior lighting
     interior_lighting_kwh = 455.0 + 0.80 * @cfa + 0.0 * @nbeds
-    XMLHelper.add_element(extension, "AnnualInteriorkWh", interior_lighting_kwh)
-    
-    # Exterior lighting
     exterior_lighting_kwh = 100.0 + 0.05 * @cfa + 0.0 * @nbeds
-    XMLHelper.add_element(extension, "AnnualExteriorkWh", exterior_lighting_kwh)
-    
-    # Garage lighting
     garage_lighting_kwh = 0.0
     if Boolean(XMLHelper.get_value(orig_details, "BuildingSummary/BuildingConstruction/GaragePresent"))
       garage_lighting_kwh = 100.0
     end
+    
+    extension = XMLHelper.add_element(new_lighting, "extension")
+    XMLHelper.add_element(extension, "AnnualInteriorkWh", interior_lighting_kwh)
+    XMLHelper.add_element(extension, "AnnualExteriorkWh", exterior_lighting_kwh)
     XMLHelper.add_element(extension, "AnnualGaragekWh", garage_lighting_kwh)
     
   end
   
   def self.set_lighting_rated(new_lighting, orig_details)
 
-    extension = XMLHelper.add_element(new_lighting, "extension")
-    
     '''
     4.2.2.5.2.2. Interior Lighting. Interior lighting annual energy use in the Rated home shall be determined 
     in accordance with Equation 4.2-2:
@@ -2144,56 +2188,47 @@ class EnergyRatingIndex301Ruleset
     qFFIL = the ratio of the interior Qualifying Light Fixtures to all interior light fixtures in Qualifying
     Light Fixture Locations.
     For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
-    '''
-    # Interior Lighting
-    if orig_details.elements["Lighting/LightingFractions"]
-      # Detailed
-      qFF_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/QualifyingLightFixturesInterior"))
-      interior_lighting_kwh = 0.8 * ((4.0 - 3.0 * qFF_int) / 3.7) * (455.0 + 0.8 * @cfa) + 0.2 * (455.0 + 0.8 * @cfa)
-    else
-      # Simplified
-      interior_lighting_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualInteriorkWh"))
-    end
-    XMLHelper.add_element(extension, "AnnualInteriorkWh", interior_lighting_kwh)
     
-    '''
     4.2.2.5.2.3. Exterior Lighting. Exterior lighting annual energy use in the Rated home shall be determined 
     in accordance with Equation 4.2-3:
     kWh/y = (100 + 0.05*CFA)*(1-FFEL) + 0.25*(100 + 0 .05*CFA)*FFEL (Eq 4.2-3)
     where
     CFA = Conditioned Floor Area
     FFEL = Fraction of exterior fixtures that are Qualifying Light Fixtures
-    '''
-    # Exterior Lighting
-    if orig_details.elements["Lighting/LightingFractions"]
-      # Detailed
-      qFF_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/QualifyingLightFixturesExterior"))
-      exterior_lighting_kwh = (100.0 + 0.05 * @cfa) * (1.0 - qFF_ext) + 0.25 * (100.0 + 0.05 * @cfa) * qFF_ext
-    else
-      # Simplified
-      exterior_lighting_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualExteriorkWh"))
-    end
-    XMLHelper.add_element(extension, "AnnualExteriorkWh", exterior_lighting_kwh)
-    
-    '''
+
     4.2.2.5.2.4. Garage Lighting. For Rated homes with garages, garage annual lighting energy use in the Rated 
     home shall be determined in accordance with Equation 4.2-4:
     kWh = 100*(1-FFGL) + 25*FFGL (Eq 4.2-4)
     where:
     FFGL = Fraction of garage fixtures that are Qualifying Light Fixtures
     '''
-    # Garage Lighting
+
     if orig_details.elements["Lighting/LightingFractions"]
       # Detailed
+      qFF_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/QualifyingLightFixturesInterior"))
+      qFF_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/QualifyingLightFixturesExterior"))
+      qFF_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/QualifyingLightFixturesGarage"))
+      
+      interior_lighting_kwh = 0.8 * ((4.0 - 3.0 * qFF_int) / 3.7) * (455.0 + 0.8 * @cfa) + 0.2 * (455.0 + 0.8 * @cfa)
+      exterior_lighting_kwh = (100.0 + 0.05 * @cfa) * (1.0 - qFF_ext) + 0.25 * (100.0 + 0.05 * @cfa) * qFF_ext
       garage_lighting_kwh = 0.0
       if Boolean(XMLHelper.get_value(orig_details, "BuildingSummary/BuildingConstruction/GaragePresent"))
-        qFF_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/QualifyingLightFixturesGarage"))
         garage_lighting_kwh = 100.0 * (1.0 - qFF_grg) + 25.0 * qFF_grg
       end
-    else
+    elsif orig_details.elements["Lighting/extension/AnnualInteriorkWh"]
       # Simplified
+      interior_lighting_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualInteriorkWh"))
+      exterior_lighting_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualExteriorkWh"))
       garage_lighting_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualGaragekWh"))
+    else
+      # Reference
+      set_lighting_reference(new_lighting, orig_details)
+      return
     end
+    
+    extension = XMLHelper.add_element(new_lighting, "extension")
+    XMLHelper.add_element(extension, "AnnualInteriorkWh", interior_lighting_kwh)
+    XMLHelper.add_element(extension, "AnnualExteriorkWh", exterior_lighting_kwh)
     XMLHelper.add_element(extension, "AnnualGaragekWh", garage_lighting_kwh)
     
   end

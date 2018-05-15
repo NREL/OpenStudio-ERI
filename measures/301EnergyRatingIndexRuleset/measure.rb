@@ -16,6 +16,7 @@ require "#{File.dirname(__FILE__)}/resources/hvac_sizing"
 require "#{File.dirname(__FILE__)}/resources/lighting"
 require "#{File.dirname(__FILE__)}/resources/location"
 require "#{File.dirname(__FILE__)}/resources/misc_loads"
+require "#{File.dirname(__FILE__)}/resources/pv"
 require "#{File.dirname(__FILE__)}/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/resources/util"
 require "#{File.dirname(__FILE__)}/resources/waterheater"
@@ -301,7 +302,7 @@ class OSModel
     
     # Hot Water
     
-    success = add_water_heater(runner, model, building, unit, weather, spaces)
+    success = add_water_heater(runner, model, building, unit, weather, spaces[Constants.SpaceTypeLiving])
     return false if not success
     success = add_hot_water_and_appliances(runner, model, building, unit, weather)
     return false if not success
@@ -324,7 +325,7 @@ class OSModel
     
     # Plug Loads & Lighting
     
-    success = add_mels(runner, model, building, unit)
+    success = add_mels(runner, model, building, unit, spaces[Constants.SpaceTypeLiving])
     return false if not success
     success = add_lighting(runner, model, building, unit, weather)
     return false if not success
@@ -1721,7 +1722,7 @@ class OSModel
     return true
   end
   
-  def self.add_water_heater(runner, model, building, unit, weather, spaces)
+  def self.add_water_heater(runner, model, building, unit, weather, living_space)
 
     dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
     setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
@@ -1736,7 +1737,6 @@ class OSModel
       num_bathrooms = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
       capacity_kbtuh = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(fuel), num_bedrooms, num_bathrooms)
     end
-    space = spaces[Constants.SpaceTypeLiving] # FIXME
     
     if wh_type == "storage water heater"
     
@@ -1749,7 +1749,7 @@ class OSModel
       end
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tank(model, unit, runner, living_space, to_beopt_fuel(fuel), 
                                        capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
                                        oncycle_power, offcycle_power)
       return false if not success
@@ -1761,7 +1761,7 @@ class OSModel
       capacity_kbtuh = 100000000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tankless(model, unit, runner, space, to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tankless(model, unit, runner, living_space, to_beopt_fuel(fuel), 
                                            capacity_kbtuh, ef, ef_adj,
                                            setpoint_temp, oncycle_power, offcycle_power)
       return false if not success
@@ -1782,7 +1782,7 @@ class OSModel
       int_factor = 1.0 # FIXME
       temp_depress = 0.0 # FIXME
       ducting = "none"
-      success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
+      success = Waterheater.apply_heatpump(model, unit, runner, living_space, weather,
                                            e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
                                            cap, cop, shr, airflow_rate, fan_power,
                                            parasitics, tank_ua, int_factor, temp_depress,
@@ -1957,7 +1957,7 @@ class OSModel
         fan_power_rated = 0.14
         fan_power_installed = 0.3
         eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-        successs = HVAC.apply_central_ac_4speed(model, unit, runner, seer, eers, shrs,
+        success = HVAC.apply_central_ac_4speed(model, unit, runner, seer, eers, shrs,
                                                 capacity_ratios, fan_speed_ratios,
                                                 fan_power_rated, fan_power_installed,
                                                 crankcase_kw, crankcase_temp,
@@ -2321,10 +2321,10 @@ class OSModel
     weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
     weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
     monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
-    success = HVAC.apply_ceiling_fans(model, unit, runner, coverage, specified_num, power,
-                                      control, use_benchmark_energy, cooling_setpoint_offset,
-                                      mult, weekday_sch, weekend_sch, monthly_sch, sch=nil)
-    return false if not success
+    #success = HVAC.apply_ceiling_fans(model, unit, runner, coverage, specified_num, power,
+    #                                  control, use_benchmark_energy, cooling_setpoint_offset,
+    #                                  mult, weekday_sch, weekend_sch, monthly_sch, sch=nil)
+    #return false if not success
 
     return true
   end
@@ -2332,7 +2332,7 @@ class OSModel
   def self.get_dse(building)
     dse_cool = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
     dse_heat = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
-    # FIXME: Error if dse_cool != dse_heat
+    # FIXME: Error if dse_cool != dse_heat?
     if dse_cool.nil?
       dse_cool = 1.0
     else
@@ -2349,28 +2349,23 @@ class OSModel
     return conv[fuel]
   end
   
-  def self.add_mels(runner, model, building, unit)
+  def self.add_mels(runner, model, building, unit, living_space)
   
-    # TODO: Split apart residual MELs and TVs for reporting
-    
-    sens_kWhs = 0
-    lat_kWhs = 0
-    building.elements.each("BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other' or PlugLoadType='TV other']") do |pl|
-      kWhs = Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value"))
-      sens_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracSensible"))
-      lat_kWhs += kWhs * Float(XMLHelper.get_value(pl, "extension/FracLatent"))
-    end
-    tot_kWhs = sens_kWhs + lat_kWhs
-    
-    sens_frac = sens_kWhs/tot_kWhs
-    lat_frac = lat_kWhs/tot_kWhs
+    # Misc
+    annual_kwh = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other']/Load[Units='kWh/year']/Value"))
+    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other']/extension/FracSensible"))
+    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other']/extension/FracLatent"))
     weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
     weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
     monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
-    success, sch = MiscLoads.apply_plug(model, unit, runner, tot_kWhs, 
+    success, sch = MiscLoads.apply_plug(model, unit, runner, annual_kwh, 
                                         sens_frac, lat_frac, weekday_sch, 
                                         weekend_sch, monthly_sch, nil)
+    return false if not success
     
+    # Television
+    annual_kwh = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='TV other']/Load[Units='kWh/year']/Value"))
+    success = MiscLoads.apply_tv(model, unit, runner, annual_kwh, sch, living_space)
     return false if not success
     
     return true
@@ -2424,7 +2419,7 @@ class OSModel
       mech_vent_total_efficiency = 0.0
       mech_vent_sensible_efficiency = 0.0
       mech_vent_fan_power = 0.0
-      mech_vent_frac_62_2 = 0.0
+      mech_vent_cfm = 0.0
     else
       # FIXME: HoursInOperation isn't being used
       fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
@@ -2446,19 +2441,21 @@ class OSModel
       mech_vent_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
       mech_vent_w = Float(XMLHelper.get_value(whole_house_fan, "FanPower"))
       mech_vent_fan_power = mech_vent_w/mech_vent_cfm
-      mech_vent_frac_62_2 = 1.0 # FIXME: Would prefer to provide airflow rate as measure input...
     end
-    mech_vent_ashrae_std = 2013
+    mech_vent_ashrae_std = '2013'
     mech_vent_infil_credit = true
     mech_vent_cfis_open_time = 20.0
     mech_vent_cfis_airflow_frac = 1.0
     clothes_dryer_exhaust = 0.0
+    range_exhaust = 0.0
     range_exhaust_hour = 16
+    bathroom_exhaust = 0.0
     bathroom_exhaust_hour = 5
     mech_vent = MechanicalVentilation.new(mech_vent_type, mech_vent_infil_credit, mech_vent_total_efficiency, 
-                                          mech_vent_frac_62_2, mech_vent_fan_power, mech_vent_sensible_efficiency, 
+                                          nil, mech_vent_cfm, mech_vent_fan_power, mech_vent_sensible_efficiency, 
                                           mech_vent_ashrae_std, mech_vent_cfis_open_time, mech_vent_cfis_airflow_frac, 
-                                          clothes_dryer_exhaust, range_exhaust_hour, bathroom_exhaust_hour)
+                                          clothes_dryer_exhaust, range_exhaust, range_exhaust_hour, bathroom_exhaust, 
+                                          bathroom_exhaust_hour)
 
     # Natural Ventilation
     natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
@@ -2559,14 +2556,20 @@ class OSModel
 
     return true if building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].nil?
   
-    building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].each do |pvsys|
+    building.elements.each("BuildingDetails/Systems/Photovoltaics/PVSystem") do |pvsys|
     
+      pv_id = pvsys.elements["SystemIdentifier"].attributes["id"]
       az = Float(XMLHelper.get_value(pvsys, "ArrayAzimuth"))
       tilt = Float(XMLHelper.get_value(pvsys, "ArrayTilt"))
       inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
-      power_kw = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))/1000.0
+      power_w = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))
       
-      # TODO: Hook up to model
+      # FIXME: Need to double-check azimuth/tilt inputs
+      module_type = Constants.PVModuleTypeStandard
+      system_losses = 0.14
+      success = PV.apply(model, runner, pv_id, power_w, module_type, 
+                         system_losses, inv_eff, tilt, az)
+      return false if not success
       
     end
       

@@ -11,16 +11,17 @@ The ERI is defined by ANSI/RESNET 301-2014 "Standard for the Calculation and Lab
 
 ## Setup
 
-Download [OpenStudio 2.5.0](https://github.com/NREL/OpenStudio/releases/tag/v2.5.0). At a minimum, install the Command Line Interface and EnergyPlus components.
+1. Download [OpenStudio 2.5.1](https://github.com/NREL/OpenStudio/releases/tag/v2.5.1). At a minimum, install the Command Line Interface and EnergyPlus components.
+2. Clone or download this repository's source code. 
 
 ## Running
 
 1. Navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory.
 2. Run the ERI calculation on a provided sample HPXML file:  
-```c:/openstudio-2.5.0/bin/openstudio.exe energy_rating_index.rb -x sample_files/valid.xml```  
+```c:/openstudio-2.5.1/bin/openstudio.exe energy_rating_index.rb -x sample_files/valid.xml```  
 Note that the Reference Home and Rated Home workflows/simulations will be executed in parallel on the local machine.
 3. This will generate output as shown below:
-![CLI output](https://user-images.githubusercontent.com/5861765/38516497-902da6ae-3bf4-11e8-818f-bc54be7f6949.png)
+![CLI output](https://user-images.githubusercontent.com/5861765/39766722-27564de2-52a2-11e8-9b14-e49a03514d0f.png)
 
 ## Outputs
 
