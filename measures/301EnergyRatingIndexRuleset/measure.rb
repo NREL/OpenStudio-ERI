@@ -544,6 +544,11 @@ class OSModel
       end
       surface.setVertices(transformation * surface.vertices)
       
+      surface.subSurfaces.each do |subsurface|
+        next unless subsurface.subSurfaceType.downcase == "skylight"
+        subsurface.setVertices(transformation * subsurface.vertices)
+      end
+      
       floor_offset += 2.5
       
       surfaces_moved << surface
@@ -797,9 +802,28 @@ class OSModel
       
   end
   
-  def self.add_roof_polygon(x, y, z, azimuth=0, tilt=0.5, offsets=[0]*4)
-    # FIXME: Need to implement
-    return self.add_wall_polygon(x, y, z, azimuth, offsets)
+  def self.add_roof_polygon(x, y, z, azimuth=0, tilt=0.5, offset=0)
+  
+    length = x + offset
+    lift = Math.sin(tilt) * length
+
+    vertices = OpenStudio::Point3dVector.new
+    vertices << OpenStudio::Point3d.new(x/2 + offset, 0-y/2, z + lift)
+    vertices << OpenStudio::Point3d.new(x/2 + offset, y/2, z + lift)
+    vertices << OpenStudio::Point3d.new(0-x/2, y/2, z)
+    vertices << OpenStudio::Point3d.new(0-x/2, 0-y/2, z)
+    
+    m = OpenStudio::Matrix.new(4, 4, 0)
+    m[0,0] = Math::cos(-azimuth * Math::PI / 180.0)
+    m[1,1] = Math::cos(-azimuth * Math::PI / 180.0)
+    m[0,1] = -Math::sin(-azimuth * Math::PI / 180.0)
+    m[1,0] = Math::sin(-azimuth * Math::PI / 180.0)
+    m[2,2] = 1
+    m[3,3] = 1
+    transformation = OpenStudio::Transformation.new(m)
+  
+    return transformation * vertices
+    
   end
 
   def self.add_ceiling_polygon(x, y, z)
@@ -1563,7 +1587,7 @@ class OSModel
                                                                 UnitConversions.convert(skylight_height,"ft","m"), 
                                                                 UnitConversions.convert(z_origin,"ft","m"), 
                                                                 skylight_azimuth, skylight_tilt,
-                                                                [0, 0.001, 0.001 * 2, 0.001]), model) # offsets B, L, T, R
+                                                                0.001), model) # offset one direction so the skylight "fits within its base surface"
       surface.setName("surface #{skylight_id}")
       surface.setSurfaceType("RoofCeiling")
       surface.setSpace(skylight_space)
@@ -1574,7 +1598,7 @@ class OSModel
                                                                        UnitConversions.convert(skylight_height,"ft","m"), 
                                                                        UnitConversions.convert(z_origin,"ft","m"), 
                                                                        skylight_azimuth, skylight_tilt,
-                                                                       [-0.001, 0, 0.001, 0]), model) # offsets B, L, T, R
+                                                                       0), model) # offset one direction so the skylight "fits within its base surface"
       sub_surface.setName(skylight_id)
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("Skylight")
