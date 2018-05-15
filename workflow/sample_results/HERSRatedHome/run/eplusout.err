@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29,
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.14 09:44,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 BATH EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
@@ -49,25 +49,12 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29,
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES NV_1 TEMP SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY10", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY11", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY12", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY3", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY4", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY5", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY6", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY7", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY8", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RESIDENTIAL CEILING FAN SCHEDULE ALLDAY9", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 1", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 14", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 16", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 17", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 18", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 19", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 2", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 20", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 21", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 3", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="SCHEDULE DAY 4", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="WINDOW SHADING SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
@@ -122,7 +109,6 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29,
    ** Warning ** ProcessScheduleInput: Schedule:Year="RES MV_1 RANGE EXHAUST SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="RES NV_1 AVAIL SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="RES NV_1 TEMP SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** ProcessScheduleInput: Schedule:Year="RESIDENTIAL CEILING FAN SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="WINDOW SHADING SCHEDULE", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="WINDOW SHADING SCHEDULE 1", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** ProcessScheduleInput: Schedule:Year="WINDOW SHADING SCHEDULE 2", Blank Schedule Type Limits Name input -- will not be validated.
@@ -171,4 +157,4 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.08 09:29,
    ************* Key=residential furnace gas heating coil, VarName=BASEBOARD TOTAL HEATING ENERGY, Frequency=
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 140 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  8.04sec
+   ************* EnergyPlus Completed Successfully-- 126 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.78sec

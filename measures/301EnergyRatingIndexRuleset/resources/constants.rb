@@ -530,6 +530,13 @@ class Constants
     end
     return "residential misc plug loads#{s_unit}"
   end
+  def self.ObjectNameMiscTelevision(unit_name=self.ObjectNameBuildingUnit)
+    s_unit = ""
+    if unit_name != self.ObjectNameBuildingUnit
+      s_unit = "|#{unit_name}"
+    end
+    return "residential misc television#{s_unit}"
+  end
   def self.ObjectNameNaturalVentilation(unit_name=self.ObjectNameBuildingUnit)
     s_unit = ""
     if unit_name != self.ObjectNameBuildingUnit

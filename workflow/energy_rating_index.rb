@@ -177,6 +177,8 @@ def parse_sql(design, sql_path, output_hpxml_path)
   # Other - MELS
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMiscPlugLoads}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   sim_output[:elecMELs] = get_sql_query_result(sqlFile, query)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMiscTelevision}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  sim_output[:elecTV] = get_sql_query_result(sqlFile, query)
   
   # Other - Range/Oven
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
@@ -240,8 +242,9 @@ def parse_sql(design, sql_path, output_hpxml_path)
   
   sum_elec_appliances = (sim_output[:elecFridge] + sim_output[:elecDishwasher] +
                      sim_output[:elecClothesWasher] + sim_output[:elecClothesDryer] +
-                     sim_output[:elecMELs] + sim_output[:elecRangeOven] +
-                     sim_output[:elecCeilingFan] + sim_output[:elecMechVent])
+                     sim_output[:elecMELs] + sim_output[:elecTV] + 
+                     sim_output[:elecRangeOven] + sim_output[:elecCeilingFan] + 
+                     sim_output[:elecMechVent])
   if (sim_output[:elecAppliances] - sum_elec_appliances).abs > tolerance
     fail "ERROR: Electric appliances do not sum to total.\n#{sim_output.to_s}"
   end
@@ -608,7 +611,7 @@ def write_results_annual_output(out_csv, sim_output)
                  "Electricity, Clothes Dryer (MBtu)"=>sim_output[:elecClothesDryer],
                  "Electricity, Range/Oven (MBtu)"=>sim_output[:elecRangeOven],
                  "Electricity, Ceiling Fan (MBtu)"=>sim_output[:elecCeilingFan],
-                 "Electricity, Plug Loads (MBtu)"=>sim_output[:elecMELs],
+                 "Electricity, Plug Loads (MBtu)"=>sim_output[:elecMELs]+sim_output[:elecTV],
                  "Electricity, PV (MBtu)"=>sim_output[:elecPV],
                  "Natural Gas, Heating (MBtu)"=>sim_output[:ngHeating],
                  "Natural Gas, Hot Water (MBtu)"=>sim_output[:ngHotWater],
@@ -686,11 +689,12 @@ def write_results(results, resultsdir, sim_outputs)
                    "L&A intLgt"=>ref_output[:elecIntLighting].round(2),
                    "L&A extLgt"=>ref_output[:elecExtLighting].round(2),
                    "L&A Fridg"=>ref_output[:elecFridge].round(2),
-                   "L&A TVs"=>0.round(2), # FIXME
+                   "L&A TVs"=>ref_output[:elecTV].round(2),
                    "L&A R/O"=>(ref_output[:elecRangeOven]+ref_output[:fuelRangeOven]).round(2),
                    "L&A cDryer"=>(ref_output[:elecClothesDryer]+ref_output[:fuelClothesDryer]).round(2),
                    "L&A dWash"=>ref_output[:elecDishwasher].round(2),
                    "L&A cWash"=>ref_output[:elecClothesWasher].round(2),
+                   "L&A mechV"=>ref_output[:elecMechVent].round(2),
                    "L&A total"=>results[:reul_la].round(2),
                   }
   CSV.open(worksheet_csv, "wb") {|csv| worksheet_out.to_a.each {|elem| csv << elem} }

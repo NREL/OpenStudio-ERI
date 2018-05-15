@@ -138,7 +138,7 @@ class Airflow
       success, mv_output = process_mech_vent_for_unit(model, runner, obj_name_mech_vent, unit, infil.is_existing_home, infil_output.a_o, mech_vent, ducts, building, nbeds, nbaths, weather, unit_ffa, unit_living, units.size, has_forced_air_equipment)
       return false if not success
       
-      sucess, nv_output = process_nat_vent_for_unit(model, runner, obj_name_natvent, nat_vent, wind_speed, infil, building, weather, unit_window_area, unit_living)
+      success, nv_output = process_nat_vent_for_unit(model, runner, obj_name_natvent, nat_vent, wind_speed, infil, building, weather, unit_window_area, unit_living)
       return false if not success
       
       success, ducts_output = process_ducts_for_unit(model, runner, obj_name_ducts, ducts, building, unit, unit_index, unit_ffa, unit_has_mshp, unit_living, unit_finished_basement, has_forced_air_equipment)
@@ -708,39 +708,41 @@ class Airflow
       end
     end
     
-    # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
-    ashrae_mv_without_infil_credit = Airflow.get_mech_vent_whole_house_cfm(1, nbeds, unit_ffa, mech_vent.ashrae_std)
-
-    # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2)
-    rate_credit = 0 # default to no credit
-    if mech_vent.infil_credit
-        if mech_vent.ashrae_std == '2010' and is_existing_home
-            # ASHRAE Standard 62.2 2010
-            # Only applies to existing buildings
-            # 2 cfm per 100ft^2 of occupiable floor area
-            default_rate = 2.0 * unit_ffa / 100.0 # cfm
-            # Half the excess infiltration rate above the default rate is credited toward mech vent:
-            rate_credit = [(unit_living.inf_flow - default_rate) / 2.0, 0].max
-        elsif mech_vent.ashrae_std == '2013' and num_units == 1
-            # ASHRAE Standard 62.2 2013
-            # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation
-            # rate shall not be reduced as described in Section 4.1.3.").
-            nl = 1000.0 * ela / unit_living.area * (unit_living.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
-            qinf = nl * weather.data.WSF * unit_living.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-            rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
-        end
+    if not mech_vent.frac_62_2.nil?
+      # Get ASHRAE 62.2 required ventilation rate (excluding infiltration credit)
+      ashrae_mv_without_infil_credit = Airflow.get_mech_vent_whole_house_cfm(1, nbeds, unit_ffa, mech_vent.ashrae_std)
+      
+      # Determine mechanical ventilation infiltration credit (per ASHRAE 62.2)
+      rate_credit = 0 # default to no credit
+      if mech_vent.infil_credit
+          if mech_vent.ashrae_std == '2010' and is_existing_home
+              # ASHRAE Standard 62.2 2010
+              # Only applies to existing buildings
+              # 2 cfm per 100ft^2 of occupiable floor area
+              default_rate = 2.0 * unit_ffa / 100.0 # cfm
+              # Half the excess infiltration rate above the default rate is credited toward mech vent:
+              rate_credit = [(unit_living.inf_flow - default_rate) / 2.0, 0].max
+          elsif mech_vent.ashrae_std == '2013' and num_units == 1
+              # ASHRAE Standard 62.2 2013
+              # Only applies to single-family homes (Section 8.2.1: "The required mechanical ventilation
+              # rate shall not be reduced as described in Section 4.1.3.").
+              nl = 1000.0 * ela / unit_living.area * (unit_living.height / 8.2) ** 0.4 # Normalized leakage, eq. 4.4
+              qinf = nl * weather.data.WSF * unit_living.area / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+              rate_credit = [(2.0 / 3.0) * ashrae_mv_without_infil_credit, qinf].min
+          end
+      end
+      
+      # Apply infiltration credit (if any)
+      ashrae_vent_rate = [ashrae_mv_without_infil_credit - rate_credit, 0.0].max # cfm
+      
+      # Apply fraction of ASHRAE value
+      whole_house_vent_rate = mech_vent.frac_62_2 * ashrae_vent_rate # cfm
+    elsif not mech_vent.whole_house_cfm.nil?
+      whole_house_vent_rate = mech_vent.whole_house_cfm
     end
-    
-    # Apply infiltration credit (if any)
-    ashrae_vent_rate = [ashrae_mv_without_infil_credit - rate_credit, 0.0].max # cfm
-    # Apply fraction of ASHRAE value
-    whole_house_vent_rate = mech_vent.frac_62_2 * ashrae_vent_rate # cfm
 
     # Spot Ventilation
-    bathroom_exhaust = 50.0 # cfm, per HSP
-    range_hood_exhaust = 100.0 # cfm, per HSP
     spot_fan_power = 0.3 # W/cfm/fan, per HSP
-
     bath_exhaust_sch_operation = 60.0 # min/day, per HSP
     range_hood_exhaust_operation = 60.0 # min/day, per HSP
 
@@ -778,8 +780,8 @@ class Airflow
       runner.registerWarning("No clothes dryer object was found in #{unit.name.to_s} but the clothes dryer exhaust specified is non-zero. Overriding clothes dryer exhaust to be zero.")
     end
     
-    bathroom_hour_avg_exhaust = bathroom_exhaust * nbaths * bath_exhaust_sch_operation / 60.0 # cfm
-    range_hood_hour_avg_exhaust = range_hood_exhaust * range_hood_exhaust_operation / 60.0 # cfm
+    bathroom_hour_avg_exhaust = mech_vent.bathroom_exhaust * nbaths * bath_exhaust_sch_operation / 60.0 # cfm
+    range_hood_hour_avg_exhaust = mech_vent.range_exhaust * range_hood_exhaust_operation / 60.0 # cfm
 
     #--- Calculate HRV/ERV effectiveness values. Calculated here for use in sizing routines.
 
@@ -2387,21 +2389,24 @@ class NaturalVentilationOutput
 end
 
 class MechanicalVentilation
-  def initialize(type, infil_credit, total_efficiency, frac_62_2, fan_power, sensible_efficiency, ashrae_std, cfis_open_time, cfis_airflow_frac, dryer_exhaust, range_exhaust_hour, bathroom_exhaust_hour)
+  def initialize(type, infil_credit, total_efficiency, frac_62_2, whole_house_cfm, fan_power, sensible_efficiency, ashrae_std, cfis_open_time, cfis_airflow_frac, dryer_exhaust, range_exhaust, range_exhaust_hour, bathroom_exhaust, bathroom_exhaust_hour)
     @type = type
     @infil_credit = infil_credit
     @total_efficiency = total_efficiency
     @frac_62_2 = frac_62_2
+    @whole_house_cfm = whole_house_cfm
     @fan_power = fan_power
     @sensible_efficiency = sensible_efficiency
     @ashrae_std = ashrae_std
     @cfis_open_time = cfis_open_time
     @cfis_airflow_frac = cfis_airflow_frac
     @dryer_exhaust = dryer_exhaust
+    @range_exhaust = range_exhaust
     @range_exhaust_hour = range_exhaust_hour
+    @bathroom_exhaust = bathroom_exhaust
     @bathroom_exhaust_hour = bathroom_exhaust_hour
   end
-  attr_accessor(:type, :infil_credit, :total_efficiency, :frac_62_2, :fan_power, :sensible_efficiency, :ashrae_std, :cfis_open_time, :cfis_airflow_frac, :dryer_exhaust, :range_exhaust_hour, :bathroom_exhaust_hour)
+  attr_accessor(:type, :infil_credit, :total_efficiency, :frac_62_2, :whole_house_cfm, :fan_power, :sensible_efficiency, :ashrae_std, :cfis_open_time, :cfis_airflow_frac, :dryer_exhaust, :range_exhaust, :range_exhaust_hour, :bathroom_exhaust, :bathroom_exhaust_hour)
 end
 
 class MechanicalVentilationOutput

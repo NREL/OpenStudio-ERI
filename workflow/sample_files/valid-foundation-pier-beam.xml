@@ -377,20 +377,6 @@
             </DistributionSystemType>
           </HVACDistribution>
         </HVAC>
-        <MechanicalVentilation>
-          <VentilationFans>
-            <VentilationFan>
-              <SystemIdentifier id='Mech_Vent_ID1'/>
-              <FanType>energy recovery ventilator</FanType>
-              <RatedFlowRate>247</RatedFlowRate>
-              <HoursInOperation>24</HoursInOperation>
-              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
-              <TotalRecoveryEfficiency>0.48</TotalRecoveryEfficiency>
-              <SensibleRecoveryEfficiency>0.72</SensibleRecoveryEfficiency>
-              <FanPower>123.5</FanPower>
-            </VentilationFan>
-          </VentilationFans>
-        </MechanicalVentilation>
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='DHW_ID1'/>

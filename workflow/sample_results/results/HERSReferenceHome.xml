@@ -330,18 +330,6 @@
             <AnnualCoolingDistributionSystemEfficiency>0.8</AnnualCoolingDistributionSystemEfficiency>
           </HVACDistribution>
         </HVAC>
-        <MechanicalVentilation>
-          <VentilationFans>
-            <VentilationFan>
-              <SystemIdentifier id='VentilationFan'/>
-              <FanType>balanced</FanType>
-              <RatedFlowRate>47.5</RatedFlowRate>
-              <HoursInOperation>24</HoursInOperation>
-              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
-              <FanPower>135.22114151996755</FanPower>
-            </VentilationFan>
-          </VentilationFans>
-        </MechanicalVentilation>
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeatingSystem'/>
