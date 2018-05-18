@@ -398,7 +398,7 @@ class EnergyRatingIndex301Validator
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => [1],
             # TODO: 'Location',
             '[FractionDHWLoadServed=1.0]' => [1],
-            'EnergyFactor' => [1],
+            '[EnergyFactor | UniformEnergyFactor]' => [1],
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => [],
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [1],
         },
