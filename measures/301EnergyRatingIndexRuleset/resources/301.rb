@@ -1538,7 +1538,15 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "TankVolume")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FractionDHWLoadServed")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "HeatingCapacity")
-      XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "EnergyFactor")
+      if not orig_wh_sys.elements["EnergyFactor"].nil?
+        XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "EnergyFactor")
+      elsif not orig_wh_sys.elements["UniformEnergyFactor"].nil?
+        wh_uef = Float(XMLHelper.get_value(orig_wh_sys, "UniformEnergyFactor"))
+        wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
+        wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
+        wh_ef = get_water_heater_ef_from_uef(wh_uef, wh_type, wh_fuel_type)
+        XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
+      end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
       XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", 125)
       extension = XMLHelper.add_element(new_wh_sys, "extension")
@@ -2550,6 +2558,28 @@ class EnergyRatingIndex301Ruleset
       end
     end
     return ef, re
+  end
+  
+  def self.get_water_heater_ef_from_uef(wh_uef, wh_type, wh_fuel_type)
+    '''
+    Per RESNET "Interpretation on Water Heater UEF"
+    '''
+    if wh_fuel_type == 'electricity'
+      if wh_type == 'storage water heater'
+        return [2.4029 * wh_uef - 1.2844, 0.96].min
+      elsif wh_type == 'instantaneous water heater'
+        return wh_uef
+      elsif wh_type == 'heat pump water heater'
+        return 1.2101 * wh_uef - 0.6052
+      end
+    else # Fuel
+      if wh_type == 'storage water heater'
+        return 0.9066 * wh_uef + 0.0711
+      elsif wh_type == 'instantaneous water heater'
+        return wh_uef
+      end
+    end
+    fail "Unable to calculated water heater EF from UEF."
   end
   
   def self.get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_rvalue)
