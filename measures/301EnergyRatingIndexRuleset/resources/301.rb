@@ -397,6 +397,8 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_roof_ins, "Layer")
           XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
         end
+        XMLHelper.delete_element(new_roof, "extension")
+        XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
       end
       
       # Floors
@@ -409,6 +411,9 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_floor_ins, "Layer")
           XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
         end
+        extension = new_floor.elements["extension"]
+        XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
+        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
       end
       
       # Walls
@@ -448,7 +453,22 @@ class EnergyRatingIndex301Ruleset
     Reference Home.
     '''
     
-    # nop
+    new_attic_roof.elements.each("Attics/Attic") do |new_attic|
+      
+      # Roofs
+      new_attic.elements.each("Roofs/Roof") do |new_roof|
+        XMLHelper.delete_element(new_roof, "extension")
+        XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
+      end
+      
+      # Floors
+      new_attic.elements.each("Floors/Floor") do |new_floor|
+        extension = new_floor.elements["extension"]
+        XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
+        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+      end
+      
+    end
     
   end
   
@@ -512,6 +532,13 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_wall_ins, "Layer")
           XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
         end
+        extension = new_wall.elements["extension"]
+        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+        if fnd_type.elements["Basement[Conditioned='true']"]
+          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        else
+          XMLHelper.add_element(extension, "DrywallThickness", 0)
+        end
       end
   
       '''
@@ -551,29 +578,43 @@ class EnergyRatingIndex301Ruleset
     
     new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
     
-    '''
-    Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    U-Factor: Same as Rated Home
-    '''
-    # nop
-
-    '''
-    Table 4.2.2(1) - Conditioned basement walls
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    U-Factor: Same as Rated Home
-    '''
-    # nop
+    new_foundations.elements.each("Foundation") do |new_foundation|
+      fnd_type = new_foundation.elements["FoundationType"]
     
-    '''
-    Table 4.2.2(1) - Foundations
-    Type: Same as Rated Home
-    Gross Area: Same as Rated Home
-    U-Factor / R-value: Same as Rated Home
-    '''
-    # nop
+      '''
+      Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
+      Type: Same as Rated Home
+      Gross area: Same as Rated Home
+      U-Factor: Same as Rated Home
+      '''
+      # nop
+
+      '''
+      Table 4.2.2(1) - Conditioned basement walls
+      Type: Same as Rated Home
+      Gross area: Same as Rated Home
+      U-Factor: Same as Rated Home
+      '''
+    
+      new_foundation.elements.each("FoundationWall") do |new_wall|
+        extension = new_wall.elements["extension"]
+        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+        if fnd_type.elements["Basement[Conditioned='true']"]
+          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        else
+          XMLHelper.add_element(extension, "DrywallThickness", 0)
+        end
+      end
+    
+      '''
+      Table 4.2.2(1) - Foundations
+      Type: Same as Rated Home
+      Gross Area: Same as Rated Home
+      U-Factor / R-value: Same as Rated Home
+      '''
+      # nop
+    
+    end
 
   end
   
@@ -628,6 +669,11 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.delete_element(insulation, "Layer")
         XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
       end
+      extension = new_wall.elements["extension"]
+      XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+      XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+      XMLHelper.delete_element(new_wall, "extension/OSBThickness")
+      XMLHelper.add_element(extension, "OSBThickness", 0.5)
     end
     
   end
@@ -645,7 +691,13 @@ class EnergyRatingIndex301Ruleset
     Emittance = Same as Rated Home
     '''
     
-    # nop
+    new_walls.elements.each("Wall") do |new_wall|
+      extension = new_wall.elements["extension"]
+      XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+      XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+      XMLHelper.delete_element(new_wall, "extension/OSBThickness")
+      XMLHelper.add_element(extension, "OSBThickness", 0.5)
+    end
     
   end
 
@@ -726,6 +778,8 @@ class EnergyRatingIndex301Ruleset
       attwall = XMLHelper.add_element(new_window, "AttachedToWall")
       attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
       set_window_interior_shading_reference(new_window)
+      extension = new_window.elements["extension"]
+      XMLHelper.add_element(extension, "Height", 5.0)
     end
 
   end
@@ -774,6 +828,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_window, orig_window, "ExteriorShading")
       XMLHelper.copy_element(new_window, orig_window, "AttachedToWall")
       set_window_interior_shading_reference(new_window)
+      extension = new_window.elements["extension"]
+      XMLHelper.add_element(extension, "Height", 5.0)
     end
     
   end
@@ -824,6 +880,8 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_door, "Area", door_area)
     XMLHelper.add_element(new_door, "Azimuth", 0)
     XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
+    extension = XMLHelper.add_element(new_door, "extension")
+    XMLHelper.add_element(extension, "Height", 6.67)
     
   end
   
@@ -845,6 +903,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_door, orig_door, "Area")
       XMLHelper.copy_element(new_door, orig_door, "Azimuth")
       XMLHelper.copy_element(new_door, orig_door, "RValue")
+      extension = XMLHelper.add_element(new_door, "extension")
+      XMLHelper.add_element(extension, "Height", 6.67)
     end
     
   end

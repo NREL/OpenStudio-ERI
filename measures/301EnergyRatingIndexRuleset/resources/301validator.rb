@@ -106,17 +106,17 @@ class EnergyRatingIndex301Validator
             # Foundation (Basement)
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]' => {
                 'FoundationType/Basement/Conditioned' => [1],
-                'FrameFloor' => [],
-                'FoundationWall' => [],
-                'Slab' => [],
+                'FrameFloor' => [1],
+                'FoundationWall' => [1],
+                'Slab' => [1],
             },
             
             # Foundation (Crawlspace)
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace]' => {
                 'FoundationType/Crawlspace/Vented' => [1],
-                'FrameFloor' => [],
-                'FoundationWall' => [],
-                'Slab' => [],
+                'FrameFloor' => [1],
+                'FoundationWall' => [1],
+                'Slab' => [1],
             },
             
             # Foundation (Vented Crawlspace)
@@ -126,7 +126,7 @@ class EnergyRatingIndex301Validator
             
             # Foundation (SlabOnGrade)
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/SlabOnGrade]' => {
-                'Slab' => [],
+                'Slab' => [1],
             },
             
             # Foundation (Ambient)
@@ -184,6 +184,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall' => {
             'Height' => [1],
             'Area' => [1],
+            'Thickness' => [1],
             'BelowGradeDepth' => [1],
             'extension[ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="conditioned basement" or ExteriorAdjacentTo="crawlspace"]' => [1],
             '[Insulation/Layer | Insulation/AssemblyEffectiveRValue]' => [1],
@@ -230,6 +231,7 @@ class EnergyRatingIndex301Validator
         ## FoundationSlab
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => {
             'Area' => [1],
+            'Thickness' => [1],
             'ExposedPerimeter' => [1],
             'PerimeterInsulationDepth' => [1],
             'UnderSlabInsulationWidth' => [1],

@@ -776,7 +776,7 @@ class RoofConstructions
             runner.registerError("Roof Framing Factor must be greater than or equal to 0 and less than 1.")
             return false
         end
-        if framing_thick_in <= 0.0
+        if framing_thick_in < 0.0
             runner.registerError("Roof Framing Thickness must be greater than 0.")
             return false
         end
@@ -829,7 +829,9 @@ class RoofConstructions
         if not mat_osb.nil?
             constr.add_layer(mat_osb)
         end
-        constr.add_layer([mat_framing, mat_cavity, mat_gap], "RoofUARoofIns")
+        if framing_thick_in > 0
+            constr.add_layer([mat_framing, mat_cavity, mat_gap], "RoofUARoofIns")
+        end
         if not mat_rb.nil?
             constr.add_layer(mat_rb)
         end
