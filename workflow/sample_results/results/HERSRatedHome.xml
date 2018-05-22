@@ -105,7 +105,7 @@
                     <Layer>
                       <InstallationType>cavity</InstallationType>
                       <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
+                      <Thickness>7.25</Thickness>
                     </Layer>
                     <Layer>
                       <InstallationType>continuous</InstallationType>
@@ -113,6 +113,9 @@
                       <Thickness>0</Thickness>
                     </Layer>
                   </Insulation>
+                  <extension>
+                    <OSBThickness>0.75</OSBThickness>
+                  </extension>
                 </Roof>
               </Roofs>
               <Floors>
@@ -139,6 +142,7 @@
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
+                    <DrywallThickness>0.5</DrywallThickness>
                   </extension>
                 </Floor>
               </Floors>
@@ -187,6 +191,7 @@
             <Slab>
               <SystemIdentifier id='Slab_ID1'/>
               <Area>3500</Area>
+              <Thickness>4</Thickness>
               <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>2</UnderSlabInsulationWidth>
@@ -245,6 +250,8 @@
             <extension>
               <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
               <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+              <DrywallThickness>0.5</DrywallThickness>
+              <OSBThickness>0.5</OSBThickness>
             </extension>
           </Wall>
         </Walls>
@@ -259,6 +266,7 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+              <Height>5.0</Height>
             </extension>
           </Window>
           <Window>
@@ -271,6 +279,7 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+              <Height>5.0</Height>
             </extension>
           </Window>
           <Window>
@@ -283,6 +292,7 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+              <Height>5.0</Height>
             </extension>
           </Window>
           <Window>
@@ -295,6 +305,7 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+              <Height>5.0</Height>
             </extension>
           </Window>
         </Windows>
@@ -305,6 +316,9 @@
             <Area>80</Area>
             <Azimuth>270</Azimuth>
             <RValue>4.4</RValue>
+            <extension>
+              <Height>6.67</Height>
+            </extension>
           </Door>
         </Doors>
       </Enclosure>

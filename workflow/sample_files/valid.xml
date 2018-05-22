@@ -78,7 +78,7 @@
                     <Layer>
                       <InstallationType>cavity</InstallationType>
                       <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
+                      <Thickness>7.25</Thickness>
                     </Layer>
                     <Layer>
                       <InstallationType>continuous</InstallationType>
@@ -160,6 +160,7 @@
             <Slab>
               <SystemIdentifier id='Slab_ID1'/>
               <Area>3500</Area>
+              <Thickness>4</Thickness>
               <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>2</UnderSlabInsulationWidth>

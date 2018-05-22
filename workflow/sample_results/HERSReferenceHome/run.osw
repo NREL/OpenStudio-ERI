@@ -1,16 +1,16 @@
 {
-   "created_at" : "20180514T154452Z",
+   "created_at" : "20180522T181541Z",
    "measure_paths" : [ "../../measures" ],
    "steps" : [
       {
          "arguments" : {
             "calc_type" : "HERS Reference Home",
-            "hpxml_file_path" : "C:/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml",
-            "hpxml_output_file_path" : "C:/GitHub/OpenStudio-ERI/workflow/results/HERSReferenceHome.xml"
+            "hpxml_file_path" : "c:/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml",
+            "hpxml_output_file_path" : "c:/GitHub/OpenStudio-ERI/workflow/results/HERSReferenceHome.xml"
          },
          "measure_dir_name" : "301EnergyRatingIndexRuleset",
          "name" : "301EnergyRatingIndexRuleset"
       }
    ],
-   "updated_at" : "20180514T154452Z"
+   "updated_at" : "20180522T181541Z"
 }

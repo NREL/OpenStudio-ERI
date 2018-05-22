@@ -175,7 +175,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       puts "#{xml}: #{errors.to_s}"
     end
     if expect_valid
-      assert_equal(errors.size, 0)
+      assert_equal(0, errors.size)
     else
       assert(errors.size > 0)
       assert(errors[0].to_s.include? "Element '{http://hpxmlonline.com/2014/6}Building': Missing child element(s). Expected is ( {http://hpxmlonline.com/2014/6}BuildingDetails")

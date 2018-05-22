@@ -1,4 +1,4 @@
-[09:44:55.316282 WARN] No valid weather file defined in either the osm or osw.
-[09:44:55.825615 WARN] No schema dir provided, no HPXML validation performed.
-[09:44:56.814424 WARN] No DDY file found; calculating design conditions from EPW weather data.
-[09:44:56.934122 WARN] No schema dir provided, no HPXML validation performed.
+[12:15:44.416071 WARN] No valid weather file defined in either the osm or osw.
+[12:15:44.931770 WARN] No schema dir provided, no HPXML validation performed.
+[12:15:45.791202 WARN] No DDY file found; calculating design conditions from EPW weather data.
+[12:15:45.947494 WARN] No schema dir provided, no HPXML validation performed.
