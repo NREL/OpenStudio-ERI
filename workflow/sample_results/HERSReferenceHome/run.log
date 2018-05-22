@@ -1,6 +1,6 @@
 [utilities.time.Date] <1> Comparing Dates with improper base years
 [utilities.time.Date] <1> Comparing Dates with improper base years
-[12:15:44.353550 WARN] No valid weather file defined in either the osm or osw.
-[12:15:44.900508 WARN] No schema dir provided, no HPXML validation performed.
-[12:15:45.759978 WARN] No DDY file found; calculating design conditions from EPW weather data.
-[12:15:45.900613 WARN] No schema dir provided, no HPXML validation performed.
+[17:15:44.575271 WARN] No valid weather file defined in either the osm or osw.
+[17:15:45.137836 WARN] No schema dir provided, no HPXML validation performed.
+[17:15:46.106671 WARN] No DDY file found; calculating design conditions from EPW weather data.
+[17:15:46.247313 WARN] No schema dir provided, no HPXML validation performed.

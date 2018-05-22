@@ -1,0 +1,20 @@
+Program Version,EnergyPlus, Version 8.9.0-40101eaafd, YMD=2018.05.22 17:15
+1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
+2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
+3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Report Variables Requested
+4,2,Cumulative Days of Simulation[],Month[]  ! When Monthly Report Variables Requested
+5,1,Cumulative Days of Simulation[] ! When Run Period Report Variables Requested
+6,1,Calendar Year of Simulation[] ! When Annual Report Variables Requested
+443,11,RESIDENTIAL FURNACE GAS HEATING COIL,Heating Coil Heating Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+532,11,RESIDENTIAL CENTRAL AC COOLING COIL,Cooling Coil Sensible Cooling Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+533,11,RESIDENTIAL CENTRAL AC COOLING COIL,Cooling Coil Latent Cooling Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+801,11,WATER USE CONNECTIONS 1,Water Use Connections Plant Hot Water Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+End of Data Dictionary
+1,RUN PERIOD 1,  39.83,-104.65,  -7.00,1650.00
+5,365
+443,72689349564.35887,0.0, 1, 5,13,60,65286727.44672169, 2, 9, 6,60
+532,30368220211.720415,0.0, 1, 1, 1,60,51949709.10735587, 8, 3,20,60
+533,560740493.8621349,0.0, 1, 1, 1,60,4673297.49250133, 8, 6,21,60
+801,9567655853.09526,174813.1144603732, 8, 9, 1,60,2373438.4350610559, 2,11, 8,60
+End of Data
+ Number of Records Written=           4
