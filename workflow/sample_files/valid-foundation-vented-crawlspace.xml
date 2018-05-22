@@ -220,7 +220,7 @@
             <Slab>
               <SystemIdentifier id='Slab_ID1'/>
               <Area>3500</Area>
-              <Thickness>4</Thickness>
+              <Thickness>0</Thickness>
               <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>

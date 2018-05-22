@@ -219,7 +219,7 @@
               <SystemIdentifier id='fndwall-1'/>
               <Height>2</Height>
               <Area>3078</Area>
-              <Thickness>8</Thickness>
+              <Thickness>0</Thickness>
               <BelowGradeDepth>0</BelowGradeDepth>
               <InteriorStuds>
                 <FramingFactor>0</FramingFactor>

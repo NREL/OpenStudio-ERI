@@ -231,7 +231,7 @@ class EnergyRatingIndex301Validator
         ## FoundationSlab
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => {
             'Area' => [1],
-            'Thickness' => [1],
+            'Thickness' => [1], # Use a value of zero for a dirt floor
             'ExposedPerimeter' => [1],
             'PerimeterInsulationDepth' => [1],
             'UnderSlabInsulationWidth' => [1],

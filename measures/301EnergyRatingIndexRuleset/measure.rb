@@ -1051,6 +1051,7 @@ class OSModel
       if wall_surface.nil?
       
         # Foundation slab only
+        
         success = FoundationConstructions.apply_slab(runner, model, slab_surface, "SlabConstruction",
                                                      slab_perim_r, slab_perim_width, slab_gap_r, slab_ext_r, slab_ext_depth,
                                                      slab_whole_r, slab_concrete_thick_in, mat_carpet,
@@ -1063,12 +1064,18 @@ class OSModel
       else
       
         # Foundation slab, walls, and ceilings
+        
+        if slab_surface.nil?
+          # Handle crawlspace without a slab (i.e., dirt floor)
+        end
+        
+        puts "slab_concrete_thick_in #{slab_concrete_thick_in}"
         success = FoundationConstructions.apply_walls_and_slab(runner, model, [wall_surface], "FndWallConstruction", 
                                                                wall_cont_height, wall_cav_r, wall_grade,
                                                                wall_cav_depth, walls_filled_cavity, wall_ff, 
                                                                wall_cont_r, walls_drywall_thick_in, walls_concrete_thick_in, 
                                                                wall_height, slab_surface, "SlabConstruction",
-                                                               slab_whole_r, perim_exp)
+                                                               slab_whole_r, slab_concrete_thick_in, perim_exp)
         return false if not success
         
         if not wall_assembly_r.nil?
