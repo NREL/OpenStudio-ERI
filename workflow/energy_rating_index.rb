@@ -79,19 +79,23 @@ def create_osw(design, basedir, resultsdir, options)
   
 end
 
-def run_osw(osw_path, show_debug=false)
+def run_osw(osw_path, options)
 
-  log_str = ''
-  if not show_debug
-    # Redirect to a log file
-    log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
-  end
+  # Redirect to a log file
+  log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
   
   # FIXME: Push changes upstream to OpenStudio-workflow gem
   gem_str = '-I ../gems/OpenStudio-workflow-gem/lib/ '
+  
+  debug_str = ''
+  verbose_str = ''
+  if options[:debug]
+    debug_str = '--debug '
+    verbose_str = '--verbose '
+  end
 
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" #{gem_str}run -w \"#{osw_path}\"#{log_str}"
+  command = "\"#{cli_path}\" #{verbose_str}#{gem_str}run #{debug_str}-w \"#{osw_path}\"#{log_str}"
   system(command)
   
   return File.join(File.dirname(osw_path), "run", "eplusout.sql")
@@ -759,7 +763,7 @@ Parallel.map(designs, in_threads: designs.size) do |design|
   
   print "[#{design}] Running workflow...\n"
   osw_path, output_hpxml_path = create_osw(design, basedir, resultsdir, options)
-  sql_path = run_osw(osw_path)
+  sql_path = run_osw(osw_path, options)
   
   print "[#{design}] Gathering results...\n"
   sim_outputs[design] = parse_sql(design, sql_path, output_hpxml_path)
