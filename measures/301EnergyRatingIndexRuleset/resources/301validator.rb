@@ -60,7 +60,6 @@ class EnergyRatingIndex301Validator
         
         ## Site
         '/HPXML/Building/BuildingDetails/BuildingSummary/Site' => {
-            'AzimuthOfFrontOfHome' => [1],
             'FuelTypesAvailable' => [1],
         },
         
