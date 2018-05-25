@@ -25,7 +25,6 @@
           <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
-          <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
           <BuildingVolume>55662.5</BuildingVolume>
           <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
@@ -388,6 +387,7 @@
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <TankVolume>50</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
+            <HeatingCapacity>4500</HeatingCapacity>
             <EnergyFactor>0.59</EnergyFactor>
             <RecoveryEfficiency>0.76</RecoveryEfficiency>
           </WaterHeatingSystem>

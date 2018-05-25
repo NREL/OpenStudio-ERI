@@ -38,13 +38,13 @@ class EnergyRatingIndexTest < MiniTest::Test
       test_num += 1
       
       # Run test
-      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       _check_reference_home_components(ref_hpxml, test_num)
       
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
       ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
-      ref_hpxml2, rated_hpxml2, ref_osm2, rated_osm2, results_csv2 = run_and_check(ref_hpxml, parent_dir)
+      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir)
       _check_e_ratio(results_csv2)
     end
   end
@@ -54,7 +54,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
-      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       _check_method_results(results_csv, test_num, test_num == 2)
     end
   end
@@ -72,7 +72,7 @@ class EnergyRatingIndexTest < MiniTest::Test
         test_num = File.basename(xml).gsub('L100-AL-','').gsub('.xml','').to_i
         test_loc = 'AL'
       end
-      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       _check_method_proposed_results(results_csv, test_num, test_loc, test_num == 8)
     end
   end
@@ -95,7 +95,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num += 1
       
-      ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       
       base_val = nil
       if [2,3].include? test_num
@@ -115,6 +115,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       
       all_results[test_num] = _check_hot_water(results_csv, test_num, base_val, mn_val)
     end
+    puts all_results
   end
   
   def test_resnet_verification_building_attributes
@@ -142,20 +143,16 @@ class EnergyRatingIndexTest < MiniTest::Test
     
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml} --debug"
+    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml}"
     system(command)
   
     # Check all output files exist
     ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
-    ref_osm = File.join(parent_dir, "results", "HERSReferenceHome.osm")
     rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
-    rated_osm = File.join(parent_dir, "results", "HERSRatedHome.osm")
     results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
     worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
     assert(File.exists?(ref_hpxml))
-    assert(File.exists?(ref_osm))
     assert(File.exists?(rated_hpxml))
-    assert(File.exists?(rated_osm))
     assert(File.exists?(results_csv))
     assert(File.exists?(worksheet_csv))
     
@@ -163,7 +160,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     _test_schema_validation(parent_dir, ref_hpxml)
     _test_schema_validation(parent_dir, rated_hpxml)
   
-    return ref_hpxml, rated_hpxml, ref_osm, rated_osm, results_csv
+    return ref_hpxml, rated_hpxml, results_csv
   end
   
   def _test_schema_validation(parent_dir, xml, expect_valid=true)
@@ -797,7 +794,7 @@ class EnergyRatingIndexTest < MiniTest::Test
       min_max_mn_delta = [43.35, 45.00]
     elsif test_num == 9
       min_max_abs = [13.17, 13.68]
-      min_max_base_delta = [-24.54, -23.25] # FIXME: Should be [-24.54, -23.47]
+      min_max_base_delta = [-24.54, -23.40] # FIXME: Should be [-24.54, -23.47]
       min_max_mn_delta = [47.26, 48.93]
     elsif test_num == 10
       min_max_abs = [8.81, 9.13]
