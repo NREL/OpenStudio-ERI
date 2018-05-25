@@ -156,7 +156,6 @@ class EnergyRatingIndex301Ruleset
   
     new_site = XMLHelper.add_element(new_summary, "Site")
     orig_site = orig_details.elements["BuildingSummary/Site"]
-    XMLHelper.add_element(new_site, "AzimuthOfFrontOfHome", 0)
     XMLHelper.copy_element(new_site, orig_site, "FuelTypesAvailable")
     extension = XMLHelper.add_element(new_site, "extension")
     XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
@@ -186,7 +185,6 @@ class EnergyRatingIndex301Ruleset
   
     new_site = XMLHelper.add_element(new_summary, "Site")
     orig_site = orig_details.elements["BuildingSummary/Site"]
-    XMLHelper.copy_element(new_site, orig_site, "AzimuthOfFrontOfHome")
     XMLHelper.copy_element(new_site, orig_site, "FuelTypesAvailable")
     extension = XMLHelper.add_element(new_site, "extension")
     XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
@@ -2933,9 +2931,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.has_fuel_access(orig_details)
     orig_details.elements.each("BuildingSummary/Site/FuelTypesAvailable/Fuel") do |fuel|
-      fuels = ["natural gas", "fuel oil", "fuel oil 1", 
-               "fuel oil 2", "fuel oil 4", "fuel oil 5/6",
-               "propane", "kerosene", "diesel",
+      fuels = ["natural gas", "fuel oil", "propane", "kerosene", "diesel",
                "anthracite coal", "bituminous coal", "coke",
                "wood", "wood pellets"]
       if fuels.include?(fuel.text)
