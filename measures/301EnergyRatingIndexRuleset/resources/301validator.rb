@@ -15,9 +15,9 @@ class EnergyRatingIndex301Validator
     # Example:
     # use_case = {
     #     nil => {
-    #         'cat' => [],        # 1 or more elements always required
-    #         'dog' => [1],       # 1 element always required
-    #         'bird' => [0,1],    # 0 or 1 elements always required
+    #         'cat' => [],        # 1 or more elements required always
+    #         'dog' => [1],       # 1 element required always
+    #         'bird' => [0,1],    # 0 or 1 elements required always
     #     },
     #     '/pets' => {
     #         'cat' => [],        # 1 or more elements required if /pets element exists
@@ -69,7 +69,6 @@ class EnergyRatingIndex301Validator
             'NumberofConditionedFloors' => [1],
             'NumberofConditionedFloorsAboveGrade' => [1],
             'NumberofBedrooms' => [1],
-            'NumberofBathrooms' => [1],
             'ConditionedFloorArea' => [1],
             'BuildingVolume' => [1],
             'ConditionedBuildingVolume' => [1],
@@ -405,12 +404,17 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [1],
         },
         
-            # WaterHeatingSystem (Tank)
+            # WaterHeatingSystem (Storage Tank)
+            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater"]' => {
+                'HeatingCapacity' => [1],
+            },
+            
+            # WaterHeatingSystem (Storage Tank or HPWH)
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" or WaterHeaterType="heat pump water heater"]' => {
                 'TankVolume' => [1],
             },
             
-            # WaterHeatingSystem (Fuel, Storage Tank)
+            # WaterHeatingSystem (Storage Tank, Fuel)
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" and FuelType!="electricity"]' => {
                 'RecoveryEfficiency' => [1],
             },

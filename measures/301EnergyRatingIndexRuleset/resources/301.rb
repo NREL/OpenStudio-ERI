@@ -22,7 +22,6 @@ class EnergyRatingIndex301Ruleset
     @weather = weather
     @cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
     @nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    @nbaths = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBathrooms"))
     @ncfl = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
     @ncfl_ag = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
     @cvolume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
@@ -177,7 +176,6 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofBathrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedFloorArea")
     XMLHelper.copy_element(new_construction, orig_construction, "BuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedBuildingVolume")
@@ -208,7 +206,6 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloors")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
-    XMLHelper.copy_element(new_construction, orig_construction, "NumberofBathrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedFloorArea")
     XMLHelper.copy_element(new_construction, orig_construction, "BuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedBuildingVolume")
@@ -392,13 +389,14 @@ class EnergyRatingIndex301Ruleset
         exterior_adjacent_to = "ambient"
         if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_roof_ins = new_roof.elements["Insulation"]
-          new_roof_ins.elements["InsulationGrade"].text = 1
           XMLHelper.delete_element(new_roof_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_roof_ins, "Layer")
           XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
         end
-        XMLHelper.delete_element(new_roof, "extension")
-        XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
+        if not new_roof.elements["Insulation/Layer"].nil?
+          XMLHelper.delete_element(new_roof, "extension")
+          XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
+        end
       end
       
       # Floors
@@ -406,14 +404,15 @@ class EnergyRatingIndex301Ruleset
         exterior_adjacent_to = XMLHelper.get_value(new_floor, "extension/ExteriorAdjacentTo")
         if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_floor_ins = new_floor.elements["Insulation"]
-          new_floor_ins.elements["InsulationGrade"].text = 1
           XMLHelper.delete_element(new_floor_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_floor_ins, "Layer")
           XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
         end
-        extension = new_floor.elements["extension"]
-        XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
-        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        if not new_floor.elements["Insulation/Layer"].nil?
+          extension = new_floor.elements["extension"]
+          XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
+          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        end
       end
       
       # Walls
@@ -421,10 +420,20 @@ class EnergyRatingIndex301Ruleset
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
         if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_wall_ins = new_wall.elements["Insulation"]
-          new_wall_ins.elements["InsulationGrade"].text = 1
           XMLHelper.delete_element(new_wall_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_wall_ins, "Layer")
           XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
+        end
+        if not new_wall.elements["Insulation/Layer"].nil?
+          extension = new_wall.elements["extension"]
+          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+          if ["cathedral ceiling", "cape code"].include? attic_type
+            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+          else
+            XMLHelper.add_element(extension, "DrywallThickness", 0.0)
+          end
+          XMLHelper.delete_element(new_wall, "extension/OSBThickness")
+          XMLHelper.add_element(extension, "OSBThickness", 0.5)
         end
       end
       
@@ -454,18 +463,39 @@ class EnergyRatingIndex301Ruleset
     '''
     
     new_attic_roof.elements.each("Attics/Attic") do |new_attic|
+    
+      attic_type = XMLHelper.get_value(new_attic, "AtticType")
       
       # Roofs
       new_attic.elements.each("Roofs/Roof") do |new_roof|
-        XMLHelper.delete_element(new_roof, "extension")
-        XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
+        if not new_roof.elements["Insulation/Layer"].nil?
+          XMLHelper.delete_element(new_roof, "extension")
+          XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
+        end
       end
       
       # Floors
       new_attic.elements.each("Floors/Floor") do |new_floor|
-        extension = new_floor.elements["extension"]
-        XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
-        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        if not new_floor.elements["Insulation/Layer"].nil?
+          extension = new_floor.elements["extension"]
+          XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
+          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        end
+      end
+      
+      # Walls
+      new_attic.elements.each("Walls/Wall") do |new_wall|
+        if not new_wall.elements["Insulation/Layer"].nil?
+          extension = new_wall.elements["extension"]
+          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+          if ["cathedral ceiling", "cape code"].include? attic_type
+            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+          else
+            XMLHelper.add_element(extension, "DrywallThickness", 0.0)
+          end
+          XMLHelper.delete_element(new_wall, "extension/OSBThickness")
+          XMLHelper.add_element(extension, "OSBThickness", 0.5)
+        end
       end
       
     end
@@ -507,10 +537,13 @@ class EnergyRatingIndex301Ruleset
         exterior_adjacent_to = XMLHelper.get_value(new_floor, "extension/ExteriorAdjacentTo")
         if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_floor_ins = new_floor.elements["Insulation"]
-          new_floor_ins.elements["InsulationGrade"].text = 1
           XMLHelper.delete_element(new_floor_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_floor_ins, "Layer")
           XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/floor_ufactor)
+        end
+        if not new_floor.elements["Insulation/Layer"].nil?
+          extension = new_floor.elements["extension"]
+          XMLHelper.add_element(extension, "OSBThickness", 0.75)
         end
       end
   
@@ -527,17 +560,18 @@ class EnergyRatingIndex301Ruleset
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
         if fnd_type.elements["Basement[Conditioned='true']"] and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_wall_ins = new_wall.elements["Insulation"]
-          new_wall_ins.elements["InsulationGrade"].text = 1
           XMLHelper.delete_element(new_wall_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_wall_ins, "Layer")
           XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
         end
-        extension = new_wall.elements["extension"]
-        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-        if fnd_type.elements["Basement[Conditioned='true']"]
-          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-        else
-          XMLHelper.add_element(extension, "DrywallThickness", 0)
+        if not new_wall.elements["Insulation/Layer"].nil?
+          extension = new_wall.elements["extension"]
+          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+          if fnd_type.elements["Basement[Conditioned='true']"]
+            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+          else
+            XMLHelper.add_element(extension, "DrywallThickness", 0)
+          end
         end
       end
   
@@ -587,7 +621,13 @@ class EnergyRatingIndex301Ruleset
       Gross area: Same as Rated Home
       U-Factor: Same as Rated Home
       '''
-      # nop
+      
+      new_foundation.elements.each("FrameFloor") do |new_floor|
+        if not new_floor.elements["Insulation/Layer"].nil?
+          extension = new_floor.elements["extension"]
+          XMLHelper.add_element(extension, "OSBThickness", 0.75)
+        end
+      end
 
       '''
       Table 4.2.2(1) - Conditioned basement walls
@@ -597,12 +637,14 @@ class EnergyRatingIndex301Ruleset
       '''
     
       new_foundation.elements.each("FoundationWall") do |new_wall|
-        extension = new_wall.elements["extension"]
-        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-        if fnd_type.elements["Basement[Conditioned='true']"]
-          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-        else
-          XMLHelper.add_element(extension, "DrywallThickness", 0)
+        if not new_wall.elements["Insulation/Layer"].nil?
+          extension = new_wall.elements["extension"]
+          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+          if fnd_type.elements["Basement[Conditioned='true']"]
+            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+          else
+            XMLHelper.add_element(extension, "DrywallThickness", 0)
+          end
         end
       end
     
@@ -669,11 +711,13 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.delete_element(insulation, "Layer")
         XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
       end
-      extension = new_wall.elements["extension"]
-      XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-      XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-      XMLHelper.delete_element(new_wall, "extension/OSBThickness")
-      XMLHelper.add_element(extension, "OSBThickness", 0.5)
+      if not new_wall.elements["Insulation/Layer"].nil?
+        extension = new_wall.elements["extension"]
+        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        XMLHelper.delete_element(new_wall, "extension/OSBThickness")
+        XMLHelper.add_element(extension, "OSBThickness", 0.5)
+      end
     end
     
   end
@@ -692,11 +736,13 @@ class EnergyRatingIndex301Ruleset
     '''
     
     new_walls.elements.each("Wall") do |new_wall|
-      extension = new_wall.elements["extension"]
-      XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-      XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-      XMLHelper.delete_element(new_wall, "extension/OSBThickness")
-      XMLHelper.add_element(extension, "OSBThickness", 0.5)
+      if not new_wall.elements["Insulation/Layer"].nil?
+        extension = new_wall.elements["extension"]
+        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
+        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
+        XMLHelper.delete_element(new_wall, "extension/OSBThickness")
+        XMLHelper.add_element(extension, "OSBThickness", 0.5)
+      end
     end
     
   end
@@ -1495,7 +1541,7 @@ class EnergyRatingIndex301Ruleset
     wh_type = 'storage water heater'
     
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), @nbeds, @nbaths) * 1000.0 # Btuh
+    wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), @nbeds, 3.0) * 1000.0 # Btuh
     
     # New water heater
     new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1505,7 +1551,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
     XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
     XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
-    XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "HeatingCapacity")
+    XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
     XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
     if not wh_re.nil?
       XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
@@ -1626,6 +1672,7 @@ class EnergyRatingIndex301Ruleset
         wh_fuel_type = 'electricity'
       end
       wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+      wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), @nbeds, 3.0) * 1000.0 # Btuh
     
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1635,6 +1682,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
       XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
       XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
+      XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
       XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       if not wh_re.nil?
         XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)

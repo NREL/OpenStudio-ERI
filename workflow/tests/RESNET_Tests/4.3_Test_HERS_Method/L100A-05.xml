@@ -25,7 +25,6 @@
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <BuildingVolume>15775</BuildingVolume>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
@@ -66,54 +65,14 @@
               <Roofs>
                 <Roof>
                   <SystemIdentifier id='attic-roof-1'/>
-                  <Area>811.11</Area>
-                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Area>1622.2</Area>
+                  <SolarAbsorptance>0.6</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
-                  <Rafters>
-                    <FramingFactor>0</FramingFactor>
-                    <Material>wood</Material>
-                  </Rafters>
                   <Pitch>4</Pitch>
                   <RadiantBarrier>false</RadiantBarrier>
                   <Insulation>
                     <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                  </Insulation>
-                </Roof>
-                <Roof>
-                  <SystemIdentifier id='attic-roof-2'/>
-                  <Area>811.11</Area>
-                  <SolarAbsorptance>0.75</SolarAbsorptance>
-                  <Emittance>0.9</Emittance>
-                  <Rafters>
-                    <FramingFactor>0</FramingFactor>
-                    <Material>wood</Material>
-                  </Rafters>
-                  <Pitch>4</Pitch>
-                  <RadiantBarrier>false</RadiantBarrier>
-                  <Insulation>
-                    <SystemIdentifier id='Attic_Roof_Ins_ID2'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
                   </Insulation>
                 </Roof>
               </Roofs>
@@ -121,23 +80,9 @@
                 <Floor>
                   <SystemIdentifier id='attic-floor-1'/>
                   <Area>1539</Area>
-                  <FloorJoists>
-                    <FramingFactor>0.1</FramingFactor>
-                    <Material>wood</Material>
-                  </FloorJoists>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>19</NominalRValue>
-                      <Thickness>5.5</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>16.95</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -150,27 +95,13 @@
                   <WallType>
                     <WoodStud></WoodStud>
                   </WallType>
-                  <Area>60.75</Area>
-                  <Studs>
-                    <FramingFactor>0.25</FramingFactor>
-                    <Material>wood</Material>
-                  </Studs>
-                  <Siding>wood siding</Siding>
-                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Area>121.5</Area>
+                  <Siding>fiber cement siding</Siding>
+                  <SolarAbsorptance>0.6</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>2.16</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
@@ -188,24 +119,10 @@
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Floor_ID1'/>
-              <FloorJoists>
-                <FramingFactor>0.1</FramingFactor>
-                <Material>wood</Material>
-              </FloorJoists>
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>11</NominalRValue>
-                  <Thickness>7.25</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
+                <AssemblyEffectiveRValue>14.08</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -220,26 +137,12 @@
               <WoodStud/>
             </WallType>
             <Area>1344</Area>
-            <Studs>
-              <FramingFactor>0.25</FramingFactor>
-              <Material>wood</Material>
-            </Studs>
-            <Siding>wood siding</Siding>
-            <SolarAbsorptance>0.3</SolarAbsorptance>
+            <Siding>fiber cement siding</Siding>
+            <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
-              <InsulationGrade>1</InsulationGrade>
-              <Layer>
-                <InstallationType>cavity</InstallationType>
-                <NominalRValue>11</NominalRValue>
-                <Thickness>3.5</Thickness>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous</InstallationType>
-                <NominalRValue>0</NominalRValue>
-                <Thickness>0</Thickness>
-              </Layer>
+              <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
@@ -379,6 +282,7 @@
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
+            <HeatingCapacity>15355</HeatingCapacity>
             <EnergyFactor>0.88</EnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
