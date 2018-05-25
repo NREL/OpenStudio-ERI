@@ -63,6 +63,21 @@ class EnergyRatingIndex301Validator
             'FuelTypesAvailable' => [1],
         },
         
+          # FuelTypesAvailable
+          '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable' => {
+            '[Fuel="electricity"]' => [0,1],
+            '[Fuel="natural gas"]' => [0,1],
+            '[Fuel="fuel oil"]' => [0,1],
+            '[Fuel="propane"]' => [0,1],
+            '[Fuel="kerosene"]' => [0,1],
+            '[Fuel="diesel"]' => [0,1],
+            '[Fuel="anthracite coal"]' => [0,1],
+            '[Fuel="bituminous coal"]' => [0,1],
+            '[Fuel="coke"]' => [0,1],
+            '[Fuel="wood"]' => [0,1],
+            '[Fuel="wood pellets"]' => [0,1],
+        },
+        
         ## BuildingConstruction
         '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction' => {
             'NumberofConditionedFloors' => [1],
