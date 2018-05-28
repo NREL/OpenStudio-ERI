@@ -1,3 +1,4 @@
+# encoding: utf-8
 start_time = Time.now
 
 require 'optparse'
@@ -458,7 +459,7 @@ def calculate_eri(sim_outputs)
   results[:xeul_cool] = 0 # TODO
   results[:xeul_dhw] = 0 # TODO
   
-  # Table 4.2.1(1) Coefficients �a� and �b�
+  # Table 4.2.1(1) Coefficients a and b
   results[:coeff_cool_a] = 3.8090
   results[:coeff_cool_b] = 0.0
   results[:coeff_heat_a] = nil
@@ -488,29 +489,29 @@ def calculate_eri(sim_outputs)
     fail "ERROR: Could not identify EEC coefficients for water heating system."
   end
   
-  # EEC_x = Equipment Efficiency Coefficient for the Rated Home�s equipment, such that EEC_x equals the 
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer�s 
+  # EEC_x = Equipment Efficiency Coefficient for the Rated Homes equipment, such that EEC_x equals the
+  # energy consumption per unit load in like units as the load, and as derived from the Manufacturers
   # Equipment Performance Rating (MEPR) such that EEC_x equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_x equals 3.413 / MEPR for HSPF, EER or SEER ratings.
   results[:eec_x_heat] = get_eec_heat(rated_hpxml_doc)
   results[:eec_x_cool] = get_eec_cool(rated_hpxml_doc)
   results[:eec_x_dhw] = get_eec_dhw(rated_hpxml_doc)
   
-  # EEC_r = Equipment Efficiency Coefficient for the Reference Home�s equipment, such that EEC_r equals the 
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer�s 
+  # EEC_r = Equipment Efficiency Coefficient for the Reference Homes equipment, such that EEC_r equals the 
+  # energy consumption per unit load in like units as the load, and as derived from the Manufacturers
   # Equipment Performance Rating (MEPR) such that EEC_r equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_r equals 3.413 / MEPR for HSPF, EER or SEER ratings
   results[:eec_r_heat] = get_eec_heat(ref_hpxml_doc)
   results[:eec_r_cool] = get_eec_cool(ref_hpxml_doc)
   results[:eec_r_dhw] = get_eec_dhw(ref_hpxml_doc)
   
-  # EC_x = estimated Energy Consumption for the Rated Home�s end uses (for heating, including Auxiliary 
+  # EC_x = estimated Energy Consumption for the Rated Homes end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_x_heat] = rated_output[:elecHeating] + rated_output[:fuelHeating]
   results[:ec_x_cool] = rated_output[:elecCooling]
   results[:ec_x_dhw] = (rated_output[:elecHotWater] + rated_output[:fuelHotWater]) * dhw_adjustment(rated_hpxml_doc) + rated_output[:elecRecircPump]
   
-  # EC_r = estimated Energy Consumption for the Reference Home�s end uses (for heating, including Auxiliary 
+  # EC_r = estimated Energy Consumption for the Reference Homes end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_r_heat] = ref_output[:elecHeating] + ref_output[:fuelHeating]
   results[:ec_r_cool] = ref_output[:elecCooling]
@@ -527,7 +528,7 @@ def calculate_eri(sim_outputs)
   results[:dse_r_cool] = results[:reul_cool] / results[:ec_r_cool] * results[:eec_r_cool]
   results[:dse_r_dhw] = results[:reul_dhw] / results[:ec_r_dhw] * results[:eec_r_dhw]
   
-  # nEC_x = (a* EEC_x � b)*(EC_x * EC_r * DSE_r) / (EEC_x * REUL) (Eq 4.1-1a)
+  # nEC_x = (a* EEC_x  b)*(EC_x * EC_r * DSE_r) / (EEC_x * REUL) (Eq 4.1-1a)
   results[:nec_x_heat] = 0
   results[:nec_x_cool] = 0
   results[:nec_x_dhw] = 0
