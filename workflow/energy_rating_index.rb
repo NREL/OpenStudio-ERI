@@ -757,7 +757,7 @@ end
 if os_has_version_split[0] == os_requires_version_split[0] and os_has_version_split[1] < os_requires_version_split[1]
   fail "ERROR: OpenStudio version #{os_requires_version} is required.  You are running #{os_has_version}"
 end
-if os_has_version_split[0] == os_requires_version_split[0] and os_has_version_split[1] == os_requires_version_split[1] and os_has_version_split[2] == os_requires_version_split[2]
+if os_has_version_split[0] == os_requires_version_split[0] and os_has_version_split[1] == os_requires_version_split[1] and os_has_version_split[2] < os_requires_version_split[2]
   fail "ERROR: OpenStudio version #{os_requires_version} is required.  You are running #{os_has_version}"
 end
 
