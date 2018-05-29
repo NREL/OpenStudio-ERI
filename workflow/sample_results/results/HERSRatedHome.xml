@@ -49,10 +49,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_CO_Denver_Intl_AP_725650_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_CO_Denver_Intl_AP_725650_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Denver, CO</Name>
+          <WMO>725650</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -174,6 +172,8 @@
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
+                    <DrywallThickness>0.0</DrywallThickness>
+                    <OSBThickness>0.5</OSBThickness>
                   </extension>
                 </Wall>
               </Walls>
@@ -413,6 +413,7 @@
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
+            <HeatingCapacity>18767</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
             <HotWaterTemperature>125</HotWaterTemperature>
             <extension>

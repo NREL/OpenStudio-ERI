@@ -2,6 +2,7 @@
   "301EnergyRatingIndexRuleset": {
     "calc_type": "HERS Rated Home",
     "hpxml_file_path": "c:/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml",
+    "weather_dir": "c:/GitHub/OpenStudio-ERI/weather",
     "hpxml_output_file_path": "c:/GitHub/OpenStudio-ERI/workflow/results/HERSRatedHome.xml",
     "debug": false,
     "applicable": true

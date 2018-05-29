@@ -21,7 +21,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
     Dir["#{xmldir}/invalid*.xml"].each do |xml|
-      run_and_check(xml, parent_dir, false)
+      run_and_check(xml, parent_dir, expect_error:true)
     end
   end
   
@@ -34,9 +34,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     system(command)
     
     num_epws_expected = File.readlines(File.join(parent_dir, "..", "weather", "data.csv")).size - 1
-    
     num_epws_actual = Dir[File.join(parent_dir, "..", "weather", "*.epw")].count
-    
     assert_equal(num_epws_expected, num_epws_actual)
   end
   
@@ -147,38 +145,37 @@ class EnergyRatingIndexTest < MiniTest::Test
 
   private
   
-  def run_and_check(xml, parent_dir, expect_valid=true)
+  def run_and_check(xml, parent_dir, expect_error=false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
-    _test_schema_validation(parent_dir, xml, expect_valid)
-  
-    if not expect_valid
-      return
-    end
     
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
     command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml}"
     system(command)
-  
-    # Check all output files exist
-    ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
-    rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
-    results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
-    worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
-    assert(File.exists?(ref_hpxml))
-    assert(File.exists?(rated_hpxml))
-    assert(File.exists?(results_csv))
-    assert(File.exists?(worksheet_csv))
     
-    # Check Reference/Rated HPXMLs are valid
-    _test_schema_validation(parent_dir, ref_hpxml)
-    _test_schema_validation(parent_dir, rated_hpxml)
+    results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
+    if expect_error
+      assert(!File.exists?(results_csv))
+    else
+      # Check all output files exist
+      ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
+      rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
+      worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
+      assert(File.exists?(ref_hpxml))
+      assert(File.exists?(rated_hpxml))
+      assert(File.exists?(results_csv))
+      assert(File.exists?(worksheet_csv))
+      
+      # Check Reference/Rated HPXMLs are valid
+      _test_schema_validation(parent_dir, ref_hpxml)
+      _test_schema_validation(parent_dir, rated_hpxml)
+    end
   
     return ref_hpxml, rated_hpxml, results_csv
   end
   
-  def _test_schema_validation(parent_dir, xml, expect_valid=true)
+  def _test_schema_validation(parent_dir, xml)
     # TODO: Remove this when schema validation is included with CLI calls
     schemas_dir = File.absolute_path(File.join(parent_dir, "..", "hpxml_schemas"))
     hpxml_doc = REXML::Document.new(File.read(xml))
@@ -186,12 +183,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     if errors.size > 0
       puts "#{xml}: #{errors.to_s}"
     end
-    if expect_valid
-      assert_equal(0, errors.size)
-    else
-      assert(errors.size > 0)
-      assert(errors[0].to_s.include? "Element '{http://hpxmlonline.com/2014/6}Building': Missing child element(s). Expected is ( {http://hpxmlonline.com/2014/6}BuildingDetails")
-    end
+    assert_equal(0, errors.size)
   end
   
   def _check_reference_home_components(ref_hpxml, test_num)
