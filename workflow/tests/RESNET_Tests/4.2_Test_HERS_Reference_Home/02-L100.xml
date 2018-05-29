@@ -37,10 +37,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Dallas, TX</Name>
+          <WMO>722590</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>

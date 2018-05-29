@@ -5,6 +5,7 @@ require 'openstudio'
 require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname'
+require 'csv'
 require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/301validator"
 require "#{File.dirname(__FILE__)}/resources/airflow"
@@ -61,9 +62,14 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the HPXML file.")
     args << arg
 
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_dir", true)
+    arg.setDisplayName("Weather Directory")
+    arg.setDescription("Absolute path of the weather directory.")
+    args << arg
+    
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", false)
     arg.setDisplayName("HPXML Schemas Directory")
-    arg.setDescription("Absolute path of the hpxml schemas.")
+    arg.setDescription("Absolute path of the hpxml schemas directory.")
     args << arg
     
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_file_path", false)
@@ -97,6 +103,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # assign the user inputs to variables
     calc_type = runner.getStringArgumentValue("calc_type", user_arguments)
     hpxml_file_path = runner.getStringArgumentValue("hpxml_file_path", user_arguments)
+    weather_dir = runner.getStringArgumentValue("weather_dir", user_arguments)
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     hpxml_output_file_path = runner.getOptionalStringArgumentValue("hpxml_output_file_path", user_arguments)
     osm_output_file_path = runner.getOptionalStringArgumentValue("osm_output_file_path", user_arguments)
@@ -159,16 +166,24 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     runner.registerInfo("Validated input HPXML against ERI Use Case.")
     
-    workflow_json = File.join(File.dirname(__FILE__), "resources", "measure-info.json")
-    
-    epw_path = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/extension/EPWFileName")
-    unless (Pathname.new epw_path).absolute?
-      epw_path = File.expand_path(File.join(File.dirname(hpxml_file_path), epw_path))
+    # Weather file
+    t = Time.now
+    weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
+    epw_path = nil
+    CSV.foreach(File.join(weather_dir, "data.csv"), headers:true) do |row|
+      next if row["wmo"] != weather_wmo
+      epw_path = File.join(weather_dir, row["filename"])
+      if not File.exists?(epw_path)
+        runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+        return false
+      end
+      break
     end
-    unless File.exists?(epw_path) and epw_path.downcase.end_with? ".epw"
-      runner.registerError("'#{epw_path}' does not exist or is not an .epw file.")
+    if epw_path.nil?
+      runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
       return false
     end
+    runner.registerWarning("#{Time.now - t} seconds")
     
     # Apply Location to obtain weather data
     success, weather = Location.apply(model, runner, epw_path, "NA", "NA")

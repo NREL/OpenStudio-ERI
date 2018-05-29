@@ -37,10 +37,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Colorado Springs, CO</Name>
+          <WMO>724660</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>

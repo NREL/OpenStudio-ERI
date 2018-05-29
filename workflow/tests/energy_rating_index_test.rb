@@ -25,6 +25,21 @@ class EnergyRatingIndexTest < MiniTest::Test
     end
   end
   
+  def test_downloading_weather
+    require 'csv'
+    
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    cli_path = OpenStudio.getOpenStudioCLI
+    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb --download-weather"
+    system(command)
+    
+    num_epws_expected = File.readlines(File.join(parent_dir, "..", "weather", "data.csv")).size - 1
+    
+    num_epws_actual = Dir[File.join(parent_dir, "..", "weather", "*.epw")].count
+    
+    assert_equal(num_epws_expected, num_epws_actual)
+  end
+  
   def test_resnet_ashrae_140
   
   end

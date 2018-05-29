@@ -36,10 +36,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_CO_Denver_Intl_AP_725650_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_CO_Denver_Intl_AP_725650_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Denver, CO</Name>
+          <WMO>725650</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
