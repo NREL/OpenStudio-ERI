@@ -291,7 +291,7 @@ class OSModel
     building = hpxml_doc.elements["/HPXML/Building"]
   
     # Geometry/Envelope
-    
+
     success, spaces, unit = add_geometry_envelope(runner, model, building, weather)
     return false if not success
     
@@ -394,7 +394,7 @@ class OSModel
     
     success = add_windows(runner, model, building, spaces, fenestration_areas, weather, cooling_season)
     return false if not success
-    
+
     success = add_skylights(runner, model, building, spaces, fenestration_areas, weather, cooling_season)
     return false if not success
     
@@ -802,28 +802,38 @@ class OSModel
       
   end
   
-  def self.add_roof_polygon(x, y, z, azimuth=0, tilt=0.5, offset=0)
-  
-    length = x + offset
-    lift = Math.sin(tilt) * length
+  def self.add_roof_polygon(x, y, z, azimuth=0, tilt=0.5)
 
     vertices = OpenStudio::Point3dVector.new
-    vertices << OpenStudio::Point3d.new(x/2 + offset, 0-y/2, z + lift)
-    vertices << OpenStudio::Point3d.new(x/2 + offset, y/2, z + lift)
-    vertices << OpenStudio::Point3d.new(0-x/2, y/2, z)
-    vertices << OpenStudio::Point3d.new(0-x/2, 0-y/2, z)
-    
+    vertices << OpenStudio::Point3d.new(x/2, -y/2, z)
+    vertices << OpenStudio::Point3d.new(x/2, y/2, z)
+    vertices << OpenStudio::Point3d.new(-x/2, y/2, z)
+    vertices << OpenStudio::Point3d.new(-x/2, -y/2, z)
+
+    # Rotate about the x axis
     m = OpenStudio::Matrix.new(4, 4, 0)
-    m[0,0] = Math::cos(-azimuth * Math::PI / 180.0)
-    m[1,1] = Math::cos(-azimuth * Math::PI / 180.0)
-    m[0,1] = -Math::sin(-azimuth * Math::PI / 180.0)
-    m[1,0] = Math::sin(-azimuth * Math::PI / 180.0)
+    m[0,0] = 1
+    m[1,1] = Math::cos(Math::atan(tilt))
+    m[1,2] = -Math::sin(Math::atan(tilt))
+    m[2,1] = Math::sin(Math::atan(tilt))
+    m[2,2] = Math::cos(Math::atan(tilt))
+    m[3,3] = 1
+    transformation = OpenStudio::Transformation.new(m)
+    vertices = transformation * vertices
+
+    # Rotate about the z axis
+    m = OpenStudio::Matrix.new(4, 4, 0)
+    m[0,0] = Math::cos(UnitConversions.convert(azimuth, "deg", "rad"))
+    m[1,1] = Math::cos(UnitConversions.convert(azimuth, "deg", "rad"))
+    m[0,1] = -Math::sin(UnitConversions.convert(azimuth, "deg", "rad"))
+    m[1,0] = Math::sin(UnitConversions.convert(azimuth, "deg", "rad"))
     m[2,2] = 1
     m[3,3] = 1
     transformation = OpenStudio::Transformation.new(m)
-  
-    return transformation * vertices
-    
+    vertices = transformation * vertices
+
+    return vertices
+
   end
 
   def self.add_ceiling_polygon(x, y, z)
@@ -1583,22 +1593,20 @@ class OSModel
         end
       end
 
-      surface = OpenStudio::Model::Surface.new(add_roof_polygon(UnitConversions.convert(skylight_width,"ft","m"), 
-                                                                UnitConversions.convert(skylight_height,"ft","m"), 
+      surface = OpenStudio::Model::Surface.new(add_roof_polygon(UnitConversions.convert(skylight_width,"ft","m") + 0.0001, # base surface must be at least slightly larger than subsurface
+                                                                UnitConversions.convert(skylight_height,"ft","m") + 0.0001, # base surface must be at least slightly larger than subsurface
                                                                 UnitConversions.convert(z_origin,"ft","m"), 
-                                                                skylight_azimuth, skylight_tilt,
-                                                                0.001), model) # offset one direction so the skylight "fits within its base surface"
+                                                                skylight_azimuth, skylight_tilt), model)
       surface.setName("surface #{skylight_id}")
       surface.setSurfaceType("RoofCeiling")
       surface.setSpace(skylight_space)
       surface.setOutsideBoundaryCondition("Outdoors") # cannot be adiabatic or OS won't create subsurface
       surfaces << surface
-      
+
       sub_surface = OpenStudio::Model::SubSurface.new(add_roof_polygon(UnitConversions.convert(skylight_width,"ft","m"), 
                                                                        UnitConversions.convert(skylight_height,"ft","m"), 
                                                                        UnitConversions.convert(z_origin,"ft","m"), 
-                                                                       skylight_azimuth, skylight_tilt,
-                                                                       0), model) # offset one direction so the skylight "fits within its base surface"
+                                                                       skylight_azimuth, skylight_tilt), model)
       sub_surface.setName(skylight_id)
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("Skylight")
