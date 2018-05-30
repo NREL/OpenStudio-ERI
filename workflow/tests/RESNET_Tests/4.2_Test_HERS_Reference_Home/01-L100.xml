@@ -37,10 +37,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Baltimore, MD</Name>
+          <WMO>724060</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>

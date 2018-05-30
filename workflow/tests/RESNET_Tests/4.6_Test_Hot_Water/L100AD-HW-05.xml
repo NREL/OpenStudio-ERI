@@ -37,10 +37,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_MN_Duluth.Intl.AP.727450_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_MN_Duluth.Intl.AP.727450_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Duluth, MN</Name>
+          <WMO>727450</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>

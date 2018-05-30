@@ -37,10 +37,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_FL_Miami.Intl.AP.722020_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_FL_Miami.Intl.AP.722020_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Miami, FL</Name>
+          <WMO>722020</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>

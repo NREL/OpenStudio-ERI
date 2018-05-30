@@ -92,7 +92,7 @@ class EnergyRatingIndex301Validator
         ## Climate
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/' => {
             'ClimateZoneIECC[Year="2006"]' => [1],
-            'WeatherStation/extension/EPWFileName' => [1],
+            'WeatherStation/WMO' => [1],  # See weather/data.csv for the list of acceptable WMO station numbers
         },
 
         ## AirInfiltration
