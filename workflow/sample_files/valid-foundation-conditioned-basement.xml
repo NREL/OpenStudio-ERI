@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='2.2'>
+<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
@@ -15,7 +15,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <AzimuthOfFrontOfHome>90</AzimuthOfFrontOfHome>
           <FuelTypesAvailable>
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
@@ -25,7 +24,6 @@
           <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
-          <NumberofBathrooms>3</NumberofBathrooms>
           <ConditionedFloorArea>7000</ConditionedFloorArea>
           <BuildingVolume>87162.5</BuildingVolume>
           <ConditionedBuildingVolume>67575</ConditionedBuildingVolume>
@@ -39,10 +37,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_CO_Denver_Intl_AP_725650_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_CO_Denver_Intl_AP_725650_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Denver, CO</Name>
+          <WMO>725650</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -190,6 +186,7 @@
               <SystemIdentifier id='fndwall-1'/>
               <Height>9</Height>
               <Area>2160</Area>
+              <Thickness>8</Thickness>
               <BelowGradeDepth>7</BelowGradeDepth>
               <InteriorStuds>
                 <FramingFactor>0</FramingFactor>
@@ -219,6 +216,7 @@
             <Slab>
               <SystemIdentifier id='fndslab-1'/>
               <Area>3500</Area>
+              <Thickness>4</Thickness>
               <ExposedPerimeter>240</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
@@ -446,6 +444,7 @@
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
+            <HeatingCapacity>18767</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>

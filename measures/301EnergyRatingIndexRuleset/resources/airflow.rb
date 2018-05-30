@@ -68,19 +68,15 @@ class Airflow
       return false
     end
     
-    # Output Variables
-
-    output_vars = create_output_vars(model)
-    
     # Global sensors
     
-    pbar_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Site Outdoor Air Barometric Pressure"])
+    pbar_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Site Outdoor Air Barometric Pressure")
     pbar_sensor.setName("#{Constants.ObjectNameNaturalVentilation} pb s")
 
-    vwind_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Site Wind Speed"])
+    vwind_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Site Wind Speed")
     vwind_sensor.setName("#{Constants.ObjectNameAirflow} vw s")
     
-    wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Site Outdoor Air Humidity Ratio"])
+    wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Site Outdoor Air Humidity Ratio")
     wout_sensor.setName("#{Constants.ObjectNameNaturalVentilation} wt s")
     
     # Adiabatic construction for ducts
@@ -146,11 +142,11 @@ class Airflow
       
       # Common sensors
 
-      tin_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Zone Mean Air Temperature"])
+      tin_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Zone Mean Air Temperature")
       tin_sensor.setName("#{obj_name_airflow} tin s")
       tin_sensor.setKeyName(unit_living.zone.name.to_s)
 
-      tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Zone Outdoor Air Drybulb Temperature"])
+      tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Zone Outdoor Air Drybulb Temperature")
       tout_sensor.setName("#{obj_name_airflow} tt s")
       tout_sensor.setKeyName(unit_living.zone.name.to_s)
 
@@ -161,11 +157,11 @@ class Airflow
       
       # Update model
       
-      nv_program = create_nat_vent_objects(model, runner, output_vars, obj_name_natvent, unit_living, nat_vent, nv_output, tin_sensor, tout_sensor, pbar_sensor, vwind_sensor, wout_sensor)
+      nv_program = create_nat_vent_objects(model, runner, obj_name_natvent, unit_living, nat_vent, nv_output, tin_sensor, tout_sensor, pbar_sensor, vwind_sensor, wout_sensor)
       
-      duct_program, cfis_program, cfis_output = create_ducts_objects(model, runner, output_vars, obj_name_ducts, unit_living, unit_finished_basement, ducts, mech_vent, ducts_output, tin_sensor, pbar_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, has_forced_air_equipment, unit_has_mshp, adiabatic_const)
+      duct_program, cfis_program, cfis_output = create_ducts_objects(model, runner, obj_name_ducts, unit_living, unit_finished_basement, ducts, mech_vent, ducts_output, tin_sensor, pbar_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, has_forced_air_equipment, unit_has_mshp, adiabatic_const)
       
-      infil_program = create_infil_mech_vent_objects(model, runner, output_vars, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output, nbeds)
+      infil_program = create_infil_mech_vent_objects(model, runner, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output, nbeds)
       
       create_ems_program_managers(model, infil_program, nv_program, cfis_program, 
                                   duct_program, obj_name_airflow, obj_name_ducts)
@@ -271,15 +267,6 @@ class Airflow
         end
       end
 
-      model.getEnergyManagementSystemOutputVariables.each do |output_var|
-        if (output_var.name.to_s.start_with? obj_name_airflow or
-            output_var.name.to_s.start_with? obj_name_natvent or
-            output_var.name.to_s.start_with? obj_name_infil or
-            output_var.name.to_s.start_with? obj_name_ducts)
-          output_var.remove
-        end
-      end
-
       model.getEnergyManagementSystemSubroutines.each do |subroutine|
         if (subroutine.name.to_s.start_with? obj_name_airflow_underscore or
             subroutine.name.to_s.start_with? obj_name_natvent_underscore or
@@ -378,31 +365,6 @@ class Airflow
   end
 
   private
-  
-  def self.create_output_vars(model)
-    output_vars = {}
-    
-    output_var_names = ["Zone Outdoor Air Drybulb Temperature", "Site Outdoor Air Barometric Pressure", "Zone Mean Air Temperature", "Zone Air Relative Humidity", "Site Outdoor Air Humidity Ratio", "Zone Mean Air Humidity Ratio", "Site Wind Speed", "Schedule Value", "System Node Mass Flow Rate", "Fan Runtime Fraction", "System Node Current Density Volume Flow Rate", "System Node Temperature", "System Node Humidity Ratio", "Zone Air Temperature"]
-    model_output_vars = model.getOutputVariables
-    
-    output_var_names.each do |output_var_name|
-      output_var = nil
-      # Already exists?
-      model_output_vars.each do |model_output_var|
-        if model_output_var.name.to_s == output_var_name
-          output_var = model_output_var
-        end
-      end
-      if output_var.nil?
-        # Create new
-        output_var = OpenStudio::Model::OutputVariable.new(output_var_name, model)
-        output_var.setName(output_var_name)
-      end
-      output_vars[output_var_name] = output_var
-    end
-    
-    return output_vars
-  end
   
   def self.process_wind_speed_correction(terrain, shelter_coef, neighbors_min_nonzero_offset, building_height)
 
@@ -1192,7 +1154,7 @@ class Airflow
 
   end
 
-  def self.create_nat_vent_objects(model, runner, output_vars, obj_name_natvent, unit_living, nat_vent, nv_output, tin_sensor, tout_sensor, pbar_sensor, vwind_sensor, wout_sensor)
+  def self.create_nat_vent_objects(model, runner, obj_name_natvent, unit_living, nat_vent, nv_output, tin_sensor, tout_sensor, pbar_sensor, vwind_sensor, wout_sensor)
   
     avail_sch = OpenStudio::Model::ScheduleRuleset.new(model)
     avail_sch.setName(obj_name_natvent + " avail schedule")
@@ -1263,11 +1225,11 @@ class Airflow
     
     # Sensors
     
-    nvavail_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
+    nvavail_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Schedule Value")
     nvavail_sensor.setName("#{obj_name_natvent} nva s")
     nvavail_sensor.setKeyName(avail_sch.name.to_s)
 
-    nvsp_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
+    nvsp_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Schedule Value")
     nvsp_sensor.setName("#{obj_name_natvent} sp s")
     nvsp_sensor.setKeyName(nv_output.temp_sch.schedule.name.to_s)
     
@@ -1312,9 +1274,9 @@ class Airflow
     
   end
 
-  def self.create_ducts_objects(model, runner, output_vars, obj_name_ducts, unit_living, unit_finished_basement, ducts, mech_vent, ducts_output, tin_sensor, pbar_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, has_forced_air_equipment, unit_has_mshp, adiabatic_const)
+  def self.create_ducts_objects(model, runner, obj_name_ducts, unit_living, unit_finished_basement, ducts, mech_vent, ducts_output, tin_sensor, pbar_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, has_forced_air_equipment, unit_has_mshp, adiabatic_const)
     
-    win_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Zone Mean Air Humidity Ratio"])
+    win_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Zone Mean Air Humidity Ratio")
     win_sensor.setName("#{obj_name_ducts} win s")
     win_sensor.setKeyName(unit_living.zone.name.to_s)
       
@@ -1512,49 +1474,49 @@ class Airflow
 
       # Sensors
 
-      ah_mfr_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["System Node Mass Flow Rate"])
+      ah_mfr_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "System Node Mass Flow Rate")
       ah_mfr_sensor.setName("#{obj_name_ducts} ah mfr s")
       ah_mfr_sensor.setKeyName(air_demand_inlet_node.name.to_s)
 
-      fan_rtf_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Fan Runtime Fraction"])
+      fan_rtf_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Fan Runtime Fraction")
       fan_rtf_sensor.setName("#{obj_name_ducts} fan rtf s")
       fan_rtf_sensor.setKeyName(supply_fan.name.to_s)
 
-      ah_vfr_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["System Node Current Density Volume Flow Rate"])
+      ah_vfr_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "System Node Current Density Volume Flow Rate")
       ah_vfr_sensor.setName("#{obj_name_ducts} ah vfr s")
       ah_vfr_sensor.setKeyName(air_demand_inlet_node.name.to_s)
 
-      ah_tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["System Node Temperature"])
+      ah_tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "System Node Temperature")
       ah_tout_sensor.setName("#{obj_name_ducts} ah tt s")
       ah_tout_sensor.setKeyName(air_demand_inlet_node.name.to_s)
 
       if not living_zone_return_air_node.nil?
-        ra_t_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["System Node Temperature"])
+        ra_t_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "System Node Temperature")
         ra_t_sensor.setName("#{obj_name_ducts} ra t s")
         ra_t_sensor.setKeyName(living_zone_return_air_node.name.to_s)
       else
         ra_t_sensor = tin_sensor
       end
 
-      ah_wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["System Node Humidity Ratio"])
+      ah_wout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "System Node Humidity Ratio")
       ah_wout_sensor.setName("#{obj_name_ducts} ah wt s")
       ah_wout_sensor.setKeyName(air_demand_inlet_node.name.to_s)
 
       if not living_zone_return_air_node.nil?
-        ra_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["System Node Humidity Ratio"])
+        ra_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "System Node Humidity Ratio")
         ra_w_sensor.setName("#{obj_name_ducts} ra w s")
         ra_w_sensor.setKeyName(living_zone_return_air_node.name.to_s)
       else
-        ra_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Zone Mean Air Humidity Ratio"])
+        ra_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Zone Mean Air Humidity Ratio")
         ra_w_sensor.setName("#{obj_name_ducts} ra w s")
         ra_w_sensor.setKeyName(unit_living.zone.name.to_s)
       end
 
-      ah_t_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Zone Air Temperature"])
+      ah_t_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Zone Air Temperature")
       ah_t_sensor.setName("#{obj_name_ducts} ah t s")
       ah_t_sensor.setKeyName(ducts_output.location_name)
 
-      ah_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Zone Mean Air Humidity Ratio"])
+      ah_w_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Zone Mean Air Humidity Ratio")
       ah_w_sensor.setName("#{obj_name_ducts} ah w s")
       ah_w_sensor.setKeyName(ducts_output.location_name)
 
@@ -1796,32 +1758,32 @@ class Airflow
     
   end
   
-  def self.create_infil_mech_vent_objects(model, runner, output_vars, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output, nbeds)
+  def self.create_infil_mech_vent_objects(model, runner, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output, nbeds)
 
     # Sensors
   
     range_array = [0.0] * 24
     range_array[mech_vent.range_exhaust_hour - 1] = 1.0
     range_hood_sch = HourlyByMonthSchedule.new(model, runner, obj_name_mech_vent + " range exhaust schedule", [range_array] * 12, [range_array] * 12, normalize_values = false)
-    range_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
+    range_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Schedule Value")
     range_sch_sensor.setName("#{obj_name_infil} range sch s")
     range_sch_sensor.setKeyName(range_hood_sch.schedule.name.to_s)
 
     bathroom_array = [0.0] * 24
     bathroom_array[mech_vent.bathroom_exhaust_hour - 1] = 1.0
     bath_exhaust_sch = HourlyByMonthSchedule.new(model, runner, obj_name_mech_vent + " bath exhaust schedule", [bathroom_array] * 12, [bathroom_array] * 12, normalize_values = false)
-    bath_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
+    bath_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Schedule Value")
     bath_sch_sensor.setName("#{obj_name_infil} bath sch s")
     bath_sch_sensor.setKeyName(bath_exhaust_sch.schedule.name.to_s)
 
     if mv_output.has_dryer and mech_vent.dryer_exhaust > 0
       dryer_exhaust_sch = HotWaterSchedule.new(model, runner, obj_name_mech_vent + " dryer exhaust schedule", obj_name_mech_vent + " dryer exhaust temperature schedule", nbeds, mv_output.dryer_exhaust_day_shift, "ClothesDryerExhaust", 0, @measure_dir)
-      dryer_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
+      dryer_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Schedule Value")
       dryer_sch_sensor.setName("#{obj_name_infil} dryer sch s")
       dryer_sch_sensor.setKeyName(dryer_exhaust_sch.schedule.name.to_s)
     end
     
-    wh_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, output_vars["Schedule Value"])
+    wh_sch_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Schedule Value")
     wh_sch_sensor.setName("#{obj_name_infil} wh sch s")
     wh_sch_sensor.setKeyName(model.alwaysOnDiscreteSchedule.name.to_s)
     

@@ -1,16 +1,17 @@
 {
-   "created_at" : "20180514T154452Z",
+   "created_at" : "20180529T204814Z",
    "measure_paths" : [ "../../measures" ],
    "steps" : [
       {
          "arguments" : {
             "calc_type" : "HERS Rated Home",
-            "hpxml_file_path" : "C:/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml",
-            "hpxml_output_file_path" : "C:/GitHub/OpenStudio-ERI/workflow/results/HERSRatedHome.xml"
+            "hpxml_file_path" : "c:/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml",
+            "hpxml_output_file_path" : "c:/GitHub/OpenStudio-ERI/workflow/results/HERSRatedHome.xml",
+            "weather_dir" : "c:/GitHub/OpenStudio-ERI/weather"
          },
          "measure_dir_name" : "301EnergyRatingIndexRuleset",
          "name" : "301EnergyRatingIndexRuleset"
       }
    ],
-   "updated_at" : "20180514T154452Z"
+   "updated_at" : "20180529T204814Z"
 }

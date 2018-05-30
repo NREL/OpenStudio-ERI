@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='2.2'>
+<HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
@@ -15,7 +15,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <AzimuthOfFrontOfHome>180</AzimuthOfFrontOfHome>
           <FuelTypesAvailable>
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
@@ -25,7 +24,6 @@
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <BuildingVolume>15390</BuildingVolume>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
@@ -39,10 +37,8 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
-          <Name>USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3</Name>
-          <extension>
-            <EPWFileName>USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw</EPWFileName>
-          </extension>
+          <Name>Colorado Springs, CO</Name>
+          <WMO>724660</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -68,54 +64,14 @@
               <Roofs>
                 <Roof>
                   <SystemIdentifier id='attic-roof-1'/>
-                  <Area>811.11</Area>
-                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Area>1622.2</Area>
+                  <SolarAbsorptance>0.6</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
-                  <Rafters>
-                    <FramingFactor>0</FramingFactor>
-                    <Material>wood</Material>
-                  </Rafters>
                   <Pitch>4</Pitch>
                   <RadiantBarrier>false</RadiantBarrier>
                   <Insulation>
                     <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                  </Insulation>
-                </Roof>
-                <Roof>
-                  <SystemIdentifier id='attic-roof-2'/>
-                  <Area>811.11</Area>
-                  <SolarAbsorptance>0.75</SolarAbsorptance>
-                  <Emittance>0.9</Emittance>
-                  <Rafters>
-                    <FramingFactor>0</FramingFactor>
-                    <Material>wood</Material>
-                  </Rafters>
-                  <Pitch>4</Pitch>
-                  <RadiantBarrier>false</RadiantBarrier>
-                  <Insulation>
-                    <SystemIdentifier id='Attic_Roof_Ins_ID2'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
                   </Insulation>
                 </Roof>
               </Roofs>
@@ -152,27 +108,13 @@
                   <WallType>
                     <WoodStud></WoodStud>
                   </WallType>
-                  <Area>60.75</Area>
-                  <Studs>
-                    <FramingFactor>0.25</FramingFactor>
-                    <Material>wood</Material>
-                  </Studs>
-                  <Siding>wood siding</Siding>
-                  <SolarAbsorptance>0.75</SolarAbsorptance>
+                  <Area>121.5</Area>
+                  <Siding>fiber cement siding</Siding>
+                  <SolarAbsorptance>0.6</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>2.16</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
@@ -219,6 +161,7 @@
               <SystemIdentifier id='fndwall-1'/>
               <Height>2</Height>
               <Area>3078</Area>
+              <Thickness>8</Thickness>
               <BelowGradeDepth>0</BelowGradeDepth>
               <InteriorStuds>
                 <FramingFactor>0</FramingFactor>
@@ -248,6 +191,7 @@
             <Slab>
               <SystemIdentifier id='fndslab-1'/>
               <Area>1539</Area>
+              <Thickness>4</Thickness>
               <ExposedPerimeter>168</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
@@ -443,6 +387,7 @@
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
+            <HeatingCapacity>38000</HeatingCapacity>
             <EnergyFactor>0.62</EnergyFactor>
             <RecoveryEfficiency>0.78</RecoveryEfficiency>
           </WaterHeatingSystem>

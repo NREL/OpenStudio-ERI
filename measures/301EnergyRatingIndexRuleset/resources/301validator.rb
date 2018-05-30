@@ -15,9 +15,9 @@ class EnergyRatingIndex301Validator
     # Example:
     # use_case = {
     #     nil => {
-    #         'cat' => [],        # 1 or more elements always required
-    #         'dog' => [1],       # 1 element always required
-    #         'bird' => [0,1],    # 0 or 1 elements always required
+    #         'cat' => [],        # 1 or more elements required always
+    #         'dog' => [1],       # 1 element required always
+    #         'bird' => [0,1],    # 0 or 1 elements required always
     #     },
     #     '/pets' => {
     #         'cat' => [],        # 1 or more elements required if /pets element exists
@@ -60,8 +60,22 @@ class EnergyRatingIndex301Validator
         
         ## Site
         '/HPXML/Building/BuildingDetails/BuildingSummary/Site' => {
-            'AzimuthOfFrontOfHome' => [1],
             'FuelTypesAvailable' => [1],
+        },
+        
+          # FuelTypesAvailable
+          '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable' => {
+            '[Fuel="electricity"]' => [0,1],
+            '[Fuel="natural gas"]' => [0,1],
+            '[Fuel="fuel oil"]' => [0,1],
+            '[Fuel="propane"]' => [0,1],
+            '[Fuel="kerosene"]' => [0,1],
+            '[Fuel="diesel"]' => [0,1],
+            '[Fuel="anthracite coal"]' => [0,1],
+            '[Fuel="bituminous coal"]' => [0,1],
+            '[Fuel="coke"]' => [0,1],
+            '[Fuel="wood"]' => [0,1],
+            '[Fuel="wood pellets"]' => [0,1],
         },
         
         ## BuildingConstruction
@@ -69,7 +83,6 @@ class EnergyRatingIndex301Validator
             'NumberofConditionedFloors' => [1],
             'NumberofConditionedFloorsAboveGrade' => [1],
             'NumberofBedrooms' => [1],
-            'NumberofBathrooms' => [1],
             'ConditionedFloorArea' => [1],
             'BuildingVolume' => [1],
             'ConditionedBuildingVolume' => [1],
@@ -79,7 +92,7 @@ class EnergyRatingIndex301Validator
         ## Climate
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/' => {
             'ClimateZoneIECC[Year="2006"]' => [1],
-            'WeatherStation/extension/EPWFileName' => [1],
+            'WeatherStation/WMO' => [1],  # See weather/data.csv for the list of acceptable WMO station numbers
         },
 
         ## AirInfiltration
@@ -106,17 +119,17 @@ class EnergyRatingIndex301Validator
             # Foundation (Basement)
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]' => {
                 'FoundationType/Basement/Conditioned' => [1],
-                'FrameFloor' => [],
-                'FoundationWall' => [],
-                'Slab' => [],
+                'FrameFloor' => [1],
+                'FoundationWall' => [1],
+                'Slab' => [1],
             },
             
             # Foundation (Crawlspace)
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace]' => {
                 'FoundationType/Crawlspace/Vented' => [1],
-                'FrameFloor' => [],
-                'FoundationWall' => [],
-                'Slab' => [],
+                'FrameFloor' => [1],
+                'FoundationWall' => [1],
+                'Slab' => [1],
             },
             
             # Foundation (Vented Crawlspace)
@@ -126,7 +139,7 @@ class EnergyRatingIndex301Validator
             
             # Foundation (SlabOnGrade)
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/SlabOnGrade]' => {
-                'Slab' => [],
+                'Slab' => [1],
             },
             
             # Foundation (Ambient)
@@ -184,6 +197,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall' => {
             'Height' => [1],
             'Area' => [1],
+            'Thickness' => [1],
             'BelowGradeDepth' => [1],
             'extension[ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="conditioned basement" or ExteriorAdjacentTo="crawlspace"]' => [1],
             '[Insulation/Layer | Insulation/AssemblyEffectiveRValue]' => [1],
@@ -230,6 +244,7 @@ class EnergyRatingIndex301Validator
         ## FoundationSlab
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => {
             'Area' => [1],
+            'Thickness' => [1], # Use a value of zero for a dirt floor
             'ExposedPerimeter' => [1],
             'PerimeterInsulationDepth' => [1],
             'UnderSlabInsulationWidth' => [1],
@@ -398,17 +413,22 @@ class EnergyRatingIndex301Validator
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => [1],
             # TODO: 'Location',
             '[FractionDHWLoadServed=1.0]' => [1],
-            'EnergyFactor' => [1],
+            '[EnergyFactor | UniformEnergyFactor]' => [1],
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => [],
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [1],
         },
         
-            # WaterHeatingSystem (Tank)
+            # WaterHeatingSystem (Storage Tank)
+            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater"]' => {
+                'HeatingCapacity' => [1],
+            },
+            
+            # WaterHeatingSystem (Storage Tank or HPWH)
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" or WaterHeaterType="heat pump water heater"]' => {
                 'TankVolume' => [1],
             },
             
-            # WaterHeatingSystem (Fuel, Storage Tank)
+            # WaterHeatingSystem (Storage Tank, Fuel)
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater" and FuelType!="electricity"]' => {
                 'RecoveryEfficiency' => [1],
             },

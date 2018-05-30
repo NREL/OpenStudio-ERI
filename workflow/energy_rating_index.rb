@@ -50,11 +50,13 @@ def create_osw(design, basedir, resultsdir, options)
   
   # Add measures (w/args) to OSW
   schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
+  weather_dir = File.absolute_path(File.join(basedir, "..", "weather"))
   output_hpxml_path = File.join(resultsdir, design_str + ".xml")
   measures = {}
   measures['301EnergyRatingIndexRuleset'] = {}
   measures['301EnergyRatingIndexRuleset']['calc_type'] = design
   measures['301EnergyRatingIndexRuleset']['hpxml_file_path'] = options[:hpxml]
+  measures['301EnergyRatingIndexRuleset']['weather_dir'] = weather_dir
   #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
   measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
   if options[:debug]
@@ -79,19 +81,23 @@ def create_osw(design, basedir, resultsdir, options)
   
 end
 
-def run_osw(osw_path, show_debug=false)
+def run_osw(osw_path, options)
 
-  log_str = ''
-  if not show_debug
-    # Redirect to a log file
-    log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
-  end
+  # Redirect to a log file
+  log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
   
   # FIXME: Push changes upstream to OpenStudio-workflow gem
   gem_str = '-I ../gems/OpenStudio-workflow-gem/lib/ '
+  
+  debug_str = ''
+  verbose_str = ''
+  if options[:debug]
+    debug_str = '--debug '
+    verbose_str = '--verbose '
+  end
 
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" #{gem_str}run -w \"#{osw_path}\"#{log_str}"
+  command = "\"#{cli_path}\" #{verbose_str}#{gem_str}run #{debug_str}-w \"#{osw_path}\"#{log_str}"
   system(command)
   
   return File.join(File.dirname(osw_path), "run", "eplusout.sql")
@@ -710,6 +716,62 @@ def write_results(results, resultsdir, sim_outputs)
   
 end
 
+def download_epws
+
+  weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
+  
+  num_epws_expected = File.readlines(File.join(weather_dir, "data.csv")).size - 1
+  num_epws_actual = Dir[File.join(weather_dir, "*.epw")].count
+  if num_epws_actual == num_epws_expected
+    puts "Weather directory is already up-to-date."
+    puts "#{num_epws_actual} weather files are available in the weather directory."
+    puts "Completed."
+    exit!
+  end
+  
+  require 'net/http'
+  require 'tempfile'
+  
+  tmpfile = Tempfile.new("epw")
+
+  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/openstudio-eri-tmy3s.zip")
+  http = Net::HTTP.new(url.host, url.port)
+
+  params = { 'User-Agent' => 'curl/7.43.0', 'Accept-Encoding' => 'identity' }
+  request = Net::HTTP::Get.new(url.path, params)
+  request.content_type = 'application/zip, application/octet-stream'
+
+  http.request request do |response|
+    total = response.header["Content-Length"].to_i
+    if total == 0
+      fail "Did not successfully download zip file."
+    end
+    size = 0
+    progress = 0
+    open tmpfile, 'wb' do |io|
+      response.read_body do |chunk|
+        io.write chunk
+        size += chunk.size
+        new_progress = (size * 100) / total
+        unless new_progress == progress
+          puts "Downloading %s (%3d%%) " % [url.path, new_progress]
+        end
+        progress = new_progress
+      end
+    end
+  end
+  
+  puts "Extracting weather files..."
+  unzip_file = OpenStudio::UnzipFile.new(tmpfile.path.to_s)
+  unzip_file.extractAllFiles(OpenStudio::toPath(weather_dir))
+  
+  num_epws_actual = Dir[File.join(weather_dir, "*.epw")].count
+  puts "#{num_epws_actual} weather files are available in the weather directory."
+  puts "Completed."
+  exit!
+  
+end
+
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/valid.xml\n"
@@ -718,6 +780,10 @@ OptionParser.new do |opts|
     options[:hpxml] = t
   end
 
+  opts.on('--download-weather', 'Downloads all weather files') do |t|
+    options[:epws] = t
+  end
+  
   options[:debug] = false
   opts.on('-d', '--debug') do |t|
     options[:debug] = true
@@ -729,6 +795,10 @@ OptionParser.new do |opts|
   end
 
 end.parse!
+
+if options[:epws]
+  download_epws
+end
 
 if not options[:hpxml]
   fail "ERROR: HPXML argument is required. Call #{File.basename(__FILE__)} -h for usage."
@@ -759,7 +829,7 @@ Parallel.map(designs, in_threads: designs.size) do |design|
   
   print "[#{design}] Running workflow...\n"
   osw_path, output_hpxml_path = create_osw(design, basedir, resultsdir, options)
-  sql_path = run_osw(osw_path)
+  sql_path = run_osw(osw_path, options)
   
   print "[#{design}] Gathering results...\n"
   sim_outputs[design] = parse_sql(design, sql_path, output_hpxml_path)
