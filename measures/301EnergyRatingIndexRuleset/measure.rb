@@ -389,7 +389,13 @@ class OSModel
   
   def self.add_geometry_envelope(runner, model, building, weather)
 
-    # FIXME
+    # FIXME - Check cooling_season
+    heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
+    if heating_season.nil? or cooling_season.nil?
+      return false
+    end 
+
+   # FIXME
     avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
     if avg_ceil_hgt.nil?
       avg_ceil_hgt = 8.0
@@ -1631,12 +1637,7 @@ class OSModel
       
   end
 
-  def self.add_windows(runner, model, building, spaces, fenestration_areas, weather)
-  
-    heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
-    if heating_season.nil? or cooling_season.nil?
-      return false
-    end
+  def self.add_windows(runner, model, building, spaces, fenestration_areas, weather, cooling_season)
   
     surfaces = []
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
