@@ -176,7 +176,6 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedFloorArea")
-    XMLHelper.copy_element(new_construction, orig_construction, "BuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedBuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "GaragePresent")
   end
@@ -205,7 +204,6 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofConditionedFloorsAboveGrade")
     XMLHelper.copy_element(new_construction, orig_construction, "NumberofBedrooms")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedFloorArea")
-    XMLHelper.copy_element(new_construction, orig_construction, "BuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "ConditionedBuildingVolume")
     XMLHelper.copy_element(new_construction, orig_construction, "GaragePresent")
   end

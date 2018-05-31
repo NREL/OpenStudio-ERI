@@ -25,7 +25,6 @@
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
-          <BuildingVolume>87162.5</BuildingVolume>
           <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
