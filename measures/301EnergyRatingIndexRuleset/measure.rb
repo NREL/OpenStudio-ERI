@@ -447,12 +447,10 @@ class OSModel
   def self.set_zone_volumes(runner, model, building)
   
     total_conditioned_volume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
-    total_volume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/BuildingVolume"))
     thermal_zones = model.getThermalZones
 
-    # init
+    # Init
     living_volume = total_conditioned_volume
-    attic_volume = total_volume
     zones_updated = 0
   
     # Basements, crawl, garage
@@ -463,7 +461,6 @@ class OSModel
         zone_volume = Geometry.get_height_of_spaces(thermal_zone.spaces) * Geometry.get_floor_area_from_spaces(thermal_zone.spaces)
         thermal_zone.setVolume(UnitConversions.convert(zone_volume,"ft^3","m^3"))
         
-        attic_volume = total_volume - zone_volume
         if Geometry.is_finished_basement(thermal_zone)
           living_volume = total_conditioned_volume - zone_volume
         end
@@ -477,11 +474,9 @@ class OSModel
         zones_updated += 1
         
         if living_volume <= 0
-          fail "Calculated negative volume for living zone."
+          fail "Calculated volume for living zone #{living_volume} is not greater than zero."
         end
         thermal_zone.setVolume(UnitConversions.convert(living_volume,"ft^3","m^3"))
-        
-        attic_volume = total_volume - living_volume
         
       end
     end
@@ -491,10 +486,23 @@ class OSModel
       if Geometry.is_unfinished_attic(thermal_zone)
         zones_updated += 1
         
-        if attic_volume <= 0
-          fail "Calculated negative volume for attic zone."
+        zone_surfaces = []
+        thermal_zone.spaces.each do |space|
+          space.surfaces.each do |surface|
+            zone_surfaces << surface
+          end
         end
-        thermal_zone.setVolume(UnitConversions.convert(attic_volume,"ft^3","m^3"))
+        
+        # Assume square hip roof for volume calculations; energy results are very insensitive to actual volume
+        zone_area = Geometry.get_floor_area_from_spaces(thermal_zone.spaces)
+        zone_length = zone_area ** 0.5
+        zone_height = Math.tan(UnitConversions.convert(Geometry.get_roof_pitch(zone_surfaces), "deg", "rad")) * zone_length / 2.0
+        zone_volume = zone_area * zone_height / 3.0
+        
+        if zone_volume <= 0
+          fail "Calculated volume for attic zone #{zone_volume} is not greater than zero."
+        end
+        thermal_zone.setVolume(UnitConversions.convert(zone_volume,"ft^3","m^3"))
       
       end
     end
@@ -1465,10 +1473,13 @@ class OSModel
         roof_width = Math::sqrt(roof_net_area)
         roof_length = roof_net_area / roof_width
         z_origin = 0
+        roof_tilt = Float(roof.elements["Pitch"].text)/12.0
 
-        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(UnitConversions.convert(roof_length,"ft","m"), 
-                                                                     UnitConversions.convert(roof_width,"ft","m"), 
-                                                                     UnitConversions.convert(z_origin,"ft","m")), model)
+        surface = OpenStudio::Model::Surface.new(add_roof_polygon(UnitConversions.convert(roof_length,"ft","m"), 
+                                                                  UnitConversions.convert(roof_width,"ft","m"), 
+                                                                  UnitConversions.convert(z_origin,"ft","m"),
+                                                                  0.0, roof_tilt), model)
+                                                                     
         surface.setName(roof_id)
         surface.setSurfaceType("RoofCeiling")
         surface.setOutsideBoundaryCondition("Outdoors")

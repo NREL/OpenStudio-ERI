@@ -25,7 +25,6 @@
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>2</NumberofBedrooms>
           <ConditionedFloorArea>1539</ConditionedFloorArea>
-          <BuildingVolume>15775</BuildingVolume>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>

@@ -84,7 +84,6 @@ class EnergyRatingIndex301Validator
             'NumberofConditionedFloorsAboveGrade' => [1],
             'NumberofBedrooms' => [1],
             'ConditionedFloorArea' => [1],
-            'BuildingVolume' => [1],
             'ConditionedBuildingVolume' => [1],
             'GaragePresent' => [1],
         },
