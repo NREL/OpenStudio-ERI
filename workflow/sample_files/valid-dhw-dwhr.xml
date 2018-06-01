@@ -34,6 +34,10 @@
           <Year>2006</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2012</Year>
+          <ClimateZone>7</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
           <Name>Denver, CO</Name>
@@ -453,9 +457,9 @@
       <Lighting>
         <LightingFractions>
           <extension>
-            <QualifyingLightFixturesInterior>0.5</QualifyingLightFixturesInterior>
-            <QualifyingLightFixturesExterior>0.5</QualifyingLightFixturesExterior>
-            <QualifyingLightFixturesGarage>0.5</QualifyingLightFixturesGarage>
+            <FractionQualifyingLightFixturesInterior>0.5</FractionQualifyingLightFixturesInterior>
+            <FractionQualifyingLightFixturesExterior>0.5</FractionQualifyingLightFixturesExterior>
+            <FractionQualifyingLightFixturesGarage>0.5</FractionQualifyingLightFixturesGarage>
           </extension>
         </LightingFractions>
       </Lighting>

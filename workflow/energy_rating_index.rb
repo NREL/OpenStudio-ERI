@@ -11,36 +11,33 @@ require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/util"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/unit_conversions"
 
-# TODO: Rake task to package ERI
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
 
-designs = [
-           Constants.CalcTypeERIRatedHome,
-           Constants.CalcTypeERIReferenceHome,
-           #Constants.CalcTypeERIIndexAdjustmentDesign,
-          ]
-
 basedir = File.expand_path(File.dirname(__FILE__))
       
-def recreate_path(path)
+def rm_path(path)
   if Dir.exists?(path)
     FileUtils.rm_r(path)
   end
   for retries in 1..50
     break if not Dir.exists?(path)
-    sleep(0.1)
+    sleep(0.01)
   end
-  Dir.mkdir(path)
 end
       
-def create_osw(design, basedir, resultsdir, options)
+def remove_design_dir(design, basedir)
 
-  design_str = design.gsub(' ','')
+  designdir = File.join(basedir, design.gsub(' ',''))
+  rm_path(designdir)
+  
+  return designdir
+end
+      
+def create_osw(design, designdir, basedir, resultsdir, options, run_design)
 
   # Create dir
-  designdir = File.join(basedir, design_str)
-  recreate_path(designdir)
+  Dir.mkdir(designdir)
   
   # Create OSW
   osw_path = File.join(designdir, "run.osw")
@@ -51,7 +48,7 @@ def create_osw(design, basedir, resultsdir, options)
   # Add measures (w/args) to OSW
   schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   weather_dir = File.absolute_path(File.join(basedir, "..", "weather"))
-  output_hpxml_path = File.join(resultsdir, design_str + ".xml")
+  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
   measures = {}
   measures['301EnergyRatingIndexRuleset'] = {}
   measures['301EnergyRatingIndexRuleset']['calc_type'] = design
@@ -133,6 +130,7 @@ def read_output(design, sql_path, output_hpxml_path)
   design_output[:hpxml_doc] = REXML::Document.new(File.read(design_output[:hpxml]))
   design_output[:hpxml_cfa] = get_cfa(design_output[:hpxml_doc])
   design_output[:hpxml_nbr] = get_nbr(design_output[:hpxml_doc])
+  design_output[:hpxml_nst] = get_nst(design_output[:hpxml_doc])
   if design == Constants.CalcTypeERIReferenceHome
     design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(design_output[:hpxml_doc])
   end
@@ -283,23 +281,15 @@ def read_output(design, sql_path, output_hpxml_path)
 end
 
 def get_cfa(hpxml_doc)
-  cfa = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea")
-  
-  if cfa.nil?
-    fail "ERROR: Conditioned floor area not found."
-  end
-  
-  return cfa.to_f
+  return Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
 end
 
 def get_nbr(hpxml_doc)
-  nbr = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms")
-  
-  if nbr.nil?
-    fail "ERROR: Number of bedrooms not found."
-  end
-  
-  return nbr.to_i
+  return Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+end
+
+def get_nst(hpxml_doc)
+  return Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
 end
 
 def get_heating_fuel(hpxml_doc)
@@ -453,11 +443,8 @@ def dhw_adjustment(hpxml_doc)
   return Float(XMLHelper.get_value(hwdist, "extension/EnergyConsumptionAdjustmentFactor"))
 end
 
-def calculate_eri(design_outputs)
+def calculate_eri(rated_output, ref_output, results_iad=nil)
 
-  rated_output = design_outputs[Constants.CalcTypeERIRatedHome]
-  ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
-  
   results = {}
   
   # REUL = Reference Home End Use Loads (for heating, cooling or hot water) as computed using an Approved 
@@ -601,10 +588,38 @@ def calculate_eri(design_outputs)
   # TnML = nMEULHEAT + nMEULCOOL + nMEULHW + EULLA (MBtu/y).  
   results[:tnml] = results[:nmeul_heat] + results[:nmeul_cool] + results[:nmeul_dhw] + results[:eul_la]
   
-  # The HERS Index shall be determined in accordance with Equation 4.1-2:
-  # HERS Index = PEfrac * (TnML / TRL) * 100
-  results[:hers_index] = results[:pefrac] * 100 * results[:tnml] / results[:trl]
-  results[:hers_index] = results[:hers_index]
+  if not results_iad.nil?
+  
+    # ANSI/RESNET/ICC 301-2014 Addendum E-2018 House Size Index Adjustment Factors (IAF)
+    
+    # 4.3.3 The saving represented by the IAD shall be calculated using equation 4.3.3-1.
+    # IADSAVE = (100 – ERIIAD) / 100
+    results[:iad_save] = (100.0 - results_iad[:hers_index]) / 100.0
+    
+    # 4.3.4 The IAF for the Rated Home (IAFPD) shall be calculated in accordance with equation 4.3.4-1.
+    # IAFRH = IAFCFA * IAFNbr * IAFNS (Eq. 4.3.4-1)
+    # where:
+    #   IAFRH = combined Index Adjustment Factor for Rated Home
+    #   IAFCFA = (2400/CFA) ^ [0.304 * (IADSAVE)]
+    #   IAFNbr = 1+ [0.069 * (IADSAVE) * (Nbr-3)]
+    #   IAFNS = (2/NS) ^ [0.12 * (IADSAVE)]
+    results[:iaf_cfa] = (2400.0 / rated_output[:hpxml_cfa]) ** (0.304 * results[:iad_save])
+    results[:iaf_nbr] = 1.0 + (0.069 * results[:iad_save] * (rated_output[:hpxml_nbr] - 3.0))
+    results[:iaf_ns] = (2.0 / rated_output[:hpxml_nst]) ** (0.12 * results[:iad_save])
+    results[:iaf_rh] = results[:iaf_cfa] * results[:iaf_nbr] * results[:iaf_ns]
+    
+    # ERI = PEfrac * (TnML / (TRL * IAFRH)) * 100 (Eq 4.1-2)
+    # where:
+    #   IAFRH = Index Adjustment Factor of Rated Home
+    results[:hers_index] = results[:pefrac] * results[:tnml] / (results[:trl] * results[:iaf_rh]) * 100.0
+    
+  else
+  
+    # The HERS Index shall be determined in accordance with Equation 4.1-2:
+    # HERS Index = PEfrac * (TnML / TRL) * 100
+    results[:hers_index] = results[:pefrac] * results[:tnml] / results[:trl] * 100.0
+    
+  end
 
   return results
 end
@@ -612,110 +627,119 @@ end
 def write_results_annual_output(resultsdir, design, design_output)
   
   out_csv = File.join(resultsdir, "#{design.gsub(' ','')}.csv")
-  results_out = {
-                 "Electricity, Total (MBtu)"=>design_output[:elecTotal],
-                 "Electricity, Net (MBtu)"=>design_output[:elecTotal]-design_output[:elecPV],
-                 "Natural Gas, Total (MBtu)"=>design_output[:ngTotal],
-                 "Other Fuels, Total (MBtu)"=>design_output[:otherTotal],
-                 ""=>"", # line break
-                 "Electricity, Heating (MBtu)"=>design_output[:elecHeating],
-                 "Electricity, Cooling (MBtu)"=>design_output[:elecCooling],
-                 "Electricity, Fans/Pumps (MBtu)"=>design_output[:elecFans]+design_output[:elecPumps],
-                 "Electricity, Hot Water (MBtu)"=>design_output[:elecHotWater]+design_output[:elecRecircPump],
-                 "Electricity, Lighting (MBtu)"=>design_output[:elecIntLighting]+design_output[:elecExtLighting],
-                 "Electricity, Mech Vent (MBtu)"=>design_output[:elecMechVent],
-                 "Electricity, Refrigerator (MBtu)"=>design_output[:elecFridge],
-                 "Electricity, Dishwasher (MBtu)"=>design_output[:elecDishwasher],
-                 "Electricity, Clothes Washer (MBtu)"=>design_output[:elecClothesWasher],
-                 "Electricity, Clothes Dryer (MBtu)"=>design_output[:elecClothesDryer],
-                 "Electricity, Range/Oven (MBtu)"=>design_output[:elecRangeOven],
-                 "Electricity, Ceiling Fan (MBtu)"=>design_output[:elecCeilingFan],
-                 "Electricity, Plug Loads (MBtu)"=>design_output[:elecMELs]+design_output[:elecTV],
-                 "Electricity, PV (MBtu)"=>design_output[:elecPV],
-                 "Natural Gas, Heating (MBtu)"=>design_output[:ngHeating],
-                 "Natural Gas, Hot Water (MBtu)"=>design_output[:ngHotWater],
-                 "Natural Gas, Clothes Dryer (MBtu)"=>design_output[:ngClothesDryer],
-                 "Natural Gas, Range/Oven (MBtu)"=>design_output[:ngRangeOven],
-                 "Other Fuels, Heating (MBtu)"=>design_output[:otherHeating],
-                 "Other Fuels, Hot Water (MBtu)"=>design_output[:otherHotWater],
-                 "Other Fuels, Clothes Dryer (MBtu)"=>design_output[:otherClothesDryer],
-                 "Other Fuels, Range/Oven (MBtu)"=>design_output[:otherRangeOven],
-                }
+  
+  results_out = {}
+  results_out["Electricity, Total (MBtu)"] = design_output[:elecTotal]
+  results_out["Electricity, Net (MBtu)"] = design_output[:elecTotal]-design_output[:elecPV]
+  results_out["Natural Gas, Total (MBtu)"] = design_output[:ngTotal]
+  results_out["Other Fuels, Total (MBtu)"] = design_output[:otherTotal]
+  results_out[""] = "", # line break
+  results_out["Electricity, Heating (MBtu)"] = design_output[:elecHeating]
+  results_out["Electricity, Cooling (MBtu)"] = design_output[:elecCooling]
+  results_out["Electricity, Fans/Pumps (MBtu)"] = design_output[:elecFans]+design_output[:elecPumps]
+  results_out["Electricity, Hot Water (MBtu)"] = design_output[:elecHotWater]+design_output[:elecRecircPump]
+  results_out["Electricity, Lighting (MBtu)"] = design_output[:elecIntLighting]+design_output[:elecExtLighting]
+  results_out["Electricity, Mech Vent (MBtu)"] = design_output[:elecMechVent]
+  results_out["Electricity, Refrigerator (MBtu)"] = design_output[:elecFridge]
+  results_out["Electricity, Dishwasher (MBtu)"] = design_output[:elecDishwasher]
+  results_out["Electricity, Clothes Washer (MBtu)"] = design_output[:elecClothesWasher]
+  results_out["Electricity, Clothes Dryer (MBtu)"] = design_output[:elecClothesDryer]
+  results_out["Electricity, Range/Oven (MBtu)"] = design_output[:elecRangeOven]
+  results_out["Electricity, Ceiling Fan (MBtu)"] = design_output[:elecCeilingFan]
+  results_out["Electricity, Plug Loads (MBtu)"] = design_output[:elecMELs]+design_output[:elecTV]
+  results_out["Electricity, PV (MBtu)"] = design_output[:elecPV]
+  results_out["Natural Gas, Heating (MBtu)"] = design_output[:ngHeating]
+  results_out["Natural Gas, Hot Water (MBtu)"] = design_output[:ngHotWater]
+  results_out["Natural Gas, Clothes Dryer (MBtu)"] = design_output[:ngClothesDryer]
+  results_out["Natural Gas, Range/Oven (MBtu)"] = design_output[:ngRangeOven]
+  results_out["Other Fuels, Heating (MBtu)"] = design_output[:otherHeating]
+  results_out["Other Fuels, Hot Water (MBtu)"] = design_output[:otherHotWater]
+  results_out["Other Fuels, Clothes Dryer (MBtu)"] = design_output[:otherClothesDryer]
+  results_out["Other Fuels, Range/Oven (MBtu)"] = design_output[:otherRangeOven]
   CSV.open(out_csv, "wb") {|csv| results_out.to_a.each {|elem| csv << elem} }
+  
 end
 
-def write_results(results, resultsdir, design_outputs)
+def write_results(results, resultsdir, design_outputs, using_iaf)
 
+  ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
+  
   # Results file
   results_csv = File.join(resultsdir, "ERI_Results.csv")
-  results_out = {
-                 "HERS Index"=>results[:hers_index].round(2),
-                 "REUL Heating (MBtu)"=>results[:reul_heat].round(2),
-                 "REUL Cooling (MBtu)"=>results[:reul_cool].round(2),
-                 "REUL Hot Water (MBtu)"=>results[:reul_dhw].round(2),
-                 "EC_r Heating (MBtu)"=>results[:ec_r_heat].round(2),
-                 "EC_r Cooling (MBtu)"=>results[:ec_r_cool].round(2),
-                 "EC_r Hot Water (MBtu)"=>results[:ec_r_dhw].round(2),
-                 #"XEUL Heating (MBtu)"=>results[:xeul_heat].round(2),
-                 #"XEUL Cooling (MBtu)"=>results[:xeul_cool].round(2),
-                 #"XEUL Hot Water (MBtu)"=>results[:xeul_dhw].round(2),
-                 "EC_x Heating (MBtu)"=>results[:ec_x_heat].round(2),
-                 "EC_x Cooling (MBtu)"=>results[:ec_x_cool].round(2),
-                 "EC_x Hot Water (MBtu)"=>results[:ec_x_dhw].round(2),
-                 "EC_x L&A (MBtu)"=>results[:eul_la].round(2),
-                 # TODO:
-                 # Heating Fuel
-                 # Heating MEPR
-                 # Cooling Fuel
-                 # Cooling MEPR
-                 # Hot Water Fuel
-                 # Hot Water MEPR
-                }
+  results_out = {}
+  results_out["HERS Index"] = results[:hers_index].round(2)
+  results_out["REUL Heating (MBtu)"] = results[:reul_heat].round(2)
+  results_out["REUL Cooling (MBtu)"] = results[:reul_cool].round(2)
+  results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].round(2)
+  results_out["EC_r Heating (MBtu)"] = results[:ec_r_heat].round(2)
+  results_out["EC_r Cooling (MBtu)"] = results[:ec_r_cool].round(2)
+  results_out["EC_r Hot Water (MBtu)"] = results[:ec_r_dhw].round(2)
+  #results_out["XEUL Heating (MBtu)"] = results[:xeul_heat].round(2)
+  #results_out["XEUL Cooling (MBtu)"] = results[:xeul_cool].round(2)
+  #results_out["XEUL Hot Water (MBtu)"] = results[:xeul_dhw].round(2)
+  results_out["EC_x Heating (MBtu)"] = results[:ec_x_heat].round(2)
+  results_out["EC_x Cooling (MBtu)"] = results[:ec_x_cool].round(2)
+  results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].round(2)
+  results_out["EC_x L&A (MBtu)"] = results[:eul_la].round(2)
+  if using_iaf
+    results_out["IAD_Save (%)"] = results[:iad_save]
+  end
+  # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
   CSV.open(results_csv, "wb") {|csv| results_out.to_a.each {|elem| csv << elem} }
   
   # Worksheet file
   worksheet_csv = File.join(resultsdir, "ERI_Worksheet.csv")
-  ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
-  worksheet_out = {
-                   "Coeff Heating a"=>results[:coeff_heat_a].round(4),
-                   "Coeff Heating b"=>results[:coeff_heat_b].round(4),
-                   "Coeff Cooling a"=>results[:coeff_cool_a].round(4),
-                   "Coeff Cooling b"=>results[:coeff_cool_b].round(4),
-                   "Coeff Hot Water a"=>results[:coeff_dhw_a].round(4),
-                   "Coeff Hot Water b"=>results[:coeff_dhw_b].round(4),
-                   "DSE_r Heating"=>results[:dse_r_heat].round(4),
-                   "DSE_r Cooling"=>results[:dse_r_cool].round(4),
-                   "DSE_r Hot Water"=>results[:dse_r_dhw].round(4),
-                   "EEC_x Heating"=>results[:eec_x_heat].round(4),
-                   "EEC_x Cooling"=>results[:eec_x_cool].round(4),
-                   "EEC_x Hot Water"=>results[:eec_x_dhw].round(4),
-                   "EEC_r Heating"=>results[:eec_r_heat].round(4),
-                   "EEC_r Cooling"=>results[:eec_r_cool].round(4),
-                   "EEC_r Hot Water"=>results[:eec_r_dhw].round(4),
-                   "nEC_x Heating"=>results[:nec_x_heat].round(4),
-                   "nEC_x Cooling"=>results[:nec_x_cool].round(4),
-                   "nEC_x Hot Water"=>results[:nec_x_dhw].round(4),
-                   "nMEUL Heating"=>results[:nmeul_heat].round(4),
-                   "nMEUL Cooling"=>results[:nmeul_cool].round(4),
-                   "nMEUL Hot Water"=>results[:nmeul_dhw].round(4),
-                   "Total Loads TnML"=>results[:tnml].round(4),
-                   "Total Loads TRL"=>results[:trl].round(4),
-                   "HERS Index"=>results[:hers_index].round(2),
-                   ""=>"", # line break
-                   "Home CFA"=>ref_output[:hpxml_cfa],
-                   "Home Nbr"=>ref_output[:hpxml_nbr],
-                   "L&A resMELs"=>ref_output[:elecMELs].round(2),
-                   "L&A intLgt"=>ref_output[:elecIntLighting].round(2),
-                   "L&A extLgt"=>ref_output[:elecExtLighting].round(2),
-                   "L&A Fridg"=>ref_output[:elecFridge].round(2),
-                   "L&A TVs"=>ref_output[:elecTV].round(2),
-                   "L&A R/O"=>(ref_output[:elecRangeOven]+ref_output[:fuelRangeOven]).round(2),
-                   "L&A cDryer"=>(ref_output[:elecClothesDryer]+ref_output[:fuelClothesDryer]).round(2),
-                   "L&A dWash"=>ref_output[:elecDishwasher].round(2),
-                   "L&A cWash"=>ref_output[:elecClothesWasher].round(2),
-                   "L&A mechV"=>ref_output[:elecMechVent].round(2),
-                   "L&A total"=>results[:reul_la].round(2),
-                  }
+  worksheet_out = {}
+  worksheet_out["Coeff Heating a"] = results[:coeff_heat_a].round(4)
+  worksheet_out["Coeff Heating b"] = results[:coeff_heat_b].round(4)
+  worksheet_out["Coeff Cooling a"] = results[:coeff_cool_a].round(4)
+  worksheet_out["Coeff Cooling b"] = results[:coeff_cool_b].round(4)
+  worksheet_out["Coeff Hot Water a"] = results[:coeff_dhw_a].round(4)
+  worksheet_out["Coeff Hot Water b"] = results[:coeff_dhw_b].round(4)
+  worksheet_out["DSE_r Heating"] = results[:dse_r_heat].round(4)
+  worksheet_out["DSE_r Cooling"] = results[:dse_r_cool].round(4)
+  worksheet_out["DSE_r Hot Water"] = results[:dse_r_dhw].round(4)
+  worksheet_out["EEC_x Heating"] = results[:eec_x_heat].round(4)
+  worksheet_out["EEC_x Cooling"] = results[:eec_x_cool].round(4)
+  worksheet_out["EEC_x Hot Water"] = results[:eec_x_dhw].round(4)
+  worksheet_out["EEC_r Heating"] = results[:eec_r_heat].round(4)
+  worksheet_out["EEC_r Cooling"] = results[:eec_r_cool].round(4)
+  worksheet_out["EEC_r Hot Water"] = results[:eec_r_dhw].round(4)
+  worksheet_out["nEC_x Heating"] = results[:nec_x_heat].round(4)
+  worksheet_out["nEC_x Cooling"] = results[:nec_x_cool].round(4)
+  worksheet_out["nEC_x Hot Water"] = results[:nec_x_dhw].round(4)
+  worksheet_out["nMEUL Heating"] = results[:nmeul_heat].round(4)
+  worksheet_out["nMEUL Cooling"] = results[:nmeul_cool].round(4)
+  worksheet_out["nMEUL Hot Water"] = results[:nmeul_dhw].round(4)
+  if using_iaf
+    worksheet_out["IAF CFA"] = results[:iaf_cfa].round(4)
+    worksheet_out["IAF NBR"] = results[:iaf_nbr].round(4)
+    worksheet_out["IAF NS"] = results[:iaf_ns].round(4)
+    worksheet_out["IAF RH"] = results[:iaf_rh].round(4)
+  end
+  worksheet_out["Total Loads TnML"] = results[:tnml].round(4)
+  worksheet_out["Total Loads TRL"] = results[:trl].round(4)
+  if using_iaf
+    worksheet_out["Total Loads TRL*IAF"] = (results[:trl] * results[:iaf_rh]).round(4)
+  end
+  worksheet_out["HERS Index"] = results[:hers_index].round(2)
+  worksheet_out[""] = "", # line break
+  worksheet_out["Ref Home CFA"] = ref_output[:hpxml_cfa]
+  worksheet_out["Ref Home Nbr"] = ref_output[:hpxml_nbr]
+  if using_iaf
+    worksheet_out["Ref Home NS"] = ref_output[:hpxml_nst]
+  end
+  worksheet_out["Ref L&A resMELs"] = ref_output[:elecMELs].round(2)
+  worksheet_out["Ref L&A intLgt"] = ref_output[:elecIntLighting].round(2)
+  worksheet_out["Ref L&A extLgt"] = ref_output[:elecExtLighting].round(2)
+  worksheet_out["Ref L&A Fridg"] = ref_output[:elecFridge].round(2)
+  worksheet_out["Ref L&A TVs"] = ref_output[:elecTV].round(2)
+  worksheet_out["Ref L&A R/O"] = (ref_output[:elecRangeOven]+ref_output[:fuelRangeOven]).round(2)
+  worksheet_out["Ref L&A cDryer"] = (ref_output[:elecClothesDryer]+ref_output[:fuelClothesDryer]).round(2)
+  worksheet_out["Ref L&A dWash"] = ref_output[:elecDishwasher].round(2)
+  worksheet_out["Ref L&A cWash"] = ref_output[:elecClothesWasher].round(2)
+  worksheet_out["Ref L&A mechV"] = ref_output[:elecMechVent].round(2)
+  worksheet_out["Ref L&A total"] = results[:reul_la].round(2)
   CSV.open(worksheet_csv, "wb") {|csv| worksheet_out.to_a.each {|elem| csv << elem} }
   
 end
@@ -788,6 +812,11 @@ OptionParser.new do |opts|
     options[:epws] = t
   end
   
+  options[:iaf] = false
+  opts.on('--iaf', 'Apply house size Index Adjustment factors (IAF)') do |t|
+    options[:iaf] = true
+  end
+  
   options[:debug] = false
   opts.on('-d', '--debug') do |t|
     options[:debug] = true
@@ -823,32 +852,50 @@ end
 
 # Create results dir
 resultsdir = File.join(basedir, "results")
-recreate_path(resultsdir)
+rm_path(resultsdir)
+Dir.mkdir(resultsdir)
+
+run_designs = {Constants.CalcTypeERIRatedHome => true,
+               Constants.CalcTypeERIReferenceHome => true,
+               Constants.CalcTypeERIIndexAdjustmentDesign => options[:iaf]}
 
 # Run simulations
 design_outputs = {}
 puts "HPXML: #{options[:hpxml]}"
-Parallel.map(designs, in_threads: designs.size) do |design|
+Parallel.map(run_designs.keys, in_threads: run_designs.size) do |design|
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   
-  print "[#{design}] Running workflow...\n"
-  osw_path, output_hpxml_path = create_osw(design, basedir, resultsdir, options)
-  sql_path = run_osw(osw_path, options)
+  designdir = remove_design_dir(design, basedir)
   
-  print "[#{design}] Gathering results...\n"
-  design_outputs[design] = read_output(design, sql_path, output_hpxml_path)
+  if run_designs[design]
+    print "[#{design}] Running workflow...\n"
+    osw_path, output_hpxml_path = create_osw(design, designdir, basedir, resultsdir, options, run_designs[design])
+    sql_path = run_osw(osw_path, options)
+    
+    print "[#{design}] Gathering results...\n"
+    design_outputs[design] = read_output(design, sql_path, output_hpxml_path)
+    
+    write_results_annual_output(resultsdir, design, design_outputs[design])
+    
+    print "[#{design}] Done.\n"
+  end
   
-  write_results_annual_output(resultsdir, design, design_outputs[design])
-  
-  print "[#{design}] Done.\n"
 end
 
 # Calculate and write results
 puts "Calculating ERI..."
-results = calculate_eri(design_outputs)
+if options[:iaf]
+  results_iad = calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign], 
+                              design_outputs[Constants.CalcTypeERIReferenceHome])
+else
+  results_iad = nil
+end
+results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome], 
+                        design_outputs[Constants.CalcTypeERIReferenceHome], 
+                        results_iad)
 
 puts "Writing output files..."
-write_results(results, resultsdir, design_outputs)
+write_results(results, resultsdir, design_outputs, options[:iaf])
 
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
 puts "Completed in #{(Time.now - start_time).round(1)} seconds."
