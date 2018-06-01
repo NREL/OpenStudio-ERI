@@ -13,7 +13,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
     Dir["#{xmldir}/valid*.xml"].each do |xml|
-      run_and_check(xml, parent_dir)
+      run_and_check(xml, parent_dir, false)
     end
   end
   
@@ -21,7 +21,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
     Dir["#{xmldir}/invalid*.xml"].each do |xml|
-      run_and_check(xml, parent_dir, expect_error:true)
+      run_and_check(xml, parent_dir, true)
     end
   end
   
@@ -51,13 +51,13 @@ class EnergyRatingIndexTest < MiniTest::Test
       test_num += 1
       
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
       _check_reference_home_components(ref_hpxml, test_num)
       
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
       ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
-      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir)
+      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir, false)
       _check_e_ratio(results_csv2)
     end
   end
@@ -67,8 +67,18 @@ class EnergyRatingIndexTest < MiniTest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
-      _check_method_results(results_csv, test_num, test_num == 2)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
+      _check_method_results(results_csv, test_num, test_num == 2, false)
+    end
+  end
+  
+  def test_resnet_hers_method_iaf
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
+    Dir["#{xmldir}/*.xml"].each do |xml|
+      test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, true)
+      _check_method_results(results_csv, test_num, test_num == 2, true)
     end
   end
   
@@ -85,7 +95,7 @@ class EnergyRatingIndexTest < MiniTest::Test
         test_num = File.basename(xml).gsub('L100-AL-','').gsub('.xml','').to_i
         test_loc = 'AL'
       end
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
       _check_method_proposed_results(results_csv, test_num, test_loc, test_num == 8)
     end
   end
@@ -108,7 +118,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num += 1
       
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
       
       base_val = nil
       if [2,3].include? test_num
@@ -145,13 +155,18 @@ class EnergyRatingIndexTest < MiniTest::Test
 
   private
   
-  def run_and_check(xml, parent_dir, expect_error=false)
+  def run_and_check(xml, parent_dir, expect_error, using_iaf=false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
     
+    iaf_str = ''
+    if using_iaf
+      iaf_str = ' --iaf'
+    end
+    
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml}"
+    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb#{iaf_str} -x #{xml}"
     system(command)
     
     results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
@@ -166,10 +181,17 @@ class EnergyRatingIndexTest < MiniTest::Test
       assert(File.exists?(rated_hpxml))
       assert(File.exists?(results_csv))
       assert(File.exists?(worksheet_csv))
+      if using_iaf
+        iad_hpxml = File.join(parent_dir, "results", "HERSIndexAdjustmentDesign.xml")
+        assert(File.exists?(iad_hpxml))
+      end
       
       # Check Reference/Rated HPXMLs are valid
       _test_schema_validation(parent_dir, ref_hpxml)
       _test_schema_validation(parent_dir, rated_hpxml)
+      if using_iaf
+        _test_schema_validation(parent_dir, iad_hpxml)
+      end
     end
   
     return ref_hpxml, rated_hpxml, results_csv
@@ -189,7 +211,7 @@ class EnergyRatingIndexTest < MiniTest::Test
   def _check_reference_home_components(ref_hpxml, test_num)
     hpxml_doc = REXML::Document.new(File.read(ref_hpxml))
 
-    # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 â€“ 4
+    # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 – 4
     
     epsilon = 0.0005 # 0.05%
     
@@ -661,7 +683,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     assert_in_epsilon(100, hers_index, 0.005)
   end
   
-  def _check_method_results(results_csv, test_num, has_tankless_water_heater)
+  def _check_method_results(results_csv, test_num, has_tankless_water_heater, using_iaf)
     require 'csv'
     values = {}
     CSV.foreach(results_csv) do |row|
@@ -676,7 +698,11 @@ class EnergyRatingIndexTest < MiniTest::Test
     hotwater_mepr = {1=>0.88,   2=>0.82,   3=>0.88,   4=>0.88,   5=>0.88  }
     ec_x_la =       {1=>21.27,  2=>23.33,  3=>22.05,  4=>22.35,  5=>23.33 }
     
-    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater)
+    cfa = {1=>1539, 2=>1539, 3=>1539, 4=>1539, 5=>1539}
+    nbr = {1=>3,    2=>3,    3=>2,    4=>4,    5=>3}
+    nst = {1=>1,    2=>1,    3=>1,    4=>1,    5=>1}
+      
+    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
     
   end
   
@@ -705,11 +731,11 @@ class EnergyRatingIndexTest < MiniTest::Test
       ec_x_la =       {6=>21.86,  7=>21.86,  8=>21.86,  9=>20.70,  10=>23.02,  11=>23.92,  12=>21.86,  13=>21.86,  14=>21.86,  15=>21.86,  16=>21.86,  17=>21.86,  18=>21.86,  19=>21.86,  20=>21.86,  21=>21.86,  22=>21.86}
     end
     
-    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater)
+    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
     
   end
   
-  def _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater)
+  def _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
                                        
     if heating_fuel[test_num] == 'gas'
       heating_a = 1.0943
@@ -755,10 +781,23 @@ class EnergyRatingIndexTest < MiniTest::Test
     cooling_nmeul = values['REUL Cooling (MBtu)'] * (cooling_nec_x / values['EC_r Cooling (MBtu)'])
     hotwater_nmeul = values['REUL Hot Water (MBtu)'] * (hotwater_nec_x / values['EC_r Hot Water (MBtu)'])
     
+    if using_iaf
+      iaf_cfa = ((2400.0 / cfa[test_num]) ** (0.304 * values['IAD_Save (%)']))
+      iaf_nbr = (1.0 + (0.069 * values['IAD_Save (%)'] * (nbr[test_num] - 3.0)))
+      iaf_nst = ((2.0 / nst[test_num]) ** (0.12 * values['IAD_Save (%)']))
+      iaf_rh = iaf_cfa * iaf_nbr * iaf_nst
+    end
+    
     tnml = heating_nmeul + cooling_nmeul + hotwater_nmeul + values['EC_x L&A (MBtu)']
     trl = values['REUL Heating (MBtu)'] + values['REUL Cooling (MBtu)'] + values['REUL Hot Water (MBtu)'] + ec_x_la[test_num]
     
-    hers_score = 100 * tnml / trl
+    if using_iaf
+      trl_iaf = trl * iaf_rh
+      hers_score = 100 * tnml / trl_iaf
+    else
+      hers_score = 100 * tnml / trl
+    end
+    
     assert_operator((values['HERS Index'] - hers_score).abs / values['HERS Index'], :<, 0.005)
   end
   

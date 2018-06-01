@@ -90,7 +90,8 @@ class EnergyRatingIndex301Validator
         
         ## Climate
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/' => {
-            'ClimateZoneIECC[Year="2006"]' => [1],
+            'ClimateZoneIECC[Year="2006"]' => [1], # Used by ANSI/RESNET/ICC 301-2014
+            'ClimateZoneIECC[Year="2012"]' => [1], # Used by ANSI/RESNET/ICC 301-2014 Addendum E-2018 House Size Index Adjustment Factors (IAF)
             'WeatherStation/WMO' => [1],  # See weather/data.csv for the list of acceptable WMO station numbers
         },
 
@@ -578,9 +579,9 @@ class EnergyRatingIndex301Validator
         
             # Lighting (Detailed)
             '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
-                'extension/QualifyingLightFixturesInterior' => [1],
-                'extension/QualifyingLightFixturesExterior' => [1],
-                'extension/QualifyingLightFixturesGarage' => [1],
+                'extension/FractionQualifyingLightFixturesInterior' => [1],
+                'extension/FractionQualifyingLightFixturesExterior' => [1],
+                'extension/FractionQualifyingLightFixturesGarage' => [1],
             },
             
             # Lighting (Simplified)

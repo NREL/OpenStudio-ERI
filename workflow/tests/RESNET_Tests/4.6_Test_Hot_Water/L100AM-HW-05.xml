@@ -34,6 +34,10 @@
           <Year>2006</Year>
           <ClimateZone>1A</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2012</Year>
+          <ClimateZone>1A</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
           <Name>Miami, FL</Name>

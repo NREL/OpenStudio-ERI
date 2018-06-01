@@ -50,7 +50,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     #calc_types << Constants.CalcTypeStandard
     calc_types << Constants.CalcTypeERIReferenceHome
     calc_types << Constants.CalcTypeERIRatedHome
-    #calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
+    calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
     calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument("calc_type", calc_types, true)
     calc_type.setDisplayName("Calculation Type")
     calc_type.setDescription("'#{Constants.CalcTypeStandard}' will use the DOE Building America Simulation Protocols. HERS options will use the ANSI/RESNET 301-2014 Standard.")
@@ -183,7 +183,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
       return false
     end
-    runner.registerWarning("#{Time.now - t} seconds")
     
     # Apply Location to obtain weather data
     success, weather = Location.apply(model, runner, epw_path, "NA", "NA")
@@ -588,29 +587,24 @@ class OSModel
     
   end
   
-  def self.create_spaces_and_zones(model, spaces, space_type)
+  def self.create_space_and_zone(model, spaces, space_type)
     if not spaces.keys.include? space_type
-      thermal_zone = create_zone(model, space_type)
-      create_space(model, space_type, spaces, thermal_zone)
+      thermal_zone = OpenStudio::Model::ThermalZone.new(model)
+      thermal_zone.setName(space_type)
+      
+      space = OpenStudio::Model::Space.new(model)
+      space.setName(space_type)
+      
+      st = OpenStudio::Model::SpaceType.new(model)
+      st.setStandardsSpaceType(space_type)
+      space.setSpaceType(st)
+      
+      space.setThermalZone(thermal_zone)
+      spaces[space_type] = space
     end
   end
 
-  def self.create_zone(model, name)
-    thermal_zone = OpenStudio::Model::ThermalZone.new(model)
-    thermal_zone.setName(name)
-    return thermal_zone
-  end
-  
-  def self.create_space(model, space_type, spaces, thermal_zone)
-    space = OpenStudio::Model::Space.new(model)
-    space.setName(space_type)
-    st = OpenStudio::Model::SpaceType.new(model)
-    st.setStandardsSpaceType(space_type)
-    space.setSpaceType(st)
-    space.setThermalZone(thermal_zone)
-    spaces[space_type] = space
-  end
-
+  # FIXME: Remove this method and create spaces/zones on the fly.
   def self.create_all_spaces_and_zones(model, building)
     
     spaces = {}
@@ -619,9 +613,9 @@ class OSModel
     
       attic_type = attic.elements["AtticType"].text
       if ["vented attic", "unvented attic"].include? attic_type
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedAttic)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeUnfinishedAttic)
       elsif attic_type == "cape cod"
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeLiving)
       elsif attic_type != "flat roof" and attic_type != "cathedral ceiling"
         fail "Unhandled value (#{attic_type})."
       end
@@ -631,9 +625,9 @@ class OSModel
     
         exterior_adjacent_to = floor.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeLiving)
         elsif exterior_adjacent_to == "garage"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeGarage)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
@@ -645,9 +639,9 @@ class OSModel
       
         exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeLiving)
         elsif exterior_adjacent_to == "garage"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeGarage)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end        
@@ -660,11 +654,11 @@ class OSModel
       
       foundation_space_type = foundation.elements["FoundationType"]      
       if foundation_space_type.elements["Basement/Conditioned/text()='true'"]        
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeFinishedBasement)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeFinishedBasement)
       elsif foundation_space_type.elements["Basement/Conditioned/text()='false'"]      
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedBasement)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeUnfinishedBasement)
       elsif foundation_space_type.elements["Crawlspace"]
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeCrawl)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeCrawl)
       elsif not foundation_space_type.elements["SlabOnGrade"] and not foundation_space_type.elements["Ambient"]
         fail "Unhandled value (#{foundation_space_type})."
       end
@@ -673,7 +667,7 @@ class OSModel
         
         exterior_adjacent_to = frame_floor.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "living space"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeLiving)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
@@ -684,11 +678,11 @@ class OSModel
         
         exterior_adjacent_to = foundation_wall.elements["extension/ExteriorAdjacentTo"].text
         if exterior_adjacent_to == "unconditioned basement"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeUnfinishedBasement)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeUnfinishedBasement)
         elsif exterior_adjacent_to == "conditioned basement"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeFinishedBasement)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeFinishedBasement)
         elsif exterior_adjacent_to == "crawlspace"
-          create_spaces_and_zones(model, spaces, Constants.SpaceTypeCrawl)
+          create_space_and_zone(model, spaces, Constants.SpaceTypeCrawl)
         elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
           fail "Unhandled value (#{exterior_adjacent_to})."
         end
@@ -701,18 +695,18 @@ class OSModel
     
       interior_adjacent_to = wall.elements["extension/InteriorAdjacentTo"].text
       if interior_adjacent_to == "living space"
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeLiving)
       elsif interior_adjacent_to == "garage"
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeGarage)
       else
         fail "Unhandled value (#{interior_adjacent_to})."
       end
       
       exterior_adjacent_to = wall.elements["extension/ExteriorAdjacentTo"].text
       if exterior_adjacent_to == "garage"
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeGarage)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeGarage)
       elsif exterior_adjacent_to == "living space"
-        create_spaces_and_zones(model, spaces, Constants.SpaceTypeLiving)
+        create_space_and_zone(model, spaces, Constants.SpaceTypeLiving)
       elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
         fail "Unhandled value (#{exterior_adjacent_to})."
       end      
@@ -883,7 +877,7 @@ class OSModel
   end
   
   def self.add_foundations(runner, model, building, spaces, fenestration_areas, unit)
-
+  
     building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       
       foundation_type = foundation.elements["FoundationType"]
