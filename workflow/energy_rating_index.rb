@@ -609,7 +609,9 @@ def calculate_eri(design_outputs)
   return results
 end
 
-def write_results_annual_output(out_csv, design_output)
+def write_results_annual_output(resultsdir, design, design_output)
+  
+  out_csv = File.join(resultsdir, "#{design.gsub(' ','')}.csv")
   results_out = {
                  "Electricity, Total (MBtu)"=>design_output[:elecTotal],
                  "Electricity, Net (MBtu)"=>design_output[:elecTotal]-design_output[:elecPV],
@@ -715,15 +717,6 @@ def write_results(results, resultsdir, design_outputs)
                    "L&A total"=>results[:reul_la].round(2),
                   }
   CSV.open(worksheet_csv, "wb") {|csv| worksheet_out.to_a.each {|elem| csv << elem} }
-  
-  # Summary energy results
-  rated_annual_csv = File.join(resultsdir, "HERSRatedHome.csv")
-  rated_output = design_outputs[Constants.CalcTypeERIRatedHome]
-  write_results_annual_output(rated_annual_csv, rated_output)
-  
-  ref_annual_csv = File.join(resultsdir, "HERSReferenceHome.csv")
-  ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
-  write_results_annual_output(ref_annual_csv, ref_output)
   
 end
 
@@ -844,6 +837,8 @@ Parallel.map(designs, in_threads: designs.size) do |design|
   
   print "[#{design}] Gathering results...\n"
   design_outputs[design] = read_output(design, sql_path, output_hpxml_path)
+  
+  write_results_annual_output(resultsdir, design, design_outputs[design])
   
   print "[#{design}] Done.\n"
 end
