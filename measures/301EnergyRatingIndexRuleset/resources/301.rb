@@ -2299,7 +2299,7 @@ class EnergyRatingIndex301Ruleset
     end
     extension = XMLHelper.add_element(new_hw_dist, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", rated_w_gpd)
-    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj) # used by energy_rating_index.rb
+    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj)
     if is_recirc
       XMLHelper.add_element(extension, "RecircPumpAnnualkWh", recirc_pump_annual_kwh)
     end
@@ -2337,7 +2337,7 @@ class EnergyRatingIndex301Ruleset
     
     new_hw_dist = new_systems.elements["WaterHeating/HotWaterDistribution"]
     extension = new_hw_dist.elements["extension"]
-    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0) # used by energy_rating_index.rb
+    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
     
   end
   
