@@ -139,9 +139,6 @@ def read_output(design, sql_path, output_hpxml_path)
   design_output[:hpxml_eec_heat] = get_eec_heat(design_output[:hpxml_doc])
   design_output[:hpxml_eec_cool] = get_eec_cool(design_output[:hpxml_doc])
   design_output[:hpxml_eec_dhw] = get_eec_dhw(design_output[:hpxml_doc])
-  if design != Constants.CalcTypeERIReferenceHome
-    design_output[:hpxml_dhw_adj] = dhw_adjustment(design_output[:hpxml_doc])
-  end
   
   # Total site energy
   design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design)
@@ -436,13 +433,6 @@ def get_eec_dhw(hpxml_doc)
   return eec_dhw
 end
 
-def dhw_adjustment(hpxml_doc)
-  # FIXME: Can we modify EF/COP/etc. efficiencies like we do for DSE, so that we don't need to post-process?
-  # FIXME: Double-check this only applies to the Rated Home
-  hwdist = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution"]
-  return Float(XMLHelper.get_value(hwdist, "extension/EnergyConsumptionAdjustmentFactor"))
-end
-
 def calculate_eri(rated_output, ref_output, results_iad=nil)
 
   results = {}
@@ -508,7 +498,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_x_heat] = rated_output[:elecHeating] + rated_output[:fuelHeating]
   results[:ec_x_cool] = rated_output[:elecCooling]
-  results[:ec_x_dhw] = (rated_output[:elecHotWater] + rated_output[:fuelHotWater]) * rated_output[:hpxml_dhw_adj] + rated_output[:elecRecircPump]
+  results[:ec_x_dhw] = rated_output[:elecHotWater] + rated_output[:fuelHotWater] + rated_output[:elecRecircPump]
   
   # EC_r = estimated Energy Consumption for the Reference Home’s end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.

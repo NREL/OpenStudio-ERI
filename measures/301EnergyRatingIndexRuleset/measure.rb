@@ -1827,6 +1827,13 @@ class OSModel
   
   def self.add_water_heater(runner, model, building, unit, weather, living_space)
 
+    ec_adj = XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor")
+    if ec_adj.nil?
+      ec_adj = 1.0
+    else
+      ec_adj = Float(ec_adj)
+    end
+  
     dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
     setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
@@ -1841,12 +1848,12 @@ class OSModel
       else
         re = 0.98
       end
-      capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity"))/1000.0
+      capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity")) / 1000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
       success = Waterheater.apply_tank(model, unit, runner, living_space, to_beopt_fuel(fuel), 
                                        capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
-                                       oncycle_power, offcycle_power)
+                                       oncycle_power, offcycle_power, ec_adj)
       return false if not success
       
     elsif wh_type == "instantaneous water heater"
@@ -1858,7 +1865,7 @@ class OSModel
       offcycle_power = 0.0
       success = Waterheater.apply_tankless(model, unit, runner, living_space, to_beopt_fuel(fuel), 
                                            capacity_kbtuh, ef, ef_adj,
-                                           setpoint_temp, oncycle_power, offcycle_power)
+                                           setpoint_temp, oncycle_power, offcycle_power, ec_adj)
       return false if not success
       
     elsif wh_type == "heat pump water heater"
@@ -1877,6 +1884,7 @@ class OSModel
       int_factor = 1.0 # FIXME
       temp_depress = 0.0 # FIXME
       ducting = "none"
+      # FIXME: Use ec_adj
       success = Waterheater.apply_heatpump(model, unit, runner, living_space, weather,
                                            e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
                                            cap, cop, shr, airflow_rate, fan_power,
