@@ -814,7 +814,7 @@ OptionParser.new do |opts|
   
   opts.on_tail('-h', '--help', 'Display help') do
     puts opts
-    exit
+    exit!
   end
 
 end.parse!
