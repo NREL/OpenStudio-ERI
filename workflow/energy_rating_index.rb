@@ -1,3 +1,4 @@
+# encoding: utf-8
 start_time = Time.now
 
 require 'optparse'
@@ -450,7 +451,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
   results[:xeul_cool] = 0 # TODO
   results[:xeul_dhw] = 0 # TODO
   
-  # Table 4.2.1(1) Coefficients ‘a’ and ‘b’
+  # Table 4.2.1(1) Coefficients a and b
   results[:coeff_cool_a] = 3.8090
   results[:coeff_cool_b] = 0.0
   results[:coeff_heat_a] = nil
@@ -478,29 +479,29 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     fail "ERROR: Could not identify EEC coefficients for water heating system."
   end
   
-  # EEC_x = Equipment Efficiency Coefficient for the Rated Home’s equipment, such that EEC_x equals the 
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer’s 
+  # EEC_x = Equipment Efficiency Coefficient for the Rated Homes equipment, such that EEC_x equals the
+  # energy consumption per unit load in like units as the load, and as derived from the Manufacturers
   # Equipment Performance Rating (MEPR) such that EEC_x equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_x equals 3.413 / MEPR for HSPF, EER or SEER ratings.
   results[:eec_x_heat] = rated_output[:hpxml_eec_heat]
   results[:eec_x_cool] = rated_output[:hpxml_eec_cool]
   results[:eec_x_dhw] = rated_output[:hpxml_eec_dhw]
   
-  # EEC_r = Equipment Efficiency Coefficient for the Reference Home’s equipment, such that EEC_r equals the 
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer’s 
+  # EEC_r = Equipment Efficiency Coefficient for the Reference Homes equipment, such that EEC_r equals the 
+  # energy consumption per unit load in like units as the load, and as derived from the Manufacturers
   # Equipment Performance Rating (MEPR) such that EEC_r equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_r equals 3.413 / MEPR for HSPF, EER or SEER ratings
   results[:eec_r_heat] = ref_output[:hpxml_eec_heat]
   results[:eec_r_cool] = ref_output[:hpxml_eec_cool]
   results[:eec_r_dhw] = ref_output[:hpxml_eec_dhw]
   
-  # EC_x = estimated Energy Consumption for the Rated Home’s end uses (for heating, including Auxiliary 
+  # EC_x = estimated Energy Consumption for the Rated Homes end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_x_heat] = rated_output[:elecHeating] + rated_output[:fuelHeating]
   results[:ec_x_cool] = rated_output[:elecCooling]
   results[:ec_x_dhw] = rated_output[:elecHotWater] + rated_output[:fuelHotWater] + rated_output[:elecRecircPump]
   
-  # EC_r = estimated Energy Consumption for the Reference Home’s end uses (for heating, including Auxiliary 
+  # EC_r = estimated Energy Consumption for the Reference Homes end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_r_heat] = ref_output[:elecHeating] + ref_output[:fuelHeating]
   results[:ec_r_cool] = ref_output[:elecCooling]
@@ -517,7 +518,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
   results[:dse_r_cool] = results[:reul_cool] / results[:ec_r_cool] * results[:eec_r_cool]
   results[:dse_r_dhw] = results[:reul_dhw] / results[:ec_r_dhw] * results[:eec_r_dhw]
   
-  # nEC_x = (a* EEC_x – b)*(EC_x * EC_r * DSE_r) / (EEC_x * REUL) (Eq 4.1-1a)
+  # nEC_x = (a* EEC_x  b)*(EC_x * EC_r * DSE_r) / (EEC_x * REUL) (Eq 4.1-1a)
   results[:nec_x_heat] = 0
   results[:nec_x_cool] = 0
   results[:nec_x_dhw] = 0
@@ -834,11 +835,21 @@ unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xm
   fail "ERROR: '#{options[:hpxml]}' does not exist or is not an .xml file."
 end
 
-# Check for correct versions of OS
-os_version = "2.5.1"
-if OpenStudio.openStudioVersion != os_version
-  fail "ERROR: OpenStudio version #{os_version} is required."
+# Check for mininum versions of OS
+os_requires_version = "2.5.1"
+os_requires_version_split = os_requires_version.split(".", 3)
+os_has_version = OpenStudio.openStudioVersion
+os_has_version_split = os_has_version.split(".", 3)
+if os_has_version_split[0] < os_requires_version_split[0]
+  fail "ERROR: OpenStudio version #{os_requires_version} is required.  You are running #{os_has_version}"
 end
+if os_has_version_split[0] == os_requires_version_split[0] and os_has_version_split[1] < os_requires_version_split[1]
+  fail "ERROR: OpenStudio version #{os_requires_version} is required.  You are running #{os_has_version}"
+end
+if os_has_version_split[0] == os_requires_version_split[0] and os_has_version_split[1] == os_requires_version_split[1] and os_has_version_split[2] < os_requires_version_split[2]
+  fail "ERROR: OpenStudio version #{os_requires_version} is required.  You are running #{os_has_version}"
+end
+
 
 # Create results dir
 resultsdir = File.join(basedir, "results")
