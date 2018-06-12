@@ -152,6 +152,16 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_resnet_verification_appliances
     # TODO
   end
+  
+  def test_running_with_cli
+    # Verifies that these tests can be run from the CLI
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    
+    cli_path = OpenStudio.getOpenStudioCLI
+    command = "cd #{parent_dir} && \"#{cli_path}\" #{File.absolute_path(__FILE__)} --name=foo"
+    success = system(command)
+    assert(success)
+  end
 
   private
   
