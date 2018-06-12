@@ -7,7 +7,7 @@ require_relative '../../measures/301EnergyRatingIndexRuleset/resources/schedules
 require_relative '../../measures/301EnergyRatingIndexRuleset/resources/constants'
 require_relative '../../measures/301EnergyRatingIndexRuleset/resources/unit_conversions'
 
-class EnergyRatingIndexTest < MiniTest::Test
+class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
   def test_valid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
