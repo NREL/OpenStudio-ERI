@@ -7,7 +7,7 @@ require_relative '../../measures/301EnergyRatingIndexRuleset/resources/schedules
 require_relative '../../measures/301EnergyRatingIndexRuleset/resources/constants'
 require_relative '../../measures/301EnergyRatingIndexRuleset/resources/unit_conversions'
 
-class EnergyRatingIndexTest < MiniTest::Test
+class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
   def test_valid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
@@ -151,6 +151,16 @@ class EnergyRatingIndexTest < MiniTest::Test
   
   def test_resnet_verification_appliances
     # TODO
+  end
+  
+  def test_running_with_cli
+    # Verifies that these tests can be run from the CLI
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    
+    cli_path = OpenStudio.getOpenStudioCLI
+    command = "cd #{parent_dir} && \"#{cli_path}\" #{File.absolute_path(__FILE__)} --name=foo"
+    success = system(command)
+    assert(success)
   end
 
   private
