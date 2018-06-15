@@ -389,13 +389,8 @@
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WF_ID1'/>
-            <WaterFixtureType>shower head</WaterFixtureType>
+            <WaterFixtureType>other</WaterFixtureType>
             <FlowRate>1.5</FlowRate>
-          </WaterFixture>
-          <WaterFixture>
-            <SystemIdentifier id='WF_ID2'/>
-            <WaterFixtureType>faucet</WaterFixtureType>
-            <FlowRate>2.5</FlowRate>
           </WaterFixture>
         </WaterHeating>
       </Systems>

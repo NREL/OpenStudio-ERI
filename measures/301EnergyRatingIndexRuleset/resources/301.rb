@@ -2159,7 +2159,7 @@ class EnergyRatingIndex301Ruleset
     new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
     sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
-    XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+    XMLHelper.add_element(new_fixture, "WaterFixtureType", "other")
     extension = XMLHelper.add_element(new_fixture, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
     XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
@@ -2214,8 +2214,8 @@ class EnergyRatingIndex301Ruleset
     orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
     
     low_flow_fixtures = false
-    orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType!='other']") do |wf|
-      if wf.elements["FlowRate"] and Float(XMLHelper.get_value(wf, "FlowRate")) <= 2.0
+    orig_details.elements.each("Systems/WaterHeating/WaterFixture") do |wf|
+      if Float(XMLHelper.get_value(wf, "FlowRate")) <= 2.0
         low_flow_fixtures = true
       end
     end
@@ -2319,7 +2319,7 @@ class EnergyRatingIndex301Ruleset
     new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
     sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
-    XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+    XMLHelper.add_element(new_fixture, "WaterFixtureType", "other")
     extension = XMLHelper.add_element(new_fixture, "extension")
     XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
     XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
@@ -2968,6 +2968,9 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(residual_mels, "extension")
     XMLHelper.add_element(extension, "FracSensible", residual_mels_sens)
     XMLHelper.add_element(extension, "FracLatent", residual_mels_lat)
+    XMLHelper.add_element(extension, "WeekdayScheduleFractions", "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+    XMLHelper.add_element(extension, "WeekendScheduleFractions", "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+    XMLHelper.add_element(extension, "MonthlyScheduleMultipliers", "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248")
     
     # Televisions
     televisions_kwh = get_televisions_kwh()
@@ -3008,6 +3011,9 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(residual_mels, "extension")
     XMLHelper.add_element(extension, "FracSensible", residual_mels_sens)
     XMLHelper.add_element(extension, "FracLatent", residual_mels_lat)
+    XMLHelper.add_element(extension, "WeekdayScheduleFractions", "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+    XMLHelper.add_element(extension, "WeekendScheduleFractions", "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05")
+    XMLHelper.add_element(extension, "MonthlyScheduleMultipliers", "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248")
     
     # Televisions
     televisions_kwh = get_televisions_kwh()

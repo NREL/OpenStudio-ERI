@@ -339,6 +339,7 @@ class BuildingLoadVars
             'Boiler Heating Energy',
             'Baseboard Total Heating Energy',
             'Heating Coil Heating Energy',
+            'Zone Ideal Loads Zone Total Heating Energy',
            ]
   end
   
@@ -346,6 +347,7 @@ class BuildingLoadVars
     return [
             'Cooling Coil Sensible Cooling Energy',
             'Cooling Coil Latent Cooling Energy',
+            'Zone Ideal Loads Zone Total Cooling Energy',
            ]
   end
 

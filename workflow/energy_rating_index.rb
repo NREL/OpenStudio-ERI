@@ -34,7 +34,7 @@ def remove_design_dir(design, basedir)
   return designdir
 end
       
-def create_osw(design, designdir, basedir, resultsdir, options, run_design)
+def create_osw(design, designdir, basedir, resultsdir, options)
 
   # Create dir
   Dir.mkdir(designdir)
@@ -56,10 +56,7 @@ def create_osw(design, designdir, basedir, resultsdir, options, run_design)
   measures['301EnergyRatingIndexRuleset']['weather_dir'] = weather_dir
   #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
   measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
-  if options[:debug]
-    measures['301EnergyRatingIndexRuleset']['debug'] = 'true'
-    measures['301EnergyRatingIndexRuleset']['osm_output_file_path'] = output_hpxml_path.gsub(".xml",".osm")
-  end
+  measures['301EnergyRatingIndexRuleset']['debug'] = options[:debug].to_s
   steps = OpenStudio::WorkflowStepVector.new
   measures.keys.each do |measure|
     step = OpenStudio::MeasureStep.new(measure)
@@ -859,7 +856,7 @@ Parallel.map(run_designs.keys, in_threads: run_designs.size) do |design|
   
   if run_designs[design]
     print "[#{design}] Running workflow...\n"
-    osw_path, output_hpxml_path = create_osw(design, designdir, basedir, resultsdir, options, run_designs[design])
+    osw_path, output_hpxml_path = create_osw(design, designdir, basedir, resultsdir, options)
     sql_path = run_osw(osw_path, options)
     
     print "[#{design}] Gathering results...\n"

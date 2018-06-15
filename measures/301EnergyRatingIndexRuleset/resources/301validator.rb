@@ -37,9 +37,10 @@ class EnergyRatingIndex301Validator
             'BuildingSummary/Site' => [1],
             'BuildingSummary/BuildingConstruction' => [1],
             'ClimateandRiskZones' => [1],
-            'Enclosure/AtticAndRoof/Attics' => [],
-            'Enclosure/Foundations' => [],
-            'Enclosure/Walls' => [],
+            'Enclosure/AtticAndRoof/Attics' => [1],
+            'Enclosure/Foundations' => [1],
+            'Enclosure/RimJoists' => [0,1],
+            'Enclosure/Walls' => [1],
             'Enclosure/AirInfiltration/' => [1],
             'Systems/HVAC/HVACPlant/HeatingSystem | Systems/HVAC/HVACPlant/HeatPump' => [0,1],
             'Systems/HVAC/HVACPlant/CoolingSystem | Systems/HVAC/HVACPlant/HeatPump' => [0,1],
@@ -48,8 +49,7 @@ class EnergyRatingIndex301Validator
             'Systems/HVAC/HVACControl' => [0,1],
             'Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => [0,1],
             'Systems/WaterHeating/WaterHeatingSystem' => [0,1],
-            'Systems/WaterHeating/HotWaterDistribution' => [0,1],
-            'Systems/Photovoltaics/PVSystem' => [0,1,2,3,4,5],
+            'Systems/Photovoltaics' => [0,1],
             'Appliances/ClothesWasher' => [1],
             'Appliances/ClothesDryer' => [1],
             'Appliances/Dishwasher' => [1],
@@ -97,7 +97,7 @@ class EnergyRatingIndex301Validator
 
         ## AirInfiltration
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration' => {
-            '[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => [1],
+            '[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage] | extension/BuildingConstantACHnatural' => [1], # ACH50 or nACH or constant nACH
         },
         
         ## Attic
@@ -108,7 +108,7 @@ class EnergyRatingIndex301Validator
           
           # Attic (Vented)
           '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic"]' => {
-              '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/extension/AtticSpecificLeakageArea' => [1],
+              '[/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/extension/AtticSpecificLeakageArea | /HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/extension/AtticConstantACHnatural]' => [1],
           },
         
         ## Foundation
@@ -147,6 +147,16 @@ class EnergyRatingIndex301Validator
                 'FrameFloor' => [],
             },
 
+        ## RimJoists
+        '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => {
+            '[ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="crawlspace" or ExteriorAdjacentTo="attic" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="ambient"]' => [1],
+            '[InteriorAdjacentTo="unconditioned basement" or InteriorAdjacentTo="living space" or InteriorAdjacentTo="crawlspace" or InteriorAdjacentTo="attic" or InteriorAdjacentTo="garage"]' => [1],
+            'Area' => [1],
+            'Insulation/AssemblyEffectiveRValue' => [1],
+            'extension/SolarAbsorptance' => [1],
+            'extension/Emittance' => [1],
+        },
+        
         ## Roof
         '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Roofs/Roof' => {
             'Area' => [1],
@@ -273,8 +283,15 @@ class EnergyRatingIndex301Validator
             'Azimuth' => [1],
             'UFactor' => [1],
             'SHGC' => [1],
+            'Overhangs' => [0,1],
             'AttachedToWall' => [1],
         },
+        
+            # Window Overhang
+            '/HPXML/Building/BuildingDetails/Enclosure/Windows/Window/Overhangs' => {
+                'Depth' => [1],
+                'DistanceToTopOfWindow' => [1],
+            },
         
         ## Skylight
         '/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight' => {
@@ -380,6 +397,8 @@ class EnergyRatingIndex301Validator
         ## HVACControl
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => {
             'ControlType' => [1],
+            'SetpointTempHeatingSeason' => [0,1],
+            'SetpointTempCoolingSeason' => [0,1],
         },
         
         ## AirDistribution
@@ -414,7 +433,7 @@ class EnergyRatingIndex301Validator
             # TODO: 'Location',
             '[FractionDHWLoadServed=1.0]' => [1],
             '[EnergyFactor | UniformEnergyFactor]' => [1],
-            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => [],
+            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => [1],
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => [1],
         },
         
@@ -463,6 +482,12 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
             '[FlowRate | extension/MixedWaterGPD]' => [1],
         },
+        
+            # WaterFixture (Simplified)
+            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture[extension/MixedWaterGPD]' => {
+                'extension/SensibleGainsBtu' => [1],
+                'extension/LatentGainsBtu' => [1],
+            },
         
         ## WholeHouseVentilationFan
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => {
@@ -604,7 +629,11 @@ class EnergyRatingIndex301Validator
         next if hpxml_doc.elements[parent].nil? # Skip if parent element doesn't exist
         hpxml_doc.elements.each(parent) do |parent_element|
           requirement.each do |child, numbers|
-            elements = parent_element.elements.to_a(child)
+            if child.start_with?("/") or child.start_with?("[/")
+              elements = hpxml_doc.elements.to_a(child)
+            else
+              elements = parent_element.elements.to_a(child)
+            end
             xpath = combine_into_xpath(parent, child)
             check_number_of_elements(elements, numbers, xpath, errors)
           end
@@ -626,7 +655,7 @@ class EnergyRatingIndex301Validator
   end
   
   def self.combine_into_xpath(parent, child)
-    if parent.nil? or child.start_with?("/")
+    if parent.nil? or child.start_with?("/") or child.start_with?("[/")
       return child
     elsif child.start_with?("[")
       return [parent, child].join('')

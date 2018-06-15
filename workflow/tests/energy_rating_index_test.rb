@@ -13,7 +13,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
     Dir["#{xmldir}/valid*.xml"].each do |xml|
-      run_and_check(xml, parent_dir, false)
+      run_eri_and_check(xml, parent_dir, false)
     end
   end
   
@@ -21,7 +21,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
     Dir["#{xmldir}/invalid*.xml"].each do |xml|
-      run_and_check(xml, parent_dir, true)
+      run_eri_and_check(xml, parent_dir, true)
     end
   end
   
@@ -39,7 +39,31 @@ class EnergyRatingIndexTest < MiniTest::Test
   end
   
   def test_resnet_ashrae_140
-  
+    this_dir = File.absolute_path(File.dirname(__FILE__))
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Test_Standard_140")
+    all_values = {}
+    Dir["#{xmldir}/*.xml"].each do |xml|
+      test_name = File.basename(xml, File.extname(xml))
+      
+      # Run test
+      all_values[test_name] = run_sim_and_check(xml, this_dir, test_name)
+      assert_operator(all_values[test_name], :>, 0)
+    end
+    
+    # Output results
+    all_values.keys.each do |test_name|
+      next if test_name.include? 'AL'
+      puts "#{test_name}: #{all_values[test_name]}"
+    end
+    all_values.keys.each do |test_name|
+      next if not test_name.include? 'AL'
+      puts "#{test_name}: #{all_values[test_name]}"
+    end
+    
+    # Check results
+    all_values.keys.each do |test_name|
+      _check_140_loads_results(test_name, all_values)
+    end
   end
   
   def test_resnet_hers_reference_home_auto_generation
@@ -51,13 +75,13 @@ class EnergyRatingIndexTest < MiniTest::Test
       test_num += 1
       
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
+      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false)
       _check_reference_home_components(ref_hpxml, test_num)
       
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
       ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
-      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir, false)
+      ref_hpxml2, rated_hpxml2, results_csv2 = run_eri_and_check(ref_hpxml, parent_dir, false)
       _check_e_ratio(results_csv2)
     end
   end
@@ -67,7 +91,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
+      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false)
       _check_method_results(results_csv, test_num, test_num == 2, false)
     end
   end
@@ -77,7 +101,7 @@ class EnergyRatingIndexTest < MiniTest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, true)
+      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false, true)
       _check_method_results(results_csv, test_num, test_num == 2, true)
     end
   end
@@ -95,7 +119,7 @@ class EnergyRatingIndexTest < MiniTest::Test
         test_num = File.basename(xml).gsub('L100-AL-','').gsub('.xml','').to_i
         test_loc = 'AL'
       end
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
+      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false)
       _check_method_proposed_results(results_csv, test_num, test_loc, test_num == 8)
     end
   end
@@ -111,14 +135,12 @@ class EnergyRatingIndexTest < MiniTest::Test
   def test_resnet_hot_water
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     test_num = 0
-    base_vals = {}
-    mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num += 1
       
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
+      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false)
       
       base_val = nil
       if [2,3].include? test_num
@@ -155,8 +177,7 @@ class EnergyRatingIndexTest < MiniTest::Test
 
   private
   
-  def run_and_check(xml, parent_dir, expect_error, using_iaf=false)
-    # Check input HPXML is valid
+  def run_eri_and_check(xml, parent_dir, expect_error, using_iaf=false)
     xml = File.absolute_path(xml)
     
     iaf_str = ''
@@ -197,6 +218,32 @@ class EnergyRatingIndexTest < MiniTest::Test
     return ref_hpxml, rated_hpxml, results_csv
   end
   
+  def run_sim_and_check(xml, this_dir, test_name)
+    xml = File.absolute_path(xml)
+    
+    # Run simulation workflow
+    cli_path = OpenStudio.getOpenStudioCLI
+    command = "cd #{this_dir} && \"#{cli_path}\" simulation.rb -x #{xml}"
+    system(command)
+    
+    results_csv = File.join(this_dir, "results", "Loads_Results.csv")
+    assert(File.exists?(results_csv))
+    
+    require 'csv'
+    values = {}
+    CSV.foreach(results_csv) do |row|
+      values[row[0]] = Float(row[1])
+    end
+    
+    if test_name.include? 'AC' or test_name.include? 'XC'
+      return values["Heating Load (MBtu)"]
+    elsif test_name.include? 'AL'
+      return values["Cooling Load (MBtu)"]
+    end
+    
+    return 0
+  end
+  
   def _test_schema_validation(parent_dir, xml)
     # TODO: Remove this when schema validation is included with CLI calls
     schemas_dir = File.absolute_path(File.join(parent_dir, "..", "hpxml_schemas"))
@@ -206,6 +253,163 @@ class EnergyRatingIndexTest < MiniTest::Test
       puts "#{xml}: #{errors.to_s}"
     end
     assert_equal(0, errors.size)
+  end
+  
+  def _check_140_loads_results(test_name, all_values)
+    load = all_values[test_name]
+    
+    if test_name == 'L100AC'
+      assert_operator(load, :<=, 79.48)
+      assert_operator(load, :>=, 48.75)
+    elsif test_name == 'L110AC'
+      assert_operator(load, :<=, 103.99)
+      assert_operator(load, :>=, 71.88)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, 28.12)
+      assert_operator(delta_load, :>=, 19.37)
+    elsif test_name == 'L120AC'
+      assert_operator(load, :<=, 64.30)
+      assert_operator(load, :>=, 37.82)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, -7.67)
+      assert_operator(delta_load, :>=, -18.57)
+    elsif test_name == 'L130AC'
+      assert_operator(load, :<=, 53.98)
+      assert_operator(load, :>=, 41.82)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, -5.97)
+      assert_operator(delta_load, :>=, -27.50)
+    elsif test_name == 'L140AC'
+      assert_operator(load, :<=, 56.48)
+      assert_operator(load, :>=, 43.24)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, -4.56)
+      assert_operator(delta_load, :>=, -24.42)
+    elsif test_name == 'L150AC'
+      assert_operator(load, :<=, 71.33)
+      assert_operator(load, :>=, 40.95)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, -3.02)
+      assert_operator(delta_load, :>=, -12.53)
+    elsif test_name == 'L155AC'
+      assert_operator(load, :<=, 74.18)
+      assert_operator(load, :>=, 43.53)
+      delta_load = load - all_values['L150AC']
+      assert_operator(delta_load, :<=, 6.88)
+      assert_operator(delta_load, :>=, -1.54)
+    elsif test_name == 'L160AC'
+      assert_operator(load, :<=, 81.00)
+      assert_operator(load, :>=, 48.78)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, 5.10)
+      assert_operator(delta_load, :>=, -3.72)
+    elsif test_name == 'L170AC'
+      assert_operator(load, :<=, 92.40)
+      assert_operator(load, :>=, 61.03)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, 17.64)
+      assert_operator(delta_load, :>=, 7.12)
+    elsif test_name == 'L200AC'
+      assert_operator(load, :<=, 185.87)
+      assert_operator(load, :>=, 106.41)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, 107.66)
+      assert_operator(delta_load, :>=, 56.39)
+    elsif test_name == 'L202AC'
+      assert_operator(load, :<=, 190.05)
+      assert_operator(load, :>=, 111.32)
+      delta_load = load - all_values['L200AC']
+      assert_operator(delta_load, :<=, 9.94)
+      assert_operator(delta_load, :>=, -0.51)
+    elsif test_name == 'L302XC'
+      assert_operator(load, :<=, 90.52)
+      assert_operator(load, :>=, 52.66)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, 14.50)
+      assert_operator(delta_load, :>=, -3.30)
+    elsif test_name == 'L304XC'
+      assert_operator(load, :<=, 75.32)
+      assert_operator(load, :>=, 43.91)
+      delta_load = load - all_values['L302XC']
+      assert_operator(delta_load, :<=, -17.75)
+      assert_operator(delta_load, :>=, -5.66)
+    elsif test_name == 'L322XC'
+      assert_operator(load, :<=, 118.20)
+      assert_operator(load, :>=, 68.35)
+      delta_load = load - all_values['L100AC']
+      assert_operator(delta_load, :<=, 39.29)
+      assert_operator(delta_load, :>=, 15.71)
+    elsif test_name == 'L324XC'
+      assert_operator(load, :<=, 80.04)
+      assert_operator(load, :>=, 44.01)
+      delta_load = load - all_values['L322XC']
+      assert_operator(delta_load, :<=, -38.27)
+      assert_operator(delta_load, :>=, -20.21)
+    elsif test_name == 'L100AL'
+      assert_operator(load, :<=, 64.88)
+      assert_operator(load, :>=, 50.66)
+    elsif test_name == 'L110AL'
+      assert_operator(load, :<=, 68.50)
+      assert_operator(load, :>=, 53.70)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, 7.84)
+      assert_operator(delta_load, :>=, -0.98)
+    elsif test_name == 'L120AL'
+      assert_operator(load, :<=, 60.14)
+      assert_operator(load, :>=, 47.34)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, 0.68)
+      assert_operator(delta_load, :>=, -8.67)
+    elsif test_name == 'L130AL'
+      assert_operator(load, :<=, 45.26)
+      assert_operator(load, :>=, 32.95)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, -13.71)
+      assert_operator(delta_load, :>=, -24.40)
+    elsif test_name == 'L140AL'
+      assert_operator(load, :<=, 30.54)
+      assert_operator(load, :>=, 19.52)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, -27.14)
+      assert_operator(delta_load, :>=, -38.68)
+    elsif test_name == 'L150AL'
+      assert_operator(load, :<=, 82.33)
+      assert_operator(load, :>=, 62.41)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, 20.55)
+      assert_operator(delta_load, :>=, 8.72)
+    elsif test_name == 'L155AL'
+      assert_operator(load, :<=, 63.06)
+      assert_operator(load, :>=, 50.08)
+      delta_load = load - all_values['L150AL']
+      assert_operator(delta_load, :<=, -9.64)
+      assert_operator(delta_load, :>=, -22.29)
+    elsif test_name == 'L160AL'
+      assert_operator(load, :<=, 72.99)
+      assert_operator(load, :>=, 58.61)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, 12.28)
+      assert_operator(delta_load, :>=, 3.88)
+    elsif test_name == 'L170AL'
+      assert_operator(load, :<=, 53.31)
+      assert_operator(load, :>=, 41.83)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, -4.83)
+      assert_operator(delta_load, :>=, -15.74)
+    elsif test_name == 'L200AL'
+      assert_operator(load, :<=, 83.43)
+      assert_operator(load, :>=, 60.25)
+      delta_load = load - all_values['L100AL']
+      assert_operator(delta_load, :<=, 21.39)
+      assert_operator(delta_load, :>=, 6.63)
+    elsif test_name == 'L202AL'
+      assert_operator(load, :<=, 75.96)
+      assert_operator(load, :>=, 52.32)
+      delta_load = load - all_values['L200AL']
+      assert_operator(delta_load, :<=, -14.86)
+      assert_operator(delta_load, :>=, -2.03)
+    end
+    
   end
   
   def _check_reference_home_components(ref_hpxml, test_num)

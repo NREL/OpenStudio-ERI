@@ -368,7 +368,7 @@
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
-            <WaterFixtureType>shower head</WaterFixtureType>
+            <WaterFixtureType>other</WaterFixtureType>
             <extension>
               <MixedWaterGPD>54.6</MixedWaterGPD>
               <SensibleGainsBtu>-1044995.0</SensibleGainsBtu>

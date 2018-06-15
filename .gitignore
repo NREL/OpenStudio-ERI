@@ -7,5 +7,10 @@ coverage
 /workflow/HERSRatedHome
 /workflow/HERSReferenceHome
 /workflow/HERSIndexAdjustmentDesign
+/workflow/SimulationHome
 /workflow/results
 /workflow/tests/RESNET_Tests/4.2_Test_HERS_Reference_Home
+/workflow/tests/SimulationHome
+/workflow/tests/results
+/workflow/tests/RESNET_Tests/4.1_Test_Standard_140/Sect7-ClassII-L100-P150/EP v8.9
+/workflow/tests/RESNET_Tests/4.1_Test_Standard_140/Sect7-ClassII-L100-P150/EP v8.1
