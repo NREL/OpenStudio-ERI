@@ -346,25 +346,6 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(new_infil, "extension")
     XMLHelper.add_element(extension, "BuildingSpecificLeakageArea", sla)
     
-    
-    '''
-    Table 4.2.2(1) - Attics
-    Type: vented with aperture = 1ft2 per 300 ft2 ceiling area
-
-    Table 4.2.2(1) - Crawlspaces
-    Type: vented with net free vent aperture = 1ft2 per 150 ft2 of crawlspace floor area.
-    U-factor: from Table 4.2.2(2) for floors over unconditioned spaces or outdoor environment.
-    '''
-
-    if orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic[AtticType='unvented attic' or AtticType='vented attic']"]
-      orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic/AtticType"].text = "vented attic"
-      XMLHelper.add_element(extension, "AtticSpecificLeakageArea", 1.0/300.0)
-    end
-    if orig_details.elements["Enclosure/Foundations/Foundation/FoundationType/Crawlspace"]
-      orig_details.elements["Enclosure/Foundations/Foundation/FoundationType/Crawlspace/Vented"].text = true
-      XMLHelper.add_element(extension, "CrawlspaceSpecificLeakageArea", 1.0/150.0)
-    end
-
   end
   
   def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
@@ -428,23 +409,6 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(new_infil, "extension")
     XMLHelper.add_element(extension, "BuildingSpecificLeakageArea", sla)
     
-    '''
-    Table 4.2.2(1) - Attics
-    Same as Rated Home
-
-    Table 4.2.2(1) - Crawlspaces
-    Same as the Rated Home, but not less net free ventilation area than the Reference Home unless an approved 
-    ground cover in accordance with 2012 IRC 408.3.1 is used, in which case, the same net free ventilation area 
-    as the Rated Home down to a minimum net free vent area of 1ft2 per 1,500 ft2 of crawlspace floor area.
-    '''
-    
-    if orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic[AtticType='vented attic']"]
-      XMLHelper.copy_element(extension, orig_infil, "extension/AtticSpecificLeakageArea")
-    end
-    if orig_details.elements["Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='true']"]
-      XMLHelper.copy_element(extension, orig_infil, "extension/CrawlspaceSpecificLeakageArea")
-    end
-    
   end
   
   def self.set_enclosure_air_infiltration_iad(new_enclosure, orig_details)
@@ -496,20 +460,6 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(new_infil, "extension")
     XMLHelper.add_element(extension, "BuildingSpecificLeakageArea", sla)
     
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Attics
-    Type: Same as Rated Home. If more than one type, maintain same proportional coverage for each type.
-    
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Foundation
-    Type: Vented crawlspace
-    Venting: net free vent aperture = 1ft2 per 150 ft2 of crawlspace floor area
-    '''
-    
-    if orig_details.elements["Enclosure/AtticAndRoof/Attics/Attic[AtticType='vented attic']"]
-      XMLHelper.copy_element(extension, orig_infil, "extension/AtticSpecificLeakageArea")
-    end
-    XMLHelper.add_element(extension, "CrawlspaceSpecificLeakageArea", 1.0/150.0)
-
   end
   
   def self.set_enclosure_attics_roofs_reference(new_enclosure, orig_details)
@@ -528,6 +478,9 @@ class EnergyRatingIndex301Ruleset
     Solar absorptance = 0.75
     Emittance = 0.90
     
+    Table 4.2.2(1) - Attics
+    Type: vented with aperture = 1ft2 per 300 ft2 ceiling area
+    
     4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
     '''
     
@@ -536,6 +489,10 @@ class EnergyRatingIndex301Ruleset
     
     new_attic_roof.elements.each("Attics/Attic") do |new_attic|
       attic_type = XMLHelper.get_value(new_attic, "AtticType")
+      if ['unvented attic','vented attic'].include? attic_type
+        attic_type = 'vented attic'
+        new_attic.elements["AtticType"].text = attic_type
+      end
       interior_adjacent_to = attic_type
       
       # Roofs
@@ -550,10 +507,6 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_roof_ins, "Layer")
           XMLHelper.add_element(new_roof_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
         end
-        if not new_roof.elements["Insulation/Layer"].nil?
-          XMLHelper.delete_element(new_roof, "extension")
-          XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
-        end
       end
       
       # Floors
@@ -564,11 +517,6 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_floor_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_floor_ins, "Layer")
           XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/ceiling_ufactor)
-        end
-        if not new_floor.elements["Insulation/Layer"].nil?
-          extension = new_floor.elements["extension"]
-          XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
-          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
         end
       end
       
@@ -581,17 +529,16 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_wall_ins, "Layer")
           XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
         end
-        if not new_wall.elements["Insulation/Layer"].nil?
-          extension = new_wall.elements["extension"]
-          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-          if ["cathedral ceiling", "cape code"].include? attic_type
-            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-          else
-            XMLHelper.add_element(extension, "DrywallThickness", 0.0)
-          end
-          XMLHelper.delete_element(new_wall, "extension/OSBThickness")
-          XMLHelper.add_element(extension, "OSBThickness", 0.5)
+      end
+      
+      # Ventilation
+      if attic_type == 'vented attic'
+        extension = new_attic.elements["extension"]
+        if extension.nil?
+          extension = XMLHelper.add_element(new_attic, "extension")
         end
+        XMLHelper.delete_element(extension, "AtticSpecificLeakageArea")
+        XMLHelper.add_element(extension, "AtticSpecificLeakageArea", 1.0/300.0)
       end
       
     end
@@ -617,45 +564,10 @@ class EnergyRatingIndex301Ruleset
     Emittance = Emittance values provided by the roofing manufacturer in accordance with ASTM Standard 
     C-1371 shall be used when available. In cases where the appropriate data are not known, same as the 
     Reference Home.
+    
+    Table 4.2.2(1) - Attics
+    Same as Rated Home
     '''
-    
-    new_attic_roof.elements.each("Attics/Attic") do |new_attic|
-    
-      attic_type = XMLHelper.get_value(new_attic, "AtticType")
-      
-      # Roofs
-      new_attic.elements.each("Roofs/Roof") do |new_roof|
-        if not new_roof.elements["Insulation/Layer"].nil?
-          XMLHelper.delete_element(new_roof, "extension")
-          XMLHelper.add_element(new_roof, "extension/OSBThickness", 0.75)
-        end
-      end
-      
-      # Floors
-      new_attic.elements.each("Floors/Floor") do |new_floor|
-        if not new_floor.elements["Insulation/Layer"].nil?
-          extension = new_floor.elements["extension"]
-          XMLHelper.delete_element(new_floor, "extension/DrywallThickness")
-          XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-        end
-      end
-      
-      # Walls
-      new_attic.elements.each("Walls/Wall") do |new_wall|
-        if not new_wall.elements["Insulation/Layer"].nil?
-          extension = new_wall.elements["extension"]
-          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-          if ["cathedral ceiling", "cape code"].include? attic_type
-            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-          else
-            XMLHelper.add_element(extension, "DrywallThickness", 0.0)
-          end
-          XMLHelper.delete_element(new_wall, "extension/OSBThickness")
-          XMLHelper.add_element(extension, "OSBThickness", 0.5)
-        end
-      end
-      
-    end
     
   end
   
@@ -717,11 +629,39 @@ class EnergyRatingIndex301Ruleset
     
     new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
     
+    '''
+    Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
+    Type: wood frame
+    Gross area: same as Rated Home
+    U-Factor: from Table 4.2.2(2)
+    
+    Table 4.2.2(1) - Conditioned basement walls
+    Type: same as Rated Home
+    Gross area: same as Rated Home
+    U-Factor: from Table 4.2.2(2) with the insulation layer on the interior side of walls
+      
+    Table 4.2.2(1) - Foundations
+    Type: same as Rated Home
+    Gross Area: same as Rated Home
+    U-Factor / R-value: from Table 4.2.2(2)
+      
+    Table 4.2.2(1) - Crawlspaces
+    Type: vented with net free vent aperture = 1ft2 per 150 ft2 of crawlspace floor area.
+    U-factor: from Table 4.2.2(2) for floors over unconditioned spaces or outdoor environment.
+      
+    4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
+    '''
+      
     floor_ufactor = get_reference_component_characteristics("floor")
     wall_ufactor = get_reference_component_characteristics("basement_wall")
     slab_rvalue, slab_depth = get_reference_component_characteristics("slab_on_grade")
           
     new_foundations.elements.each("Foundation") do |new_foundation|
+      
+      if XMLHelper.has_element(new_foundation, "FoundationType/Crawlspace[Vented='false']")
+        new_foundation.elements["FoundationType/Crawlspace/Vented"].text = true
+      end
+      
       fnd_type = new_foundation.elements["FoundationType"]
       if fnd_type.elements["Basement[Conditioned='true']"]
         interior_adjacent_to = "conditioned basement"
@@ -734,15 +674,6 @@ class EnergyRatingIndex301Ruleset
       elsif fnd_type.elements["Ambient"]  
         interior_adjacent_to = "ambient"
       end
-        
-      '''
-      Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
-      Type: wood frame
-      Gross area: same as Rated Home
-      U-Factor: from Table 4.2.2(2)
-      
-      4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
-      '''
       
       new_foundation.elements.each("FrameFloor") do |new_floor|
         exterior_adjacent_to = XMLHelper.get_value(new_floor, "extension/ExteriorAdjacentTo")
@@ -752,21 +683,8 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_floor_ins, "Layer")
           XMLHelper.add_element(new_floor_ins, "AssemblyEffectiveRValue", 1.0/floor_ufactor)
         end
-        if not new_floor.elements["Insulation/Layer"].nil?
-          extension = new_floor.elements["extension"]
-          XMLHelper.add_element(extension, "OSBThickness", 0.75)
-        end
       end
   
-      '''
-      Table 4.2.2(1) - Conditioned basement walls
-      Type: same as Rated Home
-      Gross area: same as Rated Home
-      U-Factor: from Table 4.2.2(2) with the insulation layer on the interior side of walls
-      
-      4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
-      '''
-      
       new_foundation.elements.each("FoundationWall") do |new_wall|
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
         if fnd_type.elements["Basement[Conditioned='true']"] and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
@@ -775,25 +693,8 @@ class EnergyRatingIndex301Ruleset
           XMLHelper.delete_element(new_wall_ins, "Layer")
           XMLHelper.add_element(new_wall_ins, "AssemblyEffectiveRValue", 1.0/wall_ufactor)
         end
-        if not new_wall.elements["Insulation/Layer"].nil?
-          extension = new_wall.elements["extension"]
-          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-          if fnd_type.elements["Basement[Conditioned='true']"]
-            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-          else
-            XMLHelper.add_element(extension, "DrywallThickness", 0)
-          end
-        end
       end
   
-      '''
-      Table 4.2.2(1) - Foundations
-      Type: same as Rated Home
-      Gross Area: same as Rated Home
-      U-Factor / R-value: from Table 4.2.2(2)
-      
-      4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
-      '''
       new_foundation.elements.each("Slab") do |new_slab|
         if fnd_type.elements["SlabOnGrade"] and is_external_thermal_boundary(interior_adjacent_to, "ground")
           new_slab.elements["PerimeterInsulationDepth"].text = slab_depth
@@ -814,6 +715,15 @@ class EnergyRatingIndex301Ruleset
         new_slab.elements["extension/CarpetFraction"].text = 0.8
         new_slab.elements["extension/CarpetRValue"].text = 2.0
       end
+
+      if XMLHelper.has_element(new_foundation, "FoundationType/Crawlspace[Vented='true']")
+        extension = new_foundation.elements["extension"]
+        if extension.nil?
+          extension = XMLHelper.add_element(new_foundation, "extension")
+        end
+        XMLHelper.delete_element(extension, "CrawlspaceSpecificLeakageArea")
+        XMLHelper.add_element(extension, "CrawlspaceSpecificLeakageArea", 1.0/150.0)
+      end
       
     end
     
@@ -821,52 +731,42 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_foundations_rated(new_enclosure, orig_details)
     
+    '''
+    Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
+    Type: Same as Rated Home
+    Gross area: Same as Rated Home
+    U-Factor: Same as Rated Home
+    
+    Table 4.2.2(1) - Conditioned basement walls
+    Type: Same as Rated Home
+    Gross area: Same as Rated Home
+    U-Factor: Same as Rated Home
+
+    Table 4.2.2(1) - Foundations
+    Type: Same as Rated Home
+    Gross Area: Same as Rated Home
+    U-Factor / R-value: Same as Rated Home
+    
+    Table 4.2.2(1) - Crawlspaces
+    Same as the Rated Home, but not less net free ventilation area than the Reference Home unless an approved 
+    ground cover in accordance with 2012 IRC 408.3.1 is used, in which case, the same net free ventilation area 
+    as the Rated Home down to a minimum net free vent area of 1ft2 per 1,500 ft2 of crawlspace floor area.
+    '''
+    
     new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
     
-    new_foundations.elements.each("Foundation") do |new_foundation|
-      fnd_type = new_foundation.elements["FoundationType"]
+    min_crawl_vent = 1.0/150.0 # Reference Home vent
     
-      '''
-      Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
-      Type: Same as Rated Home
-      Gross area: Same as Rated Home
-      U-Factor: Same as Rated Home
-      '''
+    new_foundations.elements.each("Foundation") do |new_foundation|
       
-      new_foundation.elements.each("FrameFloor") do |new_floor|
-        if not new_floor.elements["Insulation/Layer"].nil?
-          extension = new_floor.elements["extension"]
-          XMLHelper.add_element(extension, "OSBThickness", 0.75)
+      if XMLHelper.has_element(new_foundation, "FoundationType/Crawlspace[Vented='true']")
+        vent = Float(XMLHelper.get_value(new_foundation, "extension/CrawlspaceSpecificLeakageArea"))
+        # TODO: Handle approved ground cover
+        if vent < min_crawl_vent
+          new_foundation.elements["extension/CrawlspaceSpecificLeakageArea"].text = min_crawl_vent
         end
       end
 
-      '''
-      Table 4.2.2(1) - Conditioned basement walls
-      Type: Same as Rated Home
-      Gross area: Same as Rated Home
-      U-Factor: Same as Rated Home
-      '''
-    
-      new_foundation.elements.each("FoundationWall") do |new_wall|
-        if not new_wall.elements["Insulation/Layer"].nil?
-          extension = new_wall.elements["extension"]
-          XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-          if fnd_type.elements["Basement[Conditioned='true']"]
-            XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-          else
-            XMLHelper.add_element(extension, "DrywallThickness", 0)
-          end
-        end
-      end
-    
-      '''
-      Table 4.2.2(1) - Foundations
-      Type: Same as Rated Home
-      Gross Area: Same as Rated Home
-      U-Factor / R-value: Same as Rated Home
-      '''
-      # nop
-    
     end
 
   end
@@ -944,6 +844,8 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(new_slab, "extension")
     XMLHelper.add_element(extension, "CarpetFraction", 0)
     XMLHelper.add_element(extension, "CarpetRValue", 0)
+
+    XMLHelper.add_element(new_foundation, "extension/CrawlspaceSpecificLeakageArea", 1.0/150.0)
     
   end
   
@@ -1002,13 +904,6 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.delete_element(insulation, "Layer")
         XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
       end
-      if not new_wall.elements["Insulation/Layer"].nil?
-        extension = new_wall.elements["extension"]
-        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-        XMLHelper.delete_element(new_wall, "extension/OSBThickness")
-        XMLHelper.add_element(extension, "OSBThickness", 0.5)
-      end
     end
     
   end
@@ -1025,16 +920,6 @@ class EnergyRatingIndex301Ruleset
     Solar absorptance = Same as Rated Home
     Emittance = Same as Rated Home
     '''
-    
-    new_walls.elements.each("Wall") do |new_wall|
-      if not new_wall.elements["Insulation/Layer"].nil?
-        extension = new_wall.elements["extension"]
-        XMLHelper.delete_element(new_wall, "extension/DrywallThickness")
-        XMLHelper.add_element(extension, "DrywallThickness", 0.5)
-        XMLHelper.delete_element(new_wall, "extension/OSBThickness")
-        XMLHelper.add_element(extension, "OSBThickness", 0.5)
-      end
-    end
     
   end
   
@@ -1535,6 +1420,7 @@ class EnergyRatingIndex301Ruleset
     new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
     sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACDistribution")
+    XMLHelper.add_element(new_hvac_dist, "DistributionSystemType/Other", "DSE")
     XMLHelper.add_element(new_hvac_dist, "AnnualHeatingDistributionSystemEfficiency", 0.8)
     XMLHelper.add_element(new_hvac_dist, "AnnualCoolingDistributionSystemEfficiency", 0.8)
     
@@ -1701,6 +1587,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_attribute(sys_id, "id", "HeatPump")
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
       XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
+      XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
@@ -1730,19 +1617,21 @@ class EnergyRatingIndex301Ruleset
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
     sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACControl")
-    XMLHelper.copy_element(new_hvac_control, orig_details, "Systems/HVAC/HVACControl/ControlType")
-    XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
     if has_programmable_tstat
+      XMLHelper.add_element(new_hvac_control, "ControlType", "programmable thermostat")
+      XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
       XMLHelper.add_element(new_hvac_control, "SetbackTempHeatingSeason", 68-programmable_offset)
       XMLHelper.add_element(new_hvac_control, "TotalSetbackHoursperWeekHeating", 7*7) # 11 p.m. to 5:59 a.m., 7 days a week
       XMLHelper.add_element(new_hvac_control, "SetupTempCoolingSeason", 78+programmable_offset)
-    end
-    XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
-    if has_programmable_tstat
+      XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
       XMLHelper.add_element(new_hvac_control, "TotalSetupHoursperWeekCooling", 6*7) # 9 a.m. to 2:59 p.m., 7 days a week
       extension = XMLHelper.add_element(new_hvac_control, "extension")
       XMLHelper.add_element(extension, "SetbackStartHour", 23) # 11 p.m.
       XMLHelper.add_element(extension, "SetupStartHour", 9) # 9 a.m.
+    else
+      XMLHelper.add_element(new_hvac_control, "ControlType", "manual thermostat")
+      XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
+      XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
     end
     
     '''

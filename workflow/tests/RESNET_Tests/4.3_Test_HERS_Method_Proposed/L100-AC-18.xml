@@ -54,10 +54,6 @@
               <AirLeakage>3</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <extension>
-            <CrawlspaceSpecificLeakageArea>0.00667</CrawlspaceSpecificLeakageArea>
-            <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -124,6 +120,9 @@
                   </extension>
                 </Wall>
               </Walls>
+              <extension>
+                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -220,6 +219,9 @@
                 <CarpetRValue>2.0</CarpetRValue>
               </extension>
             </Slab>
+          <extension>
+            <CrawlspaceSpecificLeakageArea>0.00667</CrawlspaceSpecificLeakageArea>
+          </extension>
           </Foundation>
         </Foundations>
         <Walls>
