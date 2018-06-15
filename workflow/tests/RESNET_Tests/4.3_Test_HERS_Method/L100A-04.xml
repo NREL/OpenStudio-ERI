@@ -53,9 +53,6 @@
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <extension>
-            <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -108,6 +105,9 @@
                   </extension>
                 </Wall>
               </Walls>
+              <extension>
+                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -218,9 +218,6 @@
                 <Units>HSPF</Units>
                 <Value>9.85</Value>
               </AnnualHeatEfficiency>
-              <extension>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
-              </extension>
             </HeatPump>
           </HVACPlant>
           <HVACControl>

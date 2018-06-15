@@ -213,6 +213,16 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
     
+    # Validate output HPXML against ERI Use Case
+    errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
+    errors.each do |error|
+      runner.registerError(error)
+    end
+    unless errors.empty?
+      return false
+    end
+    runner.registerInfo("Validated output HPXML against ERI Use Case.")
+    
     # Create OpenStudio model
     if not OSModel.create(hpxml_doc, runner, model, weather)
       runner.registerError("Unsuccessful creation of OpenStudio model.")
@@ -987,39 +997,17 @@ class OSModel
         walls_filled_cavity = true # FIXME
         walls_concrete_thick_in = Float(XMLHelper.get_value(fnd_wall, "Thickness"))
         
-        if XMLHelper.has_element(fnd_wall, "Insulation/AssemblyEffectiveRValue")
-        
-          walls_drywall_thick_in = 0.0
-          wall_assembly_r = Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
-          wall_film_r = Material.AirFilmVertical.rvalue
-          wall_cav_r = 0.0
-          wall_cav_depth = 0.0
-          wall_grade = 1
-          wall_ff = 0.0
-          wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
-          wall_cont_r = wall_assembly_r - Material.Concrete(8.0).rvalue - Material.GypsumWall(walls_drywall_thick_in).rvalue - wall_film_r
-          wall_cont_depth = 1.0
+        walls_drywall_thick_in = 0.0
+        wall_assembly_r = Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
+        wall_film_r = Material.AirFilmVertical.rvalue
+        wall_cav_r = 0.0
+        wall_cav_depth = 0.0
+        wall_grade = 1
+        wall_ff = 0.0
+        wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
+        wall_cont_r = wall_assembly_r - Material.Concrete(walls_concrete_thick_in).rvalue - Material.GypsumWall(walls_drywall_thick_in).rvalue - wall_film_r
+        wall_cont_depth = 1.0
           
-        else
-      
-          walls_drywall_thick_in = Float(XMLHelper.get_value(fnd_wall, "extension/DrywallThickness"))
-          fnd_wall_cavity = fnd_wall.elements["Insulation/Layer[InstallationType='cavity']"]
-          wall_cav_r = Float(XMLHelper.get_value(fnd_wall_cavity, "NominalRValue"))
-          wall_cav_depth = Float(XMLHelper.get_value(fnd_wall_cavity, "Thickness"))
-          wall_grade = Integer(XMLHelper.get_value(fnd_wall, "Insulation/InsulationGrade"))
-          wall_ff = Float(XMLHelper.get_value(fnd_wall, "InteriorStuds/FramingFactor"))
-          
-          fnd_wall_cont = fnd_wall.elements["Insulation/Layer[InstallationType='continuous']"]
-          if XMLHelper.has_element(fnd_wall_cont, "extension/InsulationHeight")
-            wall_cont_height = Float(XMLHelper.get_value(fnd_wall_cont, "extension/InsulationHeight")) # For basement
-          else
-            wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height")) # For crawlspace, doesn't matter
-          end
-          wall_cont_r = Float(XMLHelper.get_value(fnd_wall_cont, "NominalRValue"))
-          wall_cont_depth = Float(XMLHelper.get_value(fnd_wall_cont, "Thickness"))
-          
-        end
-        
       end
       
       # Foundation ceiling surfaces
@@ -1063,37 +1051,20 @@ class OSModel
         end
         ceiling_surfaces << surface
         
-        mat_floor_covering = Material.FloorWood
-        mat_carpet = Material.CoveringBare
+        mat_floor_covering = nil
+        mat_carpet = nil
+        plywood_thick_in = 0.0
+        floor_assembly_r = Float(XMLHelper.get_value(fnd_floor, "Insulation/AssemblyEffectiveRValue"))
+        floor_film_r = 2 * Material.AirFilmFloorReduced.rvalue
+        misc_r = Material.Plywood(plywood_thick_in).rvalue + floor_film_r
+        wood_stud = Material.Stud2x6
+        floor_cav_depth = wood_stud.thick_in
+        floor_ff = 0.01
+        floor_cav_r = (1.0 - floor_ff) / (1.0 / floor_assembly_r - floor_ff / (wood_stud.rvalue + misc_r)) - misc_r
+        floor_cont_r = 0.0
+        floor_cont_depth = 0.0
+        floor_grade = 1
         
-        if XMLHelper.has_element(fnd_floor, "Insulation/AssemblyEffectiveRValue")
-        
-          plywood_thick_in = 0.0
-          floor_assembly_r = Float(XMLHelper.get_value(fnd_floor, "Insulation/AssemblyEffectiveRValue"))
-          floor_film_r = 2 * Material.AirFilmFloorReduced.rvalue
-          misc_r = Material.Plywood(plywood_thick_in).rvalue + mat_carpet.rvalue + mat_floor_covering.rvalue + floor_film_r
-          wood_stud = Material.Stud2x6
-          floor_cav_depth = wood_stud.thick_in
-          floor_ff = 0.01
-          floor_cav_r = (1.0 - floor_ff) / (1.0 / floor_assembly_r - floor_ff / (wood_stud.rvalue + misc_r)) - misc_r
-          floor_cont_r = 0.0
-          floor_cont_depth = 0.0
-          floor_grade = 1
-        
-        else
-      
-          plywood_thick_in = Float(XMLHelper.get_value(fnd_floor, "extension/OSBThickness"))
-          fnd_floor_cavity = fnd_floor.elements["Insulation/Layer[InstallationType='cavity']"]
-          floor_cav_r = Float(XMLHelper.get_value(fnd_floor_cavity, "NominalRValue"))
-          floor_cav_depth = Float(XMLHelper.get_value(fnd_floor_cavity, "Thickness"))
-          floor_grade = Integer(XMLHelper.get_value(fnd_floor, "Insulation/InsulationGrade"))
-          floor_ff = Float(XMLHelper.get_value(fnd_floor, "FloorJoists/FramingFactor"))
-          fnd_floor_cont = fnd_floor.elements["Insulation/Layer[InstallationType='continuous']"]
-          floor_cont_r = Float(XMLHelper.get_value(fnd_floor_cont, "NominalRValue"))
-          floor_cont_depth = Float(XMLHelper.get_value(fnd_floor_cont, "Thickness"))
-        
-        end
-
       end
       
       # Apply constructions
@@ -1264,36 +1235,19 @@ class OSModel
 
       if XMLHelper.has_element(wall, "WallType/WoodStud")
       
-        if XMLHelper.has_element(wall, "Insulation/AssemblyEffectiveRValue")
-        
-          osb_thick_in = 0.0
-          drywall_thick_in = 0.0
-          assembly_r = Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
-          film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
-          misc_r = Material.GypsumWall(drywall_thick_in).rvalue + Material.Plywood(osb_thick_in).rvalue + mat_ext_finish.rvalue + film_r
-          wood_stud = Material.Stud2x6
-          cavity_depth_in = wood_stud.thick_in
-          framing_factor = 0.01
-          cavity_r = (1.0 - framing_factor) / (1.0 / assembly_r - framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
-          rigid_r = 0.0
-          install_grade = 1
-          cavity_filled = true
+        osb_thick_in = 0.0
+        drywall_thick_in = 0.0
+        assembly_r = Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
+        film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
+        misc_r = Material.GypsumWall(drywall_thick_in).rvalue + Material.Plywood(osb_thick_in).rvalue + mat_ext_finish.rvalue + film_r
+        wood_stud = Material.Stud2x6
+        cavity_depth_in = wood_stud.thick_in
+        framing_factor = 0.01
+        cavity_r = (1.0 - framing_factor) / (1.0 / assembly_r - framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
+        rigid_r = 0.0
+        install_grade = 1
+        cavity_filled = true
           
-        else
-        
-          osb_thick_in = Float(XMLHelper.get_value(wall, "extension/OSBThickness"))
-          drywall_thick_in = Float(XMLHelper.get_value(wall, "extension/DrywallThickness"))
-          cavity_layer = wall.elements["Insulation/Layer[InstallationType='cavity']"]
-          cavity_r = Float(XMLHelper.get_value(cavity_layer, "NominalRValue"))
-          install_grade = Integer(XMLHelper.get_value(wall, "Insulation/InsulationGrade"))
-          cavity_depth_in = Float(XMLHelper.get_value(cavity_layer, "Thickness"))
-          cavity_filled = true # FIXME: How to handle?
-          framing_factor = Float(XMLHelper.get_value(wall, "Studs/FramingFactor"))
-          rigid_layer = wall.elements["Insulation/Layer[InstallationType='continuous']"]
-          rigid_r = Float(XMLHelper.get_value(rigid_layer, "NominalRValue"))
-          
-        end
-        
         success = WallConstructions.apply_wood_stud(runner, model, [surface],
                                                     "WallConstruction",
                                                     cavity_r, install_grade, cavity_depth_in,
@@ -1398,36 +1352,16 @@ class OSModel
         
         assembly_r, film_r = nil
         
-        if XMLHelper.has_element(floor, "Insulation/AssemblyEffectiveRValue")
-        
-          ceiling_drywall_thick_in = 0.0
-          assembly_r = Float(XMLHelper.get_value(floor, "Insulation/AssemblyEffectiveRValue"))
-          film_r = 2 * Material.AirFilmFloorAverage.rvalue
-          misc_r = Material.GypsumWall(ceiling_drywall_thick_in).rvalue + film_r
-          wood_stud = Material.Stud2x6
-          ceiling_joist_height_in = wood_stud.thick_in
-          ceiling_ins_thick_in = ceiling_joist_height_in
-          ceiling_framing_factor = 0.01
-          ceiling_r = (1.0 - ceiling_framing_factor) / (1.0 / assembly_r - ceiling_framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
-          ceiling_install_grade = 1
-
-        else
-        
-          ceiling_drywall_thick_in = Float(XMLHelper.get_value(floor, "extension/DrywallThickness"))
-          floor_cavity = floor.elements["Insulation/Layer[InstallationType='cavity']"]
-          floor_cav_r = Float(XMLHelper.get_value(floor_cavity, "NominalRValue"))
-          floor_cav_depth = Float(XMLHelper.get_value(floor_cavity, "Thickness"))
-          floor_cont = floor.elements["Insulation/Layer[InstallationType='continuous']"]
-          floor_cont_r = Float(XMLHelper.get_value(floor_cont, "NominalRValue"))
-          floor_cont_depth = Float(XMLHelper.get_value(floor_cont, "Thickness"))
-
-          ceiling_r = floor_cav_r + floor_cont_r
-          ceiling_install_grade = Integer(XMLHelper.get_value(floor, "Insulation/InsulationGrade"))
-          ceiling_ins_thick_in = floor_cav_depth + floor_cont_depth
-          ceiling_framing_factor = Float(XMLHelper.get_value(floor, "FloorJoists/FramingFactor"))
-          ceiling_joist_height_in = floor_cav_depth
-            
-        end
+        ceiling_drywall_thick_in = 0.0
+        assembly_r = Float(XMLHelper.get_value(floor, "Insulation/AssemblyEffectiveRValue"))
+        film_r = 2 * Material.AirFilmFloorAverage.rvalue
+        misc_r = Material.GypsumWall(ceiling_drywall_thick_in).rvalue + film_r
+        wood_stud = Material.Stud2x6
+        ceiling_joist_height_in = wood_stud.thick_in
+        ceiling_ins_thick_in = ceiling_joist_height_in
+        ceiling_framing_factor = 0.01
+        ceiling_r = (1.0 - ceiling_framing_factor) / (1.0 / assembly_r - ceiling_framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
+        ceiling_install_grade = 1
         
         success = FloorConstructions.apply_unfinished_attic(runner, model, [surface],
                                                             "FloorConstruction",
@@ -1476,36 +1410,18 @@ class OSModel
         mat_roofing = Material.RoofingAsphaltShinglesDark # FIXME
         assembly_r, film_r = nil
         
-        if XMLHelper.has_element(roof, "Insulation/AssemblyEffectiveRValue")
-        
-          roof_osb_thick_in = 0.0
-          assembly_r = Float(XMLHelper.get_value(roof, "Insulation/AssemblyEffectiveRValue"))
-          film_r = Material.AirFilmOutside.rvalue + Material.AirFilmRoof(Geometry.get_roof_pitch([surface])).rvalue
-          misc_r = mat_roofing.rvalue + Material.Plywood(roof_osb_thick_in).rvalue + film_r
-          wood_stud = Material.Stud2x6
-          roof_framing_thick_in = wood_stud.thick_in
-          roof_cavity_ins_thick_in = roof_framing_thick_in
-          roof_framing_factor = 0.01
-          roof_cavity_r = (1.0 - roof_framing_factor) / (1.0 / assembly_r - roof_framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
-          roof_install_grade = 1
-          roof_rigid_r = 0.0
-          has_radiant_barrier = false
-
-        else
-        
-          # FIXME: Cavity vs continuous
-          roof_osb_thick_in = Float(XMLHelper.get_value(roof, "extension/OSBThickness"))
-          roof_cavity = roof.elements["Insulation/Layer[InstallationType='cavity']"]
-          roof_cavity_r = Float(XMLHelper.get_value(roof_cavity, "NominalRValue"))
-          roof_framing_thick_in = Float(XMLHelper.get_value(roof_cavity, "Thickness"))
-          roof_cavity_ins_thick_in = roof_framing_thick_in
-          roof_cont = roof.elements["Insulation/Layer[InstallationType='continuous']"]
-          roof_rigid_r = Float(XMLHelper.get_value(roof_cont, "NominalRValue"))
-          roof_install_grade = Integer(XMLHelper.get_value(roof, "Insulation/InsulationGrade"))
-          roof_framing_factor = Float(XMLHelper.get_value(roof, "Rafters/FramingFactor"))
-          has_radiant_barrier = Boolean(XMLHelper.get_value(roof, "RadiantBarrier"))
-        
-        end
+        roof_osb_thick_in = 0.0
+        assembly_r = Float(XMLHelper.get_value(roof, "Insulation/AssemblyEffectiveRValue"))
+        film_r = Material.AirFilmOutside.rvalue + Material.AirFilmRoof(Geometry.get_roof_pitch([surface])).rvalue
+        misc_r = mat_roofing.rvalue + Material.Plywood(roof_osb_thick_in).rvalue + film_r
+        wood_stud = Material.Stud2x6
+        roof_framing_thick_in = wood_stud.thick_in
+        roof_cavity_ins_thick_in = roof_framing_thick_in
+        roof_framing_factor = 0.01
+        roof_cavity_r = (1.0 - roof_framing_factor) / (1.0 / assembly_r - roof_framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
+        roof_install_grade = 1
+        roof_rigid_r = 0.0
+        has_radiant_barrier = false
 
         # FIXME: Unfinished vs finished
         success = RoofConstructions.apply_unfinished_attic(runner, model, [surface],
@@ -1572,35 +1488,18 @@ class OSModel
 
         if XMLHelper.has_element(wall, "WallType/WoodStud")
         
-          if XMLHelper.has_element(wall, "Insulation/AssemblyEffectiveRValue")
-          
-            osb_thick_in = 0.0
-            drywall_thick_in = 0.0
-            assembly_r = Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
-            film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
-            misc_r = Material.GypsumWall(drywall_thick_in).rvalue + Material.Plywood(osb_thick_in).rvalue + mat_ext_finish.rvalue + film_r
-            wood_stud = Material.Stud2x4
-            cavity_depth_in = wood_stud.thick_in
-            framing_factor = 0.01
-            cavity_r = (1.0 - framing_factor) / (1.0 / assembly_r - framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
-            rigid_r = 0.0
-            install_grade = 1
-            cavity_filled = true
-            
-          else
-          
-            osb_thick_in = Float(XMLHelper.get_value(wall, "extension/OSBThickness"))
-            drywall_thick_in = Float(XMLHelper.get_value(wall, "extension/DrywallThickness"))
-            cavity_layer = wall.elements["Insulation/Layer[InstallationType='cavity']"]
-            cavity_r = Float(XMLHelper.get_value(cavity_layer, "NominalRValue"))
-            install_grade = Integer(XMLHelper.get_value(wall, "Insulation/InsulationGrade"))
-            cavity_depth_in = Float(XMLHelper.get_value(cavity_layer, "Thickness"))
-            cavity_filled = true # FIXME: How to handle?
-            framing_factor = Float(XMLHelper.get_value(wall, "Studs/FramingFactor"))
-            rigid_layer = wall.elements["Insulation/Layer[InstallationType='continuous']"]
-            rigid_r = Float(XMLHelper.get_value(rigid_layer, "NominalRValue"))
-            
-          end
+          osb_thick_in = 0.0
+          drywall_thick_in = 0.0
+          assembly_r = Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
+          film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
+          misc_r = Material.GypsumWall(drywall_thick_in).rvalue + Material.Plywood(osb_thick_in).rvalue + mat_ext_finish.rvalue + film_r
+          wood_stud = Material.Stud2x4
+          cavity_depth_in = wood_stud.thick_in
+          framing_factor = 0.01
+          cavity_r = (1.0 - framing_factor) / (1.0 / assembly_r - framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
+          rigid_r = 0.0
+          install_grade = 1
+          cavity_filled = true
           
           success = WallConstructions.apply_wood_stud(runner, model, [surface],
                                                       "WallConstruction",
@@ -2013,10 +1912,17 @@ class OSModel
     
     if clg_type == "central air conditioning"
     
+      # FIXME: Generalize
       seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
-      num_speeds = XMLHelper.get_value(clgsys, "extension/NumberSpeeds")
+      if seer_nom <= 15
+        num_speeds = "1-Speed"
+      elsif seer_nom <= 21
+        num_speeds = "2-Speed"
+      else
+        num_speeds = "Variable-Speed"
+      end
       crankcase_kw = 0.0
       crankcase_temp = 55.0
     
@@ -2178,7 +2084,6 @@ class OSModel
     return true if hp.nil?
     
     hp_type = XMLHelper.get_value(hp, "HeatPumpType")
-    num_speeds = XMLHelper.get_value(hp, "extension/NumberSpeeds")
     
     cool_capacity_btuh = XMLHelper.get_value(hp, "CoolingCapacity")
     if cool_capacity_btuh.nil?
@@ -2196,6 +2101,7 @@ class OSModel
     
     if hp_type == "air-to-air"        
     
+      # FIXME: Generalize
       if not hp.elements["AnnualCoolEfficiency"].nil?
         seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
         seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
@@ -2210,6 +2116,14 @@ class OSModel
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       
+      if seer_nom <= 15
+        num_speeds = "1-Speed"
+      elsif seer_nom <= 21
+        num_speeds = "2-Speed"
+      else
+        num_speeds = "Variable-Speed"
+      end
+
       crankcase_kw = 0.02
       crankcase_temp = 55.0
       
@@ -2288,6 +2202,7 @@ class OSModel
       
     elsif hp_type == "mini-split"
       
+      # FIXME: Generalize
       seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
@@ -2324,6 +2239,7 @@ class OSModel
              
     elsif hp_type == "ground-to-air"
     
+      # FIXME: Generalize
       cop = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='COP']/Value"))
       eer = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='EER']/Value"))
       shr = 0.732
@@ -2504,8 +2420,35 @@ class OSModel
     # Infiltration
     infiltration = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
     infil_ach50 = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
-    attic_sla = XMLHelper.get_value(infiltration, "extension/AtticSpecificLeakageArea").to_f
-    crawl_sla = XMLHelper.get_value(infiltration, "extension/CrawlspaceSpecificLeakageArea").to_f
+    
+    # Vented crawl SLA
+    vented_crawl_area = 0.0
+    vented_crawl_sla_area = 0.0
+    building.elements.each("BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]") do |vented_crawl|
+      area = REXML::XPath.first(vented_crawl, "sum(FrameFloor/Area/text())")
+      vented_crawl_sla_area += (Float(XMLHelper.get_value(vented_crawl, "extension/CrawlspaceSpecificLeakageArea")) * area)
+      vented_crawl_area += area
+    end
+    if vented_crawl_area > 0
+      crawl_sla = vented_crawl_sla_area / vented_crawl_area
+    else
+      crawl_sla = 0.0
+    end
+    
+    # Vented attic SLA
+    vented_attic_area = 0.0
+    vented_attic_sla_area = 0.0
+    building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='vented attic']") do |vented_attic|
+      area = REXML::XPath.first(vented_attic, "sum(Floors/Floor/Area/text())")
+      vented_attic_sla_area += (Float(XMLHelper.get_value(vented_attic, "extension/AtticSpecificLeakageArea")) * area)
+      vented_attic_area += area
+    end
+    if vented_attic_area > 0
+      attic_sla = vented_attic_sla_area / vented_attic_area
+    else
+      attic_sla = 0.0
+    end
+    
     living_ach50 = infil_ach50
     garage_ach50 = infil_ach50
     finished_basement_ach = 0 # TODO: Need to handle above-grade basement

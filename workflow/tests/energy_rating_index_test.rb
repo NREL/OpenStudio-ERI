@@ -468,26 +468,20 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
   def _get_attic_vent_area(hpxml_doc)
     area = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Floors/Floor") do |attc_floor|
-      area += Float(XMLHelper.get_value(attc_floor, "Area"))
-    end
-    if area > 0
-      sla = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/extension/AtticSpecificLeakageArea"))
-    else
-      sla = 0.0
+    sla = 0.0
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='vented attic']") do |attc|
+      area = REXML::XPath.first(attc, "sum(Floors/Floor/Area/text())")
+      sla += Float(XMLHelper.get_value(attc, "extension/AtticSpecificLeakageArea"))
     end
     return sla*area
   end
   
   def _get_crawl_vent_area(hpxml_doc)
     area = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace]/FrameFloor") do |crawl_ceil|
-      area += Float(XMLHelper.get_value(crawl_ceil, "Area"))
-    end
-    if area > 0
-      sla = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/extension/CrawlspaceSpecificLeakageArea"))
-    else
-      sla = 0.0
+    sla = 0.0
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]") do |foundation|
+      area = REXML::XPath.first(foundation, "sum(FrameFloor/Area/text())")
+      sla += Float(XMLHelper.get_value(foundation, "extension/CrawlspaceSpecificLeakageArea"))
     end
     return sla*area
   end

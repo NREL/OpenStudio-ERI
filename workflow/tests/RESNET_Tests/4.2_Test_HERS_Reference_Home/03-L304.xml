@@ -53,9 +53,6 @@
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <extension>
-            <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -82,7 +79,7 @@
                   <Area>1539</Area>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>16.95</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -101,13 +98,16 @@
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>2.16</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                   </extension>
                 </Wall>
               </Walls>
+              <extension>
+                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -148,6 +148,22 @@
             </Slab>
           </Foundation>
         </Foundations>
+        <RimJoists>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist_ID1'/>
+            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned basement</InteriorAdjacentTo>
+            <Area>126</Area>
+            <Insulation>
+              <SystemIdentifier id='RimJoist_Ins_ID1'/>
+              <AssemblyEffectiveRValue>5.01</AssemblyEffectiveRValue>
+            </Insulation>
+            <extension>
+              <SolarAbsorptance>0.6</SolarAbsorptance>
+              <Emittance>0.9</Emittance>
+            </extension>
+          </RimJoist>
+        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
@@ -245,9 +261,6 @@
                 <Units>SEER</Units>
                 <Value>15</Value>
               </AnnualCoolingEfficiency>
-              <extension>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
