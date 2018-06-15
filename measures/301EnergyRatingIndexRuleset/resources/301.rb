@@ -1362,7 +1362,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(cool_eff, "Value", seer)
       extension = XMLHelper.add_element(cool_sys, "extension")
       XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      XMLHelper.add_element(extension, "NumberSpeeds", "1-Speed")
       
     end
     
@@ -1393,7 +1392,6 @@ class EnergyRatingIndex301Ruleset
       if prevent_hp_and_ac
         XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       end
-      XMLHelper.add_element(extension, "NumberSpeeds", "1-Speed")
       
     end
     
@@ -1554,7 +1552,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(cool_eff, "Value", seer)
       extension = XMLHelper.add_element(cooling_system, "extension")
       XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      XMLHelper.add_element(extension, "NumberSpeeds", "1-Speed")
       
     end
     
@@ -1597,7 +1594,6 @@ class EnergyRatingIndex301Ruleset
       extension = XMLHelper.add_element(heat_pump, "extension")
       XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
-      XMLHelper.add_element(extension, "NumberSpeeds", "1-Speed")
       
     end
     

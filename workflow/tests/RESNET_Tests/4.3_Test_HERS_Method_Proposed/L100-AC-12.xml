@@ -276,9 +276,6 @@
                 <Units>SEER</Units>
                 <Value>13</Value>
               </AnnualCoolingEfficiency>
-              <extension>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>

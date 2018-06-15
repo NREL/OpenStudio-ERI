@@ -246,9 +246,6 @@
                 <Units>COP</Units>
                 <Value>3.6</Value>
               </AnnualHeatEfficiency>
-              <extension>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
-              </extension>
             </HeatPump>
           </HVACPlant>
           <HVACControl>

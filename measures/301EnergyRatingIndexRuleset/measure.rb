@@ -1912,10 +1912,17 @@ class OSModel
     
     if clg_type == "central air conditioning"
     
+      # FIXME: Generalize
       seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
-      num_speeds = XMLHelper.get_value(clgsys, "extension/NumberSpeeds")
+      if seer_nom <= 15
+        num_speeds = "1-Speed"
+      elsif seer_nom <= 21
+        num_speeds = "2-Speed"
+      else
+        num_speeds = "Variable-Speed"
+      end
       crankcase_kw = 0.0
       crankcase_temp = 55.0
     
@@ -2077,7 +2084,6 @@ class OSModel
     return true if hp.nil?
     
     hp_type = XMLHelper.get_value(hp, "HeatPumpType")
-    num_speeds = XMLHelper.get_value(hp, "extension/NumberSpeeds")
     
     cool_capacity_btuh = XMLHelper.get_value(hp, "CoolingCapacity")
     if cool_capacity_btuh.nil?
@@ -2095,6 +2101,7 @@ class OSModel
     
     if hp_type == "air-to-air"        
     
+      # FIXME: Generalize
       if not hp.elements["AnnualCoolEfficiency"].nil?
         seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
         seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
@@ -2109,6 +2116,14 @@ class OSModel
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       
+      if seer_nom <= 15
+        num_speeds = "1-Speed"
+      elsif seer_nom <= 21
+        num_speeds = "2-Speed"
+      else
+        num_speeds = "Variable-Speed"
+      end
+
       crankcase_kw = 0.02
       crankcase_temp = 55.0
       
@@ -2187,6 +2202,7 @@ class OSModel
       
     elsif hp_type == "mini-split"
       
+      # FIXME: Generalize
       seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
@@ -2223,6 +2239,7 @@ class OSModel
              
     elsif hp_type == "ground-to-air"
     
+      # FIXME: Generalize
       cop = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='COP']/Value"))
       eer = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='EER']/Value"))
       shr = 0.732

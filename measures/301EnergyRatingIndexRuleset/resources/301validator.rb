@@ -280,7 +280,6 @@ class EnergyRatingIndex301Validator
             '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]' => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC]
             '[CoolingSystemFuel="electricity"]' => one,
             'FractionCoolLoadServed' => one,
-            'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]' => one,
         },
     
             ## [CoolingType=CentralAC]
@@ -301,7 +300,6 @@ class EnergyRatingIndex301Validator
             '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
             'FractionHeatLoadServed' => one,
             'FractionCoolLoadServed' => one,
-            'extension[NumberSpeeds="1-Speed" or NumberSpeeds="2-Speed" or NumberSpeeds="Variable-Speed"]' => one,
         },
             
             ## [HeatPumpType=ASHP]

@@ -246,9 +246,6 @@
                 <Units>HSPF</Units>
                 <Value>10.0</Value>
               </AnnualHeatEfficiency>
-              <extension>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
-              </extension>
             </HeatPump>
           </HVACPlant>
           <HVACControl>
