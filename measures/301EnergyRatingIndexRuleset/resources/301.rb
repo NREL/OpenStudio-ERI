@@ -1588,10 +1588,14 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
       XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
       XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
+      cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolEfficiency")
+      XMLHelper.add_element(cool_eff, "Units", "SEER")
+      XMLHelper.add_element(cool_eff, "Value", 13.0)
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
       extension = XMLHelper.add_element(heat_pump, "extension")
+      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       XMLHelper.add_element(extension, "NumberSpeeds", "1-Speed")
       

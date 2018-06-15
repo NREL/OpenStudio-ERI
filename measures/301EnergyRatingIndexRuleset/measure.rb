@@ -1005,7 +1005,7 @@ class OSModel
         wall_grade = 1
         wall_ff = 0.0
         wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
-        wall_cont_r = wall_assembly_r - Material.Concrete(8.0).rvalue - Material.GypsumWall(walls_drywall_thick_in).rvalue - wall_film_r
+        wall_cont_r = wall_assembly_r - Material.Concrete(walls_concrete_thick_in).rvalue - Material.GypsumWall(walls_drywall_thick_in).rvalue - wall_film_r
         wall_cont_depth = 1.0
           
       end

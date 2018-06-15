@@ -57,7 +57,7 @@
           <Attics>
             <Attic>
               <SystemIdentifier id='Attic_ID1'/>
-              <AtticType>vented attic</AtticType>
+              <AtticType>unvented attic</AtticType>
               <Roofs>
                 <Roof>
                   <SystemIdentifier id='attic-roof-1'/>
