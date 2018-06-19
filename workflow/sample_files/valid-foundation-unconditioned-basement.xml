@@ -6,7 +6,14 @@
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
-  <SoftwareInfo/>
+  <SoftwareInfo>
+    <extension>
+      <ERICalculation>
+        <Version>2014</Version>
+        <Addenda>IncludeAll</Addenda>
+      </ERICalculation>
+    </extension>
+  </SoftwareInfo>
   <Building>
     <BuildingID id='MyBuilding'/>
     <ProjectStatus>
@@ -335,6 +342,7 @@
             <SystemIdentifier id='DHW_ID1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
+            <Location>conditioned space</Location>
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <HeatingCapacity>18767</HeatingCapacity>
@@ -402,9 +410,12 @@
       <Lighting>
         <LightingFractions>
           <extension>
-            <FractionQualifyingLightFixturesInterior>0.5</FractionQualifyingLightFixturesInterior>
-            <FractionQualifyingLightFixturesExterior>0.5</FractionQualifyingLightFixturesExterior>
-            <FractionQualifyingLightFixturesGarage>0.5</FractionQualifyingLightFixturesGarage>
+            <FractionQualifyingTierIFixturesInterior>0.5</FractionQualifyingTierIFixturesInterior>
+            <FractionQualifyingTierIFixturesExterior>0.5</FractionQualifyingTierIFixturesExterior>
+            <FractionQualifyingTierIFixturesGarage>0.5</FractionQualifyingTierIFixturesGarage>
+            <FractionQualifyingTierIIFixturesInterior>0.25</FractionQualifyingTierIIFixturesInterior>
+            <FractionQualifyingTierIIFixturesExterior>0.25</FractionQualifyingTierIIFixturesExterior>
+            <FractionQualifyingTierIIFixturesGarage>0.25</FractionQualifyingTierIIFixturesGarage>
           </extension>
         </LightingFractions>
       </Lighting>
