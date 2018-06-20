@@ -220,7 +220,7 @@ class HPXMLtoOSMTranslator
         subsurface.setVertices(transformation * subsurface.vertices)
       end
       
-      wall_offset += 10
+      wall_offset += 2.5
       
       surfaces_moved << surface
       
@@ -246,7 +246,7 @@ class HPXMLtoOSMTranslator
       end
       surface.setVertices(transformation * surface.vertices)
       
-      floor_offset += 10
+      floor_offset += 2.5
       
       surfaces_moved << surface
       
@@ -273,7 +273,7 @@ class HPXMLtoOSMTranslator
         end
       end
       
-      window_offset += 10
+      window_offset += 2.5
       
     end
     
