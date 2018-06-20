@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.29 14:48
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.06.20 13:46
 ! <Version>, Version ID
  Version, 8.9
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -61,11 +61,11 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
 ! <Shading Summary>, Number of Fixed Detached Shades, Number of Building Detached Shades, Number of Attached Shades
  Shading Summary,0,0,0
 ! <Zone Summary>, Number of Zones, Number of Zone Surfaces, Number of SubSurfaces
- Zone Summary,3,25,5
+ Zone Summary,3,24,5
 ! <Zone Information>,Zone Name,North Axis {deg},Origin X-Coordinate {m},Origin Y-Coordinate {m},Origin Z-Coordinate {m},Centroid X-Coordinate {m},Centroid Y-Coordinate {m},Centroid Z-Coordinate {m},Type,Zone Multiplier,Zone List Multiplier,Minimum X {m},Maximum X {m},Minimum Y {m},Maximum Y {m},Minimum Z {m},Maximum Z {m},Ceiling Height {m},Volume {m3},Zone Inside Convection Algorithm {Simple-Detailed-CeilingDiffuser-TrombeWall},Zone Outside Convection Algorithm {Simple-Detailed-Tarp-MoWitt-DOE-2-BLAST}, Floor Area {m2},Exterior Gross Wall Area {m2},Exterior Net Wall Area {m2},Exterior Window Area {m2}, Number of Surfaces, Number of SubSurfaces, Number of Shading SubSurfaces,  Part of Total Building Area
- Zone Information, LIVING,0.0,0.00,0.00,0.00,-0.10,2.76,0.56,1,1,1,-59.55,59.55,-55.00,52.50,0.00,2.44,0.50,956.76,TARP,DOE-2,325.16,352.75,290.51,58.53,9,5,0,Yes
+ Zone Information, LIVING,0.0,0.00,0.00,0.00,-0.41,2.73,0.56,1,1,1,-80.00,59.55,-70.00,60.00,0.00,2.44,0.50,956.76,TARP,DOE-2,325.16,352.75,290.51,58.53,9,5,0,Yes
  Zone Information, RES DS_1 RET AIR ZONE,0.0,0.00,0.00,0.00,0.50,74.50,0.50,1,1,1,0.00,1.00,74.00,75.00,0.00,1.00,1.00,1.00,TARP,DOE-2,1.00,0.00,0.00,0.00,6,0,0,Yes
- Zone Information, UNFINISHED ATTIC,0.0,0.00,0.00,0.00,-1.05E-019,4.74E-002,1.75,1,1,1,-9.88,9.88,-9.88,12.50,0.00,3.00,2.50,619.43,TARP,DOE-2,390.19,0.00,0.00,0.00,3,0,0,Yes
+ Zone Information, UNFINISHED ATTIC,0.0,0.00,0.00,0.00,-1.05E-019,7.59E-002,4.93,1,1,1,-9.88,9.88,-9.88,20.00,0.00,13.81,8.89,642.30,TARP,DOE-2,390.19,0.00,0.00,0.00,3,0,0,Yes
 ! <Zone Internal Gains Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
  Zone Internal Gains Nominal, LIVING,325.16,4.0,81.290,1.230E-002,3.014,4.852,0.000,3.069E-003,0.000,0.000,7.869,No
  Zone Internal Gains Nominal, RES DS_1 RET AIR ZONE,1.00,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
@@ -129,9 +129,9 @@ Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01,12/31,Monday,365,Use RunPeri
 Environment:Daylight Saving,No,RunPeriod Object
 Environment:WarmupDays,  6
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,7.5791225148E-014,6.2851132118E-014,Pass,Pass,0.1417417302,0.1557391850,Pass,Pass
- Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,4.1267380963E-003,2.0098995131E-003,Pass,Pass,0.1471636892,0.1690830939,Pass,Pass
- Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,1.9503710565,1.6762163144,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.1398289719E-013,9.1535058730E-014,Pass,Pass,0.1577033616,0.1818129778,Pass,Pass
+ Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,4.4621662051E-003,2.2456450383E-003,Pass,Pass,0.1634188342,0.1951560411,Pass,Pass
+ Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,2.4242760265,2.3373602004,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

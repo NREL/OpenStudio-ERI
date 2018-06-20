@@ -142,7 +142,7 @@
               <Height>4</Height>
               <Area>960</Area>
               <Thickness>8</Thickness>
-              <BelowGradeDepth>3</BelowGradeDepth>
+              <DepthBelowGrade>3</DepthBelowGrade>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <AssemblyEffectiveRValue>10.69</AssemblyEffectiveRValue>

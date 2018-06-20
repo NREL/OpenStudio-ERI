@@ -217,14 +217,14 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
-              <AnnualCoolEfficiency>
+              <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>10</Value>
-              </AnnualCoolEfficiency>
-              <AnnualHeatEfficiency>
+              </AnnualCoolingEfficiency>
+              <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>9.85</Value>
-              </AnnualHeatEfficiency>
+              </AnnualHeatingEfficiency>
             </HeatPump>
           </HVACPlant>
           <HVACControl>

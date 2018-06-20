@@ -375,7 +375,7 @@ def get_eec_heat(hpxml_doc)
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
     units.each do |unit|
-      value = XMLHelper.get_value(heat_pump, "AnnualHeatEfficiency[Units='#{unit}']/Value")
+      value = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
       eec_heats << get_eec_value_numerator(unit) / Float(value)
     end
@@ -406,7 +406,7 @@ def get_eec_cool(hpxml_doc)
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
     units.each do |unit|
-      value = XMLHelper.get_value(heat_pump, "AnnualCoolEfficiency[Units='#{unit}']/Value")
+      value = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
       eec_cools << get_eec_value_numerator(unit) / Float(value)
     end

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?> 
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
-    <XMLType>HPXML, HERS Reference Home</XMLType>
+    <XMLType>HPXML, HERS Index Adjustment Design</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
@@ -31,7 +31,7 @@
           </extension>
         </Site>
         <BuildingOccupancy>
-          <NumberofResidents>4.0</NumberofResidents>
+          <NumberofResidents>3</NumberofResidents>
           <extension>
             <HeatGainBtuPerPersonPerHr>400.0</HeatGainBtuPerPersonPerHr>
             <PersonHrsPerDay>16.5</PersonHrsPerDay>
@@ -40,11 +40,11 @@
           </extension>
         </BuildingOccupancy>
         <BuildingConstruction>
-          <NumberofConditionedFloors>3</NumberofConditionedFloors>
+          <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
-          <NumberofBedrooms>4</NumberofBedrooms>
-          <ConditionedFloorArea>3500</ConditionedFloorArea>
-          <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
+          <NumberofBedrooms>3</NumberofBedrooms>
+          <ConditionedFloorArea>2400</ConditionedFloorArea>
+          <ConditionedBuildingVolume>20400</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
       </BuildingSummary>
@@ -69,7 +69,7 @@
             <SystemIdentifier id='Infiltration_ACHnatural'/>
             <BuildingAirLeakage>
               <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <AirLeakage>0.3692142163704932</AirLeakage>
+              <AirLeakage>0.2633143066386988</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
           <AirInfiltrationMeasurement>
@@ -77,26 +77,26 @@
             <HousePressure>50</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>6.173122203558909</AirLeakage>
+              <AirLeakage>5.0</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='Infiltration_ELA_SLA'/>
-            <EffectiveLeakageArea>1.26</EffectiveLeakageArea>
+            <EffectiveLeakageArea>0.6161831014316744</EffectiveLeakageArea>
           </AirInfiltrationMeasurement>
           <extension>
-            <BuildingSpecificLeakageArea>0.00036</BuildingSpecificLeakageArea>
+            <BuildingSpecificLeakageArea>0.00025674295892986435</BuildingSpecificLeakageArea>
           </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
             <Attic>
               <SystemIdentifier id='Attic_ID1'/>
-              <AtticType>vented attic</AtticType>
+              <AtticType>unvented attic</AtticType>
               <Roofs>
                 <Roof>
                   <SystemIdentifier id='attic-roof-1'/>
-                  <Area>4200</Area>
+                  <Area>1300.0</Area>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Pitch>6</Pitch>
@@ -110,10 +110,10 @@
               <Floors>
                 <Floor>
                   <SystemIdentifier id='attic-floor-1'/>
-                  <Area>4200</Area>
+                  <Area>1200.0</Area>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>38.46153846153846</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -132,43 +132,67 @@
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>17.543859649122805</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>4.0</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
                   </extension>
                 </Wall>
               </Walls>
-              <extension>
-                <AtticSpecificLeakageArea>0.0033333333333333335</AtticSpecificLeakageArea>
-              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>
         <Foundations>
           <Foundation>
-            <SystemIdentifier id='Foundation_ID1'/>
+            <SystemIdentifier id='Foundation_Crawlspace'/>
             <FoundationType>
-              <SlabOnGrade/>
+              <Crawlspace>
+                <Vented>true</Vented>
+              </Crawlspace>
             </FoundationType>
+            <FrameFloor>
+              <SystemIdentifier id='Foundation_Floor'/>
+              <Area>1200</Area>
+              <Insulation>
+                <SystemIdentifier id='Foundation_Floor_Ins'/>
+                <AssemblyEffectiveRValue>30.3030303030303</AssemblyEffectiveRValue>
+              </Insulation>
+              <extension>
+                <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
+              </extension>
+            </FrameFloor>
+            <FoundationWall>
+              <SystemIdentifier id='Foundation_Wall'/>
+              <Height>2</Height>
+              <Area>277.12</Area>
+              <Thickness>8</Thickness>
+              <DepthBelowGrade>0</DepthBelowGrade>
+              <Insulation>
+                <SystemIdentifier id='Foundation_Wall_Ins'/>
+                <AssemblyEffectiveRValue>30.3030303030303</AssemblyEffectiveRValue>
+              </Insulation>
+              <extension>
+                <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+              </extension>
+            </FoundationWall>
             <Slab>
-              <SystemIdentifier id='Slab_ID1'/>
-              <Area>3500</Area>
-              <Thickness>4</Thickness>
-              <ExposedPerimeter>240</ExposedPerimeter>
-              <PerimeterInsulationDepth>4.0</PerimeterInsulationDepth>
+              <SystemIdentifier id='Foundation_Slab'/>
+              <Area>1200</Area>
+              <Thickness>0</Thickness>
+              <ExposedPerimeter>138.56</ExposedPerimeter>
+              <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
               <DepthBelowGrade>0</DepthBelowGrade>
               <PerimeterInsulation>
-                <SystemIdentifier id='PerimeterInsulation_ID1'/>
+                <SystemIdentifier id='Foundation_Slab_Perim_Ins'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
-                  <NominalRValue>10.0</NominalRValue>
-                  <Thickness>2.0</Thickness>
+                  <NominalRValue>0</NominalRValue>
+                  <Thickness>0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
-                <SystemIdentifier id='UnderSlabInsulation_ID1'/>
+                <SystemIdentifier id='Foundation_Slab_Under_Ins'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
@@ -176,10 +200,13 @@
                 </Layer>
               </UnderSlabInsulation>
               <extension>
-                <CarpetFraction>0.8</CarpetFraction>
-                <CarpetRValue>2.0</CarpetRValue>
+                <CarpetFraction>0</CarpetFraction>
+                <CarpetRValue>0</CarpetRValue>
               </extension>
             </Slab>
+            <extension>
+              <CrawlspaceSpecificLeakageArea>0.006666666666666667</CrawlspaceSpecificLeakageArea>
+            </extension>
           </Foundation>
         </Foundations>
         <Walls>
@@ -188,13 +215,13 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>3796</Area>
-            <Siding>vinyl siding</Siding>
+            <Area>2360.0</Area>
+            <Siding>stucco</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
-              <AssemblyEffectiveRValue>17.543859649122805</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
@@ -205,7 +232,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='Window_north'/>
-            <Area>157.5</Area>
+            <Area>108.0</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -219,7 +246,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window_south'/>
-            <Area>157.5</Area>
+            <Area>108.0</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -233,7 +260,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window_east'/>
-            <Area>157.5</Area>
+            <Area>108.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -247,7 +274,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window_west'/>
-            <Area>157.5</Area>
+            <Area>108.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -262,11 +289,11 @@
         </Windows>
         <Doors>
           <Door>
-            <SystemIdentifier id='Door'/>
+            <SystemIdentifier id='Door_ID1'/>
             <AttachedToWall idref='agwall-1'/>
-            <Area>40.0</Area>
-            <Azimuth>0</Azimuth>
-            <RValue>2.857142857142857</RValue>
+            <Area>80</Area>
+            <Azimuth>270</Azimuth>
+            <RValue>4.4</RValue>
             <extension>
               <Height>6.67</Height>
             </extension>
@@ -319,6 +346,18 @@
             <AnnualCoolingDistributionSystemEfficiency>0.8</AnnualCoolingDistributionSystemEfficiency>
           </HVACDistribution>
         </HVAC>
+        <MechanicalVentilation>
+          <VentilationFans>
+            <VentilationFan>
+              <SystemIdentifier id='VentilationFan'/>
+              <FanType>balanced</FanType>
+              <RatedFlowRate>36.28705461288138</RatedFlowRate>
+              <HoursInOperation>24</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <FanPower>43.800562937410184</FanPower>
+            </VentilationFan>
+          </VentilationFans>
+        </MechanicalVentilation>
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeatingSystem'/>
@@ -338,24 +377,25 @@
             <SystemIdentifier id='HotWaterDistribution'/>
             <SystemType>
               <Standard>
-                <PipingLength>98.31300510639733</PipingLength>
+                <PipingLength>89.2820323027551</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>0</PipeRValue>
             </PipeInsulation>
             <extension>
-              <MixedWaterGPD>17.787375444216355</MixedWaterGPD>
-              <RefLoopL>176.62601021279465</RefLoopL>
+              <MixedWaterGPD>15.717671770088979</MixedWaterGPD>
+              <RefLoopL>158.5640646055102</RefLoopL>
+              <EnergyConsumptionAdjustmentFactor>1.0</EnergyConsumptionAdjustmentFactor>
             </extension>
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
             <WaterFixtureType>other</WaterFixtureType>
             <extension>
-              <MixedWaterGPD>54.6</MixedWaterGPD>
-              <SensibleGainsBtu>-1044995.0</SensibleGainsBtu>
-              <LatentGainsBtu>1060325.0</LatentGainsBtu>
+              <MixedWaterGPD>44.6</MixedWaterGPD>
+              <SensibleGainsBtu>-895710.0</SensibleGainsBtu>
+              <LatentGainsBtu>908850.0</LatentGainsBtu>
             </extension>
           </WaterFixture>
         </WaterHeating>
@@ -364,34 +404,34 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <extension>
-            <AnnualkWh>78.0</AnnualkWh>
-            <FracSensible>0.27291304079435075</FracSensible>
-            <FracLatent>0.03154271325763853</FracLatent>
-            <HotWaterGPD>4.484343212524908</HotWaterGPD>
+            <AnnualkWh>68.0</AnnualkWh>
+            <FracSensible>0.2721466577356614</FracSensible>
+            <FracLatent>0.031462041356723855</FracLatent>
+            <HotWaterGPD>3.888566185718028</HotWaterGPD>
           </extension>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <FuelType>electricity</FuelType>
           <extension>
-            <AnnualkWh>1120.0</AnnualkWh>
+            <AnnualkWh>971.0</AnnualkWh>
             <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.13495530275533282</FracSensible>
-            <FracLatent>0.014995033639481424</FracLatent>
+            <FracSensible>0.1349530404230225</FracSensible>
+            <FracLatent>0.014982541630637601</FracLatent>
           </extension>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
           <extension>
-            <AnnualkWh>202.0</AnnualkWh>
-            <FracSensible>0.30026001647273387</FracSensible>
-            <FracLatent>0.30026001647273387</FracLatent>
-            <HotWaterGPD>5.097205479452055</HotWaterGPD>
+            <AnnualkWh>171.0</AnnualkWh>
+            <FracSensible>0.30026930698346976</FracSensible>
+            <FracLatent>0.30026930698346976</FracLatent>
+            <HotWaterGPD>4.316975342465753</HotWaterGPD>
           </extension>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
-          <RatedAnnualkWh>709.0</RatedAnnualkWh>
+          <RatedAnnualkWh>691.0</RatedAnnualkWh>
           <extension>
             <FracSensible>1.0</FracSensible>
             <FracLatent>0.0</FracLatent>
@@ -401,10 +441,10 @@
           <SystemIdentifier id='CookingRange'/>
           <FuelType>electricity</FuelType>
           <extension>
-            <AnnualkWh>487.0</AnnualkWh>
+            <AnnualkWh>448.0</AnnualkWh>
             <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.7195827545127989</FracSensible>
-            <FracLatent>0.07995363939031098</FracLatent>
+            <FracSensible>0.719666104926704</FracSensible>
+            <FracLatent>0.07998943103863498</FracLatent>
           </extension>
         </CookingRange>
         <Oven>
@@ -414,8 +454,8 @@
       </Appliances>
       <Lighting>
         <extension>
-          <AnnualInteriorkWh>3255.0</AnnualInteriorkWh>
-          <AnnualExteriorkWh>275.0</AnnualExteriorkWh>
+          <AnnualInteriorkWh>1248.4797297297298</AnnualInteriorkWh>
+          <AnnualExteriorkWh>96.25</AnnualExteriorkWh>
           <AnnualGaragekWh>0.0</AnnualGaragekWh>
         </extension>
       </Lighting>
@@ -425,10 +465,10 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>3185.0</Value>
+            <Value>2184.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.8545920200609892</FracSensible>
+            <FracSensible>0.8545920200609893</FracSensible>
             <FracLatent>0.04466918399218376</FracLatent>
             <WeekdayScheduleFractions>0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05</WeekdayScheduleFractions>
             <WeekendScheduleFractions>0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05</WeekendScheduleFractions>
@@ -440,10 +480,10 @@
           <PlugLoadType>TV other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>689.0</Value>
+            <Value>620.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.9999997510703025</FracSensible>
+            <FracSensible>1.0000057609550692</FracSensible>
             <FracLatent>0.0</FracLatent>
           </extension>
         </PlugLoad>

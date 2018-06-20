@@ -649,7 +649,7 @@ class HPXMLtoOSMTranslator
         wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, fnd_id)
         wall_length = wall_net_area / wall_height
         
-        z_origin = -1 * Float(XMLHelper.get_value(fnd_wall, "BelowGradeDepth"))
+        z_origin = -1 * Float(XMLHelper.get_value(fnd_wall, "DepthBelowGrade"))
         
         surface = OpenStudio::Model::Surface.new(add_wall_polygon(UnitConversions.convert(wall_length,"ft","m"), 
                                                                   UnitConversions.convert(wall_height,"ft","m"), 
@@ -1906,8 +1906,8 @@ class HPXMLtoOSMTranslator
     if hp_type == "air-to-air"        
     
       # FIXME: Generalize
-      if not hp.elements["AnnualCoolEfficiency"].nil?
-        seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
+      if not hp.elements["AnnualCoolingEfficiency"].nil?
+        seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
         seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       else
         # FIXME: Currently getting from AC
@@ -1916,7 +1916,7 @@ class HPXMLtoOSMTranslator
         seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
       end
       seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       
@@ -2007,10 +2007,10 @@ class HPXMLtoOSMTranslator
     elsif hp_type == "mini-split"
       
       # FIXME: Generalize
-      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
+      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       shr = 0.73
@@ -2044,8 +2044,8 @@ class HPXMLtoOSMTranslator
     elsif hp_type == "ground-to-air"
     
       # FIXME: Generalize
-      cop = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='COP']/Value"))
-      eer = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='EER']/Value"))
+      cop = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='COP']/Value"))
+      eer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='EER']/Value"))
       shr = 0.732
       ground_conductivity = 0.6
       grout_conductivity = 0.4
