@@ -9,19 +9,22 @@ require_relative '../../measures/301EnergyRatingIndexRuleset/resources/unit_conv
 
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
-  def test_valid_simulations
+  def test_sample_file_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
-    Dir["#{xmldir}/valid*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].each do |xml|
       run_eri_and_check(xml, parent_dir, false)
     end
   end
   
-  def test_invalid_simulations
+  def test_invalid_files
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    xmldir = "#{parent_dir}/sample_files"
-    Dir["#{xmldir}/invalid*.xml"].each do |xml|
+    this_dir = File.absolute_path(File.dirname(__FILE__))
+    xmldir = "#{this_dir}/invalid_tests"
+    puts xmldir
+    Dir["#{xmldir}/*.xml"].each do |xml|
       run_eri_and_check(xml, parent_dir, true)
+      # TODO: Check for specific error message(s)
     end
   end
   
