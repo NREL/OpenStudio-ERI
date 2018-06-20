@@ -40,9 +40,8 @@ See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/work
 Continuous integration tests are automatically run for any change to this repository. The current set of tests include:
 - [x] Successful ERI calculations for all sample files
 - [x] RESNET HERS Reference Home auto-generation tests
-- [x] RESNET HERS method tests
-- [x] RESNET HERS IAF method tests
-- [x] RESNET Hot water system performance tests
+- [x] RESNET HERS method tests (including IAF and proposed tests)
+- [x] RESNET Hot water system performance tests (including pre-Addendum A tests)
 
 TODO: Describe how to run the tests locally.
 

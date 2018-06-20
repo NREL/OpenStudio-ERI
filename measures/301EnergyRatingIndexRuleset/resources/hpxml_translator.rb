@@ -20,7 +20,7 @@ class HPXMLtoOSMTranslator
     
     # Hot Water
     
-    success = add_water_heater(runner, model, building, unit, weather, spaces[Constants.SpaceTypeLiving])
+    success = add_water_heater(runner, model, building, unit, weather, spaces)
     return false if not success
     success = add_hot_water_and_appliances(runner, model, building, unit, weather)
     return false if not success
@@ -1471,7 +1471,7 @@ class HPXMLtoOSMTranslator
     return true
   end
   
-  def self.add_water_heater(runner, model, building, unit, weather, living_space)
+  def self.add_water_heater(runner, model, building, unit, weather, spaces)
 
     ec_adj = XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor")
     if ec_adj.nil?
@@ -1484,10 +1484,28 @@ class HPXMLtoOSMTranslator
     
     return true if dhw.nil?
     
+    location = XMLHelper.get_value(dhw, "Location")
     setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
     fuel = XMLHelper.get_value(dhw, "FuelType")
     
+    if location == 'conditioned space'
+      space = spaces[Constants.SpaceTypeLiving]
+    elsif location == 'basement - unconditioned'
+      space = spaces[Constants.SpaceTypeUnfinishedBasement]
+    elsif location == 'attic - unconditioned'
+      space = spaces[Constants.SpaceTypeUnfinishedAttic]
+    elsif location == 'garage - unconditioned'
+      space = spaces[Constants.SpaceTypeGarage]
+    elsif location == 'crawlspace - unvented' or location == 'crawlspace - vented'
+      space = spaces[Constants.SpaceTypeCrawl]
+    else
+      fail "Unhandled water heater space: #{location}."
+    end
+    if space.nil?
+      fail "Water heater location was #{location} but building does not have this space type."
+    end
+
     if wh_type == "storage water heater"
     
       tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
@@ -1500,7 +1518,7 @@ class HPXMLtoOSMTranslator
       capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity")) / 1000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tank(model, unit, runner, living_space, to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
                                        capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
                                        oncycle_power, offcycle_power, ec_adj)
       return false if not success
@@ -1512,7 +1530,7 @@ class HPXMLtoOSMTranslator
       capacity_kbtuh = 100000000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tankless(model, unit, runner, living_space, to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tankless(model, unit, runner, space, to_beopt_fuel(fuel), 
                                            capacity_kbtuh, ef, ef_adj,
                                            setpoint_temp, oncycle_power, offcycle_power, ec_adj)
       return false if not success
@@ -1534,7 +1552,7 @@ class HPXMLtoOSMTranslator
       temp_depress = 0.0 # FIXME
       ducting = "none"
       # FIXME: Use ec_adj
-      success = Waterheater.apply_heatpump(model, unit, runner, living_space, weather,
+      success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
                                            e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
                                            cap, cop, shr, airflow_rate, fan_power,
                                            parasitics, tank_ua, int_factor, temp_depress,

@@ -98,7 +98,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
   def test_resnet_hers_method_iaf
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_IAF")
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
       ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false, true)
@@ -140,8 +140,17 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     Dir["#{xmldir}/*.xml"].each do |xml|
       test_num += 1
       
+      # Run test
       ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false)
-      
+      all_results[test_num] = _get_hot_water(results_csv)
+      assert_operator(all_results[test_num], :>, 0)
+    end
+    
+    # Output results
+    puts all_results
+    
+    # Check results
+    all_results.keys.each do |test_num|
       base_val = nil
       if [2,3].include? test_num
         base_val = all_results[1]
@@ -158,9 +167,48 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         mn_val = all_results[test_num-7]
       end
       
-      all_results[test_num] = _check_hot_water(results_csv, test_num, base_val, mn_val)
+      _check_hot_water(test_num, all_results[test_num], base_val, mn_val)
     end
+    
+  end
+  
+  def test_resnet_hot_water_pre_addendum_a
+    # Tests w/o Addendum A
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    test_num = 0
+    base_vals = {}
+    mn_vals = {}
+    all_results = {}
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water_PreAddendumA")
+    Dir["#{xmldir}/*.xml"].each do |xml|
+      test_num += 1
+      
+      # Run test
+      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, parent_dir, false)
+      all_results[test_num] = _get_hot_water(results_csv)
+      assert_operator(all_results[test_num], :>, 0)
+    end
+    
+    # Output results
     puts all_results
+      
+    # Check results
+    all_results.keys.each do |test_num|
+      base_val = nil
+      if [2,3].include? test_num
+        base_val = all_results[1]
+      elsif [5,6].include? test_num
+        base_val = all_results[4]
+      end
+
+      mn_val = nil
+      if test_num >= 4
+        mn_val = all_results[test_num-3]
+      end
+      
+      _check_hot_water_pre_addendum_a(test_num, all_results[test_num], base_val, mn_val)
+    end
+    
   end
   
   def test_resnet_verification_building_attributes
@@ -190,14 +238,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def run_eri_and_check(xml, parent_dir, expect_error, using_iaf=false)
     xml = File.absolute_path(xml)
     
-    iaf_str = ''
-    if using_iaf
-      iaf_str = ' --iaf'
-    end
-    
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb#{iaf_str} -x #{xml}"
+    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml}"
     system(command)
     
     results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
@@ -1009,7 +1052,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     assert_operator((values['HERS Index'] - hers_score).abs / values['HERS Index'], :<, 0.005)
   end
   
-  def _check_hot_water(results_csv, test_num, base_val=nil, mn_val=nil)
+  def _get_hot_water(results_csv)
     require 'csv'
     rated_dhw = nil
     CSV.foreach(results_csv) do |row|
@@ -1017,84 +1060,143 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       rated_dhw = Float(row[1])
       break
     end
-    
+    return rated_dhw
+  end
+  
+  def _check_hot_water(test_num, curr_val, base_val=nil, mn_val=nil)
+
     # Table 4.6.2(1): Acceptance Criteria for Hot Water Tests
-    
     min_max_abs = nil
-    min_max_base_delta = nil
-    min_max_mn_delta = nil
+    min_max_base_delta_percent = nil
+    min_max_mn_delta_percent = nil
     if test_num == 1
       min_max_abs = [19.11, 19.73]
     elsif test_num == 2
       min_max_abs = [25.54, 26.36]
-      min_max_base_delta = [-34.01, -32.49]
+      min_max_base_delta_percent = [-34.01, -32.49]
     elsif test_num == 3
       min_max_abs = [17.03, 17.50]
-      min_max_base_delta = [10.74, 11.57]
+      min_max_base_delta_percent = [10.74, 11.57]
     elsif test_num == 4
       min_max_abs = [24.75, 25.52]
-      min_max_base_delta = [3.06, 3.22]
+      min_max_base_delta_percent = [3.06, 3.22]
     elsif test_num == 5
       min_max_abs = [55.43, 57.15]
-      min_max_base_delta = [-118.52, -115.63]
+      min_max_base_delta_percent = [-118.52, -115.63]
     elsif test_num == 6
       min_max_abs = [22.39, 23.09]
-      min_max_base_delta = [12.17, 12.51]
+      min_max_base_delta_percent = [12.17, 12.51]
     elsif test_num == 7
       min_max_abs = [20.29, 20.94]
-      min_max_base_delta = [20.15, 20.78]
+      min_max_base_delta_percent = [20.15, 20.78]
     elsif test_num == 8
       min_max_abs = [10.59, 11.03]
-      min_max_mn_delta = [43.35, 45.00]
+      min_max_mn_delta_percent = [43.35, 45.00]
     elsif test_num == 9
       min_max_abs = [13.17, 13.68]
-      min_max_base_delta = [-24.54, -23.40] # FIXME: Should be [-24.54, -23.47]
-      min_max_mn_delta = [47.26, 48.93]
+      min_max_base_delta_percent = [-24.54, -23.40] # FIXME: Should be [-24.54, -23.47]
+      min_max_mn_delta_percent = [47.26, 48.93]
     elsif test_num == 10
       min_max_abs = [8.81, 9.13]
-      min_max_base_delta = [16.65, 18.12]
-      min_max_mn_delta = [47.38, 48.74]
+      min_max_base_delta_percent = [16.65, 18.12]
+      min_max_mn_delta_percent = [47.38, 48.74]
     elsif test_num == 11
       min_max_abs = [12.87, 13.36]
-      min_max_base_delta = [2.20, 2.38]
-      min_max_mn_delta = [46.81, 48.48]
+      min_max_base_delta_percent = [2.20, 2.38]
+      min_max_mn_delta_percent = [46.81, 48.48]
     elsif test_num == 12
       min_max_abs = [30.19, 31.31]
-      min_max_base_delta = [-130.88, -127.52]
-      min_max_mn_delta = [44.41, 45.99]
+      min_max_base_delta_percent = [-130.88, -127.52]
+      min_max_mn_delta_percent = [44.41, 45.99]
     elsif test_num == 13
       min_max_abs = [11.90, 12.38]
-      min_max_base_delta = [9.3, 9.74] # FIXME: Should be [9.38, 9.74]
-      min_max_mn_delta = [45.60, 47.33]
+      min_max_base_delta_percent = [9.3, 9.74] # FIXME: Should be [9.38, 9.74]
+      min_max_mn_delta_percent = [45.60, 47.33]
     elsif test_num == 14
       min_max_abs = [11.68, 12.14]
-      min_max_base_delta = [11.00, 11.40]
-      min_max_mn_delta = [41.32, 42.86]
+      min_max_base_delta_percent = [11.00, 11.40]
+      min_max_mn_delta_percent = [41.32, 42.86]
+    else
+      fail "Unexpected test."
+    end
+    
+    base_delta_percent = nil
+    mn_delta_percent = nil
+    if not min_max_base_delta_percent.nil? and not base_val.nil?
+      base_delta_percent = (base_val-curr_val)/base_val*100.0 # %
+    end
+    if not min_max_mn_delta_percent.nil? and not mn_val.nil?
+      mn_delta_percent = (mn_val-curr_val)/mn_val*100.0 # %
+    end
+    
+    assert_operator(curr_val, :>=, min_max_abs[0])
+    assert_operator(curr_val, :<=, min_max_abs[1])
+    if not base_delta_percent.nil?
+      assert_operator(base_delta_percent, :>=, min_max_base_delta_percent[0])
+      assert_operator(base_delta_percent, :<=, min_max_base_delta_percent[1])
+    end
+    if not mn_delta_percent.nil?
+      assert_operator(mn_delta_percent, :>=, min_max_mn_delta_percent[0])
+      assert_operator(mn_delta_percent, :<=, min_max_mn_delta_percent[1])
+    end
+    
+  end
+  
+  def _check_hot_water_pre_addendum_a(test_num, curr_val, base_val=nil, mn_val=nil)
+    
+    # Acceptance criteria from HERS Hot Water Performance Tests Excel spreadsheet
+    min_max_abs = nil
+    min_max_fl_delta_abs = nil
+    min_max_base_delta_percent = nil
+    min_max_fl_delta_percent = nil
+    if test_num == 1
+      min_max_abs = [18.2, 22.0]
+    elsif test_num == 2
+      min_max_base_delta_percent = [26.5, 32.2]
+    elsif test_num == 3
+      min_max_base_delta_percent = [-11.8, -6.8]
+    elsif test_num == 4
+      min_max_abs = [10.9, 14.4]
+      min_max_fl_delta_abs = [5.5, 9.4]
+      min_max_fl_delta_percent = [28.9, 45.1]
+    elsif test_num == 5
+      min_max_base_delta_percent = [19.1, 29.1]
+    elsif test_num == 6
+      min_max_base_delta_percent = [-19.5, -7.7]
     else
       fail "Unexpected test."
     end
     
     base_delta = nil
     mn_delta = nil
-    if not min_max_base_delta.nil? and not base_val.nil?
-      base_delta = (base_val-rated_dhw)/base_val*100.0 # %
+    fl_delta_percent = nil
+    if not min_max_base_delta_percent.nil? and not base_val.nil?
+      base_delta = (curr_val-base_val)/base_val*100.0 # %
     end
-    if not min_max_mn_delta.nil? and not mn_val.nil?
-      mn_delta = (mn_val-rated_dhw)/mn_val*100.0 # %
+    if not min_max_fl_delta_abs.nil? and not mn_val.nil?
+      fl_delta = mn_val-curr_val
+    end
+    if not min_max_fl_delta_percent.nil? and not mn_val.nil?
+      fl_delta_percent = (mn_val-curr_val)/mn_val*100.0 # %
     end
     
-    assert_operator(rated_dhw, :>=, min_max_abs[0])
-    assert_operator(rated_dhw, :<=, min_max_abs[1])
+    if not min_max_abs.nil?
+      assert_operator(curr_val, :>=, min_max_abs[0])
+      assert_operator(curr_val, :<=, min_max_abs[1])
+    end
     if not base_delta.nil?
-      assert_operator(base_delta, :>=, min_max_base_delta[0])
-      assert_operator(base_delta, :<=, min_max_base_delta[1])
+      assert_operator(base_delta, :>=, min_max_base_delta_percent[0])
+      assert_operator(base_delta, :<=, min_max_base_delta_percent[1])
     end
-    if not mn_delta.nil?
-      assert_operator(mn_delta, :>=, min_max_mn_delta[0])
-      assert_operator(mn_delta, :<=, min_max_mn_delta[1])
+    if not fl_delta.nil?
+      assert_operator(fl_delta, :>=, min_max_fl_delta_abs[0])
+      assert_operator(fl_delta, :<=, min_max_fl_delta_abs[1])
+    end
+    if not fl_delta_percent.nil?
+      assert_operator(fl_delta_percent, :>=, min_max_fl_delta_percent[0])
+      assert_operator(fl_delta_percent, :<=, min_max_fl_delta_percent[1])
     end
     
-    return rated_dhw
   end
   
 end

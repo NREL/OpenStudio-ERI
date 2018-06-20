@@ -814,11 +814,6 @@ OptionParser.new do |opts|
     options[:epws] = t
   end
   
-  options[:iaf] = false
-  opts.on('--iaf', 'Apply house size Index Adjustment factors (IAF)') do |t|
-    options[:iaf] = true
-  end
-  
   options[:debug] = false
   opts.on('-d', '--debug') do |t|
     options[:debug] = true
@@ -857,9 +852,18 @@ resultsdir = File.join(basedir, "results")
 rm_path(resultsdir)
 Dir.mkdir(resultsdir)
 
+# Run w/ Addendum E House Size Index Adjustment Factor?
+using_iaf = false
+hpxml_doc = REXML::Document.new(File.read(options[:hpxml]))
+eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+eri_addenda = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Addenda")
+if eri_version == '2014' and ['IncludeAll', 'Exclude2014G'].include? eri_addenda
+  using_iaf = true
+end
+
 run_designs = {Constants.CalcTypeERIRatedHome => true,
                Constants.CalcTypeERIReferenceHome => true,
-               Constants.CalcTypeERIIndexAdjustmentDesign => options[:iaf]}
+               Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf}
 
 # Run simulations
 design_outputs = {}
@@ -886,7 +890,7 @@ end
 
 # Calculate and write results
 puts "Calculating ERI..."
-if options[:iaf]
+if using_iaf
   results_iad = calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign], 
                               design_outputs[Constants.CalcTypeERIReferenceHome])
 else
@@ -897,7 +901,7 @@ results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome],
                         results_iad)
 
 puts "Writing output files..."
-write_results(results, resultsdir, design_outputs, options[:iaf])
+write_results(results, resultsdir, design_outputs, using_iaf)
 
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
 puts "Completed in #{(Time.now - start_time).round(1)} seconds."
