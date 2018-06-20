@@ -1649,7 +1649,7 @@ class EnergyRatingIndex301Ruleset
       orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
       
       low_flow_fixtures = false
-      orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType!='other']") do |wf|
+      orig_details.elements.each("Systems/WaterHeating/WaterFixture") do |wf|
         if wf.elements["FlowRate"] and Float(XMLHelper.get_value(wf, "FlowRate")) <= 2.0
           low_flow_fixtures = true
         end

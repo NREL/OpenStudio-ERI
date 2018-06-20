@@ -2238,18 +2238,8 @@ class HPXMLtoOSMTranslator
       infil_ach50 = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
       infil_const_ach = nil
     elsif infiltration.elements["AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"]
-      # nACH
-      infil_nach = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
-      # Convert to ACH50
-      ncfl_ag = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
-      cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-      cvolume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
-      infil_sla = Airflow.get_infiltration_SLA_from_ACH(infil_nach, ncfl_ag, weather)
-      infil_ach50 = Airflow.get_infiltration_ACH50_from_SLA(infil_sla, 0.67, cfa, cvolume)
-      infil_const_ach = nil
-    elsif infiltration.elements["extension/BuildingConstantACHnatural"]
       # Constant nACH
-      infil_const_ach = Float(XMLHelper.get_value(infiltration, "extension/BuildingConstantACHnatural"))
+      infil_const_ach = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
       infil_ach50 = nil
     end
     
