@@ -14,7 +14,7 @@ namespace :test do
   desc 'Run all tests'
   Rake::TestTask.new('all') do |t|
     t.libs << 'test'
-    t.test_files = Dir['measures/*/tests/*.rb'] + Dir['workflow/tests/*.rb']
+    t.test_files = Dir['measures/*/tests/*.rb'] + Dir['workflow/tests/energy_rating_index_test.rb']
     t.warning = false
     t.verbose = true
   end
