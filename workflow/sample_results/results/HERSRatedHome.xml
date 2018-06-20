@@ -349,7 +349,6 @@
                 <Value>16</Value>
               </AnnualCoolingEfficiency>
               <extension>
-                <NumberSpeeds>2-Speed</NumberSpeeds>
                 <PerformanceAdjustmentSEER>1.0626992561105209</PerformanceAdjustmentSEER>
               </extension>
             </CoolingSystem>

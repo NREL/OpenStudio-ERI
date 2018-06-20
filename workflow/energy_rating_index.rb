@@ -287,58 +287,68 @@ def get_nst(hpxml_doc)
 end
 
 def get_heating_fuel(hpxml_doc)
-  heat_fuel = nil
+  heat_fuels = []
   
-  heating_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
-  heat_pump_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
-  
-  if heating_system.nil? and heat_pump_system.nil?
-    fail "ERROR: No heating system found."
-  elsif not heating_system.nil? and not heat_pump_system.nil?
-    fail "ERROR: Multiple heating systems found."
-  elsif not heating_system.nil?
-    heat_fuel = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
-  elsif not heat_pump_system.nil?
-    heat_fuel = 'electricity'
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg_system|
+    heat_fuels << XMLHelper.get_value(htg_system, "HeatingSystemFuel")
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+    heat_fuels << "electricity"
   end
   
-  if heat_fuel.nil?
+  heat_fuels.uniq!
+  
+  if heat_fuels.size == 0
     fail "ERROR: No heating system fuel type found."
+  elsif heat_fuels.size > 1
+    fail "ERROR: Multiple heating system fuel types found."
   end
 
-  return heat_fuel
+  return heat_fuels[0]
 end
 
 def get_dhw_fuel(hpxml_doc)
-  dhw_fuel = nil
+  dhw_fuels = []
   
-  dhw_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
-  
-  if dhw_system.nil?
-    fail "ERROR: No water heating system found."
-  else
-    dhw_fuel = XMLHelper.get_value(dhw_system, "FuelType")
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
+    dhw_fuels << XMLHelper.get_value(dhw_system, "FuelType")
   end
   
-  if dhw_fuel.nil?
+  dhw_fuels.uniq!
+  
+  if dhw_fuels.size == 0
     fail "ERROR: No water heating system fuel type found."
+  elsif dhw_fuels.size > 1
+    fail "ERROR: Multiple water heating system fuel types found."
   end
   
-  return dhw_fuel
+  return dhw_fuels[0]
 end
 
 def get_dse_heat_cool(hpxml_doc)
   
-  dse_heat = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
-  dse_cool = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
+  dse_heats = []
+  dse_cools = []
   
-  if dse_heat.nil?
-    fail "ERROR: Heating distribution system efficiency not found."
-  elsif dse_cool.nil?
-    fail "ERROR: Cooling distribution system efficiency not found."
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
+    dse_heats << Float(XMLHelper.get_value(hvac_dist, "AnnualHeatingDistributionSystemEfficiency"))
+    dse_cools << Float(XMLHelper.get_value(hvac_dist, "AnnualCoolingDistributionSystemEfficiency"))
   end
   
-  return Float(dse_heat), Float(dse_cool)
+  dse_heats.uniq!
+  dse_cools.uniq!
+  
+  if dse_heats.size == 0
+    fail "ERROR: No heating distribution system efficiency value found."
+  elsif dse_cools.size == 0
+    fail "ERROR: No cooling distribution system efficiency value found."
+  elsif dse_heats.size > 1
+    fail "ERROR: Multiple heating distribution system efficiency values found."
+  elsif dse_cools.size > 1
+    fail "ERROR: Multiple cooling distribution system efficiency values found."
+  end
+  
+  return dse_heats[0], dse_cools[0]
   
 end
 
@@ -352,82 +362,87 @@ def get_eec_value_numerator(unit)
 end
 
 def get_eec_heat(hpxml_doc)
-  eec_heat = nil
+  eec_heats = []
   
-  heating_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
-  heat_pump_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
+  units = ['HSPF','COP','AFUE','Percent']
   
-  [heating_system, heat_pump_system].each do |sys|
-    next if sys.nil?
-    ['HSPF','COP','AFUE','Percent'].each do |unit|
-      if sys == heating_system
-        value = XMLHelper.get_value(sys, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
-      elsif sys == heat_pump_system
-        value = XMLHelper.get_value(sys, "AnnualHeatEfficiency[Units='#{unit}']/Value")
-      end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg_system|
+    units.each do |unit|
+      value = XMLHelper.get_value(htg_system, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
-      if not eec_heat.nil?
-        fail "ERROR: Multiple heating system efficiency values found."
-      end
-      eec_heat = get_eec_value_numerator(unit) / value.to_f
+      eec_heats << get_eec_value_numerator(unit) / Float(value)
     end
   end
-
-  if eec_heat.nil?
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+    units.each do |unit|
+      value = XMLHelper.get_value(heat_pump, "AnnualHeatEfficiency[Units='#{unit}']/Value")
+      next if value.nil?
+      eec_heats << get_eec_value_numerator(unit) / Float(value)
+    end
+  end
+  
+  eec_heats.uniq!
+  
+  if eec_heats.size == 0
     fail "ERROR: No heating system efficiency value found."
+  elsif eec_heats.size > 1
+    fail "ERROR: Multiple heating system efficiency values found."
   end
 
-  return eec_heat
+  return eec_heats[0]
 end
 
 def get_eec_cool(hpxml_doc)
-  eec_cool = nil
+  eec_cools = []
   
-  cooling_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
-  heat_pump_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
+  units = ['SEER','COP','EER']
   
-  [cooling_system, heat_pump_system].each do |sys|
-    next if sys.nil?
-    ['SEER','COP','EER'].each do |unit|
-      if sys == cooling_system  
-        value = XMLHelper.get_value(sys, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
-      elsif sys == heat_pump_system
-        value = XMLHelper.get_value(sys, "AnnualCoolEfficiency[Units='#{unit}']/Value")
-      end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clg_system|
+    units.each do |unit|
+      value = XMLHelper.get_value(clg_system, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
-      if not eec_cool.nil?
-        fail "ERROR: Multiple cooling system efficiency values found."
-      end
-      eec_cool = get_eec_value_numerator(unit) / value.to_f
+      eec_cools << get_eec_value_numerator(unit) / Float(value)
+    end
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+    units.each do |unit|
+      value = XMLHelper.get_value(heat_pump, "AnnualCoolEfficiency[Units='#{unit}']/Value")
+      next if value.nil?
+      eec_cools << get_eec_value_numerator(unit) / Float(value)
     end
   end
   
-  if eec_cool.nil?
-    fail "ERROR: No cooling system efficiency value found."
-  end
+  eec_cools.uniq!
   
-  return eec_cool
+  if eec_cools.size == 0
+    fail "ERROR: No cooling system efficiency value found."
+  elsif eec_cools.size > 1
+    fail "ERROR: Multiple cooling system efficiency values found."
+  end
+
+  return eec_cools[0]
 end
 
 def get_eec_dhw(hpxml_doc)
-  eec_dhw = nil
+  eec_dhws = []
   
-  dhw_system = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
-  
-  [dhw_system].each do |sys|
-    next if sys.nil?
-    value = XMLHelper.get_value(sys, "EnergyFactor")
-    value_adj = XMLHelper.get_value(sys, "extension/PerformanceAdjustmentEnergyFactor")
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
+    value = XMLHelper.get_value(dhw_system, "EnergyFactor")
+    value_adj = XMLHelper.get_value(dhw_system, "extension/PerformanceAdjustmentEnergyFactor")
     if not value.nil? and not value_adj.nil?
-      eec_dhw = get_eec_value_numerator('EF') / (value.to_f * value_adj.to_f)
+      eec_dhws << get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end
   end
   
-  if eec_dhw.nil?
+  eec_dhws.uniq!
+  
+  if eec_dhws.size == 0
     fail "ERROR: No water heating system efficiency value found."
+  elsif eec_dhws.size > 1
+    fail "ERROR: Multiple water heating system efficiency values found."
   end
   
-  return eec_dhw
+  return eec_dhws[0]
 end
 
 def calculate_eri(rated_output, ref_output, results_iad=nil)

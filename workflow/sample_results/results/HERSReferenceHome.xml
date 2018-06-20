@@ -321,7 +321,6 @@
               </AnnualCoolingEfficiency>
               <extension>
                 <PerformanceAdjustmentSEER>1.0626992561105209</PerformanceAdjustmentSEER>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
               </extension>
             </CoolingSystem>
           </HVACPlant>

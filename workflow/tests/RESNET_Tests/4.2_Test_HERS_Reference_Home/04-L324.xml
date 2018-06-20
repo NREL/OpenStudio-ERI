@@ -53,9 +53,6 @@
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <extension>
-            <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -82,7 +79,7 @@
                   <Area>1539</Area>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>16.95</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -101,13 +98,16 @@
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>2.16</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                   </extension>
                 </Wall>
               </Walls>
+              <extension>
+                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -121,24 +121,10 @@
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Floor_ID1'/>
-              <FloorJoists>
-                <FramingFactor>0.2</FramingFactor>
-                <Material>wood</Material>
-              </FloorJoists>
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>5.5</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
+                <AssemblyEffectiveRValue>3.1</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -150,26 +136,9 @@
               <Area>1344</Area>
               <Thickness>8</Thickness>
               <BelowGradeDepth>6.583</BelowGradeDepth>
-              <InteriorStuds>
-                <FramingFactor>0.09375</FramingFactor>
-                <Material>wood</Material>
-              </InteriorStuds>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                  <extension>
-                    <InsulationHeight>8</InsulationHeight>
-                  </extension>
-                </Layer>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>11</NominalRValue>
-                  <Thickness>3.5</Thickness>
-                </Layer>
+                <AssemblyEffectiveRValue>10.69</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
@@ -206,6 +175,22 @@
             </Slab>
           </Foundation>
         </Foundations>
+        <RimJoists>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist_ID1'/>
+            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned basement</InteriorAdjacentTo>
+            <Area>126</Area>
+            <Insulation>
+              <SystemIdentifier id='RimJoist_Ins_ID1'/>
+              <AssemblyEffectiveRValue>13.14</AssemblyEffectiveRValue>
+            </Insulation>
+            <extension>
+              <SolarAbsorptance>0.6</SolarAbsorptance>
+              <Emittance>0.9</Emittance>
+            </extension>
+          </RimJoist>
+        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>

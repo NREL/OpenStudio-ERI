@@ -57,7 +57,6 @@
         <AirInfiltration>
           <extension>
             <BuildingConstantACHnatural>1.5</BuildingConstantACHnatural>
-            <AtticConstantACHnatural>2.4</AtticConstantACHnatural>
           </extension>
         </AirInfiltration>
         <AtticAndRoof>
@@ -111,6 +110,9 @@
                   </extension>
                 </Wall>
               </Walls>
+              <extension>
+                <AtticConstantACHnatural>2.4</AtticConstantACHnatural>
+              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>

@@ -54,10 +54,6 @@
               <AirLeakage>3</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <extension>
-            <CrawlspaceSpecificLeakageArea>0.00667</CrawlspaceSpecificLeakageArea>
-            <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -82,23 +78,9 @@
                 <Floor>
                   <SystemIdentifier id='attic-floor-1'/>
                   <Area>1539</Area>
-                  <FloorJoists>
-                    <FramingFactor>0.11</FramingFactor>
-                    <Material>wood</Material>
-                  </FloorJoists>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>49</NominalRValue>
-                      <Thickness>5.5</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -124,6 +106,9 @@
                   </extension>
                 </Wall>
               </Walls>
+              <extension>
+                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -137,24 +122,10 @@
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Floor_ID1'/>
-              <FloorJoists>
-                <FramingFactor>0.13</FramingFactor>
-                <Material>wood</Material>
-              </FloorJoists>
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>30</NominalRValue>
-                  <Thickness>7.25</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
+                <AssemblyEffectiveRValue>20.4</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -164,28 +135,11 @@
               <SystemIdentifier id='fndwall-1'/>
               <Height>2</Height>
               <Area>3078</Area>
-              <Thickness>8</Thickness>
+              <Thickness>6</Thickness>
               <BelowGradeDepth>0</BelowGradeDepth>
-              <InteriorStuds>
-                <FramingFactor>0</FramingFactor>
-                <Material>wood</Material>
-              </InteriorStuds>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                  <extension>
-                    <InsulationHeight>0</InsulationHeight>
-                  </extension>
-                </Layer>
+                <AssemblyEffectiveRValue>1.34</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
@@ -194,7 +148,7 @@
             <Slab>
               <SystemIdentifier id='fndslab-1'/>
               <Area>1539</Area>
-              <Thickness>4</Thickness>
+              <Thickness>0</Thickness>
               <ExposedPerimeter>168</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
@@ -220,6 +174,9 @@
                 <CarpetRValue>2.0</CarpetRValue>
               </extension>
             </Slab>
+          <extension>
+            <CrawlspaceSpecificLeakageArea>0.00667</CrawlspaceSpecificLeakageArea>
+          </extension>
           </Foundation>
         </Foundations>
         <Walls>
@@ -229,26 +186,12 @@
               <WoodStud/>
             </WallType>
             <Area>1344</Area>
-            <Studs>
-              <FramingFactor>0.25</FramingFactor>
-              <Material>wood</Material>
-            </Studs>
             <Siding>wood siding</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
-              <InsulationGrade>1</InsulationGrade>
-              <Layer>
-                <InstallationType>cavity</InstallationType>
-                <NominalRValue>13</NominalRValue>
-                <Thickness>3.5</Thickness>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous</InstallationType>
-                <NominalRValue>5</NominalRValue>
-                <Thickness>1</Thickness>
-              </Layer>
+              <AssemblyEffectiveRValue>16.9</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
@@ -333,9 +276,6 @@
                 <Units>SEER</Units>
                 <Value>21</Value>
               </AnnualCoolingEfficiency>
-              <extension>
-                <NumberSpeeds>Variable-Speed</NumberSpeeds>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>

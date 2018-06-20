@@ -143,15 +143,17 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
     
-    # Validate input HPXML against ERI Use Case
-    errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
-    errors.each do |error|
-      runner.registerError(error)
+    if calc_type != "None"
+      # Validate input HPXML against ERI Use Case
+      errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
+      errors.each do |error|
+        runner.registerError(error)
+      end
+      unless errors.empty?
+        return false
+      end
+      runner.registerInfo("Validated input HPXML against ERI Use Case.")
     end
-    unless errors.empty?
-      return false
-    end
-    runner.registerInfo("Validated input HPXML against ERI Use Case.")
     
     # Weather file
     t = Time.now

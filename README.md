@@ -41,6 +41,7 @@ Continuous integration tests are automatically run for any change to this reposi
 - [x] Successful ERI calculations for all sample files
 - [x] RESNET HERS Reference Home auto-generation tests
 - [x] RESNET HERS method tests
+- [x] RESNET HERS IAF method tests
 - [x] RESNET Hot water system performance tests
 
 TODO: Describe how to run the tests locally.
@@ -49,12 +50,12 @@ TODO: Describe how to run the tests locally.
 
 To use this workflow, software tools must be able to produce a valid HPXML file; see the included [schema](https://github.com/NREL/OpenStudio-ERI/tree/master/hpxml_schemas). The primary section of the HPXML file for describing a building is found at `/HPXML/Building/BuildingDetails`.
 
-HPXML is an flexible and extensible format, where all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is under development that specifies the particular HPXML fields required to run this workflow. The [ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log` files.
+HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is under development that specifies the particular HPXML fields required to run this workflow. The [ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log` files.
 
 ## Status
 
 *	The 301 ruleset and ERI calculation are **works-in-progress**. 
 * The format of the ERI HPXML file is still in flux.
-*	The workflow has only been tested with a few sample files, as provided in the `workflow/sample_files` directory.
+*	The workflow has only been tested with the sample files provided in the `workflow/sample_files` directory.
 *	Errors/warnings are not yet being handled gracefully.
 *	Limited effort has been spent to optimize/speed up the process. 
