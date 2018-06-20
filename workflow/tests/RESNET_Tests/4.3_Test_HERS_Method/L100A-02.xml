@@ -6,7 +6,14 @@
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
-  <SoftwareInfo/>
+  <SoftwareInfo>
+    <extension>
+      <ERICalculation>
+        <Version>2014</Version>
+        <Addenda>Exclude2014GE</Addenda>
+      </ERICalculation>
+    </extension>
+  </SoftwareInfo>
   <Building>
     <BuildingID id='MyBuilding'/>
     <ProjectStatus>
@@ -267,6 +274,7 @@
             <SystemIdentifier id='DHW_ID1'/>
             <FuelType>natural gas</FuelType>
             <WaterHeaterType>instantaneous water heater</WaterHeaterType>
+            <Location>conditioned space</Location>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <EnergyFactor>0.82</EnergyFactor>
           </WaterHeatingSystem>

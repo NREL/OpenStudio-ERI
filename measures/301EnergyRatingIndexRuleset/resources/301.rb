@@ -11,15 +11,27 @@ class EnergyRatingIndex301Ruleset
     building = hpxml_doc.elements["/HPXML/Building"]
     
     # Update XML type
-    header = hpxml_doc.elements["//XMLTransactionHeaderInformation"]
+    header = hpxml_doc.elements["/HPXML/XMLTransactionHeaderInformation"]
     if header.elements["XMLType"].nil?
       header.elements["XMLType"].text = calc_type
     else
       header.elements["XMLType"].text += ", #{calc_type}"
     end
     
-    # Set class variables
+    addenda_map = {
+                   'IncludeAll'     => ['Addendum A', 'Addendum E', 'Addendum G'],
+                   'Exclude2014G'   => ['Addendum A', 'Addendum E'],
+                   'Exclude2014GE'  => ['Addendum A'],
+                   'Exclude2014GEA' => [],
+                  }
+    
+    # ERI version and addenda
+    @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+    @eri_addenda = addenda_map[XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Addenda")]
+    
+    # Class variables
     @weather = weather
+    @ndu = 1 # Dwelling units
     @cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
     @nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     @ncfl = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
@@ -258,18 +270,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_summary_iad(new_summary, orig_details)
   
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
-    
-    Number of Stories (NS): Two (2)
-    Number of Bedrooms (Nbr): Three (3)
-    Conditioned Floor Area (CFA): 2400 ft2
-    Number of conditioned zones: One (1)
-    No attached garage
-    Wall height: 17 feet (including band joist)
-    Wall width: 34.64 feet facing N, S, E and W
-    '''
-  
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
     @cfa = 2400
     @nbeds = 3
     @ncfl = 2
@@ -308,12 +309,7 @@ class EnergyRatingIndex301Ruleset
     
     new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
     
-    '''
-    Table 4.2.2(1) - Air exchange rate
-    Specific Leakage Area (SLA) = 0.00036 assuming no energy recovery and with energy loads calculated in 
-    quadrature
-    '''
-    
+    # Table 4.2.2(1) - Air exchange rate
     sla = 0.00036
     
     # Convert to other forms
@@ -349,18 +345,12 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
-    '''
-    Table 4.2.2(1) - Air exchange rate
-    For residences , without Whole-House Mechanical Ventilation Systems, the measured infiltration rate but 
-    not less than 0.30 ach
-    For residences with Whole-House Mechanical Ventilation Systems, the measured infiltration rate combined 
-    with the time-averaged Whole-House Mechanical Ventilation System rate,(f) which shall not be less than 
-    0.03 x CFA + 7.5 x (Nbr+1) cfm and with energy loads calculated in quadrature
-    '''
     
     new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
     orig_infil = orig_details.elements["Enclosure/AirInfiltration"]
     orig_mv = orig_details.elements["Systems/MechanicalVentilation"]
+    
+    # Table 4.2.2(1) - Air exchange rate
     
     whole_house_fan = nil
     if not orig_mv.nil?
@@ -412,16 +402,11 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_enclosure_air_infiltration_iad(new_enclosure, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-    Infiltration flow rate shall be determined using the following envelope leakage rates:
-      5 ACH50 in IECC(2012) Climate Zones 1-2
-      3 ACH50 in IECC(2012) Climate Zones 3-8
-    '''
     
     new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
     orig_infil = orig_details.elements["Enclosure/AirInfiltration"]
     
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
     if ["1A", "1B", "1C", "2A", "2B", "2C"].include? @iecc_zone_2012
       ach50 = 3.0
     elsif ["3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2012
@@ -466,24 +451,6 @@ class EnergyRatingIndex301Ruleset
   
     new_attic_roof = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/AtticAndRoof")
     
-    '''
-    Table 4.2.2(1) - Ceilings
-    Type: wood frame
-    Gross area: same as Rated Home
-    U-Factor: from Table 4.2.2(2)
-    
-    Table 4.2.2(1) - Roofs
-    Type: composition shingle on wood sheathing
-    Gross area: same as Rated Home
-    Solar absorptance = 0.75
-    Emittance = 0.90
-    
-    Table 4.2.2(1) - Attics
-    Type: vented with aperture = 1ft2 per 300 ft2 ceiling area
-    
-    4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
-    '''
-    
     ceiling_ufactor = get_reference_component_characteristics("ceiling")
     wall_ufactor = get_reference_component_characteristics("frame_wall")
     
@@ -495,7 +462,7 @@ class EnergyRatingIndex301Ruleset
       end
       interior_adjacent_to = attic_type
       
-      # Roofs
+      # Table 4.2.2(1) - Roofs
       new_attic.elements.each("Roofs/Roof") do |new_roof|
         new_roof.elements["RadiantBarrier"].text = false
         new_roof.elements["SolarAbsorptance"].text = 0.75
@@ -509,7 +476,7 @@ class EnergyRatingIndex301Ruleset
         end
       end
       
-      # Floors
+      # Table 4.2.2(1) - Ceilings
       new_attic.elements.each("Floors/Floor") do |new_floor|
         exterior_adjacent_to = XMLHelper.get_value(new_floor, "extension/ExteriorAdjacentTo")
         if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
@@ -520,7 +487,7 @@ class EnergyRatingIndex301Ruleset
         end
       end
       
-      # Walls
+      # Table 4.2.2(1) - Above-grade walls
       new_attic.elements.each("Walls/Wall") do |new_wall|
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
         if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
@@ -531,7 +498,7 @@ class EnergyRatingIndex301Ruleset
         end
       end
       
-      # Ventilation
+      # Table 4.2.2(1) - Attics
       if attic_type == 'vented attic'
         extension = new_attic.elements["extension"]
         if extension.nil?
@@ -549,51 +516,9 @@ class EnergyRatingIndex301Ruleset
     
     new_attic_roof = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/AtticAndRoof")
     
-    '''
-    Table 4.2.2(1) - Ceilings
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    U-Factor: Same as Rated Home
-    
-    Table 4.2.2(1) - Roofs
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    Solar absorptance = Values from Table 4.2.2(4) shall be used to determine solar absorptance except 
-    where test data are provided for roof surface in accordance with ASTM Standards C-1549, E-1918, or 
-    CRRC Method # 1.
-    Emittance = Emittance values provided by the roofing manufacturer in accordance with ASTM Standard 
-    C-1371 shall be used when available. In cases where the appropriate data are not known, same as the 
-    Reference Home.
-    
-    Table 4.2.2(1) - Attics
-    Same as Rated Home
-    '''
-    
   end
   
   def self.set_enclosure_attics_roofs_iad(new_enclosure, orig_details)
-    
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Attics
-    Type: Same as Rated Home. If more than one type, maintain same proportional coverage for each type.
-
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Roofs
-    Type: Same as Rated Home. If more than one type, maintain same proportional coverage for each type.
-    Gross area: 1300 ft2
-    
-    Solar absorptance: Same as Rated Home
-    Values from Table 4.2.2(4) shall be used to determine solar absorptance except where test data are provided 
-    for roof surface in accordance with ANSI/CRRC S100.
-    
-    Emittance: Same as Rated Home
-    Emittance values provided by the roofing manufacturer in accordance with ANSI/CRRC S100 shall be used 
-    when available. In cases where the appropriate data are not known, same as the Energy Rating Reference Home.
-    
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Ceilings
-    Type: Same as Rated Home. If more than one type, maintain same proportional coverage for each type.
-    Gross projected footprint area: 1200 ft2
-    U-Factor: Same as Rated Home
-    '''
     
     set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
     
@@ -601,7 +526,7 @@ class EnergyRatingIndex301Ruleset
     
     new_attic_roof.elements.each("Attics/Attic") do |new_attic|
     
-      # Roofs
+      # Table 4.3.1(1) Configuration of Index Adjustment Design - Roofs
       sum_roof_area = 0.0
       new_attic.elements.each("Roofs/Roof") do |new_roof|
         sum_roof_area += Float(XMLHelper.get_value(new_roof, "Area"))
@@ -611,7 +536,7 @@ class EnergyRatingIndex301Ruleset
         new_roof.elements["Area"].text = 1300.0 * roof_area / sum_roof_area
       end
       
-      # Floors
+      # Table 4.3.1(1) Configuration of Index Adjustment Design - Ceilings
       sum_floor_area = 0.0
       new_attic.elements.each("Floors/Floor") do |new_floor|
         sum_floor_area += Float(XMLHelper.get_value(new_floor, "Area"))
@@ -629,29 +554,6 @@ class EnergyRatingIndex301Ruleset
     
     new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
     
-    '''
-    Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
-    Type: wood frame
-    Gross area: same as Rated Home
-    U-Factor: from Table 4.2.2(2)
-    
-    Table 4.2.2(1) - Conditioned basement walls
-    Type: same as Rated Home
-    Gross area: same as Rated Home
-    U-Factor: from Table 4.2.2(2) with the insulation layer on the interior side of walls
-      
-    Table 4.2.2(1) - Foundations
-    Type: same as Rated Home
-    Gross Area: same as Rated Home
-    U-Factor / R-value: from Table 4.2.2(2)
-      
-    Table 4.2.2(1) - Crawlspaces
-    Type: vented with net free vent aperture = 1ft2 per 150 ft2 of crawlspace floor area.
-    U-factor: from Table 4.2.2(2) for floors over unconditioned spaces or outdoor environment.
-      
-    4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
-    '''
-      
     floor_ufactor = get_reference_component_characteristics("floor")
     wall_ufactor = get_reference_component_characteristics("basement_wall")
     slab_rvalue, slab_depth = get_reference_component_characteristics("slab_on_grade")
@@ -675,6 +577,7 @@ class EnergyRatingIndex301Ruleset
         interior_adjacent_to = "ambient"
       end
       
+      # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
       new_foundation.elements.each("FrameFloor") do |new_floor|
         exterior_adjacent_to = XMLHelper.get_value(new_floor, "extension/ExteriorAdjacentTo")
         if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
@@ -685,6 +588,7 @@ class EnergyRatingIndex301Ruleset
         end
       end
   
+      # Table 4.2.2(1) - Conditioned basement walls
       new_foundation.elements.each("FoundationWall") do |new_wall|
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
         if fnd_type.elements["Basement[Conditioned='true']"] and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
@@ -695,6 +599,7 @@ class EnergyRatingIndex301Ruleset
         end
       end
   
+      # Table 4.2.2(1) - Foundations
       new_foundation.elements.each("Slab") do |new_slab|
         if fnd_type.elements["SlabOnGrade"] and is_external_thermal_boundary(interior_adjacent_to, "ground")
           new_slab.elements["PerimeterInsulationDepth"].text = slab_depth
@@ -716,6 +621,7 @@ class EnergyRatingIndex301Ruleset
         new_slab.elements["extension/CarpetRValue"].text = 2.0
       end
 
+      # Table 4.2.2(1) - Crawlspaces
       if XMLHelper.has_element(new_foundation, "FoundationType/Crawlspace[Vented='true']")
         extension = new_foundation.elements["extension"]
         if extension.nil?
@@ -731,34 +637,13 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_foundations_rated(new_enclosure, orig_details)
     
-    '''
-    Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    U-Factor: Same as Rated Home
-    
-    Table 4.2.2(1) - Conditioned basement walls
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    U-Factor: Same as Rated Home
-
-    Table 4.2.2(1) - Foundations
-    Type: Same as Rated Home
-    Gross Area: Same as Rated Home
-    U-Factor / R-value: Same as Rated Home
-    
-    Table 4.2.2(1) - Crawlspaces
-    Same as the Rated Home, but not less net free ventilation area than the Reference Home unless an approved 
-    ground cover in accordance with 2012 IRC 408.3.1 is used, in which case, the same net free ventilation area 
-    as the Rated Home down to a minimum net free vent area of 1ft2 per 1,500 ft2 of crawlspace floor area.
-    '''
-    
     new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
     
     min_crawl_vent = 1.0/150.0 # Reference Home vent
     
     new_foundations.elements.each("Foundation") do |new_foundation|
       
+      # Table 4.2.2(1) - Crawlspaces
       if XMLHelper.has_element(new_foundation, "FoundationType/Crawlspace[Vented='true']")
         vent = Float(XMLHelper.get_value(new_foundation, "extension/CrawlspaceSpecificLeakageArea"))
         # TODO: Handle approved ground cover
@@ -772,17 +657,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_enclosure_foundations_iad(new_enclosure, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Foundation
-    Type: Vented crawlspace
-    Venting: net free vent aperture = 1ft2 per 150 ft2 of crawlspace floor area.
-    Gross floor area: 1200 ft2
-      Floor U-Factor: Same as Energy Rating Reference Home
-    Foundation wall: 2 feet tall, 2 feet above grade
-      Wall width: 34.64 feet facing N, S, E and W
-      Wall U-Factor: Same as Energy Rating Reference Home
-    '''
-    
+  
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Foundation
     floor_ufactor = get_reference_component_characteristics("floor")
     
     new_foundation = XMLHelper.add_element(new_enclosure, "Foundations/Foundation")
@@ -861,35 +737,11 @@ class EnergyRatingIndex301Ruleset
     # FIXME
   end
   
-  def self.get_wall_subsurface_area(wall, details)
-    wall_id = wall.elements["SystemIdentifier"].attributes["id"]
-    subsurface_area = 0.0
-    details.elements.each("Enclosure/Windows/Window") do |window|
-      next if window.elements["AttachedToWall"].attributes["idref"] != wall_id
-      subsurface_area += Float(XMLHelper.get_value(window, "Area"))
-    end
-    details.elements.each("Enclosure/Doors/Door") do |door|
-      next if door.elements["AttachedToWall"].attributes["idref"] != wall_id
-      subsurface_area += Float(XMLHelper.get_value(door, "Area"))
-    end
-    return subsurface_area
-  end
-
   def self.set_enclosure_walls_reference(new_enclosure, orig_details)
   
     new_walls = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Walls")
-  
-    '''
-    Table 4.2.2(1) - Above-grade walls
-    Type: wood frame
-    Gross area: same as Rated Home
-    U-Factor: from Table 4.2.2(2)
-    Solar absorptance = 0.75
-    Emittance = 0.90
     
-    4.2.2.2.1. The insulation of the HERS Reference Home enclosure elements shall be modeled as Grade I.
-    '''
-    
+    # Table 4.2.2(1) - Above-grade walls
     ufactor = get_reference_component_characteristics("frame_wall")
     
     new_walls.elements.each("Wall") do |new_wall|
@@ -912,28 +764,14 @@ class EnergyRatingIndex301Ruleset
   
     new_walls = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Walls")
   
-    '''
-    Table 4.2.2(1) - Above-grade walls
-    Type: Same as Rated Home
-    Gross area: Same as Rated Home
-    U-Factor: Same as Rated Home
-    Solar absorptance = Same as Rated Home
-    Emittance = Same as Rated Home
-    '''
+    # Table 4.2.2(1) - Above-grade walls
+    # nop
     
   end
   
   def self.set_enclosure_walls_iad(new_enclosure, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
-    Type: Same as Rated Home. If more than one type, maintain same proportional coverage for 
-    each type, excluding any garage wall and adiabatic wall areas.
-    Gross Area: 2360ft2 total, 590ft2 facing N, S, E and W
-    U-Factor: Same as Rated Home
-    Solar absorptance: Same as Rated Home
-    Emittance: Same as Rated Home
-    '''
     
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
     set_enclosure_walls_rated(new_enclosure, orig_details)
     
     new_walls = new_enclosure.elements["Walls"]
@@ -960,37 +798,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_reference(new_enclosure, orig_details)
     
-    '''
-    Table 4.2.2(1) - Glazing
-    Total area = 18% of CFA
-    Orientation: equally distributed to four (4) cardinal compass orientations (N,E,S,&W)
-    U-factor: from Table 4.2.2(2)
-    SHGC: from Table 4.2.2(2)    
-    External shading: none
-    
-    (b) For one- and two-family dwellings with conditioned basements and dwelling units in residential 
-    buildings not over three stories in height above grade containing multiple dwelling units the following 
-    formula shall be used to determine total window area:
-      AG = 0.18 x CFA x FA x F
-      where:
-        AG = Total glazing area
-        CFA = Total Conditioned Floor Area
-        FA = (gross above-grade thermal boundary wall area) / (gross above-grade thermal boundary wall area + 
-             0.5*gross below-grade thermal boundary wall area)
-        F = 1- 0.44* (gross common wall Area) / (gross above-grade thermal boundary wall area + gross common 
-            wall area)
-      and where:
-        Thermal boundary wall is any wall that separates Conditioned Space from Unconditioned Space, outdoor 
-        environment or the surrounding soil.
-        Above-grade thermal boundary wall is any portion of a thermal boundary wall not in contact with soil.
-        Below-grade thermal boundary wall is any portion of a thermal boundary wall in soil contact
-        Common wall is the total wall area of walls adjacent to another conditioned living unit, not including 
-        foundation walls.
-    
-    4.3.7. Natural Ventilation. Natural ventilation shall be assumed in both the Reference and Rated Homes 
-    during hours when natural ventilation will reduce annual cooling energy use.
-    '''
-
+    # Table 4.2.2(1) - Glazing
     ufactor, shgc = get_reference_component_characteristics("window")
     
     ag_wall_area = 0.0
@@ -1042,11 +850,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_window_interior_shading_reference(window)
-    '''
-    Table 4.2.2(1) - Glazing
-    Interior shade coefficient: Summer = 0.70; Winter = 0.85
-    '''
-    
+
+    # Table 4.2.2(1) - Glazing
     extension = window.elements["extension"]
     if extension.nil?
       extension = XMLHelper.add_element(window, "extension")
@@ -1062,19 +867,7 @@ class EnergyRatingIndex301Ruleset
   
     new_windows = XMLHelper.add_element(new_enclosure, "Windows")
   
-    '''
-    Table 4.2.2(1) - Glazing
-    Total area = Same as Rated Home
-    Orientation: Same as Rated Home
-    U-factor: Same as Rated Home
-    SHGC: Same as Rated Home
-    Interior shade coefficient: Same as HERS Reference Home
-    External shading: Same as Rated Home
-    
-    4.3.7. Natural Ventilation. Natural ventilation shall be assumed in both the Reference and Rated Homes 
-    during hours when natural ventilation will reduce annual cooling energy use.
-    '''
-    
+    # Table 4.2.2(1) - Glazing
     orig_details.elements.each("Enclosure/Windows/Window") do |orig_window|
       new_window = XMLHelper.add_element(new_windows, "Window")
       XMLHelper.copy_element(new_window, orig_window, "SystemIdentifier")
@@ -1092,18 +885,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_enclosure_windows_iad(new_enclosure, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Glazing
-    Total area =Same as Energy Rating Reference Home
-    Orientation: equally distributed to four (4) cardinal compass orientations (N,E,S,&W)
-    U-Factor: Area-weighted average U-Factor of Rated Home
-    SHGC: Area-weighted average SHGC of Rated Home
-    Interior shade coefficient:
-      Summer: Same as Energy Rating Reference Home
-      Winter: Same as Energy Rating Reference Home
-    External shading: None
-    '''
     
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Glazing
     set_enclosure_windows_reference(new_enclosure, orig_details)
     
     new_windows = new_enclosure.elements["Windows"]
@@ -1129,10 +912,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_skylights_reference(enclosure)
   
-    '''
-    Table 4.2.2(1) - Skylights
-    None
-    '''
+    # Table 4.2.2(1) - Skylights
     # nop
     
   end
@@ -1141,34 +921,21 @@ class EnergyRatingIndex301Ruleset
   
     new_skylights = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Skylights")
 
-    '''
-    Table 4.2.2(1) - Skylights
-    Same as Rated Home
-    '''
+    # Table 4.2.2(1) - Skylights
     # nop
     
   end
   
   def self.set_enclosure_skylights_iad(new_enclosure, orig_details)
   
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Skylights
-    Same as Rated Home
-    '''
-    
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Skylights
     set_enclosure_skylights_rated(new_enclosure, orig_details)
     
   end
 
   def self.set_enclosure_doors_reference(new_enclosure, orig_details)
 
-    '''
-    Table 4.2.2(1) - Doors
-    Area: 40 ft2
-    U-factor: same as fenestration from Table 4.2.2(2)
-    Orientation: North
-    '''
-    
+    # Table 4.2.2(1) - Doors
     ufactor, shgc = get_reference_component_characteristics("door")
     door_area = 40.0
     
@@ -1193,13 +960,7 @@ class EnergyRatingIndex301Ruleset
   
     new_doors = XMLHelper.add_element(new_enclosure, "Doors")
   
-    '''
-    Table 4.2.2(1) - Doors
-    Area: Same as Rated Home
-    U-factor: Same as Rated Home
-    Orientation: Same as Rated Home
-    '''
-
+    # Table 4.2.2(1) - Doors
     orig_details.elements.each("Enclosure/Doors/Door") do |orig_door|
       new_door = XMLHelper.add_element(new_doors, "Door")
       XMLHelper.copy_element(new_door, orig_door, "SystemIdentifier")
@@ -1215,13 +976,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_doors_iad(new_enclosure, orig_details)
   
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
-    Area: Same as Rated Home
-    Orientation: Same as Rated Home
-    U-Factor: Same as Rated Home
-    '''
-
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
     set_enclosure_doors_rated(new_enclosure, orig_details)
     
   end
@@ -1230,44 +985,8 @@ class EnergyRatingIndex301Ruleset
   
     new_hvac = XMLHelper.add_element(new_systems, "HVAC")
   
-    '''
-    Table 4.2.2(1) - Heating systems
-    Fuel type: same as Rated Home
-    Efficiencies:
-    - Electric: air source heat pump in accordance with Table 4.2.2(1a)
-    - Non-electric furnaces: natural gas furnace in accordance with Table 4.2.2(1a)
-    - Non-electric boilers: natural gas boiler in accordance with Table 4.2.2(1a)
-    - Capacity: sized in accordance with Section 4.3.3.1.
-    
-    Table 4.2.2(1) - Cooling systems
-    Fuel type: Electric
-    Efficiency: in accordance with Table 4.2.2(1a)
-    Capacity: sized in accordance with Section 4.3.3.1.
-    
-    (i) For a Rated Home with multiple heating, cooling, or water heating systems using different fuel types, 
-    the applicable system capacities and fuel types shall be weighted in accordance with the loads 
-    distribution (as calculated by accepted engineering practice for that equipment and fuel type) of the 
-    subject multiple systems.
-    
-    (k) For a Rated Home without a heating system, a gas heating system with the efficiency provided in Table 
-    4.2.2(1a) shall be assumed for both the HERS Reference Home and Rated Home. For a Rated home that has 
-    no access to natural gas or fossil fuel delivery, an air-source heat pump with the efficiency provided 
-    in Table 4.2.2(1a) shall be assumed for both the HERS Reference Home and Rated Home.
-    
-    (m) For a Rated Home without a cooling system, an electric air conditioner with the efficiency provided in 
-    Table 4.2.2(1a) shall be assumed for both the HERS Reference Home and the Rated Home.
-    
-    4.3.4. Air Source Heat Pumps. For heat pumps and air conditioners where
-    a detailed, hourly HVAC simulation is used to separately model the 
-    compressor and evaporator energy (including part-load performance), the 
-    back-up heating energy, the distribution fan or blower energy and crank 
-    case heating energy, the Manufacturers Equipment Performance Rating 
-    (HSPF and SEER) shall be modified as follows to represent the performance
-    of the compressor and evaporator components alone: HSPF, corr = HSPF, mfg / 0.582
-    and SEER, corr = SEER, mfg / 0.941. The energy uses of all components 
-    (i.e. compressor and distribution fan/blower; and crank case heater) shall 
-    then be added together to obtain the total energy uses for heating and cooling.
-    '''
+    # Table 4.2.2(1) - Heating systems
+    # Table 4.2.2(1) - Cooling systems
     
     prevent_hp_and_ac = true # TODO: Eventually allow this...
     
@@ -1395,13 +1114,7 @@ class EnergyRatingIndex301Ruleset
       
     end
     
-    '''
-    Table 303.4.1(1) - Thermostat
-    Type: manual
-    Temperature setpoints: heating temperature set point = 68 F
-    Temperature setpoints: cooling temperature set point = 78 F
-    '''
-    
+    # Table 303.4.1(1) - Thermostat
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
     sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACControl")
@@ -1409,12 +1122,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
     XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
     
-    '''
-    Table 4.2.2(1) - Thermal distribution systems
-    Thermal distribution system efficiency (DSE) of 0.80 shall be applied to both the heating and 
-    cooling system efficiencies
-    '''
-
+    # Table 4.2.2(1) - Thermal distribution systems
     new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
     sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACDistribution")
@@ -1428,44 +1136,8 @@ class EnergyRatingIndex301Ruleset
   
     new_hvac = XMLHelper.add_element(new_systems, "HVAC")
   
-    '''
-    Table 4.2.2(1) - Heating systems
-    Fuel type: Same as Rated Home
-    Efficiencies:
-    - Electric: Same as Rated Home
-    - Non-electric furnaces: Same as Rated Home
-    - Non-electric boilers: Same as Rated Home
-    - Capacity: Same as Rated Home
-    
-    Table 4.2.2(1) - Cooling systems
-    Fuel type: Same as Rated Home
-    Efficiency: Same as Rated Home
-    Capacity: Same as Rated Home
-    
-    (i) For a Rated Home with multiple heating, cooling, or water heating systems using different fuel types, 
-    the applicable system capacities and fuel types shall be weighted in accordance with the loads 
-    distribution (as calculated by accepted engineering practice for that equipment and fuel type) of the 
-    subject multiple systems.
-    
-    (k) For a Rated Home without a heating system, a gas heating system with the efficiency provided in Table 
-    4.2.2(1a) shall be assumed for both the HERS Reference Home and Rated Home. For a Rated home that has 
-    no access to natural gas or fossil fuel delivery, an air-source heat pump with the efficiency provided 
-    in Table 4.2.2(1a) shall be assumed for both the HERS Reference Home and Rated Home.
-    
-    (m) For a Rated Home without a cooling system, an electric air conditioner with the efficiency provided in 
-    Table 4.2.2(1a) shall be assumed for both the HERS Reference Home and the Rated Home.
-    
-    4.3.4. Air Source Heat Pumps. For heat pumps and air conditioners where
-    a detailed, hourly HVAC simulation is used to separately model the 
-    compressor and evaporator energy (including part-load performance), the 
-    back-up heating energy, the distribution fan or blower energy and crank 
-    case heating energy, the Manufacturers Equipment Performance Rating 
-    (HSPF and SEER) shall be modified as follows to represent the performance
-    of the compressor and evaporator components alone: HSPF, corr = HSPF, mfg / 0.582
-    and SEER, corr = SEER, mfg / 0.941. The energy uses of all components 
-    (i.e. compressor and distribution fan/blower; and crank case heater) shall 
-    then be added together to obtain the total energy uses for heating and cooling.
-    '''
+    # Table 4.2.2(1) - Heating systems
+    # Table 4.2.2(1) - Cooling systems
     
     heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
     heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
@@ -1597,16 +1269,7 @@ class EnergyRatingIndex301Ruleset
       
     end
     
-    '''
-    Table 303.4.1(1) - Thermostat
-    Type: Same as Rated Home
-    Temperature setpoints: same as the HERS Reference Home, except as required by Section 4.3.1
-    
-    4.3.1. Programmable Thermostats. Where programmable offsets are available in the Rated Home, 2F 
-    temperature control point offsets with an 11 p.m. to 5:59 a.m. schedule for heating and a 9 a.m. 
-    to 2:59 p.m. schedule for cooling, and with no offsets assumed for the Reference Home;
-    '''
-    
+    # Table 303.4.1(1) - Thermostat
     has_programmable_tstat = false
     control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType")
     if control_type == "programmable thermostat"
@@ -1634,17 +1297,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
     end
     
-    '''
-    Table 4.2.2(1) - Thermal distribution systems
-    For forced air distribution systems: Tested in accordance with Section 803 of the Mortgage Industry 
-    National Home Energy Rating Systems Standards (o), and then either calculated through hourly simulation 
-    or calculated in accordance with ASHRAE Standard 152-2004 with the ducts located and insulated as in 
-    the Rated Home.
-    For ductless distribution systems: DSE=1.00
-    For hydronic distribution systems: DSE=1.00
-    '''
-    
-    # Retain distribution system
+    # Table 4.2.2(1) - Thermal distribution systems
     # FIXME: There can be no distribution system when HVAC prescribed via above
     #        e.g., no cooling system => AC w/o ducts
     XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
@@ -1653,49 +1306,15 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_systems_hvac_iad(new_systems, orig_details)
   
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Heating systems
-    Fuel type: Same as Rated Home
-    Efficiencies:
-      Electric: air source heat pump in accordance with Table 4.2.2(1a)
-      Non-electric furnaces: natural gas furnace in accordance with Table 4.2.2(1a)
-      Non-electric boilers: natural gas boiler in accordance with Table 4.2.2(1a)
-    Capacity: sized in accordance with Section 4.3.3.1
-    
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Cooling systems
-    Fuel type: Electric
-    Efficiency: in accordance with Table 4.2.2(1a)
-    Capacity: sized in accordance with Section 4.3.3.1
-    '''
-    
-    # Above language is same as reference home
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Heating systems
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Cooling systems
     set_systems_hvac_reference(new_systems, orig_details)
   
   end
   
-  def self.calc_mech_vent_q_fan(q_tot, sla)
-    # TODO: Merge with Airflow measure and move this code to airflow.rb
-    nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
-    q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-    if q_inf > 2.0/3.0 * q_tot
-      return q_tot - 2.0/3.0 * q_tot
-    end
-    return q_tot - q_inf
-  end
-  
   def self.set_systems_mechanical_ventilation_reference(new_systems, orig_details, new_enclosure)
-    '''
-    Table 4.2.2(1) - Whole-House Mechanical ventilation
-    None, except where a mechanical ventilation system is specified by the Rated Home, in which case:
-    Where Rated Home has supply-only or exhaust-only Whole-House Ventilation System:
-    0.35*fanCFM*8.76 kWh/y
-    Where Rated Home has balanced Whole-House Ventilation System without energy recovery:
-    0.70* fanCFM*8.76 kWh/y
-    Where Rated Home has balanced Whole-House Ventilation System with energy recovery:
-    1.00*fanCFM*8.76 kWh/y
-    And where fanCFM is calculated in accordance with Section 4.1.2 ASHRAE Standard 62.2-2013 for a 
-    continuous Whole-House Ventilation System.
-    '''
+    
+    # Table 4.2.2(1) - Whole-House Mechanical ventilation
     
     # Init
     fan_type = nil
@@ -1711,9 +1330,6 @@ class EnergyRatingIndex301Ruleset
       # Calculate fan cfm for airflow rate using Reference Home infiltration
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
       sla = Float(XMLHelper.get_value(new_enclosure, "AirInfiltration/extension/BuildingSpecificLeakageArea"))
-      if sla != 0.00036
-        fail "BAD" # FIXME: Temporary
-      end
       q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
       
       # Calculate fan cfm for fan power using Rated Home infiltration
@@ -1756,16 +1372,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_systems_mechanical_ventilation_rated(new_systems, orig_details)
-    '''
-    Table 4.2.2(1) - Whole-House Mechanical ventilation
-    Same as Rated Home
     
-    Table 4.2.2(1) - Air exchange rate
-    For residences with Whole-House Mechanical Ventilation Systems, the measured infiltration rate combined 
-    with the time-averaged Whole-House Mechanical Ventilation System rate,(f) which shall not be less than 
-    0.03 x CFA + 7.5 x (Nbr+1) cfm and with energy loads calculated in quadrature
-    '''
-    
+    # Table 4.2.2(1) - Whole-House Mechanical ventilation
     orig_vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
     if not orig_vent_fan.nil?
@@ -1788,16 +1396,9 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_systems_mechanical_ventilation_iad(new_systems, orig_details, new_enclosure)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
-    Balanced Whole-House Ventilation System without energy recovery with 
-    fan power = 0.70 * fanCFM * 8.76 kWh/y
-    
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-    Combined infiltration flow rate plus mechanical ventilation flow rate of
-      0.03 * CFA + 7.5 * (Nbr+1) cfm and with energy loads
-    calculated in quadrature
-    '''
+
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
     
     q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
     
@@ -1837,25 +1438,7 @@ class EnergyRatingIndex301Ruleset
   
     new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
   
-    '''
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
-    
-    Table 4.2.2(1) - Service water heating systems
-    Fuel type: same as Rated Home
-    Efficiency
-    - Electric: EF = 0.97 - (0.00132 * store gal)
-    - Fossil fuel: EF = 0.67 - (0.0019 * store gal)
-    Tank temperature: 125 F
-    
-    (n) For a Rated Home with a non-storage type water heater, a 40-gallon storage-type water heater of the 
-    same fuel as the proposed water heater shall be assumed for the HERS Reference Home. For a Rated 
-    Home without a proposed water heater, a 40-gallon storage-type water heater of the same fuel as the 
-    predominant fuel type used for the heating system(s) shall be assumed for both the Rated and HERS 
-    Reference Homes. In both cases the Energy Factor of the water heater shall be as prescribed for water 
-    heaters by CFR 430.32(d), published in the Federal Register/Volume 66, No. 11, Wednesday, January 17, 
-    2001 for water heaters manufactured after January 20, 2004.
-    '''
+    # Table 4.2.2(1) - Service water heating systems
     
     orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
 
@@ -1868,6 +1451,7 @@ class EnergyRatingIndex301Ruleset
         wh_tank_vol = Float(XMLHelper.get_value(orig_wh_sys, "TankVolume"))
       end
       wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
+      wh_location = XMLHelper.get_value(orig_wh_sys, "Location")
     end
 
     if orig_wh_sys.nil?
@@ -1876,6 +1460,7 @@ class EnergyRatingIndex301Ruleset
       if wh_fuel_type.nil? # Electric heat pump or no heating system
         wh_fuel_type = 'electricity'
       end
+      wh_location = 'conditioned space' # 301 Standard doesn't specify the location
     elsif wh_type == 'instantaneous water heater'
       wh_tank_vol = 40.0
     end
@@ -1890,6 +1475,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_attribute(sys_id, "id", "WaterHeatingSystem")
     XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
     XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
+    XMLHelper.add_element(new_wh_sys, "Location", wh_location)
     XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
     XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
     XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
@@ -1897,7 +1483,7 @@ class EnergyRatingIndex301Ruleset
     if not wh_re.nil?
       XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
     end
-    XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", 125)
+    XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
     extension = XMLHelper.add_element(new_wh_sys, "extension")
     XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
     
@@ -1907,22 +1493,7 @@ class EnergyRatingIndex301Ruleset
   
     new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
   
-    '''
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
-    
-    Table 4.2.2(1) - Service water heating systems
-    Fuel type: Same as Rated Home
-    Efficiency: Same as Rated Home
-    Tank temperature: Same as HERS Reference Home
-    
-    (n) For tankless water heaters, the Energy Factor (EF) shall be multiplied by 0.92 for Rated Home 
-    calculations. For a Rated Home without a proposed water heater, a 40-gallon storage-type water heater 
-    of the same fuel as the predominant fuel type used for the heating system(s) shall be assumed for both 
-    the Rated and HERS Reference Homes. In both cases the Energy Factor of the water heater shall be as 
-    prescribed for water heaters by CFR 430.32(d), published in the Federal Register/Volume 66, No. 11, 
-    Wednesday, January 17, 2001 for water heaters manufactured after January 20, 2004.
-    '''
+    # Table 4.2.2(1) - Service water heating systems
     
     orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
     
@@ -1933,6 +1504,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "SystemIdentifier")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FuelType")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "WaterHeaterType")
+      XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "Location")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "TankVolume")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "FractionDHWLoadServed")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "HeatingCapacity")
@@ -1946,7 +1518,7 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
-      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", 125)
+      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
       extension = XMLHelper.add_element(new_wh_sys, "extension")
       if XMLHelper.get_value(new_wh_sys, "WaterHeaterType") == 'instantaneous water heater'
         XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 0.92)
@@ -1964,6 +1536,7 @@ class EnergyRatingIndex301Ruleset
       end
       wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
       wh_cap = Waterheater.calc_capacity(Constants.Auto, to_beopt_fuel(wh_fuel_type), @nbeds, 3.0) * 1000.0 # Btuh
+      wh_location = 'conditioned space' # 301 Standard doesn't specify the location
     
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1971,6 +1544,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_attribute(sys_id, "id", "WaterHeatingSystem")
       XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
       XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
+      XMLHelper.add_element(new_wh_sys, "Location", wh_location)
       XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
       XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
       XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
@@ -1978,7 +1552,7 @@ class EnergyRatingIndex301Ruleset
       if not wh_re.nil?
         XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
       end
-      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", 125)
+      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
       extension = XMLHelper.add_element(new_wh_sys, "extension")
       XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
       
@@ -1987,16 +1561,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_systems_water_heater_iad(new_systems, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
-    Fuel type: same as Rated Home
-    Efficiency:
-      Electric: EF = 0.97 - (0.00132 * store gal)
-      Fossil fuel: EF = 0.67 - (0.0019 * store gal)
-    Tank temperature: 125 F
-    '''
     
-    # Above language is same as reference home
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
     set_systems_water_heater_reference(new_systems, orig_details)
     
   end
@@ -2005,54 +1571,72 @@ class EnergyRatingIndex301Ruleset
   
     new_water_heating = new_systems.elements["WaterHeating"]
   
-    '''
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
+    # Table 4.2.2(1) - Service water heating systems
     
-    4.2.2.5.1.4 refWgpd = 9.8*Nbr^0.43 
-                        = reference climate-normalized daily hot water waste due to distribution system 
-                          losses in Reference Home (in gallons per day)
-    '''
-    
-    ref_w_gpd = get_waste_gpd_reference()
-    bsmnt = get_conditioned_basement_integer(orig_details)
-    ref_pipe_l = get_pipe_length_reference(bsmnt)
-    ref_loop_l = get_loop_length_reference(ref_pipe_l)
-    
-    # New hot water distribution
-    new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
-    sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
-    sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
-    standard = XMLHelper.add_element(sys_type, "Standard")
-    XMLHelper.add_element(standard, "PipingLength", ref_pipe_l)
-    pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
-    XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
-    extension = XMLHelper.add_element(new_hw_dist, "extension")
-    XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
-    XMLHelper.add_element(extension, "RefLoopL", ref_loop_l)
-    
-    '''
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
-    
-    4.2.2.5.1.4 refFgpd = 14.6 + 10.0*Nbr
-                        = reference climate-normalized daily fixture water use in Reference Home (in 
-                          gallons per day)
-    '''
-    
-    ref_f_gpd = get_fixtures_gpd_reference()
     sens_gain, lat_gain = get_general_water_use_gains_sens_lat()
+      
+    if @eri_addenda.include? "Addendum A"
     
-    # New water fixture
-    new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
-    sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
-    XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
-    extension = XMLHelper.add_element(new_fixture, "extension")
-    XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-    XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-    XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      ref_w_gpd = get_waste_gpd_reference()
+      bsmnt = get_conditioned_basement_integer(orig_details)
+      ref_pipe_l = get_pipe_length_reference(bsmnt)
+      ref_loop_l = get_loop_length_reference(ref_pipe_l)
+      
+      # New hot water distribution
+      new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
+      sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
+      sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
+      standard = XMLHelper.add_element(sys_type, "Standard")
+      XMLHelper.add_element(standard, "PipingLength", ref_pipe_l)
+      pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
+      XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
+      extension = XMLHelper.add_element(new_hw_dist, "extension")
+      XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
+      XMLHelper.add_element(extension, "RefLoopL", ref_loop_l)
+      
+      ref_f_gpd = get_fixtures_gpd_reference()
+      
+      # New water fixture
+      new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
+      sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
+      XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+      extension = XMLHelper.add_element(new_fixture, "extension")
+      XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
+      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      
+    else
+    
+      # Hot (not mixed) water GPD defined, so added to dishwasher instead.
+      # Mixed water GPD here set to zero.
+      ref_w_gpd = 0.0
+    
+      # New hot water distribution
+      new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
+      sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
+      sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
+      standard = XMLHelper.add_element(sys_type, "Standard")
+      pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
+      XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
+      extension = XMLHelper.add_element(new_hw_dist, "extension")
+      XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
+      
+      ref_f_gpd = 0.0
+      
+     # New water fixture
+      new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
+      sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
+      XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+      extension = XMLHelper.add_element(new_fixture, "extension")
+      XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
+      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      
+    end
     
   end
   
@@ -2060,168 +1644,127 @@ class EnergyRatingIndex301Ruleset
   
     new_water_heating = new_systems.elements["WaterHeating"]
     
-    '''
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
+    # Table 4.2.2(1) - Service water heating systems
     
-    4.2.2.5.2.11 Service Hot Water Use.
+    if @eri_addenda.include? "Addendum A"
     
-    oWgpd = refWgpd * oFrac * (1-oCDeff) Eq. 4.2-12
-    where
-      oWgpd = daily standard operating condition waste hot water quantity
-      oFrac = 0.25 = fraction of hot water waste from standard operating conditions
-      oCDeff = Approved Hot Water Operating Condition Control Device effectiveness (default = 0.0)
-
-    sWgpd = (refWgpd - refWgpd * oFrac) * pRatio * sysFactor Eq. 4.2-13
-    where
-      sWgpd = daily structural waste hot water quantity
-      refWgpd = reference climate-normalized distribution system waste water use calculated in accordance with Section 4.2.2.5.1.4
-      oFrac = 0.25 = fraction of hot water waste from standard operating conditions
-      pRatio = hot water piping ratio
-      where
-        for Standard systems:
-          pRatio = PipeL / refPipeL
-          where
-            PipeL = measured length of hot water piping from the hot water heater to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
-            refPipeL = 2*(CFA/Nfl)0.5 + 10*Nfl + 5*Bsmt = hot water piping length for Reference Home
-            where
-              CFA = conditioned floor area
-              Nfl = number of conditioned floor levels in the residence, including conditioned basements
-              Bsmt = presence =1.0 or absence = 0.0 of an unconditioned basement in the residence
-        for recirculation systems:
-          pRatio = BranchL /10
-          where
-            BranchL = measured length of the branch hot water piping from the recirculation loop to the farthest hot water fixture from the recirculation loop, measured longitudinally from plans, assuming the branch hot water piping does not run diagonally
-      sysFactor = hot water distribution system factor from Table 4.2.2.5.2.11(2)
-
-    WDeff = distribution system water use effectiveness from Table 4.2.2.5.2.11(3)
-    
-    Feff = fixture effectiveness in accordance with Table 4.2.2.5.2.11(1)
-    
-    '''
-    
-    orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
-    
-    low_flow_fixtures = false
-    orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType!='other']") do |wf|
-      if wf.elements["FlowRate"] and Float(XMLHelper.get_value(wf, "FlowRate")) <= 2.0
-        low_flow_fixtures = true
-      end
-    end
-    
-    bsmnt = get_conditioned_basement_integer(orig_details)
-    
-    is_recirc = false
-    recirc_control_type = nil
-    recirc_pump_power = nil
-    if orig_hw_dist.nil?
-      pipe_l = get_pipe_length_reference(bsmnt)
-      pipe_rvalue = 0
-    else
-      if not orig_hw_dist.elements["SystemType/Recirculation"].nil?
-        is_recirc = true
-        recirc_branch_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/BranchPipingLoopLength"))
-        if not orig_hw_dist.elements["SystemType/Recirculation/RecirculationPipingLoopLength"].nil?
-          recirc_loop_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/RecirculationPipingLoopLength"))
-        else
-          recirc_loop_l = get_loop_length_reference(get_pipe_length_reference(bsmnt))
+      orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
+      
+      low_flow_fixtures = false
+      orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType!='other']") do |wf|
+        if wf.elements["FlowRate"] and Float(XMLHelper.get_value(wf, "FlowRate")) <= 2.0
+          low_flow_fixtures = true
         end
-        recirc_control_type = XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/ControlType")
-        recirc_pump_power = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/PumpPower"))
+      end
+      
+      bsmnt = get_conditioned_basement_integer(orig_details)
+      
+      is_recirc = false
+      recirc_control_type = nil
+      recirc_pump_power = nil
+      if orig_hw_dist.nil?
+        pipe_l = get_pipe_length_reference(bsmnt)
+        pipe_rvalue = 0
       else
-        if not orig_hw_dist.elements["SystemType/Standard/PipingLength"].nil?
-          pipe_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Standard/PipingLength"))
+        if not orig_hw_dist.elements["SystemType/Recirculation"].nil?
+          is_recirc = true
+          recirc_branch_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/BranchPipingLoopLength"))
+          if not orig_hw_dist.elements["SystemType/Recirculation/RecirculationPipingLoopLength"].nil?
+            recirc_loop_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/RecirculationPipingLoopLength"))
+          else
+            recirc_loop_l = get_loop_length_reference(get_pipe_length_reference(bsmnt))
+          end
+          recirc_control_type = XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/ControlType")
+          recirc_pump_power = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/PumpPower"))
         else
-          pipe_l = get_pipe_length_reference(bsmnt)
+          if not orig_hw_dist.elements["SystemType/Standard/PipingLength"].nil?
+            pipe_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Standard/PipingLength"))
+          else
+            pipe_l = get_pipe_length_reference(bsmnt)
+          end
         end
+        pipe_rvalue = Float(XMLHelper.get_value(orig_hw_dist, "PipeInsulation/PipeRValue"))
       end
-      pipe_rvalue = Float(XMLHelper.get_value(orig_hw_dist, "PipeInsulation/PipeRValue"))
-    end
-    
-    # Waste gpd
-    rated_w_gpd = get_waste_gpd_rated(is_recirc, pipe_rvalue, pipe_l, recirc_branch_l, bsmnt, low_flow_fixtures)
-    
-    # Recirc pump annual electricity consumption
-    recirc_pump_annual_kwh = get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
-    
-    # Calculate energy delivery effectiveness adjustment for energy consumption
-    ec_adj = get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_rvalue, pipe_l, recirc_loop_l, bsmnt)
+      
+      # Waste gpd
+      rated_w_gpd = get_waste_gpd_rated(is_recirc, pipe_rvalue, pipe_l, recirc_branch_l, bsmnt, low_flow_fixtures)
+      
+      # Recirc pump annual electricity consumption
+      recirc_pump_annual_kwh = get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
+      
+      # Calculate energy delivery effectiveness adjustment for energy consumption
+      ec_adj = get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_rvalue, pipe_l, recirc_loop_l, bsmnt)
 
-    has_dwhr = false
-    if not orig_hw_dist.nil? and not orig_hw_dist.elements["DrainWaterHeatRecovery"].nil?
-      has_dwhr = true
-      eff = Float(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/Efficiency"))
-      equal_flow = Boolean(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/EqualFlow"))
-      if XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "all"
-        all_showers = true
-      elsif XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "one"
-        all_showers = false
+      has_dwhr = false
+      if not orig_hw_dist.nil? and not orig_hw_dist.elements["DrainWaterHeatRecovery"].nil?
+        has_dwhr = true
+        eff = Float(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/Efficiency"))
+        equal_flow = Boolean(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/EqualFlow"))
+        if XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "all"
+          all_showers = true
+        elsif XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "one"
+          all_showers = false
+        end
+        dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
       end
-      dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
-    end
+      
+      # New hot water distribution
+      new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
+      sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
+      systype = XMLHelper.add_element(new_hw_dist, "SystemType")
+      if is_recirc
+        recirc = XMLHelper.add_element(systype, "Recirculation")
+        XMLHelper.add_element(recirc, "ControlType", recirc_control_type)
+        XMLHelper.add_element(recirc, "RecirculationPipingLoopLength", recirc_loop_l)
+        XMLHelper.add_element(recirc, "BranchPipingLoopLength", recirc_branch_l)
+        XMLHelper.add_element(recirc, "PumpPower", recirc_pump_power)
+      else
+        standard = XMLHelper.add_element(systype, "Standard")
+        XMLHelper.add_element(standard, "PipingLength", pipe_l)
+      end
+      insulation = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
+      XMLHelper.add_element(insulation, "PipeRValue", pipe_rvalue)
+      if has_dwhr
+        new_dwhr = XMLHelper.copy_element(new_hw_dist, orig_hw_dist, "DrainWaterHeatRecovery")
+        extension = XMLHelper.add_element(new_dwhr, "extension")
+        XMLHelper.add_element(extension, "EfficiencyAdjustment", dwhr_eff_adj)
+        XMLHelper.add_element(extension, "FracImpactedHotWater", dwhr_iFrac)
+        XMLHelper.add_element(extension, "PipingLossCoefficient", dwhr_plc)
+        XMLHelper.add_element(extension, "LocationFactor", dwhr_locF)
+        XMLHelper.add_element(extension, "FixtureFactor", dwhr_fixF)
+      end
+      extension = XMLHelper.add_element(new_hw_dist, "extension")
+      XMLHelper.add_element(extension, "MixedWaterGPD", rated_w_gpd)
+      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj)
+      if is_recirc
+        XMLHelper.add_element(extension, "RecircPumpAnnualkWh", recirc_pump_annual_kwh)
+      end
+
+      rated_f_gpd = get_fixtures_gpd_rated(low_flow_fixtures)
+      sens_gain, lat_gain = get_general_water_use_gains_sens_lat()
+      
+      # New water fixture
+      new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
+      sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
+      XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+      extension = XMLHelper.add_element(new_fixture, "extension")
+      XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
+      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
     
-    # New hot water distribution
-    new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
-    sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
-    systype = XMLHelper.add_element(new_hw_dist, "SystemType")
-    if is_recirc
-      recirc = XMLHelper.add_element(systype, "Recirculation")
-      XMLHelper.add_element(recirc, "ControlType", recirc_control_type)
-      XMLHelper.add_element(recirc, "RecirculationPipingLoopLength", recirc_loop_l)
-      XMLHelper.add_element(recirc, "BranchPipingLoopLength", recirc_branch_l)
-      XMLHelper.add_element(recirc, "PumpPower", recirc_pump_power)
     else
-      standard = XMLHelper.add_element(systype, "Standard")
-      XMLHelper.add_element(standard, "PipingLength", pipe_l)
+      
+      set_systems_water_heating_use_reference(new_systems, orig_details)
+      
     end
-    insulation = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
-    XMLHelper.add_element(insulation, "PipeRValue", pipe_rvalue)
-    if has_dwhr
-      new_dwhr = XMLHelper.copy_element(new_hw_dist, orig_hw_dist, "DrainWaterHeatRecovery")
-      extension = XMLHelper.add_element(new_dwhr, "extension")
-      XMLHelper.add_element(extension, "EfficiencyAdjustment", dwhr_eff_adj)
-      XMLHelper.add_element(extension, "FracImpactedHotWater", dwhr_iFrac)
-      XMLHelper.add_element(extension, "PipingLossCoefficient", dwhr_plc)
-      XMLHelper.add_element(extension, "LocationFactor", dwhr_locF)
-      XMLHelper.add_element(extension, "FixtureFactor", dwhr_fixF)
-    end
-    extension = XMLHelper.add_element(new_hw_dist, "extension")
-    XMLHelper.add_element(extension, "MixedWaterGPD", rated_w_gpd)
-    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj)
-    if is_recirc
-      XMLHelper.add_element(extension, "RecircPumpAnnualkWh", recirc_pump_annual_kwh)
-    end
-
-    '''
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
-    
-    4.2.2.5.2.11 Service Hot Water Use.
-    refFgpd = reference climate-normalized daily fixture water use calculated in accordance with Section 4.2.2.5.1.4
-    '''
-    
-    rated_f_gpd = get_fixtures_gpd_rated(low_flow_fixtures)
-    sens_gain, lat_gain = get_general_water_use_gains_sens_lat()
-    
-    # New water fixture
-    new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
-    sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
-    XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
-    extension = XMLHelper.add_element(new_fixture, "extension")
-    XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
-    XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-    XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
 
   end
   
   def self.set_systems_water_heating_use_iad(new_systems, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
-    Use: Same as Energy Rating Reference Home (see Addendum A)
-    '''
-    
+
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
     set_systems_water_heating_use_reference(new_systems, orig_details)
     
     new_hw_dist = new_systems.elements["WaterHeating/HotWaterDistribution"]
@@ -2239,30 +1782,23 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_systems_photovoltaics_iad(new_systems)
-    '''
-    4.3.1 Index Adjustment Design (IAD). An IAD shall be configured in accordance with Table
-    4.3.1(1). Renewable Energy Systems that offset the energy consumption requirements
-    of the Rated Home shall not be included in the IAD.
-    '''
     
+    # 4.3.1 Index Adjustment Design (IAD)
+    # Renewable Energy Systems that offset the energy consumption requirements of the Rated Home shall not be included in the IAD.
     # nop
     
   end
   
   def self.set_appliances_clothes_washer_reference(new_appliances)
   
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
-    4.2.2.5.1.4 refCWgpd = reference clothes washer gallons per day
-                         = (4.52*(164+46.5*Nbr))*((3*2.08+1.59)/(2.874*2.08+1.59))/365
-    '''
-  
-    clothes_washer_kwh = 38.0 + 0.0 * @cfa + 10.0 * @nbeds
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    clothes_washer_kwh = 38.0 + 0.0*@cfa + 10.0*@nbeds
     clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
-    clothes_washer_gpd = (4.52 * (164.0 + 46.5 * @nbeds)) * ((3.0 * 2.08 + 1.59)/(2.874 * 2.08 + 1.59)) / 365.0
+    if not @eri_addenda.include? "Addendum A"
+      clothes_washer_gpd = 0.0 # delta DHW change made to rated home
+    else
+      clothes_washer_gpd = (4.52*(164.0 + 46.5*@nbeds))*((3.0*2.08 + 1.59)/(2.874*2.08 + 1.59))/365.0
+    end
     
     new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
     sys_id = XMLHelper.add_element(new_clothes_washer, "SystemIdentifier")
@@ -2277,36 +1813,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_appliances_clothes_washer_rated(new_appliances, orig_details)
   
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
-    
-    4.2.2.5.2.10 Clothes Washers. Clothes Washer annual energy use and daily hot water use for the Rated Home 
-    shall be determined as follows.
-    
-    Annual energy use shall be calculated in accordance with Equation 4.2-9a.
-    kWh/yr = ((LER/392)-((LER*($/kWh)-AGC)/(21.9825*($/kWh) - ($/therm))/392)*21.9825)*ACY (Eq. 4.2-9a)
-    where:
-      LER = Label Energy Rating (kWh/y) from the Energy Guide label
-      $/kWh = Electric Rate from Energy Guide Label
-      AGC = Annual Gas Cost from Energy Guide Label
-      $/therm = Gas Rate from Energy Guide Label
-      ACY = Adjusted Cycles per Year
-    and where:
-      ACY = NCY * ((3.0*2.08+1.59)/(CAPw*2.08+1.59))
-      where:
-        NCY = (3.0/2.847) * (164 + Nbr*46.5)
-        CAPw = washer capacity in cubic feet from the manufacturers data or the CEC database1 or the EPA 
-               Energy Star website 2 or the default value of 2.874 ft3
-               
-    Daily hot water use shall be calculated in accordance with Equation 4.2-9b.
-    DHWgpd = 60 * therms/cyc * ACY / 365 (Eq 4.2-9b)
-    where:
-      therms/cyc = (LER * $/kWh - AGC) / (21.9825 * $/kWh - $/therm) / 392
-    '''
-    
+    # 4.2.2.5.2.10. Clothes Washers
     if orig_details.elements["Appliances/ClothesWasher/ModifiedEnergyFactor"]
       # Detailed
       ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
@@ -2315,11 +1822,18 @@ class EnergyRatingIndex301Ruleset
       agc = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelAnnualGasCost"))
       cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
       
-      ncy = (3.0 / 2.847) * (164 + @nbeds * 46.5)
-      acy = ncy * ((3.0 * 2.08 + 1.59) / (cap * 2.08 + 1.59)) #Adjusted Cycles per Year
-      clothes_washer_kwh = ((ler / 392.0) - ((ler * elec_rate - agc) / (21.9825 * elec_rate - gas_rate) / 392.0) * 21.9825) * acy
+      # Eq 4.2-9a
+      ncy = (3.0/2.847)*(164 + @nbeds*45.6)
+      if @eri_addenda.include? "Addendum A"
+        ncy = (3.0/2.847)*(164 + @nbeds*46.5)
+      end
+      acy = ncy*((3.0*2.08 + 1.59)/(cap*2.08 + 1.59)) #Adjusted Cycles per Year
+      clothes_washer_kwh = ((ler/392.0) - ((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*21.9825)*acy
       clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
-      clothes_washer_gpd = 60.0 * ((ler * elec_rate - agc) / (21.9825 * elec_rate - gas_rate) / 392.0) * acy / 365.0
+      clothes_washer_gpd = 60.0*((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*acy/365.0
+      if not @eri_addenda.include? "Addendum A"
+        clothes_washer_gpd -= 3.97 # Section 4.2.2.5.2.10
+      end
     elsif orig_details.elements["Appliances/ClothesWasher/extension/AnnualkWh"]
       # Simplified
       clothes_washer_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/AnnualkWh"))
@@ -2344,25 +1858,20 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_clothes_washer_iad(new_appliances, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    Same as the Energy Rating Reference Home
-    '''
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     self.set_appliances_clothes_washer_reference(new_appliances)
   end
 
   def self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
-    '''
-  
+    
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    # Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
     dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
-    clothes_dryer_kwh = 524.0 + 0.0 * @cfa + 149.0 * @nbeds
+    clothes_dryer_kwh = 524.0 + 0.0*@cfa + 149.0*@nbeds
     clothes_dryer_therm = 0.0
     if dryer_fuel != 'electricity'
-      clothes_dryer_kwh = 41.0 + 0.0 * @cfa + 11.7 * @nbeds
-      clothes_dryer_therm = 18.8 + 0.0 * @cfa + 5.3 * @nbeds
+      clothes_dryer_kwh = 41.0 + 0.0*@cfa + 11.7*@nbeds
+      clothes_dryer_therm = 18.8 + 0.0*@cfa + 5.3*@nbeds
     end
     clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
     
@@ -2380,30 +1889,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_appliances_clothes_dryer_rated(new_appliances, orig_details)
   
-    '''
-    4.2.2.5.2.8. Clothes Dryers. Clothes Dryer annual energy use for the Rated Home shall be determined in 
-    accordance with Equation 4.2-6.
-    kWh/y = 12.5*(164+46.5*Nbr)*FU/EFdry*(CAPw/MEF- LER/392)/(0.2184*(CAPw*4.08+0.24)) (Eq 4.2-6)
-    where:
-      Nbr = Number of Bedrooms in home
-      FU = Field Utilization factor =1.18 for timer controls or 1.04 for moisture sensing
-      EFdry = Efficiency Factor of clothes dryer (lbs dry clothes/kWh) from the CEC database 8 or the 
-              default value of 3.01.
-      CAPw = Capacity of clothes washer (ft3) from the manufacturers data or the CEC database or the EPA 
-             Energy Star website 9 or the default value of 2.874 ft3.
-      MEF10 = Modified Energy Factor of clothes washer from the Energy Guide label or the default value of 
-              0.817.
-      LER = Labeled Energy Rating of clothes washer (kWh/y) from the Energy Guide label or the default 
-            value of 704.
-    
-    For natural gas clothes dryers, annual energy use shall be determined in accordance with Equations 4.2-7a 
-    and 4.2-7b.
-    Therms/y = (result of Eq. 4.2-6)*3412*(1-0.07) *(3.01/EFdry-g)/100000 (Eq 4.2-7a)
-    kWh/y = (result of Eq. 4.2-6)*0.07*(3.01/EFdry-g) (Eq 4.2-7b)
-    where:
-      EFdry-g = Efficiency Factor for gas clothes dryer from the CEC database1 or the default value of 2.67.
-    '''
-    
+    # 4.2.2.5.2.8. Clothes Dryers
     dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
     if orig_details.elements["Appliances/ClothesDryer/EfficiencyFactor"]
       # Detailed
@@ -2414,17 +1900,18 @@ class EnergyRatingIndex301Ruleset
       cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
       mef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/ModifiedEnergyFactor"))
       
+      # Eq 4.2-6 (FU)
       field_util_factor = nil
       if has_timer_control
         field_util_factor = 1.18
       else
         field_util_factor = 1.04
       end
-      clothes_dryer_kwh = 12.5 * (164.0 + 46.5 * @nbeds) * (field_util_factor / ef_dry) * ((cap / mef) - ler / 392.0) / (0.2184 * (cap * 4.08 + 0.24))
+      clothes_dryer_kwh = 12.5*(164.0 + 46.5*@nbeds)*(field_util_factor/ef_dry)*((cap/mef) - ler/392.0)/(0.2184*(cap*4.08 + 0.24)) # Eq 4.2-6
       clothes_dryer_therm = 0.0
       if dryer_fuel != 'electricity'
-        clothes_dryer_therm = clothes_dryer_kwh * (3412.0/100000) * 0.93 * (3.01/ef_dry)
-        clothes_dryer_kwh = clothes_dryer_kwh * 0.07 * (3.01/ef_dry)
+        clothes_dryer_therm = clothes_dryer_kwh*3412.0*(1.0-0.07)*(3.01/ef_dry)/100000 # Eq 4.2-7a
+        clothes_dryer_kwh = clothes_dryer_kwh*0.07*(3.01/ef_dry)
       end
       clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
     elsif orig_details.elements["Appliances/ClothesDryer/extension/AnnualkWh"]
@@ -2452,26 +1939,21 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_clothes_dryer_iad(new_appliances, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    Same as the Energy Rating Reference Home
-    '''
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
   end
 
   def self.set_appliances_dishwasher_reference(new_appliances)
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-
-    ANSI/RESNET 301-2014 Addendum A-2015
-    Amendment on Domestic Hot Water (DHW) Systems
-    4.2.2.5.1.4 refDWgpd = reference dishwasher gallons per day
-                         = ((88.4+34.9*Nbr)*8.16)/365
-    '''
-  
-    dishwasher_kwh = 78.0 + 0.0 * @cfa + 31.0 * @nbeds
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    dishwasher_kwh = 78.0 + 0.0*@cfa + 31.0*@nbeds
     dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(dishwasher_kwh)
-    dishwasher_gpd = ((88.4 + 34.9 * @nbeds) * 8.16) / 365.0
+    if not @eri_addenda.include? "Addendum A"
+      dishwasher_gpd = 0.0 # delta DHW change made to rated home
+      # Add service water heating GPD here
+      dishwasher_gpd += get_service_water_heating_use_gpd()
+    else
+      dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16)/365.0 # Eq. 4.2-2 (refDWgpd)
+    end
     
     new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
     sys_id = XMLHelper.add_element(new_dishwasher, "SystemIdentifier")
@@ -2485,35 +1967,26 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_dishwasher_rated(new_appliances, orig_details)
-    '''
-    4.2.2.5.2.9. Dishwashers. Dishwasher annual energy use for the Rated Home shall be determined in accordance with Equation 4.2-8a.
-    kWh/y = [(86.3 + 47.73/EF)/215]*dWcpy (Eq 4.2-8a)
-    where:
-      EF = Labeled dishwasher energy factor
-        or
-      EF = 215/(labeled kWh/y)
-      dWcpy = (88.4 + 34.9*Nbr)*12/dWcap
-      where:
-        dWcap = Dishwasher place setting capacity; Default = 12 settings for standard sized dishwashers and 8 place settings for compact dishwashers
-      
-      And the change (delta) in daily hot water use (GPD - gallons per day) for dishwashers shall be calculated in accordance with Equation 4.2-8b.
-      delta_GPDDW = [(88.4+34.9*Nbr)*8.16 - (88.4+34.9*Nbr)*12/dWcap*(4.6415*(1/EF) - 1.9295)]/365 (Eq 4.2-8b)
-    '''
-    
+  
+    # 4.2.2.5.2.9. Dishwashers
     if orig_details.elements["Appliances/Dishwasher/EnergyFactor"] or orig_details.elements["Appliances/Dishwasher/RatedAnnualkWh"]
       # Detailed
       cap = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/PlaceSettingCapacity"))
       ef = XMLHelper.get_value(orig_details, "Appliances/Dishwasher/EnergyFactor")
       if ef.nil?
         rated_annual_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/RatedAnnualkWh"))
-        ef = 215.0 / rated_annual_kwh
+        ef = 215.0/rated_annual_kwh # Eq 4.2-8a (EF)
       else
         ef = ef.to_f
       end
-      dwcpy = (88.4 + 34.9 * @nbeds) * (12.0 / cap)
-      dishwasher_kwh = ((86.3 + 47.73 / ef) / 215) * dwcpy
+      dwcpy = (88.4 + 34.9*@nbeds)*(12.0/cap) # Eq 4.2-8a (dWcpy)
+      dishwasher_kwh = ((86.3 + 47.73/ef)/215.0)*dwcpy # Eq 4.2-8a
       dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(dishwasher_kwh)
-      dishwasher_gpd = dwcpy * (4.6415 * (1.0 / ef) - 1.9295) / 365.0
+      if @eri_addenda.include? "Addendum A"
+        dishwasher_gpd = dwcpy*(4.6415*(1.0/ef) - 1.9295)/365.0 # Eq. 4.2-11 (DWgpd)
+      else
+        dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16 - (88.4 + 34.9*@nbeds)*12.0/cap*(4.6415*(1.0/ef) - 1.9295))/365.0 # Eq 4.2-8b
+      end
     elsif orig_details.elements["Appliances/Dishwasher/extension/AnnualkWh"]
       # Simplified
       dishwasher_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/AnnualkWh"))
@@ -2538,19 +2011,14 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_dishwasher_iad(new_appliances, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    Same as the Energy Rating Reference Home
-    '''
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     self.set_appliances_dishwasher_reference(new_appliances)
   end
 
   def self.set_appliances_refrigerator_reference(new_appliances)
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    '''
-  
-    refrigerator_kwh = 637.0 + 0.0 * @cfa + 18.0 * @nbeds
+
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    refrigerator_kwh = 637.0 + 0.0*@cfa + 18.0*@nbeds
 
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
@@ -2563,12 +2031,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_refrigerator_rated(new_appliances, orig_details)
-    '''
-    4.2.2.5.2.5. Refrigerators. Refrigerator annual energy use for the Rated Home shall be determined from 
-    either refrigerator Energy Guide labels or from age-based defaults in accordance with Table 
-    4.2.2.5.2.5(1).
-    '''
-    
+
+    # 4.2.2.5.2.5. Refrigerators
     if orig_details.elements["Appliances/Refrigerator/RatedAnnualkWh"]
       # Detailed
       refrigerator_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Refrigerator/RatedAnnualkWh"))
@@ -2586,28 +2050,23 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_refrigerator_iad(new_appliances, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    Same as the Energy Rating Reference Home
-    '''
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     self.set_appliances_refrigerator_reference(new_appliances)
   end
 
   def self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
-    '''
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    # Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
     
     # TODO: How to handle different fuel types for CookingRange vs Oven?
     range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
     oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
     
-    cooking_range_kwh = 331.0 + 0.0 * @cfa + 39.0 * @nbeds
+    cooking_range_kwh = 331.0 + 0.0*@cfa + 39.0*@nbeds
     cooking_range_therm = 0.0
     if range_fuel != 'electricity' or oven_fuel != 'electricity'
-      cooking_range_kwh = 22.6 + 0.0 * @cfa + 2.7 * @nbeds
-      cooking_range_therm = 22.6 + 0.0 * @cfa + 2.7 * @nbeds
+      cooking_range_kwh = 22.6 + 0.0*@cfa + 2.7*@nbeds
+      cooking_range_therm = 22.6 + 0.0*@cfa + 2.7*@nbeds
     end
     cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
     
@@ -2629,20 +2088,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_cooking_range_oven_rated(new_appliances, orig_details)
-    '''
-    4.2.2.5.2.7. Range/Oven. Range/Oven (cooking) annual energy use for the Rated Home shall be determined in accordance with Equations 4.2-5a through 4.2-5c, as appropriate.
-    1) For electric cooking:
-      kWh/y = BEF * OEF * (331 + 39*Nbr) (Eq 4.2-5a)
-    2) For natural gas cooking:
-      Therms/y = OEF*(22.6 + 2.7*Nbr) (Eq 4.2-5b)
-     plus:
-      kWh/y = 22.6 + 2.7*Nbr (Eq 4.2-5c)
-    where:
-      BEF= Burner Energy Factor = 0.91 for induction ranges and 1.0 otherwise.
-      OEF = Oven Energy Factor = 0.95 for convection types and 1.0 otherwise
-      Nbr = Number of Bedrooms
-    '''
-    
+
+    # 4.2.2.5.2.7 Range/Oven
     range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
     oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
     if orig_details.elements["Appliances/CookingRange/IsInduction"]
@@ -2660,11 +2107,11 @@ class EnergyRatingIndex301Ruleset
         oven_ef = 0.95
       end
       
-      cooking_range_kwh = burner_ef * oven_ef * (331 + 39.0 * @nbeds)
+      cooking_range_kwh = burner_ef*oven_ef*(331 + 39.0*@nbeds)
       cooking_range_therm = 0.0
       if range_fuel != 'electricity' or oven_fuel != 'electricity'
-        cooking_range_kwh = 22.6 + 2.7 * @nbeds
-        cooking_range_therm = oven_ef * (22.6 + 2.7 * @nbeds)
+        cooking_range_kwh = 22.6 + 2.7*@nbeds
+        cooking_range_therm = oven_ef*(22.6 + 2.7*@nbeds)
       end
       cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
     elsif orig_details.elements["Appliances/CookingRange/extension/AnnualkWh"]
@@ -2697,22 +2144,15 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_appliances_cooking_range_oven_iad(new_appliances, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    Same as the Energy Rating Reference Home
-    '''
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
   end
 
   def self.set_lighting_reference(new_lighting, orig_details)
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    4.2.2.5.1.3. Garage Lighting. Where the Rated Home includes an enclosed garage, 100 kWh/y shall be added
-    to the energy use of the Reference Home to account for garage lighting.
-    '''
-    
-    int_kwh = 455.0 + 0.80 * @cfa + 0.0 * @nbeds
-    ext_kwh = 100.0 + 0.05 * @cfa + 0.0 * @nbeds
+
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    int_kwh = 455.0 + 0.80*@cfa + 0.0*@nbeds
+    ext_kwh = 100.0 + 0.05*@cfa + 0.0*@nbeds
     grg_kwh = 0.0
     if @garage_present
       grg_kwh = 100.0
@@ -2725,49 +2165,25 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.calc_lighting(qFF_int, qFF_ext, qFF_grg)
-    int_kwh = 0.8 * ((4.0 - 3.0 * qFF_int) / 3.7) * (455.0 + 0.8 * @cfa) + 0.2 * (455.0 + 0.8 * @cfa)
-    ext_kwh = (100.0 + 0.05 * @cfa) * (1.0 - qFF_ext) + 0.25 * (100.0 + 0.05 * @cfa) * qFF_ext
-    grg_kwh = 0.0
-    if @garage_present
-      grg_kwh = 100.0 * (1.0 - qFF_grg) + 25.0 * qFF_grg
-    end
-    return int_kwh, ext_kwh, grg_kwh
-  end
-  
   def self.set_lighting_rated(new_lighting, orig_details)
 
-    '''
-    4.2.2.5.2.2. Interior Lighting. Interior lighting annual energy use in the Rated home shall be determined 
-    in accordance with Equation 4.2-2:
-    kWh/y = 0.8*[(4 - 3*qFFIL)/3.7]*(455 + 0.8*CFA) + 0.2*(455 + 0.8*CFA) (Eq 4.2-2)
-    where:
-    CFA = Conditioned Floor Area
-    qFFIL = the ratio of the interior Qualifying Light Fixtures to all interior light fixtures in Qualifying
-    Light Fixture Locations.
-    For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
-    
-    4.2.2.5.2.3. Exterior Lighting. Exterior lighting annual energy use in the Rated home shall be determined 
-    in accordance with Equation 4.2-3:
-    kWh/y = (100 + 0.05*CFA)*(1-FFEL) + 0.25*(100 + 0 .05*CFA)*FFEL (Eq 4.2-3)
-    where
-    CFA = Conditioned Floor Area
-    FFEL = Fraction of exterior fixtures that are Qualifying Light Fixtures
-
-    4.2.2.5.2.4. Garage Lighting. For Rated homes with garages, garage annual lighting energy use in the Rated 
-    home shall be determined in accordance with Equation 4.2-4:
-    kWh = 100*(1-FFGL) + 25*FFGL (Eq 4.2-4)
-    where:
-    FFGL = Fraction of garage fixtures that are Qualifying Light Fixtures
-    '''
-
     if orig_details.elements["Lighting/LightingFractions"]
-      
+
       # Detailed
-      qFF_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingLightFixturesInterior"))
-      qFF_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingLightFixturesExterior"))
-      qFF_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingLightFixturesGarage"))
-      int_kwh, ext_kwh, grg_kwh = calc_lighting(qFF_int, qFF_ext, qFF_grg)
+      if @eri_addenda.include? "Addendum G"
+        fFI_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesInterior"))
+        fFI_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesExterior"))
+        fFI_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesGarage"))
+        fFII_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesInterior"))
+        fFII_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesExterior"))
+        fFII_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesGarage"))
+        int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(fFI_int, fFII_int, fFI_ext, fFII_ext, fFI_grg, fFII_grg)
+      else
+        qFF_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesInterior"))
+        qFF_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesExterior"))
+        qFF_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesGarage"))
+        int_kwh, ext_kwh, grg_kwh = calc_lighting(qFF_int, qFF_ext, qFF_grg)
+      end
       
     elsif orig_details.elements["Lighting/extension/AnnualInteriorkWh"]
       
@@ -2795,12 +2211,13 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_lighting_iad(new_lighting, orig_details)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    Lighting shall be 75% high efficiency
-    '''
-    
-    int_kwh, ext_kwh, grg_kwh = calc_lighting(0.75, 0.75, 0.75)
+
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
+    if @eri_addenda.include? "Addendum G"
+      int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(0.75, 0.0, 0.75, 0.0, 0.75, 0.0)
+    else
+      int_kwh, ext_kwh, grg_kwh = calc_lighting(0.75, 0.75, 0.75)
+    end
       
     extension = XMLHelper.add_element(new_lighting, "extension")
     XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
@@ -2810,25 +2227,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_lighting_ceiling_fans_reference(new_lighting)
-    '''
-    4.2.2.5.1.4. Ceiling Fans. Where ceiling fans are included in the Rated Home they shall also be included
-    in the Reference Home in accordance with the provisions of Section 4.2.2.5.2.11
-    
-    4.2.2.5.2.11. Ceiling Fans. If ceiling fans are included in the Rated home, they shall also be included 
-    in the Reference home. The number of Bedrooms plus one (Nbr+1) ceiling fans shall be assumed in both the
-    Reference Home and the Rated Home. A daily ceiling fan operating schedule equal to 10.5 full-load hours 
-    shall be assumed in both the Reference Home and the Rated Home during months with an average outdoor 
-    temperature greater than 63 oF. The cooling thermostat (but not the heating thermostat) shall be set up 
-    by 0.5 oF in both the Reference and Rated Home during these months.
-    
-    The Reference Home shall use number of Bedrooms plus one (Nbr+1) Standard Ceiling Fans of 42.6 watts 
-    each. The Rated Home shall use the Labeled Ceiling Fan Standardized Watts (LCFSW), also multiplied by 
-    number of Bedrooms plus one (Nbr+1) fans to obtain total ceiling fan wattage for the Rated Home. The 
-    Rated Home LCFSW shall be calculated in accordance with Equation 4.2-10.
-    '''
-    
     # FIXME
-    
   end
   
   def self.set_lighting_ceiling_fans_rated(new_lighting)
@@ -2840,9 +2239,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_misc_loads_reference(new_misc_loads)
-    '''
-    Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    '''
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
     
     # Residual MELs
     residual_mels_kwh = get_residual_mels_kwh()
@@ -2875,15 +2272,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_misc_loads_rated(new_misc_loads)
-    '''
-    4.2.2.5.2.1. Residual MELs. Residual miscellaneous annual electric energy use in the Rated Home shall 
-    be the same as in the HERS Reference Home and shall be calculated as 0.91*CFA.
-    
-    4.2.2.5.2.6. Televisions. Television annual energy use in the Rated Home shall be the same as television 
-    energy use in the HERS Reference Home and shall be calculated as TVkWh/y = 413 + 69*Nbr, where Nbr is 
-    the number of Bedrooms in the Rated Home.
-    '''
-    
+    # Table 4.2.2(1) - Internal gains
+
     # Residual MELs
     residual_mels_kwh = get_residual_mels_kwh()
     residual_mels_sens, residual_mels_lat = get_residual_mels_sens_lat(residual_mels_kwh)
@@ -2915,20 +2305,17 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_misc_loads_iad(new_misc_loads)
-    '''
-    Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    Same as the Energy Rating Reference Home
-    '''
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     self.set_misc_loads_reference(new_misc_loads)
   end
+  
+  private
 
   def self.get_reference_component_characteristics(component_type)
-    '''
-    Table 4.2.2(2) - Component Heat Transfer Characteristics for HERS Reference Home
-    '''
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for HERS Reference Home
     if component_type == "window" or component_type == "door"
       # Fenestration and Opaque Door U-Factor
-      # Glazed Fene-stration Assembly SHGC
+      # Glazed Fenestration Assembly SHGC
       if ["1A", "1B", "1C"].include? @iecc_zone_2006
         return 1.2, 0.40
       elsif ["2A", "2B", "2C"].include? @iecc_zone_2006
@@ -2963,7 +2350,7 @@ class EnergyRatingIndex301Ruleset
         return nil
       end
     elsif component_type == "floor"
-      # Floor Over Uncond-itioned Space U-Factor
+      # Floor Over Unconditioned Space U-Factor
       if ["1A", "1B", "1C", "2A", "2B", "2C"].include? @iecc_zone_2006
         return 0.064
       elsif ["3A", "3B", "3C", "4A", "4B"].include? @iecc_zone_2006
@@ -3001,14 +2388,21 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_pipe_length_reference(bsmnt)
-    return 2.0 * (@cfa / @ncfl)**0.5 + 10.0 * @ncfl + 5.0 * bsmnt
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    return 2.0*(@cfa/@ncfl)**0.5 + 10.0*@ncfl + 5.0*bsmnt # Eq. 4.2-13 (refPipeL)
   end
   
   def self.get_loop_length_reference(ref_pipe_l)
-    return 2.0 * ref_pipe_l - 20.0
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    return 2.0*ref_pipe_l - 20.0 # Eq. 4.2-17 (refLoopL)
   end
   
   def self.get_fixture_effectiveness_rated(low_flow_fixtures)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Table 4.2.2.5.2.11(1) Hot water fixture effectiveness
     f_eff = 1.0
     if low_flow_fixtures
       f_eff = 0.95
@@ -3017,20 +2411,31 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_fixtures_gpd_reference()
-    return 14.6 + 10.0 * @nbeds
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    return 14.6 + 10.0*@nbeds # Eq. 4.2-2 (refFgpd)
   end
   
   def self.get_fixtures_gpd_rated(low_flow_fixtures)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
     ref_f_gpd = get_fixtures_gpd_reference()
     f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
-    return f_eff * ref_f_gpd
+    return f_eff*ref_f_gpd
   end
   
   def self.get_waste_gpd_reference()
-    return 9.8 * (@nbeds**0.43)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    return 9.8*(@nbeds**0.43) # Eq. 4.2-2 (refWgpd)
   end
   
   def self.get_waste_gpd_rated(is_recirc, pipe_rvalue, pipe_l, recirc_branch_l, bsmnt, low_flow_fixtures)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # 4.2.2.5.2.11 Service Hot Water Use
+    
+    # Table 4.2.2.5.2.11(2) Hot Water Distribution System Insulation Factors
     sys_factor = 1.0
     if is_recirc and pipe_rvalue < 3.0
       sys_factor = 1.11
@@ -3043,15 +2448,16 @@ class EnergyRatingIndex301Ruleset
     o_cd_eff = 0.0
     
     if is_recirc
-      p_ratio = recirc_branch_l / 10.0
+      p_ratio = recirc_branch_l/10.0
     else
       ref_pipe_l = get_pipe_length_reference(bsmnt)
-      p_ratio = pipe_l / ref_pipe_l
+      p_ratio = pipe_l/ref_pipe_l
     end
     
-    o_w_gpd = ref_w_gpd * o_frac * (1.0 - o_cd_eff)
-    s_w_gpd = (ref_w_gpd - ref_w_gpd * o_frac) * p_ratio * sys_factor
+    o_w_gpd = ref_w_gpd*o_frac*(1.0 - o_cd_eff) # Eq. 4.2-12
+    s_w_gpd = (ref_w_gpd - ref_w_gpd*o_frac)*p_ratio*sys_factor # Eq. 4.2-13
     
+    # Table 4.2.2.5.2.11(3) Distribution system water use effectiveness
     wd_eff = 1.0
     if is_recirc
       wd_eff = 0.10
@@ -3059,23 +2465,27 @@ class EnergyRatingIndex301Ruleset
     
     f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
     
-    return f_eff * (o_w_gpd + s_w_gpd * wd_eff)
+    hw_gpd = f_eff*(o_w_gpd + s_w_gpd*wd_eff) # Eq. 4.2-11
+    
+    return hw_gpd
   end
   
   def self.get_clothes_washer_sens_lat(clothes_washer_kwh)
-    load_sens = 95.0 + 26.0 * @nbeds # Btu/day
-    load_lat = 11.0 + 3.0 * @nbeds # Btu/day
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    load_sens = 95.0 + 26.0*@nbeds # Btu/day
+    load_lat = 11.0 + 3.0*@nbeds # Btu/day
     total = UnitConversions.convert(clothes_washer_kwh, "kWh", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   
   def self.get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
     if dryer_fuel != 'electricity'
-      load_sens = 738.0 + 209.0 * @nbeds # Btu/day
-      load_lat = 91.0 + 26.0 * @nbeds # Btu/day
+      load_sens = 738.0 + 209.0*@nbeds # Btu/day
+      load_lat = 91.0 + 26.0*@nbeds # Btu/day
     else
-      load_sens = 661.0 + 188.0 * @nbeds # Btu/day
-      load_lat = 73.0 + 21.0 * @nbeds # Btu/day
+      load_sens = 661.0 + 188.0*@nbeds # Btu/day
+      load_lat = 73.0 + 21.0*@nbeds # Btu/day
     end
     total = UnitConversions.convert(clothes_dryer_kwh, "kWh", "Btu")/365.0  # Btu/day
     total += UnitConversions.convert(clothes_dryer_therm, "therm", "Btu")/365.0 # Btu/day
@@ -3083,19 +2493,21 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_dishwasher_sens_lat(dishwasher_kwh)
-    load_sens = 219.0 + 87.0 * @nbeds # Btu/day
-    load_lat = 219.0 + 87.0 * @nbeds # Btu/day
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    load_sens = 219.0 + 87.0*@nbeds # Btu/day
+    load_lat = 219.0 + 87.0*@nbeds # Btu/day
     total = UnitConversions.convert(dishwasher_kwh, "kWh", "Btu")/365.0
     return load_sens/total, load_lat/total
   end
   
   def self.get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
     if range_fuel != 'electricity' or oven_fuel != 'electricity'
-      load_sens = 4086.0 + 488.0 * @nbeds # Btu/day
-      load_lat = 1037.0 + 124.0 * @nbeds # Btu/day
+      load_sens = 4086.0 + 488.0*@nbeds # Btu/day
+      load_lat = 1037.0 + 124.0*@nbeds # Btu/day
     else
-      load_sens = 2228.0 + 262.0 * @nbeds # Btu/day
-      load_lat = 248.0 + 29.0 * @nbeds # Btu/day
+      load_sens = 2228.0 + 262.0*@nbeds # Btu/day
+      load_lat = 248.0 + 29.0*@nbeds # Btu/day
     end
     total = UnitConversions.convert(cooking_range_kwh, "kWh", "Btu")/365.0 # Btu/day
     total += UnitConversions.convert(cooking_range_therm, "therm", "Btu")/365.0 # Btu/day
@@ -3103,34 +2515,39 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_residual_mels_kwh()
-    return 0.91 * @cfa
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    return 0.91*@cfa
   end
   
   def self.get_residual_mels_sens_lat(residual_mels_kwh)
-    load_sens = 7.27 * @cfa # Btu/day
-    load_lat = 0.38 * @cfa # Btu/day
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    load_sens = 7.27*@cfa # Btu/day
+    load_lat = 0.38*@cfa # Btu/day
     total = UnitConversions.convert(residual_mels_kwh, "kWh", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   
   def self.get_televisions_kwh()
-    return 413.0 + 0.0 * @cfa + 69.0 * @nbeds
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    return 413.0 + 0.0*@cfa + 69.0*@nbeds
   end
   
   def self.get_televisions_sens_lat(televisions_kwh)
-    load_sens = 3861.0 + 645.0 * @nbeds # Btu/day
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    load_sens = 3861.0 + 645.0*@nbeds # Btu/day
     load_lat = 0.0 # Btu/day
     total = UnitConversions.convert(televisions_kwh, "kWh", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   
   def self.get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    # # Table 4.2.2(1) - Service water heating systems
     ef = nil
     re = nil
     if wh_fuel_type == 'electricity'
-      ef = 0.97 - (0.00132 * wh_tank_vol)
+      ef = 0.97 - (0.00132*wh_tank_vol)
     else
-      ef = 0.67 - (0.0019 * wh_tank_vol)
+      ef = 0.67 - (0.0019*wh_tank_vol)
       if wh_fuel_type == 'natural gas' or wh_fuel_type == 'propane'
         re = 0.76
       elsif wh_fuel_type == 'fuel oil'
@@ -3141,20 +2558,18 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_water_heater_ef_from_uef(wh_uef, wh_type, wh_fuel_type)
-    '''
-    Per RESNET "Interpretation on Water Heater UEF"
-    '''
+    # Interpretation on Water Heater UEF
     if wh_fuel_type == 'electricity'
       if wh_type == 'storage water heater'
-        return [2.4029 * wh_uef - 1.2844, 0.96].min
+        return [2.4029*wh_uef - 1.2844, 0.96].min
       elsif wh_type == 'instantaneous water heater'
         return wh_uef
       elsif wh_type == 'heat pump water heater'
-        return 1.2101 * wh_uef - 0.6052
+        return 1.2101*wh_uef - 0.6052
       end
     else # Fuel
       if wh_type == 'storage water heater'
-        return 0.9066 * wh_uef + 0.0711
+        return 0.9066*wh_uef + 0.0711
       elsif wh_type == 'instantaneous water heater'
         return wh_uef
       end
@@ -3163,19 +2578,9 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_rvalue)
-    '''
-    Table 4.2.2.5.2.11(6) Hot water distribution system relative annual energy waste factors
-                                                                             EWfact
-    Distribution System Description                         ------------------------------------------
-                                                            No pipe insulation    >R-3 pipe insulation
-    -------------------------------                         ------------------    --------------------
-    Standard systems                                        32.0                  28.8
-    Recirculation without control or with timer control     500                   250
-    Recirculation with temperature control                  375                   187.5
-    Recirculation with demand control (presence sensor)     64.8                  43.2
-    Recirculation with demand control (manual)              43.2                  28.8
-    '''
-    
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Table 4.2.2.5.2.11(6) Hot water distribution system relative annual energy waste factors
     if is_recirc
       if recirc_control_type == "no control" or recirc_control_type == "timer"
         if pipe_rvalue < 3.0
@@ -3213,122 +2618,61 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
-    '''
-    4.2.2.5.2.11.2 Hot Water System Annual Energy Consumption
-    
-    If the Rated Home includes a hot water recirculation system, the annual electric consumption of the recirculation pump shall be added to the total hot water energy consumption. The recirculation pump kWh/y shall be calculated using Equation 4.2-15
-      pumpkWh/y = pumpW * Efact Eq. 4.2-15
-      where:
-        pumpW = pump power in watts (default pumpW = 50 watts)
-        Efact = factor selected from Table 4.2.2.5.2.11(5)
-      
-    Table 4.2.2.5.2.11(5) Annual electricity consumption factor for hot water recirculation system pumps
-    Recirculation System Description                        Efact
-    --------------------------------                        -----
-    Recirculation without control or with timer control     8.76
-    Recirculation with temperature control                  1.46
-    Recirculation with demand control (presence sensor)     0.15
-    Recirculation with demand control (manual)              0.10
-    '''
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Table 4.2.2.5.2.11(5) Annual electricity consumption factor for hot water recirculation system pumps
     if is_recirc
       if recirc_control_type == "no control" or recirc_control_type == "timer"
-        return 8.76 * recirc_pump_power
+        return 8.76*recirc_pump_power
       elsif recirc_control_type == "temperature"
-        return 1.46 * recirc_pump_power
+        return 1.46*recirc_pump_power
       elsif recirc_control_type == "presence sensor demand control"
-        return 0.15 * recirc_pump_power
+        return 0.15*recirc_pump_power
       elsif recirc_control_type == "manual demand control"
-        return 0.10 * recirc_pump_power
+        return 0.10*recirc_pump_power
       end
     end
     return nil
   end
   
   def self.get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_rvalue, pipe_l, loop_l, bsmnt)
-    '''
-    Results from standard hot water energy consumption calculations considering only tested Energy Factor data (stdECHW) shall be adjusted to account for the energy delivery effectiveness of the hot water distribution system in accordance with equation 4.2-16.
-      ECHW = stdECHW * (Ewaste + 128) / 160 Eq. 4.2-16
-      where Ewaste is calculated in accordance with equation 4.2-17.
-        Ewaste = oEWfact * (1-oCDeff) + sEWfact * pEratio Eq. 4.2-17
-        where
-          oEWfact = EWfact * oFrac = standard operating condition portion of hot water energy waste
-          where
-            EWfact = energy waste factor in accordance with Table 4.2.2.5.2.11(6)
-          oCDeff is in accordance with Section 4.2.2.5.2.11.1
-          sEWfact = EWfact - oEWfact = structural portion of hot water energy waste
-          pEratio = piping length energy ratio
-          where
-            for standard system: pEratio = PipeL / refpipeL
-            for recirculation systems: pEratio = LoopL / refLoopL
-            and where
-              LoopL = hot water recirculation loop piping length including both supply and return sides of the loop, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements.
-              refLoopL = 2.0*refPipeL - 20
-    '''
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Eq. 4.2-16
     ew_fact = get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_rvalue)
     o_frac = 0.25 # fraction of hot water waste from standard operating conditions
-    oew_fact = ew_fact * o_frac # standard operating condition portion of hot water energy waste
+    oew_fact = ew_fact*o_frac # standard operating condition portion of hot water energy waste
     ocd_eff = 0.0 # TODO: Need an HPXML input for this?
     sew_fact = ew_fact - oew_fact
     ref_pipe_l = get_pipe_length_reference(bsmnt)
     if not is_recirc
-      pe_ratio = pipe_l / ref_pipe_l
+      pe_ratio = pipe_l/ref_pipe_l
     else
       ref_loop_l = get_loop_length_reference(ref_pipe_l)
-      pe_ratio = loop_l / ref_loop_l
+      pe_ratio = loop_l/ref_loop_l
     end
-    e_waste = oew_fact * (1.0 - ocd_eff) + sew_fact * pe_ratio
-    return (e_waste + 128.0) / 160.0
+    e_waste = oew_fact*(1.0 - ocd_eff) + sew_fact*pe_ratio
+    return (e_waste + 128.0)/160.0
   end
   
   def self.get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
-    '''
-    4.2.2.5.2.11.1 Drain Water Heat Recovery (DWHR) Units
-    
-    If DWHR unit(s) is (are) installed in the Rated Home, the water heater potable water supply temperature adjustment (WHinTadj) shall be calculated in accordance with Equation 4.2-14.
-    
-      WHinTadj =Ifrac*(DWHRinT-Tmains)*DWHReff*PLC*LocF*FixF Eq. 4.2-14
-      where
-        WHinTadj = adjustment to water heater potable supply inlet temperature (oF)
-        Ifrac = 0.56 + 0.015*Nbr - 0.0004*Nbr2 = fraction of hot water use impacted by DWHR
-        DWHRinT = 97 oF
-        Tmains = calculated in accordance with Section 4.2.2.5.1.4
-        DWHReff = Drain Water Heat Recovery Unit efficiency as rated and labeled in accordance with CSA 55.1
-        where
-          DWHReff = DWHReff *1.082 if low-flow fixtures are installed in accordance with Table 4.2.2.5.2.11(1)
-        PLC = 1 - 0.0002*pLength = piping loss coefficient
-        where
-          for standard systems: 
-            pLength = pipeL as measured accordance with Section 4.1.1.5.2.11
-          for recirculation systems: 
-            pLength = branchL as measured in accordance with Section 4.2.2.5.2.11
-        LocF = a performance factor based on the installation location of the DWHR determined from Table 4.2.2.5.2.11(4)
-        
-        Table 4.2.2.5.2.11(4) Location factors for DWHR placement
-        DRHR Placement                                                                                                      LocF
-        --------------                                                                                                      ----
-        Supplies pre-heated water to both the fixture cold water piping and the hot water heater potable supply piping      1.000
-        Supplies pre-heated water to only the hot water heater potable supply piping                                        0.777
-        Supplies pre-heated water to only the fixture cold water piping                                                     0.777
-    
-        FixF = Fixture Factor
-        where
-          FixF = 1.0 if all of the showers in the home are connected to DWHR units
-          FixF = 0.5 if there are 2 or more showers in the home and only 1 shower is connected to a DWHR unit.
-    '''
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Eq. 4.2-14
     
     eff_adj = 1.0
     if low_flow_fixtures
       eff_adj = 1.082
     end
     
-    iFrac = 0.56 + 0.015 * @nbeds - 0.0004 * @nbeds**2 # fraction of hot water use impacted by DWHR
+    iFrac = 0.56 + 0.015*@nbeds - 0.0004*@nbeds**2 # fraction of hot water use impacted by DWHR
     
     if is_recirc
       pLength = recirc_branch_l
     else
       pLength = pipe_l
     end
-    plc = 1 - 0.0002 * pLength # piping loss coefficient
+    plc = 1 - 0.0002*pLength # piping loss coefficient
     
     # Location factors for DWHR placement
     if equal_flow
@@ -3346,19 +2690,22 @@ class EnergyRatingIndex301Ruleset
     
     return eff_adj, iFrac, plc, locF, fixF
   end
+  
+  def self.get_water_heater_tank_temperature()
+    # Table 4.2.2(1) - Service water heating systems
+    if @eri_addenda.include? "Addendum A"
+      return 125.0
+    end
+    return 120.0
+  end
+  
+  def self.get_service_water_heating_use_gpd()
+    # Table 4.2.2(1) - Service water heating systems
+    return 30.0*@ndu + 10.0*@nbeds
+  end
 
   def self.get_occupants_heat_gain_sens_lat()
-    '''
-    Table 4.2.2(3). Internal Gains for HERS Reference Homes
-    Occupants
-    Sensible Gains (Btu/day) - 3716*Nbr
-    Latent Gains (Btu/day) - 2884*Nbr
-    
-    Software tools shall use either the occupant gains provided above or similar temperature dependent values 
-    generated by the software where the number of occupants equals the number of Bedrooms and occupants are 
-    present in the home 16.5 hours per day.
-    '''
-    
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
     hrs_per_day = 16.5
     sens_gains = 3716.0 # Btu/person/day
     lat_gains = 2884.0 # Btu/person/day
@@ -3372,26 +2719,14 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_general_water_use_gains_sens_lat()
-    '''
-    Table 4.2.2(3). Internal Gains for HERS Reference Homes
-    Occupants
-    Sensible Gains (Btu/day) - -1227-409*Nbr
-    Latent Gains (Btu/day) - 1245+415*Nbr
-    '''
-    
+    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
     sens_gains = -1227.0 - 409.0*@nbeds # Btu/day
     lat_gains = 1245.0 + 415.0*@nbeds # Btu/day
     return sens_gains*365.0, lat_gains*365.0
   end
   
   def self.get_shelter_coefficient()
-    '''
-    Either hourly calculations using the procedures given in the 2013 ASHRAE Handbook
-    of Fundamentals (IP version), Chapter 16, page 16.25, Equation 51 using Shelter
-    Class 4 or calculations yielding equivalent results shall be used to determine the
-    energy loads resulting from infiltration in combination with Whole-House Mechanical
-    Ventilation systems.
-    '''
+    # Table 4.2.2(1)(g)
     return 0.5
   end
   
@@ -3417,6 +2752,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.get_conditioned_basement_integer(orig_details)
     bsmnt = 0.0
+    # FIXME: Looks wrong. Should be 'true'?
     if not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?
       bsmnt = 1.0
     end
@@ -3456,5 +2792,39 @@ class EnergyRatingIndex301Ruleset
     fail "Unexpected adjacent_to (#{adjacent_to})."
   end
   
+  def self.calc_mech_vent_q_fan(q_tot, sla)
+    # TODO: Merge with Airflow measure and move this code to airflow.rb
+    nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
+    q_inf = nl * @weather.data.WSF * @cfa/7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+    if q_inf > 2.0/3.0 * q_tot
+      return q_tot - 2.0/3.0 * q_tot
+    end
+    return q_tot - q_inf
+  end
+
+  def self.calc_lighting(qFF_int, qFF_ext, qFF_grg)
+    if qFF_int < 0.1
+      qFF_int = 0.1
+    end
+    int_kwh = 0.8*((4.0 - 3.0*qFF_int)/3.7)*(455.0 + 0.8*@cfa) + 0.2*(455.0 + 0.8*@cfa) # Eq 4.2-2
+    ext_kwh = (100.0 + 0.05*@cfa)*(1.0 - qFF_ext) + 0.25*(100.0 + 0.05*@cfa)*qFF_ext # Eq 4.2-3
+    grg_kwh = 0.0
+    if @garage_present
+      grg_kwh = 100.0*(1.0 - qFF_grg) + 25.0*qFF_grg # Eq 4.2-4
+    end
+    return int_kwh, ext_kwh, grg_kwh
+  end
+  
+  def self.calc_lighting_addendum_g(fFI_int, fFII_int, fFI_ext, fFII_ext, fFI_grg, fFII_grg)
+    # ANSI/RESNET/ICC 301-2014 Addendum G-2018, Solid State Lighting
+    int_kwh = 0.9/0.925*(455.0 + 0.8*@cfa)*((1.0 - fFII_int - fFI_int) + fFI_int*15.0/60.0 + fFII_int*15.0/90.0) + 0.1*(455.0 + 0.8*@cfa) # Eq 4.2-2)
+    ext_kwh = (100.0 + 0.05*@cfa)*(1.0 - fFI_ext - fFII_ext) + 15.0/60.0*(100.0 + 0.05*@cfa)*fFI_ext + 15.0/90.0*(100.0 + 0.05*@cfa)*fFII_ext # Eq 4.2-3
+    grg_kwh = 0.0
+    if @garage_present
+      grg_kwh = 100.0*((1.0 - fFI_grg - fFII_grg) + 15.0/60.0*fFI_grg + 15.0/90.0*fFII_grg) # Eq 4.2-4
+    end
+    return int_kwh, ext_kwh, grg_kwh
+  end
+
 end
   

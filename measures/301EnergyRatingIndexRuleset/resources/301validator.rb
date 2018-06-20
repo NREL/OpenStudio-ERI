@@ -28,7 +28,14 @@ class EnergyRatingIndex301Validator
     
         # Root
         nil => {
-            '/HPXML/Building/BuildingDetails' => one,
+            '/HPXML/SoftwareInfo' => one, # See [SoftwareInfo]
+            '/HPXML/Building/BuildingDetails' => one, # See [BuildingDetails]
+        },
+        
+        # [SoftwareInfo]
+        '/HPXML/SoftwareInfo' => {
+            'extension/ERICalculation[Version="2014"]' => one, # Only 2014 currently
+            'extension/ERICalculation[Addenda="IncludeAll" or Addenda="Exclude2014G" or Addenda="Exclude2014GE" or Addenda="Exclude2014GEA"]' => one, # Only ERI version 2014 addenda A, E, and G affect the calculation
         },
         
         # [BuildingDetails]
@@ -385,7 +392,7 @@ class EnergyRatingIndex301Validator
             '../HotWaterDistribution' => one, # See [HotWaterDistribution]
             '../WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => one_or_more, # See [WaterFixture]
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => one, # See [WHType=Tank]
-            #'Location' => one, # TODO: Restrict values
+            '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
             'FractionDHWLoadServed' => one,
             '[EnergyFactor | UniformEnergyFactor]' => one,
         },
@@ -556,10 +563,20 @@ class EnergyRatingIndex301Validator
         },
         
             ## [LtgType=Detailed]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
-                'extension/FractionQualifyingLightFixturesInterior' => one,
-                'extension/FractionQualifyingLightFixturesExterior' => one,
-                'extension/FractionQualifyingLightFixturesGarage' => one,
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Addenda="Exclude2014G" or Addenda="Exclude2014GE" or Addenda="Exclude2014GEA"]]' => {
+                'extension/FractionQualifyingFixturesInterior' => one,
+                'extension/FractionQualifyingFixturesExterior' => one,
+                'extension/FractionQualifyingFixturesGarage' => one,
+            },
+            
+            ## [LtgType=DetailedAppendixG]
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Addenda="IncludeAll"]]' => {
+                'extension/FractionQualifyingTierIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIFixturesGarage' => one,
+                'extension/FractionQualifyingTierIIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIIFixturesGarage' => one,
             },
             
             ## [LtgType=Simplified]
