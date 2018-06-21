@@ -34,8 +34,7 @@ class EnergyRatingIndex301Validator
         
         # [SoftwareInfo]
         '/HPXML/SoftwareInfo' => {
-            'extension/ERICalculation[Version="2014"]' => one, # Only 2014 currently
-            'extension/ERICalculation[Addenda="IncludeAll" or Addenda="Exclude2014G" or Addenda="Exclude2014GE" or Addenda="Exclude2014GEA"]' => one, # Only ERI version 2014 addenda A, E, and G affect the calculation
+            'extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE" or Version="2014AEG"]' => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
         },
         
         # [BuildingDetails]
@@ -563,14 +562,14 @@ class EnergyRatingIndex301Validator
         },
         
             ## [LtgType=Detailed]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Addenda="Exclude2014G" or Addenda="Exclude2014GE" or Addenda="Exclude2014GEA"]]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE"]]' => {
                 'extension/FractionQualifyingFixturesInterior' => one,
                 'extension/FractionQualifyingFixturesExterior' => one,
                 'extension/FractionQualifyingFixturesGarage' => one,
             },
             
             ## [LtgType=DetailedAppendixG]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Addenda="IncludeAll"]]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014AEG"]]' => {
                 'extension/FractionQualifyingTierIFixturesInterior' => one,
                 'extension/FractionQualifyingTierIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIFixturesGarage' => one,
