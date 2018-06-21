@@ -1821,7 +1821,7 @@ class EnergyRatingIndex301Ruleset
       clothes_washer_kwh = ((ler/392.0) - ((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*21.9825)*acy
       clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
       clothes_washer_gpd = 60.0*((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*acy/365.0
-      if not @eri_eri_version.include? "A"
+      if not @eri_version.include? "A"
         clothes_washer_gpd -= 3.97 # Section 4.2.2.5.2.10
       end
     elsif orig_details.elements["Appliances/ClothesWasher/extension/AnnualkWh"]
