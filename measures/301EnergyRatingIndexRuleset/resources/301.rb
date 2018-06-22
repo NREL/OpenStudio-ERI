@@ -457,8 +457,7 @@ class EnergyRatingIndex301Ruleset
         new_roof.elements["RadiantBarrier"].text = false
         new_roof.elements["SolarAbsorptance"].text = 0.75
         new_roof.elements["Emittance"].text = 0.90
-        exterior_adjacent_to = "ambient"
-        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        if is_external_thermal_boundary(interior_adjacent_to, "ambient")
           new_roof_ins = new_roof.elements["Insulation"]
           XMLHelper.delete_element(new_roof_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_roof_ins, "Layer")
@@ -555,17 +554,7 @@ class EnergyRatingIndex301Ruleset
       end
       
       fnd_type = new_foundation.elements["FoundationType"]
-      if fnd_type.elements["Basement[Conditioned='true']"]
-        interior_adjacent_to = "conditioned basement"
-      elsif fnd_type.elements["Basement[Conditioned='false']"]
-        interior_adjacent_to = "unconditioned basement"
-      elsif fnd_type.elements["Crawlspace"]
-        interior_adjacent_to = "crawlspace"
-      elsif fnd_type.elements["SlabOnGrade"]
-        interior_adjacent_to = "living space"
-      elsif fnd_type.elements["Ambient"]  
-        interior_adjacent_to = "ambient"
-      end
+      interior_adjacent_to = get_foundation_interior_adjacent_to(fnd_type)
       
       # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
       new_foundation.elements.each("FrameFloor") do |new_floor|
@@ -581,7 +570,8 @@ class EnergyRatingIndex301Ruleset
       # Table 4.2.2(1) - Conditioned basement walls
       new_foundation.elements.each("FoundationWall") do |new_wall|
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
-        if fnd_type.elements["Basement[Conditioned='true']"] and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)?
+        if interior_adjacent_to == "conditioned basement" and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_wall_ins = new_wall.elements["Insulation"]
           XMLHelper.delete_element(new_wall_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_wall_ins, "Layer")
@@ -591,7 +581,8 @@ class EnergyRatingIndex301Ruleset
   
       # Table 4.2.2(1) - Foundations
       new_foundation.elements.each("Slab") do |new_slab|
-        if fnd_type.elements["SlabOnGrade"] and is_external_thermal_boundary(interior_adjacent_to, "ground")
+        # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, "ground")?
+        if interior_adjacent_to == "living space" and is_external_thermal_boundary(interior_adjacent_to, "ground")
           new_slab.elements["PerimeterInsulationDepth"].text = slab_depth
           new_slab.elements["UnderSlabInsulationWidth"].text = 0
           perim_ins = new_slab.elements["PerimeterInsulation"]
@@ -738,7 +729,6 @@ class EnergyRatingIndex301Ruleset
       interior_adjacent_to = XMLHelper.get_value(new_wall, "extension/InteriorAdjacentTo")
       exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
       if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-        new_wall.elements["Siding"].text = "vinyl siding"
         new_wall.elements["SolarAbsorptance"].text = 0.75
         new_wall.elements["Emittance"].text = 0.90
         insulation = new_wall.elements["Insulation"]
@@ -2749,39 +2739,6 @@ class EnergyRatingIndex301Ruleset
     return bsmnt
   end
   
-  def self.is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-    interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
-    exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
-    return (interior_conditioned != exterior_conditioned)
-  end
-  
-  def self.is_adjacent_to_conditioned(adjacent_to)
-    if adjacent_to == "living space"
-      return true
-    elsif adjacent_to == "garage"
-      return false
-    elsif adjacent_to == "vented attic"
-      return false
-    elsif adjacent_to == "unvented attic"
-      return false
-    elsif adjacent_to == "cape cod"
-      return true
-    elsif adjacent_to == "cathedral ceiling"
-      return true
-    elsif adjacent_to == "unconditioned basement"
-      return false
-    elsif adjacent_to == "conditioned basement"
-      return true
-    elsif adjacent_to == "crawlspace"
-      return false
-    elsif adjacent_to == "ambient"
-      return false
-    elsif adjacent_to == "ground"
-      return false
-    end
-    fail "Unexpected adjacent_to (#{adjacent_to})."
-  end
-  
   def self.calc_mech_vent_q_fan(q_tot, sla)
     # TODO: Merge with Airflow measure and move this code to airflow.rb
     nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
@@ -2818,3 +2775,50 @@ class EnergyRatingIndex301Ruleset
 
 end
   
+def is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+  interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
+  exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
+  return (interior_conditioned != exterior_conditioned)
+end
+
+def is_adjacent_to_conditioned(adjacent_to)
+  if adjacent_to == "living space"
+    return true
+  elsif adjacent_to == "garage"
+    return false
+  elsif adjacent_to == "vented attic"
+    return false
+  elsif adjacent_to == "unvented attic"
+    return false
+  elsif adjacent_to == "cape cod"
+    return true
+  elsif adjacent_to == "cathedral ceiling"
+    return true
+  elsif adjacent_to == "unconditioned basement"
+    return false
+  elsif adjacent_to == "conditioned basement"
+    return true
+  elsif adjacent_to == "crawlspace"
+    return false
+  elsif adjacent_to == "ambient"
+    return false
+  elsif adjacent_to == "ground"
+    return false
+  end
+  fail "Unexpected adjacent_to (#{adjacent_to})."
+end
+
+def get_foundation_interior_adjacent_to(fnd_type)
+  if fnd_type.elements["Basement[Conditioned='true']"]
+    interior_adjacent_to = "conditioned basement"
+  elsif fnd_type.elements["Basement[Conditioned='false']"]
+    interior_adjacent_to = "unconditioned basement"
+  elsif fnd_type.elements["Crawlspace"]
+    interior_adjacent_to = "crawlspace"
+  elsif fnd_type.elements["SlabOnGrade"]
+    interior_adjacent_to = "living space"
+  elsif fnd_type.elements["Ambient"]  
+    interior_adjacent_to = "ambient"
+  end
+  return interior_adjacent_to
+end
