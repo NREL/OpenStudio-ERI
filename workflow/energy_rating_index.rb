@@ -45,6 +45,11 @@ def create_osw(design, designdir, basedir, resultsdir, options, run_design)
   osw.setOswPath(osw_path)
   osw.addMeasurePath("../../measures")
   
+  runOptions = OpenStudio::RunOptions.new
+  runOptions.setSkipExpandObjects(true)
+  runOptions.setSkipEnergyPlusPreprocess(true)
+  osw.setRunOptions(runOptions)
+  
   # Add measures (w/args) to OSW
   schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   weather_dir = File.absolute_path(File.join(basedir, "..", "weather"))
@@ -83,18 +88,12 @@ def run_osw(osw_path, options)
   # Redirect to a log file
   log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
   
-  # FIXME: Push changes upstream to OpenStudio-workflow gem
-  gem_str = '-I ../gems/OpenStudio-workflow-gem/lib/ '
-  
-  debug_str = ''
-  verbose_str = ''
-  if options[:debug]
-    debug_str = '--debug '
-    verbose_str = '--verbose '
-  end
-
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" #{verbose_str}#{gem_str}run #{debug_str}-w \"#{osw_path}\"#{log_str}"
+  if options[:debug]
+    command = "\"#{cli_path}\" --no-ssl --verbose run --debug -w \"#{osw_path}\"#{log_str}"
+  else
+    command = "\"#{cli_path}\" --no-ssl run --fast -w \"#{osw_path}\"#{log_str}"
+  end
   system(command)
   
   return File.join(File.dirname(osw_path), "run", "eplusout.sql")
@@ -845,7 +844,7 @@ unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xm
 end
 
 # Check for correct versions of OS
-os_version = "2.5.1"
+os_version = "2.6.0"
 if OpenStudio.openStudioVersion != os_version
   fail "ERROR: OpenStudio version #{os_version} is required."
 end

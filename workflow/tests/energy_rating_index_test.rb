@@ -30,7 +30,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb --download-weather"
+    command = "cd #{parent_dir} && \"#{cli_path}\" --no-ssl energy_rating_index.rb --download-weather"
     system(command)
     
     num_epws_expected = File.readlines(File.join(parent_dir, "..", "weather", "data.csv")).size - 1
@@ -202,11 +202,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def test_running_with_cli
-    # Verifies that these tests can be run from the CLI
+    # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" #{File.absolute_path(__FILE__)} --name=foo"
+    command = "cd #{parent_dir} && \"#{cli_path}\" --no-ssl #{File.absolute_path(__FILE__)} --name=foo"
     success = system(command)
     assert(success)
   end
@@ -219,7 +219,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml}"
+    command = "cd #{parent_dir} && \"#{cli_path}\" --no-ssl energy_rating_index.rb -x #{xml}"
     system(command)
     
     results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
