@@ -28,53 +28,54 @@ class EnergyRatingIndex301Validator
     
         # Root
         nil => {
-            '/HPXML/SoftwareInfo' => one, # See [SoftwareInfo]
-            '/HPXML/Building/BuildingDetails' => one, # See [BuildingDetails]
-        },
+            '/HPXML/XMLTransactionHeaderInformation/XMLType' => one, # Required by HPXML schema
+            '/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy' => one, # Required by HPXML schema
+            '/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime' => one, # Required by HPXML schema
+            '/HPXML/XMLTransactionHeaderInformation/Transaction' => one, # Required by HPXML schema
+            '/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE" or Version="2014AEG"]' => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
+
+            '/HPXML/Building' => one,
+            '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
+            '/HPXML/Building/ProjectStatus/EventType' => one, # Required by HPXML schema
         
-        # [SoftwareInfo]
-        '/HPXML/SoftwareInfo' => {
-            'extension/ERICalculation[Version="2014"]' => one, # Only 2014 currently
-            'extension/ERICalculation[Addenda="IncludeAll" or Addenda="Exclude2014G" or Addenda="Exclude2014GE" or Addenda="Exclude2014GEA"]' => one, # Only ERI version 2014 addenda A, E, and G affect the calculation
-        },
-        
-        # [BuildingDetails]
-        '/HPXML/Building/BuildingDetails' => {
-            'BuildingSummary/Site/FuelTypesAvailable[Fuel="electricity" or Fuel="natural gas" or Fuel="fuel oil" or Fuel="propane" or Fuel="kerosene" or Fuel="diesel" or Fuel="anthracite coal" or Fuel="bituminous coal" or Fuel="coke" or Fuel="wood" or Fuel="wood pellets"]' => one_or_more,
-            'BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
-            'BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
-            'BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
-            'BuildingSummary/BuildingConstruction/ConditionedFloorArea' => one,
-            'BuildingSummary/BuildingConstruction/ConditionedBuildingVolume' => one,
-            'BuildingSummary/BuildingConstruction/GaragePresent' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable[Fuel="electricity" or Fuel="natural gas" or Fuel="fuel oil" or Fuel="propane" or Fuel="kerosene" or Fuel="diesel" or Fuel="anthracite coal" or Fuel="bituminous coal" or Fuel="coke" or Fuel="wood" or Fuel="wood pellets"]' => one_or_more,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent' => one,
             
-            'ClimateandRiskZones/ClimateZoneIECC[Year="2006"]' => one, # Used by ANSI/RESNET/ICC 301-2014
-            'ClimateandRiskZones/ClimateZoneIECC[Year="2012"]' => one, # Used by ANSI/RESNET/ICC 301-2014 Addendum E-2018 House Size Index Adjustment Factors (IAF)
-            'ClimateandRiskZones/WeatherStation/WMO' => one, # Reference weather/data.csv for the list of acceptable WMO station numbers
+            '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2006"]' => one, # Used by ANSI/RESNET/ICC 301-2014
+            '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2012"]' => one, # Used by ANSI/RESNET/ICC 301-2014 Addendum E-2018 House Size Index Adjustment Factors (IAF)
+            '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/SystemIdentifiersInfo' => one, # Required by HPXML schema
+            '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/Name' => one, # Required by HPXML schema
+            '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO' => one, # Reference weather/data.csv for the list of acceptable WMO station numbers
             
-            'Enclosure/AtticAndRoof/Attics' => one, # See [Attic]
-            'Enclosure/Foundations' => one, # See [Foundation]
-            'Enclosure/Walls' => one, # See [Wall]
-            'Enclosure/Windows' => zero_or_one, # See [Window]
-            'Enclosure/Skylights' => zero_or_one, # See [Skylight]
-            'Enclosure/Doors' => zero_or_one, # See [Door]
-            'Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH
+            '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics' => one, # See [Attic]
+            '/HPXML/Building/BuildingDetails/Enclosure/Foundations' => one, # See [Foundation]
+            '/HPXML/Building/BuildingDetails/Enclosure/Walls' => one, # See [Wall]
+            '/HPXML/Building/BuildingDetails/Enclosure/Windows' => zero_or_one, # See [Window]
+            '/HPXML/Building/BuildingDetails/Enclosure/Skylights' => zero_or_one, # See [Skylight]
+            '/HPXML/Building/BuildingDetails/Enclosure/Doors' => zero_or_one, # See [Door]
             
-            'Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_one, # See [HeatingSystem]
-            'Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_one, # See [CoolingSystem]
-            'Systems/HVAC/HVACPlant/HeatPump' => zero_or_one, # See [HeatPump]
+            '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
             
-            'Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
-            'Systems/WaterHeating' => zero_or_one, # See [WaterHeatingSystem]
-            'Systems/Photovoltaics' => zero_or_one, # See [PVSystem]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_one, # See [HeatingSystem]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_one, # See [CoolingSystem]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_one, # See [HeatPump]
             
-            'Appliances/ClothesWasher' => one, # See [ClothesWasher]
-            'Appliances/ClothesDryer' => one, # See [ClothesDryer]
-            'Appliances/Dishwasher' => one, # See [Dishwasher]
-            'Appliances/Refrigerator' => one, # See [Refrigerator]
-            'Appliances/CookingRange' => one, # See [CookingRange]
+            '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
+            '/HPXML/Building/BuildingDetails/Systems/WaterHeating' => zero_or_one, # See [WaterHeatingSystem]
+            '/HPXML/Building/BuildingDetails/Systems/Photovoltaics' => zero_or_one, # See [PVSystem]
             
-            'Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => one, # See [ClothesWasher]
+            '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => one, # See [ClothesDryer]
+            '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => one, # See [Dishwasher]
+            '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
+            '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
+            
+            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
         },
         
         
@@ -104,28 +105,34 @@ class EnergyRatingIndex301Validator
             
             ## [AtticRoof]
             '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Roofs/Roof' => {
+                'SystemIdentifier' => one, # Required by HPXML schema
                 'Area' => one,
                 'SolarAbsorptance' => one,
                 'Emittance' => one,
                 'Pitch' => one,
                 'RadiantBarrier' => one,
+                'Insulation/SystemIdentifier' => one, # Required by HPXML schema
                 'Insulation/AssemblyEffectiveRValue' => one,
             },
     
             ## [AtticFloor]
             '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Floors/Floor' => {
+                'SystemIdentifier' => one, # Required by HPXML schema
                 'Area' => one,
+                'Insulation/SystemIdentifier' => one, # Required by HPXML schema
                 'Insulation/AssemblyEffectiveRValue' => one,
                 'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="ambient"]' => one,
             },
             
             ## [AtticWall]
             '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall' => {
+                'SystemIdentifier' => one, # Required by HPXML schema
                 'WallType/WoodStud' => one,
                 'Area' => one,
                 '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]' => one,
                 'SolarAbsorptance' => one,
                 'Emittance' => one,
+                'Insulation/SystemIdentifier' => one, # Required by HPXML schema
                 'Insulation/AssemblyEffectiveRValue' => one,
                 'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="vented attic" or ExteriorAdjacentTo="unvented attic" or ExteriorAdjacentTo="cape cod" or ExteriorAdjacentTo="ambient"]' => one,
             },
@@ -134,6 +141,7 @@ class EnergyRatingIndex301Validator
             
         # [Foundation]
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'FoundationType[Basement | Crawlspace | SlabOnGrade | Ambient]' => one, # See [FoundationType=Basement] or [FoundationType=Crawl] or [FoundationType=Slab] or [FoundationType=Ambient]
         },
             
@@ -174,31 +182,38 @@ class EnergyRatingIndex301Validator
     
             ## [FoundationFrameFloor]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/FrameFloor' => {
+                'SystemIdentifier' => one, # Required by HPXML schema
                 'Area' => one,
+                'Insulation/SystemIdentifier' => one, # Required by HPXML schema
                 'Insulation/AssemblyEffectiveRValue' => one,
                 'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage"]' => one,
             },
 
             ## [FoundationWall]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationWall' => {
+                'SystemIdentifier' => one, # Required by HPXML schema
                 'Height' => one,
                 'Area' => one,
                 'Thickness' => one,
                 'BelowGradeDepth' => one,
+                'Insulation/SystemIdentifier' => one, # Required by HPXML schema
                 'Insulation/AssemblyEffectiveRValue' => one,
                 'extension[ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="conditioned basement" or ExteriorAdjacentTo="crawlspace"]' => one,
             },
 
             ## [FoundationSlab]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab' => {
+                'SystemIdentifier' => one, # Required by HPXML schema
                 'Area' => one,
                 'Thickness' => one, # Use zero for dirt floor
                 'ExposedPerimeter' => one,
                 'PerimeterInsulationDepth' => one,
                 'UnderSlabInsulationWidth' => one,
                 'DepthBelowGrade' => one,
+                'PerimeterInsulation/SystemIdentifier' => one, # Required by HPXML schema
                 'PerimeterInsulation/Layer[InstallationType="continuous"]/NominalRValue' => one,
                 'PerimeterInsulation/Layer[InstallationType="continuous"]/Thickness' => one,
+                'UnderSlabInsulation/SystemIdentifier' => one, # Required by HPXML schema
                 'UnderSlabInsulation/Layer[InstallationType="continuous"]/NominalRValue' => one,
                 'UnderSlabInsulation/Layer[InstallationType="continuous"]/Thickness' => one,
                 'extension/CarpetFraction' => one,
@@ -209,11 +224,13 @@ class EnergyRatingIndex301Validator
             
         # [Wall]
         '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'WallType/WoodStud' => one,
             'Area' => one,
             '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]' => one,
             'SolarAbsorptance' => one,
             'Emittance' => one,
+            'Insulation/SystemIdentifier' => one, # Required by HPXML schema
             'Insulation/AssemblyEffectiveRValue' => one,
             'extension[InteriorAdjacentTo="living space" or InteriorAdjacentTo="garage" or InteriorAdjacentTo="vented attic" or InteriorAdjacentTo="unvented attic" or InteriorAdjacentTo="cape cod"]' => one,
             'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="vented attic" or ExteriorAdjacentTo="unvented attic" or ExteriorAdjacentTo="cape cod" or ExteriorAdjacentTo="ambient"]' => one,
@@ -223,6 +240,7 @@ class EnergyRatingIndex301Validator
     
         # [Window]
         '/HPXML/Building/BuildingDetails/Enclosure/Windows/Window' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'Area' => one,
             'Azimuth' => one,
             'UFactor' => one,
@@ -234,6 +252,7 @@ class EnergyRatingIndex301Validator
     
         # [Skylight]
         '/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'Area' => one,
             'Azimuth' => one,
             'UFactor' => one,
@@ -245,6 +264,7 @@ class EnergyRatingIndex301Validator
     
         # [Door]
         '/HPXML/Building/BuildingDetails/Enclosure/Doors/Door' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'Area' => one,
             'Azimuth' => one,
             'RValue' => one,
@@ -253,8 +273,16 @@ class EnergyRatingIndex301Validator
         
         
         
+        # [AirInfiltration]
+        'BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+        },
+        
+        
+        
         # [HeatingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '../../HVACControl' => one, # See [HVACControl]
             'DistributionSystem' => zero_or_one, # See [HVACDistribution]
             'HeatingSystemType[Furnace | Boiler | ElectricResistance]' => one, # See [HeatingType=Furnace] or [HeatingType=Boiler] or [HeatingType=Resistance]
@@ -283,6 +311,7 @@ class EnergyRatingIndex301Validator
             
         ## [CoolingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'DistributionSystem' => zero_or_one, # See [HVACDistribution]
             '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]' => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC]
             '[CoolingSystemFuel="electricity"]' => one,
@@ -303,6 +332,7 @@ class EnergyRatingIndex301Validator
             
         ## [HeatPump]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'DistributionSystem' => zero_or_one, # See [HVACDistribution]
             '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
             'FractionHeatLoadServed' => one,
@@ -331,6 +361,7 @@ class EnergyRatingIndex301Validator
         
         # [HVACControl]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'ControlType' => one,
         },
 
@@ -338,6 +369,7 @@ class EnergyRatingIndex301Validator
         
         # [HVACDistribution]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[DistributionSystemType/AirDistribution | DistributionSystemType/HydronicDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=Hydronic] or [HVACDistType=DSE]
         },
             
@@ -367,6 +399,7 @@ class EnergyRatingIndex301Validator
             
         # [MechanicalVentilation]
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[FanType="energy recovery ventilator" or FanType="heat recovery ventilator" or FanType="exhaust only" or FanType="supply only" or FanType="balanced" or FanType="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV]
             'RatedFlowRate' => one,
             'HoursInOperation' => one,
@@ -391,6 +424,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => {
             '../HotWaterDistribution' => one, # See [HotWaterDistribution]
             '../WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => one_or_more, # See [WaterFixture]
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => one, # See [WHType=Tank]
             '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
             'FractionDHWLoadServed' => one,
@@ -424,6 +458,7 @@ class EnergyRatingIndex301Validator
         
         # [HotWaterDistribution]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
             'PipeInsulation/PipeRValue' => one,
             'DrainWaterHeatRecovery' => zero_or_one # See [HotWaterDistribution DrainWaterHeatRecovery]
@@ -453,12 +488,15 @@ class EnergyRatingIndex301Validator
         
         # [WaterFixture]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            'WaterFixtureType' => one, # Required by HPXML schema
             '[FlowRate | extension/MixedWaterGPD]' => one,
         },
         
         
         # [PVSystem]
         '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'ArrayAzimuth' => one,
             'ArrayTilt' => one,
             'InverterEfficiency' => one,
@@ -469,6 +507,7 @@ class EnergyRatingIndex301Validator
         
         # [ClothesWasher]
         '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[ModifiedEnergyFactor | extension/AnnualkWh]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CWType=Detailed] or [CWType=Simplified]
         },
         
@@ -492,6 +531,7 @@ class EnergyRatingIndex301Validator
         
         # [ClothesDryer]
         '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
             '[EfficiencyFactor | extension/AnnualkWh]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CDType=Detailed] or [CDType=Simplified]
         },
@@ -512,6 +552,7 @@ class EnergyRatingIndex301Validator
         
         # [Dishwasher]
         '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[EnergyFactor | RatedAnnualkWh | extension/AnnualkWh]' => zero_or_one, # Uses Reference Home if none provided; otherwise see [DWType=Detailed] or [DWType=Simplified]
         },
         
@@ -531,6 +572,7 @@ class EnergyRatingIndex301Validator
         
         # [Refrigerator]
         '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             'RatedAnnualkWh' => zero_or_one,
         },
         
@@ -538,6 +580,7 @@ class EnergyRatingIndex301Validator
         
         # [CookingRange]
         '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
             '[IsInduction | extension/AnnualkWh]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CRType=Detailed] or [CRType=Simplified]
         },
@@ -563,14 +606,14 @@ class EnergyRatingIndex301Validator
         },
         
             ## [LtgType=Detailed]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Addenda="Exclude2014G" or Addenda="Exclude2014GE" or Addenda="Exclude2014GEA"]]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE"]]' => {
                 'extension/FractionQualifyingFixturesInterior' => one,
                 'extension/FractionQualifyingFixturesExterior' => one,
                 'extension/FractionQualifyingFixturesGarage' => one,
             },
             
             ## [LtgType=DetailedAppendixG]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Addenda="IncludeAll"]]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014AEG"]]' => {
                 'extension/FractionQualifyingTierIFixturesInterior' => one,
                 'extension/FractionQualifyingTierIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIFixturesGarage' => one,
