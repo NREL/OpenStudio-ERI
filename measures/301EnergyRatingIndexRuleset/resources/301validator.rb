@@ -129,7 +129,6 @@ class EnergyRatingIndex301Validator
                 'SystemIdentifier' => one, # Required by HPXML schema
                 'WallType/WoodStud' => one,
                 'Area' => one,
-                '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]' => one,
                 'SolarAbsorptance' => one,
                 'Emittance' => one,
                 'Insulation/SystemIdentifier' => one, # Required by HPXML schema
@@ -227,7 +226,6 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             'WallType/WoodStud' => one,
             'Area' => one,
-            '[Siding="stucco" or Siding="brick veneer" or Siding="wood siding" or Siding="aluminum siding" or Siding="vinyl siding" or Siding="fiber cement siding"]' => one,
             'SolarAbsorptance' => one,
             'Emittance' => one,
             'Insulation/SystemIdentifier' => one, # Required by HPXML schema
