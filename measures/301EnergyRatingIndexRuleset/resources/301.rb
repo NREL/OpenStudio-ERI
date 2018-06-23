@@ -18,18 +18,8 @@ class EnergyRatingIndex301Ruleset
       header.elements["XMLType"].text += ", #{calc_type}"
     end
     
-    addenda_map = {
-                   'IncludeAll'     => ['Addendum A', 'Addendum E', 'Addendum G'],
-                   'Exclude2014G'   => ['Addendum A', 'Addendum E'],
-                   'Exclude2014GE'  => ['Addendum A'],
-                   'Exclude2014GEA' => [],
-                  }
-    
-    # ERI version and addenda
-    @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
-    @eri_addenda = addenda_map[XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Addenda")]
-    
     # Class variables
+    @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
     @weather = weather
     @ndu = 1 # Dwelling units
     @cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
@@ -467,8 +457,7 @@ class EnergyRatingIndex301Ruleset
         new_roof.elements["RadiantBarrier"].text = false
         new_roof.elements["SolarAbsorptance"].text = 0.75
         new_roof.elements["Emittance"].text = 0.90
-        exterior_adjacent_to = "ambient"
-        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        if is_external_thermal_boundary(interior_adjacent_to, "ambient")
           new_roof_ins = new_roof.elements["Insulation"]
           XMLHelper.delete_element(new_roof_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_roof_ins, "Layer")
@@ -565,17 +554,7 @@ class EnergyRatingIndex301Ruleset
       end
       
       fnd_type = new_foundation.elements["FoundationType"]
-      if fnd_type.elements["Basement[Conditioned='true']"]
-        interior_adjacent_to = "conditioned basement"
-      elsif fnd_type.elements["Basement[Conditioned='false']"]
-        interior_adjacent_to = "unconditioned basement"
-      elsif fnd_type.elements["Crawlspace"]
-        interior_adjacent_to = "crawlspace"
-      elsif fnd_type.elements["SlabOnGrade"]
-        interior_adjacent_to = "living space"
-      elsif fnd_type.elements["Ambient"]  
-        interior_adjacent_to = "ambient"
-      end
+      interior_adjacent_to = get_foundation_interior_adjacent_to(fnd_type)
       
       # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
       new_foundation.elements.each("FrameFloor") do |new_floor|
@@ -591,7 +570,8 @@ class EnergyRatingIndex301Ruleset
       # Table 4.2.2(1) - Conditioned basement walls
       new_foundation.elements.each("FoundationWall") do |new_wall|
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
-        if fnd_type.elements["Basement[Conditioned='true']"] and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)?
+        if interior_adjacent_to == "conditioned basement" and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_wall_ins = new_wall.elements["Insulation"]
           XMLHelper.delete_element(new_wall_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_wall_ins, "Layer")
@@ -601,7 +581,8 @@ class EnergyRatingIndex301Ruleset
   
       # Table 4.2.2(1) - Foundations
       new_foundation.elements.each("Slab") do |new_slab|
-        if fnd_type.elements["SlabOnGrade"] and is_external_thermal_boundary(interior_adjacent_to, "ground")
+        # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, "ground")?
+        if interior_adjacent_to == "living space" and is_external_thermal_boundary(interior_adjacent_to, "ground")
           new_slab.elements["PerimeterInsulationDepth"].text = slab_depth
           new_slab.elements["UnderSlabInsulationWidth"].text = 0
           perim_ins = new_slab.elements["PerimeterInsulation"]
@@ -748,7 +729,6 @@ class EnergyRatingIndex301Ruleset
       interior_adjacent_to = XMLHelper.get_value(new_wall, "extension/InteriorAdjacentTo")
       exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
       if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-        new_wall.elements["Siding"].text = "vinyl siding"
         new_wall.elements["SolarAbsorptance"].text = 0.75
         new_wall.elements["Emittance"].text = 0.90
         insulation = new_wall.elements["Insulation"]
@@ -1575,7 +1555,7 @@ class EnergyRatingIndex301Ruleset
     
     sens_gain, lat_gain = get_general_water_use_gains_sens_lat()
       
-    if @eri_addenda.include? "Addendum A"
+    if @eri_version.include? "A"
     
       ref_w_gpd = get_waste_gpd_reference()
       bsmnt = get_conditioned_basement_integer(orig_details)
@@ -1644,7 +1624,9 @@ class EnergyRatingIndex301Ruleset
   
     new_water_heating = new_systems.elements["WaterHeating"]
     
-    if @eri_addenda.include? "Addendum A"
+    # Table 4.2.2(1) - Service water heating systems
+    
+    if @eri_version.include? "A"
     
       orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
       
@@ -1792,10 +1774,10 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
     clothes_washer_kwh = 38.0 + 0.0*@cfa + 10.0*@nbeds
     clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
-    if not @eri_addenda.include? "Addendum A"
-      clothes_washer_gpd = 0.0 # delta DHW change made to rated home
-    else
+    if @eri_version.include? "A"
       clothes_washer_gpd = (4.52*(164.0 + 46.5*@nbeds))*((3.0*2.08 + 1.59)/(2.874*2.08 + 1.59))/365.0
+    else
+      clothes_washer_gpd = 0.0 # delta DHW change made to rated home
     end
     
     new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
@@ -1822,14 +1804,14 @@ class EnergyRatingIndex301Ruleset
       
       # Eq 4.2-9a
       ncy = (3.0/2.847)*(164 + @nbeds*45.6)
-      if @eri_addenda.include? "Addendum A"
+      if @eri_version.include? "A"
         ncy = (3.0/2.847)*(164 + @nbeds*46.5)
       end
       acy = ncy*((3.0*2.08 + 1.59)/(cap*2.08 + 1.59)) #Adjusted Cycles per Year
       clothes_washer_kwh = ((ler/392.0) - ((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*21.9825)*acy
       clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
       clothes_washer_gpd = 60.0*((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*acy/365.0
-      if not @eri_addenda.include? "Addendum A"
+      if not @eri_version.include? "A"
         clothes_washer_gpd -= 3.97 # Section 4.2.2.5.2.10
       end
     elsif orig_details.elements["Appliances/ClothesWasher/extension/AnnualkWh"]
@@ -1945,12 +1927,12 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
     dishwasher_kwh = 78.0 + 0.0*@cfa + 31.0*@nbeds
     dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(dishwasher_kwh)
-    if not @eri_addenda.include? "Addendum A"
+    if @eri_version.include? "A"
+      dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16)/365.0 # Eq. 4.2-2 (refDWgpd)
+    else
       dishwasher_gpd = 0.0 # delta DHW change made to rated home
       # Add service water heating GPD here
       dishwasher_gpd += get_service_water_heating_use_gpd()
-    else
-      dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16)/365.0 # Eq. 4.2-2 (refDWgpd)
     end
     
     new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
@@ -1980,7 +1962,7 @@ class EnergyRatingIndex301Ruleset
       dwcpy = (88.4 + 34.9*@nbeds)*(12.0/cap) # Eq 4.2-8a (dWcpy)
       dishwasher_kwh = ((86.3 + 47.73/ef)/215.0)*dwcpy # Eq 4.2-8a
       dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(dishwasher_kwh)
-      if @eri_addenda.include? "Addendum A"
+      if @eri_version.include? "A"
         dishwasher_gpd = dwcpy*(4.6415*(1.0/ef) - 1.9295)/365.0 # Eq. 4.2-11 (DWgpd)
       else
         dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16 - (88.4 + 34.9*@nbeds)*12.0/cap*(4.6415*(1.0/ef) - 1.9295))/365.0 # Eq 4.2-8b
@@ -2168,7 +2150,7 @@ class EnergyRatingIndex301Ruleset
     if orig_details.elements["Lighting/LightingFractions"]
 
       # Detailed
-      if @eri_addenda.include? "Addendum G"
+      if @eri_version.include? "G"
         fFI_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesInterior"))
         fFI_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesExterior"))
         fFI_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesGarage"))
@@ -2211,7 +2193,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_lighting_iad(new_lighting, orig_details)
 
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    if @eri_addenda.include? "Addendum G"
+    if @eri_version.include? "G"
       int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(0.75, 0.0, 0.75, 0.0, 0.75, 0.0)
     else
       int_kwh, ext_kwh, grg_kwh = calc_lighting(0.75, 0.75, 0.75)
@@ -2697,7 +2679,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.get_water_heater_tank_temperature()
     # Table 4.2.2(1) - Service water heating systems
-    if @eri_addenda.include? "Addendum A"
+    if @eri_version.include? "A"
       return 125.0
     end
     return 120.0
@@ -2763,39 +2745,6 @@ class EnergyRatingIndex301Ruleset
     return bsmnt
   end
   
-  def self.is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-    interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
-    exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
-    return (interior_conditioned != exterior_conditioned)
-  end
-  
-  def self.is_adjacent_to_conditioned(adjacent_to)
-    if adjacent_to == "living space"
-      return true
-    elsif adjacent_to == "garage"
-      return false
-    elsif adjacent_to == "vented attic"
-      return false
-    elsif adjacent_to == "unvented attic"
-      return false
-    elsif adjacent_to == "cape cod"
-      return true
-    elsif adjacent_to == "cathedral ceiling"
-      return true
-    elsif adjacent_to == "unconditioned basement"
-      return false
-    elsif adjacent_to == "conditioned basement"
-      return true
-    elsif adjacent_to == "crawlspace"
-      return false
-    elsif adjacent_to == "ambient"
-      return false
-    elsif adjacent_to == "ground"
-      return false
-    end
-    fail "Unexpected adjacent_to (#{adjacent_to})."
-  end
-  
   def self.calc_mech_vent_q_fan(q_tot, sla)
     # TODO: Merge with Airflow measure and move this code to airflow.rb
     nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
@@ -2832,3 +2781,50 @@ class EnergyRatingIndex301Ruleset
 
 end
   
+def is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+  interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
+  exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
+  return (interior_conditioned != exterior_conditioned)
+end
+
+def is_adjacent_to_conditioned(adjacent_to)
+  if adjacent_to == "living space"
+    return true
+  elsif adjacent_to == "garage"
+    return false
+  elsif adjacent_to == "vented attic"
+    return false
+  elsif adjacent_to == "unvented attic"
+    return false
+  elsif adjacent_to == "cape cod"
+    return true
+  elsif adjacent_to == "cathedral ceiling"
+    return true
+  elsif adjacent_to == "unconditioned basement"
+    return false
+  elsif adjacent_to == "conditioned basement"
+    return true
+  elsif adjacent_to == "crawlspace"
+    return false
+  elsif adjacent_to == "ambient"
+    return false
+  elsif adjacent_to == "ground"
+    return false
+  end
+  fail "Unexpected adjacent_to (#{adjacent_to})."
+end
+
+def get_foundation_interior_adjacent_to(fnd_type)
+  if fnd_type.elements["Basement[Conditioned='true']"]
+    interior_adjacent_to = "conditioned basement"
+  elsif fnd_type.elements["Basement[Conditioned='false']"]
+    interior_adjacent_to = "unconditioned basement"
+  elsif fnd_type.elements["Crawlspace"]
+    interior_adjacent_to = "crawlspace"
+  elsif fnd_type.elements["SlabOnGrade"]
+    interior_adjacent_to = "living space"
+  elsif fnd_type.elements["Ambient"]  
+    interior_adjacent_to = "ambient"
+  end
+  return interior_adjacent_to
+end

@@ -9,8 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014</Version>
-        <Addenda>IncludeAll</Addenda>
+        <Version>2014AEG</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -101,7 +100,6 @@
                     <WoodStud></WoodStud>
                   </WallType>
                   <Area>32</Area>
-                  <Siding>vinyl siding</Siding>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -142,7 +140,6 @@
               <WoodStud></WoodStud>
             </WallType>
             <Area>3796</Area>
-            <Siding>stucco</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>

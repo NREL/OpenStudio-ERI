@@ -856,8 +856,7 @@ Dir.mkdir(resultsdir)
 using_iaf = false
 hpxml_doc = REXML::Document.new(File.read(options[:hpxml]))
 eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
-eri_addenda = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Addenda")
-if eri_version == '2014' and ['IncludeAll', 'Exclude2014G'].include? eri_addenda
+if ['2014AE', '2014AEG'].include? eri_version
   using_iaf = true
 end
 
