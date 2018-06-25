@@ -102,7 +102,6 @@
                     <WoodStud></WoodStud>
                   </WallType>
                   <Area>121.5</Area>
-                  <Siding>fiber cement siding</Siding>
                   <SolarAbsorptance>0.6</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -157,6 +156,22 @@
             </Slab>
           </Foundation>
         </Foundations>
+        <RimJoists>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist_ID1'/>
+            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>126</Area>
+            <Insulation>
+              <SystemIdentifier id='RimJoist_Ins_ID1'/>
+              <AssemblyEffectiveRValue>5.01</AssemblyEffectiveRValue>
+            </Insulation>
+            <extension>
+              <SolarAbsorptance>0.6</SolarAbsorptance>
+              <Emittance>0.9</Emittance>
+            </extension>
+          </RimJoist>
+        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
@@ -164,7 +179,6 @@
               <WoodStud/>
             </WallType>
             <Area>1344</Area>
-            <Siding>fiber cement siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>

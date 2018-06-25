@@ -111,7 +111,7 @@
                 </Wall>
               </Walls>
               <extension>
-                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+                <AtticConstantACHnatural>2.4</AtticConstantACHnatural>
               </extension>
             </Attic>
           </Attics>
@@ -127,7 +127,7 @@
               <Area>1539</Area>
               <Thickness>4</Thickness>
               <ExposedPerimeter>168</ExposedPerimeter>
-              <PerimeterInsulationDepth>4</PerimeterInsulationDepth>
+              <PerimeterInsulationDepth>2.5</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
               <DepthBelowGrade>0</DepthBelowGrade>
               <PerimeterInsulation>
@@ -148,7 +148,7 @@
               </UnderSlabInsulation>
               <extension>
                 <CarpetFraction>1.0</CarpetFraction>
-                <CarpetRValue>2.08</CarpetRValue>
+                <CarpetRValue>2.5</CarpetRValue>
               </extension>
             </Slab>
           </Foundation>
@@ -157,7 +157,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist_ID1'/>
             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>conditioned basement</InteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>126</Area>
             <Insulation>
               <SystemIdentifier id='RimJoist_Ins_ID1'/>

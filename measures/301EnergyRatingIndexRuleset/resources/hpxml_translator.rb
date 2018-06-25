@@ -678,6 +678,7 @@ class HPXMLtoOSMTranslator
         else
           wall_drywall_thick_in = 0.0
         end
+        
         walls_filled_cavity = true
         wall_concrete_thick_in = Float(XMLHelper.get_value(fnd_wall, "Thickness"))
         wall_assembly_r = Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
@@ -688,6 +689,14 @@ class HPXMLtoOSMTranslator
         wall_ff = 0.0
         wall_cont_height = Float(XMLHelper.get_value(fnd_wall, "Height"))
         wall_cont_r = wall_assembly_r - Material.Concrete(wall_concrete_thick_in).rvalue - Material.GypsumWall(wall_drywall_thick_in).rvalue - wall_film_r
+        if wall_cont_r < 0 # Try without drywall
+          wall_drywall_thick_in = 0.0
+          wall_cont_r = wall_assembly_r - Material.Concrete(wall_concrete_thick_in).rvalue - Material.GypsumWall(wall_drywall_thick_in).rvalue - wall_film_r
+        end
+        if wall_cont_r < 0
+          surface_name = "foundation wall #{wall_id}"
+          fail "Unable to calculate a construction for '#{surface_name}' using the provided assembly R-value (#{wall_assembly_r})."
+        end
         wall_cont_depth = 1.0
         
       end
@@ -1015,29 +1024,37 @@ class HPXMLtoOSMTranslator
       
       # Apply construction
       
-      siding = "fiber cement siding" # FIXME
+      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        drywall_thick_in = 0.5
+      else
+        drywall_thick_in = 0.0
+      end
+      if exterior_adjacent_to == "ambient"
+        film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
+        mat_ext_finish = Material.ExtFinishWoodLight
+      else
+        film_r = 2.0 * Material.AirFilmVertical.rvalue
+        mat_ext_finish = nil
+      end
       solar_abs = Float(XMLHelper.get_value(rim_joist, "extension/SolarAbsorptance"))
       emitt = Float(XMLHelper.get_value(rim_joist, "extension/Emittance"))
-      mat_ext_finish = get_siding_material(siding, solar_abs, emitt)
-      assembly_r, film_r = nil
-
-      osb_thick_in = 0.0
-      drywall_thick_in = 0.0
-      continuous_wood_thick_in = 1.5
+      
       assembly_r = Float(XMLHelper.get_value(rim_joist, "Insulation/AssemblyEffectiveRValue"))
-      film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
-      misc_r = Material.GypsumWall(drywall_thick_in).rvalue + Material.Plywood(osb_thick_in).rvalue + Material.Stud2x(continuous_wood_thick_in).rvalue + mat_ext_finish.rvalue + film_r
-      wood_stud = Material.Stud2x(2.0)
-      framing_factor = 1.5 / (1.5 + 7.5)
-      cavity_r = (1.0 - framing_factor) / (1.0 / assembly_r - framing_factor / (wood_stud.rvalue + misc_r)) - misc_r
-      rigid_r = 0.0
+      
+      constr_sets = [
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 10.0, 2.0, drywall_thick_in, mat_ext_finish),  # 2x4 + R10
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 5.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4 + R5
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 0.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.01, 0.0, 0.0, 0.0, nil),                           # Fallback
+                    ] 
+      constr_set, cavity_r = pick_construction_set(assembly_r, constr_sets, film_r, "rim joist #{rim_joist_id}")
       install_grade = 1
       
       success = WallConstructions.apply_rim_joist(runner, model, [surface],
                                                   "RimJoistConstruction",
-                                                  cavity_r, install_grade, framing_factor,
-                                                  drywall_thick_in, osb_thick_in,
-                                                  rigid_r, mat_ext_finish)
+                                                  cavity_r, install_grade, constr_set.framing_factor,
+                                                  constr_set.drywall_thick_in, constr_set.osb_thick_in,
+                                                  constr_set.rigid_r, constr_set.exterior_material)
       return false if not success
       
       check_surface_assembly_rvalue(surface, film_r, assembly_r)
@@ -1163,9 +1180,9 @@ class HPXMLtoOSMTranslator
         assembly_r = Float(XMLHelper.get_value(roof, "Insulation/AssemblyEffectiveRValue"))
 
         constr_sets = [
-                       WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 10.0, 0.75, drywall_thick_in, mat_roofing), # 2x8, 24" o.c. + R10
-                       WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 5.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c. + R5
-                       WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 0.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c.
+                       WoodStudConstructionSet.new(Material.Stud2x8, 0.07, 10.0, 0.75, drywall_thick_in, mat_roofing), # 2x8, 24" o.c. + R10
+                       WoodStudConstructionSet.new(Material.Stud2x8, 0.07, 5.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c. + R5
+                       WoodStudConstructionSet.new(Material.Stud2x8, 0.07, 0.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c.
                        WoodStudConstructionSet.new(Material.Stud2x6, 0.07, 0.0, 0.75, drywall_thick_in, mat_roofing),  # 2x6, 24" o.c.
                        WoodStudConstructionSet.new(Material.Stud2x4, 0.07, 0.0, 0.5, drywall_thick_in, mat_roofing),   # 2x4, 16" o.c.
                        WoodStudConstructionSet.new(Material.Stud2x4, 0.01, 0.0, 0.0, 0.0, nil),                        # Fallback

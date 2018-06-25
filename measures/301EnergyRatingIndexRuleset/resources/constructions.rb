@@ -745,7 +745,6 @@ class WallConstructions
         # Define materials
         rim_joist_thick_in = 1.5
         sill_plate_thick_in = 3.5
-        mat_continuous_wood = Material.new(name="RimJoistWood", thick_in=rim_joist_thick_in, mat_base=BaseMaterial.Wood)
         framing_thick_in = sill_plate_thick_in - rim_joist_thick_in # Extra non-continuous wood beyond rim joist thickness
         if cavity_r > 0
             # Insulation
@@ -784,7 +783,6 @@ class WallConstructions
         if not mat_osb.nil?
             constr.add_layer(mat_osb)
         end
-        constr.add_layer(mat_continuous_wood)
         constr.add_layer([mat_framing, mat_cavity, mat_gap], "RimJoistStudAndCavity") 
         if drywall_thick_in > 0
             constr.add_layer(Material.GypsumWall(drywall_thick_in))
