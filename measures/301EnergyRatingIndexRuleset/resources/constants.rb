@@ -242,6 +242,20 @@ class Constants
   def self.FuelTypeWood
     return 'wood'
   end
+  def self.LoadVarsSpaceHeating
+    return ['Heating Coil Total Heating Energy',
+            'Heating Coil Air Heating Energy',
+            'Boiler Heating Energy',
+            'Baseboard Total Heating Energy',
+            'Heating Coil Heating Energy']
+  end
+  def self.LoadVarsSpaceCooling
+    return ['Cooling Coil Sensible Cooling Energy',
+            'Cooling Coil Latent Cooling Energy']
+  end
+  def self.LoadVarsWaterHeating
+    return ['Water Use Connections Plant Hot Water Energy']
+  end
   def self.LocationInterior
     return 'interior'
   end

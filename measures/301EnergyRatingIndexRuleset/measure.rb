@@ -57,7 +57,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     calc_type.setDefaultValue(Constants.CalcTypeStandard)
     args << calc_type
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_file_path", true)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_path", true)
     arg.setDisplayName("HPXML File Path")
     arg.setDescription("Absolute (or relative) path of the HPXML file.")
     args << arg
@@ -72,14 +72,19 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute path of the hpxml schemas directory.")
     args << arg
     
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_file_path", false)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_path", false)
     arg.setDisplayName("HPXML Output File Path")
     arg.setDescription("Absolute (or relative) path of the output HPXML file.")
     args << arg
     
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("osm_output_file_path", false)
-    arg.setDisplayName("OSM Output File Path")
-    arg.setDescription("Absolute (or relative) path of the output OSM file.")
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_path", false)
+    arg.setDisplayName("HPXML Output File Path")
+    arg.setDescription("Absolute (or relative) path of the output HPXML file.")
+    args << arg
+    
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("epw_output_path", false)
+    arg.setDisplayName("EPW Output File Path")
+    arg.setDescription("Absolute (or relative) path of the output EPW file.")
     args << arg    
     
     arg = OpenStudio::Measure::OSArgument.makeBoolArgument("debug", false)
@@ -102,18 +107,19 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
     # assign the user inputs to variables
     calc_type = runner.getStringArgumentValue("calc_type", user_arguments)
-    hpxml_file_path = runner.getStringArgumentValue("hpxml_file_path", user_arguments)
+    hpxml_path = runner.getStringArgumentValue("hpxml_path", user_arguments)
     weather_dir = runner.getStringArgumentValue("weather_dir", user_arguments)
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
-    hpxml_output_file_path = runner.getOptionalStringArgumentValue("hpxml_output_file_path", user_arguments)
-    osm_output_file_path = runner.getOptionalStringArgumentValue("osm_output_file_path", user_arguments)
+    hpxml_output_path = runner.getOptionalStringArgumentValue("hpxml_output_path", user_arguments)
+    osm_output_path = runner.getOptionalStringArgumentValue("osm_output_path", user_arguments)
+    epw_output_path = runner.getOptionalStringArgumentValue("epw_output_path", user_arguments)
     debug = runner.getBoolArgumentValue("debug", user_arguments)
 
-    unless (Pathname.new hpxml_file_path).absolute?
-      hpxml_file_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_file_path))
+    unless (Pathname.new hpxml_path).absolute?
+      hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
     end 
-    unless File.exists?(hpxml_file_path) and hpxml_file_path.downcase.end_with? ".xml"
-      runner.registerError("'#{hpxml_file_path}' does not exist or is not an .xml file.")
+    unless File.exists?(hpxml_path) and hpxml_path.downcase.end_with? ".xml"
+      runner.registerError("'#{hpxml_path}' does not exist or is not an .xml file.")
       return false
     end
     
@@ -130,16 +136,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       schemas_dir = nil
     end
     
-    hpxml_doc = REXML::Document.new(File.read(hpxml_file_path))
-    
-    show_measure_calls = false
-    apply_measures_osw1 = nil
-    apply_measures_osw2 = nil
-    if debug
-      show_measure_calls = true
-      apply_measures_osw1 = "apply_measures1.osw"
-      apply_measures_osw2 = "apply_measures2.osw"
-    end
+    hpxml_doc = REXML::Document.new(File.read(hpxml_path))
     
     # Validate input HPXML against schema
     if not schemas_dir.nil?
@@ -183,6 +180,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
       return false
     end
+    if epw_output_path.is_initialized
+      FileUtils.cp(epw_path, epw_output_path.get)
+    end
     
     # Apply Location to obtain weather data
     success, weather = Location.apply(model, runner, epw_path, "NA", "NA")
@@ -190,12 +190,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
     # Apply 301 ruleset on HPXML object
     EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
-    if hpxml_output_file_path.is_initialized
-      XMLHelper.write_file(hpxml_doc, hpxml_output_file_path.get)
-      runner.registerInfo("Wrote file: #{hpxml_output_file_path.get}")
-    end
-    unless errors.empty?
-      return false
+    if hpxml_output_path.is_initialized
+      XMLHelper.write_file(hpxml_doc, hpxml_output_path.get)
+      runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
     end
     
     # Validate output HPXML against schema
@@ -229,9 +226,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
     
-    if osm_output_file_path.is_initialized
-      File.write(osm_output_file_path.get, model.to_s)
-      runner.registerInfo("Wrote file: #{osm_output_file_path.get}")
+    if osm_output_path.is_initialized
+      File.write(osm_output_path.get, model.to_s)
+      runner.registerInfo("Wrote file: #{osm_output_path.get}")
     end
     
     # Add output variables for RESNET building loads
@@ -282,9 +279,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # TODO: Make variables specific to the equipment
-    add_output_variables(model, BuildingLoadVars.get_space_heating_load_vars, htg_objs)
-    add_output_variables(model, BuildingLoadVars.get_space_cooling_load_vars, clg_objs)
-    add_output_variables(model, BuildingLoadVars.get_water_heating_load_vars)
+    add_output_variables(model, Constants.LoadVarsSpaceHeating, htg_objs)
+    add_output_variables(model, Constants.LoadVarsSpaceCooling, clg_objs)
+    add_output_variables(model, Constants.LoadVarsWaterHeating)
     
     return true
     

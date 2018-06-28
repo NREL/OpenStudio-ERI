@@ -5,11 +5,9 @@ require 'csv'
 require 'pathname'
 require 'fileutils'
 require 'parallel'
-require 'openstudio'
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/util"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/unit_conversions"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/meta_measure"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
@@ -20,102 +18,93 @@ def rm_path(path)
   if Dir.exists?(path)
     FileUtils.rm_r(path)
   end
-  for retries in 1..50
+  while true
     break if not Dir.exists?(path)
     sleep(0.01)
   end
 end
-      
-def remove_design_dir(design, basedir)
 
-  designdir = File.join(basedir, design.gsub(' ',''))
+def get_designdir(basedir, design)
+  return File.join(basedir, design.gsub(' ',''))
+end
+
+def get_output_hpxml_path(resultsdir, designdir)
+  return File.join(resultsdir, File.basename(designdir) + ".xml")
+end
+
+def run_design(basedir, design, resultsdir, hpxml, debug, run)
+  # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
+  designdir = get_designdir(basedir, design)
   rm_path(designdir)
-  
-  return designdir
+  if run
+    print "[#{design}] Running workflow...\n"
+    create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
+    print "[#{design}] Running simulation...\n"
+    run_energyplus(design, designdir)    
+  end
 end
       
-def create_osw(design, designdir, basedir, resultsdir, options, run_design)
-
-  # Create dir
+def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
   Dir.mkdir(designdir)
   
-  # Create OSW
-  osw_path = File.join(designdir, "run.osw")
-  osw = OpenStudio::WorkflowJSON.new
-  osw.setOswPath(osw_path)
-  osw.addMeasurePath("../../measures")
+  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   
-  runOptions = OpenStudio::RunOptions.new
-  runOptions.setSkipExpandObjects(true)
-  runOptions.setSkipEnergyPlusPreprocess(true)
-  osw.setRunOptions(runOptions)
-  
-  # Add measures (w/args) to OSW
-  schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
-  weather_dir = File.absolute_path(File.join(basedir, "..", "weather"))
-  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
+  model = OpenStudio::Model::Model.new
+  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+  measures_dir = "../measures/"
   measures = {}
-  measures['301EnergyRatingIndexRuleset'] = {}
-  measures['301EnergyRatingIndexRuleset']['calc_type'] = design
-  measures['301EnergyRatingIndexRuleset']['hpxml_file_path'] = options[:hpxml]
-  measures['301EnergyRatingIndexRuleset']['weather_dir'] = weather_dir
-  #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
-  measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
-  if options[:debug]
-    measures['301EnergyRatingIndexRuleset']['debug'] = 'true'
-    measures['301EnergyRatingIndexRuleset']['osm_output_file_path'] = output_hpxml_path.gsub(".xml",".osm")
+  measure_subdir = "301EnergyRatingIndexRuleset"
+  
+  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  args = {}
+  args['calc_type'] = design
+  args['hpxml_path'] = hpxml
+  args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
+  #args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
+  args['hpxml_output_path'] = output_hpxml_path
+  args['epw_output_path'] = File.join(designdir, "in.epw")
+  if debug
+    args['osm_output_path'] = output_hpxml_path.gsub(".xml",".osm")
   end
-  steps = OpenStudio::WorkflowStepVector.new
-  measures.keys.each do |measure|
-    step = OpenStudio::MeasureStep.new(measure)
-    step.setName(measure)
-    measures[measure].each do |arg,val|
-      step.setArgument(arg, val)
-    end
-    steps.push(step)
-  end  
-  osw.setWorkflowSteps(steps)
   
-  # Save OSW
-  osw.save
+  update_args_hash(measures, measure_subdir, args)
+  apply_measures(measures_dir, measures, runner, model, nil, nil, false)
   
-  return osw_path, output_hpxml_path
+  forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
+  model_idf = forward_translator.translateModel(model)
+  File.open(File.join(designdir, "in.idf"), 'w') { |f| f << model_idf.to_s }
   
+  return output_hpxml_path
 end
 
-def run_osw(osw_path, options)
-
-  # Redirect to a log file
-  log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
-  
-  cli_path = OpenStudio.getOpenStudioCLI
-  if options[:debug]
-    command = "\"#{cli_path}\" --no-ssl --verbose run --debug -w \"#{osw_path}\"#{log_str}"
-  else
-    command = "\"#{cli_path}\" --no-ssl run --fast -w \"#{osw_path}\"#{log_str}"
+def run_energyplus(design, designdir)
+  ep_path = OpenStudio.getEnergyPlusDirectory.to_s
+  if ep_path.empty?
+    # Probably run on linux w/o absolute path
+    ep_path = "/usr/local/openstudio-2.6.0/EnergyPlus"
   end
+  ep_path = File.join(ep_path, "energyplus")
+  command = "cd #{designdir} && #{ep_path} -w in.epw in.idf > run.log"
   system(command)
-  
-  return File.join(File.dirname(osw_path), "run", "eplusout.sql")
-  
 end
-
+      
 def get_sql_query_result(sqlFile, query)
   result = sqlFile.execAndReturnFirstDouble(query)
   if result.is_initialized
-    return UnitConversions.convert(result.get, "GJ", "MBtu")
+    return result.get * 0.9478171203133172 # GJ => MBtu
   end
   return 0
 end
 
 def get_sql_result(sqlValue, design)
   if sqlValue.is_initialized
-    return UnitConversions.convert(sqlValue.get, "GJ", "MBtu")
+    return sqlValue.get * 0.9478171203133172 # GJ => MBtu
   end
   fail "ERROR: Simulation unsuccessful for #{design}."
 end
 
-def read_output(design, sql_path, output_hpxml_path)
+def read_output(design, designdir, output_hpxml_path)
+  sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
     fail "ERROR: Simulation unsuccessful for #{design}."
   end
@@ -221,17 +210,17 @@ def read_output(design, sql_path, output_hpxml_path)
   design_output[:elecAppliances] -= design_output[:elecRecircPump]
   
   # Other - Space Heating Load
-  vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsSpaceHeating.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeating] = get_sql_query_result(sqlFile, query)
   
   # Other - Space Cooling Load
-  vars = "'" + BuildingLoadVars.get_space_cooling_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsSpaceCooling.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCooling] = get_sql_query_result(sqlFile, query)
   
   # Other - Water Heating Load
-  vars = "'" + BuildingLoadVars.get_water_heating_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsWaterHeating.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHotWater] = get_sql_query_result(sqlFile, query)
   
@@ -633,33 +622,33 @@ def write_results_annual_output(resultsdir, design, design_output)
   out_csv = File.join(resultsdir, "#{design.gsub(' ','')}.csv")
   
   results_out = {}
-  results_out["Electricity, Total (MBtu)"] = design_output[:elecTotal]
-  results_out["Electricity, Net (MBtu)"] = design_output[:elecTotal]-design_output[:elecPV]
-  results_out["Natural Gas, Total (MBtu)"] = design_output[:ngTotal]
-  results_out["Other Fuels, Total (MBtu)"] = design_output[:otherTotal]
-  results_out[""] = "", # line break
-  results_out["Electricity, Heating (MBtu)"] = design_output[:elecHeating]
-  results_out["Electricity, Cooling (MBtu)"] = design_output[:elecCooling]
-  results_out["Electricity, Fans/Pumps (MBtu)"] = design_output[:elecFans]+design_output[:elecPumps]
-  results_out["Electricity, Hot Water (MBtu)"] = design_output[:elecHotWater]+design_output[:elecRecircPump]
-  results_out["Electricity, Lighting (MBtu)"] = design_output[:elecIntLighting]+design_output[:elecExtLighting]
-  results_out["Electricity, Mech Vent (MBtu)"] = design_output[:elecMechVent]
-  results_out["Electricity, Refrigerator (MBtu)"] = design_output[:elecFridge]
-  results_out["Electricity, Dishwasher (MBtu)"] = design_output[:elecDishwasher]
-  results_out["Electricity, Clothes Washer (MBtu)"] = design_output[:elecClothesWasher]
-  results_out["Electricity, Clothes Dryer (MBtu)"] = design_output[:elecClothesDryer]
-  results_out["Electricity, Range/Oven (MBtu)"] = design_output[:elecRangeOven]
-  results_out["Electricity, Ceiling Fan (MBtu)"] = design_output[:elecCeilingFan]
-  results_out["Electricity, Plug Loads (MBtu)"] = design_output[:elecMELs]+design_output[:elecTV]
-  results_out["Electricity, PV (MBtu)"] = design_output[:elecPV]
-  results_out["Natural Gas, Heating (MBtu)"] = design_output[:ngHeating]
-  results_out["Natural Gas, Hot Water (MBtu)"] = design_output[:ngHotWater]
-  results_out["Natural Gas, Clothes Dryer (MBtu)"] = design_output[:ngClothesDryer]
-  results_out["Natural Gas, Range/Oven (MBtu)"] = design_output[:ngRangeOven]
-  results_out["Other Fuels, Heating (MBtu)"] = design_output[:otherHeating]
-  results_out["Other Fuels, Hot Water (MBtu)"] = design_output[:otherHotWater]
-  results_out["Other Fuels, Clothes Dryer (MBtu)"] = design_output[:otherClothesDryer]
-  results_out["Other Fuels, Range/Oven (MBtu)"] = design_output[:otherRangeOven]
+  results_out["Electricity: Total (MBtu)"] = design_output[:elecTotal]
+  results_out["Electricity: Net (MBtu)"] = design_output[:elecTotal]-design_output[:elecPV]
+  results_out["Natural Gas: Total (MBtu)"] = design_output[:ngTotal]
+  results_out["Other Fuels: Total (MBtu)"] = design_output[:otherTotal]
+  results_out[""] = "" # line break
+  results_out["Electricity: Heating (MBtu)"] = design_output[:elecHeating]
+  results_out["Electricity: Cooling (MBtu)"] = design_output[:elecCooling]
+  results_out["Electricity: Fans/Pumps (MBtu)"] = design_output[:elecFans]+design_output[:elecPumps]
+  results_out["Electricity: Hot Water (MBtu)"] = design_output[:elecHotWater]+design_output[:elecRecircPump]
+  results_out["Electricity: Lighting (MBtu)"] = design_output[:elecIntLighting]+design_output[:elecExtLighting]
+  results_out["Electricity: Mech Vent (MBtu)"] = design_output[:elecMechVent]
+  results_out["Electricity: Refrigerator (MBtu)"] = design_output[:elecFridge]
+  results_out["Electricity: Dishwasher (MBtu)"] = design_output[:elecDishwasher]
+  results_out["Electricity: Clothes Washer (MBtu)"] = design_output[:elecClothesWasher]
+  results_out["Electricity: Clothes Dryer (MBtu)"] = design_output[:elecClothesDryer]
+  results_out["Electricity: Range/Oven (MBtu)"] = design_output[:elecRangeOven]
+  results_out["Electricity: Ceiling Fan (MBtu)"] = design_output[:elecCeilingFan]
+  results_out["Electricity: Plug Loads (MBtu)"] = design_output[:elecMELs]+design_output[:elecTV]
+  results_out["Electricity: PV (MBtu)"] = design_output[:elecPV]
+  results_out["Natural Gas: Heating (MBtu)"] = design_output[:ngHeating]
+  results_out["Natural Gas: Hot Water (MBtu)"] = design_output[:ngHotWater]
+  results_out["Natural Gas: Clothes Dryer (MBtu)"] = design_output[:ngClothesDryer]
+  results_out["Natural Gas: Range/Oven (MBtu)"] = design_output[:ngRangeOven]
+  results_out["Other Fuels: Heating (MBtu)"] = design_output[:otherHeating]
+  results_out["Other Fuels: Hot Water (MBtu)"] = design_output[:otherHotWater]
+  results_out["Other Fuels: Clothes Dryer (MBtu)"] = design_output[:otherClothesDryer]
+  results_out["Other Fuels: Range/Oven (MBtu)"] = design_output[:otherRangeOven]
   CSV.open(out_csv, "wb") {|csv| results_out.to_a.each {|elem| csv << elem} }
   
 end
@@ -727,7 +716,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
     worksheet_out["Total Loads TRL*IAF"] = (results[:trl] * results[:iaf_rh]).round(4)
   end
   worksheet_out["HERS Index"] = results[:hers_index].round(2)
-  worksheet_out[""] = "", # line break
+  worksheet_out[""] = "" # line break
   worksheet_out["Ref Home CFA"] = ref_output[:hpxml_cfa]
   worksheet_out["Ref Home Nbr"] = ref_output[:hpxml_nbr]
   if using_iaf
@@ -867,26 +856,33 @@ run_designs = {Constants.CalcTypeERIRatedHome => true,
                Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf}
 
 # Run simulations
-design_outputs = {}
 puts "HPXML: #{options[:hpxml]}"
-Parallel.map(run_designs.keys, in_threads: run_designs.size) do |design|
-  # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
-  
-  designdir = remove_design_dir(design, basedir)
-  
-  if run_designs[design]
-    print "[#{design}] Running workflow...\n"
-    osw_path, output_hpxml_path = create_osw(design, designdir, basedir, resultsdir, options, run_designs[design])
-    sql_path = run_osw(osw_path, options)
-    
-    print "[#{design}] Gathering results...\n"
-    design_outputs[design] = read_output(design, sql_path, output_hpxml_path)
-    
-    write_results_annual_output(resultsdir, design, design_outputs[design])
-    
-    print "[#{design}] Done.\n"
+if Process.respond_to?(:fork)
+  # All code runs in forked child processes. This is the fastest approach 
+  # but isn't available on Windows.
+  Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
+    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
   end
-  
+else
+  # Fallback. Some code runs in threads, but simulations still occur in
+  # spawned child processes.
+  puts "WARNING: Process#fork not available, running with degraded performance."
+  Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
+    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+  end
+end
+
+# Read results (not in separate processes, which would requiring passing
+# data from the child processes back to the parent process)
+design_outputs = {}
+run_designs.each do |design, run|
+  next if not run
+  print "[#{design}] Gathering results...\n"
+  designdir = get_designdir(basedir, design)
+  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  design_outputs[design] = read_output(design, designdir, output_hpxml_path)
+  write_results_annual_output(resultsdir, design, design_outputs[design])
+  print "[#{design}] Done.\n"
 end
 
 # Calculate and write results
