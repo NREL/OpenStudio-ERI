@@ -85,7 +85,7 @@ def run_energyplus(design, designdir)
   end
   ep_path = File.join(ep_path, "energyplus")
   command = "cd #{designdir} && #{ep_path} -w in.epw in.idf > run.log"
-  system(command)
+  system(command, :err => File::NULL)
 end
       
 def get_sql_query_result(sqlFile, query)
