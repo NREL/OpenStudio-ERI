@@ -25,17 +25,9 @@ def rm_path(path)
   end
 end
 
-def get_designdir(basedir, design)
-  return File.join(basedir, design.gsub(' ',''))
-end
-
-def get_output_hpxml_path(resultsdir, designdir)
-  return File.join(resultsdir, File.basename(designdir) + ".xml")
-end
-
 def run_design(basedir, design, resultsdir, hpxml, debug, run, writer)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
-  designdir = get_designdir(basedir, design)
+  designdir = File.join(basedir, design.gsub(' ',''))
   rm_path(designdir)
   if run
     print "[#{design}] Creating input...\n"
@@ -64,7 +56,7 @@ def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
   measures = {}
   measure_subdir = "301EnergyRatingIndexRuleset"
   
-  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
   args = {}
   args['calc_type'] = design
   args['hpxml_path'] = hpxml
