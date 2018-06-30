@@ -5,6 +5,7 @@ require 'csv'
 require 'pathname'
 require 'fileutils'
 require 'parallel'
+require "base64"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/meta_measure"
@@ -32,15 +33,23 @@ def get_output_hpxml_path(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def run_design(basedir, design, resultsdir, hpxml, debug, run)
+def run_design(basedir, design, resultsdir, hpxml, debug, run, writer)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   designdir = get_designdir(basedir, design)
   rm_path(designdir)
   if run
-    print "[#{design}] Running workflow...\n"
-    create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
+    print "[#{design}] Creating input...\n"
+    output_hpxml_path = create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
+    
     print "[#{design}] Running simulation...\n"
     run_energyplus(design, designdir)    
+    
+    print "[#{design}] Gathering results...\n"
+    output_data = read_output(design, designdir, output_hpxml_path)
+    writer.puts(Base64.encode64(Marshal.dump(output_data))) # Provide output data to parent process
+    write_results_annual_output(resultsdir, design, output_data)
+    
+    print "[#{design}] Done.\n"
   end
 end
       
@@ -68,7 +77,20 @@ def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
   end
   
   update_args_hash(measures, measure_subdir, args)
-  apply_measures(measures_dir, measures, runner, model, nil, nil, false)
+  success = apply_measures(measures_dir, measures, runner, model, nil, nil, false)
+  
+  File.open(File.join(designdir,'run.log'), 'w') do |f|
+    runner.result.stepWarnings.each do |w|
+      f << "Warning: #{w}\n"
+    end
+    runner.result.stepErrors.each do |e|
+      f << "Error: #{e}\n"
+    end
+  end
+
+  if not success
+    fail "ERROR: Simulation unsuccessful for #{design}."
+  end
   
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
@@ -79,12 +101,12 @@ end
 
 def run_energyplus(design, designdir)
   ep_path = OpenStudio.getEnergyPlusDirectory.to_s
-  if ep_path.empty?
+  if ep_path.empty? # Bug in OS, should remove at some point in the future
     # Probably run on linux w/o absolute path
-    ep_path = "/usr/local/openstudio-2.6.0/EnergyPlus"
+    ep_path = "/usr/local/openstudio-#{OpenStudio.openStudioVersion}/EnergyPlus"
   end
   ep_path = File.join(ep_path, "energyplus")
-  command = "cd #{designdir} && #{ep_path} -w in.epw in.idf > run.log"
+  command = "cd #{designdir} && #{ep_path} -w in.epw in.idf > eplusout.log"
   system(command, :err => File::NULL)
 end
       
@@ -115,18 +137,18 @@ def read_output(design, designdir, output_hpxml_path)
   
   # HPXML
   design_output[:hpxml] = output_hpxml_path
-  design_output[:hpxml_doc] = REXML::Document.new(File.read(design_output[:hpxml]))
-  design_output[:hpxml_cfa] = get_cfa(design_output[:hpxml_doc])
-  design_output[:hpxml_nbr] = get_nbr(design_output[:hpxml_doc])
-  design_output[:hpxml_nst] = get_nst(design_output[:hpxml_doc])
+  hpxml_doc = REXML::Document.new(File.read(design_output[:hpxml]))
+  design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
+  design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
+  design_output[:hpxml_nst] = get_nst(hpxml_doc)
   if design == Constants.CalcTypeERIReferenceHome
-    design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(design_output[:hpxml_doc])
+    design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(hpxml_doc)
   end
-  design_output[:hpxml_heat_fuel] = get_heating_fuel(design_output[:hpxml_doc])
-  design_output[:hpxml_dwh_fuel] = get_dhw_fuel(design_output[:hpxml_doc])
-  design_output[:hpxml_eec_heat] = get_eec_heat(design_output[:hpxml_doc])
-  design_output[:hpxml_eec_cool] = get_eec_cool(design_output[:hpxml_doc])
-  design_output[:hpxml_eec_dhw] = get_eec_dhw(design_output[:hpxml_doc])
+  design_output[:hpxml_heat_fuel] = get_heating_fuel(hpxml_doc)
+  design_output[:hpxml_dwh_fuel] = get_dhw_fuel(hpxml_doc)
+  design_output[:hpxml_eec_heat] = get_eec_heat(hpxml_doc)
+  design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
+  design_output[:hpxml_eec_dhw] = get_eec_dhw(hpxml_doc)
   
   # Total site energy
   design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design)
@@ -855,34 +877,37 @@ run_designs = {Constants.CalcTypeERIRatedHome => true,
                Constants.CalcTypeERIReferenceHome => true,
                Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf}
 
+# Setup IO.pipe to communicate output from child processes to this (parent) process
+readers,writers = {},{}
+run_designs.keys.each do |design|
+  reader,writer = IO.pipe
+  readers[design] = reader
+  writers[design] = writer
+end
+
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
 if Process.respond_to?(:fork)
-  # All code runs in forked child processes. This is the fastest approach 
-  # but isn't available on Windows.
+  # Code runs in forked child processes. This is the fastest approach 
+  # but isn't available on, e.g., Windows.
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run, writers[design])
   end
 else
-  # Fallback. Some code runs in threads, but simulations still occur in
+  # Fallback. Code runs in threads, though simulations still occur in
   # spawned child processes.
-  puts "WARNING: Process#fork not available, running with degraded performance."
+  puts "WARNING: Process.fork not available on this platform, running with degraded performance."
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run, writers[design])
   end
 end
 
-# Read results (not in separate processes, which would requiring passing
-# data from the child processes back to the parent process)
+# Retrieve design data from child processes
 design_outputs = {}
-run_designs.each do |design, run|
-  next if not run
-  print "[#{design}] Gathering results...\n"
-  designdir = get_designdir(basedir, design)
-  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
-  design_outputs[design] = read_output(design, designdir, output_hpxml_path)
-  write_results_annual_output(resultsdir, design, design_outputs[design])
-  print "[#{design}] Done.\n"
+readers.each do |design,reader|
+  writers[design].close
+  next if not run_designs[design]
+  design_outputs[design] = Marshal.load(Base64.decode64(reader.read))
 end
 
 # Calculate and write results
