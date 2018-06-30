@@ -43,7 +43,6 @@
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
-          <BuildingVolume>55662.5</BuildingVolume>
           <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
@@ -51,6 +50,10 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
+          <ClimateZone>7</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2012</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
@@ -95,56 +98,24 @@
                   <Area>4200</Area>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
-                  <Rafters>
-                    <FramingFactor>0.11</FramingFactor>
-                    <Material>wood</Material>
-                  </Rafters>
                   <Pitch>6</Pitch>
                   <RadiantBarrier>false</RadiantBarrier>
                   <Insulation>
                     <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>7.25</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>2.3</AssemblyEffectiveRValue>
                   </Insulation>
-                  <extension>
-                    <OSBThickness>0.75</OSBThickness>
-                  </extension>
                 </Roof>
               </Roofs>
               <Floors>
                 <Floor>
                   <SystemIdentifier id='attic-floor-1'/>
                   <Area>4200</Area>
-                  <FloorJoists>
-                    <FramingFactor>0.11</FramingFactor>
-                    <Material>wood</Material>
-                  </FloorJoists>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>13</NominalRValue>
-                      <Thickness>3.5</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>25</NominalRValue>
-                      <Thickness>7.0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-                    <DrywallThickness>0.5</DrywallThickness>
                   </extension>
                 </Floor>
               </Floors>
@@ -155,31 +126,15 @@
                     <WoodStud/>
                   </WallType>
                   <Area>32</Area>
-                  <Studs>
-                    <FramingFactor>0.1988</FramingFactor>
-                    <Material>wood</Material>
-                  </Studs>
                   <Siding>vinyl siding</Siding>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <InsulationGrade>1</InsulationGrade>
-                    <Layer>
-                      <InstallationType>cavity</InstallationType>
-                      <NominalRValue>22</NominalRValue>
-                      <Thickness>5.5</Thickness>
-                    </Layer>
-                    <Layer>
-                      <InstallationType>continuous</InstallationType>
-                      <NominalRValue>0</NominalRValue>
-                      <Thickness>0</Thickness>
-                    </Layer>
+                    <AssemblyEffectiveRValue>4.0</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-                    <DrywallThickness>0.0</DrywallThickness>
-                    <OSBThickness>0.5</OSBThickness>
                   </extension>
                 </Wall>
               </Walls>
@@ -230,32 +185,16 @@
               <WoodStud/>
             </WallType>
             <Area>3796</Area>
-            <Studs>
-              <FramingFactor>0.1988</FramingFactor>
-              <Material>wood</Material>
-            </Studs>
             <Siding>stucco</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
-              <InsulationGrade>1</InsulationGrade>
-              <Layer>
-                <InstallationType>cavity</InstallationType>
-                <NominalRValue>30</NominalRValue>
-                <Thickness>5.5</Thickness>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous</InstallationType>
-                <NominalRValue>10</NominalRValue>
-                <Thickness>2</Thickness>
-              </Layer>
+              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
               <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-              <DrywallThickness>0.5</DrywallThickness>
-              <OSBThickness>0.5</OSBThickness>
             </extension>
           </Wall>
         </Walls>
@@ -416,11 +355,12 @@
             <SystemIdentifier id='DHW_ID1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
+            <Location>conditioned space</Location>
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <HeatingCapacity>18767</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125</HotWaterTemperature>
+            <HotWaterTemperature>125.0</HotWaterTemperature>
             <extension>
               <PerformanceAdjustmentEnergyFactor>1.0</PerformanceAdjustmentEnergyFactor>
             </extension>
@@ -501,8 +441,8 @@
       </Appliances>
       <Lighting>
         <extension>
-          <AnnualInteriorkWh>2410.4594594594596</AnnualInteriorkWh>
-          <AnnualExteriorkWh>171.875</AnnualExteriorkWh>
+          <AnnualInteriorkWh>1200.337837837838</AnnualInteriorkWh>
+          <AnnualExteriorkWh>91.66666666666667</AnnualExteriorkWh>
           <AnnualGaragekWh>0.0</AnnualGaragekWh>
         </extension>
       </Lighting>
@@ -512,10 +452,10 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>3185.0</Value>
+            <Value>2184.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.8545920200609892</FracSensible>
+            <FracSensible>0.8545920200609893</FracSensible>
             <FracLatent>0.04466918399218376</FracLatent>
           </extension>
         </PlugLoad>
@@ -524,10 +464,10 @@
           <PlugLoadType>TV other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>689.0</Value>
+            <Value>620.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.9999997510703025</FracSensible>
+            <FracSensible>1.0000057609550692</FracSensible>
             <FracLatent>0.0</FracLatent>
           </extension>
         </PlugLoad>

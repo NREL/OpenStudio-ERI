@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.29 14:48,
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.06.30 17:44,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 BATH EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
@@ -174,11 +174,11 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.29 14:48,
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 9894 total times;
+   *************  **   ~~~   **   This error occurred 9846 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=6.960838E-005  Min=6.762910E-005
+   *************  **   ~~~   **   Max=6.960797E-005  Min=6.762543E-005
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 10023 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  5.05sec
+   ************* EnergyPlus Completed Successfully-- 9975 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  5.67sec

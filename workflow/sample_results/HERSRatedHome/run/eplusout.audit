@@ -40,7 +40,7 @@
  NumConsideredOutputVariables=          28
  MaxConsideredOutputVariables=       10000
  numActuatorsUsed=          17
- numEMSActuatorsAvailable=         568
+ numEMSActuatorsAvailable=         556
  maxEMSActuatorsAvailable=        1000
  numInternalVariablesUsed=           0
  numEMSInternalVarsAvailable=          45

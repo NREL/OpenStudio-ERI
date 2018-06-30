@@ -164,7 +164,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     runner.registerInfo("Validated input HPXML against ERI Use Case.")
     
     # Weather file
-    t = Time.now
     weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
     epw_path = nil
     CSV.foreach(File.join(weather_dir, "data.csv"), headers:true) do |row|

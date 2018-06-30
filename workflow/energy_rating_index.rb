@@ -31,10 +31,10 @@ def run_design(basedir, design, resultsdir, hpxml, debug, run, writer)
   rm_path(designdir)
   if run
     print "[#{design}] Creating input...\n"
-    output_hpxml_path = create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
+    output_hpxml_path, rundir = create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
     
     print "[#{design}] Running simulation...\n"
-    run_energyplus(design, designdir)    
+    run_energyplus(design, rundir)    
     
     print "[#{design}] Gathering results...\n"
     output_data = read_output(design, designdir, output_hpxml_path)
@@ -47,6 +47,9 @@ end
       
 def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
   Dir.mkdir(designdir)
+  
+  rundir = File.join(designdir, "run")
+  Dir.mkdir(rundir)
   
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   
@@ -63,7 +66,7 @@ def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
   #args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   args['hpxml_output_path'] = output_hpxml_path
-  args['epw_output_path'] = File.join(designdir, "in.epw")
+  args['epw_output_path'] = File.join(rundir, "in.epw")
   if debug
     args['osm_output_path'] = output_hpxml_path.gsub(".xml",".osm")
   end
@@ -86,19 +89,19 @@ def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
   
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
-  File.open(File.join(designdir, "in.idf"), 'w') { |f| f << model_idf.to_s }
+  File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
   
-  return output_hpxml_path
+  return output_hpxml_path, rundir
 end
 
-def run_energyplus(design, designdir)
+def run_energyplus(design, rundir)
   ep_path = OpenStudio.getEnergyPlusDirectory.to_s
   if ep_path.empty? # Bug in OS, should remove at some point in the future
     # Probably run on linux w/o absolute path
     ep_path = "/usr/local/openstudio-#{OpenStudio.openStudioVersion}/EnergyPlus"
   end
   ep_path = File.join(ep_path, "energyplus")
-  command = "cd #{designdir} && #{ep_path} -w in.epw in.idf > eplusout.log"
+  command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
   system(command, :err => File::NULL)
 end
       
@@ -118,7 +121,7 @@ def get_sql_result(sqlValue, design)
 end
 
 def read_output(design, designdir, output_hpxml_path)
-  sql_path = File.join(designdir, "eplusout.sql")
+  sql_path = File.join(designdir, "run", "eplusout.sql")
   if not File.exists?(sql_path)
     fail "ERROR: Simulation unsuccessful for #{design}."
   end
