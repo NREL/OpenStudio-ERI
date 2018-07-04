@@ -5,10 +5,8 @@ require 'csv'
 require 'pathname'
 require 'fileutils'
 require 'parallel'
-require "base64"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/meta_measure"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
@@ -25,86 +23,33 @@ def rm_path(path)
   end
 end
 
-def run_design(basedir, design, resultsdir, hpxml, debug, run, writer)
-  # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
+def run_design_direct(basedir, design, resultsdir, hpxml, debug, run)
+  # Calls design.rb methods directly. Should only be called from a forked 
+  # process. This is the fastest approach.
   designdir = File.join(basedir, design.gsub(' ',''))
   rm_path(designdir)
-  if run
-    print "[#{design}] Creating input...\n"
-    output_hpxml_path, rundir = create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
-    
-    print "[#{design}] Running simulation...\n"
-    run_energyplus(design, rundir)    
-    
-    print "[#{design}] Gathering results...\n"
-    output_data = read_output(design, designdir, output_hpxml_path)
-    writer.puts(Base64.encode64(Marshal.dump(output_data))) # Provide output data to parent process
-    write_results_annual_output(resultsdir, design, output_data)
-    
-    print "[#{design}] Done.\n"
-  end
-end
-      
-def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
-  Dir.mkdir(designdir)
-  
-  rundir = File.join(designdir, "run")
-  Dir.mkdir(rundir)
-  
-  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  
-  model = OpenStudio::Model::Model.new
-  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-  measures_dir = "../measures/"
-  measures = {}
-  measure_subdir = "301EnergyRatingIndexRuleset"
-  
-  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
-  args = {}
-  args['calc_type'] = design
-  args['hpxml_path'] = hpxml
-  args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
-  #args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
-  args['hpxml_output_path'] = output_hpxml_path
-  args['epw_output_path'] = File.join(rundir, "in.epw")
-  if debug
-    args['osm_output_path'] = output_hpxml_path.gsub(".xml",".osm")
-  end
-  
-  update_args_hash(measures, measure_subdir, args)
-  success = apply_measures(measures_dir, measures, runner, model, nil, nil, false)
-  
-  File.open(File.join(designdir,'run.log'), 'w') do |f|
-    runner.result.stepWarnings.each do |w|
-      f << "Warning: #{w}\n"
-    end
-    runner.result.stepErrors.each do |e|
-      f << "Error: #{e}\n"
-    end
-  end
 
-  if not success
-    fail "ERROR: Simulation unsuccessful for #{design}."
-  end
+  return if not run
   
-  forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
-  model_idf = forward_translator.translateModel(model)
-  File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
-  
-  return output_hpxml_path, rundir
+  require_relative 'design'
+  run_design(basedir, design, designdir, resultsdir, hpxml, debug)
 end
 
-def run_energyplus(design, rundir)
-  ep_path = OpenStudio.getEnergyPlusDirectory.to_s
-  if ep_path.empty? # Bug in OS, should remove at some point in the future
-    # Probably run on linux w/o absolute path
-    ep_path = "/usr/local/openstudio-#{OpenStudio.openStudioVersion}/EnergyPlus"
-  end
-  ep_path = File.join(ep_path, "energyplus")
-  command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
-  system(command, :err => File::NULL)
+def run_design_spawn(basedir, design, resultsdir, hpxml, debug, run)
+  # Calls design.rb in a new spawned process in order to utilize multiple 
+  # processes. Not as efficient as calling design.rb methods directly in 
+  # forked processes for a couple reasons:
+  # 1. There is overhead to using the CLI
+  # 2. There is overhead to spawning processes vs using forked processes
+  designdir = File.join(basedir, design.gsub(' ',''))
+  rm_path(designdir)
+
+  return if not run
+  
+  cli_path = OpenStudio.getOpenStudioCLI
+  system("\"#{cli_path}\" --no-ssl design.rb \"#{basedir}\" \"#{design}\" \"#{designdir}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug}")
 end
-      
+
 def get_sql_query_result(sqlFile, query)
   result = sqlFile.execAndReturnFirstDouble(query)
   if result.is_initialized
@@ -872,37 +817,34 @@ run_designs = {Constants.CalcTypeERIRatedHome => true,
                Constants.CalcTypeERIReferenceHome => true,
                Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf}
 
-# Setup IO.pipe to communicate output from child processes to this (parent) process
-readers,writers = {},{}
-run_designs.keys.each do |design|
-  reader,writer = IO.pipe
-  readers[design] = reader
-  writers[design] = writer
-end
-
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
 if Process.respond_to?(:fork)
-  # Code runs in forked child processes. This is the fastest approach 
-  # but isn't available on, e.g., Windows.
+  # Code runs in forked child processes and makes direct calls. This is the fastest 
+  # approach but isn't available on, e.g., Windows.
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run, writers[design])
+    run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
   end
 else
-  # Fallback. Code runs in threads, though simulations still occur in
-  # spawned child processes.
-  puts "WARNING: Process.fork not available on this platform, running with degraded performance."
+  # Fallback. Code runs in spawned child processes in order to take advantage of
+  # multiple processors.
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    run_design(basedir, design, resultsdir, options[:hpxml], options[:debug], run, writers[design])
+    run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
   end
 end
 
 # Retrieve design data from child processes
 design_outputs = {}
-readers.each do |design,reader|
-  writers[design].close
-  next if not run_designs[design]
-  design_outputs[design] = Marshal.load(Base64.decode64(reader.read))
+run_designs.each do |design, run|
+  next if not run
+
+  print "[#{design}] Gathering results...\n"
+  designdir = File.join(basedir, design.gsub(' ',''))
+  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
+  design_outputs[design] = read_output(design, designdir, output_hpxml_path)
+  write_results_annual_output(resultsdir, design, design_outputs[design])
+  
+  print "[#{design}] Done.\n"
 end
 
 # Calculate and write results
