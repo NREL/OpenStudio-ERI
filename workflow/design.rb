@@ -1,15 +1,28 @@
+# Separate ruby script to allow the code to be called using system() on Windows
+
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/meta_measure"
 
-def run_design(basedir, design, designdir, resultsdir, hpxml, debug)
+def get_designdir(basedir, design)
+  return File.join(basedir, design.gsub(' ',''))
+end
+
+def get_output_hpxml_path(resultsdir, designdir)
+  return File.join(resultsdir, File.basename(designdir) + ".xml")
+end
+
+def run_design(basedir, design, resultsdir, hpxml, debug)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design}] Creating input...\n"
-  output_hpxml_path, rundir = create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
+  output_hpxml_path, rundir = create_idf(design, basedir, resultsdir, hpxml, debug)
   
   print "[#{design}] Running simulation...\n"
-  run_energyplus(design, rundir)    
+  run_energyplus(design, rundir)
+  
+  return output_hpxml_path
 end
       
-def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
+def create_idf(design, basedir, resultsdir, hpxml, debug)
+  designdir = get_designdir(basedir, design)
   Dir.mkdir(designdir)
   
   rundir = File.join(designdir, "run")
@@ -23,7 +36,7 @@ def create_idf(design, designdir, basedir, resultsdir, hpxml, debug)
   measures = {}
   measure_subdir = "301EnergyRatingIndexRuleset"
   
-  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
+  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
   args = {}
   args['calc_type'] = design
   args['hpxml_path'] = hpxml
@@ -69,12 +82,11 @@ def run_energyplus(design, rundir)
   system(command, :err => File::NULL)
 end
       
-if not ARGV.empty?
+if ARGV.size == 5
   basedir = ARGV[0]
   design = ARGV[1]
-  designdir = ARGV[2]
-  resultsdir = ARGV[3]
-  hpxml = ARGV[4]
-  debug = (ARGV[5].downcase.to_s == "true")
-  run_design(basedir, design, designdir, resultsdir, hpxml, debug)
+  resultsdir = ARGV[2]
+  hpxml = ARGV[3]
+  debug = (ARGV[4].downcase.to_s == "true")
+  run_design(basedir, design, resultsdir, hpxml, debug)
 end

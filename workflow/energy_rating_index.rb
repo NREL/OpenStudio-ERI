@@ -5,6 +5,7 @@ require 'csv'
 require 'pathname'
 require 'fileutils'
 require 'parallel'
+require_relative "design"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
 
@@ -26,13 +27,13 @@ end
 def run_design_direct(basedir, design, resultsdir, hpxml, debug, run)
   # Calls design.rb methods directly. Should only be called from a forked 
   # process. This is the fastest approach.
-  designdir = File.join(basedir, design.gsub(' ',''))
+  designdir = get_designdir(basedir, design)
   rm_path(designdir)
 
-  return if not run
+  return nil if not run
   
-  require_relative 'design'
-  run_design(basedir, design, designdir, resultsdir, hpxml, debug)
+  output_hpxml_path = run_design(basedir, design, resultsdir, hpxml, debug)
+  return output_hpxml_path, designdir
 end
 
 def run_design_spawn(basedir, design, resultsdir, hpxml, debug, run)
@@ -41,13 +42,27 @@ def run_design_spawn(basedir, design, resultsdir, hpxml, debug, run)
   # forked processes for a couple reasons:
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
-  designdir = File.join(basedir, design.gsub(' ',''))
+  designdir = get_designdir(basedir, design)
   rm_path(designdir)
 
-  return if not run
+  return nil if not run
   
   cli_path = OpenStudio.getOpenStudioCLI
-  system("\"#{cli_path}\" --no-ssl design.rb \"#{basedir}\" \"#{design}\" \"#{designdir}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug}")
+  system("\"#{cli_path}\" --no-ssl design.rb \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug}")
+  
+  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  return output_hpxml_path, designdir
+end
+
+def process_design_output(design, designdir, resultsdir, output_hpxml_path)
+  return nil if output_hpxml_path.nil?
+  
+  print "[#{design}] Processing output...\n"
+  design_output = read_output(design, designdir, output_hpxml_path)
+  write_results_annual_output(resultsdir, design, design_output)
+  print "[#{design}] Done.\n"
+  
+  return design_output
 end
 
 def get_sql_query_result(sqlFile, query)
@@ -819,32 +834,41 @@ run_designs = {Constants.CalcTypeERIRatedHome => true,
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
-if Process.respond_to?(:fork)
+design_outputs = {}
+if Process.respond_to?(:fork) # e.g., most Unix systems
+  
   # Code runs in forked child processes and makes direct calls. This is the fastest 
   # approach but isn't available on, e.g., Windows.
-  Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+  
+  # Setup IO.pipe to communicate output from child processes to this parent process
+  readers,writers = {},{}
+  run_designs.keys.each do |design|
+    readers[design],writers[design] = IO.pipe
   end
-else
+  
+  Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
+    output_hpxml_path, designdir = run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+    writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
+  end
+  
+  # Retrieve output data from child processes
+  readers.each do |design,reader|
+    writers[design].close
+    next if not run_designs[design]
+    design_outputs[design] = Marshal.load(reader.read)
+  end
+  
+else # e.g., Windows
+  
   # Fallback. Code runs in spawned child processes in order to take advantage of
   # multiple processors.
-  Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
-  end
-end
-
-# Retrieve design data from child processes
-design_outputs = {}
-run_designs.each do |design, run|
-  next if not run
-
-  print "[#{design}] Gathering results...\n"
-  designdir = File.join(basedir, design.gsub(' ',''))
-  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
-  design_outputs[design] = read_output(design, designdir, output_hpxml_path)
-  write_results_annual_output(resultsdir, design, design_outputs[design])
   
-  print "[#{design}] Done.\n"
+  Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
+    output_hpxml_path, designdir = run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+    design_outputs[design] = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+  end
+  
 end
 
 # Calculate and write results
@@ -859,7 +883,6 @@ results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome],
                         design_outputs[Constants.CalcTypeERIReferenceHome], 
                         results_iad)
 
-puts "Writing output files..."
 write_results(results, resultsdir, design_outputs, using_iaf)
 
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
