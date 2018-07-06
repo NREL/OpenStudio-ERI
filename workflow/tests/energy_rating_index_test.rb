@@ -36,6 +36,10 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     num_epws_expected = File.readlines(File.join(parent_dir, "..", "weather", "data.csv")).size - 1
     num_epws_actual = Dir[File.join(parent_dir, "..", "weather", "*.epw")].count
     assert_equal(num_epws_expected, num_epws_actual)
+    
+    num_cache_expected = File.readlines(File.join(parent_dir, "..", "weather", "data.csv")).size - 1
+    num_cache_actual = Dir[File.join(parent_dir, "..", "weather", "*.cache")].count
+    assert_equal(num_cache_expected, num_cache_actual)
   end
   
   def test_resnet_ashrae_140
