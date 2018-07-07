@@ -247,11 +247,13 @@ class Constants
             'Heating Coil Air Heating Energy',
             'Boiler Heating Energy',
             'Baseboard Total Heating Energy',
-            'Heating Coil Heating Energy']
+            'Heating Coil Heating Energy',
+            'Zone Ideal Loads Zone Total Heating Energy']
   end
   def self.LoadVarsSpaceCooling
     return ['Cooling Coil Sensible Cooling Energy',
-            'Cooling Coil Latent Cooling Energy']
+            'Cooling Coil Latent Cooling Energy',
+            'Zone Ideal Loads Zone Total Cooling Energy']
   end
   def self.LoadVarsWaterHeating
     return ['Water Use Connections Plant Hot Water Energy']

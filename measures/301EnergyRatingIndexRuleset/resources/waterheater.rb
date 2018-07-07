@@ -1072,8 +1072,12 @@ class Waterheater
                     Constants.SpaceTypeLaundryRoom, 
                     Constants.SpaceTypeCrawl, 
                     Constants.SpaceTypeUnfinishedAttic]
+        elsif ba_cz_name.nil?
+            return [Constants.SpaceTypeFinishedBasement,
+                    Constants.SpaceTypeUnfinishedBasement,
+                    Constants.SpaceTypeGarage,
+                    Constants.SpaceTypeLiving]
         end
-        return nil
     end
     
     def self.calc_capacity(cap, fuel, num_beds, num_baths)

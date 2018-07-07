@@ -672,7 +672,7 @@ class ClothesDryer
       
           if sch.nil?
               # Create schedule
-              hr_shift = day_shift + 1.0 / 24.0
+              hr_shift = day_shift - 1.0 / 24.0
               sch = HotWaterSchedule.new(model, runner, unit_obj_name_f + " schedule", 
                                          unit_obj_name_f + " temperature schedule", nbeds, 
                                          hr_shift, "ClothesDryer", 0, measure_dir)

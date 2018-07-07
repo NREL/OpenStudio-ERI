@@ -2477,7 +2477,7 @@ class OSModel
     has_flue_chimney = false
     is_existing_home = false
     terrain = Constants.TerrainSuburban
-    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, attic_sla, unfinished_basement_ach, 
+    infil = Infiltration.new(living_ach50, nil, shelter_coef, garage_ach50, crawl_ach, attic_sla, nil, unfinished_basement_ach, 
                              finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
 
     # Mechanical Ventilation
