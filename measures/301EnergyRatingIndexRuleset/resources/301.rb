@@ -815,16 +815,17 @@ class EnergyRatingIndex301Ruleset
       window_area = 0.25 * total_window_area # Equal distribution to N/S/E/W
       # Distribute this orientation's window area proportionally across all exterior walls
       wall_area_fracs.each do |wall, wall_area_frac|
+        wall_id = wall.elements["SystemIdentifier"].attributes["id"]
         new_window = XMLHelper.add_element(new_windows, "Window")
         sys_id = XMLHelper.add_element(new_window, "SystemIdentifier")
-        XMLHelper.add_attribute(sys_id, "id", "Window_#{orientation}")
+        XMLHelper.add_attribute(sys_id, "id", "Window_#{wall_id}_#{orientation}")
         XMLHelper.add_element(new_window, "Area", window_area * wall_area_frac)
         XMLHelper.add_element(new_window, "Azimuth", azimuth)
         XMLHelper.add_element(new_window, "UFactor", ufactor)
         XMLHelper.add_element(new_window, "SHGC", shgc)
         XMLHelper.add_element(new_window, "ExteriorShading", "none")
         attwall = XMLHelper.add_element(new_window, "AttachedToWall")
-        attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
+        attwall.attributes["idref"] = wall_id
         set_window_interior_shading_reference(new_window)
         extension = new_window.elements["extension"]
         XMLHelper.add_element(extension, "Height", 5.0)
@@ -929,11 +930,12 @@ class EnergyRatingIndex301Ruleset
     new_doors = XMLHelper.add_element(new_enclosure, "Doors")
     # Distribute door area proportionally across all exterior walls
     wall_area_fracs.each do |wall, wall_area_frac|
-      new_door = XMLHelper.add_element(new_doors, "Door")
+      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+      new_door = XMLHelper.add_element(new_doors, "Door_#{wall_id}")
       sys_id = XMLHelper.add_element(new_door, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "Door")
       attwall = XMLHelper.add_element(new_door, "AttachedToWall")
-      attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
+      attwall.attributes["idref"] = wall_id
       XMLHelper.add_element(new_door, "Area", door_area * wall_area_frac)
       XMLHelper.add_element(new_door, "Azimuth", 0)
       XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
