@@ -931,9 +931,9 @@ class EnergyRatingIndex301Ruleset
     # Distribute door area proportionally across all exterior walls
     wall_area_fracs.each do |wall, wall_area_frac|
       wall_id = wall.elements["SystemIdentifier"].attributes["id"]
-      new_door = XMLHelper.add_element(new_doors, "Door_#{wall_id}")
+      new_door = XMLHelper.add_element(new_doors, "Door")
       sys_id = XMLHelper.add_element(new_door, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "Door")
+      XMLHelper.add_attribute(sys_id, "id", "Door_#{wall_id}")
       attwall = XMLHelper.add_element(new_door, "AttachedToWall")
       attwall.attributes["idref"] = wall_id
       XMLHelper.add_element(new_door, "Area", door_area * wall_area_frac)
