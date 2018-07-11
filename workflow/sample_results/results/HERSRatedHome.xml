@@ -126,7 +126,6 @@
                     <WoodStud/>
                   </WallType>
                   <Area>32</Area>
-                  <Siding>vinyl siding</Siding>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -185,7 +184,6 @@
               <WoodStud/>
             </WallType>
             <Area>3796</Area>
-            <Siding>stucco</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -441,8 +439,8 @@
       </Appliances>
       <Lighting>
         <extension>
-          <AnnualInteriorkWh>1200.337837837838</AnnualInteriorkWh>
-          <AnnualExteriorkWh>91.66666666666667</AnnualExteriorkWh>
+          <AnnualInteriorkWh>1645.0945945945946</AnnualInteriorkWh>
+          <AnnualExteriorkWh>114.58333333333333</AnnualExteriorkWh>
           <AnnualGaragekWh>0.0</AnnualGaragekWh>
         </extension>
       </Lighting>
@@ -452,10 +450,10 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>2184.0</Value>
+            <Value>3185.0</Value>
           </Load>
           <extension>
-            <FracSensible>0.8545920200609893</FracSensible>
+            <FracSensible>0.8545920200609892</FracSensible>
             <FracLatent>0.04466918399218376</FracLatent>
           </extension>
         </PlugLoad>
@@ -464,10 +462,10 @@
           <PlugLoadType>TV other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>620.0</Value>
+            <Value>689.0</Value>
           </Load>
           <extension>
-            <FracSensible>1.0000057609550692</FracSensible>
+            <FracSensible>0.9999997510703025</FracSensible>
             <FracLatent>0.0</FracLatent>
           </extension>
         </PlugLoad>

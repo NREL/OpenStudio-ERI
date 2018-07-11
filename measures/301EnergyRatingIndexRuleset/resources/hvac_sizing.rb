@@ -3271,7 +3271,10 @@ class HVACSizing
   def self.true_azimuth(surface)
     true_azimuth = nil
     facade = Geometry.get_facade_for_surface(surface)
-    if facade == Constants.FacadeFront
+    if facade.nil?
+        relative_azimuth = UnitConversions.convert(surface.azimuth,"rad","deg")
+        true_azimuth = @northAxis + relative_azimuth + 180.0
+    elsif facade == Constants.FacadeFront
         true_azimuth = @northAxis
     elsif facade == Constants.FacadeBack
         true_azimuth = @northAxis + 180
@@ -3280,7 +3283,7 @@ class HVACSizing
     elsif facade == Constants.FacadeRight
         true_azimuth = @northAxis + 270
     end
-    if not true_azimuth.nil? and true_azimuth >= 360
+    if true_azimuth >= 360
         true_azimuth = true_azimuth - 360
     end
     return true_azimuth

@@ -99,7 +99,6 @@
                     <WoodStud></WoodStud>
                   </WallType>
                   <Area>121.5</Area>
-                  <Siding>fiber cement siding</Siding>
                   <SolarAbsorptance>0.6</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -188,7 +187,6 @@
               <WoodStud/>
             </WallType>
             <Area>1344</Area>
-            <Siding>fiber cement siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>

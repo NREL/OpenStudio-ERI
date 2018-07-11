@@ -126,7 +126,6 @@
                     <WoodStud/>
                   </WallType>
                   <Area>32</Area>
-                  <Siding>vinyl siding</Siding>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -188,7 +187,6 @@
               <WoodStud/>
             </WallType>
             <Area>3796</Area>
-            <Siding>vinyl siding</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -203,7 +201,7 @@
         </Walls>
         <Windows>
           <Window>
-            <SystemIdentifier id='Window_north'/>
+            <SystemIdentifier id='Window_agwall-1_north'/>
             <Area>157.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.35</UFactor>
@@ -217,7 +215,7 @@
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_south'/>
+            <SystemIdentifier id='Window_agwall-1_south'/>
             <Area>157.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
@@ -231,7 +229,7 @@
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_east'/>
+            <SystemIdentifier id='Window_agwall-1_east'/>
             <Area>157.5</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.35</UFactor>
@@ -245,7 +243,7 @@
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_west'/>
+            <SystemIdentifier id='Window_agwall-1_west'/>
             <Area>157.5</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.35</UFactor>
@@ -261,7 +259,7 @@
         </Windows>
         <Doors>
           <Door>
-            <SystemIdentifier id='Door'/>
+            <SystemIdentifier id='Door_agwall-1'/>
             <AttachedToWall idref='agwall-1'/>
             <Area>40.0</Area>
             <Azimuth>0</Azimuth>

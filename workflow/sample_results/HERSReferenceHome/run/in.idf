@@ -243,7 +243,7 @@ BuildingSurface:Detailed,
 BuildingSurface:Detailed,
   attic-floor-1 Reversed,                 !- Name
   Ceiling,                                !- Surface Type
-  FloorConstruction,                      !- Construction Name
+  FloorConstruction Reversed,             !- Construction Name
   living,                                 !- Zone Name
   Surface,                                !- Outside Boundary Condition
   attic-floor-1,                          !- Outside Boundary Condition Object
@@ -289,7 +289,7 @@ BuildingSurface:Detailed,
   36.576, -2.2225, -0;                    !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  surface Door,                           !- Name
+  surface Door_agwall-1,                  !- Name
   Wall,                                   !- Surface Type
   AdiabaticWallConstruction 1,            !- Construction Name
   living,                                 !- Zone Name
@@ -305,10 +305,10 @@ BuildingSurface:Detailed,
   0.914943028485757, 15, 0;               !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
-  Door,                                   !- Name
+  Door_agwall-1,                          !- Name
   Door,                                   !- Surface Type
   Door,                                   !- Construction Name
-  surface Door,                           !- Building Surface Name
+  surface Door_agwall-1,                  !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
   ,                                       !- View Factor to Ground
   ,                                       !- Shading Control Name
@@ -321,7 +321,7 @@ FenestrationSurface:Detailed,
   0.913943028485757, 15, 0;               !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  surface Window_east,                    !- Name
+  surface Window_agwall-1_east,           !- Name
   Wall,                                   !- Surface Type
   AdiabaticWallConstruction,              !- Construction Name
   living,                                 !- Zone Name
@@ -337,10 +337,10 @@ BuildingSurface:Detailed,
   50, -4.8016, 0;                         !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
-  Window_east,                            !- Name
+  Window_agwall-1_east,                   !- Name
   Window,                                 !- Surface Type
   WindowConstruction 2,                   !- Construction Name
-  surface Window_east,                    !- Building Surface Name
+  surface Window_agwall-1_east,           !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
   ,                                       !- View Factor to Ground
   WindowShadingControl 2,                 !- Shading Control Name
@@ -353,7 +353,7 @@ FenestrationSurface:Detailed,
   50, -4.8006, 0.001;                     !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  surface Window_north,                   !- Name
+  surface Window_agwall-1_north,          !- Name
   Wall,                                   !- Surface Type
   AdiabaticWallConstruction,              !- Construction Name
   living,                                 !- Zone Name
@@ -369,10 +369,10 @@ BuildingSurface:Detailed,
   4.8016, 52.5, 0;                        !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
-  Window_north,                           !- Name
+  Window_agwall-1_north,                  !- Name
   Window,                                 !- Surface Type
   WindowConstruction,                     !- Construction Name
-  surface Window_north,                   !- Building Surface Name
+  surface Window_agwall-1_north,          !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
   ,                                       !- View Factor to Ground
   WindowShadingControl,                   !- Shading Control Name
@@ -385,7 +385,7 @@ FenestrationSurface:Detailed,
   4.8006, 52.5, 0.001;                    !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  surface Window_south,                   !- Name
+  surface Window_agwall-1_south,          !- Name
   Wall,                                   !- Surface Type
   AdiabaticWallConstruction,              !- Construction Name
   living,                                 !- Zone Name
@@ -401,10 +401,10 @@ BuildingSurface:Detailed,
   -4.80159999999999, -55, 0;              !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
-  Window_south,                           !- Name
+  Window_agwall-1_south,                  !- Name
   Window,                                 !- Surface Type
   WindowConstruction 1,                   !- Construction Name
-  surface Window_south,                   !- Building Surface Name
+  surface Window_agwall-1_south,          !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
   ,                                       !- View Factor to Ground
   WindowShadingControl 1,                 !- Shading Control Name
@@ -417,7 +417,7 @@ FenestrationSurface:Detailed,
   -4.80059999999999, -55, 0.001;          !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  surface Window_west,                    !- Name
+  surface Window_agwall-1_west,           !- Name
   Wall,                                   !- Surface Type
   AdiabaticWallConstruction,              !- Construction Name
   living,                                 !- Zone Name
@@ -433,10 +433,10 @@ BuildingSurface:Detailed,
   -57.5, 4.80159999999999, 0;             !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
-  Window_west,                            !- Name
+  Window_agwall-1_west,                   !- Name
   Window,                                 !- Surface Type
   WindowConstruction 3,                   !- Construction Name
-  surface Window_west,                    !- Building Surface Name
+  surface Window_agwall-1_west,           !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
   ,                                       !- View Factor to Ground
   WindowShadingControl 3,                 !- Shading Control Name
@@ -2865,7 +2865,7 @@ AirTerminal:SingleDuct:Uncontrolled,
   residential furnace gas and central ac living direct air, !- Name
   Always On Discrete,                     !- Availability Schedule Name
   Node 19,                                !- Zone Supply Air Node Name
-  0.616195797654743;                      !- Maximum Air Flow Rate {m3/s}
+  0.616225333765651;                      !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:EquipmentList,
   living Equipment List,                  !- Name
@@ -3157,9 +3157,9 @@ Material,
   FloorUATrussandIns,                     !- Name
   Rough,                                  !- Roughness
   0.1397,                                 !- Thickness {m}
-  0.0214823165524567,                     !- Conductivity {W/m-K}
-  20.9862,                                !- Density {kg/m3}
-  1087.66114503817,                       !- Specific Heat {J/kg-K}
+  0.0217472795999817,                     !- Conductivity {W/m-K}
+  70.6482,                                !- Density {kg/m3}
+  1180.4301814059,                        !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
   0.7,                                    !- Solar Absorptance
   0.7;                                    !- Visible Absorptance
@@ -3183,8 +3183,8 @@ Material,
   32.04,                                  !- Density {kg/m3}
   1214.23,                                !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
-  0.7,                                    !- Solar Absorptance
-  0.7;                                    !- Visible Absorptance
+  0.75,                                   !- Solar Absorptance
+  0.75;                                   !- Visible Absorptance
 
 Material,
   residential furniture material living,  !- Name
@@ -3200,24 +3200,13 @@ Material,
 Material,
   RoofUARoofIns,                          !- Name
   Rough,                                  !- Roughness
-  0.1397,                                 !- Thickness {m}
-  0.750310780362502,                      !- Conductivity {W/m-K}
-  50.32683,                               !- Density {kg/m3}
-  1063.80987585548,                       !- Specific Heat {J/kg-K}
+  0.0889,                                 !- Thickness {m}
+  1.16678120053427,                       !- Conductivity {W/m-K}
+  78.34581,                               !- Density {kg/m3}
+  1123.46101114405,                       !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
   0.7,                                    !- Solar Absorptance
   0.7;                                    !- Visible Absorptance
-
-Material,
-  Siding,                                 !- Name
-  Rough,                                  !- Roughness
-  0.009525,                               !- Thickness {m}
-  0.089435,                               !- Conductivity {W/m-K}
-  177.822,                                !- Density {kg/m3}
-  1046.75,                                !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.75,                                   !- Solar Absorptance
-  0.75;                                   !- Visible Absorptance
 
 Material,
   Stucco&#44 Medium/Dark,                 !- Name
@@ -3229,6 +3218,17 @@ Material,
   0.9,                                    !- Thermal Absorptance
   0.75,                                   !- Solar Absorptance
   0.75;                                   !- Visible Absorptance
+
+Material,
+  WallSheathing,                          !- Name
+  Rough,                                  !- Roughness
+  0.0127,                                 !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
 
 Material,
   WallStudAndCavity,                      !- Name
@@ -3245,9 +3245,9 @@ Material,
   WallStudAndCavity 1,                    !- Name
   Rough,                                  !- Roughness
   0.1397,                                 !- Thickness {m}
-  0.0493944692882087,                     !- Conductivity {W/m-K}
-  50.32683,                               !- Density {kg/m3}
-  1063.80987585548,                       !- Specific Heat {J/kg-K}
+  0.189632176485022,                      !- Conductivity {W/m-K}
+  139.0536,                               !- Density {kg/m3}
+  1170.23755760369,                       !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
   0.7,                                    !- Solar Absorptance
   0.7;                                    !- Visible Absorptance
@@ -3255,10 +3255,10 @@ Material,
 Material,
   WallStudAndCavity 2,                    !- Name
   Rough,                                  !- Roughness
-  0.0889,                                 !- Thickness {m}
-  0.0314328440924964,                     !- Conductivity {W/m-K}
-  50.32683,                               !- Density {kg/m3}
-  1063.80987585548,                       !- Specific Heat {J/kg-K}
+  0.1397,                                 !- Thickness {m}
+  0.155283363202631,                      !- Conductivity {W/m-K}
+  139.0536,                               !- Density {kg/m3}
+  1170.23755760369,                       !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
   0.7,                                    !- Solar Absorptance
   0.7;                                    !- Visible Absorptance
@@ -3273,6 +3273,17 @@ Material,
   0.9,                                    !- Thermal Absorptance
   0.7,                                    !- Solar Absorptance
   0.7;                                    !- Visible Absorptance
+
+Material,
+  Wood&#44 Light,                         !- Name
+  Rough,                                  !- Roughness
+  0.0254,                                 !- Thickness {m}
+  0.1024175,                              !- Conductivity {W/m-K}
+  544.68,                                 !- Density {kg/m3}
+  1172.36,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.75,                                   !- Solar Absorptance
+  0.75;                                   !- Visible Absorptance
 
 Material:NoMass,
   Adiabatic,                              !- Name
@@ -3429,7 +3440,13 @@ Construction,
 
 Construction,
   FloorConstruction,                      !- Name
-  FloorUATrussandIns;                     !- Layer 1
+  FloorUATrussandIns,                     !- Layer 1
+  Drywall 0.5 in.;                        !- Layer 2
+
+Construction,
+  FloorConstruction Reversed,             !- Name
+  Drywall 0.5 in.,                        !- Layer 1
+  FloorUATrussandIns;                     !- Layer 2
 
 Construction,
   FootingConstruction,                    !- Name
@@ -3447,7 +3464,8 @@ Construction,
 Construction,
   RoofConstruction,                       !- Name
   Asphalt Shingles&#44 Dark,              !- Layer 1
-  RoofUARoofIns;                          !- Layer 2
+  WallSheathing,                          !- Layer 2
+  RoofUARoofIns;                          !- Layer 3
 
 Construction,
   SlabConstruction,                       !- Name
@@ -3455,18 +3473,25 @@ Construction,
 
 Construction,
   WallConstruction,                       !- Name
-  Siding,                                 !- Layer 1
-  WallStudAndCavity 1;                    !- Layer 2
+  Wood&#44 Light,                         !- Layer 1
+  FoundationExtVertIns,                   !- Layer 2
+  WallSheathing,                          !- Layer 3
+  WallStudAndCavity 1,                    !- Layer 4
+  Drywall 0.5 in.;                        !- Layer 5
 
 Construction,
   WallConstruction 1,                     !- Name
-  Siding,                                 !- Layer 1
-  WallStudAndCavity 2;                    !- Layer 2
+  FoundationExtVertIns,                   !- Layer 1
+  WallSheathing,                          !- Layer 2
+  WallStudAndCavity 2,                    !- Layer 3
+  Drywall 0.5 in.;                        !- Layer 4
 
 Construction,
   WallConstruction 1 Reversed,            !- Name
-  WallStudAndCavity 2,                    !- Layer 1
-  Siding;                                 !- Layer 2
+  Drywall 0.5 in.,                        !- Layer 1
+  WallStudAndCavity 2,                    !- Layer 2
+  WallSheathing,                          !- Layer 3
+  FoundationExtVertIns;                   !- Layer 4
 
 Construction,
   WindowConstruction,                     !- Name
@@ -3491,13 +3516,13 @@ SurfaceProperty:ExposedFoundationPerimeter,
   1;                                      !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 5,                              !- Surface Name
+  Surface 3,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
+  Surface 5,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -3509,7 +3534,7 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 4,                              !- Surface Name
+  Surface 1,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -3521,7 +3546,7 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
+  Surface 4,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -29093,7 +29118,7 @@ AirLoopHVAC,
   residential furnace gas and central ac central air system, !- Name
   ,                                       !- Controller List Name
   residential furnace gas and central ac central air systemAvailability Manager List, !- Availability Manager List Name
-  0.616195797654743,                      !- Design Supply Air Flow Rate {m3/s}
+  0.616225333765651,                      !- Design Supply Air Flow Rate {m3/s}
   residential furnace gas and central ac central air system Supply Branches, !- Branch List Name
   ,                                       !- Connector List Name
   Node 15,                                !- Supply Side Inlet Node Name
@@ -29192,12 +29217,12 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0.547879707286913,                      !- Cooling Supply Air Flow Rate {m3/s}
+  0.564905285696405,                      !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
   SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
-  0.616195797654743,                      !- Heating Supply Air Flow Rate {m3/s}
+  0.616225333765651,                      !- Heating Supply Air Flow Rate {m3/s}
   ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -29223,7 +29248,7 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.094049686480896,                      !- Fan Total Efficiency
   124.55,                                 !- Pressure Rise {Pa}
-  0.616200517129175,                      !- Maximum Flow Rate {m3/s}
+  0.616230053240083,                      !- Maximum Flow Rate {m3/s}
   0.8,                                    !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 15,                                !- Air Inlet Node Name
@@ -29254,7 +29279,7 @@ Coil:Heating:Fuel,
   residential heating season,             !- Availability Schedule Name
   NaturalGas,                             !- Fuel Type
   0.624,                                  !- Burner Efficiency
-  17330.2828430592,                       !- Nominal Capacity {W}
+  17331.1135354431,                       !- Nominal Capacity {W}
   residential furnace gas and central ac unitary system Cooling Coil - Heating Coil Node, !- Air Inlet Node Name
   Node 16,                                !- Air Outlet Node Name
   ,                                       !- Temperature Setpoint Node Name
@@ -29321,10 +29346,10 @@ Curve:Quadratic,
 Coil:Cooling:DX:SingleSpeed,
   residential central ac cooling coil,    !- Name
   residential cooling season,             !- Availability Schedule Name
-  8181.73159239021,                       !- Gross Rated Total Cooling Capacity {W}
+  8435.98213479751,                       !- Gross Rated Total Cooling Capacity {W}
   0.740402528813699,                      !- Gross Rated Sensible Heat Ratio
   3.22691518426208,                       !- Gross Rated Cooling COP {W/W}
-  0.423920551069093,                      !- Rated Air Flow Rate {m3/s}
+  0.437094049714192,                      !- Rated Air Flow Rate {m3/s}
   773.3912012006,                         !- Rated Evaporator Fan Power Per Volume Flow Rate {W/(m3/s)}
   residential furnace gas and central ac unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
   residential furnace gas and central ac unitary system Cooling Coil - Heating Coil Node, !- Air Outlet Node Name
@@ -29800,6 +29825,11 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
+  *,                                      !- Key Value
+  Water Use Connections Plant Hot Water Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
   residential furnace gas heating coil,   !- Key Value
   Heating Coil Air Heating Energy,        !- Variable Name
   runperiod;                              !- Reporting Frequency
@@ -29820,6 +29850,11 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
+  residential furnace gas heating coil,   !- Key Value
+  Zone Ideal Loads Zone Total Heating Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
   residential central ac cooling coil,    !- Key Value
   Cooling Coil Sensible Cooling Energy,   !- Variable Name
   runperiod;                              !- Reporting Frequency
@@ -29830,8 +29865,8 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  Water Use Connections Plant Hot Water Energy, !- Variable Name
+  residential central ac cooling coil,    !- Key Value
+  Zone Ideal Loads Zone Total Cooling Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,

@@ -152,15 +152,49 @@
         </Foundations>
         <Walls>
           <Wall>
-            <SystemIdentifier id='agwall-1'/>
+            <SystemIdentifier id='agwall-small'/>
             <WallType>
               <WoodStud></WoodStud>
             </WallType>
-            <Area>3796</Area>
+            <Area>10</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
+              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+            </Insulation>
+            <extension>
+              <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            </extension>
+          </Wall>
+          <Wall>
+            <SystemIdentifier id='agwall-medium'/>
+            <WallType>
+              <WoodStud></WoodStud>
+            </WallType>
+            <Area>300</Area>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='AGW_Ins_ID2'/>
+              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+            </Insulation>
+            <extension>
+              <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            </extension>
+          </Wall>
+          <Wall>
+            <SystemIdentifier id='agwall-large'/>
+            <WallType>
+              <WoodStud></WoodStud>
+            </WallType>
+            <Area>3486</Area>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='AGW_Ins_ID3'/>
               <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
@@ -181,7 +215,7 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <AttachedToWall idref='agwall-1'/>
+            <AttachedToWall idref='agwall-medium'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID2'/>
@@ -194,7 +228,7 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <AttachedToWall idref='agwall-1'/>
+            <AttachedToWall idref='agwall-large'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID3'/>
@@ -207,7 +241,7 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <AttachedToWall idref='agwall-1'/>
+            <AttachedToWall idref='agwall-large'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID4'/>
@@ -220,13 +254,13 @@
               <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
             </Overhangs>
-            <AttachedToWall idref='agwall-1'/>
+            <AttachedToWall idref='agwall-large'/>
           </Window>
         </Windows>
         <Doors>
           <Door>
             <SystemIdentifier id='Door_ID1'/>
-            <AttachedToWall idref='agwall-1'/>
+            <AttachedToWall idref='agwall-large'/>
             <Area>80</Area>
             <Azimuth>270</Azimuth>
             <RValue>4.4</RValue>
@@ -234,6 +268,77 @@
         </Doors>
       </Enclosure>
       <Systems>
+        <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='SpaceHeat_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>64000</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.92</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+            </HeatingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>48000</CoolingCapacity>
+              <FractionCoolLoadServed>1</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>16</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
+          </HVACPlant>
+          <HVACControl>
+            <SystemIdentifier id='HVAC_Ctrl_ID1'/>
+            <ControlType>programmable thermostat</ControlType>
+          </HVACControl>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <AirDistribution>
+                <DuctLeakageMeasurement>
+                  <DuctType>supply</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>75.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <DuctLeakageMeasurement>
+                  <DuctType>return</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>25.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>unconditioned attic</DuctLocation>
+                  <FractionDuctArea>1.0</FractionDuctArea>
+                  <DuctSurfaceArea>150.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
+                  <DuctLocation>unconditioned attic</DuctLocation>
+                  <FractionDuctArea>1.0</FractionDuctArea>
+                  <DuctSurfaceArea>50.0</DuctSurfaceArea>
+                </Ducts>
+              </AirDistribution>
+            </DistributionSystemType>
+          </HVACDistribution>
+        </HVAC>
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='DHW_ID1'/>

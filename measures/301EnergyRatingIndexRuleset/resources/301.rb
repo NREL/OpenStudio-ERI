@@ -457,8 +457,7 @@ class EnergyRatingIndex301Ruleset
         new_roof.elements["RadiantBarrier"].text = false
         new_roof.elements["SolarAbsorptance"].text = 0.75
         new_roof.elements["Emittance"].text = 0.90
-        exterior_adjacent_to = "ambient"
-        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        if is_external_thermal_boundary(interior_adjacent_to, "ambient")
           new_roof_ins = new_roof.elements["Insulation"]
           XMLHelper.delete_element(new_roof_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_roof_ins, "Layer")
@@ -555,17 +554,7 @@ class EnergyRatingIndex301Ruleset
       end
       
       fnd_type = new_foundation.elements["FoundationType"]
-      if fnd_type.elements["Basement[Conditioned='true']"]
-        interior_adjacent_to = "conditioned basement"
-      elsif fnd_type.elements["Basement[Conditioned='false']"]
-        interior_adjacent_to = "unconditioned basement"
-      elsif fnd_type.elements["Crawlspace"]
-        interior_adjacent_to = "crawlspace"
-      elsif fnd_type.elements["SlabOnGrade"]
-        interior_adjacent_to = "living space"
-      elsif fnd_type.elements["Ambient"]  
-        interior_adjacent_to = "ambient"
-      end
+      interior_adjacent_to = get_foundation_interior_adjacent_to(fnd_type)
       
       # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
       new_foundation.elements.each("FrameFloor") do |new_floor|
@@ -581,7 +570,8 @@ class EnergyRatingIndex301Ruleset
       # Table 4.2.2(1) - Conditioned basement walls
       new_foundation.elements.each("FoundationWall") do |new_wall|
         exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
-        if fnd_type.elements["Basement[Conditioned='true']"] and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)?
+        if interior_adjacent_to == "conditioned basement" and is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
           new_wall_ins = new_wall.elements["Insulation"]
           XMLHelper.delete_element(new_wall_ins, "AssemblyEffectiveRValue")
           XMLHelper.delete_element(new_wall_ins, "Layer")
@@ -591,7 +581,8 @@ class EnergyRatingIndex301Ruleset
   
       # Table 4.2.2(1) - Foundations
       new_foundation.elements.each("Slab") do |new_slab|
-        if fnd_type.elements["SlabOnGrade"] and is_external_thermal_boundary(interior_adjacent_to, "ground")
+        # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, "ground")?
+        if interior_adjacent_to == "living space" and is_external_thermal_boundary(interior_adjacent_to, "ground")
           new_slab.elements["PerimeterInsulationDepth"].text = slab_depth
           new_slab.elements["UnderSlabInsulationWidth"].text = 0
           perim_ins = new_slab.elements["PerimeterInsulation"]
@@ -738,7 +729,6 @@ class EnergyRatingIndex301Ruleset
       interior_adjacent_to = XMLHelper.get_value(new_wall, "extension/InteriorAdjacentTo")
       exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
       if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-        new_wall.elements["Siding"].text = "vinyl siding"
         new_wall.elements["SolarAbsorptance"].text = 0.75
         new_wall.elements["Emittance"].text = 0.90
         insulation = new_wall.elements["Insulation"]
@@ -817,24 +807,29 @@ class EnergyRatingIndex301Ruleset
     
     total_window_area = 0.18 * @cfa * fa * f
     
-    wall = orig_details.elements["Enclosure/Walls/Wall"] # Arbitrary wall
+    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
     
     # Create new windows
     new_windows = XMLHelper.add_element(new_enclosure, "Windows")
     for orientation, azimuth in {"north"=>0,"south"=>180,"east"=>90,"west"=>270}
-      new_window = XMLHelper.add_element(new_windows, "Window")
-      sys_id = XMLHelper.add_element(new_window, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "Window_#{orientation}")
-      XMLHelper.add_element(new_window, "Area", 0.25 * total_window_area)
-      XMLHelper.add_element(new_window, "Azimuth", azimuth)
-      XMLHelper.add_element(new_window, "UFactor", ufactor)
-      XMLHelper.add_element(new_window, "SHGC", shgc)
-      XMLHelper.add_element(new_window, "ExteriorShading", "none")
-      attwall = XMLHelper.add_element(new_window, "AttachedToWall")
-      attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
-      set_window_interior_shading_reference(new_window)
-      extension = new_window.elements["extension"]
-      XMLHelper.add_element(extension, "Height", 5.0)
+      window_area = 0.25 * total_window_area # Equal distribution to N/S/E/W
+      # Distribute this orientation's window area proportionally across all exterior walls
+      wall_area_fracs.each do |wall, wall_area_frac|
+        wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+        new_window = XMLHelper.add_element(new_windows, "Window")
+        sys_id = XMLHelper.add_element(new_window, "SystemIdentifier")
+        XMLHelper.add_attribute(sys_id, "id", "Window_#{wall_id}_#{orientation}")
+        XMLHelper.add_element(new_window, "Area", window_area * wall_area_frac)
+        XMLHelper.add_element(new_window, "Azimuth", azimuth)
+        XMLHelper.add_element(new_window, "UFactor", ufactor)
+        XMLHelper.add_element(new_window, "SHGC", shgc)
+        XMLHelper.add_element(new_window, "ExteriorShading", "none")
+        attwall = XMLHelper.add_element(new_window, "AttachedToWall")
+        attwall.attributes["idref"] = wall_id
+        set_window_interior_shading_reference(new_window)
+        extension = new_window.elements["extension"]
+        XMLHelper.add_element(extension, "Height", 5.0)
+      end
     end
 
   end
@@ -929,20 +924,24 @@ class EnergyRatingIndex301Ruleset
     ufactor, shgc = get_reference_component_characteristics("door")
     door_area = 40.0
     
-    wall = orig_details.elements["Enclosure/Walls/Wall"] # Arbitrary wall
+    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
     
-    # Create new door
+    # Create new doors
     new_doors = XMLHelper.add_element(new_enclosure, "Doors")
-    new_door = XMLHelper.add_element(new_doors, "Door")
-    sys_id = XMLHelper.add_element(new_door, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Door")
-    attwall = XMLHelper.add_element(new_door, "AttachedToWall")
-    attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
-    XMLHelper.add_element(new_door, "Area", door_area)
-    XMLHelper.add_element(new_door, "Azimuth", 0)
-    XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
-    extension = XMLHelper.add_element(new_door, "extension")
-    XMLHelper.add_element(extension, "Height", 6.67)
+    # Distribute door area proportionally across all exterior walls
+    wall_area_fracs.each do |wall, wall_area_frac|
+      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+      new_door = XMLHelper.add_element(new_doors, "Door")
+      sys_id = XMLHelper.add_element(new_door, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Door_#{wall_id}")
+      attwall = XMLHelper.add_element(new_door, "AttachedToWall")
+      attwall.attributes["idref"] = wall_id
+      XMLHelper.add_element(new_door, "Area", door_area * wall_area_frac)
+      XMLHelper.add_element(new_door, "Azimuth", 0)
+      XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
+      extension = XMLHelper.add_element(new_door, "extension")
+      XMLHelper.add_element(extension, "Height", 6.67)
+    end
     
   end
   
@@ -2749,39 +2748,6 @@ class EnergyRatingIndex301Ruleset
     return bsmnt
   end
   
-  def self.is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-    interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
-    exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
-    return (interior_conditioned != exterior_conditioned)
-  end
-  
-  def self.is_adjacent_to_conditioned(adjacent_to)
-    if adjacent_to == "living space"
-      return true
-    elsif adjacent_to == "garage"
-      return false
-    elsif adjacent_to == "vented attic"
-      return false
-    elsif adjacent_to == "unvented attic"
-      return false
-    elsif adjacent_to == "cape cod"
-      return true
-    elsif adjacent_to == "cathedral ceiling"
-      return true
-    elsif adjacent_to == "unconditioned basement"
-      return false
-    elsif adjacent_to == "conditioned basement"
-      return true
-    elsif adjacent_to == "crawlspace"
-      return false
-    elsif adjacent_to == "ambient"
-      return false
-    elsif adjacent_to == "ground"
-      return false
-    end
-    fail "Unexpected adjacent_to (#{adjacent_to})."
-  end
-  
   def self.calc_mech_vent_q_fan(q_tot, sla)
     # TODO: Merge with Airflow measure and move this code to airflow.rb
     nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
@@ -2818,3 +2784,71 @@ class EnergyRatingIndex301Ruleset
 
 end
   
+def is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+  interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
+  exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
+  return (interior_conditioned != exterior_conditioned)
+end
+
+def is_adjacent_to_conditioned(adjacent_to)
+  if adjacent_to == "living space"
+    return true
+  elsif adjacent_to == "garage"
+    return false
+  elsif adjacent_to == "vented attic"
+    return false
+  elsif adjacent_to == "unvented attic"
+    return false
+  elsif adjacent_to == "cape cod"
+    return true
+  elsif adjacent_to == "cathedral ceiling"
+    return true
+  elsif adjacent_to == "unconditioned basement"
+    return false
+  elsif adjacent_to == "conditioned basement"
+    return true
+  elsif adjacent_to == "crawlspace"
+    return false
+  elsif adjacent_to == "ambient"
+    return false
+  elsif adjacent_to == "ground"
+    return false
+  end
+  fail "Unexpected adjacent_to (#{adjacent_to})."
+end
+
+def get_foundation_interior_adjacent_to(fnd_type)
+  if fnd_type.elements["Basement[Conditioned='true']"]
+    interior_adjacent_to = "conditioned basement"
+  elsif fnd_type.elements["Basement[Conditioned='false']"]
+    interior_adjacent_to = "unconditioned basement"
+  elsif fnd_type.elements["Crawlspace"]
+    interior_adjacent_to = "crawlspace"
+  elsif fnd_type.elements["SlabOnGrade"]
+    interior_adjacent_to = "living space"
+  elsif fnd_type.elements["Ambient"]  
+    interior_adjacent_to = "ambient"
+  end
+  return interior_adjacent_to
+end
+
+def get_exterior_wall_area_fracs(orig_details)
+  # Get individual exterior wall areas and sum
+  wall_areas = {}
+  wall_area_sum = 0.0
+  orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
+    next if XMLHelper.get_value(wall, "extension/ExteriorAdjacentTo") != "ambient"
+    next if XMLHelper.get_value(wall, "extension/InteriorAdjacentTo") != "living space"
+    wall_area = Float(XMLHelper.get_value(wall, "Area"))
+    wall_areas[wall] = wall_area
+    wall_area_sum += wall_area
+  end
+  
+  # Convert to fractions
+  wall_area_fracs = {}
+  wall_areas.each do |wall, wall_area|
+    wall_area_fracs[wall] = wall_areas[wall] / wall_area_sum
+  end
+  
+  return wall_area_fracs
+end

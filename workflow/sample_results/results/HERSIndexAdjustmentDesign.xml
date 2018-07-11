@@ -126,7 +126,6 @@
                     <WoodStud/>
                   </WallType>
                   <Area>32</Area>
-                  <Siding>vinyl siding</Siding>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -215,7 +214,6 @@
               <WoodStud/>
             </WallType>
             <Area>2360.0</Area>
-            <Siding>stucco</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -230,7 +228,7 @@
         </Walls>
         <Windows>
           <Window>
-            <SystemIdentifier id='Window_north'/>
+            <SystemIdentifier id='Window_agwall-1_north'/>
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.35</UFactor>
@@ -244,7 +242,7 @@
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_south'/>
+            <SystemIdentifier id='Window_agwall-1_south'/>
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
@@ -258,7 +256,7 @@
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_east'/>
+            <SystemIdentifier id='Window_agwall-1_east'/>
             <Area>108.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.35</UFactor>
@@ -272,7 +270,7 @@
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_west'/>
+            <SystemIdentifier id='Window_agwall-1_west'/>
             <Area>108.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.35</UFactor>
