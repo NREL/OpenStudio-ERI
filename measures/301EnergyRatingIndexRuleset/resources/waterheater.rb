@@ -9,8 +9,8 @@ require "#{File.dirname(__FILE__)}/psychrometrics"
 
 class Waterheater
 
-    def self.apply_tank(model, unit, runner, space, fuel_type, 
-                        cap, vol, ef, re, t_set, oncycle_p, offcycle_p)
+    def self.apply_tank(model, unit, runner, space, fuel_type, cap, vol, ef, 
+                        re, t_set, oncycle_p, offcycle_p, ec_adj)
     
         # Validate inputs
         if vol <= 0
@@ -77,7 +77,7 @@ class Waterheater
             new_manager.addToNode(loop.supplyOutletNode)
         end
     
-        new_heater = create_new_heater(Constants.ObjectNameWaterHeater(unit.name.to_s), cap, fuel_type, vol, ef, re, t_set, space.thermalZone.get, oncycle_p, offcycle_p, Constants.WaterHeaterTypeTank, 0, nbeds, File.dirname(__FILE__), model, runner)
+        new_heater = create_new_heater(Constants.ObjectNameWaterHeater(unit.name.to_s), cap, fuel_type, vol, ef, re, t_set, space.thermalZone.get, oncycle_p, offcycle_p, ec_adj, Constants.WaterHeaterTypeTank, 0, nbeds, File.dirname(__FILE__), model, runner)
 
         storage_tank = get_shw_storage_tank(model, unit)
 
@@ -93,8 +93,8 @@ class Waterheater
         
     end
     
-    def self.apply_tankless(model, unit, runner, space, fuel_type,
-                            cap, ef, cd, t_set, oncycle_p, offcycle_p)
+    def self.apply_tankless(model, unit, runner, space, fuel_type, cap, ef, 
+                            cd, t_set, oncycle_p, offcycle_p, ec_adj)
 
         # Validate inputs
         if ef >= 1 or ef <= 0
@@ -156,7 +156,7 @@ class Waterheater
             new_manager.addToNode(loop.supplyOutletNode)
         end
     
-        new_heater = Waterheater.create_new_heater(Constants.ObjectNameWaterHeater(unit.name.to_s), cap, fuel_type, 1, ef, 0, t_set, space.thermalZone.get, oncycle_p, offcycle_p, Constants.WaterHeaterTypeTankless, cd, nbeds, File.dirname(__FILE__), model, runner)
+        new_heater = Waterheater.create_new_heater(Constants.ObjectNameWaterHeater(unit.name.to_s), cap, fuel_type, 1, ef, 0, t_set, space.thermalZone.get, oncycle_p, offcycle_p, ec_adj, Constants.WaterHeaterTypeTankless, cd, nbeds, File.dirname(__FILE__), model, runner)
     
         storage_tank = Waterheater.get_shw_storage_tank(model, unit)
     
@@ -633,11 +633,7 @@ class Waterheater
             hpwh_ducting_program.addLine("Set HPWHOn_#{unit_index} = HPWHOn_#{unit_index} + #{timestep_minutes}")
             hpwh_ducting_program.addLine("ElseIf (HPWH_last_#{unit_index} <> 0) && (HPWH_now_#{unit_index}<>0)") #HPWH has been running for more than 1 timestep
             hpwh_ducting_program.addLine("Set exp = -(HPWHOn_#{unit_index} / 9.4) * num")
-            hpwh_ducting_program.addLine("If exp <= -20")
-            hpwh_ducting_program.addLine("Set exponent = 0")
-            hpwh_ducting_program.addLine("Else")
             hpwh_ducting_program.addLine("Set exponent = (@Exp exp)")
-            hpwh_ducting_program.addLine("EndIf")
             hpwh_ducting_program.addLine("Set T_dep = (#{temp_depress_c} * exponent) - #{temp_depress_c}")
             hpwh_ducting_program.addLine("Set HPWHOn_#{unit_index} = HPWHOn_#{unit_index} + #{timestep_minutes}")
             hpwh_ducting_program.addLine("Else")
@@ -649,11 +645,7 @@ class Waterheater
             hpwh_ducting_program.addLine("Set HPWHOn_#{unit_index} = 0")
             hpwh_ducting_program.addLine("EndIf")
             hpwh_ducting_program.addLine("Set exp = -(HPWHOn_#{unit_index} / 9.4) * num")
-            hpwh_ducting_program.addLine("If exp <= -20")
-            hpwh_ducting_program.addLine("Set exponent = 0")
-            hpwh_ducting_program.addLine("Else")
             hpwh_ducting_program.addLine("Set exponent = (@Exp exp)")
-            hpwh_ducting_program.addLine("EndIf")
             hpwh_ducting_program.addLine("Set T_dep = (#{temp_depress_c} * exponent) - #{temp_depress_c}")
             hpwh_ducting_program.addLine("EndIf")
             hpwh_ducting_program.addLine("Set T_hpwh_inlet_#{unit_index} = #{amb_temp_sensor.name} + T_dep")
@@ -980,12 +972,14 @@ class Waterheater
                               Constants.SpaceTypeFinishedBasement]
 
         # Clothes washer
-        cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
-        cw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
-        cw_peak_flow_gpm = cw_gpd/sum_fractions_hw/timestep_minutes*365.0
-        cw_design_level_w = UnitConversions.convert(cw_annual_kwh*60.0/(cw_gpd*365.0/cw_peak_flow_gpm), "kW", "W")
-        add_electric_equipment(model, cw_name, cw_space, cw_design_level_w, cw_frac_sens, cw_frac_lat, schedule_hw)
-        add_water_use_equipment(model, cw_name, cw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
+        if cw_gpd > 0
+          cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
+          cw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
+          cw_peak_flow_gpm = cw_gpd/sum_fractions_hw/timestep_minutes*365.0
+          cw_design_level_w = UnitConversions.convert(cw_annual_kwh*60.0/(cw_gpd*365.0/cw_peak_flow_gpm), "kW", "W")
+          add_electric_equipment(model, cw_name, cw_space, cw_design_level_w, cw_frac_sens, cw_frac_lat, schedule_hw)
+          add_water_use_equipment(model, cw_name, cw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
+        end
         
         # Clothes dryer
         cd_name_e = Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric, unit.name.to_s)
@@ -1000,12 +994,14 @@ class Waterheater
         add_other_equipment(model, cd_name_f, cd_space, cd_design_level_f, cd_frac_sens, cd_frac_lat, cd_schedule.schedule, cd_fuel_type)
         
         # Dishwasher
-        dw_name = Constants.ObjectNameDishwasher(unit.name.to_s)
-        dw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
-        dw_peak_flow_gpm = dw_gpd/sum_fractions_hw/timestep_minutes*365.0
-        dw_design_level_w = UnitConversions.convert(dw_annual_kwh*60.0/(dw_gpd*365.0/dw_peak_flow_gpm), "kW", "W")
-        add_electric_equipment(model, dw_name, dw_space, dw_design_level_w, dw_frac_sens, dw_frac_lat, schedule_hw)
-        add_water_use_equipment(model, dw_name, dw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
+        if dw_gpd > 0
+          dw_name = Constants.ObjectNameDishwasher(unit.name.to_s)
+          dw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
+          dw_peak_flow_gpm = dw_gpd/sum_fractions_hw/timestep_minutes*365.0
+          dw_design_level_w = UnitConversions.convert(dw_annual_kwh*60.0/(dw_gpd*365.0/dw_peak_flow_gpm), "kW", "W")
+          add_electric_equipment(model, dw_name, dw_space, dw_design_level_w, dw_frac_sens, dw_frac_lat, schedule_hw)
+          add_water_use_equipment(model, dw_name, dw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
+        end
         
         # Refrigerator
         fridge_name = Constants.ObjectNameRefrigerator(unit.name.to_s)
@@ -1319,7 +1315,7 @@ class Waterheater
         OpenStudio::Model::SetpointManagerScheduled.new(model, new_schedule)
     end 
     
-    def self.create_new_heater(name, cap, fuel, vol, ef, re, t_set, thermal_zone, oncycle_p, offcycle_p, wh_type, cyc_derate, nbeds, measure_dir, model, runner)
+    def self.create_new_heater(name, cap, fuel, vol, ef, re, t_set, thermal_zone, oncycle_p, offcycle_p, ec_adj, wh_type, cyc_derate, nbeds, measure_dir, model, runner)
     
         new_heater = OpenStudio::Model::WaterHeaterMixed.new(model)
         new_heater.setName(name)
@@ -1337,7 +1333,7 @@ class Waterheater
         new_heater.setHeaterMinimumCapacity(0.0)
         new_heater.setHeaterMaximumCapacity(UnitConversions.convert(cap,"kBtu/hr","W"))
         new_heater.setHeaterFuelType(HelperMethods.eplus_fuel_map(fuel))
-        new_heater.setHeaterThermalEfficiency(eta_c)
+        new_heater.setHeaterThermalEfficiency(eta_c / ec_adj)
         new_heater.setTankVolume(UnitConversions.convert(act_vol, "gal", "m^3"))
         
         #Set parasitic power consumption

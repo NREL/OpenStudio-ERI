@@ -6,7 +6,13 @@
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
-  <SoftwareInfo/>
+  <SoftwareInfo>
+    <extension>
+      <ERICalculation>
+        <Version>2014A</Version>
+      </ERICalculation>
+    </extension>
+  </SoftwareInfo>
   <Building>
     <BuildingID id='MyBuilding'/>
     <ProjectStatus>
@@ -34,6 +40,10 @@
           <Year>2006</Year>
           <ClimateZone>3A</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2012</Year>
+          <ClimateZone>3A</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifiersInfo id='Weather_Station'/>
           <Name>Dallas, TX</Name>
@@ -49,9 +59,6 @@
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <extension>
-            <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -92,7 +99,6 @@
                     <WoodStud></WoodStud>
                   </WallType>
                   <Area>121.5</Area>
-                  <Siding>fiber cement siding</Siding>
                   <SolarAbsorptance>0.6</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -104,6 +110,9 @@
                   </extension>
                 </Wall>
               </Walls>
+              <extension>
+                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+              </extension>
             </Attic>
           </Attics>
         </AtticAndRoof>
@@ -117,24 +126,10 @@
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Floor_ID1'/>
-              <FloorJoists>
-                <FramingFactor>0.1</FramingFactor>
-                <Material>wood</Material>
-              </FloorJoists>
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>3.5</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
+                <AssemblyEffectiveRValue>3.1</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -146,23 +141,9 @@
               <Area>672</Area>
               <Thickness>8</Thickness>
               <BelowGradeDepth>3</BelowGradeDepth>
-              <InteriorStuds>
-                <FramingFactor>0.22</FramingFactor>
-                <Material>wood</Material>
-              </InteriorStuds>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
-                <InsulationGrade>1</InsulationGrade>
-                <Layer>
-                  <InstallationType>cavity</InstallationType>
-                  <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
-                </Layer>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>7</NominalRValue>
-                  <Thickness>1.0</Thickness>
-                </Layer>
+                <AssemblyEffectiveRValue>8.165</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
@@ -206,26 +187,11 @@
               <WoodStud/>
             </WallType>
             <Area>1344</Area>
-            <Studs>
-              <FramingFactor>0.25</FramingFactor>
-              <Material>wood</Material>
-            </Studs>
-            <Siding>wood siding</Siding>
-            <SolarAbsorptance>0.3</SolarAbsorptance>
+            <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
-              <InsulationGrade>1</InsulationGrade>
-              <Layer>
-                <InstallationType>cavity</InstallationType>
-                <NominalRValue>11</NominalRValue>
-                <Thickness>3.5</Thickness>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous</InstallationType>
-                <NominalRValue>0</NominalRValue>
-                <Thickness>0</Thickness>
-              </Layer>
+              <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
@@ -301,9 +267,6 @@
                 <Units>HSPF</Units>
                 <Value>7.5</Value>
               </AnnualHeatEfficiency>
-              <extension>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
-              </extension>
             </HeatPump>
           </HVACPlant>
           <HVACControl>

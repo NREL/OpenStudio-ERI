@@ -6,7 +6,13 @@
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
-  <SoftwareInfo/>
+  <SoftwareInfo>
+    <extension>
+      <ERICalculation>
+        <Version>2014AEG</Version>
+      </ERICalculation>
+    </extension>
+  </SoftwareInfo>
   <Building>
     <BuildingID id='MyBuilding'/>
     <ProjectStatus>
@@ -144,7 +150,6 @@
                     <FramingFactor>0.1988</FramingFactor>
                     <Material>wood</Material>
                   </Studs>
-                  <Siding>vinyl siding</Siding>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
                   <Emittance>0.9</Emittance>
                   <Insulation>
@@ -208,7 +213,6 @@
               <FramingFactor>0.1988</FramingFactor>
               <Material>wood</Material>
             </Studs>
-            <Siding>vinyl siding</Siding>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -321,7 +325,6 @@
               </AnnualCoolingEfficiency>
               <extension>
                 <PerformanceAdjustmentSEER>1.0626992561105209</PerformanceAdjustmentSEER>
-                <NumberSpeeds>1-Speed</NumberSpeeds>
               </extension>
             </CoolingSystem>
           </HVACPlant>
