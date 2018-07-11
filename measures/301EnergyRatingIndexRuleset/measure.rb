@@ -970,6 +970,9 @@ class OSModel
         wall_height = Float(fnd_wall.elements["Height"].text) # FIXME: Need to handle above-grade portion
         wall_gross_area = Float(fnd_wall.elements["Area"].text)
         wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, fnd_id)
+        if wall_net_area <= 0
+          fail "Calculated a negative net surface area for Wall '#{wall_id}'."
+        end
         wall_length = wall_net_area / wall_height
         
         z_origin = -1 * Float(fnd_wall.elements["BelowGradeDepth"].text)
@@ -1201,6 +1204,9 @@ class OSModel
       
       wall_gross_area = Float(wall.elements["Area"].text)
       wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, wall_id)
+      if wall_net_area <= 0
+        fail "Calculated a negative net surface area for Wall '#{wall_id}'."
+      end
       wall_height = avg_ceil_hgt
       wall_length = wall_net_area / wall_height
       z_origin = 0
@@ -1447,6 +1453,9 @@ class OSModel
         
         wall_gross_area = Float(wall.elements["Area"].text)
         wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, wall_id)
+        if wall_net_area <= 0
+          fail "Calculated a negative net surface area for Wall '#{wall_id}'."
+        end
         wall_height = avg_ceil_hgt
         wall_length = wall_net_area / wall_height
         z_origin = 0
