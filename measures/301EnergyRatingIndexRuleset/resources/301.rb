@@ -807,24 +807,29 @@ class EnergyRatingIndex301Ruleset
     
     total_window_area = 0.18 * @cfa * fa * f
     
-    wall = orig_details.elements["Enclosure/Walls/Wall"] # Arbitrary wall
+    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
     
     # Create new windows
     new_windows = XMLHelper.add_element(new_enclosure, "Windows")
     for orientation, azimuth in {"north"=>0,"south"=>180,"east"=>90,"west"=>270}
-      new_window = XMLHelper.add_element(new_windows, "Window")
-      sys_id = XMLHelper.add_element(new_window, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "Window_#{orientation}")
-      XMLHelper.add_element(new_window, "Area", 0.25 * total_window_area)
-      XMLHelper.add_element(new_window, "Azimuth", azimuth)
-      XMLHelper.add_element(new_window, "UFactor", ufactor)
-      XMLHelper.add_element(new_window, "SHGC", shgc)
-      XMLHelper.add_element(new_window, "ExteriorShading", "none")
-      attwall = XMLHelper.add_element(new_window, "AttachedToWall")
-      attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
-      set_window_interior_shading_reference(new_window)
-      extension = new_window.elements["extension"]
-      XMLHelper.add_element(extension, "Height", 5.0)
+      window_area = 0.25 * total_window_area # Equal distribution to N/S/E/W
+      # Distribute this orientation's window area proportionally across all exterior walls
+      wall_area_fracs.each do |wall, wall_area_frac|
+        wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+        new_window = XMLHelper.add_element(new_windows, "Window")
+        sys_id = XMLHelper.add_element(new_window, "SystemIdentifier")
+        XMLHelper.add_attribute(sys_id, "id", "Window_#{wall_id}_#{orientation}")
+        XMLHelper.add_element(new_window, "Area", window_area * wall_area_frac)
+        XMLHelper.add_element(new_window, "Azimuth", azimuth)
+        XMLHelper.add_element(new_window, "UFactor", ufactor)
+        XMLHelper.add_element(new_window, "SHGC", shgc)
+        XMLHelper.add_element(new_window, "ExteriorShading", "none")
+        attwall = XMLHelper.add_element(new_window, "AttachedToWall")
+        attwall.attributes["idref"] = wall_id
+        set_window_interior_shading_reference(new_window)
+        extension = new_window.elements["extension"]
+        XMLHelper.add_element(extension, "Height", 5.0)
+      end
     end
 
   end
@@ -919,20 +924,24 @@ class EnergyRatingIndex301Ruleset
     ufactor, shgc = get_reference_component_characteristics("door")
     door_area = 40.0
     
-    wall = orig_details.elements["Enclosure/Walls/Wall"] # Arbitrary wall
+    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
     
-    # Create new door
+    # Create new doors
     new_doors = XMLHelper.add_element(new_enclosure, "Doors")
-    new_door = XMLHelper.add_element(new_doors, "Door")
-    sys_id = XMLHelper.add_element(new_door, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Door")
-    attwall = XMLHelper.add_element(new_door, "AttachedToWall")
-    attwall.attributes["idref"] = wall.elements["SystemIdentifier"].attributes["id"]
-    XMLHelper.add_element(new_door, "Area", door_area)
-    XMLHelper.add_element(new_door, "Azimuth", 0)
-    XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
-    extension = XMLHelper.add_element(new_door, "extension")
-    XMLHelper.add_element(extension, "Height", 6.67)
+    # Distribute door area proportionally across all exterior walls
+    wall_area_fracs.each do |wall, wall_area_frac|
+      wall_id = wall.elements["SystemIdentifier"].attributes["id"]
+      new_door = XMLHelper.add_element(new_doors, "Door")
+      sys_id = XMLHelper.add_element(new_door, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Door_#{wall_id}")
+      attwall = XMLHelper.add_element(new_door, "AttachedToWall")
+      attwall.attributes["idref"] = wall_id
+      XMLHelper.add_element(new_door, "Area", door_area * wall_area_frac)
+      XMLHelper.add_element(new_door, "Azimuth", 0)
+      XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
+      extension = XMLHelper.add_element(new_door, "extension")
+      XMLHelper.add_element(extension, "Height", 6.67)
+    end
     
   end
   
@@ -2827,4 +2836,25 @@ def get_foundation_interior_adjacent_to(fnd_type)
     interior_adjacent_to = "ambient"
   end
   return interior_adjacent_to
+end
+
+def get_exterior_wall_area_fracs(orig_details)
+  # Get individual exterior wall areas and sum
+  wall_areas = {}
+  wall_area_sum = 0.0
+  orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
+    next if XMLHelper.get_value(wall, "extension/ExteriorAdjacentTo") != "ambient"
+    next if XMLHelper.get_value(wall, "extension/InteriorAdjacentTo") != "living space"
+    wall_area = Float(XMLHelper.get_value(wall, "Area"))
+    wall_areas[wall] = wall_area
+    wall_area_sum += wall_area
+  end
+  
+  # Convert to fractions
+  wall_area_fracs = {}
+  wall_areas.each do |wall, wall_area|
+    wall_area_fracs[wall] = wall_areas[wall] / wall_area_sum
+  end
+  
+  return wall_area_fracs
 end

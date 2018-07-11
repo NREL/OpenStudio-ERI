@@ -648,6 +648,9 @@ class HPXMLtoOSMTranslator
         wall_height = Float(XMLHelper.get_value(fnd_wall, "Height")) # FIXME: Need to handle above-grade portion
         wall_gross_area = Float(XMLHelper.get_value(fnd_wall, "Area"))
         wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, fnd_id)
+        if wall_net_area <= 0
+          fail "Calculated a negative net surface area for Wall '#{wall_id}'."
+        end        
         wall_length = wall_net_area / wall_height
         
         z_origin = -1 * Float(XMLHelper.get_value(fnd_wall, "DepthBelowGrade"))
@@ -892,6 +895,9 @@ class HPXMLtoOSMTranslator
       
       wall_gross_area = Float(XMLHelper.get_value(wall, "Area"))
       wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, wall_id)
+      if wall_net_area <= 0
+        fail "Calculated a negative net surface area for Wall '#{wall_id}'."
+      end
       wall_height = avg_ceil_hgt
       wall_length = wall_net_area / wall_height
       z_origin = 0
@@ -1225,6 +1231,9 @@ class HPXMLtoOSMTranslator
         
         wall_gross_area = Float(XMLHelper.get_value(wall, "Area"))
         wall_net_area = net_wall_area(wall_gross_area, fenestration_areas, wall_id)
+        if wall_net_area <= 0
+          fail "Calculated a negative net surface area for Wall '#{wall_id}'."
+        end
         wall_height = avg_ceil_hgt
         wall_length = wall_net_area / wall_height
         z_origin = 0
