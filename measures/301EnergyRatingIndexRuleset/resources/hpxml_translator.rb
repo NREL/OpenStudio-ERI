@@ -1375,10 +1375,6 @@ class HPXMLtoOSMTranslator
       if window.elements["Overhangs"]
         overhang_depth = Float(XMLHelper.get_value(window, "Overhangs/Depth"))
         overhang_offset = Float(XMLHelper.get_value(window, "Overhangs/DistanceToTopOfWindow"))
-        if overhang_depth > 0
-          puts "add overhang!"
-          puts sub_surface.addOverhang(UnitConversions.convert(overhang_depth,"ft","m"), UnitConversions.convert(overhang_offset,"ft","m")).is_initialized
-        end
       end
       
       # Apply construction
@@ -2386,7 +2382,7 @@ class HPXMLtoOSMTranslator
       window_area = Float(XMLHelper.get_value(window, "Area"))
       window_openable = XMLHelper.get_value(window, "Operable")
       if window_openable.nil? or Boolean(window_openable)
-        sum_window_area_openable += window_area * 0.2
+        sum_window_area_openable += window_area * 0.2 # Building America Benchmark
       end
       sum_window_area += window_area
     end
@@ -2398,7 +2394,7 @@ class HPXMLtoOSMTranslator
     nat_vent_ovlp_season = true
     nat_vent_num_weekdays = 5
     nat_vent_num_weekends = 2
-    nat_vent_frac_windows_open = 0.33
+    nat_vent_frac_windows_open = 0.33 # Building America Benchmark
     if sum_window_area > 0
       nat_vent_frac_window_area_openable = sum_window_area_openable / sum_window_area
     else

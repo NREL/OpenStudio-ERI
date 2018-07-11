@@ -272,9 +272,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     end
     
     # TODO: Make variables specific to the equipment
-    add_output_variables(model, BuildingLoadVars.get_space_heating_load_vars, htg_objs)
-    add_output_variables(model, BuildingLoadVars.get_space_cooling_load_vars, clg_objs)
-    add_output_variables(model, BuildingLoadVars.get_water_heating_load_vars)
+    add_output_variables(model, Constants.LoadVarsSpaceHeating, htg_objs)
+    add_output_variables(model, Constants.LoadVarsSpaceCooling, clg_objs)
+    add_output_variables(model, Constants.LoadVarsWaterHeating)
     
     return true
     
