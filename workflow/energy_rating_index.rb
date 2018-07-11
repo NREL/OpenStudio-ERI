@@ -219,17 +219,17 @@ def read_output(design, sql_path, output_hpxml_path)
   design_output[:elecAppliances] -= design_output[:elecRecircPump]
   
   # Other - Space Heating Load
-  vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsSpaceHeating.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeating] = get_sql_query_result(sqlFile, query)
   
   # Other - Space Cooling Load
-  vars = "'" + BuildingLoadVars.get_space_cooling_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsSpaceCooling.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCooling] = get_sql_query_result(sqlFile, query)
   
   # Other - Water Heating Load
-  vars = "'" + BuildingLoadVars.get_water_heating_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsWaterHeating.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHotWater] = get_sql_query_result(sqlFile, query)
   
