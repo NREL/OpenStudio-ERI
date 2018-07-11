@@ -111,7 +111,7 @@
                 </Wall>
               </Walls>
               <extension>
-                <AtticConstantACHnatural>2.4</AtticConstantACHnatural>
+                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
               </extension>
             </Attic>
           </Attics>
