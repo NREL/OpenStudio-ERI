@@ -1526,25 +1526,6 @@ class FoundationConstructions
         return true
     end
     
-    def self.get_walls_connected_to_floor(wall_surfaces, floor_surface)
-        adjacent_wall_surfaces = []
-        
-        # Note: Algorithm assumes that walls span an entire edge of the floor.
-        tol = 0.001
-        wall_surfaces.each do |wall_surface|
-            next if wall_surface.space.get != floor_surface.space.get
-            wall_surface.vertices.each do |v1|
-                floor_surface.vertices.each do |v2|
-                    if (v1.x - v2.x).abs < tol and (v1.y - v2.y).abs < tol
-                        adjacent_wall_surfaces << wall_surface
-                    end
-                end
-            end
-        end
-        
-        return adjacent_wall_surfaces.uniq!
-    end
-    
     private
     
     def self.calc_interior_wall_r_value(runner, cavity_depth_in, cavity_r, filled_cavity,
