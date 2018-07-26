@@ -44,9 +44,18 @@ class Location
         OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
         runner.registerInfo("Setting weather file.")
 
-        weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
-        if weather.error?
-          return false
+        # Obtain weather object
+        # Load from cache file if exists, as this is faster and doesn't require
+        # parsing the weather file.
+        cache_file = weather_file_path.gsub('.epw','.cache')
+        if File.exists? cache_file
+          weather = Marshal.load(File.binread(cache_file))
+          weather.cache_weather(weather.get_weather_building_unit(model))
+        else
+          weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
+          if weather.error?
+            return false
+          end
         end
 
         return true, weather, epw_file
@@ -68,6 +77,7 @@ class Location
     def self.apply_climate_zones(model, runner, epw_file)
       
         ba_zone = get_climate_zone_ba(epw_file.wmoNumber)
+        return true if ba_zone.nil?
         climateZones = model.getClimateZones
         climateZones.setClimateZone(Constants.BuildingAmericaClimateZone, ba_zone)
         runner.registerInfo("Setting #{Constants.BuildingAmericaClimateZone} climate zone to #{ba_zone}.")
@@ -90,7 +100,8 @@ class Location
         swmt.setCalculationMethod "Correlation"
         swmt.setAnnualAverageOutdoorAirTemperature avgOAT
         swmt.setMaximumDifferenceInMonthlyAverageOutdoorAirTemperatures maxDiffOAT
-        runner.registerInfo("Setting mains water temperature profile with an average temperature of #{weather.data.MainsAvgTemp.round(1)} F.")
+        
+        runner.registerInfo("Setting mains water temperature profile.")
         
         return true
     end
@@ -143,7 +154,7 @@ class Location
     end
    
     def self.get_climate_zone_ba(wmo)
-        ba_zone = "NA"
+        ba_zone = nil
 
         zones_csv = File.join(File.dirname(__FILE__), "climate_zones.csv")
         if not File.exists?(zones_csv)

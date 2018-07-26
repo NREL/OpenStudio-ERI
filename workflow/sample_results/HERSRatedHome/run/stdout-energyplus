@@ -1,5 +1,5 @@
 EnergyPlus Starting
-EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.29 14:48
+EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.07.11 11:18
 Adjusting Air System Sizing
 Adjusting Standard 62.1 Ventilation Sizing
 Initializing Simulation
@@ -50,4 +50,6 @@ Continuing Simulation at 12/07 for RUN PERIOD 1
 Updating Shadowing Calculations, Start Date=12/27
 Continuing Simulation at 12/27 for RUN PERIOD 1
 Writing tabular output file results using HTML format.
-EnergyPlus Completed Successfully.
+Computing Life Cycle Costs and Reporting
+Writing final SQL reports
+EnergyPlus Run Time=00hr 00min  7.16sec

@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.29 14:48
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.07.11 11:18
 1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
 2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
 3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Report Variables Requested
@@ -12,9 +12,9 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.05.29 14:48
 End of Data Dictionary
 1,RUN PERIOD 1,  39.83,-104.65,  -7.00,1650.00
 5,365
-443,72046570526.95465,0.0, 1, 5,13,60,64857007.309122357, 2, 9, 6,60
-532,29860974138.98761,0.0, 1, 1, 1,60,51693481.595314349, 8, 5,20,60
-533,572283280.3750936,0.0, 1, 1, 1,60,4691670.901372362, 8, 6,21,60
-801,9567655822.17537,174808.9824681705, 8, 9, 1,60,2373346.7335232046, 2,11, 8,60
+443,76824894285.6494,0.0, 1, 5,13,60,67523574.56761584, 2, 9, 6,60
+532,32257715314.50692,0.0, 1, 1, 1,60,52281452.63778298, 8, 3,20,60
+533,477134299.803267,0.0, 1, 1, 1,60,4310885.8927342449, 6,20,17,60
+801,9567649961.664319,174851.2898692722, 8, 9, 1,60,2373116.42004781, 2,11, 8,60
 End of Data
  Number of Records Written=           4

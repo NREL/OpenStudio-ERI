@@ -916,8 +916,12 @@ class Waterheater
         tHot = 125.0 # F, Water heater set point temperature
         tMix = 105.0 # F, Temperature of mixed water at fixtures
         
+        # Get daily mains temperatures
+        avgOAT = weather.data.AnnualAvgDrybulb
+        maxDiffMonthlyAvgOAT = weather.data.MonthlyAvgDrybulbs.max - weather.data.MonthlyAvgDrybulbs.min
+        tmains_daily = WeatherProcess.calc_mains_temperatures(avgOAT, maxDiffMonthlyAvgOAT, weather.header.Latitude)[2]
+        
         # Calculate adjFmix
-        tmains_daily = weather.data.MainsDailyTemps
         dwhr_inT = 97.0 # F
         adjFmix = [0.0] * 365
         dwhr_WHinT_C = []
@@ -1068,8 +1072,12 @@ class Waterheater
                     Constants.SpaceTypeLaundryRoom, 
                     Constants.SpaceTypeCrawl, 
                     Constants.SpaceTypeUnfinishedAttic]
+        elsif ba_cz_name.nil?
+            return [Constants.SpaceTypeFinishedBasement,
+                    Constants.SpaceTypeUnfinishedBasement,
+                    Constants.SpaceTypeGarage,
+                    Constants.SpaceTypeLiving]
         end
-        return nil
     end
     
     def self.calc_capacity(cap, fuel, num_beds, num_baths)
