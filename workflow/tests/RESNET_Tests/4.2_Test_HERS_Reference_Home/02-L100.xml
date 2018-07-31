@@ -140,7 +140,7 @@
               <Height>4</Height>
               <Area>672</Area>
               <Thickness>8</Thickness>
-              <BelowGradeDepth>3</BelowGradeDepth>
+              <DepthBelowGrade>3</DepthBelowGrade>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <AssemblyEffectiveRValue>8.165</AssemblyEffectiveRValue>
@@ -259,14 +259,14 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
-              <AnnualCoolEfficiency>
+              <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>12</Value>
-              </AnnualCoolEfficiency>
-              <AnnualHeatEfficiency>
+              </AnnualCoolingEfficiency>
+              <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>7.5</Value>
-              </AnnualHeatEfficiency>
+              </AnnualHeatingEfficiency>
             </HeatPump>
           </HVACPlant>
           <HVACControl>

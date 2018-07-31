@@ -194,7 +194,7 @@ class EnergyRatingIndex301Validator
                 'Height' => one,
                 'Area' => one,
                 'Thickness' => one,
-                'BelowGradeDepth' => one,
+                'DepthBelowGrade' => one,
                 'Insulation/SystemIdentifier' => one, # Required by HPXML schema
                 'Insulation/AssemblyEffectiveRValue' => one,
                 'extension[ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="conditioned basement" or ExteriorAdjacentTo="crawlspace"]' => one,
@@ -359,22 +359,22 @@ class EnergyRatingIndex301Validator
             ## [HeatPumpType=ASHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
-                'AnnualCoolEfficiency[Units="SEER"]/Value' => one,
-                'AnnualHeatEfficiency[Units="HSPF"]/Value' => one,
+                'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
+                'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
             },
 
             ## [HeatPumpType=MSHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="mini-split"]' => {
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
-                'AnnualCoolEfficiency[Units="SEER"]/Value' => one,
-                'AnnualHeatEfficiency[Units="HSPF"]/Value' => one,
+                'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
+                'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
             },
 
             ## [HeatPumpType=GSHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => {
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
-                'AnnualCoolEfficiency[Units="EER"]/Value' => one,
-                'AnnualHeatEfficiency[Units="COP"]/Value' => one,
+                'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
+                'AnnualHeatingEfficiency[Units="COP"]/Value' => one,
             },
             
         
