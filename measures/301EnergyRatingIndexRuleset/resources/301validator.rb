@@ -282,21 +282,32 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '../../HVACControl' => one, # See [HVACControl]
-            'DistributionSystem' => zero_or_one, # See [HVACDistribution]
-            'HeatingSystemType[Furnace | Boiler | ElectricResistance]' => one, # See [HeatingType=Furnace] or [HeatingType=Boiler] or [HeatingType=Resistance]
+            'HeatingSystemType[Furnace | WallFurnace | Boiler | ElectricResistance | Stove]' => one, # See [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Resistance] or [HeatingType=Stove]
+            'HeatingCapacity' => zero_or_one, # Uses Manual J auto-sizing if not provided
             'FractionHeatLoadServed' => one,
         },
         
             ## [HeatingType=Furnace]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+                'ElectricAuxiliaryEnergy' => zero_or_one, # Uses 301 default if not provided
+            },
+        
+            ## [HeatingType=WallFurnace]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/WallFurnace]' => {
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
+                'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+                'ElectricAuxiliaryEnergy' => zero_or_one,
             },
         
             ## [HeatingType=Boiler]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+                'ElectricAuxiliaryEnergy' => zero_or_one, # Uses 301 default if not provided
             },
             
             ## [HeatingType=Resistance]
@@ -305,24 +316,33 @@ class EnergyRatingIndex301Validator
                 'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
             },
             
+            ## [HeatingType=Stove]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Stove]' => {
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
+                'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+                'ElectricAuxiliaryEnergy' => zero_or_one,
+            },
+            
             
             
         ## [CoolingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'DistributionSystem' => zero_or_one, # See [HVACDistribution]
             '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]' => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC]
             '[CoolingSystemFuel="electricity"]' => one,
+            'CoolingCapacity' => zero_or_one, # Uses Manual J auto-sizing if not provided
             'FractionCoolLoadServed' => one,
         },
     
             ## [CoolingType=CentralAC]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
             },
             
             ## [CoolingType=RoomAC]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioning"]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
             },
             
@@ -331,7 +351,6 @@ class EnergyRatingIndex301Validator
         ## [HeatPump]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'DistributionSystem' => zero_or_one, # See [HVACDistribution]
             '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
             'FractionHeatLoadServed' => one,
             'FractionCoolLoadServed' => one,
@@ -339,18 +358,21 @@ class EnergyRatingIndex301Validator
             
             ## [HeatPumpType=ASHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatEfficiency[Units="HSPF"]/Value' => one,
             },
 
             ## [HeatPumpType=MSHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="mini-split"]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatEfficiency[Units="HSPF"]/Value' => one,
             },
 
             ## [HeatPumpType=GSHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolEfficiency[Units="EER"]/Value' => one,
                 'AnnualHeatEfficiency[Units="COP"]/Value' => one,
             },

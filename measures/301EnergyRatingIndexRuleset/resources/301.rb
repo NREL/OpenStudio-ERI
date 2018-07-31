@@ -1288,7 +1288,7 @@ class EnergyRatingIndex301Ruleset
     
     # Table 4.2.2(1) - Thermal distribution systems
     # FIXME: There can be no distribution system when HVAC prescribed via above
-    #        e.g., no cooling system => AC w/o ducts
+    #        e.g., no cooling system => AC w/o ducts. Is this right?
     XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
 
   end
