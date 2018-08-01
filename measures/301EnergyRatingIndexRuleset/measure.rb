@@ -976,7 +976,7 @@ class OSModel
         end
         wall_length = wall_net_area / wall_height
         
-        z_origin = -1 * Float(fnd_wall.elements["BelowGradeDepth"].text)
+        z_origin = -1 * Float(fnd_wall.elements["DepthBelowGrade"].text)
         
         surface = OpenStudio::Model::Surface.new(add_wall_polygon(UnitConversions.convert(wall_length,"ft","m"), 
                                                                   UnitConversions.convert(wall_height,"ft","m"), 
@@ -2038,7 +2038,7 @@ class OSModel
     
     return true if htgsys.nil?
     
-    fuel = XMLHelper.get_value(htgsys, "HeatingSystemFuel")
+    fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
     
     heat_capacity_btuh = XMLHelper.get_value(htgsys, "HeatingCapacity")
     if heat_capacity_btuh.nil?
@@ -2070,10 +2070,21 @@ class OSModel
     
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
     
+      # FIXME: Use EAE (needs to come after HVAC sizing in case we're autosizing)
       fan_power_installed = 0.5
-      success = HVAC.apply_furnace(model, unit, runner, to_beopt_fuel(fuel), afue,
+      success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
                                    heat_capacity_btuh, fan_power_installed, dse,
                                    existing_objects)
+      return false if not success
+      
+    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
+    
+      efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
+      fan_power = 0.0
+      airflow_rate = 0.0
+      success = HVAC.apply_unit_heater(model, unit, runner, fuel,
+                                       efficiency, heat_capacity_btuh, fan_power,
+                                       airflow_rate)
       return false if not success
       
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
@@ -2087,7 +2098,8 @@ class OSModel
       oat_hwst_low = nil
       design_temp = 180.0
       is_modulating = false
-      success = HVAC.apply_boiler(model, unit, runner, to_beopt_fuel(fuel), system_type, afue,
+      # FIXME: Use EAE (needs to come after HVAC sizing in case we're autosizing)
+      success = HVAC.apply_boiler(model, unit, runner, fuel, system_type, afue,
                                   oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
                                   heat_capacity_btuh, design_temp, is_modulating, dse)
       return false if not success
@@ -2098,12 +2110,16 @@ class OSModel
       success = HVAC.apply_electric_baseboard(model, unit, runner, efficiency, 
                                               heat_capacity_btuh)
       return false if not success
-
-    # TODO
-    #success = HVAC.apply_unit_heater(model, unit, runner, fuel_type,
-    #                                 efficiency, capacity, fan_power,
-    #                                 airflow)
-    #return false if not success
+      
+    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
+    
+      efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
+      fan_power = 0.0
+      airflow_rate = 0.0
+      success = HVAC.apply_unit_heater(model, unit, runner, fuel,
+                                       efficiency, heat_capacity_btuh, fan_power,
+                                       airflow_rate)
+      return false if not success
       
     end
     
@@ -2136,8 +2152,8 @@ class OSModel
     if hp_type == "air-to-air"        
     
       # FIXME: Generalize
-      if not hp.elements["AnnualCoolEfficiency"].nil?
-        seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
+      if not hp.elements["AnnualCoolingEfficiency"].nil?
+        seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
         seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       else
         # FIXME: Currently getting from AC
@@ -2146,7 +2162,7 @@ class OSModel
         seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
       end
       seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       
@@ -2237,10 +2253,10 @@ class OSModel
     elsif hp_type == "mini-split"
       
       # FIXME: Generalize
-      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
+      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
       seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
+      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
       hspf = hspf_nom * hspf_adj
       shr = 0.73
@@ -2274,8 +2290,8 @@ class OSModel
     elsif hp_type == "ground-to-air"
     
       # FIXME: Generalize
-      cop = Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='COP']/Value"))
-      eer = Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='EER']/Value"))
+      cop = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='COP']/Value"))
+      eer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='EER']/Value"))
       shr = 0.732
       ground_conductivity = 0.6
       grout_conductivity = 0.4

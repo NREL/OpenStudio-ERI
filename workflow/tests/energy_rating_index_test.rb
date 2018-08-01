@@ -659,12 +659,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       num_seer += 1
     end
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
-      if hp.elements["AnnualHeatEfficiency[Units='HSPF']"]
-        hspf += Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
+      if hp.elements["AnnualHeatingEfficiency[Units='HSPF']"]
+        hspf += Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
         num_hspf += 1
       end
-      if hp.elements["AnnualCoolEfficiency[Units='SEER']"]
-        seer += Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
+      if hp.elements["AnnualCoolingEfficiency[Units='SEER']"]
+        seer += Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
         num_seer += 1
       end
     end

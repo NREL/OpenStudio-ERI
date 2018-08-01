@@ -164,7 +164,7 @@
               <Height>2</Height>
               <Area>277.12</Area>
               <Thickness>8</Thickness>
-              <BelowGradeDepth>0</BelowGradeDepth>
+              <DepthBelowGrade>0</DepthBelowGrade>
               <Insulation>
                 <SystemIdentifier id='Foundation_Wall_Ins'/>
                 <AssemblyEffectiveRValue>30.3030303030303</AssemblyEffectiveRValue>

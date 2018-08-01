@@ -666,7 +666,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_wall, "Height", 2)
     XMLHelper.add_element(new_wall, "Area", 2*34.64*4)
     XMLHelper.add_element(new_wall, "Thickness", 8)
-    XMLHelper.add_element(new_wall, "BelowGradeDepth", 0)
+    XMLHelper.add_element(new_wall, "DepthBelowGrade", 0)
     new_wall_ins = XMLHelper.add_element(new_wall, "Insulation")
     sys_id = XMLHelper.add_element(new_wall_ins, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Foundation_Wall_Ins")
@@ -796,7 +796,7 @@ class EnergyRatingIndex301Ruleset
       adj_to = XMLHelper.get_value(fwall, "extension/ExteriorAdjacentTo")
       next if adj_to == "living space"
       height = Float(XMLHelper.get_value(fwall, "Height"))
-      bg_depth = Float(XMLHelper.get_value(fwall, "BelowGradeDepth"))
+      bg_depth = Float(XMLHelper.get_value(fwall, "DepthBelowGrade"))
       area = Float(XMLHelper.get_value(fwall, "Area"))
       ag_wall_area += (height - bg_depth) / height * area
       bg_wall_area += bg_depth / height * area
@@ -1088,11 +1088,11 @@ class EnergyRatingIndex301Ruleset
       if prevent_hp_and_ac
         XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
         seer = 13.0
-        cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolEfficiency")
+        cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolingEfficiency")
         XMLHelper.add_element(cool_eff, "Units", "SEER")
         XMLHelper.add_element(cool_eff, "Value", seer)
       end
-      heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatEfficiency")
+      heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
       extension = XMLHelper.add_element(heat_pump, "extension")
@@ -1225,7 +1225,7 @@ class EnergyRatingIndex301Ruleset
       if extension.nil?
         extension = XMLHelper.add_element(heat_pump_system, "extension")
       end
-      if not heat_pump_system.elements["AnnualCoolEfficiency"].nil?
+      if not heat_pump_system.elements["AnnualCoolingEfficiency"].nil?
         XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
         XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       end
@@ -1246,10 +1246,10 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
       XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
       XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
-      cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolEfficiency")
+      cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", 13.0)
-      heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatEfficiency")
+      heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
       extension = XMLHelper.add_element(heat_pump, "extension")
@@ -1288,7 +1288,7 @@ class EnergyRatingIndex301Ruleset
     
     # Table 4.2.2(1) - Thermal distribution systems
     # FIXME: There can be no distribution system when HVAC prescribed via above
-    #        e.g., no cooling system => AC w/o ducts
+    #        e.g., no cooling system => AC w/o ducts. Is this right?
     XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
 
   end
