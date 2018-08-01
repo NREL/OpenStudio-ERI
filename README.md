@@ -43,7 +43,13 @@ Continuous integration tests are automatically run for any change to this reposi
 - [x] RESNET HERS method tests (including IAF and proposed tests)
 - [x] RESNET Hot water system performance tests (including pre-Addendum A tests)
 
-TODO: Describe how to run the tests locally.
+Tests can be run locally as follows. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
+```openstudio.exe tests/energy_rating_index_test.rb``` (all tests)  
+```openstudio.exe tests/energy_rating_index_test.rb --mame=test_resnet_hers_method``` (HERS Method tests only)
+
+At the completion of the test, there will be output that denotes the number of failures/errors like so:  
+```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  
+```1 runs, 35 assertions, 0 failures, 0 errors, 0 skips```
 
 ## Software Developers
 
