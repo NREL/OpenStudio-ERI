@@ -32,7 +32,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug)
   
   model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-  measures_dir = "../measures/"
+  measures_dir = File.join(File.dirname(__FILE__), "../measures")
   measures = {}
   measure_subdir = "301EnergyRatingIndexRuleset"
   

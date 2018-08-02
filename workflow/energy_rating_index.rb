@@ -5,7 +5,7 @@ require 'csv'
 require 'pathname'
 require 'fileutils'
 require 'parallel'
-require_relative "design"
+require File.join(File.dirname(__FILE__), "design.rb")
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
 
@@ -48,7 +48,7 @@ def run_design_spawn(basedir, design, resultsdir, hpxml, debug, run)
   return nil if not run
   
   cli_path = OpenStudio.getOpenStudioCLI
-  system("\"#{cli_path}\" --no-ssl design.rb \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug}")
+  system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug}")
   
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
   return output_hpxml_path, designdir
@@ -805,7 +805,7 @@ if not options[:hpxml]
 end
 
 unless (Pathname.new options[:hpxml]).absolute?
-  options[:hpxml] = File.expand_path(File.join(File.dirname(__FILE__), options[:hpxml]))
+  options[:hpxml] = File.expand_path(options[:hpxml])
 end 
 unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xml"
   fail "ERROR: '#{options[:hpxml]}' does not exist or is not an .xml file."
