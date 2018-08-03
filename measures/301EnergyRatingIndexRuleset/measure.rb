@@ -2059,13 +2059,6 @@ class OSModel
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
         objname = Constants.ObjectNameElectricBaseboard
       end
-      existing_objects = {}
-      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
-      HVAC.get_control_and_slave_zones(thermal_zones).each do |control_zone, slave_zones|
-        ([control_zone] + slave_zones).each do |zone|
-          existing_objects[zone] = HVAC.remove_hvac_equipment(model, runner, zone, unit, objname)
-        end
-      end
       # ==================================
     
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
@@ -2073,8 +2066,7 @@ class OSModel
       # FIXME: Use EAE (needs to come after HVAC sizing in case we're autosizing)
       fan_power_installed = 0.5
       success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
-                                   heat_capacity_btuh, fan_power_installed, dse,
-                                   existing_objects)
+                                   heat_capacity_btuh, fan_power_installed, dse)
       return false if not success
       
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
@@ -2509,7 +2501,7 @@ class OSModel
     has_flue_chimney = false
     is_existing_home = false
     terrain = Constants.TerrainSuburban
-    infil = Infiltration.new(living_ach50, nil, shelter_coef, garage_ach50, crawl_ach, attic_sla, nil, unfinished_basement_ach, 
+    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, attic_sla, unfinished_basement_ach, 
                              finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
 
     # Mechanical Ventilation

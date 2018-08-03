@@ -55,7 +55,7 @@ class Airflow
       elsif Geometry.is_pier_beam(thermal_zone)
         building.pierbeam = ZoneInfo.new(thermal_zone, Geometry.get_height_of_spaces(thermal_zone.spaces), UnitConversions.convert(thermal_zone.floorArea,"m^2","ft^2"), Geometry.get_zone_volume(thermal_zone, false, runner), Geometry.get_z_origin_for_zone(thermal_zone), infil.pier_beam_ach, nil)
       elsif Geometry.is_unfinished_attic(thermal_zone)
-        building.unfinished_attic = ZoneInfo.new(thermal_zone, Geometry.get_height_of_spaces(thermal_zone.spaces), UnitConversions.convert(thermal_zone.floorArea,"m^2","ft^2"), Geometry.get_zone_volume(thermal_zone, false, runner), Geometry.get_z_origin_for_zone(thermal_zone), infil.unfinished_attic_const_ach, infil.unfinished_attic_sla)
+        building.unfinished_attic = ZoneInfo.new(thermal_zone, Geometry.get_height_of_spaces(thermal_zone.spaces), UnitConversions.convert(thermal_zone.floorArea,"m^2","ft^2"), Geometry.get_zone_volume(thermal_zone, false, runner), Geometry.get_z_origin_for_zone(thermal_zone), nil, infil.unfinished_attic_sla)
       end
     end
     building.ffa = Geometry.get_finished_floor_area_from_spaces(model_spaces, true, runner)
@@ -120,11 +120,7 @@ class Airflow
       
       # Determine if forced air equipment
       has_forced_air_equipment = false
-      model.getAirLoopHVACs.each do |air_loop|
-        next unless air_loop.thermalZones.include? unit_living.zone
-        has_forced_air_equipment = true
-      end
-      if unit_has_mshp
+      if unit_living.zone.airLoopHVACs.length > 0 or unit_has_mshp
         has_forced_air_equipment = true
       end
 
@@ -163,8 +159,7 @@ class Airflow
       
       infil_program = create_infil_mech_vent_objects(model, runner, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_lk_supply_fan_equiv_var, duct_lk_return_fan_equiv_var, cfis_output, nbeds)
       
-      create_ems_program_managers(model, infil_program, nv_program, cfis_program, 
-                                  duct_program, obj_name_airflow, obj_name_ducts)
+      create_ems_program_managers(model, infil_program, nv_program, cfis_program, duct_program, obj_name_airflow, obj_name_ducts)
                                   
       # Store info for HVAC Sizing measure
       if not unit_living.ELA.nil?
@@ -463,14 +458,10 @@ class Airflow
     end
 
     unless building.unfinished_attic.nil?
-      if not building.unfinished_attic.SLA.nil?
-        building.unfinished_attic.inf_method = @infMethodSG
-        building.unfinished_attic.hor_lk_frac = 0.75 # Same as Energy Gauge USA Attic Model
-        building.unfinished_attic.neutral_level = 0.5 # DOE-2 Default
-        building.unfinished_attic.ACH = Airflow.get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0, weather)
-      elsif not building.unfinished_attic.ACH.nil?
-        building.unfinished_attic.inf_method = @infMethodRes
-      end
+      building.unfinished_attic.inf_method = @infMethodSG
+      building.unfinished_attic.hor_lk_frac = 0.75 # Same as Energy Gauge USA Attic Model
+      building.unfinished_attic.neutral_level = 0.5 # DOE-2 Default
+      building.unfinished_attic.ACH = Airflow.get_infiltration_ACH_from_SLA(building.unfinished_attic.SLA, 1.0, weather)
       building.unfinished_attic.inf_flow = building.unfinished_attic.ACH / UnitConversions.convert(1.0,"hr","min") * building.unfinished_attic.volume
     end
     
@@ -490,8 +481,8 @@ class Airflow
     inf_conv_factor = 776.25 # [ft/min]/[inH2O^(1/2)*ft^(3/2)/lbm^(1/2)]
     delta_pref = 0.016 # inH2O
 
-    # Living Space Infiltration
-    if not infil.living_ach50.nil?
+    if infil.living_ach50 > 0
+      # Living Space Infiltration
       unit_living.inf_method = @infMethodASHRAE
 
       # Based on "Field Validation of Algebraic Equations for Stack and
@@ -610,13 +601,6 @@ class Airflow
       # Convert living space ACH to cfm:
       unit_living.inf_flow = unit_living.ACH / UnitConversions.convert(1.0,"hr","min") * unit_living.volume # cfm
 
-    elsif not infil.living_constant_ach.nil?
-    
-      unit_living.inf_method = @infMethodRes
-      
-      unit_living.ACH = infil.living_constant_ach
-      unit_living.inf_flow = unit_living.ACH / UnitConversions.convert(1.0,"hr","min") * unit_living.volume # cfm
-      
     end
 
     unless unit_finished_basement.nil?
@@ -634,7 +618,7 @@ class Airflow
   def self.process_infiltration_for_spaces(model, spaces, wind_speed)
   
     spaces.each do |space|
-    
+
       space.f_t_SG = wind_speed.site_terrain_multiplier * ((space.height + space.coord_z) / 32.8) ** wind_speed.site_terrain_exponent / (wind_speed.terrain_multiplier * (wind_speed.height / 32.8) ** wind_speed.terrain_exponent)
 
       if space.inf_method == @infMethodSG
@@ -648,7 +632,6 @@ class Airflow
       end
       
       space.zone.spaces.each do |s|
-        next if Geometry.is_living(s)
         obj_name = "#{Constants.ObjectNameInfiltration}|#{s.name}"
         if space.inf_method == @infMethodRes and space.ACH.to_f > 0
           flow_rate = OpenStudio::Model::SpaceInfiltrationDesignFlowRate.new(model)
@@ -656,10 +639,6 @@ class Airflow
           flow_rate.setSchedule(model.alwaysOnDiscreteSchedule)
           flow_rate.setAirChangesperHour(space.ACH)
           flow_rate.setSpace(s)
-          flow_rate.setConstantTermCoefficient(1)
-          flow_rate.setTemperatureTermCoefficient(0)
-          flow_rate.setVelocityTermCoefficient(0)
-          flow_rate.setVelocitySquaredTermCoefficient(0)
         elsif space.inf_method == @infMethodSG and space.ELA.to_f > 0
           leakage_area = OpenStudio::Model::SpaceInfiltrationEffectiveLeakageArea.new(model)
           leakage_area.setName(obj_name)
@@ -1327,22 +1306,28 @@ class Airflow
       air_demand_inlet_node = nil
       supply_fan = nil
       living_zone_return_air_node = nil
+      #air_demand_inlet_nodes = []
+      #supply_fans = []
+      #living_zone_return_air_nodes = []
 
-      model.getAirLoopHVACs.each do |air_loop|
-        next unless air_loop.thermalZones.include? unit_living.zone # get the correct air loop for this unit
+      unit_living.zone.airLoopHVACs.each do |air_loop|
         air_demand_inlet_node = air_loop.demandInletNode
+        #air_demand_inlet_nodes << air_loop.demandInletNode
         air_loop.supplyComponents.each do |supply_component|
           next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
           air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
           supply_fan = air_loop_unitary.supplyFan.get
+          #supply_fans << air_loop_unitary.supplyFan.get
         end
-        break
       end
 
       if air_demand_inlet_node.nil? and supply_fan.nil? # for mshp
+      #if air_demand_inlet_nodes.empty? and supply_fans.empty? # for mshp
         model.getZoneHVACTerminalUnitVariableRefrigerantFlows.each do |tu_vrf|
           air_demand_inlet_node = tu_vrf.outletNode.get
+          #air_demand_inlet_nodes << tu_vrf.outletNode.get
           supply_fan = tu_vrf.supplyAirFan
+          #supply_fans << tu_vrf.supplyAirFan
         end
       end
 
@@ -1354,6 +1339,7 @@ class Airflow
       if unit_living.zone.returnAirModelObject.is_initialized
         living_zone_return_air_node = unit_living.zone.returnAirModelObject.get
       end
+      #living_zone_return_air_nodes << unit_living.zone.returnAirModelObjects # FIXME: Kyle needs to implement this method
 
     end
     
@@ -1903,6 +1889,7 @@ class Airflow
     
     infil_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
     infil_program.setName(obj_name_infil + " program")
+
     if unit_living.inf_method == @infMethodASHRAE
       if unit_living.SLA > 0
         infil_program.addLine("Set p_m = #{wind_speed.ashrae_terrain_exponent}")
@@ -1938,56 +1925,61 @@ class Airflow
         cfis_outdoor_airflow = mv_output.whole_house_vent_rate * (60.0 / mech_vent.cfis_open_time)
       end
       
-      system, clg_coil, htg_coil, air_loop = HVAC.get_unitary_system_air_loop(model, runner, unit_living.zone)
-      clg_coil = HVAC.get_coil_from_hvac_component(clg_coil)
-      cfis_fan_power = clg_coil.ratedEvaporatorFanPowerPerVolumeFlowRate.get / UnitConversions.convert(1.0,"m^3/s","cfm") # W/cfm
-      
-      infil_program.addLine("Set #{cfis_output.fan_rtf_var.name} = #{cfis_output.fan_rtf_sensor.name}")
+      unitary_system_air_loops = HVAC.get_unitary_system_air_loops(model, runner, unit_living.zone)
+      unitary_system_air_loops.each do |unitary_system_air_loop|
+          system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
+          next if clg_coil.nil?
 
-      infil_program.addLine("If @ABS(Minute - ZoneTimeStep*60) < 0.1")
-      infil_program.addLine("  Set #{cfis_output.t_sum_open_var.name} = 0") # New hour, time on summation re-initializes to 0
-      infil_program.addLine("  Set #{cfis_output.on_for_hour_var.name} = 0")
-      infil_program.addLine("EndIf")
+        clg_coil = HVAC.get_coil_from_hvac_component(clg_coil)
+        cfis_fan_power = clg_coil.ratedEvaporatorFanPowerPerVolumeFlowRate.get / UnitConversions.convert(1.0,"m^3/s","cfm") # W/cfm
+        
+        infil_program.addLine("Set #{cfis_output.fan_rtf_var.name} = #{cfis_output.fan_rtf_sensor.name}")
 
-      infil_program.addLine("Set CFIS_t_min_hr_open = #{mech_vent.cfis_open_time}") # minutes per hour the CFIS damper is open
-      infil_program.addLine("Set CFIS_Q_duct = #{UnitConversions.convert(cfis_outdoor_airflow, 'cfm', 'm^3/s')}")
-      infil_program.addLine("Set #{cfis_output.f_damper_open_var.name} = 0") # fraction of the timestep the CFIS damper is open
+        infil_program.addLine("If @ABS(Minute - ZoneTimeStep*60) < 0.1")
+        infil_program.addLine("  Set #{cfis_output.t_sum_open_var.name} = 0") # New hour, time on summation re-initializes to 0
+        infil_program.addLine("  Set #{cfis_output.on_for_hour_var.name} = 0")
+        infil_program.addLine("EndIf")
 
-      infil_program.addLine("If #{cfis_output.t_sum_open_var.name} < CFIS_t_min_hr_open")
-      infil_program.addLine("  Set CFIS_t_fan_on = 60 - (CFIS_t_min_hr_open - #{cfis_output.t_sum_open_var.name})") # minute at which the blower needs to turn on to meet the ventilation requirements
-      infil_program.addLine("  If ((Minute+0.00001) >= CFIS_t_fan_on) || #{cfis_output.on_for_hour_var.name}")
+        infil_program.addLine("Set CFIS_t_min_hr_open = #{mech_vent.cfis_open_time}") # minutes per hour the CFIS damper is open
+        infil_program.addLine("Set CFIS_Q_duct = #{UnitConversions.convert(cfis_outdoor_airflow, 'cfm', 'm^3/s')}")
+        infil_program.addLine("Set #{cfis_output.f_damper_open_var.name} = 0") # fraction of the timestep the CFIS damper is open
 
-      # Supply fan needs to run for remainder of hour to achieve target minutes per hour of operation
-      infil_program.addLine("    If #{cfis_output.on_for_hour_var.name}")
-      infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = 1")
-      infil_program.addLine("    Else")
-      infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = (@Mod (60.0-CFIS_t_fan_on) (60.0*ZoneTimeStep)) / (60.0*ZoneTimeStep)") # calculates the portion of the current timestep the CFIS damper needs to be open
-      infil_program.addLine("      Set #{cfis_output.on_for_hour_var.name} = 1") # CFIS damper will need to open for all the remaining timesteps in this hour
-      infil_program.addLine("    EndIf")
-      infil_program.addLine("    Set QWHV = #{cfis_output.f_damper_open_var.name}*CFIS_Q_duct")
-      infil_program.addLine("    Set #{cfis_output.t_sum_open_var.name} = #{cfis_output.t_sum_open_var.name} + #{cfis_output.f_damper_open_var.name}*(ZoneTimeStep*60)")
-      infil_program.addLine("    Set cfis_cfm = (#{cfis_output.max_supply_fan_mfr.name} / 1.16097654) * #{mech_vent.cfis_airflow_frac} * #{UnitConversions.convert(1.0,'m^3/s','cfm')}")      # Density of 1.16097654 was back calculated using E+ results
-      infil_program.addLine("    Set #{whole_house_fan_actuator.name} = #{cfis_fan_power} * cfis_cfm * #{cfis_output.f_damper_open_var.name}*(1-#{cfis_output.fan_rtf_var.name})")
-      infil_program.addLine("  Else")
-      infil_program.addLine("    If (#{cfis_output.t_sum_open_var.name} + (#{cfis_output.fan_rtf_var.name}*ZoneTimeStep*60)) > CFIS_t_min_hr_open")
-      # Damper is only open for a portion of this time step to achieve target minutes per hour
-      infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = (CFIS_t_min_hr_open-#{cfis_output.t_sum_open_var.name})/(ZoneTimeStep*60)")
-      infil_program.addLine("      Set QWHV = #{cfis_output.f_damper_open_var.name}*CFIS_Q_duct")
-      infil_program.addLine("      Set #{cfis_output.t_sum_open_var.name} = CFIS_t_min_hr_open")
-      infil_program.addLine("    Else")
-      # Damper is open and using call for heat/cool to supply fresh air
-      infil_program.addLine("      Set #{cfis_output.t_sum_open_var.name} = #{cfis_output.t_sum_open_var.name} + (#{cfis_output.fan_rtf_var.name}*ZoneTimeStep*60)")
-      infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = 1")
-      infil_program.addLine("      Set QWHV = #{cfis_output.fan_rtf_var.name}*CFIS_Q_duct")
-      infil_program.addLine("    EndIf")
-      # Fan power is metered under fan cooling and heating meters
-      infil_program.addLine("    Set #{whole_house_fan_actuator.name} =  0")
-      infil_program.addLine("  EndIf")
-      infil_program.addLine("Else")
-      # The ventilation requirement for the hour has been met
-      infil_program.addLine("  Set QWHV = 0")
-      infil_program.addLine("  Set #{whole_house_fan_actuator.name} =  0")
-      infil_program.addLine("EndIf")
+        infil_program.addLine("If #{cfis_output.t_sum_open_var.name} < CFIS_t_min_hr_open")
+        infil_program.addLine("  Set CFIS_t_fan_on = 60 - (CFIS_t_min_hr_open - #{cfis_output.t_sum_open_var.name})") # minute at which the blower needs to turn on to meet the ventilation requirements
+        infil_program.addLine("  If ((Minute+0.00001) >= CFIS_t_fan_on) || #{cfis_output.on_for_hour_var.name}")
+
+        # Supply fan needs to run for remainder of hour to achieve target minutes per hour of operation
+        infil_program.addLine("    If #{cfis_output.on_for_hour_var.name}")
+        infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = 1")
+        infil_program.addLine("    Else")
+        infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = (@Mod (60.0-CFIS_t_fan_on) (60.0*ZoneTimeStep)) / (60.0*ZoneTimeStep)") # calculates the portion of the current timestep the CFIS damper needs to be open
+        infil_program.addLine("      Set #{cfis_output.on_for_hour_var.name} = 1") # CFIS damper will need to open for all the remaining timesteps in this hour
+        infil_program.addLine("    EndIf")
+        infil_program.addLine("    Set QWHV = #{cfis_output.f_damper_open_var.name}*CFIS_Q_duct")
+        infil_program.addLine("    Set #{cfis_output.t_sum_open_var.name} = #{cfis_output.t_sum_open_var.name} + #{cfis_output.f_damper_open_var.name}*(ZoneTimeStep*60)")
+        infil_program.addLine("    Set cfis_cfm = (#{cfis_output.max_supply_fan_mfr.name} / 1.16097654) * #{mech_vent.cfis_airflow_frac} * #{UnitConversions.convert(1.0,'m^3/s','cfm')}")      # Density of 1.16097654 was back calculated using E+ results
+        infil_program.addLine("    Set #{whole_house_fan_actuator.name} = #{cfis_fan_power} * cfis_cfm * #{cfis_output.f_damper_open_var.name}*(1-#{cfis_output.fan_rtf_var.name})")
+        infil_program.addLine("  Else")
+        infil_program.addLine("    If (#{cfis_output.t_sum_open_var.name} + (#{cfis_output.fan_rtf_var.name}*ZoneTimeStep*60)) > CFIS_t_min_hr_open")
+        # Damper is only open for a portion of this time step to achieve target minutes per hour
+        infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = (CFIS_t_min_hr_open-#{cfis_output.t_sum_open_var.name})/(ZoneTimeStep*60)")
+        infil_program.addLine("      Set QWHV = #{cfis_output.f_damper_open_var.name}*CFIS_Q_duct")
+        infil_program.addLine("      Set #{cfis_output.t_sum_open_var.name} = CFIS_t_min_hr_open")
+        infil_program.addLine("    Else")
+        # Damper is open and using call for heat/cool to supply fresh air
+        infil_program.addLine("      Set #{cfis_output.t_sum_open_var.name} = #{cfis_output.t_sum_open_var.name} + (#{cfis_output.fan_rtf_var.name}*ZoneTimeStep*60)")
+        infil_program.addLine("      Set #{cfis_output.f_damper_open_var.name} = 1")
+        infil_program.addLine("      Set QWHV = #{cfis_output.fan_rtf_var.name}*CFIS_Q_duct")
+        infil_program.addLine("    EndIf")
+        # Fan power is metered under fan cooling and heating meters
+        infil_program.addLine("    Set #{whole_house_fan_actuator.name} =  0")
+        infil_program.addLine("  EndIf")
+        infil_program.addLine("Else")
+        # The ventilation requirement for the hour has been met
+        infil_program.addLine("  Set QWHV = 0")
+        infil_program.addLine("  Set #{whole_house_fan_actuator.name} =  0")
+        infil_program.addLine("EndIf")
+      end
     end
 
     infil_program.addLine("Set Qrange = #{range_sch_sensor.name}*#{UnitConversions.convert(mv_output.range_hood_hour_avg_exhaust,"cfm","m^3/s").round(4)}")
@@ -2298,14 +2290,12 @@ class DuctsOutput
 end
 
 class Infiltration
-  def initialize(living_ach50, living_constant_ach, shelter_coef, garage_ach50, crawl_ach, unfinished_attic_sla, unfinished_attic_const_ach, unfinished_basement_ach, finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
+  def initialize(living_ach50, shelter_coef, garage_ach50, crawl_ach, unfinished_attic_sla, unfinished_basement_ach, finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
     @living_ach50 = living_ach50
-    @living_constant_ach = living_constant_ach
     @shelter_coef = shelter_coef
     @garage_ach50 = garage_ach50
     @crawl_ach = crawl_ach
     @unfinished_attic_sla = unfinished_attic_sla
-    @unfinished_attic_const_ach = unfinished_attic_const_ach
     @unfinished_basement_ach = unfinished_basement_ach
     @finished_basement_ach = finished_basement_ach
     @pier_beam_ach = pier_beam_ach
@@ -2313,7 +2303,7 @@ class Infiltration
     @is_existing_home = is_existing_home
     @terrain = terrain
   end
-  attr_accessor(:living_ach50, :living_constant_ach, :shelter_coef, :garage_ach50, :crawl_ach, :unfinished_attic_sla, :unfinished_attic_const_ach, :unfinished_basement_ach, :finished_basement_ach, :pier_beam_ach, :has_flue_chimney, :is_existing_home, :terrain)
+  attr_accessor(:living_ach50, :shelter_coef, :garage_ach50, :crawl_ach, :unfinished_attic_sla, :unfinished_basement_ach, :finished_basement_ach, :pier_beam_ach, :has_flue_chimney, :is_existing_home, :terrain)
 end
 
 class InfiltrationOutput

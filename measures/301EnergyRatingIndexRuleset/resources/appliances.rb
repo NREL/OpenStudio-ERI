@@ -140,10 +140,7 @@ class ClothesWasher
               runner.registerError("Mains water temperature has not been set.")
               return false
           end
-          waterMainsTemperature = site.siteWaterMainsTemperature.get
-          avgOAT = UnitConversions.convert(waterMainsTemperature.annualAverageOutdoorAirTemperature.get, "C", "F")
-          maxDiffMonthlyAvgOAT = UnitConversions.convert(waterMainsTemperature.maximumDifferenceInMonthlyAverageOutdoorAirTemperatures.get, "K", "R")
-          mains_temps = WeatherProcess.calc_mains_temperatures(avgOAT, maxDiffMonthlyAvgOAT, site.latitude)[1]
+          mains_temps = WeatherProcess.get_mains_temperature(site.siteWaterMainsTemperature.get, site.latitude)[1]
       end
 
       unit_obj_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
@@ -981,10 +978,7 @@ class Dishwasher
               runner.registerError("Mains water temperature has not been set.")
               return false
           end
-          waterMainsTemperature = site.siteWaterMainsTemperature.get
-          avgOAT = UnitConversions.convert(waterMainsTemperature.annualAverageOutdoorAirTemperature.get, "C", "F")
-          maxDiffMonthlyAvgOAT = UnitConversions.convert(waterMainsTemperature.maximumDifferenceInMonthlyAverageOutdoorAirTemperatures.get, "K", "R")
-          mains_temps = WeatherProcess.calc_mains_temperatures(avgOAT, maxDiffMonthlyAvgOAT, site.latitude)[1]
+          mains_temps = WeatherProcess.get_mains_temperature(site.siteWaterMainsTemperature.get, site.latitude)[1]
       end
 
       unit_obj_name = Constants.ObjectNameDishwasher(unit.name.to_s)

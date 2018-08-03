@@ -44,18 +44,9 @@ class Location
         OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
         runner.registerInfo("Setting weather file.")
 
-        # Obtain weather object
-        # Load from cache file if exists, as this is faster and doesn't require
-        # parsing the weather file.
-        cache_file = weather_file_path.gsub('.epw','.cache')
-        if File.exists? cache_file
-          weather = Marshal.load(File.binread(cache_file))
-          weather.cache_weather(weather.get_weather_building_unit(model))
-        else
-          weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
-          if weather.error?
-            return false
-          end
+        weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
+        if weather.error?
+          return false
         end
 
         return true, weather, epw_file
@@ -100,8 +91,7 @@ class Location
         swmt.setCalculationMethod "Correlation"
         swmt.setAnnualAverageOutdoorAirTemperature avgOAT
         swmt.setMaximumDifferenceInMonthlyAverageOutdoorAirTemperatures maxDiffOAT
-        
-        runner.registerInfo("Setting mains water temperature profile.")
+        runner.registerInfo("Setting mains water temperature profile with an average temperature of #{weather.data.MainsAvgTemp.round(1)} F.")
         
         return true
     end
