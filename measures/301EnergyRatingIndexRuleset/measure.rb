@@ -2049,18 +2049,6 @@ class OSModel
     
     if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
     
-      # FIXME: THIS SHOULD NOT BE NEEDED
-      # ==================================
-      objname = nil
-      if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
-        objname = Constants.ObjectNameFurnace
-      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
-        objname = Constants.ObjectNameBoiler
-      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
-        objname = Constants.ObjectNameElectricBaseboard
-      end
-      # ==================================
-    
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
     
       # FIXME: Use EAE (needs to come after HVAC sizing in case we're autosizing)
@@ -2501,7 +2489,7 @@ class OSModel
     has_flue_chimney = false
     is_existing_home = false
     terrain = Constants.TerrainSuburban
-    infil = Infiltration.new(living_ach50, shelter_coef, garage_ach50, crawl_ach, attic_sla, unfinished_basement_ach, 
+    infil = Infiltration.new(living_ach50, nil, shelter_coef, garage_ach50, crawl_ach, attic_sla, nil, unfinished_basement_ach, 
                              finished_basement_ach, pier_beam_ach, has_flue_chimney, is_existing_home, terrain)
 
     # Mechanical Ventilation
