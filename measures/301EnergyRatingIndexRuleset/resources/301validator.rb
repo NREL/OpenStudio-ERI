@@ -61,11 +61,12 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Enclosure/Doors' => zero_or_one, # See [Door]
             
             '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
-            
+
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_more, # See [HeatingSystem]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_more, # See [CoolingSystem]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_more, # See [HeatPump]
-            
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl' => zero_or_one, # See [HVACControl]
+
             '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating' => zero_or_one, # See [WaterHeatingSystem]
             '/HPXML/Building/BuildingDetails/Systems/Photovoltaics' => zero_or_one, # See [PVSystem]
@@ -329,6 +330,7 @@ class EnergyRatingIndex301Validator
         ## [CoolingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => {
             'SystemIdentifier' => one, # Required by HPXML schema
+            '../../HVACControl' => one, # See [HVACControl]
             '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]' => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC]
             '[CoolingSystemFuel="electricity"]' => one,
             'CoolingCapacity' => zero_or_one, # Uses Manual J auto-sizing if not provided
@@ -352,6 +354,7 @@ class EnergyRatingIndex301Validator
         ## [HeatPump]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => {
             'SystemIdentifier' => one, # Required by HPXML schema
+            '../../HVACControl' => one, # See [HVACControl]
             '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
             'FractionHeatLoadServed' => one,
             'FractionCoolLoadServed' => one,
