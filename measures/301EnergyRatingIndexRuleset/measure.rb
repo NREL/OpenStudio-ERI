@@ -77,11 +77,6 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the output HPXML file.")
     args << arg
     
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_path", false)
-    arg.setDisplayName("HPXML Output File Path")
-    arg.setDescription("Absolute (or relative) path of the output HPXML file.")
-    args << arg
-    
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("epw_output_path", false)
     arg.setDisplayName("EPW Output File Path")
     arg.setDescription("Absolute (or relative) path of the output EPW file.")
@@ -111,9 +106,15 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     weather_dir = runner.getStringArgumentValue("weather_dir", user_arguments)
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     hpxml_output_path = runner.getOptionalStringArgumentValue("hpxml_output_path", user_arguments)
-    osm_output_path = runner.getOptionalStringArgumentValue("osm_output_path", user_arguments)
     epw_output_path = runner.getOptionalStringArgumentValue("epw_output_path", user_arguments)
     debug = runner.getBoolArgumentValue("debug", user_arguments)
+
+    osm_output_path = nil
+    if debug
+      if hpxml_output_path.is_initialized
+        osm_output_path = hpxml_output_path.get.gsub(".xml",".osm")
+      end
+    end
 
     unless (Pathname.new hpxml_path).absolute?
       hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
@@ -230,9 +231,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end 
     
-    if osm_output_path.is_initialized
-      File.write(osm_output_path.get, model.to_s)
-      runner.registerInfo("Wrote file: #{osm_output_path.get}")
+    unless osm_output_path.nil?
+      File.write(osm_output_path, model.to_s)
+      runner.registerInfo("Wrote file: #{osm_output_path}")
     end
     
     # Add output variables for RESNET building loads
