@@ -417,7 +417,7 @@ class EnergyRatingIndex301Validator
             ## [HVACDucts]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
                 'DuctInsulationRValue' => one,
-                'DuctLocation' => one, # TODO: Restrict values; allow multiple
+                'DuctLocation' => one, # TODO: Restrict values
                 'DuctSurfaceArea' => one,
             },
             
