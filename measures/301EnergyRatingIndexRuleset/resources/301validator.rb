@@ -401,12 +401,8 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
                 'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
                 'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
-                'Ducts[DuctType="supply" and FractionDuctArea=1.0]/DuctInsulationRValue' => one,
-                'Ducts[DuctType="supply" and FractionDuctArea=1.0]/DuctLocation' => one, # TODO: Restrict values
-                'Ducts[DuctType="supply" and FractionDuctArea=1.0]/DuctSurfaceArea' => one,
-                'Ducts[DuctType="return" and FractionDuctArea=1.0]/DuctInsulationRValue' => one,
-                'Ducts[DuctType="return" and FractionDuctArea=1.0]/DuctLocation' => one, # TODO: Restrict values
-                'Ducts[DuctType="return" and FractionDuctArea=1.0]/DuctSurfaceArea' => one,
+                'Ducts[DuctType="supply"]' => one_or_more, # See [HVACDucts]
+                'Ducts[DuctType="return"]' => one_or_more, # See [HVACDucts]
             },
         
             ## [HVACDistType=Hydronic]
@@ -417,6 +413,13 @@ class EnergyRatingIndex301Validator
             ## [HVACDistType=DSE]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution[DistributionSystemType[Other="DSE"]]' => {
                 '[AnnualHeatingDistributionSystemEfficiency | AnnualCoolingDistributionSystemEfficiency]' => one_or_more,
+            },
+            
+            ## [HVACDucts]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
+                'DuctInsulationRValue' => one,
+                'DuctLocation' => one, # TODO: Restrict values
+                'DuctSurfaceArea' => one,
             },
             
             
