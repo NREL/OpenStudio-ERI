@@ -1,5 +1,4 @@
-require 'bundler'
-Bundler.setup
+require 'fileutils'
 
 require 'rake'
 require 'rake/testtask'

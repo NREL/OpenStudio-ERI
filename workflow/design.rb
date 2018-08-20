@@ -45,7 +45,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug)
   args['hpxml_output_path'] = output_hpxml_path
   args['epw_output_path'] = File.join(rundir, "in.epw")
   if debug
-    args['osm_output_path'] = output_hpxml_path.gsub(".xml",".osm")
+    args['osm_output_path'] = File.join(rundir, "in.osm")
   end
   
   update_args_hash(measures, measure_subdir, args)
