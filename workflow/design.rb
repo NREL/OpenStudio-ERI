@@ -44,7 +44,9 @@ def create_idf(design, basedir, resultsdir, hpxml, debug)
   #args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   args['hpxml_output_path'] = output_hpxml_path
   args['epw_output_path'] = File.join(rundir, "in.epw")
-  args['debug'] = debug
+  if debug
+    args['osm_output_path'] = File.join(rundir, "in.osm")
+  end
   
   update_args_hash(measures, measure_subdir, args)
   success = apply_measures(measures_dir, measures, runner, model, nil, nil, false)
@@ -85,6 +87,6 @@ if ARGV.size == 5
   design = ARGV[1]
   resultsdir = ARGV[2]
   hpxml = ARGV[3]
-  debug = ARGV[4]
+  debug = (ARGV[4].downcase.to_s == "true")
   run_design(basedir, design, resultsdir, hpxml, debug)
 end
