@@ -1178,9 +1178,9 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_attribute(dist, "idref", dist_id)
       end
       sys_type = XMLHelper.add_element(heating_system, "HeatingSystemType")
-      XMLHelper.add_element(heating_system, "HeatingCapacity", -1) # Use Manual J auto-sizing
       furnace = XMLHelper.add_element(sys_type, "Furnace")
       XMLHelper.add_element(heating_system, "HeatingSystemFuel", "natural gas")
+      XMLHelper.add_element(heating_system, "HeatingCapacity", -1) # Use Manual J auto-sizing
       heat_eff = XMLHelper.add_element(heating_system, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "AFUE")
       XMLHelper.add_element(heat_eff, "Value", afue)
