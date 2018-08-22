@@ -1,37 +1,15 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>energy_rating_index_301</name>
+  <name>hpxml_translator</name>
   <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>6c0faf62-79b0-4ce8-a27a-7b9c3df4446e</version_id>
+  <version_id>96020aed-01fe-4269-bb38-710ad7a4fb21</version_id>
   <version_modified>20180822T205103Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
-  <class_name>EnergyRatingIndex301</class_name>
-  <display_name>Generate Energy Rating Index Model</display_name>
-  <description>Generates a model from a HPXML building description as defined by the ANSI/RESNET 301-2014 ruleset. Used as part of the calculation of an Energy Rating Index.</description>
-  <modeler_description>Based on the provided HPXML building description and choice of calculation type (e.g., HERS Reference Home, HERS Rated Home, etc.), creates an updated version of the HPXML file as well as an OpenStudio model, as specified by ANSI/RESNET 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using the HERS Index".</modeler_description>
+  <class_name>HPXMLTranslator</class_name>
+  <display_name>Translate HPXML to OpenStudio model</display_name>
+  <description>TODO</description>
+  <modeler_description>TODO</modeler_description>
   <arguments>
-    <argument>
-      <name>calc_type</name>
-      <display_name>Calculation Type</display_name>
-      <description>'Standard' will use the DOE Building America Simulation Protocols. HERS options will use the ANSI/RESNET 301-2014 Standard.</description>
-      <type>Choice</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <choices>
-        <choice>
-          <value>HERS Reference Home</value>
-          <display_name>HERS Reference Home</display_name>
-        </choice>
-        <choice>
-          <value>HERS Rated Home</value>
-          <display_name>HERS Rated Home</display_name>
-        </choice>
-        <choice>
-          <value>HERS Index Adjustment Design</value>
-          <display_name>HERS Index Adjustment Design</display_name>
-        </choice>
-      </choices>
-    </argument>
     <argument>
       <name>hpxml_path</name>
       <display_name>HPXML File Path</display_name>
@@ -57,9 +35,17 @@
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
-      <name>hpxml_output_path</name>
-      <display_name>HPXML Output File Path</display_name>
-      <description>Absolute (or relative) path of the output HPXML file.</description>
+      <name>epw_output_path</name>
+      <display_name>EPW Output File Path</display_name>
+      <description>Absolute (or relative) path of the output EPW file.</description>
+      <type>String</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>osm_output_path</name>
+      <display_name>OSM Output File Path</display_name>
+      <description>Absolute (or relative) path of the output OSM file.</description>
       <type>String</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
@@ -100,16 +86,34 @@
       <checksum>805D6B21</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
+      <filename>meta_measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>9F147496</checksum>
+      <checksum>F56C35C9</checksum>
     </file>
     <file>
-      <filename>301.rb</filename>
+      <filename>psychrometrics.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>23AB851A</checksum>
+      <checksum>208441EA</checksum>
+    </file>
+    <file>
+      <filename>unit_conversions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>91D17463</checksum>
+    </file>
+    <file>
+      <filename>airflow.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>62487D97</checksum>
+    </file>
+    <file>
+      <filename>weather.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D9E029B9</checksum>
     </file>
     <file>
       <version>
@@ -120,43 +124,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F2B5C976</checksum>
+      <checksum>35B42758</checksum>
     </file>
     <file>
-      <filename>constants.rb</filename>
+      <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>3BCB1148</checksum>
-    </file>
-    <file>
-      <filename>ASHRAE622WSF.csv</filename>
-      <filetype>csv</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>308F75BA</checksum>
-    </file>
-    <file>
-      <filename>location.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>05659A93</checksum>
-    </file>
-    <file>
-      <filename>airflow.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>62487D97</checksum>
-    </file>
-    <file>
-      <filename>appliances.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9411D70B</checksum>
-    </file>
-    <file>
-      <filename>constructions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D8B04DC5</checksum>
+      <checksum>4516079E</checksum>
     </file>
     <file>
       <filename>geometry.rb</filename>
@@ -165,10 +139,46 @@
       <checksum>3A649817</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3BCB1148</checksum>
+    </file>
+    <file>
+      <filename>schedules.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1C22DD2A</checksum>
+    </file>
+    <file>
+      <filename>waterheater.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9E2A2A78</checksum>
+    </file>
+    <file>
       <filename>hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>1F3DDDE7</checksum>
+    </file>
+    <file>
+      <filename>appliances.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>9411D70B</checksum>
+    </file>
+    <file>
+      <filename>ASHRAE622WSF.csv</filename>
+      <filetype>csv</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>308F75BA</checksum>
+    </file>
+    <file>
+      <filename>constructions.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>D8B04DC5</checksum>
     </file>
     <file>
       <filename>hvac_sizing.rb</filename>
@@ -183,16 +193,16 @@
       <checksum>F728B6CE</checksum>
     </file>
     <file>
+      <filename>location.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>05659A93</checksum>
+    </file>
+    <file>
       <filename>materials.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>82D32FEE</checksum>
-    </file>
-    <file>
-      <filename>meta_measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>F56C35C9</checksum>
     </file>
     <file>
       <filename>misc_loads.rb</filename>
@@ -201,22 +211,10 @@
       <checksum>A0AF3447</checksum>
     </file>
     <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>208441EA</checksum>
-    </file>
-    <file>
       <filename>pv.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>B9E81501</checksum>
-    </file>
-    <file>
-      <filename>schedules.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>1C22DD2A</checksum>
     </file>
     <file>
       <filename>simulation.rb</filename>
@@ -225,28 +223,16 @@
       <checksum>6B1AEF16</checksum>
     </file>
     <file>
-      <filename>unit_conversions.rb</filename>
+      <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>91D17463</checksum>
+      <checksum>23AB851A</checksum>
     </file>
     <file>
-      <filename>util.rb</filename>
+      <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4516079E</checksum>
-    </file>
-    <file>
-      <filename>waterheater.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>9E2A2A78</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>D9E029B9</checksum>
+      <checksum>9F147496</checksum>
     </file>
   </files>
 </measure>
