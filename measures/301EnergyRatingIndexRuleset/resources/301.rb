@@ -1027,6 +1027,7 @@ class EnergyRatingIndex301Ruleset
       sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
       furnace = XMLHelper.add_element(sys_type, "Furnace")
       XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
+      XMLHelper.add_element(heat_sys, "HeatingCapacity", -1) # Use Manual J auto-sizing
       heat_eff = XMLHelper.add_element(heat_sys, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "AFUE")
       XMLHelper.add_element(heat_eff, "Value", afue)
@@ -1045,6 +1046,7 @@ class EnergyRatingIndex301Ruleset
       boiler = XMLHelper.add_element(sys_type, "Boiler")
       XMLHelper.add_element(boiler, "BoilerType", "hot water")
       XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
+      XMLHelper.add_element(heat_sys, "HeatingCapacity", -1) # Use Manual J auto-sizing
       heat_eff = XMLHelper.add_element(heat_sys, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "AFUE")
       XMLHelper.add_element(heat_eff, "Value", afue)
@@ -1064,6 +1066,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
       XMLHelper.add_element(cool_sys, "CoolingSystemType", "central air conditioning")
       XMLHelper.add_element(cool_sys, "CoolingSystemFuel", "electricity")
+      XMLHelper.add_element(cool_sys, "CoolingCapacity", -1) # Use Manual J auto-sizing
       XMLHelper.add_element(cool_sys, "FractionCoolLoadServed", 1.0)
       cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
@@ -1084,6 +1087,8 @@ class EnergyRatingIndex301Ruleset
       dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
       XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
+      XMLHelper.add_element(heat_pump, "HeatingCapacity", -1) # Use Manual J auto-sizing
+      XMLHelper.add_element(heat_pump, "CoolingCapacity", -1) # Use Manual J auto-sizing
       XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
       if prevent_hp_and_ac
         XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
@@ -1175,6 +1180,7 @@ class EnergyRatingIndex301Ruleset
       sys_type = XMLHelper.add_element(heating_system, "HeatingSystemType")
       furnace = XMLHelper.add_element(sys_type, "Furnace")
       XMLHelper.add_element(heating_system, "HeatingSystemFuel", "natural gas")
+      XMLHelper.add_element(heating_system, "HeatingCapacity", -1) # Use Manual J auto-sizing
       heat_eff = XMLHelper.add_element(heating_system, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "AFUE")
       XMLHelper.add_element(heat_eff, "Value", afue)
@@ -1207,6 +1213,7 @@ class EnergyRatingIndex301Ruleset
       end
       XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
       XMLHelper.add_element(cooling_system, "CoolingSystemFuel", "electricity")
+      XMLHelper.add_element(cooling_system, "CoolingCapacity", -1) # Use Manual J auto-sizing
       XMLHelper.add_element(cooling_system, "FractionCoolLoadServed", 1.0)
       cool_eff = XMLHelper.add_element(cooling_system, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
@@ -1244,6 +1251,8 @@ class EnergyRatingIndex301Ruleset
       end
       XMLHelper.add_attribute(sys_id, "id", "HeatPump")
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
+      XMLHelper.add_element(heat_pump, "HeatingCapacity", -1) # Use Manual J auto-sizing
+      XMLHelper.add_element(heat_pump, "CoolingCapacity", -1) # Use Manual J auto-sizing
       XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
       XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
       cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolingEfficiency")

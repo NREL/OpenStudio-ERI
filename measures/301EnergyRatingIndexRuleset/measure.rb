@@ -1930,11 +1930,9 @@ class OSModel
     
     clg_type = XMLHelper.get_value(clgsys, "CoolingSystemType")
     
-    cool_capacity_btuh = XMLHelper.get_value(clgsys, "CoolingCapacity")
-    if cool_capacity_btuh.nil?
+    cool_capacity_btuh = Float(XMLHelper.get_value(clgsys, "CoolingCapacity"))
+    if cool_capacity_btuh <= 0.0
       cool_capacity_btuh = Constants.SizingAuto
-    else
-      cool_capacity_btuh = Float(cool_capacity_btuh)
     end
     
     if clg_type == "central air conditioning"
@@ -2033,11 +2031,9 @@ class OSModel
     
     fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
     
-    heat_capacity_btuh = XMLHelper.get_value(htgsys, "HeatingCapacity")
-    if heat_capacity_btuh.nil?
+    heat_capacity_btuh = Float(XMLHelper.get_value(htgsys, "HeatingCapacity"))
+    if heat_capacity_btuh <= 0.0
       heat_capacity_btuh = Constants.SizingAuto
-    else
-      heat_capacity_btuh = Float(heat_capacity_btuh)
     end
     
     if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
