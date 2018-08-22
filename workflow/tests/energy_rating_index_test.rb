@@ -12,7 +12,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_valid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
-    Dir["#{xmldir}/valid*.xml"].each do |xml|
+    Dir["#{xmldir}/valid*.xml"].sort.each do |xml|
       run_and_check(xml, parent_dir, false)
     end
   end
@@ -20,7 +20,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_invalid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
-    Dir["#{xmldir}/invalid*.xml"].each do |xml|
+    Dir["#{xmldir}/invalid*.xml"].sort.each do |xml|
       run_and_check(xml, parent_dir, true)
     end
   end
@@ -50,7 +50,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     test_num = 0
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_Test_HERS_Reference_Home")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next if xml.end_with? "HERSReferenceHome.xml"
       test_num += 1
       
@@ -69,7 +69,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_resnet_hers_method
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
       _check_method_results(results_csv, test_num, test_num == 2, false)
@@ -79,7 +79,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_resnet_hers_method_iaf
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_IAF")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, true)
       _check_method_results(results_csv, test_num, test_num == 2, true)
@@ -91,7 +91,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     # Approved by RESNET Board of Directors June 16, 2016
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_Proposed")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       if xml.include? 'AC'
         test_num = File.basename(xml).gsub('L100-AC-','').gsub('.xml','').to_i
         test_loc = 'AC'
@@ -119,7 +119,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num += 1
       
       # Run test
@@ -162,7 +162,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water_PreAddendumA")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num += 1
       
       # Run test
