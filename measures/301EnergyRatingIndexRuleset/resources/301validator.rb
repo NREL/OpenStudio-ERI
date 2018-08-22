@@ -285,7 +285,7 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             '../../HVACControl' => one, # See [HVACControl]
             'HeatingSystemType[Furnace | WallFurnace | Boiler | ElectricResistance | Stove]' => one, # See [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Resistance] or [HeatingType=Stove]
-            'HeatingCapacity' => zero_or_one, # Uses Manual J auto-sizing if not provided
+            'HeatingCapacity' => one,
             'FractionHeatLoadServed' => one,
         },
         
@@ -333,7 +333,7 @@ class EnergyRatingIndex301Validator
             '../../HVACControl' => one, # See [HVACControl]
             '[CoolingSystemType="central air conditioning" or CoolingSystemType="room air conditioner"]' => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC]
             '[CoolingSystemFuel="electricity"]' => one,
-            'CoolingCapacity' => zero_or_one, # Uses Manual J auto-sizing if not provided
+            'CoolingCapacity' => one,
             'FractionCoolLoadServed' => one,
         },
     

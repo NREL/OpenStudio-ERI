@@ -894,7 +894,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       min_max_mn_delta_percent = [43.35, 45.00]
     elsif test_num == 9
       min_max_abs = [13.17, 13.68]
-      min_max_base_delta_percent = [-24.54, -23.40] # FIXME: Should be [-24.54, -23.47]
+      min_max_base_delta_percent = [-24.54, -23.47]
       min_max_mn_delta_percent = [47.26, 48.93]
     elsif test_num == 10
       min_max_abs = [8.81, 9.13]
@@ -910,7 +910,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       min_max_mn_delta_percent = [44.41, 45.99]
     elsif test_num == 13
       min_max_abs = [11.90, 12.38]
-      min_max_base_delta_percent = [9.3, 9.74] # FIXME: Should be [9.38, 9.74]
+      min_max_base_delta_percent = [9.38, 9.74]
       min_max_mn_delta_percent = [45.60, 47.33]
     elsif test_num == 14
       min_max_abs = [11.68, 12.14]
