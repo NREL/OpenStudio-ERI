@@ -588,13 +588,11 @@ class EnergyRatingIndex301Ruleset
           perim_layer = XMLHelper.add_element(perim_ins, "Layer")
           XMLHelper.add_element(perim_layer, "InstallationType", "continuous")
           XMLHelper.add_element(perim_layer, "NominalRValue", slab_rvalue)
-          XMLHelper.add_element(perim_layer, "Thickness", slab_rvalue/5.0)
           under_ins = new_slab.elements["UnderSlabInsulation"]
           XMLHelper.delete_element(under_ins, "Layer")
           under_layer = XMLHelper.add_element(under_ins, "Layer")
           XMLHelper.add_element(under_layer, "InstallationType", "continuous")
           XMLHelper.add_element(under_layer, "NominalRValue", 0)
-          XMLHelper.add_element(under_layer, "Thickness", 0)
         end
         new_slab.elements["extension/CarpetFraction"].text = 0.8
         new_slab.elements["extension/CarpetRValue"].text = 2.0
@@ -688,14 +686,12 @@ class EnergyRatingIndex301Ruleset
     new_perim_ins_layer = XMLHelper.add_element(new_perim_ins, "Layer")
     XMLHelper.add_element(new_perim_ins_layer, "InstallationType", "continuous")
     XMLHelper.add_element(new_perim_ins_layer, "NominalRValue", 0)
-    XMLHelper.add_element(new_perim_ins_layer, "Thickness", 0)
     new_under_ins = XMLHelper.add_element(new_slab, "UnderSlabInsulation")
     sys_id = XMLHelper.add_element(new_under_ins, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Foundation_Slab_Under_Ins")
     new_under_ins_layer = XMLHelper.add_element(new_under_ins, "Layer")
     XMLHelper.add_element(new_under_ins_layer, "InstallationType", "continuous")
     XMLHelper.add_element(new_under_ins_layer, "NominalRValue", 0)
-    XMLHelper.add_element(new_under_ins_layer, "Thickness", 0)
     extension = XMLHelper.add_element(new_slab, "extension")
     XMLHelper.add_element(extension, "CarpetFraction", 0)
     XMLHelper.add_element(extension, "CarpetRValue", 0)
@@ -1593,11 +1589,12 @@ class EnergyRatingIndex301Ruleset
       
       ref_f_gpd = get_fixtures_gpd_reference()
       
-      # New water fixture
+      # New water fixture (aggregate)
       new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
       sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
       XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+      XMLHelper.add_element(new_fixture, "LowFlow", false)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
       XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
@@ -1622,11 +1619,12 @@ class EnergyRatingIndex301Ruleset
       
       ref_f_gpd = 0.0
       
-     # New water fixture
+      # New water fixture (aggregate)
       new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
       sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
       XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+      XMLHelper.add_element(new_fixture, "LowFlow", false)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
       XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
@@ -1646,10 +1644,10 @@ class EnergyRatingIndex301Ruleset
     
       orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
       
-      low_flow_fixtures = false
-      orig_details.elements.each("Systems/WaterHeating/WaterFixture") do |wf|
-        if wf.elements["FlowRate"] and Float(XMLHelper.get_value(wf, "FlowRate")) <= 2.0
-          low_flow_fixtures = true
+      low_flow_fixtures = true
+      orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |wf|
+        if not Boolean(XMLHelper.get_value(wf, "LowFlow"))
+          low_flow_fixtures = false
         end
       end
       
@@ -1734,17 +1732,18 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(extension, "MixedWaterGPD", rated_w_gpd)
       XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj)
       if is_recirc
-        XMLHelper.add_element(extension, "RecircPumpAnnualkWh", recirc_pump_annual_kwh)
+        XMLHelper.add_element(recirc, "extension/PumpAnnualkWh", recirc_pump_annual_kwh)
       end
 
       rated_f_gpd = get_fixtures_gpd_rated(low_flow_fixtures)
       sens_gain, lat_gain = get_general_water_use_gains_sens_lat()
       
-      # New water fixture
+      # New water fixture (aggregate)
       new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
       sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
       XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
+      XMLHelper.add_element(new_fixture, "LowFlow", low_flow_fixtures)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
       XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)

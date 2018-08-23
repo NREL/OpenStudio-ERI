@@ -6,6 +6,7 @@ require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname'
 require 'csv'
+require "#{File.dirname(__FILE__)}/resources/ep_validator"
 require "#{File.dirname(__FILE__)}/resources/airflow"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/constructions"
@@ -124,6 +125,16 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     else
       runner.registerWarning("No schema dir provided, no HPXML validation performed.")
     end
+    
+    # Validate input HPXML against EnergyPlus Use Case
+    errors = EnergyPlusValidator.run_validator(hpxml_doc)
+    errors.each do |error|
+      runner.registerError(error)
+    end
+    unless errors.empty?
+      return false
+    end
+    runner.registerInfo("Validated input HPXML against ERI Use Case.")
     
     # Weather file
     weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
@@ -1617,9 +1628,7 @@ class OSModel
       
       # Apply construction
       name = door.elements["SystemIdentifier"].attributes["id"]
-      area = Float(XMLHelper.get_value(door, "Area"))
-      ua = area/Float(XMLHelper.get_value(door, "RValue"))
-      ufactor = ua/area
+      ufactor = 1.0/Float(XMLHelper.get_value(door, "RValue"))
       
       success = SubsurfaceConstructions.apply_door(runner, model, [sub_surface], "Door", ufactor)
       return false if not success
@@ -1818,7 +1827,7 @@ class OSModel
       dist_pump_annual_kwh = 0.0
     elsif XMLHelper.has_element(dist, "SystemType/Recirculation")
       dist_type = "recirculation"
-      dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "extension/RecircPumpAnnualkWh"))
+      dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/extension/PumpAnnualkWh"))
     end
     dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
     
@@ -2068,7 +2077,7 @@ class OSModel
       cool_capacity_btuh = Float(cool_capacity_btuh)
     end
     
-    backup_heat_capacity_btuh = XMLHelper.get_value(hp, "BackupHeatingCapacity")
+    backup_heat_capacity_btuh = XMLHelper.get_value(hp, "BackupHeatingCapacity") # TODO: Require in ERI Use Case?
     if backup_heat_capacity_btuh.nil?
       backup_heat_capacity_btuh = Constants.SizingAuto
     else
@@ -2287,13 +2296,13 @@ class OSModel
 
   def self.add_dehumidifier(runner, model, building, unit)
   
-    dehumidifier = building.elements["BuildingDetails/Systems/HVAC/extension/dehumidifier"]
+    dehumidifier = building.elements["BuildingDetails/Systems/HVAC/extension/Dehumidifier"]
     return true if dehumidifier.nil?
     
-    energy_factor = XMLHelper.get_value(dehumidifier, "energy_factor")
-    water_removal_rate = XMLHelper.get_value(dehumidifier, "water_removal_rate")
-    air_flow_rate = XMLHelper.get_value(dehumidifier, "air_flow_rate")
-    humidity_setpoint = XMLHelper.get_value(dehumidifier, "humidity_setpoint")
+    energy_factor = XMLHelper.get_value(dehumidifier, "EnergyFactor")
+    water_removal_rate = XMLHelper.get_value(dehumidifier, "WaterRemovalRrate")
+    air_flow_rate = XMLHelper.get_value(dehumidifier, "AirFlowRate")
+    humidity_setpoint = XMLHelper.get_value(dehumidifier, "HumiditySetpoint")
     success = HVAC.apply_dehumidifier(model, unit, runner, energy_factor, 
                                       water_removal_rate, air_flow_rate, humidity_setpoint)
     return false if not success
@@ -2395,7 +2404,7 @@ class OSModel
   
     # Infiltration
     infiltration = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
-    infil_ach50 = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+    infil_ach50 = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
     
     # Vented crawl SLA
     vented_crawl_area = 0.0
@@ -2484,8 +2493,9 @@ class OSModel
                                           bathroom_exhaust_hour)
 
     # Natural Ventilation
-    natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/natural_ventilation"]
+    natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/NaturalVentilation"]
     if natural_ventilation.nil?
+      # Assume Building America HSP defaults
       nat_vent_htg_offset = 1.0
       nat_vent_clg_offset = 1.0
       nat_vent_ovlp_offset = 1.0
@@ -2499,18 +2509,18 @@ class OSModel
       nat_vent_max_oa_hr = 0.0115
       nat_vent_max_oa_rh = 0.7
     else
-      nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_offset")
-      nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_offset")
-      nat_vent_ovlp_offset = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_offset")
-      nat_vent_htg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_htg_season")
-      nat_vent_clg_season = XMLHelper.get_value(natural_ventilation, "nat_vent_clg_season")
-      nat_vent_ovlp_season = XMLHelper.get_value(natural_ventilation, "nat_vent_ovlp_season")
-      nat_vent_num_weekdays = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekdays")
-      nat_vent_num_weekends = XMLHelper.get_value(natural_ventilation, "nat_vent_num_weekends")
-      nat_vent_frac_windows_open = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_windows_open")
-      nat_vent_frac_window_area_openable = XMLHelper.get_value(natural_ventilation, "nat_vent_frac_window_area_openable")
-      nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_hr")
-      nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "nat_vent_max_oa_rh")
+      nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "HeatingSeasonTemperatureOffset")
+      nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "CoolingSeasonTemperatureOffset")
+      nat_vent_ovlp_offset = XMLHelper.get_value(natural_ventilation, "OverlapSeasonTemperatureOffset")
+      nat_vent_htg_season = XMLHelper.get_value(natural_ventilation, "EnabledForHeatingSeason")
+      nat_vent_clg_season = XMLHelper.get_value(natural_ventilation, "EnabledForCoolingSeason")
+      nat_vent_ovlp_season = XMLHelper.get_value(natural_ventilation, "EnabledForOverlapSeason")
+      nat_vent_num_weekdays = XMLHelper.get_value(natural_ventilation, "EnabledNumberOfWeekdays")
+      nat_vent_num_weekends = XMLHelper.get_value(natural_ventilation, "EnabledNumberOfWeekendDays")
+      nat_vent_frac_windows_open = XMLHelper.get_value(natural_ventilation, "FractionWindowsOpen")
+      nat_vent_frac_window_area_openable = XMLHelper.get_value(natural_ventilation, "FractionWindowAreaOpenable")
+      nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "ControlMaximumHumidityRatio")
+      nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "ControlMaximumRelativeHumidity")
     end
     nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season,
                                       nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays, 
