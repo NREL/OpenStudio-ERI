@@ -162,7 +162,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>10.0</NominalRValue>
-                  <Thickness>2.0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
@@ -170,7 +169,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
@@ -280,6 +278,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>-1</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.78</Value>
@@ -291,6 +290,7 @@
               <DistributionSystem idref='HVACDistribution'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>-1</CoolingCapacity>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -349,6 +349,7 @@
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
             <WaterFixtureType>shower head</WaterFixtureType>
+            <LowFlow>false</LowFlow>
             <extension>
               <MixedWaterGPD>54.6</MixedWaterGPD>
               <SensibleGainsBtu>-1044995.0</SensibleGainsBtu>

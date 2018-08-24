@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.07.11 11:18
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.08.24 08:24
 ! <Version>, Version ID
  Version, 8.9
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -139,10 +139,10 @@ Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01,12/31,Monday,365,Use RunPeri
 Environment:Daylight Saving,No,RunPeriod Object
 Environment:WarmupDays,  7
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,CRAWLSPACE,RunPeriod: RUN PERIOD 1,9.6265071072E-002,7.0323978400E-002,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.9022803984E-002,2.0831149375E-002,Pass,Pass,0.1508131989,0.1646194596,Pass,Pass
- Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,1.8380737723E-003,1.7703843297E-003,Pass,Pass,0.9996681242,2.4486607649,Pass,Pass
- Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,2.8498343496,2.4264396885,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,CRAWLSPACE,RunPeriod: RUN PERIOD 1,9.6283714852E-002,7.0330275139E-002,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.9035934207E-002,2.0985527509E-002,Pass,Pass,0.1514614127,0.1652969608,Pass,Pass
+ Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,1.8212283723E-003,1.7450770049E-003,Pass,Pass,1.3738954495,4.0954317115,Pass,Pass
+ Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,2.8498429329,2.4264073750,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

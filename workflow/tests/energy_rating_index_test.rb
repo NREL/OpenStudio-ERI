@@ -2,10 +2,10 @@ require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/xmlhelper'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/schedules'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/constants'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/unit_conversions'
+require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
+require_relative '../../measures/HPXMLTranslator/resources/schedules'
+require_relative '../../measures/HPXMLTranslator/resources/constants'
+require_relative '../../measures/HPXMLTranslator/resources/unit_conversions'
 
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
