@@ -25,7 +25,7 @@ Note that the Reference Home, Rated Home and Index Adjustment Home (if applicabl
 3. This will generate output as shown below:
 ![CLI output](https://user-images.githubusercontent.com/5861765/43606063-8f3b6a5c-9657-11e8-8e8d-985a7b6b6f2b.png)
 
-Note that the simulations will run fastest on Linux and Mac by taking advantage of special capabilities on these platforms. Simulations will run significantly slower on Windows, though one possibility is to run the simulations through Windows Subsystem for Linux (WSL).
+Note that the workflow runs significantly faster on Linux/Mac platforms by taking advantage of the ability to call [POSIX fork](https://en.wikipedia.org/wiki/Fork_(system_call)).
 
 ## Outputs
 
