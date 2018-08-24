@@ -68,7 +68,7 @@
             <SystemIdentifier id='Infiltration_ACHnatural'/>
             <BuildingAirLeakage>
               <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <AirLeakage>0.3</AirLeakage>
+              <AirLeakage>0.17942989180951335</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
           <AirInfiltrationMeasurement>
@@ -76,15 +76,15 @@
             <HousePressure>50</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>5.015886655917173</AirLeakage>
+              <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='Infiltration_ELA_SLA'/>
-            <EffectiveLeakageArea>1.023795897449113</EffectiveLeakageArea>
+            <EffectiveLeakageArea>0.6123319570477266</EffectiveLeakageArea>
           </AirInfiltrationMeasurement>
           <extension>
-            <BuildingSpecificLeakageArea>0.0002925131135568894</BuildingSpecificLeakageArea>
+            <BuildingSpecificLeakageArea>0.00017495198772792187</BuildingSpecificLeakageArea>
           </extension>
         </AirInfiltration>
         <AtticAndRoof>
@@ -372,15 +372,16 @@
               <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
             <extension>
-              <MixedWaterGPD>8.091794196682153</MixedWaterGPD>
+              <MixedWaterGPD>8.517678101770688</MixedWaterGPD>
               <EnergyConsumptionAdjustmentFactor>0.8957721742421562</EnergyConsumptionAdjustmentFactor>
             </extension>
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
             <WaterFixtureType>shower head</WaterFixtureType>
+            <LowFlow>false</LowFlow>
             <extension>
-              <MixedWaterGPD>51.87</MixedWaterGPD>
+              <MixedWaterGPD>54.6</MixedWaterGPD>
               <SensibleGainsBtu>-1044995.0</SensibleGainsBtu>
               <LatentGainsBtu>1060325.0</LatentGainsBtu>
             </extension>

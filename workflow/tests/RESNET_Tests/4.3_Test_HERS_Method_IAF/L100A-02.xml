@@ -212,6 +212,8 @@
               <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatPumpType>air-to-air</HeatPumpType>
+              <HeatingCapacity>60000</HeatingCapacity>
+              <CoolingCapacity>60000</CoolingCapacity>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
@@ -285,12 +287,12 @@
           <WaterFixture>
             <SystemIdentifier id='WF_ID1'/>
             <WaterFixtureType>shower head</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WF_ID2'/>
             <WaterFixtureType>faucet</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
         </WaterHeating>
       </Systems>

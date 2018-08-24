@@ -215,6 +215,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>60000</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.78</Value>
@@ -226,6 +227,7 @@
               <DistributionSystem idref="HVAC_Dist_ID1"/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>60000</CoolingCapacity>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -296,12 +298,12 @@
           <WaterFixture>
             <SystemIdentifier id='WF_ID1'/>
             <WaterFixtureType>shower head</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WF_ID2'/>
             <WaterFixtureType>faucet</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
         </WaterHeating>
       </Systems>

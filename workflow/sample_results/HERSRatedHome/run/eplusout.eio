@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.07.11 11:18
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.08.24 08:24
 ! <Version>, Version ID
  Version, 8.9
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -115,10 +115,10 @@ RoomAir Model,UNFINISHED ATTIC,Mixing/Well-Stirred
 ! <AirflowNetwork Model:Control>, No Multizone or Distribution/Multizone with Distribution/Multizone without Distribution/Multizone with Distribution only during Fan Operation
 AirflowNetwork Model:Control,NoMultizoneOrDistribution
 ! <Component Sizing Information>, Component Type, Component Name, Input Field Description, Value
- Component Sizing Information, AirTerminal:SingleDuct:Uncontrolled, RESIDENTIAL FURNACE GAS AND CENTRAL AC LIVING DIRECT AIR, User-Specified Maximum Air Flow Rate [m3/s], 1.39405
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 1.39405
+ Component Sizing Information, AirTerminal:SingleDuct:Uncontrolled, RESIDENTIAL FURNACE GAS AND CENTRAL AC LIVING DIRECT AIR, User-Specified Maximum Air Flow Rate [m3/s], 1.36906
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 1.36906
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.66691
- Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 1.39405
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 1.36906
  Component Sizing Information, Coil:Cooling:DX:MultiSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Speed 2 Rated Air Flow Rate [m3/s], 0.67054
  Component Sizing Information, Coil:Cooling:DX:MultiSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, Design Size Speed 1 Rated Air Flow Rate [m3/s], 0.33527
  Component Sizing Information, Coil:Cooling:DX:MultiSpeed, RESIDENTIAL CENTRAL AC COOLING COIL, User-Specified Speed 1 Rated Air Flow Rate [m3/s], 0.57667
@@ -134,22 +134,22 @@ AirflowNetwork Model:Control,NoMultizoneOrDistribution
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 18756.54849
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, User-Specified Maximum Supply Air Temperature [C], 48.88889
  Component Sizing Information, AirLoopHVAC:UnitarySystem, RESIDENTIAL FURNACE GAS AND CENTRAL AC UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
- Component Sizing Information, Fan:OnOff, RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 1.39406
+ Component Sizing Information, Fan:OnOff, RESIDENTIAL FURNACE GAS AND CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 1.36907
  Component Sizing Information, Coil:Heating:Fuel, RESIDENTIAL FURNACE GAS HEATING COIL, User-Specified Nominal Capacity [W], 18756.54849
 ! <Water Heater Information>,Type,Name,Volume {m3},Maximum Capacity {W},Standard Rated Recovery Efficiency, Standard Rated Energy Factor
 Water Heater Information,WaterHeater:Mixed,RES WH,0.1362,5500.0,3.293,0.7814
- Component Sizing Information, WaterHeater:Mixed, RES WH, Use Side Design Flow Rate [m3/s], 4.89142E-006
+ Component Sizing Information, WaterHeater:Mixed, RES WH, Use Side Design Flow Rate [m3/s], 5.14030E-006
 ! <Environment>,Environment Name,Environment Type, Start Date, End Date, Start DayOfWeek, Duration {#days}, Source:Start DayOfWeek,  Use Daylight Saving, Use Holidays, Apply Weekend Holiday Rule,  Use Rain Values, Use Snow Values
 ! <Environment:Special Days>, Special Day Name, Special Day Type, Source, Start Date, Duration {#days}
 ! <Environment:Daylight Saving>, Daylight Saving Indicator, Source, Start Date, End Date
 ! <Environment:WarmupDays>, NumberofWarmupDays
 Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01,12/31,Monday,365,Use RunPeriod Specified Day,No,No,No,Yes,Yes
 Environment:Daylight Saving,No,RunPeriod Object
-Environment:WarmupDays,  6
+Environment:WarmupDays,  7
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.1738758114E-013,1.0097917680E-013,Pass,Pass,0.1119678262,0.1011045052,Pass,Pass
- Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,4.2583709668E-002,2.3890648569E-002,Pass,Pass,0.1226652332,0.1047011311,Pass,Pass
- Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,2.4021025516,2.0700782407,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.4003613084E-013,9.6344048425E-014,Pass,Pass,0.1259291291,0.1034536951,Pass,Pass
+ Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,3.7495441077E-002,2.0607878861E-002,Pass,Pass,0.1350061882,0.1092356280,Pass,Pass
+ Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,2.4370088361,2.0944186114,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data
