@@ -967,131 +967,64 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_hvac_reference(new_systems, orig_details)
   
     new_hvac = XMLHelper.add_element(new_systems, "HVAC")
-  
+    new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
+    
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
     
-    # FIXME: Handle multiple HVAC systems
-    has_boiler = false
-    fuel_type = nil
-    heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
-    heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
-    if not heating_system.nil?
+    # Heating
+    heating_systems = {} # Build up reference heating systems
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
       has_boiler = XMLHelper.has_element(heating_system, "HeatingSystemType/Boiler")
       fuel_type = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
-    elsif not heat_pump_system.nil?
-      fuel_type = 'electricity'
-    end
-    
-    new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
-    
-    # Heating
-    heat_type = nil
-    if heating_system.nil? and heat_pump_system.nil?
-      if has_fuel_access(orig_details)
-        heat_type = "GasFurnace"
+      load_frac = Float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed"))
+      if fuel_type == 'electricity'
+        htg_type = 'HeatPump'
+      elsif has_boiler
+        htg_type = 'GasBoiler'
       else
-        heat_type = "HeatPump"
+        htg_type = 'GasFurnace'
       end
-    elsif fuel_type == 'electricity'
-      heat_type = "HeatPump"
-    elsif has_boiler
-      heat_type = "GasBoiler"
-    else
-      heat_type = "GasFurnace"
+      if heating_systems[htg_type].nil? 
+        heating_systems[htg_type] = load_frac # First reference
+      else
+        heating_systems[htg_type] += load_frac # Previously assigned, aggregate load_frac
+      end
     end
-    
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |heat_pump_system|
+      load_frac = Float(XMLHelper.get_value(heat_pump_system, "FractionHeatLoadServed"))
+      htg_type = 'HeatPump'
+      if heating_systems[htg_type].nil? 
+        heating_systems[htg_type] = load_frac # First reference
+      else
+        heating_systems[htg_type] += load_frac # Previously assigned, aggregate load_frac
+      end
+    end
+    if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"].nil?
+      load_frac = 1.0
+      if has_fuel_access(orig_details)
+        htg_type = 'GasFurnace'
+      else
+        htg_type = 'HeatPump'
+      end
+      if heating_systems[htg_type].nil? 
+        heating_systems[htg_type] = load_frac # First reference
+      else
+        heating_systems[htg_type] += load_frac # Previously assigned, aggregate load_frac
+      end
+    end
+    heating_systems.each do |htg_type, load_frac|
+      if htg_type == 'HeatPump'
+        add_reference_heating_heat_pump(new_hvac_plant, load_frac)
+      elsif htg_type == 'GasBoiler'
+        add_reference_heating_gas_boiler(new_hvac_plant, load_frac)
+      elsif htg_type == 'GasFurnace'
+        add_reference_heating_gas_furnace(new_hvac_plant, load_frac)
+      end
+    end
+  
     # Cooling
-    cool_type = "AirConditioner"
-    
-    # HeatingSystems
-    if heat_type == "GasFurnace"
-    
-      # 78% AFUE gas furnace
-      afue = 0.78
-      heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
-      sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
-      dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
-      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
-      sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
-      furnace = XMLHelper.add_element(sys_type, "Furnace")
-      XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
-      XMLHelper.add_element(heat_sys, "HeatingCapacity", -1) # Use Manual J auto-sizing
-      heat_eff = XMLHelper.add_element(heat_sys, "AnnualHeatingEfficiency")
-      XMLHelper.add_element(heat_eff, "Units", "AFUE")
-      XMLHelper.add_element(heat_eff, "Value", afue)
-      XMLHelper.add_element(heat_sys, "FractionHeatLoadServed", 1.0)
-      
-    elsif heat_type == "GasBoiler"
-    
-      # 80% AFUE gas boiler
-      afue = 0.80
-      heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
-      sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
-      dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
-      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
-      sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
-      boiler = XMLHelper.add_element(sys_type, "Boiler")
-      XMLHelper.add_element(boiler, "BoilerType", "hot water")
-      XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
-      XMLHelper.add_element(heat_sys, "HeatingCapacity", -1) # Use Manual J auto-sizing
-      heat_eff = XMLHelper.add_element(heat_sys, "AnnualHeatingEfficiency")
-      XMLHelper.add_element(heat_eff, "Units", "AFUE")
-      XMLHelper.add_element(heat_eff, "Value", afue)
-      XMLHelper.add_element(heat_sys, "FractionHeatLoadServed", 1.0)
-      
-    end
-    
-    # CoolingSystems
-    if cool_type == "AirConditioner"
-    
-      # 13 SEER electric air conditioner
-      seer = 13.0
-      cool_sys = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
-      sys_id = XMLHelper.add_element(cool_sys, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
-      dist = XMLHelper.add_element(cool_sys, "DistributionSystem")
-      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
-      XMLHelper.add_element(cool_sys, "CoolingSystemType", "central air conditioning")
-      XMLHelper.add_element(cool_sys, "CoolingSystemFuel", "electricity")
-      XMLHelper.add_element(cool_sys, "CoolingCapacity", -1) # Use Manual J auto-sizing
-      XMLHelper.add_element(cool_sys, "FractionCoolLoadServed", 1.0)
-      cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
-      XMLHelper.add_element(cool_eff, "Units", "SEER")
-      XMLHelper.add_element(cool_eff, "Value", seer)
-      extension = XMLHelper.add_element(cool_sys, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      
-    end
-    
-    # HeatPump
-    if heat_type == "HeatPump"
-      
-      # 7.7 HSPF air source heat pump
-      hspf = 7.7
-      heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
-      sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "HeatPump")
-      dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
-      XMLHelper.add_attribute(dist, "idref", "HVACDistribution")
-      XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
-      XMLHelper.add_element(heat_pump, "HeatingCapacity", -1) # Use Manual J auto-sizing
-      XMLHelper.add_element(heat_pump, "CoolingCapacity", -1) # Use Manual J auto-sizing
-      XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
-      XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
-      cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolingEfficiency")
-      XMLHelper.add_element(cool_eff, "Units", "SEER")
-      XMLHelper.add_element(cool_eff, "Value", 13.0)
-      heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
-      XMLHelper.add_element(heat_eff, "Units", "HSPF")
-      XMLHelper.add_element(heat_eff, "Value", hspf)
-      extension = XMLHelper.add_element(heat_pump, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      
-    end
+    add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
     
     # Table 303.4.1(1) - Thermostat
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
@@ -1101,13 +1034,8 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
     XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
     
-    # Table 4.2.2(1) - Thermal distribution systems
-    new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
-    sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "HVACDistribution")
-    XMLHelper.add_element(new_hvac_dist, "DistributionSystemType/Other", "DSE")
-    XMLHelper.add_element(new_hvac_dist, "AnnualHeatingDistributionSystemEfficiency", 0.8)
-    XMLHelper.add_element(new_hvac_dist, "AnnualCoolingDistributionSystemEfficiency", 0.8)
+    # Distribution system
+    add_reference_distribution_system(new_hvac)
     
   end
   
@@ -1124,96 +1052,13 @@ class EnergyRatingIndex301Ruleset
     
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
     
-    # TODO: Handle multiple distribution systems
-    dist_id = nil
-    if orig_details.elements["Systems/HVAC/HVACDistribution"]
-      dist_id = orig_details.elements["Systems/HVAC/HVACDistribution/SystemIdentifier"].attributes["id"]
-    end
-    
     # Heating
-    heat_type = nil
-    if heating_system.nil? and heat_pump_system.nil?
-      if has_fuel_access(orig_details)
-        heat_type = "GasFurnace" # override
-      else
-        heat_type = "HeatPump" # override
-      end
-    end
-    
-    # Cooling
-    cool_type = nil
-    if cooling_system.nil? and heat_pump_system.nil?
-      cool_type = "AirConditioner" # override
-    end
-    
-    # HeatingSystems
+    added_reference_heating = false
     if not heating_system.nil?
-      
       # Retain heating system(s)
       XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
-      
-    elsif heat_type == "GasFurnace"
-    
-      # 78% AFUE gas furnace
-      afue = 0.78
-      heating_system = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
-      sys_id = XMLHelper.add_element(heating_system, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
-      if not dist_id.nil?
-        dist = XMLHelper.add_element(heating_system, "DistributionSystem")
-        XMLHelper.add_attribute(dist, "idref", dist_id)
-      end
-      sys_type = XMLHelper.add_element(heating_system, "HeatingSystemType")
-      furnace = XMLHelper.add_element(sys_type, "Furnace")
-      XMLHelper.add_element(heating_system, "HeatingSystemFuel", "natural gas")
-      XMLHelper.add_element(heating_system, "HeatingCapacity", -1) # Use Manual J auto-sizing
-      heat_eff = XMLHelper.add_element(heating_system, "AnnualHeatingEfficiency")
-      XMLHelper.add_element(heat_eff, "Units", "AFUE")
-      XMLHelper.add_element(heat_eff, "Value", afue)
-      XMLHelper.add_element(heating_system, "FractionHeatLoadServed", 1.0)
-        
     end
-    
-    # CoolingSystems
-    if not cooling_system.nil?
-      
-      # Retain cooling system(s)
-      XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
-      new_hvac_plant.elements.each("CoolingSystem") do |cooling_system|
-        extension = cooling_system.elements["extension"]
-        if extension.nil?
-          extension = XMLHelper.add_element(cooling_system, "extension")
-        end
-        XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
-        XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      end
-      
-    elsif cool_type == "AirConditioner"
-      
-      # 13 SEER electric air conditioner
-      seer = 13.0
-      cooling_system = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
-      sys_id = XMLHelper.add_element(cooling_system, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
-      if not dist_id.nil?
-        dist = XMLHelper.add_element(cooling_system, "DistributionSystem")
-        XMLHelper.add_attribute(dist, "idref", dist_id)
-      end
-      XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
-      XMLHelper.add_element(cooling_system, "CoolingSystemFuel", "electricity")
-      XMLHelper.add_element(cooling_system, "CoolingCapacity", -1) # Use Manual J auto-sizing
-      XMLHelper.add_element(cooling_system, "FractionCoolLoadServed", 1.0)
-      cool_eff = XMLHelper.add_element(cooling_system, "AnnualCoolingEfficiency")
-      XMLHelper.add_element(cool_eff, "Units", "SEER")
-      XMLHelper.add_element(cool_eff, "Value", seer)
-      extension = XMLHelper.add_element(cooling_system, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      
-    end
-    
-    # HeatPump
     if not heat_pump_system.nil?
-    
       # Retain heating system(s)
       XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
       new_hvac_plant.elements.each("HeatPump") do |heat_pump_system|
@@ -1228,39 +1073,37 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.delete_element(extension, "PerformanceAdjustmentHSPF")
         XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       end
-      
-    elsif heat_type == "HeatPump"
-    
-      # 7.7 HSPF air source heat pump
-      hspf = 7.7
-      heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
-      sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
-      if not dist_id.nil?
-        dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
-        XMLHelper.add_attribute(dist, "idref", dist_id)
+    end
+    if not heating_system.nil? and not heat_pump_system.nil?
+      if has_fuel_access(orig_details)
+        add_reference_heating_gas_furnace(new_hvac_plant, 1.0)
+      else
+        add_reference_heating_heat_pump(new_hvac_plant, 1.0)
       end
-      XMLHelper.add_attribute(sys_id, "id", "HeatPump")
-      XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
-      XMLHelper.add_element(heat_pump, "HeatingCapacity", -1) # Use Manual J auto-sizing
-      XMLHelper.add_element(heat_pump, "CoolingCapacity", -1) # Use Manual J auto-sizing
-      XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", 1.0)
-      XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 1.0)
-      cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolingEfficiency")
-      XMLHelper.add_element(cool_eff, "Units", "SEER")
-      XMLHelper.add_element(cool_eff, "Value", 13.0)
-      heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
-      XMLHelper.add_element(heat_eff, "Units", "HSPF")
-      XMLHelper.add_element(heat_eff, "Value", hspf)
-      extension = XMLHelper.add_element(heat_pump, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
-      
+      added_reference_heating = true
+    end
+    
+    # Cooling
+    added_reference_cooling = false
+    if not cooling_system.nil?
+      # Retain cooling system(s)
+      XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
+      new_hvac_plant.elements.each("CoolingSystem") do |cooling_system|
+        extension = cooling_system.elements["extension"]
+        if extension.nil?
+          extension = XMLHelper.add_element(cooling_system, "extension")
+        end
+        XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
+        XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
+      end
+    else
+      add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
+      added_reference_cooling = true
     end
     
     # Table 303.4.1(1) - Thermostat
     has_programmable_tstat = false
-    control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType")
-    if control_type == "programmable thermostat"
+    if XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType") == "programmable thermostat"
       has_programmable_tstat = true
     end
     
@@ -1286,9 +1129,11 @@ class EnergyRatingIndex301Ruleset
     end
     
     # Table 4.2.2(1) - Thermal distribution systems
-    # FIXME: There can be no distribution system when HVAC prescribed via above
-    #        e.g., no cooling system => AC w/o ducts. Is this right?
     XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
+    if added_reference_heating or added_reference_cooling
+      # Add DSE distribution for these systems
+      add_reference_distribution_system(new_hvac)
+    end
 
   end
   
@@ -2783,169 +2628,254 @@ class EnergyRatingIndex301Ruleset
     return int_kwh, ext_kwh, grg_kwh
   end
 
-end
-  
-def is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-  interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
-  exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
-  return (interior_conditioned != exterior_conditioned)
-end
-
-def is_adjacent_to_conditioned(adjacent_to)
-  if adjacent_to == "living space"
-    return true
-  elsif adjacent_to == "garage"
-    return false
-  elsif adjacent_to == "vented attic"
-    return false
-  elsif adjacent_to == "unvented attic"
-    return false
-  elsif adjacent_to == "cape cod"
-    return true
-  elsif adjacent_to == "cathedral ceiling"
-    return true
-  elsif adjacent_to == "unconditioned basement"
-    return false
-  elsif adjacent_to == "conditioned basement"
-    return true
-  elsif adjacent_to == "crawlspace"
-    return false
-  elsif adjacent_to == "ambient"
-    return false
-  elsif adjacent_to == "ground"
-    return false
+  def self.is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+    interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
+    exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
+    return (interior_conditioned != exterior_conditioned)
   end
-  fail "Unexpected adjacent_to (#{adjacent_to})."
-end
 
-def get_foundation_interior_adjacent_to(fnd_type)
-  if fnd_type.elements["Basement[Conditioned='true']"]
-    interior_adjacent_to = "conditioned basement"
-  elsif fnd_type.elements["Basement[Conditioned='false']"]
-    interior_adjacent_to = "unconditioned basement"
-  elsif fnd_type.elements["Crawlspace"]
-    interior_adjacent_to = "crawlspace"
-  elsif fnd_type.elements["SlabOnGrade"]
-    interior_adjacent_to = "living space"
-  elsif fnd_type.elements["Ambient"]  
-    interior_adjacent_to = "ambient"
-  end
-  return interior_adjacent_to
-end
-
-def get_exterior_wall_area_fracs(orig_details)
-  # Get individual exterior wall areas and sum
-  wall_areas = {}
-  wall_area_sum = 0.0
-  orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-    next if XMLHelper.get_value(wall, "extension/ExteriorAdjacentTo") != "ambient"
-    next if XMLHelper.get_value(wall, "extension/InteriorAdjacentTo") != "living space"
-    wall_area = Float(XMLHelper.get_value(wall, "Area"))
-    wall_areas[wall] = wall_area
-    wall_area_sum += wall_area
-  end
-  
-  # Convert to fractions
-  wall_area_fracs = {}
-  wall_areas.each do |wall, wall_area|
-    wall_area_fracs[wall] = wall_areas[wall] / wall_area_sum
-  end
-  
-  return wall_area_fracs
-end
-
-def calc_water_heater_capacity(fuel, num_beds)
-  #Calculate the capacity of the water heater based on the fuel type and number of bedrooms and bathrooms in a home
-  #returns the capacity in kBtu/hr
-  
-  # From https://www.sansomeandgeorge.co.uk/news-updates/what-is-the-ideal-ratio-of-bathrooms-to-bedrooms.html
-  # "According to 70% of estate agents, a property should have two bathrooms for every three bedrooms..."
-  num_baths = 2.0/3.0 * num_beds
-  
-  if fuel != Constants.FuelTypeElectric
-    if num_beds <= 3
-      input_power = 36
-    elsif num_beds == 4
-      if num_baths <= 2.5
-        input_power = 36
-      else
-        input_power = 38
-      end
-    elsif num_beds == 5
-      input_power = 47
-    else
-      input_power = 50
+  def self.is_adjacent_to_conditioned(adjacent_to)
+    if adjacent_to == "living space"
+      return true
+    elsif adjacent_to == "garage"
+      return false
+    elsif adjacent_to == "vented attic"
+      return false
+    elsif adjacent_to == "unvented attic"
+      return false
+    elsif adjacent_to == "cape cod"
+      return true
+    elsif adjacent_to == "cathedral ceiling"
+      return true
+    elsif adjacent_to == "unconditioned basement"
+      return false
+    elsif adjacent_to == "conditioned basement"
+      return true
+    elsif adjacent_to == "crawlspace"
+      return false
+    elsif adjacent_to == "ambient"
+      return false
+    elsif adjacent_to == "ground"
+      return false
     end
-    return input_power
-  else
-    if num_beds == 1
-      input_power = UnitConversions.convert(2.5,"kW","kBtu/hr")
-    elsif num_beds == 2
-      if num_baths <= 1.5
-        input_power = UnitConversions.convert(3.5,"kW","kBtu/hr")
+    fail "Unexpected adjacent_to (#{adjacent_to})."
+  end
+
+  def self.get_foundation_interior_adjacent_to(fnd_type)
+    if fnd_type.elements["Basement[Conditioned='true']"]
+      interior_adjacent_to = "conditioned basement"
+    elsif fnd_type.elements["Basement[Conditioned='false']"]
+      interior_adjacent_to = "unconditioned basement"
+    elsif fnd_type.elements["Crawlspace"]
+      interior_adjacent_to = "crawlspace"
+    elsif fnd_type.elements["SlabOnGrade"]
+      interior_adjacent_to = "living space"
+    elsif fnd_type.elements["Ambient"]  
+      interior_adjacent_to = "ambient"
+    end
+    return interior_adjacent_to
+  end
+
+  def self.get_exterior_wall_area_fracs(orig_details)
+    # Get individual exterior wall areas and sum
+    wall_areas = {}
+    wall_area_sum = 0.0
+    orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
+      next if XMLHelper.get_value(wall, "extension/ExteriorAdjacentTo") != "ambient"
+      next if XMLHelper.get_value(wall, "extension/InteriorAdjacentTo") != "living space"
+      wall_area = Float(XMLHelper.get_value(wall, "Area"))
+      wall_areas[wall] = wall_area
+      wall_area_sum += wall_area
+    end
+    
+    # Convert to fractions
+    wall_area_fracs = {}
+    wall_areas.each do |wall, wall_area|
+      wall_area_fracs[wall] = wall_areas[wall] / wall_area_sum
+    end
+    
+    return wall_area_fracs
+  end
+
+  def self.calc_water_heater_capacity(fuel, num_beds)
+    #Calculate the capacity of the water heater based on the fuel type and number of bedrooms and bathrooms in a home
+    #returns the capacity in kBtu/hr
+    
+    # From https://www.sansomeandgeorge.co.uk/news-updates/what-is-the-ideal-ratio-of-bathrooms-to-bedrooms.html
+    # "According to 70% of estate agents, a property should have two bathrooms for every three bedrooms..."
+    num_baths = 2.0/3.0 * num_beds
+    
+    if fuel != Constants.FuelTypeElectric
+      if num_beds <= 3
+        input_power = 36
+      elsif num_beds == 4
+        if num_baths <= 2.5
+          input_power = 36
+        else
+          input_power = 38
+        end
+      elsif num_beds == 5
+        input_power = 47
       else
-        input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
+        input_power = 50
       end
-    elsif num_beds == 3
-      if num_baths <= 1.5
-        input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
+      return input_power
+    else
+      if num_beds == 1
+        input_power = UnitConversions.convert(2.5,"kW","kBtu/hr")
+      elsif num_beds == 2
+        if num_baths <= 1.5
+          input_power = UnitConversions.convert(3.5,"kW","kBtu/hr")
+        else
+          input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
+        end
+      elsif num_beds == 3
+        if num_baths <= 1.5
+          input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
+        else
+          input_power = UnitConversions.convert(5.5,"kW","kBtu/hr")
+        end
       else
         input_power = UnitConversions.convert(5.5,"kW","kBtu/hr")
       end
-    else
-      input_power = UnitConversions.convert(5.5,"kW","kBtu/hr")
+      return input_power
     end
-    return input_power
   end
-end
 
-def get_infiltration_ACH_from_SLA(sla, numStories, weather)
-  # Returns the infiltration annual average ACH given a SLA.
-  w = calc_infiltration_w_factor(weather)
+  def self.get_infiltration_ACH_from_SLA(sla, numStories, weather)
+    # Returns the infiltration annual average ACH given a SLA.
+    w = calc_infiltration_w_factor(weather)
 
-  # Equation from ASHRAE 119-1998 (using numStories for simplification)
-  norm_lkage = 1000.0 * sla * numStories ** 0.3
+    # Equation from ASHRAE 119-1998 (using numStories for simplification)
+    norm_lkage = 1000.0 * sla * numStories ** 0.3
 
-  # Equation from ASHRAE 136-1993
-  return norm_lkage * w
-end  
+    # Equation from ASHRAE 136-1993
+    return norm_lkage * w
+  end  
 
-def get_infiltration_ACH50_from_SLA(sla, n_i, conditionedFloorArea, conditionedVolume, pressure_difference_Pa=50)
-  # Returns the infiltration ACH50 given a SLA.
-  return ((sla * conditionedFloorArea * UnitConversions.convert(1.0,"ft^2","in^2") * pressure_difference_Pa ** n_i * 60.0)/(0.2835 * 4.0 ** n_i * conditionedVolume))
-end
-
-def get_infiltration_SLA_from_ACH(ach, numStories, weather)
-  # Returns the infiltration SLA given an annual average ACH.
-  w = calc_infiltration_w_factor(weather)
-  return ach/(w * 1000 * numStories**0.3) 
-end
-
-def get_infiltration_SLA_from_ACH50(ach50, n_i, conditionedFloorArea, conditionedVolume, pressure_difference_Pa=50)
-  # Returns the infiltration SLA given a ACH50.
-  return ((ach50 * 0.2835 * 4.0 ** n_i * conditionedVolume) / (conditionedFloorArea * UnitConversions.convert(1.0,"ft^2","in^2") * pressure_difference_Pa ** n_i * 60.0))
-end  
-
-def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
-  # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
-  if std == '2013'
-    return frac622 * ((num_beds + 1.0) * 7.5 + 0.03 * ffa)
+  def self.get_infiltration_ACH50_from_SLA(sla, n_i, conditionedFloorArea, conditionedVolume, pressure_difference_Pa=50)
+    # Returns the infiltration ACH50 given a SLA.
+    return ((sla * conditionedFloorArea * UnitConversions.convert(1.0,"ft^2","in^2") * pressure_difference_Pa ** n_i * 60.0)/(0.2835 * 4.0 ** n_i * conditionedVolume))
   end
-  return frac622 * ((num_beds + 1.0) * 7.5 + 0.01 * ffa)
-end  
 
-def calc_infiltration_w_factor(weather)
-  # Returns a w factor for infiltration calculations; see ticket #852 for derivation.
-  hdd65f = weather.data.HDD65F
-  ws = weather.data.AnnualAvgWindspeed
-  a = 0.36250748
-  b = 0.365317169
-  c = 0.028902855
-  d = 0.050181043
-  e = 0.009596674
-  f = -0.041567541
-  # in ACH
-  w = (a + b * hdd65f / 10000.0 + c * (hdd65f / 10000.0) ** 2.0 + d * ws + e * ws ** 2 + f * hdd65f / 10000.0 * ws)
-  return w
+  def self.get_infiltration_SLA_from_ACH(ach, numStories, weather)
+    # Returns the infiltration SLA given an annual average ACH.
+    w = calc_infiltration_w_factor(weather)
+    return ach/(w * 1000 * numStories**0.3) 
+  end
+
+  def self.get_infiltration_SLA_from_ACH50(ach50, n_i, conditionedFloorArea, conditionedVolume, pressure_difference_Pa=50)
+    # Returns the infiltration SLA given a ACH50.
+    return ((ach50 * 0.2835 * 4.0 ** n_i * conditionedVolume) / (conditionedFloorArea * UnitConversions.convert(1.0,"ft^2","in^2") * pressure_difference_Pa ** n_i * 60.0))
+  end  
+
+  def self.get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
+    # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
+    if std == '2013'
+      return frac622 * ((num_beds + 1.0) * 7.5 + 0.03 * ffa)
+    end
+    return frac622 * ((num_beds + 1.0) * 7.5 + 0.01 * ffa)
+  end  
+
+  def self.calc_infiltration_w_factor(weather)
+    # Returns a w factor for infiltration calculations; see ticket #852 for derivation.
+    hdd65f = weather.data.HDD65F
+    ws = weather.data.AnnualAvgWindspeed
+    a = 0.36250748
+    b = 0.365317169
+    c = 0.028902855
+    d = 0.050181043
+    e = 0.009596674
+    f = -0.041567541
+    # in ACH
+    w = (a + b * hdd65f / 10000.0 + c * (hdd65f / 10000.0) ** 2.0 + d * ws + e * ws ** 2 + f * hdd65f / 10000.0 * ws)
+    return w
+  end
+
+  def self.add_reference_heating_gas_furnace(new_hvac_plant, load_frac)
+    # 78% AFUE gas furnace
+    heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
+    sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
+    dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
+    XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
+    sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
+    furnace = XMLHelper.add_element(sys_type, "Furnace")
+    XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
+    XMLHelper.add_element(heat_sys, "HeatingCapacity", -1) # Use Manual J auto-sizing
+    heat_eff = XMLHelper.add_element(heat_sys, "AnnualHeatingEfficiency")
+    XMLHelper.add_element(heat_eff, "Units", "AFUE")
+    XMLHelper.add_element(heat_eff, "Value", 0.78)
+    XMLHelper.add_element(heat_sys, "FractionHeatLoadServed", load_frac)
+  end
+
+  def self.add_reference_heating_gas_boiler(new_hvac_plant, load_frac)
+    # 80% AFUE gas boiler
+    heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
+    sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
+    dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
+    XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
+    sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
+    boiler = XMLHelper.add_element(sys_type, "Boiler")
+    XMLHelper.add_element(boiler, "BoilerType", "hot water")
+    XMLHelper.add_element(heat_sys, "HeatingSystemFuel", "natural gas")
+    XMLHelper.add_element(heat_sys, "HeatingCapacity", -1) # Use Manual J auto-sizing
+    heat_eff = XMLHelper.add_element(heat_sys, "AnnualHeatingEfficiency")
+    XMLHelper.add_element(heat_eff, "Units", "AFUE")
+    XMLHelper.add_element(heat_eff, "Value", 0.80)
+    XMLHelper.add_element(heat_sys, "FractionHeatLoadServed", load_frac)
+  end
+
+  def self.add_reference_heating_heat_pump(new_hvac_plant, load_frac)
+    # 7.7 HSPF air source heat pump
+    heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
+    sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "HeatPump")
+    dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
+    XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
+    XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
+    XMLHelper.add_element(heat_pump, "HeatingCapacity", -1) # Use Manual J auto-sizing
+    XMLHelper.add_element(heat_pump, "CoolingCapacity", -1) # Use Manual J auto-sizing
+    XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", load_frac)
+    XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 0.0)
+    cool_eff = XMLHelper.add_element(heat_pump, "AnnualCoolingEfficiency")
+    XMLHelper.add_element(cool_eff, "Units", "SEER")
+    XMLHelper.add_element(cool_eff, "Value", 13.0) # Arbitrary, not used
+    heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
+    XMLHelper.add_element(heat_eff, "Units", "HSPF")
+    XMLHelper.add_element(heat_eff, "Value", 7.7)
+    extension = XMLHelper.add_element(heat_pump, "extension")
+    XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
+    XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
+  end
+
+  def self.add_reference_cooling_air_conditioner(new_hvac_plant, load_frac)
+    # 13 SEER electric air conditioner
+    cool_sys = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
+    sys_id = XMLHelper.add_element(cool_sys, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
+    dist = XMLHelper.add_element(cool_sys, "DistributionSystem")
+    XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
+    XMLHelper.add_element(cool_sys, "CoolingSystemType", "central air conditioning")
+    XMLHelper.add_element(cool_sys, "CoolingSystemFuel", "electricity")
+    XMLHelper.add_element(cool_sys, "CoolingCapacity", -1) # Use Manual J auto-sizing
+    XMLHelper.add_element(cool_sys, "FractionCoolLoadServed", load_frac)
+    cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
+    XMLHelper.add_element(cool_eff, "Units", "SEER")
+    XMLHelper.add_element(cool_eff, "Value", 13.0)
+    extension = XMLHelper.add_element(cool_sys, "extension")
+    XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
+  end
+  
+  def self.add_reference_distribution_system(new_hvac)
+    # Table 4.2.2(1) - Thermal distribution systems
+    new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
+    sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "HVACDistribution_DSE_80")
+    XMLHelper.add_element(new_hvac_dist, "DistributionSystemType/Other", "DSE")
+    XMLHelper.add_element(new_hvac_dist, "AnnualHeatingDistributionSystemEfficiency", 0.8)
+    XMLHelper.add_element(new_hvac_dist, "AnnualCoolingDistributionSystemEfficiency", 0.8)
+  end
+
 end
-

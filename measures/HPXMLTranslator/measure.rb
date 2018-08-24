@@ -139,7 +139,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     
       # Something went wrong, check for invalid HPXML file now. This is not performed 
       # up front to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47)
-      validate_hpxml(runner, hpxml_doc, schemas_dir)
+      validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
       
       # Report exception
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
@@ -220,7 +220,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     
   end
   
-  def validate_hpxml(runner, hpxml_doc, schemas_dir)
+  def validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
     if schemas_dir.is_initialized
       schemas_dir = schemas_dir.get
       unless (Pathname.new schemas_dir).absolute?
@@ -237,19 +237,19 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     # Validate input HPXML against schema
     if not schemas_dir.nil?
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-        runner.registerError("Input HPXML: #{error.to_s}")
+        runner.registerError("#{hpxml_path}: #{error.to_s}")
       end
-      runner.registerInfo("Validated input HPXML against schema.")
+      runner.registerInfo("#{hpxml_path}: Validated against HPXML schema.")
     else
-      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
+      runner.registerWarning("#{hpxml_path}: No schema dir provided, no HPXML validation performed.")
     end
     
     # Validate input HPXML against EnergyPlus Use Case
     errors = EnergyPlusValidator.run_validator(hpxml_doc)
     errors.each do |error|
-      runner.registerError(error)
+      runner.registerError("#{hpxml_path}: #{error}")
     end
-    runner.registerInfo("Validated input HPXML against EnergyPlus Use Case.")
+    runner.registerInfo("#{hpxml_path}: Validated against HPXML EnergyPlus Use Case.")
   end
   
 end
@@ -1885,6 +1885,8 @@ class OSModel
         cool_capacity_btuh = Constants.SizingAuto
       end
       
+      load_frac = Float(XMLHelper.get_value(clgsys, "FractionCoolLoadServed")) # FIXME: Not yet used
+      
       if clg_type == "central air conditioning"
       
         # FIXME: Generalize
@@ -1984,6 +1986,8 @@ class OSModel
         heat_capacity_btuh = Constants.SizingAuto
       end
       
+      load_frac = Float(XMLHelper.get_value(htgsys, "FractionHeatLoadServed")) # FIXME: Not yet used
+      
       if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
       
         afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
@@ -2058,6 +2062,9 @@ class OSModel
         else
           cool_capacity_btuh = Float(cool_capacity_btuh)
         end
+        
+        load_frac_heat = Float(XMLHelper.get_value(hp, "FractionHeatLoadServed")) # FIXME: Not yet used
+        load_frac_cool = Float(XMLHelper.get_value(hp, "FractionCoolLoadServed")) # FIXME: Not yet used
         
         backup_heat_capacity_btuh = XMLHelper.get_value(hp, "BackupHeatingCapacity") # TODO: Require in ERI Use Case?
         if backup_heat_capacity_btuh.nil?
@@ -2649,6 +2656,54 @@ class OSModel
       fail "Construction R-value (#{constr_r}) does not match Assembly R-value (#{assembly_r}) for '#{surface.name.to_s}'."
     end
 
+  end
+  
+  def self.is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+    interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
+    exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
+    return (interior_conditioned != exterior_conditioned)
+  end
+
+  def self.is_adjacent_to_conditioned(adjacent_to)
+    if adjacent_to == "living space"
+      return true
+    elsif adjacent_to == "garage"
+      return false
+    elsif adjacent_to == "vented attic"
+      return false
+    elsif adjacent_to == "unvented attic"
+      return false
+    elsif adjacent_to == "cape cod"
+      return true
+    elsif adjacent_to == "cathedral ceiling"
+      return true
+    elsif adjacent_to == "unconditioned basement"
+      return false
+    elsif adjacent_to == "conditioned basement"
+      return true
+    elsif adjacent_to == "crawlspace"
+      return false
+    elsif adjacent_to == "ambient"
+      return false
+    elsif adjacent_to == "ground"
+      return false
+    end
+    fail "Unexpected adjacent_to (#{adjacent_to})."
+  end
+
+  def self.get_foundation_interior_adjacent_to(fnd_type)
+    if fnd_type.elements["Basement[Conditioned='true']"]
+      interior_adjacent_to = "conditioned basement"
+    elsif fnd_type.elements["Basement[Conditioned='false']"]
+      interior_adjacent_to = "unconditioned basement"
+    elsif fnd_type.elements["Crawlspace"]
+      interior_adjacent_to = "crawlspace"
+    elsif fnd_type.elements["SlabOnGrade"]
+      interior_adjacent_to = "living space"
+    elsif fnd_type.elements["Ambient"]  
+      interior_adjacent_to = "ambient"
+    end
+    return interior_adjacent_to
   end
   
 end
