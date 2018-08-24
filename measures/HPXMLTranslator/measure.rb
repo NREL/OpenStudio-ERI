@@ -96,80 +96,56 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
       return false
     end
     
-    if schemas_dir.is_initialized
-      schemas_dir = schemas_dir.get
-      unless (Pathname.new schemas_dir).absolute?
-        schemas_dir = File.expand_path(File.join(File.dirname(__FILE__), schemas_dir))
-      end
-      unless Dir.exists?(schemas_dir)
-        runner.registerError("'#{schemas_dir}' does not exist.")
-        return false
-      end
-    else
-      schemas_dir = nil
-    end
-    
     hpxml_doc = REXML::Document.new(File.read(hpxml_path))
     
-    # Validate input HPXML against schema
-    if not schemas_dir.nil?
-      has_errors = false
-      XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-        runner.registerError("Input HPXML: #{error.to_s}")
-        has_errors = true
+    begin
+    
+      # Weather file
+      weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
+      epw_path = nil
+      CSV.foreach(File.join(weather_dir, "data.csv"), headers:true) do |row|
+        next if row["wmo"] != weather_wmo
+        epw_path = File.join(weather_dir, row["filename"])
+        if not File.exists?(epw_path)
+          runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+          return false
+        end
+        cache_path = epw_path.gsub('.epw','.cache')
+        if not File.exists?(cache_path)
+          runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+          return false
+        end
+        break
       end
-      if has_errors
+      if epw_path.nil?
+        runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
         return false
       end
-      runner.registerInfo("Validated input HPXML against schema.")
-    else
-      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
-    end
-    
-    # Validate input HPXML against EnergyPlus Use Case
-    errors = EnergyPlusValidator.run_validator(hpxml_doc)
-    errors.each do |error|
-      runner.registerError(error)
-    end
-    unless errors.empty?
-      return false
-    end
-    runner.registerInfo("Validated input HPXML against ERI Use Case.")
-    
-    # Weather file
-    weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
-    epw_path = nil
-    CSV.foreach(File.join(weather_dir, "data.csv"), headers:true) do |row|
-      next if row["wmo"] != weather_wmo
-      epw_path = File.join(weather_dir, row["filename"])
-      if not File.exists?(epw_path)
-        runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
-        return false
+      if epw_output_path.is_initialized
+        FileUtils.cp(epw_path, epw_output_path.get)
       end
-      cache_path = epw_path.gsub('.epw','.cache')
-      if not File.exists?(cache_path)
-        runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+      
+      # Apply Location to obtain weather data
+      success, weather = Location.apply(model, runner, epw_path, "NA", "NA")
+      return false if not success
+      
+      # Create OpenStudio model
+      if not OSModel.create(hpxml_doc, runner, model, weather)
+        runner.registerError("Unsuccessful creation of OpenStudio model.")
         return false
-      end
-      break
-    end
-    if epw_path.nil?
-      runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
-      return false
-    end
-    if epw_output_path.is_initialized
-      FileUtils.cp(epw_path, epw_output_path.get)
-    end
+      end 
+      
+    rescue Exception => e
     
-    # Apply Location to obtain weather data
-    success, weather = Location.apply(model, runner, epw_path, "NA", "NA")
-    return false if not success
-    
-    # Create OpenStudio model
-    if not OSModel.create(hpxml_doc, runner, model, weather)
-      runner.registerError("Unsuccessful creation of OpenStudio model.")
+      # Something went wrong, check for invalid HPXML file now. This is not performed 
+      # up front to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47)
+      validate_hpxml(runner, hpxml_doc, schemas_dir)
+      
+      # Report exception
+      runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
       return false
-    end 
+      
+    end
     
     if osm_output_path.is_initialized
       File.write(osm_output_path.get, model.to_s)
@@ -242,6 +218,38 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
       end
     end
     
+  end
+  
+  def validate_hpxml(runner, hpxml_doc, schemas_dir)
+    if schemas_dir.is_initialized
+      schemas_dir = schemas_dir.get
+      unless (Pathname.new schemas_dir).absolute?
+        schemas_dir = File.expand_path(File.join(File.dirname(__FILE__), schemas_dir))
+      end
+      unless Dir.exists?(schemas_dir)
+        runner.registerError("'#{schemas_dir}' does not exist.")
+        return false
+      end
+    else
+      schemas_dir = nil
+    end
+    
+    # Validate input HPXML against schema
+    if not schemas_dir.nil?
+      XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
+        runner.registerError("Input HPXML: #{error.to_s}")
+      end
+      runner.registerInfo("Validated input HPXML against schema.")
+    else
+      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
+    end
+    
+    # Validate input HPXML against EnergyPlus Use Case
+    errors = EnergyPlusValidator.run_validator(hpxml_doc)
+    errors.each do |error|
+      runner.registerError(error)
+    end
+    runner.registerInfo("Validated input HPXML against EnergyPlus Use Case.")
   end
   
 end

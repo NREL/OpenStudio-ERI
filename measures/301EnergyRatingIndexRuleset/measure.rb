@@ -93,6 +93,62 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       return false
     end
     
+    hpxml_doc = REXML::Document.new(File.read(hpxml_path))
+    
+    begin
+    
+      # Weather file
+      weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
+      epw_path = nil
+      cache_path = nil
+      CSV.foreach(File.join(weather_dir, "data.csv"), headers:true) do |row|
+        next if row["wmo"] != weather_wmo
+        epw_path = File.join(weather_dir, row["filename"])
+        if not File.exists?(epw_path)
+          runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+          return false
+        end
+        cache_path = epw_path.gsub('.epw','.cache')
+        if not File.exists?(cache_path)
+          runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+          return false
+        end
+        break
+      end
+      if epw_path.nil?
+        runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
+        return false
+      end
+      
+      # Obtain weather object
+      weather = Marshal.load(File.binread(cache_path))
+      
+      # Apply 301 ruleset on HPXML object
+      EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
+      
+    rescue Exception => e
+    
+      # Something went wrong, check for invalid HPXML file now. This is not performed 
+      # up front to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47)
+      validate_hpxml(runner, hpxml_doc, schemas_dir)
+      
+      # Report exception
+      runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
+      return false
+      
+    end
+    
+    # Write new HPXML file
+    if hpxml_output_path.is_initialized
+      XMLHelper.write_file(hpxml_doc, hpxml_output_path.get)
+      runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
+    end
+    
+    return true
+
+  end
+  
+  def validate_hpxml(runner, hpxml_doc, schemas_dir)
     if schemas_dir.is_initialized
       schemas_dir = schemas_dir.get
       unless (Pathname.new schemas_dir).absolute?
@@ -106,17 +162,10 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       schemas_dir = nil
     end
     
-    hpxml_doc = REXML::Document.new(File.read(hpxml_path))
-    
     # Validate input HPXML against schema
     if not schemas_dir.nil?
-      has_errors = false
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
         runner.registerError("Input HPXML: #{error.to_s}")
-        has_errors = true
-      end
-      if has_errors
-        return false
       end
       runner.registerInfo("Validated input HPXML against schema.")
     else
@@ -128,63 +177,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     errors.each do |error|
       runner.registerError(error)
     end
-    unless errors.empty?
-      return false
-    end
     runner.registerInfo("Validated input HPXML against ERI Use Case.")
-    
-    # Weather file
-    weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
-    epw_path = nil
-    cache_path = nil
-    CSV.foreach(File.join(weather_dir, "data.csv"), headers:true) do |row|
-      next if row["wmo"] != weather_wmo
-      epw_path = File.join(weather_dir, row["filename"])
-      if not File.exists?(epw_path)
-        runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
-        return false
-      end
-      cache_path = epw_path.gsub('.epw','.cache')
-      if not File.exists?(cache_path)
-        runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
-        return false
-      end
-      break
-    end
-    if epw_path.nil?
-      runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
-      return false
-    end
-    
-    # Obtain weather object
-    weather = Marshal.load(File.binread(cache_path))
-    
-    # Apply 301 ruleset on HPXML object
-    EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
-    
-    # Write new HPXML file
-    if hpxml_output_path.is_initialized
-      XMLHelper.write_file(hpxml_doc, hpxml_output_path.get)
-      runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
-    end
-    
-    # Validate output HPXML against schema
-    if not schemas_dir.nil?
-      has_errors = false
-      XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-        runner.registerError("Output HPXML: #{error.to_s}")
-        has_errors = true
-      end
-      if has_errors
-        return false
-      end
-      runner.registerInfo("Validated output HPXML.")
-    else
-      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
-    end
-    
-    return true
-
   end
   
 end
