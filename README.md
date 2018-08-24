@@ -23,7 +23,7 @@ The ERI is defined by ANSI/RESNET 301-2014 "Standard for the Calculation and Lab
 ```openstudio --no-ssl energy_rating_index.rb -x sample_files/valid.xml```  
 Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) workflows/simulations will be executed in parallel on the local machine.
 3. This will generate output as shown below:
-![CLI output](https://user-images.githubusercontent.com/5861765/43606063-8f3b6a5c-9657-11e8-8e8d-985a7b6b6f2b.png)
+![CLI output](https://user-images.githubusercontent.com/5861765/44598523-84351280-a790-11e8-91ef-56542a74028a.png)
 
 Note that the workflow runs significantly faster on Linux/Mac platforms by taking advantage of the ability to call [POSIX fork](https://en.wikipedia.org/wiki/Fork_(system_call)).
 
