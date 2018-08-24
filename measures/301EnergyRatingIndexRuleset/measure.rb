@@ -130,7 +130,8 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     
       # Something went wrong, check for invalid HPXML file now. This is not performed 
       # up front to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47)
-      validate_hpxml(runner, hpxml_doc, schemas_dir)
+      original_hpxml_doc = REXML::Document.new(File.read(hpxml_path))
+      validate_hpxml(runner, hpxml_path, original_hpxml_doc, schemas_dir)
       
       # Report exception
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
@@ -148,7 +149,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
   end
   
-  def validate_hpxml(runner, hpxml_doc, schemas_dir)
+  def validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
     if schemas_dir.is_initialized
       schemas_dir = schemas_dir.get
       unless (Pathname.new schemas_dir).absolute?
@@ -165,19 +166,19 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     # Validate input HPXML against schema
     if not schemas_dir.nil?
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-        runner.registerError("Input HPXML: #{error.to_s}")
+        runner.registerError("#{hpxml_path}: #{error.to_s}")
       end
-      runner.registerInfo("Validated input HPXML against schema.")
+      runner.registerInfo("#{hpxml_path}: Validated against HPXML schema.")
     else
-      runner.registerWarning("No schema dir provided, no HPXML validation performed.")
+      runner.registerWarning("#{hpxml_path}: No schema dir provided, no HPXML validation performed.")
     end
     
     # Validate input HPXML against ERI Use Case
     errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
     errors.each do |error|
-      runner.registerError(error)
+      runner.registerError("#{hpxml_path}: #{error}")
     end
-    runner.registerInfo("Validated input HPXML against ERI Use Case.")
+    runner.registerInfo("#{hpxml_path}: Validated against HPXML ERI Use Case.")
   end
   
 end
