@@ -184,7 +184,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist_ID1'/>
             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>conditioned basement</InteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>126</Area>
             <Insulation>
               <SystemIdentifier id='RimJoist_Ins_ID1'/>
