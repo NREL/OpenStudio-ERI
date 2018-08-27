@@ -54,6 +54,7 @@ class EnergyPlusValidator
             
             '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics' => one, # See [Attic]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations' => one, # See [Foundation]
+            '/HPXML/Building/BuildingDetails/Enclosure/RimJoists' => zero_or_one, # See [RimJoist]
             '/HPXML/Building/BuildingDetails/Enclosure/Walls' => one, # See [Wall]
             '/HPXML/Building/BuildingDetails/Enclosure/Windows' => zero_or_one, # See [Window]
             '/HPXML/Building/BuildingDetails/Enclosure/Skylights' => zero_or_one, # See [Skylight]
@@ -225,6 +226,18 @@ class EnergyPlusValidator
             
             
             
+        # [RimJoist]
+        '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            '[ExteriorAdjacentTo="ambient" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="crawlspace" or ExteriorAdjacentTo="attic" or ExteriorAdjacentTo="garage"]' => one,
+            '[InteriorAdjacentTo="unconditioned basement" or InteriorAdjacentTo="living space" or InteriorAdjacentTo="crawlspace" or InteriorAdjacentTo="attic" or InteriorAdjacentTo="garage"]' => one,
+            'Area' => one,
+            'Insulation/SystemIdentifier' => one, # Required by HPXML schema
+            'Insulation/AssemblyEffectiveRValue' => one,
+        },
+        
+        
+        
         # [Wall]
         '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => {
             'SystemIdentifier' => one, # Required by HPXML schema
