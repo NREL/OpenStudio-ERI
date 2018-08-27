@@ -206,11 +206,6 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -219,11 +214,6 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -232,11 +222,6 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -245,11 +230,6 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
         </Windows>

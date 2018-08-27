@@ -247,11 +247,19 @@ class EnergyPlusValidator
             'Azimuth' => one,
             'UFactor' => one,
             'SHGC' => one,
+            'Overhangs' => zero_or_one, # See [WindowOverhang]
             'AttachedToWall' => one,
             'extension/Height' => one,
             'extension/InteriorShadingFactorSummer' => one,
             'extension/InteriorShadingFactorWinter' => one,
         },
+        
+            ## [WindowOverhang]
+            '/HPXML/Building/BuildingDetails/Enclosure/Windows/Window/Overhangs' => {
+                'Depth' => one,
+                'DistanceToTopOfWindow' => one,
+            },
+
     
     
     

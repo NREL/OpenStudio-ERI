@@ -817,7 +817,6 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(new_window, "Azimuth", azimuth)
         XMLHelper.add_element(new_window, "UFactor", ufactor)
         XMLHelper.add_element(new_window, "SHGC", shgc)
-        XMLHelper.add_element(new_window, "ExteriorShading", "none")
         attwall = XMLHelper.add_element(new_window, "AttachedToWall")
         attwall.attributes["idref"] = wall_id
         set_window_interior_shading_reference(new_window)
@@ -854,7 +853,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_window, orig_window, "Azimuth")
       XMLHelper.copy_element(new_window, orig_window, "UFactor")
       XMLHelper.copy_element(new_window, orig_window, "SHGC")
-      XMLHelper.copy_element(new_window, orig_window, "ExteriorShading")
+      XMLHelper.copy_element(new_window, orig_window, "Overhangs")
       XMLHelper.copy_element(new_window, orig_window, "AttachedToWall")
       set_window_interior_shading_reference(new_window)
       extension = new_window.elements["extension"]
@@ -870,6 +869,7 @@ class EnergyRatingIndex301Ruleset
     
     new_windows = new_enclosure.elements["Windows"]
     
+    # Calculate area-weighted averages
     sum_u_a = 0.0
     sum_shgc_a = 0.0
     sum_a = 0.0
