@@ -1,6 +1,6 @@
 # Separate ruby script to allow the code to be called using system() on Windows
 
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/meta_measure"
+require_relative "../measures/HPXMLTranslator/resources/meta_measure"
 
 def get_designdir(basedir, design)
   return File.join(basedir, design.gsub(' ',''))
@@ -30,27 +30,40 @@ def create_idf(design, basedir, resultsdir, hpxml, debug)
   
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   
+  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  
   model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
   measures_dir = File.join(File.dirname(__FILE__), "../measures")
-  measures = {}
-  measure_subdir = "301EnergyRatingIndexRuleset"
   
-  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  measures = {}
+  
+  # Add 301 measure to workflow
+  measure_subdir = "301EnergyRatingIndexRuleset"
   args = {}
   args['calc_type'] = design
   args['hpxml_path'] = hpxml
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
   #args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   args['hpxml_output_path'] = output_hpxml_path
+  update_args_hash(measures, measure_subdir, args)
+  
+  # Add HPXML translator measure to workflow
+  measure_subdir = "HPXMLTranslator"
+  args = {}
+  args['hpxml_path'] = output_hpxml_path
+  args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
+  #args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   args['epw_output_path'] = File.join(rundir, "in.epw")
   if debug
     args['osm_output_path'] = File.join(rundir, "in.osm")
   end
-  
   update_args_hash(measures, measure_subdir, args)
+
+  # Apply measures
   success = apply_measures(measures_dir, measures, runner, model, nil, nil, false)
   
+  # Report warnings/errors
   File.open(File.join(designdir,'run.log'), 'w') do |f|
     runner.result.stepWarnings.each do |w|
       f << "Warning: #{w}\n"
@@ -64,6 +77,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug)
     fail "ERROR: Simulation unsuccessful for #{design}."
   end
   
+  # Write model to IDF
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
   File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
