@@ -27,7 +27,7 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
-          <NumberofConditionedFloors>2</NumberofConditionedFloors>
+          <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
@@ -151,18 +151,6 @@
             </Slab>
           </Foundation>
         </Foundations>
-        <RimJoists>
-          <RimJoist>
-            <SystemIdentifier id='rimjoist-1'/>
-            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>180</Area>
-            <Insulation>
-              <SystemIdentifier id='rimjoist_Ins_ID1'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
-            </Insulation>
-          </RimJoist>
-        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
@@ -189,6 +177,10 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <Overhangs>
+              <Depth>2.5</Depth>
+              <DistanceToTopOfWindow>0</DistanceToTopOfWindow>
+            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -205,6 +197,10 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <Overhangs>
+              <Depth>1.5</Depth>
+              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
+            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -213,6 +209,10 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <Overhangs>
+              <Depth>1.5</Depth>
+              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
+            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
         </Windows>
@@ -310,15 +310,12 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
-              <Recirculation>
-                <ControlType>presence sensor demand control</ControlType>
-                <RecirculationPipingLoopLength>30</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>30</BranchPipingLoopLength>
-                <PumpPower>50</PumpPower>
-              </Recirculation>
+              <Standard>
+                <PipingLength>30</PipingLength>
+              </Standard>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>3.0</PipeRValue>
+              <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>

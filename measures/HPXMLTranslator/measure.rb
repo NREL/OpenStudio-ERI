@@ -542,6 +542,13 @@ class OSModel
       end
       surface.setVertices(transformation * surface.vertices)
       
+      # Overhangs
+      sub_surface.shadingSurfaceGroups.each do |overhang_group|
+        overhang_group.shadingSurfaces.each do |overhang|
+          overhang.setVertices(transformation * overhang.vertices)
+        end
+      end
+      
       window_offset += 2.5
       
     end
@@ -1640,13 +1647,13 @@ class OSModel
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("FixedWindow")
       
-      overhangs = window.elements["Overhangs"]
-      if not overhangs.nil?
-        name = window.elements["SystemIdentifier"].attributes["id"]
-        depth = Float(XMLHelper.get_value(overhangs, "Depth"))
-        offset = Float(XMLHelper.get_value(overhangs, "DistanceToTopOfWindow"))
-      
-        # TODO apply_overhang.....
+      overhang_depth = 0
+      overhang_offset = 0
+      if not window.elements["Overhangs"].nil?
+        overhang_depth = Float(XMLHelper.get_value(window, "Overhangs/Depth"))
+        overhang_offset = Float(XMLHelper.get_value(window, "Overhangs/DistanceToTopOfWindow"))
+        overhang = sub_surface.addOverhang(UnitConversions.convert(overhang_depth,"ft","m"), UnitConversions.convert(overhang_offset,"ft","m"))
+        overhang.get.setName("#{sub_surface.name} - #{Constants.ObjectNameOverhangs}")
       end
       
       # Apply construction
