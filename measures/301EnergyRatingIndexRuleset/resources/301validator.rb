@@ -373,6 +373,7 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             '../../HVACControl' => one, # See [HVACControl]
             '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
+            'CoolingCapacity' => one,
             'FractionHeatLoadServed' => one,
             'FractionCoolLoadServed' => one,
         },

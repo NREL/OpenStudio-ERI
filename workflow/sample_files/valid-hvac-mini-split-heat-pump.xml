@@ -232,6 +232,7 @@
             <HeatPump>
               <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <HeatPumpType>mini-split</HeatPumpType>
+              <CoolingCapacity>48000</CoolingCapacity>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
