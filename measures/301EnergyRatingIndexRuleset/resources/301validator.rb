@@ -55,6 +55,7 @@ class EnergyRatingIndex301Validator
             
             '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics' => one, # See [Attic]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations' => one, # See [Foundation]
+            '/HPXML/Building/BuildingDetails/Enclosure/RimJoists' => zero_or_one, # See [RimJoist]
             '/HPXML/Building/BuildingDetails/Enclosure/Walls' => one, # See [Wall]
             '/HPXML/Building/BuildingDetails/Enclosure/Windows' => zero_or_one, # See [Window]
             '/HPXML/Building/BuildingDetails/Enclosure/Skylights' => zero_or_one, # See [Skylight]
@@ -218,6 +219,18 @@ class EnergyRatingIndex301Validator
                 'extension/CarpetFraction' => one,
                 'extension/CarpetRValue' => one,
             },
+          
+
+          
+        # [RimJoist]
+        '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            '[ExteriorAdjacentTo="ambient" or ExteriorAdjacentTo="unconditioned basement" or ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="ground" or ExteriorAdjacentTo="crawlspace" or ExteriorAdjacentTo="attic" or ExteriorAdjacentTo="garage"]' => one,
+            '[InteriorAdjacentTo="unconditioned basement" or InteriorAdjacentTo="living space" or InteriorAdjacentTo="crawlspace" or InteriorAdjacentTo="attic" or InteriorAdjacentTo="garage"]' => one,
+            'Area' => one,
+            'Insulation/SystemIdentifier' => one, # Required by HPXML schema
+            'Insulation/AssemblyEffectiveRValue' => one,
+        },
             
             
             
@@ -243,8 +256,15 @@ class EnergyRatingIndex301Validator
             'Azimuth' => one,
             'UFactor' => one,
             'SHGC' => one,
+            'Overhangs' => zero_or_one, # See [WindowOverhang]
             'AttachedToWall' => one,
         },
+        
+            ## [WindowOverhang]
+            '/HPXML/Building/BuildingDetails/Enclosure/Windows/Window/Overhangs' => {
+                'Depth' => one,
+                'DistanceToTopOfWindow' => one,
+            },
     
     
     
@@ -354,6 +374,7 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             '../../HVACControl' => one, # See [HVACControl]
             '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
+            'CoolingCapacity' => one,
             'FractionHeatLoadServed' => one,
             'FractionCoolLoadServed' => one,
         },

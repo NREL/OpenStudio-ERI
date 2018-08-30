@@ -59,7 +59,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_air_infiltration_reference(new_enclosure, orig_details)
     set_enclosure_attics_roofs_reference(new_enclosure, orig_details)
     set_enclosure_foundations_reference(new_enclosure, orig_details)
-    set_enclosure_rim_joists_reference(new_enclosure)
+    set_enclosure_rim_joists_reference(new_enclosure, orig_details)
     set_enclosure_walls_reference(new_enclosure, orig_details)
     set_enclosure_windows_reference(new_enclosure, orig_details)
     set_enclosure_skylights_reference(new_enclosure)
@@ -112,7 +112,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
     set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
     set_enclosure_foundations_rated(new_enclosure, orig_details)
-    set_enclosure_rim_joists_rated(new_enclosure)
+    set_enclosure_rim_joists_rated(new_enclosure, orig_details)
     set_enclosure_walls_rated(new_enclosure, orig_details)
     set_enclosure_windows_rated(new_enclosure, orig_details)
     set_enclosure_skylights_rated(new_enclosure, orig_details)
@@ -165,7 +165,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_air_infiltration_iad(new_enclosure, orig_details)
     set_enclosure_attics_roofs_iad(new_enclosure, orig_details)
     set_enclosure_foundations_iad(new_enclosure, orig_details)
-    set_enclosure_rim_joists_iad(new_enclosure)
+    set_enclosure_rim_joists_iad(new_enclosure, orig_details)
     set_enclosure_walls_iad(new_enclosure, orig_details)
     set_enclosure_windows_iad(new_enclosure, orig_details)
     set_enclosure_skylights_iad(new_enclosure, orig_details)
@@ -700,16 +700,72 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.set_enclosure_rim_joists_reference(new_enclosure)
-    # FIXME
+  def self.set_enclosure_rim_joists_reference(new_enclosure, orig_details)
+    
+    new_rim_joists = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/RimJoists")
+    return if new_rim_joists.nil?
+    
+    # Table 4.2.2(1) - Above-grade walls
+    ufactor = get_reference_component_characteristics("frame_wall")
+    
+    new_rim_joists.elements.each("RimJoist") do |new_rim_joist|
+      interior_adjacent_to = XMLHelper.get_value(new_rim_joist, "InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(new_rim_joist, "ExteriorAdjacentTo")
+      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        insulation = new_rim_joist.elements["Insulation"]
+        XMLHelper.delete_element(insulation, "AssemblyEffectiveRValue")
+        XMLHelper.delete_element(insulation, "Layer")
+        XMLHelper.add_element(insulation, "AssemblyEffectiveRValue", 1.0/ufactor)
+      end
+    end
+    
   end
   
-  def self.set_enclosure_rim_joists_rated(new_enclosure)
-    # FIXME
+  def self.set_enclosure_rim_joists_rated(new_enclosure, orig_details)
+  
+    new_rim_joists = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/RimJoists")
+  
+    # Table 4.2.2(1) - Above-grade walls
+    # nop
+    
   end
   
-  def self.set_enclosure_rim_joists_iad(new_enclosure)
-    # FIXME
+  def self.set_enclosure_rim_joists_iad(new_enclosure, orig_details)
+
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
+    set_enclosure_rim_joists_rated(new_enclosure, orig_details)
+    
+    orig_rim_joists = orig_details.elements["Enclosure/RimJoists"]
+    return if orig_rim_joists.nil?
+    orig_walls = orig_details.elements["Enclosure/Walls"]
+    
+    sum_wall_area = 0.0
+    orig_rim_joists.elements.each("RimJoist") do |orig_rim_joist|
+      interior_adjacent_to = XMLHelper.get_value(orig_rim_joist, "InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(orig_rim_joist, "ExteriorAdjacentTo")
+      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        sum_wall_area += Float(XMLHelper.get_value(orig_rim_joist, "Area"))
+      end
+    end
+    orig_walls.elements.each("Wall") do |orig_wall|
+      interior_adjacent_to = XMLHelper.get_value(orig_wall, "extension/InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(orig_wall, "extension/ExteriorAdjacentTo")
+      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        sum_wall_area += Float(XMLHelper.get_value(orig_wall, "Area"))
+      end
+    end
+    
+    new_rim_joists = new_enclosure.elements["RimJoists"]
+    
+    new_rim_joists.elements.each("RimJoist") do |new_rim_joist|
+      interior_adjacent_to = XMLHelper.get_value(new_rim_joist, "InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(new_rim_joist, "ExteriorAdjacentTo")
+      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        rim_joist_area = Float(XMLHelper.get_value(new_rim_joist, "Area"))
+        new_rim_joist.elements["Area"].text = 2360.0 * rim_joist_area / sum_wall_area
+      end
+    end
+    
   end
   
   def self.set_enclosure_walls_reference(new_enclosure, orig_details)
@@ -748,16 +804,28 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
     set_enclosure_walls_rated(new_enclosure, orig_details)
     
-    new_walls = new_enclosure.elements["Walls"]
+    orig_walls = orig_details.elements["Enclosure/Walls"]
+    orig_rim_joists = orig_details.elements["Enclosure/RimJoists"]
     
     sum_wall_area = 0.0
-    new_walls.elements.each("Wall") do |new_wall|
-      interior_adjacent_to = XMLHelper.get_value(new_wall, "extension/InteriorAdjacentTo")
-      exterior_adjacent_to = XMLHelper.get_value(new_wall, "extension/ExteriorAdjacentTo")
+    orig_walls.elements.each("Wall") do |orig_wall|
+      interior_adjacent_to = XMLHelper.get_value(orig_wall, "extension/InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(orig_wall, "extension/ExteriorAdjacentTo")
       if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-        sum_wall_area += Float(XMLHelper.get_value(new_wall, "Area"))
+        sum_wall_area += Float(XMLHelper.get_value(orig_wall, "Area"))
       end
     end
+    if not orig_rim_joists.nil?
+      orig_rim_joists.elements.each("RimJoist") do |orig_rim_joist|
+        interior_adjacent_to = XMLHelper.get_value(orig_rim_joist, "InteriorAdjacentTo")
+        exterior_adjacent_to = XMLHelper.get_value(orig_rim_joist, "ExteriorAdjacentTo")
+        if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+          sum_wall_area += Float(XMLHelper.get_value(orig_rim_joist, "Area"))
+        end
+      end
+    end
+    
+    new_walls = new_enclosure.elements["Walls"]
     
     new_walls.elements.each("Wall") do |new_wall|
       interior_adjacent_to = XMLHelper.get_value(new_wall, "extension/InteriorAdjacentTo")
@@ -817,7 +885,6 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(new_window, "Azimuth", azimuth)
         XMLHelper.add_element(new_window, "UFactor", ufactor)
         XMLHelper.add_element(new_window, "SHGC", shgc)
-        XMLHelper.add_element(new_window, "ExteriorShading", "none")
         attwall = XMLHelper.add_element(new_window, "AttachedToWall")
         attwall.attributes["idref"] = wall_id
         set_window_interior_shading_reference(new_window)
@@ -854,7 +921,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_window, orig_window, "Azimuth")
       XMLHelper.copy_element(new_window, orig_window, "UFactor")
       XMLHelper.copy_element(new_window, orig_window, "SHGC")
-      XMLHelper.copy_element(new_window, orig_window, "ExteriorShading")
+      XMLHelper.copy_element(new_window, orig_window, "Overhangs")
       XMLHelper.copy_element(new_window, orig_window, "AttachedToWall")
       set_window_interior_shading_reference(new_window)
       extension = new_window.elements["extension"]
@@ -870,6 +937,7 @@ class EnergyRatingIndex301Ruleset
     
     new_windows = new_enclosure.elements["Windows"]
     
+    # Calculate area-weighted averages
     sum_u_a = 0.0
     sum_shgc_a = 0.0
     sum_a = 0.0

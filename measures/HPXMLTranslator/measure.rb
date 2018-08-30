@@ -69,6 +69,12 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the output OSM file.")
     args << arg    
     
+    arg = OpenStudio::Measure::OSArgument.makeBoolArgument("skip_validation", true)
+    arg.setDisplayName("Skip HPXML validation")
+    arg.setDescription("If true, only checks for and reports HPXML validation issues if an error occurs during processing. Used for faster runtime.")
+    arg.setDefaultValue(false)
+    args << arg
+    
     return args
   end
 
@@ -87,7 +93,8 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     epw_output_path = runner.getOptionalStringArgumentValue("epw_output_path", user_arguments)
     osm_output_path = runner.getOptionalStringArgumentValue("osm_output_path", user_arguments)
-
+    skip_validation = runner.getBoolArgumentValue("skip_validation", user_arguments)
+    
     unless (Pathname.new hpxml_path).absolute?
       hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
     end 
@@ -97,6 +104,13 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     end
     
     hpxml_doc = REXML::Document.new(File.read(hpxml_path))
+    
+    # Check for invalid HPXML file up front?
+    if not skip_validation
+      if not validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
+        return false
+      end
+    end
     
     begin
     
@@ -137,9 +151,11 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
       
     rescue Exception => e
     
-      # Something went wrong, check for invalid HPXML file now. This is not performed 
-      # up front to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47)
-      validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
+      if skip_validation
+        # Something went wrong, check for invalid HPXML file now. This was previously 
+        # skipped to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47).
+        validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
+      end
       
       # Report exception
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
@@ -221,6 +237,8 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
   end
   
   def validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
+    is_valid = true
+  
     if schemas_dir.is_initialized
       schemas_dir = schemas_dir.get
       unless (Pathname.new schemas_dir).absolute?
@@ -238,6 +256,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     if not schemas_dir.nil?
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
         runner.registerError("#{hpxml_path}: #{error.to_s}")
+        is_valid = false
       end
       runner.registerInfo("#{hpxml_path}: Validated against HPXML schema.")
     else
@@ -248,8 +267,11 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     errors = EnergyPlusValidator.run_validator(hpxml_doc)
     errors.each do |error|
       runner.registerError("#{hpxml_path}: #{error}")
+      is_valid = false
     end
     runner.registerInfo("#{hpxml_path}: Validated against HPXML EnergyPlus Use Case.")
+    
+    return is_valid
   end
   
 end
@@ -374,6 +396,9 @@ class OSModel
     return false if not success
     
     success = add_walls(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+    return false if not success
+    
+    success = add_rim_joists(runner, model, building, spaces)
     return false if not success
     
     success = add_attics(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
@@ -538,6 +563,13 @@ class OSModel
         surface.adjacentSurface.get.setVertices(transformation * surface.adjacentSurface.get.vertices)
       end
       surface.setVertices(transformation * surface.vertices)
+      
+      # Overhangs
+      sub_surface.shadingSurfaceGroups.each do |overhang_group|
+        overhang_group.shadingSurfaces.each do |overhang|
+          overhang.setVertices(transformation * overhang.vertices)
+        end
+      end
       
       window_offset += 2.5
       
@@ -1244,6 +1276,92 @@ class OSModel
     
   end
 
+  def self.add_rim_joists(runner, model, building, spaces)
+    building.elements.each("BuildingDetails/Enclosure/RimJoists/RimJoist") do |rim_joist|
+    
+      interior_adjacent_to = XMLHelper.get_value(rim_joist, "InteriorAdjacentTo")
+      exterior_adjacent_to = XMLHelper.get_value(rim_joist, "ExteriorAdjacentTo")
+      
+      rim_joist_id = rim_joist.elements["SystemIdentifier"].attributes["id"]
+      
+      rim_joist_area = Float(XMLHelper.get_value(rim_joist, "Area"))
+      rim_joist_height = 7.5
+      rim_joist_length = rim_joist_area / rim_joist_height
+      z_origin = 0
+      surface = OpenStudio::Model::Surface.new(add_wall_polygon(UnitConversions.convert(rim_joist_length,"ft","m"), 
+                                                                UnitConversions.convert(rim_joist_height,"ft","m"), 
+                                                                UnitConversions.convert(z_origin,"ft","m")), model)
+      surface.setName(rim_joist_id)
+      surface.setSurfaceType("Wall") 
+      if ["living space"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.SpaceTypeLiving])
+      elsif ["garage"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.SpaceTypeGarage])
+      elsif ["unvented attic", "vented attic"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.SpaceTypeUnfinishedAttic])
+      elsif ["cape cod"].include? interior_adjacent_to
+        surface.setSpace(spaces[Constants.SpaceTypeFinishedAttic])
+      else
+        fail "Unhandled value (#{interior_adjacent_to})."
+      end
+      if ["ambient"].include? exterior_adjacent_to
+        surface.setOutsideBoundaryCondition("Outdoors")
+      elsif ["garage"].include? exterior_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeGarage])
+      elsif ["unvented attic", "vented attic"].include? exterior_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeUnfinishedAttic])
+      elsif ["cape cod"].include? exterior_adjacent_to
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeFinishedAttic])
+      elsif exterior_adjacent_to != "ambient" and exterior_adjacent_to != "ground"
+        fail "Unhandled value (#{exterior_adjacent_to})."
+      end
+      
+      # Apply construction
+      
+      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+        drywall_thick_in = 0.5
+      else
+        drywall_thick_in = 0.0
+      end
+      if exterior_adjacent_to == "ambient"
+        film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
+        mat_ext_finish = Material.ExtFinishWoodLight
+      else
+        film_r = 2.0 * Material.AirFilmVertical.rvalue
+        mat_ext_finish = nil
+      end
+      solar_abs = 0.75
+      emitt = 0.9
+      
+      assembly_r = Float(XMLHelper.get_value(rim_joist, "Insulation/AssemblyEffectiveRValue"))
+      
+      constr_sets = [
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 10.0, 2.0, drywall_thick_in, mat_ext_finish),  # 2x4 + R10
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 5.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4 + R5
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 0.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4
+                     WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.01, 0.0, 0.0, 0.0, nil),                           # Fallback
+                    ] 
+      constr_set, cavity_r = pick_construction_set(assembly_r, constr_sets, film_r, "rim joist #{rim_joist_id}")
+      install_grade = 1
+      
+      success = WallConstructions.apply_rim_joist(runner, model, [surface],
+                                                  "RimJoistConstruction",
+                                                  cavity_r, install_grade, constr_set.framing_factor,
+                                                  constr_set.drywall_thick_in, constr_set.osb_thick_in,
+                                                  constr_set.rigid_r, constr_set.exterior_material)
+      return false if not success
+      
+      check_surface_assembly_rvalue(surface, film_r, assembly_r)
+      
+      apply_solar_abs_emittance_to_construction(surface, solar_abs, emitt)
+      
+      return true
+      
+    end
+    
+    return true
+    
+  end
   
   def self.add_attics(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
 
@@ -1551,13 +1669,13 @@ class OSModel
       sub_surface.setSurface(surface)
       sub_surface.setSubSurfaceType("FixedWindow")
       
-      overhangs = window.elements["Overhangs"]
-      if not overhangs.nil?
-        name = window.elements["SystemIdentifier"].attributes["id"]
-        depth = Float(XMLHelper.get_value(overhangs, "Depth"))
-        offset = Float(XMLHelper.get_value(overhangs, "DistanceToTopOfWindow"))
-      
-        # TODO apply_overhang.....
+      overhang_depth = 0
+      overhang_offset = 0
+      if not window.elements["Overhangs"].nil?
+        overhang_depth = Float(XMLHelper.get_value(window, "Overhangs/Depth"))
+        overhang_offset = Float(XMLHelper.get_value(window, "Overhangs/DistanceToTopOfWindow"))
+        overhang = sub_surface.addOverhang(UnitConversions.convert(overhang_depth,"ft","m"), UnitConversions.convert(overhang_offset,"ft","m"))
+        overhang.get.setName("#{sub_surface.name} - #{Constants.ObjectNameOverhangs}")
       end
       
       # Apply construction

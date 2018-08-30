@@ -27,7 +27,7 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
-          <NumberofConditionedFloors>3</NumberofConditionedFloors>
+          <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
@@ -151,6 +151,18 @@
             </Slab>
           </Foundation>
         </Foundations>
+        <RimJoists>
+          <RimJoist>
+            <SystemIdentifier id='rimjoist-1'/>
+            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>180</Area>
+            <Insulation>
+              <SystemIdentifier id='rimjoist_Ins_ID1'/>
+              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
@@ -177,11 +189,6 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -190,11 +197,6 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -203,11 +205,6 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
           <Window>
@@ -216,11 +213,6 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <Overhangs>
-              <Depth>1.5</Depth>
-              <DistanceToTopOfWindow>2</DistanceToTopOfWindow>
-              <DistanceToBottomOfWindow>6</DistanceToBottomOfWindow>
-            </Overhangs>
             <AttachedToWall idref='agwall-1'/>
           </Window>
         </Windows>
@@ -241,6 +233,7 @@
               <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatPumpType>air-to-air</HeatPumpType>
+              <CoolingCapacity>48000</CoolingCapacity>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
