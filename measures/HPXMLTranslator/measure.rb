@@ -332,6 +332,8 @@ class OSModel
     return false if not success
     success = add_hvac_sizing(runner, model, unit, weather)
     return false if not success
+    success = add_fuel_heating_eae(runner, model, building, dse)
+    return false if not success
     success = add_photovoltaics(runner, model, building)
     return false if not success
     
@@ -2131,21 +2133,10 @@ class OSModel
     
       afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
     
-      # FIXME: Use EAE (needs to come after HVAC sizing in case we're autosizing)
-      fan_power_installed = 0.5
+      fan_power = 0.5 # For fuel furnaces, will be overridden by EAE later
       success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
-                                   heat_capacity_btuh, fan_power_installed, dse,
+                                   heat_capacity_btuh, fan_power, dse,
                                    existing_objects)
-      return false if not success
-      
-    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
-    
-      efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
-      fan_power = 0.0
-      airflow_rate = 0.0
-      success = HVAC.apply_unit_heater(model, unit, runner, fuel,
-                                       efficiency, heat_capacity_btuh, fan_power,
-                                       airflow_rate)
       return false if not success
       
     elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
@@ -2159,7 +2150,6 @@ class OSModel
       oat_hwst_low = nil
       design_temp = 180.0
       is_modulating = false
-      # FIXME: Use EAE (needs to come after HVAC sizing in case we're autosizing)
       success = HVAC.apply_boiler(model, unit, runner, fuel, system_type, afue,
                                   oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
                                   heat_capacity_btuh, design_temp, is_modulating, dse)
@@ -2172,11 +2162,15 @@ class OSModel
                                               heat_capacity_btuh)
       return false if not success
       
-    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
+    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace") or XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
     
+      if XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
+        efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
+      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
       efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
-      fan_power = 0.0
-      airflow_rate = 0.0
+      end
+      airflow_rate = 125.0 # cfm/ton; doesn't affect energy consumption
+      fan_power = 0.5 # For fuel equipment, will be overridden by EAE later
       success = HVAC.apply_unit_heater(model, unit, runner, fuel,
                                        efficiency, heat_capacity_btuh, fan_power,
                                        airflow_rate)
@@ -2711,6 +2705,36 @@ class OSModel
     
     return true
 
+  end
+  
+  def self.add_fuel_heating_eae(runner, model, building, dse)
+  
+    # Needs to come after HVAC sizing (needs heating capacity and flowrate)
+    # TODO: Handle multiple heating systems
+    
+    htgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
+    return true if htgsys.nil?
+    
+    has_furnace = XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
+    has_wall_furnace = XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
+    has_stove = XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
+    has_boiler = XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
+    return true if not (has_furnace or has_wall_furnace or has_stove or has_boiler)
+    
+    fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
+    return true if fuel == Constants.FuelTypeElectric
+    
+    fuel_eae = XMLHelper.get_value(htgsys, "ElectricAuxiliaryEnergy")
+    if not fuel_eae.nil?
+      fuel_eae = Float(fuel_eae)
+    end
+    
+    success = HVAC.apply_eae_to_heating_fan(runner, model, fuel_eae, fuel, dse, 
+                                            has_furnace, has_boiler)
+    return false if not success
+  
+    return true
+    
   end
   
   def self.add_photovoltaics(runner, model, building)
