@@ -1,4 +1,5 @@
-# Separate ruby script to allow the code to be called using system() on Windows
+# Used by energy_rating_index.rb.
+# Separate ruby script to allow being called using system() on Windows.
 
 require_relative "../measures/HPXMLTranslator/resources/meta_measure"
 
@@ -10,10 +11,10 @@ def get_output_hpxml_path(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def run_design(basedir, design, resultsdir, hpxml, debug)
+def run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design}] Creating input...\n"
-  output_hpxml_path, rundir = create_idf(design, basedir, resultsdir, hpxml, debug)
+  output_hpxml_path, rundir = create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   
   print "[#{design}] Running simulation...\n"
   run_energyplus(design, rundir)
@@ -21,7 +22,7 @@ def run_design(basedir, design, resultsdir, hpxml, debug)
   return output_hpxml_path
 end
       
-def create_idf(design, basedir, resultsdir, hpxml, debug)
+def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   designdir = get_designdir(basedir, design)
   Dir.mkdir(designdir)
   
@@ -46,6 +47,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug)
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
   #args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
   args['hpxml_output_path'] = output_hpxml_path
+  args['skip_validation'] = skip_validation
   update_args_hash(measures, measure_subdir, args)
   
   # Add HPXML translator measure to workflow
@@ -58,6 +60,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug)
   if debug
     args['osm_output_path'] = File.join(rundir, "in.osm")
   end
+  args['skip_validation'] = skip_validation
   update_args_hash(measures, measure_subdir, args)
 
   # Apply measures
@@ -96,11 +99,12 @@ def run_energyplus(design, rundir)
   system(command, :err => File::NULL)
 end
       
-if ARGV.size == 5
+if ARGV.size == 6
   basedir = ARGV[0]
   design = ARGV[1]
   resultsdir = ARGV[2]
   hpxml = ARGV[3]
   debug = (ARGV[4].downcase.to_s == "true")
-  run_design(basedir, design, resultsdir, hpxml, debug)
+  skip_validation = (ARGV[5].downcase.to_s == "true")
+  run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
 end

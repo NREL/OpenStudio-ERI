@@ -3,7 +3,7 @@ OpenStudio-ERI
 
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
 
-The ERI is defined by ANSI/RESNET 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using the HERS Index".
+The ERI is defined by [ANSI/RESNET/ICC 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index"](http://www.resnet.us/blog/ansiresneticc-standard-301-2014-january-15-2016/).
 
 **Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master)
 
@@ -20,12 +20,21 @@ The ERI is defined by ANSI/RESNET 301-2014 "Standard for the Calculation and Lab
 
 1. Navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory.
 2. Run the ERI calculation on a provided sample HPXML file:  
-```openstudio --no-ssl energy_rating_index.rb -x sample_files/valid.xml```  
-Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) workflows/simulations will be executed in parallel on the local machine.
+```openstudio --no-ssl energy_rating_index.rb -s -x sample_files/valid.xml```  
+Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) simulations will be executed in parallel on the local machine.
 3. This will generate output as shown below:
 ![CLI output](https://user-images.githubusercontent.com/5861765/44598523-84351280-a790-11e8-91ef-56542a74028a.png)
 
-Note that the workflow runs significantly faster on Linux/Mac platforms by taking advantage of the ability to call [POSIX fork](https://en.wikipedia.org/wiki/Fork_(system_call)).
+Run `openstudio energy_rating_index.rb -h` to see all available commands/arguments.
+
+## Speed
+
+The workflow is continuously being evaluated for ways to reduce runtime. A number of enhancements have been made to date.
+
+There are additional ways that software developers using this workflow can reduce runtime:
+* Run on Linux/Mac platform, which is significantly faster by taking advantage of the [POSIX fork](https://en.wikipedia.org/wiki/Fork_(system_call)) call.
+* Use the `--no-ssl` flag to prevent SSL initialization in OpenStudio.
+* Use the `-s` flag to skip HPXML validation.
 
 ## Outputs
 
@@ -47,7 +56,7 @@ Continuous integration tests are automatically run for any change to this reposi
 
 Tests can be run locally as follows. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
 ```openstudio tests/energy_rating_index_test.rb``` (all tests)  
-```openstudio tests/energy_rating_index_test.rb --mame=test_resnet_hers_method``` (HERS Method tests only)
+```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (HERS Method tests only)
 
 At the completion of the test, there will be output that denotes the number of failures/errors like so:  
 ```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  
@@ -55,9 +64,7 @@ At the completion of the test, there will be output that denotes the number of f
 
 ## Software Developers
 
-To use this workflow, software tools must be able to produce a valid HPXML file; see the included [schema](https://github.com/NREL/OpenStudio-ERI/tree/master/hpxml_schemas). The primary section of the HPXML file for describing a building is found at `/HPXML/Building/BuildingDetails`.
-
-HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is under development that specifies the particular HPXML fields required to run this workflow. The [ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log` files.
+To use this workflow, software tools must produce a valid HPXML file. HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is available that specifies the specific HPXML fields required to run this workflow. The [HPXML ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log` files.
 
 ## Status
 
@@ -65,4 +72,3 @@ HPXML is an flexible and extensible format, where nearly all fields in the schem
 * The format of the ERI HPXML file is still in flux.
 *	The workflow has only been tested with the sample files provided in the `workflow/sample_files` directory.
 *	Errors/warnings are not yet being handled gracefully.
-*	Limited effort has been spent to optimize/speed up the process. 

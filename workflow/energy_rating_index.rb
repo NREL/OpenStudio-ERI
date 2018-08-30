@@ -24,7 +24,7 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, design, resultsdir, hpxml, debug, run)
+def run_design_direct(basedir, design, resultsdir, hpxml, debug, skip_validation, run)
   # Calls design.rb methods directly. Should only be called from a forked 
   # process. This is the fastest approach.
   designdir = get_designdir(basedir, design)
@@ -32,11 +32,11 @@ def run_design_direct(basedir, design, resultsdir, hpxml, debug, run)
 
   return nil if not run
   
-  output_hpxml_path = run_design(basedir, design, resultsdir, hpxml, debug)
+  output_hpxml_path = run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, design, resultsdir, hpxml, debug, run)
+def run_design_spawn(basedir, design, resultsdir, hpxml, debug, skip_validation, run)
   # Calls design.rb in a new spawned process in order to utilize multiple 
   # processes. Not as efficient as calling design.rb methods directly in 
   # forked processes for a couple reasons:
@@ -48,7 +48,7 @@ def run_design_spawn(basedir, design, resultsdir, hpxml, debug, run)
   return nil if not run
   
   cli_path = OpenStudio.getOpenStudioCLI
-  system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug}")
+  system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation}")
   
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
   return output_hpxml_path, designdir
@@ -774,7 +774,7 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/valid.xml\n"
+  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -s -x sample_files/valid.xml\n"
 
   opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
     options[:hpxml] = t
@@ -787,6 +787,11 @@ OptionParser.new do |opts|
   options[:debug] = false
   opts.on('-d', '--debug') do |t|
     options[:debug] = true
+  end
+  
+  options[:skip_validation] = false
+  opts.on('-s', '--skip-validation') do |t|
+    options[:skip_validation] = true
   end
   
   opts.on_tail('-h', '--help', 'Display help') do
@@ -849,7 +854,7 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   end
   
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+    output_hpxml_path, designdir = run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
     writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
   end
@@ -867,7 +872,7 @@ else # e.g., Windows
   # multiple processors.
   
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], run)
+    output_hpxml_path, designdir = run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
     design_outputs[design] = process_design_output(design, designdir, resultsdir, output_hpxml_path)
   end
   
