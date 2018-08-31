@@ -302,45 +302,46 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '../../HVACControl' => one, # See [HVACControl]
-            'HeatingSystemType[Furnace | WallFurnace | Boiler | ElectricResistance | Stove]' => one, # See [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Resistance] or [HeatingType=Stove]
+            'HeatingSystemType[ElectricResistance | Furnace | WallFurnace | Boiler | Stove]' => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Stove]
             'HeatingCapacity' => one,
             'FractionHeatLoadServed' => one,
         },
         
-            ## [HeatingType=Furnace]
-            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
-                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
-                'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
-                'ElectricAuxiliaryEnergy' => zero_or_one, # Uses 301 default if not provided
-            },
-        
-            ## [HeatingType=WallFurnace]
-            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/WallFurnace]' => {
-                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
-                'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
-                'ElectricAuxiliaryEnergy' => zero_or_one,
-            },
-        
-            ## [HeatingType=Boiler]
-            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
-                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
-                'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
-                'ElectricAuxiliaryEnergy' => zero_or_one, # Uses 301 default if not provided
-            },
-            
             ## [HeatingType=Resistance]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/ElectricResistance]' => {
                 '[HeatingSystemFuel="electricity"]' => one,
                 'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
             },
             
+            ## [HeatingType=Furnace]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+                'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+            },
+        
+            ## [HeatingType=WallFurnace]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/WallFurnace]' => {
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+                'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+            },
+        
+            ## [HeatingType=Boiler]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+                'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+            },
+            
             ## [HeatingType=Stove]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Stove]' => {
-                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one,
+                '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
                 'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
-                'ElectricAuxiliaryEnergy' => zero_or_one,
+            },
+            
+            ## [HeatingType=FuelEquipment]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane"]' => {
+                'ElectricAuxiliaryEnergy' => zero_or_one, # If not provided, uses 301 defaults for furnace/boiler and zero for other heating systems
             },
             
             

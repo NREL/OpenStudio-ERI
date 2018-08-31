@@ -1107,12 +1107,9 @@ class Airflow
       return_volume = 0
     end
 
-    # This can't be zero. A value of zero causes weird sizing issues in DOE-2.
-    direct_oa_supply_loss = 0.000001
-
     # Only if using the Fractional Leakage Option Type:
     if ducts.norm_leakage_25pa.nil?
-      supply_loss = (location_frac_leakage * (supply_leakage - direct_oa_supply_loss) + (ah_supply_leakage + direct_oa_supply_loss))
+      supply_loss = location_frac_leakage * supply_leakage + ah_supply_leakage
       return_loss = return_leakage + ah_return_leakage
     end
 
@@ -1129,25 +1126,22 @@ class Airflow
         # Handle the exception for if there is no leakage unbalance.
         frac_oa = 0
       elsif not unit_finished_basement.nil? and unit_finished_basement.zone == location_zone
-        frac_oa = direct_oa_supply_loss / total_unbalance
+        frac_oa = 0
       elsif not building.unfinished_basement.nil? and building.unfinished_basement.zone == location_zone
-        frac_oa = direct_oa_supply_loss / total_unbalance
+        frac_oa = 0
       elsif not building.crawlspace.nil? and building.crawlspace.zone == location_zone and building.crawlspace.ACH == 0
-        frac_oa = direct_oa_supply_loss / total_unbalance
+        frac_oa = 0
       elsif not building.pierbeam.nil? and building.pierbeam.zone == location_zone and building.pierbeam.ACH == 0
-        frac_oa = direct_oa_supply_loss / total_unbalance
+        frac_oa = 0
       elsif not building.unfinished_attic.nil? and building.unfinished_attic.zone == location_zone and building.unfinished_attic.ACH == 0
-        frac_oa = direct_oa_supply_loss / total_unbalance
+        frac_oa = 0
       else
         # Assume that all of the unbalanced make-up air is driven infiltration from outdoors.
         # This assumes that the holes for attic ventilation are much larger than any attic bypasses.
         frac_oa = 1
       end
-      # d.oa_duct_makeup =  fraction of the supply duct air loss that is made up by outside air (via return leakage)
-      oa_duct_makeup = [frac_oa * total_unbalance / [supply_loss, return_loss].max, 1].min
     else
       frac_oa = 0
-      oa_duct_makeup = 0
     end
     
     # Store info for HVAC Sizing measure
