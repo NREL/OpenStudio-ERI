@@ -1678,6 +1678,13 @@ class HVAC
                            capacity, fan_power_installed, dse,
                            existing_objects={})
     
+      # Parasitic Electricity (Source: DOE. (2007). Technical Support Document: Energy Efficiency Program for Consumer Products: "Energy Conservation Standards for Residential Furnaces and Boilers". www.eere.energy.gov/buildings/appliance_standards/residential/furnaces_boilers.html)
+      furnaceParasiticElecDict = {Constants.FuelTypeGas=>76.0, # W during operation
+                                  Constants.FuelTypePropane=>76.0,
+                                  Constants.FuelTypeOil=>220.0,
+                                  Constants.FuelTypeElectric=>0.0}
+      aux_elec = furnaceParasiticElecDict[fuel_type]
+      
       # _processAirSystem
       
       obj_name = Constants.ObjectNameFurnace(fuel_type, unit.name.to_s)
@@ -1697,7 +1704,7 @@ class HVAC
         else
           htg_coil = OpenStudio::Model::CoilHeatingGas.new(model)
           htg_coil.setGasBurnerEfficiency(dse * afue)
-          htg_coil.setParasiticElectricLoad(0)
+          htg_coil.setParasiticElectricLoad(aux_elec)
           htg_coil.setParasiticGasLoad(0)
           htg_coil.setFuelType(HelperMethods.eplus_fuel_map(fuel_type))
         end
@@ -3072,17 +3079,18 @@ class HVAC
         model.getPlantLoops.each do |pl|
             pl.components.each do |plc|
                 next if not plc.to_BoilerHotWater.is_initialized
+                
                 boiler = plc.to_BoilerHotWater.get
                 boiler.setParasiticElectricLoad(0.0)
+                
                 pl.supplyComponents.each do |plc|
                     next if not plc.to_PumpVariableSpeed.is_initialized
                     if set_pump
                       runner.registerError("Cannot handle multiple heating systems.")
                       return false
                     end
-                    pump = plc.to_PumpVariableSpeed.get
                     
-                    # Update pump
+                    pump = plc.to_PumpVariableSpeed.get
                     pump_eff = 0.9
                     pump_gpm = UnitConversions.convert(pump.ratedFlowRate.get,"m^3/s","gal/min")
                     pump_w_gpm = elec_power / pump_gpm # W/gpm
@@ -3090,6 +3098,7 @@ class HVAC
                     pump.setRatedPumpHead(calculate_pump_head(pump_eff, pump_w_gpm/dse))
                     pump.setMotorEfficiency(1.0)
                     set_pump = true
+                    
                 end
             end
         end
@@ -3105,8 +3114,11 @@ class HVAC
             runner.registerError("Cannot handle multiple heating systems.")
             return false
           end
-          fan = system.supplyFan.get.to_FanOnOff.get
           
+          htg_coil = system.heatingCoil.get
+          htg_coil.setParasiticElectricLoad(0.0)
+          
+          fan = system.supplyFan.get.to_FanOnOff.get
           if elec_power > 0
             fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
             htg_cfm = UnitConversions.convert(system.supplyAirFlowRateDuringHeatingOperation.get,"m^3/s","cfm")
@@ -3120,6 +3132,7 @@ class HVAC
           fan.setMotorEfficiency(1.0)
           fan.setMotorInAirstreamFraction(1.0)  
           set_fan = true
+          
         end
         
       end
