@@ -67,8 +67,8 @@ class HVAC
 
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(fan_eff)
         fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
         fan.setMotorEfficiency(1.0)
@@ -88,7 +88,7 @@ class HVAC
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " asys")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -203,8 +203,8 @@ class HVAC
         
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(fan_eff)
         fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
         fan.setMotorEfficiency(1.0)
@@ -232,7 +232,7 @@ class HVAC
         end
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " asys")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -350,8 +350,8 @@ class HVAC
         
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(fan_eff)
         fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
         fan.setMotorEfficiency(1.0)
@@ -379,7 +379,7 @@ class HVAC
         end
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " asys")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -486,13 +486,14 @@ class HVAC
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # _processCurvesDXHeating
+
         htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
       
         # _processSystemHeatingCoil
         
         htg_coil = OpenStudio::Model::CoilHeatingDXSingleSpeed.new(model, model.alwaysOnDiscreteSchedule, htg_coil_stage_data[0].heatingCapacityFunctionofTemperatureCurve, htg_coil_stage_data[0].heatingCapacityFunctionofFlowFractionCurve, htg_coil_stage_data[0].energyInputRatioFunctionofTemperatureCurve, htg_coil_stage_data[0].energyInputRatioFunctionofFlowFractionCurve, htg_coil_stage_data[0].partLoadFractionCorrelationCurve)
         htg_coil_stage_data[0].remove
-        htg_coil.setName(obj_name + " heating coil")
+        htg_coil.setName(obj_name + " htg coil")
         if heat_pump_capacity != Constants.SizingAuto and heat_pump_capacity != Constants.SizingAutoMaxLoad
           htg_coil.setRatedTotalHeatingCapacity(UnitConversions.convert(heat_pump_capacity,"Btu/hr","W")) # Used by HVACSizing measure
         end
@@ -512,7 +513,78 @@ class HVAC
         if supplemental_capacity != Constants.SizingAuto
           supp_htg_coil.setNominalCapacity(UnitConversions.convert(supplemental_capacity,"Btu/hr","W")) # Used by HVACSizing measure
         end
+
+        # _processSystemFan
+
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+        fan.setName(obj_name + " htg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
+        fan.setFanEfficiency(dse * calculate_fan_efficiency(static, fan_power_installed))
+        fan.setPressureRise(static)
+        fan.setMotorEfficiency(dse * 1.0)
+        fan.setMotorInAirstreamFraction(1.0)
         
+        # _processSystemAir
+                
+        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        air_loop_unitary.setName(obj_name + " htg unitary system")
+        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        air_loop_unitary.setSupplyFan(fan)
+        air_loop_unitary.setHeatingCoil(htg_coil)
+        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        air_loop_unitary.setFanPlacement("BlowThrough")
+        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+          
+        air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
+        air_loop.setName(obj_name + " central htg air system")
+        air_supply_inlet_node = air_loop.supplyInletNode
+        air_supply_outlet_node = air_loop.supplyOutletNode
+        air_demand_inlet_node = air_loop.demandInletNode
+        air_demand_outlet_node = air_loop.demandOutletNode    
+        
+        air_loop_unitary.addToNode(air_supply_inlet_node)
+
+        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        
+        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+
+        # _processSystemDemandSideAir
+        # Demand Side
+
+        # Supply Air
+        zone_splitter = air_loop.zoneSplitter
+        zone_splitter.setName(obj_name + " htg zone splitter")
+        
+        zone_mixer = air_loop.zoneMixer
+        zone_mixer.setName(obj_name + " htg zone mixer")
+
+        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+        diffuser_living.setName(obj_name + " #{control_zone.name} htg direct air")
+        air_loop.multiAddBranchForZone(control_zone, diffuser_living)
+
+        air_loop.multiAddBranchForZone(control_zone)
+        runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
+
+        prioritize_zone_hvac(model, runner, control_zone)
+        
+        slave_zones.each do |slave_zone|
+
+          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} htg direct air")
+          air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
+
+          air_loop.multiAddBranchForZone(slave_zone)
+          runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
+
+          prioritize_zone_hvac(model, runner, slave_zone)
+
+        end # slave_zone
+
         # _processCurvesDXCooling
 
         clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
@@ -521,7 +593,7 @@ class HVAC
         
         clg_coil = OpenStudio::Model::CoilCoolingDXSingleSpeed.new(model, model.alwaysOnDiscreteSchedule, clg_coil_stage_data[0].totalCoolingCapacityFunctionofTemperatureCurve, clg_coil_stage_data[0].totalCoolingCapacityFunctionofFlowFractionCurve, clg_coil_stage_data[0].energyInputRatioFunctionofTemperatureCurve, clg_coil_stage_data[0].energyInputRatioFunctionofFlowFractionCurve, clg_coil_stage_data[0].partLoadFractionCorrelationCurve)
         clg_coil_stage_data[0].remove
-        clg_coil.setName(obj_name + " cooling coil")
+        clg_coil.setName(obj_name + " clg coil")
         if heat_pump_capacity != Constants.SizingAuto and heat_pump_capacity != Constants.SizingAutoMaxLoad
           clg_coil.setRatedTotalCoolingCapacity(UnitConversions.convert(heat_pump_capacity,"Btu/hr","W")) # Used by HVACSizing measure
         end
@@ -538,8 +610,8 @@ class HVAC
 
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(fan_eff)
         fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
         fan.setMotorEfficiency(1.0)
@@ -548,12 +620,10 @@ class HVAC
         # _processSystemAir
                  
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " unitary system")
+        air_loop_unitary.setName(obj_name + " clg unitary system")
         air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
         air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
@@ -561,7 +631,7 @@ class HVAC
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " central clg air system")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -571,8 +641,6 @@ class HVAC
         
         runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
         runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
         
         air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
@@ -581,13 +649,13 @@ class HVAC
 
         # Supply Air
         zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName(obj_name + " zone splitter")
+        zone_splitter.setName(obj_name + " clg zone splitter")
         
         zone_mixer = air_loop.zoneMixer
-        zone_mixer.setName(obj_name + " zone mixer")
+        zone_mixer.setName(obj_name + " clg zone mixer")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName(obj_name + " #{control_zone.name} direct air")
+        diffuser_living.setName(obj_name + " #{control_zone.name} clg direct air")
         air_loop.multiAddBranchForZone(control_zone, diffuser_living)
 
         air_loop.multiAddBranchForZone(control_zone)
@@ -598,7 +666,7 @@ class HVAC
         slave_zones.each do |slave_zone|
 
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} clg direct air")
           air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
 
           air_loop.multiAddBranchForZone(slave_zone)
@@ -679,7 +747,7 @@ class HVAC
         # _processSystemHeatingCoil        
 
         htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
-        htg_coil.setName(obj_name + " heating coil")
+        htg_coil.setName(obj_name + " htg coil")
         htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(UnitConversions.convert(min_temp,"F","C"))
         htg_coil.setCrankcaseHeaterCapacity(UnitConversions.convert(crankcase_capacity,"kW","W"))
         htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(UnitConversions.convert(crankcase_temp,"F","C"))
@@ -701,6 +769,89 @@ class HVAC
           supp_htg_coil.setNominalCapacity(UnitConversions.convert(supplemental_capacity,"Btu/hr","W")) # Used by HVACSizing measure
         end
         
+        # _processSystemFan
+
+        fan_power_curve = create_curve_exponent(model, [0, 1, 3], obj_name + " fan power curve", -100, 100)        
+        fan_eff_curve = create_curve_cubic(model, [0, 1, 0, 0], obj_name + " fan eff curve", 0, 1, 0.01, 1)
+        
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
+        fan.setName(obj_name + " htg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
+        fan.setFanEfficiency(dse * calculate_fan_efficiency(static, fan_power_installed))
+        fan.setPressureRise(static)
+        fan.setMotorEfficiency(dse * 1.0)
+        fan.setMotorInAirstreamFraction(1.0)
+        
+        perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
+        perf.setSingleModeOperation(false)
+        for speed in 1..num_speeds
+          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], fan_speed_ratios_cooling[speed-1])
+          perf.addSupplyAirflowRatioField(f)
+        end
+
+        # _processSystemAir
+                 
+        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        air_loop_unitary.setName(obj_name + " htg unitary system")
+        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        air_loop_unitary.setSupplyFan(fan)
+        air_loop_unitary.setHeatingCoil(htg_coil)
+        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        air_loop_unitary.setFanPlacement("BlowThrough")
+        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
+
+        
+        air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
+        air_loop.setName(obj_name + " central htg air system")
+        air_supply_inlet_node = air_loop.supplyInletNode
+        air_supply_outlet_node = air_loop.supplyOutletNode
+        air_demand_inlet_node = air_loop.demandInletNode
+        air_demand_outlet_node = air_loop.demandOutletNode    
+        
+        air_loop_unitary.addToNode(air_supply_inlet_node)
+        
+        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
+        
+        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+          
+        # _processSystemDemandSideAir
+        # Demand Side
+
+        # Supply Air
+        zone_splitter = air_loop.zoneSplitter
+        zone_splitter.setName(obj_name + " htg zone splitter")
+        
+        zone_mixer = air_loop.zoneMixer
+        zone_mixer.setName(obj_name + " htg zone mixer")
+
+        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+        diffuser_living.setName(obj_name + " #{control_zone.name} htg direct air")
+        air_loop.multiAddBranchForZone(control_zone, diffuser_living)
+
+        air_loop.multiAddBranchForZone(control_zone)
+        runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
+
+        prioritize_zone_hvac(model, runner, control_zone)
+        
+        slave_zones.each do |slave_zone|
+
+          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} htg direct air")
+          air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
+
+          air_loop.multiAddBranchForZone(slave_zone)
+          runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
+
+          prioritize_zone_hvac(model, runner, slave_zone)
+          
+        end # slave_zone
+
         # _processCurvesDXCooling
 
         clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
@@ -708,7 +859,7 @@ class HVAC
         # _processSystemCoolingCoil
         
         clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
-        clg_coil.setName(obj_name + " cooling coil")
+        clg_coil.setName(obj_name + " clg coil")
         clg_coil.setCondenserType("AirCooled")
         clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
         clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)        
@@ -725,8 +876,8 @@ class HVAC
         
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(fan_eff)
         fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
         fan.setMotorEfficiency(1.0)
@@ -735,28 +886,19 @@ class HVAC
         # _processSystemAir
                  
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " unitary system")
+        air_loop_unitary.setName(obj_name + " clg unitary system")
         air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
         air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
         air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
-          
-        perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
         air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
-        perf.setSingleModeOperation(false)
-        for speed in 1..num_speeds
-          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], fan_speed_ratios_cooling[speed-1])
-          perf.addSupplyAirflowRatioField(f)
-        end
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " central clg air system")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -766,8 +908,6 @@ class HVAC
         
         runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
         runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
         
         air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
@@ -776,13 +916,13 @@ class HVAC
 
         # Supply Air
         zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName(obj_name + " zone splitter")
+        zone_splitter.setName(obj_name + " clg zone splitter")
         
         zone_mixer = air_loop.zoneMixer
-        zone_mixer.setName(obj_name + " zone mixer")
+        zone_mixer.setName(obj_name + " clg zone mixer")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName(obj_name + " #{control_zone.name} direct air")
+        diffuser_living.setName(obj_name + " #{control_zone.name} clg direct air")
         air_loop.multiAddBranchForZone(control_zone, diffuser_living)
 
         air_loop.multiAddBranchForZone(control_zone)
@@ -793,7 +933,7 @@ class HVAC
         slave_zones.each do |slave_zone|
 
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} clg direct air")
           air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
 
           air_loop.multiAddBranchForZone(slave_zone)
@@ -880,7 +1020,7 @@ class HVAC
         # _processSystemHeatingCoil        
 
         htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
-        htg_coil.setName(obj_name + " heating coil")
+        htg_coil.setName(obj_name + " htg coil")
         htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(UnitConversions.convert(min_temp,"F","C"))
         htg_coil.setCrankcaseHeaterCapacity(UnitConversions.convert(crankcase_capacity,"kW","W"))
         htg_coil.setMaximumOutdoorDryBulbTemperatureforCrankcaseHeaterOperation(UnitConversions.convert(crankcase_temp,"F","C"))
@@ -902,6 +1042,88 @@ class HVAC
           supp_htg_coil.setNominalCapacity(UnitConversions.convert(supplemental_capacity,"Btu/hr","W")) # Used by HVACSizing measure
         end
         
+        # _processSystemFan
+        
+        fan_power_curve = create_curve_exponent(model, [0, 1, 3], obj_name + " fan power curve", -100, 100)        
+        fan_eff_curve = create_curve_cubic(model, [0, 1, 0, 0], obj_name + " fan eff curve", 0, 1, 0.01, 1)
+        
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
+        fan.setName(obj_name + " htg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
+        fan.setFanEfficiency(dse * calculate_fan_efficiency(static, fan_power_installed))
+        fan.setPressureRise(static)
+        fan.setMotorEfficiency(dse * 1.0)
+        fan.setMotorInAirstreamFraction(1.0)    
+        
+        perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
+        perf.setSingleModeOperation(false)
+        for speed in 1..num_speeds
+          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], fan_speed_ratios_cooling[speed-1])
+          perf.addSupplyAirflowRatioField(f)
+        end
+
+        # _processSystemAir
+                 
+        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        air_loop_unitary.setName(obj_name + " htg unitary system")
+        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        air_loop_unitary.setSupplyFan(fan)
+        air_loop_unitary.setHeatingCoil(htg_coil)
+        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        air_loop_unitary.setFanPlacement("BlowThrough")
+        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
+        
+        air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
+        air_loop.setName(obj_name + " central htg air system")
+        air_supply_inlet_node = air_loop.supplyInletNode
+        air_supply_outlet_node = air_loop.supplyOutletNode
+        air_demand_inlet_node = air_loop.demandInletNode
+        air_demand_outlet_node = air_loop.demandOutletNode    
+        
+        air_loop_unitary.addToNode(air_supply_inlet_node)
+        
+        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
+        
+        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+          
+        # _processSystemDemandSideAir
+        # Demand Side
+
+        # Supply Air
+        zone_splitter = air_loop.zoneSplitter
+        zone_splitter.setName(obj_name + " htg zone splitter")
+        
+        zone_mixer = air_loop.zoneMixer
+        zone_mixer.setName(obj_name + " htg zone mixer")
+
+        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+        diffuser_living.setName(obj_name + " #{control_zone.name} htg direct air")
+        air_loop.multiAddBranchForZone(control_zone, diffuser_living)
+
+        air_loop.multiAddBranchForZone(control_zone)
+        runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
+
+        prioritize_zone_hvac(model, runner, control_zone)
+        
+        slave_zones.each do |slave_zone|
+
+          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} htg direct air")
+          air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
+
+          air_loop.multiAddBranchForZone(slave_zone)
+          runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
+
+          prioritize_zone_hvac(model, runner, slave_zone)
+          
+        end # slave_zone
+        
         # _processCurvesDXCooling
 
         clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
@@ -909,7 +1131,7 @@ class HVAC
         # _processSystemCoolingCoil
         
         clg_coil = OpenStudio::Model::CoilCoolingDXMultiSpeed.new(model)
-        clg_coil.setName(obj_name + " cooling coil")
+        clg_coil.setName(obj_name + " clg coil")
         clg_coil.setCondenserType("AirCooled")
         clg_coil.setApplyPartLoadFractiontoSpeedsGreaterthan1(false)
         clg_coil.setApplyLatentDegradationtoSpeedsGreaterthan1(false)        
@@ -926,8 +1148,8 @@ class HVAC
         
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(fan_eff)
         fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
         fan.setMotorEfficiency(1.0)
@@ -936,28 +1158,19 @@ class HVAC
         # _processSystemAir
                  
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " unitary system")
+        air_loop_unitary.setName(obj_name + " clg unitary system")
         air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
         air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
         air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
-          
-        perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
         air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
-        perf.setSingleModeOperation(false)
-        for speed in 1..num_speeds
-          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], fan_speed_ratios_cooling[speed-1])
-          perf.addSupplyAirflowRatioField(f)
-        end
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " central clg air system")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -967,8 +1180,6 @@ class HVAC
         
         runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
         runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
         
         air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
@@ -977,13 +1188,13 @@ class HVAC
 
         # Supply Air
         zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName(obj_name + " zone splitter")
+        zone_splitter.setName(obj_name + " clg zone splitter")
         
         zone_mixer = air_loop.zoneMixer
-        zone_mixer.setName(obj_name + " zone mixer")
+        zone_mixer.setName(obj_name + " clg zone mixer")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName(obj_name + " #{control_zone.name} direct air")
+        diffuser_living.setName(obj_name + " #{control_zone.name} clg direct air")
         air_loop.multiAddBranchForZone(control_zone, diffuser_living)
 
         air_loop.multiAddBranchForZone(control_zone)
@@ -994,7 +1205,7 @@ class HVAC
         slave_zones.each do |slave_zone|
 
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} clg direct air")
           air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
 
           air_loop.multiAddBranchForZone(slave_zone)
@@ -1106,24 +1317,6 @@ class HVAC
       
         ([control_zone] + slave_zones).each do |zone|
         
-            # _processSystemHeatingCoil
-            
-            htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
-            htg_coil.setName(obj_name + " #{zone.name} heating coil")
-            htg_coil.setHeatingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic_curve)
-            htg_coil.setHeatingCapacityModifierFunctionofFlowFractionCurve(constant_cubic_curve)        
-          
-            # _processSystemCoolingCoil
-            
-            clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
-            clg_coil.setName(obj_name + " #{zone.name} cooling coil")
-            if heat_pump_capacity != Constants.SizingAuto and heat_pump_capacity != Constants.SizingAutoMaxLoad
-              clg_coil.setRatedTotalCoolingCapacity(UnitConversions.convert(heat_pump_capacity,"Btu/hr","W")) # Used by HVACSizing measure
-            end
-            clg_coil.setRatedSensibleHeatRatio(shrs_rated[mshp_indices[-1]])
-            clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic_curve)
-            clg_coil.setCoolingCapacityModifierCurveFunctionofFlowFraction(constant_cubic_curve)
-          
             # _processSystemAir
             
             vrf = OpenStudio::Model::AirConditionerVariableRefrigerantFlow.new(model)
@@ -1162,32 +1355,13 @@ class HVAC
             vrf.setPipingCorrectionFactorforHeightinCoolingModeCoefficient(0)
             vrf.setEquivalentPipingLengthusedforPipingCorrectionFactorinHeatingMode(0)
 
-            # _processSystemFan
+            # _processSystemHeatingCoil
+            
+            htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)
+            htg_coil.setName(obj_name + " #{zone.name} heating coil")
+            htg_coil.setHeatingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic_curve)
+            htg_coil.setHeatingCapacityModifierFunctionofFlowFractionCurve(constant_cubic_curve)
 
-            fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
-            fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-            fan.setName(obj_name + " #{zone.name} supply fan")
-            fan.setEndUseSubcategory(Constants.EndUseHVACFan)
-            fan.setFanEfficiency(fan_eff)
-            fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power/dse))
-            fan.setMotorEfficiency(1.0)
-            fan.setMotorInAirstreamFraction(1.0)       
-            
-            # _processSystemDemandSideAir
-            
-            tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
-            tu_vrf.setName(obj_name + " #{zone.name} zone vrf")
-            tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
-            tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-            tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
-            tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
-            tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
-            tu_vrf.addToThermalZone(zone)
-            vrf.addTerminal(tu_vrf)
-            runner.registerInfo("Added '#{tu_vrf.name}' to '#{zone.name}' of #{unit.name}")        
-            
-            prioritize_zone_hvac(model, runner, zone)
-            
             # Supplemental heat
             unless supplemental_capacity == 0.0
               supp_htg_coil = OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric.new(model)
@@ -1199,6 +1373,78 @@ class HVAC
               supp_htg_coil.addToThermalZone(zone)
               runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{zone.name}' of #{unit.name}")     
             end
+
+            # _processSystemCoolingCoil
+
+            clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
+
+            # _processSystemFan
+
+            fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+            fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
+            fan.setName(obj_name + " #{zone.name} htg supply fan")
+            fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
+            fan.setFanEfficiency(fan_eff)
+            fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power/dse))
+            fan.setMotorEfficiency(1.0)
+            fan.setMotorInAirstreamFraction(1.0)       
+            
+            # _processSystemDemandSideAir
+            
+            tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
+            tu_vrf.coolingCoil.get.remove
+            tu_vrf.setName(obj_name + " #{zone.name} h vrf".gsub(" zone", ""))
+            tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
+            tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+            tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
+            tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
+            tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
+            tu_vrf.addToThermalZone(zone)
+            vrf.addTerminal(tu_vrf)
+            runner.registerInfo("Added '#{tu_vrf.name}' to '#{zone.name}' of #{unit.name}")        
+            
+            prioritize_zone_hvac(model, runner, zone)
+
+            # _processSystemCoolingCoil
+            
+            clg_coil = OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow.new(model)
+            clg_coil.setName(obj_name + " #{zone.name} cooling coil")
+            if heat_pump_capacity != Constants.SizingAuto and heat_pump_capacity != Constants.SizingAutoMaxLoad
+              clg_coil.setRatedTotalCoolingCapacity(UnitConversions.convert(heat_pump_capacity,"Btu/hr","W")) # Used by HVACSizing measure
+            end
+            clg_coil.setRatedSensibleHeatRatio(shrs_rated[mshp_indices[-1]])
+            clg_coil.setCoolingCapacityRatioModifierFunctionofTemperatureCurve(constant_cubic_curve)
+            clg_coil.setCoolingCapacityModifierCurveFunctionofFlowFraction(constant_cubic_curve)
+
+            # _processSystemHeatingCoil
+
+            htg_coil = OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow.new(model)          
+
+            # _processSystemFan
+
+            fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+            fan.setName(obj_name + " #{zone.name} clg supply fan")
+            fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
+            fan.setFanEfficiency(dse * calculate_fan_efficiency(static, fan_power))
+            fan.setPressureRise(static)
+            fan.setMotorEfficiency(dse * 1.0)
+            fan.setMotorInAirstreamFraction(1.0)       
+            
+            # _processSystemDemandSideAir
+            
+            tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
+            tu_vrf.heatingCoil.get.remove
+            tu_vrf.setName(obj_name + " #{zone.name} c vrf".gsub(" zone", ""))
+            tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
+            tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+            tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
+            tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
+            tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
+            tu_vrf.addToThermalZone(zone)
+            vrf.addTerminal(tu_vrf)
+            runner.registerInfo("Added '#{tu_vrf.name}' to '#{zone.name}' of #{unit.name}")        
+            
+            prioritize_zone_hvac(model, runner, zone)
         
         end
         
@@ -1430,7 +1676,68 @@ class HVAC
         supp_htg_coil.setEfficiency(dse * supplemental_efficiency)
         if supplemental_capacity != Constants.SizingAuto
           supp_htg_coil.setNominalCapacity(UnitConversions.convert(supplemental_capacity,"Btu/hr","W")) # Used by HVACSizing measure
-        end        
+        end
+
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+        fan.setName(obj_name + " #{control_zone.name} htg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
+        fan.setFanEfficiency(dse * calculate_fan_efficiency(static, fan_power))
+        fan.setPressureRise(static)
+        fan.setMotorEfficiency(dse * 1.0)
+        fan.setMotorInAirstreamFraction(1.0)
+          
+        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        air_loop_unitary.setName(obj_name + " htg unitary system")
+        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        air_loop_unitary.setSupplyFan(fan)
+        air_loop_unitary.setHeatingCoil(htg_coil)
+        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        air_loop_unitary.setFanPlacement("BlowThrough")
+        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
+        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
+          
+        air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
+        air_loop.setName(obj_name + " central htg air system")
+        air_supply_inlet_node = air_loop.supplyInletNode
+        air_supply_outlet_node = air_loop.supplyOutletNode
+        air_demand_inlet_node = air_loop.demandInletNode
+        air_demand_outlet_node = air_loop.demandOutletNode    
+        
+        air_loop_unitary.addToNode(air_supply_inlet_node)
+        
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        
+        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        
+        zone_splitter = air_loop.zoneSplitter
+        zone_splitter.setName(obj_name + " htg zone splitter")
+        
+        zone_mixer = air_loop.zoneMixer
+        zone_mixer.setName(obj_name + " htg zone mixer")
+
+        diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+        diffuser_living.setName(obj_name + " #{control_zone.name} htg direct air")
+        air_loop.multiAddBranchForZone(control_zone, diffuser_living)
+
+        air_loop.multiAddBranchForZone(control_zone)
+        runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
+
+        prioritize_zone_hvac(model, runner, control_zone)
+        
+        slave_zones.each do |slave_zone|
+
+          diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} htg direct air")
+          air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
+
+          air_loop.multiAddBranchForZone(slave_zone)
+          runner.registerInfo("Added '#{air_loop.name}' to '#{slave_zone.name}' of #{unit.name}")
+
+          prioritize_zone_hvac(model, runner, slave_zone)
+          
+        end
         
         gshp_COOL_CAP_fT_coeff = convert_curve_gshp(cOOL_CAP_FT_SPEC, false)
         gshp_COOL_POWER_fT_coeff = convert_curve_gshp(cOOL_POWER_FT_SPEC, false)
@@ -1465,20 +1772,18 @@ class HVAC
 
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " #{control_zone.name} supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " #{control_zone.name} clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(fan_eff)
         fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power/dse))
         fan.setMotorEfficiency(1.0)
         fan.setMotorInAirstreamFraction(1.0)
           
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " unitary system")
+        air_loop_unitary.setName(obj_name + " clg unitary system")
         air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
         air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
         air_loop_unitary.setFanPlacement("BlowThrough")
         air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
@@ -1486,7 +1791,7 @@ class HVAC
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " central clg air system")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -1494,18 +1799,18 @@ class HVAC
         
         air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{clg_coil.name}' and '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
         
         air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
         
         zone_splitter = air_loop.zoneSplitter
-        zone_splitter.setName(obj_name + " zone splitter")
+        zone_splitter.setName(obj_name + " clg zone splitter")
         
         zone_mixer = air_loop.zoneMixer
-        zone_mixer.setName(obj_name + " zone mixer")
+        zone_mixer.setName(obj_name + " clg zone mixer")
 
         diffuser_living = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-        diffuser_living.setName(obj_name + " #{control_zone.name} direct air")
+        diffuser_living.setName(obj_name + " #{control_zone.name} clg direct air")
         air_loop.multiAddBranchForZone(control_zone, diffuser_living)
 
         air_loop.multiAddBranchForZone(control_zone)
@@ -1516,7 +1821,7 @@ class HVAC
         slave_zones.each do |slave_zone|
 
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
-          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} direct air")
+          diffuser_fbsmt.setName(obj_name + " #{slave_zone.name} clg direct air")
           air_loop.multiAddBranchForZone(slave_zone, diffuser_fbsmt)
 
           air_loop.multiAddBranchForZone(slave_zone)
@@ -1584,8 +1889,8 @@ class HVAC
         clg_coil.setBasinHeaterSetpointTemperature(OpenStudio::OptionalDouble.new(2))
         
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " clg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACCoolingFan)
         fan.setFanEfficiency(1)
         fan.setPressureRise(0)
         fan.setMotorEfficiency(1)
@@ -1657,10 +1962,10 @@ class HVAC
 
         fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
         fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        fan.setName(obj_name + " supply fan")
-        fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+        fan.setName(obj_name + " htg supply fan")
+        fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
         fan.setFanEfficiency(fan_eff)
-        fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
+        fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse)
         fan.setMotorEfficiency(1.0)
         fan.setMotorInAirstreamFraction(1.0)  
       
@@ -1678,7 +1983,7 @@ class HVAC
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
 
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
-        air_loop.setName(obj_name + " central air system")
+        air_loop.setName(obj_name + " asys")
         air_supply_inlet_node = air_loop.supplyInletNode
         air_supply_outlet_node = air_loop.supplyOutletNode
         air_demand_inlet_node = air_loop.demandInletNode
@@ -1973,8 +2278,8 @@ class HVAC
           
           
           fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
-          fan.setName(obj_name + " fan")
-          fan.setEndUseSubcategory(Constants.EndUseHVACFan)
+          fan.setName(obj_name + " htg fan")
+          fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
           if fan_power > 0
             fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
             fan.setFanEfficiency(fan_eff)
@@ -2054,118 +2359,26 @@ class HVAC
       return true
     end
     
-    def self.remove_hvac_equipment(model, runner, thermal_zone, unit, new_equip)
-      # TODO: Split into remove_heating and remove_cooling
-      case new_equip
-      when Constants.ObjectNameCentralAirConditioner
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_ac = remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = remove_room_ac(model, runner, thermal_zone)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_mshp
-          removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        end
-        if removed_ac or removed_ashp or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameRoomAirConditioner
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_room_ac = remove_room_ac(model, runner, thermal_zone)
-        removed_ac = remove_central_ac(model, runner, thermal_zone)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_mshp
-          removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        end        
-        if removed_ac or removed_ashp or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameFurnace
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_furnace = remove_furnace(model, runner, thermal_zone)
-        removed_boiler = remove_boiler(model, runner, thermal_zone)
-        removed_heater = remove_unit_heater(model, runner, thermal_zone)
+    def self.remove_heating(model, runner, thermal_zone, unit)
+      removed_furnace = remove_furnace(model, runner, thermal_zone)
+      removed_boiler = remove_boiler(model, runner, thermal_zone)
+      removed_heater = remove_unit_heater(model, runner, thermal_zone)
+      removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
+      removed_ashp = remove_ashp(model, runner, thermal_zone)
+      removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
+      removed_gshp = remove_gshp(model, runner, thermal_zone)
+    end
+    
+    def self.remove_cooling(model, runner, thermal_zone, unit)
+      removed_ac = remove_central_ac(model, runner, thermal_zone)
+      removed_room_ac = remove_room_ac(model, runner, thermal_zone)
+      removed_ashp = remove_ashp(model, runner, thermal_zone)
+      removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
+      if removed_mshp
         removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_furnace or removed_ashp or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameBoiler
-        removed_boiler = remove_boiler(model, runner, thermal_zone)
-        removed_heater = remove_unit_heater(model, runner, thermal_zone)
-        removed_furnace = remove_furnace(model, runner, thermal_zone)
-        removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_furnace or removed_ashp or removed_mshp or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameElectricBaseboard
-        removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        removed_furnace = remove_furnace(model, runner, thermal_zone)
-        removed_boiler = remove_boiler(model, runner, thermal_zone)
-        removed_heater = remove_unit_heater(model, runner, thermal_zone)
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_furnace or removed_ashp or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameAirSourceHeatPump
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_ac = remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = remove_room_ac(model, runner, thermal_zone)
-        removed_furnace = remove_furnace(model, runner, thermal_zone)
-        removed_boiler = remove_boiler(model, runner, thermal_zone)
-        removed_heater = remove_unit_heater(model, runner, thermal_zone)
-        removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_ashp or removed_ac or removed_furnace or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameMiniSplitHeatPump
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_ac = remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = remove_room_ac(model, runner, thermal_zone)
-        removed_furnace = remove_furnace(model, runner, thermal_zone)
-        removed_boiler = remove_boiler(model, runner, thermal_zone)
-        removed_heater = remove_unit_heater(model, runner, thermal_zone)
-        removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_ac or removed_furnace or removed_ashp or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameGroundSourceHeatPumpVerticalBore
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_ac = remove_central_ac(model, runner, thermal_zone)
-        removed_room_ac = remove_room_ac(model, runner, thermal_zone)
-        removed_furnace = remove_furnace(model, runner, thermal_zone)
-        removed_boiler = remove_boiler(model, runner, thermal_zone)
-        removed_heater = remove_unit_heater(model, runner, thermal_zone)
-        removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_ashp or removed_ac or removed_furnace or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
-      when Constants.ObjectNameUnitHeater
-        removed_elec_baseboard = remove_electric_baseboard(model, runner, thermal_zone)
-        removed_furnace = remove_furnace(model, runner, thermal_zone)
-        removed_boiler = remove_boiler(model, runner, thermal_zone)
-        removed_heater = remove_unit_heater(model, runner, thermal_zone)
-        removed_ashp = remove_ashp(model, runner, thermal_zone)
-        removed_mshp = remove_mshp(model, runner, thermal_zone, unit)
-        removed_gshp = remove_gshp(model, runner, thermal_zone)
-        if removed_furnace or removed_ashp or removed_gshp
-          remove_air_loops(model, runner, thermal_zone)
-        end
       end
-    end   
+      removed_gshp = remove_gshp(model, runner, thermal_zone)
+    end
     
     def self.apply_heating_setpoints(model, runner, weather, weekday_setpoints, weekend_setpoints,
                                      use_auto_season, season_start_month, season_end_month)
@@ -3490,19 +3703,19 @@ class HVAC
 
       cooling_equipment = []
       if self.has_ashp(model, runner, thermal_zone)
-        runner.registerInfo("Found air source heat pump in #{thermal_zone.name}.")
+        runner.registerInfo("Found air source heat pump providing cooling in #{thermal_zone.name}.")
       end
       if self.has_central_ac(model, runner, thermal_zone)
         runner.registerInfo("Found central air conditioner in #{thermal_zone.name}.")
       end
       if self.has_gshp(model, runner, thermal_zone)
-        runner.registerInfo("Found ground source heat pump in #{thermal_zone.name}.")
+        runner.registerInfo("Found ground source heat pump providing cooling in #{thermal_zone.name}.")
       end
       if self.has_room_ac(model, runner, thermal_zone)
         runner.registerInfo("Found room air conditioner in #{thermal_zone.name}.")
       end
       if self.has_mshp(model, runner, thermal_zone)
-        runner.registerInfo("Found mini split heat pump in #{thermal_zone.name}.")
+        runner.registerInfo("Found mini split heat pump providing cooling in #{thermal_zone.name}.")
       end
 
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
@@ -3538,13 +3751,13 @@ class HVAC
 
       heating_equipment = []
       if self.has_ashp(model, runner, thermal_zone)
-        runner.registerInfo("Found air source heat pump in #{thermal_zone.name}.")
+        runner.registerInfo("Found air source heat pump providing heating in #{thermal_zone.name}.")
       end
       if self.has_furnace(model, runner, thermal_zone)
         runner.registerInfo("Found furnace in #{thermal_zone.name}.")
       end
       if self.has_gshp(model, runner, thermal_zone)
-        runner.registerInfo("Found ground source heat pump in #{thermal_zone.name}.")
+        runner.registerInfo("Found ground source heat pump providing heating in #{thermal_zone.name}.")
       end
       if self.has_boiler(model, runner, thermal_zone)
         runner.registerInfo("Found boiler serving #{thermal_zone.name}.")
@@ -3553,7 +3766,7 @@ class HVAC
         runner.registerInfo("Found electric baseboard in #{thermal_zone.name}.")
       end
       if self.has_mshp(model, runner, thermal_zone)
-        runner.registerInfo("Found mini split heat pump in #{thermal_zone.name}.")
+        runner.registerInfo("Found mini split heat pump providing heating in #{thermal_zone.name}.")
       end
       if self.has_unit_heater(model, runner, thermal_zone)
         runner.registerInfo("Found unit heater in #{thermal_zone.name}.")
@@ -3704,7 +3917,9 @@ class HVAC
       model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
         vrf.terminals.each do |terminal|
           next unless thermal_zone.handle.to_s == terminal.thermalZone.get.handle.to_s
-          vrfs << vrf
+          unless vrfs.include? vrf
+            vrfs << vrf
+          end
         end
       end
       return vrfs
@@ -3766,10 +3981,8 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil?
-        if ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized or clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized ) and htg_coil.nil?
-          num += 1
-        end
+        next unless system.name.to_s.start_with? Constants.ObjectNameCentralAirConditioner
+        num += 1
       end
       return num
     end
@@ -3779,10 +3992,8 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil? or htg_coil.nil?
-        if ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized and htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized ) or ( clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
-          num += 1
-        end
+        next unless system.name.to_s.start_with? Constants.ObjectNameAirSourceHeatPump
+        num += 1
       end
       return num
     end
@@ -3792,10 +4003,8 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil? or htg_coil.nil?
-        if clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
-          num += 1
-        end
+        next unless system.name.to_s.start_with? Constants.ObjectNameGroundSourceHeatPumpVerticalBore
+        num += 1
       end
       return num
     end
@@ -3805,10 +4014,8 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if htg_coil.nil?
-        if htg_coil.to_CoilHeatingGas.is_initialized or htg_coil.to_CoilHeatingElectric.is_initialized
-          num += 1
-        end
+        next unless system.name.to_s.start_with? Constants.ObjectNameFurnace
+        num += 1
       end
       return num
     end
@@ -3880,59 +4087,23 @@ class HVAC
     # Has Equipment methods
     
     def self.has_central_ac(model, runner, thermal_zone)
-      unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
-      unitary_system_air_loops.each do |unitary_system_air_loop|
-        system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil?
-        if ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized or clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized ) and htg_coil.nil?
-          return true
-        end
-      end
-      return false
+      return self.num_central_ac(model, runner, thermal_zone) > 0
     end
     
     def self.has_ashp(model, runner, thermal_zone)
-      unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
-      unitary_system_air_loops.each do |unitary_system_air_loop|
-        system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil? or htg_coil.nil?
-        if ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized and htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized ) or ( clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized and htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
-          return true
-        end
-      end
-      return false
+      return self.num_ashp(model, runner, thermal_zone) > 0
     end
     
     def self.has_gshp(model, runner, thermal_zone)
-      unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
-      unitary_system_air_loops.each do |unitary_system_air_loop|
-        system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil? or htg_coil.nil?
-        if clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized and htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
-          return true
-        end
-      end
-      return false
+      return self.num_gshp(model, runner, thermal_zone) > 0
     end
     
     def self.has_furnace(model, runner, thermal_zone)
-      unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
-      unitary_system_air_loops.each do |unitary_system_air_loop|
-        system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if htg_coil.nil?
-        if htg_coil.to_CoilHeatingGas.is_initialized or htg_coil.to_CoilHeatingElectric.is_initialized
-          return true
-        end
-      end
-      return false
+      return self.num_furnace(model, runner, thermal_zone) > 0
     end
     
     def self.has_mshp(model, runner, thermal_zone)
-      vrfs = self.get_vrfs(model, runner, thermal_zone)
-      unless vrfs.empty?
-        return true
-      end
-      return false
+      return self.num_mshp(model, runner, thermal_zone) > 0
     end
     
     def self.has_ducted_mshp(model, runner, thermal_zone)
@@ -3952,35 +4123,19 @@ class HVAC
     end
     
     def self.has_room_ac(model, runner, thermal_zone)
-      ptacs = self.get_ptacs(model, runner, thermal_zone)
-      unless ptacs.empty?
-        return true
-      end
-      return false
+      return self.num_room_ac(model, runner, thermal_zone) > 0
     end
     
     def self.has_boiler(model, runner, thermal_zone)
-      baseboards = self.get_baseboard_waters(model, runner, thermal_zone)
-      unless baseboards.empty?
-        return true
-      end
-      return false
+      return self.num_boiler(model, runner, thermal_zone) > 0
     end
     
     def self.has_electric_baseboard(model, runner, thermal_zone)
-      baseboards = self.get_baseboard_electrics(model, runner, thermal_zone)
-      unless baseboards.empty?
-        return true
-      end
-      return false
+      return self.num_electric_baseboard(model, runner, thermal_zone) > 0
     end
     
     def self.has_unit_heater(model, runner, thermal_zone)
-      unitary_system_zone_hvacs = self.get_unitary_system_zone_hvacs(model, runner, thermal_zone)
-      unitary_system_zone_hvacs.each do |unitary_system_zone_hvac|
-        return true
-      end
-      return false
+      return self.num_unit_heater(model, runner, thermal_zone) > 0
     end
     
     def self.has_dehumidifier(model, runner, thermal_zone)
@@ -4022,11 +4177,13 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil?
+        next unless system.name.to_s.start_with? Constants.ObjectNameCentralAirConditioner
         runner.registerInfo("Removed '#{clg_coil.name}' from '#{air_loop.name}'.")
         system.resetCoolingCoil
         clg_coil.remove
         system.supplyFan.get.remove
+        runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
+        air_loop.remove
       end
       return true
     end
@@ -4037,13 +4194,20 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil? or htg_coil.nil?
-        next if not ( clg_coil.to_CoilCoolingDXSingleSpeed.is_initialized or clg_coil.to_CoilCoolingDXMultiSpeed.is_initialized ) and not ( htg_coil.to_CoilHeatingDXSingleSpeed.is_initialized or htg_coil.to_CoilHeatingDXMultiSpeed.is_initialized )
-        runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from '#{air_loop.name}'.")
-        system.resetHeatingCoil
-        system.resetCoolingCoil              
-        htg_coil.remove
-        clg_coil.remove
+        next unless system.name.to_s.start_with? Constants.ObjectNameAirSourceHeatPump
+        unless htg_coil.nil?
+          runner.registerInfo("Removed '#{htg_coil.name}' from '#{air_loop.name}'.")
+          system.resetHeatingCoil
+          htg_coil.remove          
+        end
+        unless clg_coil.nil?
+          runner.registerInfo("Removed '#{clg_coil.name}' from '#{air_loop.name}'.")
+          system.resetCoolingCoil
+          clg_coil.remove          
+        end
+        system.supplyFan.get.remove
+        runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
+        air_loop.remove        
       end
       return true
     end
@@ -4055,13 +4219,20 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if clg_coil.nil? or htg_coil.nil?
-        next if not clg_coil.to_CoilCoolingWaterToAirHeatPumpEquationFit.is_initialized or not htg_coil.to_CoilHeatingWaterToAirHeatPumpEquationFit.is_initialized
-        runner.registerInfo("Removed '#{clg_coil.name}' and '#{htg_coil.name}' from '#{air_loop.name}'.")
-        system.resetHeatingCoil
-        system.resetCoolingCoil              
-        htg_coil.remove
-        clg_coil.remove
+        next unless system.name.to_s.start_with? Constants.ObjectNameGroundSourceHeatPumpVerticalBore
+        unless htg_coil.nil?
+          runner.registerInfo("Removed '#{htg_coil.name}' from '#{air_loop.name}'.")
+          system.resetHeatingCoil
+          htg_coil.remove
+        end
+        unless clg_coil.nil?
+          runner.registerInfo("Removed '#{clg_coil.name}' from '#{air_loop.name}'.")
+          system.resetCoolingCoil
+          clg_coil.remove
+        end
+        system.supplyFan.get.remove
+        air_loop.remove
+        runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
       end
       return true
     end
@@ -4072,11 +4243,13 @@ class HVAC
       unitary_system_air_loops = self.get_unitary_system_air_loops(model, runner, thermal_zone)
       unitary_system_air_loops.each do |unitary_system_air_loop|
         system, clg_coil, htg_coil, air_loop = unitary_system_air_loop
-        next if htg_coil.nil?
+        next unless system.name.to_s.start_with? Constants.ObjectNameFurnace
         runner.registerInfo("Removed '#{htg_coil.name}' from '#{air_loop.name}'.")
         system.resetHeatingCoil
         htg_coil.remove
         system.supplyFan.get.remove
+        runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
+        air_loop.remove
       end
       return true
     end
@@ -4223,59 +4396,6 @@ class HVAC
         end
       end
     end 
-    
-    def self.remove_air_loops(model, runner, thermal_zone, clone_perf=false)
-      # Returns the cloned perf or nil
-      thermal_zone.airLoopHVACs.each do |air_loop|
-        air_loop.supplyComponents.each do |supply_component|
-          next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
-          air_loop_unitary = supply_component.to_AirLoopHVACUnitarySystem.get
-          next if air_loop_unitary.heatingCoil.is_initialized or air_loop_unitary.coolingCoil.is_initialized
-          runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
-          cloned_perf = nil
-          if clone_perf and air_loop_unitary.designSpecificationMultispeedObject.is_initialized
-            perf = air_loop_unitary.designSpecificationMultispeedObject.get
-            cloned_perf = perf.clone.to_UnitarySystemPerformanceMultispeed.get
-            cloned_perf.setName(perf.name.to_s)
-            return cloned_perf
-          end
-          air_loop.remove          
-        end
-      end
-      return nil
-    end
-    
-    # Reset Equipment methods
-    
-    def self.reset_central_ac(model, runner, thermal_zone)
-      # Returns the cloned coil or nil
-      return nil if not self.has_central_ac(model, runner, thermal_zone)
-      system, clg_coil, htg_coil, air_loop = self.get_unitary_system_air_loop(model, runner, thermal_zone)
-      cloned_clg_coil = clg_coil.clone
-      system.resetCoolingCoil
-      clg_coil.remove
-      system.supplyFan.get.remove
-      cloned_clg_coil = self.get_coil_from_hvac_component(cloned_clg_coil)
-      cloned_clg_coil.setName(clg_coil.name.to_s)
-      return cloned_clg_coil
-    end
-    
-    def self.reset_furnace(model, runner, thermal_zone)
-      # Returns the cloned coil or nil
-      return nil if not self.has_furnace(model, runner, thermal_zone)
-      system, clg_coil, htg_coil, air_loop = self.get_unitary_system_air_loop(model, runner, thermal_zone)
-      cloned_htg_coil = htg_coil.clone
-      system.resetHeatingCoil
-      htg_coil.remove
-      system.supplyFan.get.remove
-      if cloned_htg_coil.to_CoilHeatingGas.is_initialized
-        cloned_htg_coil = cloned_htg_coil.to_CoilHeatingGas.get
-      elsif cloned_htg_coil.to_CoilHeatingElectric.is_initialized
-        cloned_htg_coil = cloned_htg_coil.to_CoilHeatingElectric.get
-      end
-      cloned_htg_coil.setName(htg_coil.name.to_s)
-      return cloned_htg_coil
-    end
     
     def self.prioritize_zone_hvac(model, runner, zone)
       zone_hvac_priority_list = [

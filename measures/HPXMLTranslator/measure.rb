@@ -306,11 +306,12 @@ class OSModel
     # HVAC
     
     dse = get_dse(building)
-    success = add_cooling_system(runner, model, building, unit, dse)
+    duct_systems = {}
+    success = add_cooling_system(runner, model, building, unit, dse, duct_systems)
     return false if not success
-    success = add_heating_system(runner, model, building, unit, dse)
+    success = add_heating_system(runner, model, building, unit, dse, duct_systems)
     return false if not success
-    success = add_heat_pump(runner, model, building, unit, dse, weather)
+    success = add_heat_pump(runner, model, building, unit, dse, weather, duct_systems)
     return false if not success
     success = add_setpoints(runner, model, building, weather) 
     return false if not success
@@ -328,7 +329,7 @@ class OSModel
     
     # Other
     
-    success = add_airflow(runner, model, building, unit)
+    success = add_airflow(runner, model, building, unit, duct_systems)
     return false if not success
     success = add_hvac_sizing(runner, model, unit, weather)
     return false if not success
@@ -1994,7 +1995,7 @@ class OSModel
     return true
   end
   
-  def self.add_cooling_system(runner, model, building, unit, dse)
+  def self.add_cooling_system(runner, model, building, unit, dse, duct_systems)
   
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
     
@@ -2076,6 +2077,17 @@ class OSModel
           fail "Unexpected number of speeds (#{num_speeds}) for cooling system."
           
         end
+
+        unless duct_systems.keys.include? clgsys.elements["DistributionSystem"].attributes["idref"]
+          duct_systems[clgsys.elements["DistributionSystem"].attributes["idref"]] = []
+        end
+        unit.spaces.each do |space|
+          thermal_zone = space.thermalZone.get
+          thermal_zone.airLoopHVACs.each do |air_loop|
+            next if duct_systems[clgsys.elements["DistributionSystem"].attributes["idref"]].include? air_loop
+            duct_systems[clgsys.elements["DistributionSystem"].attributes["idref"]] << air_loop
+          end
+        end
         
       elsif clg_type == "room air conditioner"
       
@@ -2091,14 +2103,14 @@ class OSModel
       
     end
     
-    return true
+    return true, duct_systems
 
   end
   
-  def self.add_heating_system(runner, model, building, unit, dse)
+  def self.add_heating_system(runner, model, building, unit, dse, duct_systems)
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htgsys|
-    
+
       fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
       
       heat_capacity_btuh = Float(XMLHelper.get_value(htgsys, "HeatingCapacity"))
@@ -2114,7 +2126,28 @@ class OSModel
       
         fan_power = 0.5 # For fuel furnaces, will be overridden by EAE later
         success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
-                                     heat_capacity_btuh, fan_power, dse)
+                                     heat_capacity_btuh, fan_power_installed, dse)
+        return false if not success
+
+        unless duct_systems.keys.include? htgsys.elements["DistributionSystem"].attributes["idref"]
+          duct_systems[htgsys.elements["DistributionSystem"].attributes["idref"]] = []
+        end
+        unit.spaces.each do |space|
+          thermal_zone = space.thermalZone.get
+          thermal_zone.airLoopHVACs.each do |air_loop|
+            next if duct_systems[htgsys.elements["DistributionSystem"].attributes["idref"]].include? air_loop
+            duct_systems[htgsys.elements["DistributionSystem"].attributes["idref"]] << air_loop
+          end
+        end
+        
+      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
+      
+        efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
+        fan_power = 0.0
+        airflow_rate = 0.0
+        success = HVAC.apply_unit_heater(model, unit, runner, fuel,
+                                         efficiency, heat_capacity_btuh, fan_power,
+                                         airflow_rate)
         return false if not success
         
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
@@ -2159,11 +2192,11 @@ class OSModel
       
     end
     
-    return true
+    return true, duct_systems
 
   end
 
-  def self.add_heat_pump(runner, model, building, unit, dse, weather)
+  def self.add_heat_pump(runner, model, building, unit, dse, weather, duct_systems)
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
     
@@ -2353,10 +2386,21 @@ class OSModel
           return false if not success
                  
         end
+
+        unless duct_systems.keys.include? hp.elements["DistributionSystem"].attributes["idref"]
+          duct_systems[hp.elements["DistributionSystem"].attributes["idref"]] = []
+        end
+        unit.spaces.each do |space|
+          thermal_zone = space.thermalZone.get
+          thermal_zone.airLoopHVACs.each do |air_loop|
+            next if duct_systems[hp.elements["DistributionSystem"].attributes["idref"]].include? air_loop
+            duct_systems[hp.elements["DistributionSystem"].attributes["idref"]] << air_loop
+          end
+        end
         
     end
     
-    return true
+    return true, duct_systems
 
   end
   
@@ -2496,7 +2540,7 @@ class OSModel
     return true
   end
   
-  def self.add_airflow(runner, model, building, unit)
+  def self.add_airflow(runner, model, building, unit, duct_systems)
   
     # Infiltration
     infiltration = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
@@ -2624,50 +2668,50 @@ class OSModel
                                       nat_vent_max_oa_hr, nat_vent_max_oa_rh)
   
     # Ducts
-    hvac_distribution = building.elements["BuildingDetails/Systems/HVAC/HVACDistribution"]
-    air_distribution = nil
-    if not hvac_distribution.nil?
+    building.elements.each("BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_distribution|
       air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
+      if not air_distribution.nil?
+        # Ducts
+        supply_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+        return_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+        supply_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctInsulationRValue"))
+        return_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue"))
+        supply_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctSurfaceArea"))
+        return_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctSurfaceArea"))
+        # FIXME: Values below
+        duct_location = Constants.Auto
+        duct_total_leakage = 0.3
+        duct_supply_frac = 0.6
+        duct_return_frac = 0.067
+        duct_ah_supply_frac = 0.067
+        duct_ah_return_frac = 0.267
+        duct_location_frac = Constants.Auto
+        duct_num_returns = 1
+        duct_supply_area_mult = 1.0
+        duct_return_area_mult = 1.0
+        duct_r = 4.0
+      else
+        duct_location = "none"
+        duct_total_leakage = 0.0
+        duct_supply_frac = 0.0
+        duct_return_frac = 0.0
+        duct_ah_supply_frac = 0.0
+        duct_ah_return_frac = 0.0
+        duct_location_frac = Constants.Auto
+        duct_num_returns = Constants.Auto
+        duct_supply_area_mult = 1.0
+        duct_return_area_mult = 1.0
+        duct_r = 0.0
+      end
+      duct_norm_leakage_25pa = nil
+      ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, 
+                        duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, 
+                        duct_num_returns, duct_location)      
+      duct_systems[ducts] = duct_systems[hvac_distribution.elements["SystemIdentifier"].attributes["id"]]
+      duct_systems.delete(hvac_distribution.elements["SystemIdentifier"].attributes["id"])
     end
-    if not air_distribution.nil?
-      # Ducts
-      supply_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
-      return_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
-      supply_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctInsulationRValue"))
-      return_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue"))
-      supply_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctSurfaceArea"))
-      return_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctSurfaceArea"))
-      # FIXME: Values below
-      duct_location = Constants.Auto
-      duct_total_leakage = 0.3
-      duct_supply_frac = 0.6
-      duct_return_frac = 0.067
-      duct_ah_supply_frac = 0.067
-      duct_ah_return_frac = 0.267
-      duct_location_frac = Constants.Auto
-      duct_num_returns = 1
-      duct_supply_area_mult = 1.0
-      duct_return_area_mult = 1.0
-      duct_r = 4.0
-    else
-      duct_location = "none"
-      duct_total_leakage = 0.0
-      duct_supply_frac = 0.0
-      duct_return_frac = 0.0
-      duct_ah_supply_frac = 0.0
-      duct_ah_return_frac = 0.0
-      duct_location_frac = Constants.Auto
-      duct_num_returns = Constants.Auto
-      duct_supply_area_mult = 1.0
-      duct_return_area_mult = 1.0
-      duct_r = 0.0
-    end
-    duct_norm_leakage_25pa = nil
-    ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, 
-                      duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, 
-                      duct_num_returns, duct_location)
 
-    success = Airflow.apply(model, runner, infil, mech_vent, nat_vent, ducts, File.dirname(__FILE__))
+    success = Airflow.apply(model, runner, infil, mech_vent, nat_vent, duct_systems, File.dirname(__FILE__))
     return false if not success
     
     return true

@@ -4228,8 +4228,16 @@ class HVACSizing
                 next if thermal_zone != terminal.thermalZone.get
                 
                 # Terminal
-                terminal.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
-                terminal.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
+                if terminal.coolingCoil.is_initialized
+                    terminal.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
+                else
+                    terminal.setSupplyAirFlowRateDuringCoolingOperation(0.00001)
+                end
+                if terminal.heatingCoil.is_initialized
+                    terminal.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
+                else
+                    terminal.setSupplyAirFlowRateDuringHeatingOperation(0.00001)
+                end
                 terminal.setSupplyAirFlowRateWhenNoCoolingisNeeded(0.0)
                 terminal.setSupplyAirFlowRateWhenNoHeatingisNeeded(0.0)
                 terminal.setOutdoorAirFlowRateDuringCoolingOperation(0.0)

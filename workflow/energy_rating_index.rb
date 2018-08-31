@@ -836,8 +836,8 @@ if ['2014AE', '2014AEG'].include? eri_version
 end
 
 run_designs = {Constants.CalcTypeERIRatedHome => true,
-               Constants.CalcTypeERIReferenceHome => true,
-               Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf}
+               Constants.CalcTypeERIReferenceHome => false,
+               Constants.CalcTypeERIIndexAdjustmentDesign => false}
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
@@ -877,7 +877,7 @@ else # e.g., Windows
   end
   
 end
-
+exit
 # Calculate and write results
 puts "Calculating ERI..."
 if using_iaf
