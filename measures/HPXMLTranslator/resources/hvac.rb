@@ -1680,8 +1680,6 @@ class HVAC
     
       # _processAirSystem
       
-      hir = get_furnace_hir(afue)
-
       obj_name = Constants.ObjectNameFurnace(fuel_type, unit.name.to_s)
     
       thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
@@ -1695,10 +1693,10 @@ class HVAC
 
         if fuel_type == Constants.FuelTypeElectric
           htg_coil = OpenStudio::Model::CoilHeatingElectric.new(model)
-          htg_coil.setEfficiency(dse / hir)
+          htg_coil.setEfficiency(dse * afue)
         else
           htg_coil = OpenStudio::Model::CoilHeatingGas.new(model)
-          htg_coil.setGasBurnerEfficiency(dse / hir)
+          htg_coil.setGasBurnerEfficiency(dse * afue)
           htg_coil.setParasiticElectricLoad(0)
           htg_coil.setParasiticGasLoad(0)
           htg_coil.setFuelType(HelperMethods.eplus_fuel_map(fuel_type))
@@ -1817,9 +1815,6 @@ class HVAC
         return false
       end
       
-      # Installed equipment adjustments
-      boiler_hir = 1.0 / afue
-      
       if system_type == Constants.BoilerTypeCondensing
         # Efficiency curves are normalized using 80F return water temperature, at 0.254PLR
         condensingBlr_TE_FT_coefficients = [1.058343061, 0.052650153, 0.0087272, 0.001742217, 0.00000333715, 0.000513723]
@@ -1885,7 +1880,7 @@ class HVAC
         plr_Design = 1.0
         boiler_DesignHWRT = UnitConversions.convert(design_temp - 20.0 - 32.0,"R","K")
         condBlr_TE_Coeff = condensingBlr_TE_FT_coefficients   # The coefficients are normalized at 80F HWRT
-        boilerEff_Norm = 1.0 / boiler_hir / (condBlr_TE_Coeff[0] - condBlr_TE_Coeff[1] * plr_Rated - condBlr_TE_Coeff[2] * plr_Rated**2 - condBlr_TE_Coeff[3] * boiler_RatedHWRT + condBlr_TE_Coeff[4] * boiler_RatedHWRT**2 + condBlr_TE_Coeff[5] * boiler_RatedHWRT * plr_Rated)
+        boilerEff_Norm = afue / (condBlr_TE_Coeff[0] - condBlr_TE_Coeff[1] * plr_Rated - condBlr_TE_Coeff[2] * plr_Rated**2 - condBlr_TE_Coeff[3] * boiler_RatedHWRT + condBlr_TE_Coeff[4] * boiler_RatedHWRT**2 + condBlr_TE_Coeff[5] * boiler_RatedHWRT * plr_Rated)
         boilerEff_Design = boilerEff_Norm * (condBlr_TE_Coeff[0] - condBlr_TE_Coeff[1] * plr_Design - condBlr_TE_Coeff[2] * plr_Design**2 - condBlr_TE_Coeff[3] * boiler_DesignHWRT + condBlr_TE_Coeff[4] * boiler_DesignHWRT**2 + condBlr_TE_Coeff[5] * boiler_DesignHWRT * plr_Design)
         boiler.setNominalThermalEfficiency(dse * boilerEff_Design)
         boiler.setEfficiencyCurveTemperatureEvaluationVariable("EnteringBoiler")
@@ -1901,7 +1896,7 @@ class HVAC
           boiler.setBoilerFlowMode("ConstantFlow")
         end
       else
-        boiler.setNominalThermalEfficiency(dse / boiler_hir)
+        boiler.setNominalThermalEfficiency(dse * afue)
         boiler.setEfficiencyCurveTemperatureEvaluationVariable("LeavingBoiler")
         boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
         boiler.setDesignWaterOutletTemperature(UnitConversions.convert(design_temp - 32.0,"R","K"))
@@ -3540,18 +3535,6 @@ class HVAC
       # errors (pump efficiencies > 1).
       return pump_eff * pump_power / UnitConversions.convert(1.0,"gal/min","m^3/s") # Pa
     end
-  
-    def self.get_furnace_hir(afue)
-      # Based on DOE2 Volume 5 Compliance Analysis manual.
-      # This is not used until we have a better way of disaggregating AFUE
-      # if afue <= 0.835:
-      #     hir = 1 / (0.2907 * afue + 0.5787)
-      # else:
-      #     hir = 1 / (1.1116 * afue - 0.098185)
-
-      hir = 1.0 / afue
-      return hir
-    end  
   
     def self.get_control_and_slave_zones(thermal_zones)
       control_slave_zones_hash = {}
