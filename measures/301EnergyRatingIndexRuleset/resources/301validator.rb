@@ -577,7 +577,7 @@ class EnergyRatingIndex301Validator
         
             ## [CDType=UserSpecified]
             '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EfficiencyFactor]' => {
-                'ControlType' => one,
+                '[ControlType="timer" or ControlType="moisture"]' => one,
             },
         
         
