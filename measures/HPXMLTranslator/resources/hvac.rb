@@ -3115,7 +3115,7 @@ class HVAC
             return false
           end
           
-          htg_coil = system.heatingCoil.get
+          htg_coil = system.heatingCoil.get.to_CoilHeatingGas.get
           htg_coil.setParasiticElectricLoad(0.0)
           
           fan = system.supplyFan.get.to_FanOnOff.get
