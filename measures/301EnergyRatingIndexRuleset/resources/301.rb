@@ -2903,7 +2903,6 @@ class EnergyRatingIndex301Ruleset
     dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
     XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
     XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
-    XMLHelper.add_element(heat_pump, "HeatingCapacity", -1) # Use Manual J auto-sizing
     XMLHelper.add_element(heat_pump, "CoolingCapacity", -1) # Use Manual J auto-sizing
     XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", load_frac)
     XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 0.0)
