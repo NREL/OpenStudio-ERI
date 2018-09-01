@@ -35,6 +35,9 @@ class EnergyRatingIndex301Ruleset
         apply_rated_home_ruleset(building)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         apply_index_adjustment_design_ruleset(building)
+    elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+        apply_index_adjustment_design_ruleset(building)
+        apply_reference_home_ruleset(building)
     end
     
   end
