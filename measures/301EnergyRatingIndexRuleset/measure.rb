@@ -40,6 +40,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     calc_types << Constants.CalcTypeERIReferenceHome
     calc_types << Constants.CalcTypeERIRatedHome
     calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
+    calc_types << Constants.CalcTypeERIIndexAdjustmentReferenceHome
     calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument("calc_type", calc_types, true)
     calc_type.setDisplayName("Calculation Type")
     calc_type.setDescription("'#{Constants.CalcTypeStandard}' will use the DOE Building America Simulation Protocols. HERS options will use the ANSI/RESNET 301-2014 Standard.")

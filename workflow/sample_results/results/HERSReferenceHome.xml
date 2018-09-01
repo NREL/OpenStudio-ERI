@@ -39,7 +39,7 @@
           </extension>
         </BuildingOccupancy>
         <BuildingConstruction>
-          <NumberofConditionedFloors>3</NumberofConditionedFloors>
+          <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>3500</ConditionedFloorArea>
@@ -178,6 +178,18 @@
             </Slab>
           </Foundation>
         </Foundations>
+        <RimJoists>
+          <RimJoist>
+            <SystemIdentifier id='rimjoist-1'/>
+            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>180</Area>
+            <Insulation>
+              <SystemIdentifier id='rimjoist_Ins_ID1'/>
+              <AssemblyEffectiveRValue>17.543859649122805</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
@@ -204,7 +216,6 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
-            <ExteriorShading>none</ExteriorShading>
             <AttachedToWall idref='agwall-1'/>
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
@@ -218,7 +229,6 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
-            <ExteriorShading>none</ExteriorShading>
             <AttachedToWall idref='agwall-1'/>
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
@@ -232,7 +242,6 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
-            <ExteriorShading>none</ExteriorShading>
             <AttachedToWall idref='agwall-1'/>
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
@@ -246,7 +255,6 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
-            <ExteriorShading>none</ExteriorShading>
             <AttachedToWall idref='agwall-1'/>
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
@@ -335,7 +343,7 @@
             <SystemIdentifier id='HotWaterDistribution'/>
             <SystemType>
               <Standard>
-                <PipingLength>98.31300510639733</PipingLength>
+                <PipingLength>103.66600265340756</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>
@@ -343,7 +351,7 @@
             </PipeInsulation>
             <extension>
               <MixedWaterGPD>17.787375444216355</MixedWaterGPD>
-              <RefLoopL>176.62601021279465</RefLoopL>
+              <RefLoopL>187.33200530681512</RefLoopL>
             </extension>
           </HotWaterDistribution>
           <WaterFixture>
