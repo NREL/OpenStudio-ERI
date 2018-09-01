@@ -4,8 +4,6 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-# TODO: Add IAD
-
 class ApplianceTest < MiniTest::Test
 
   def test_appliances_electric
@@ -26,6 +24,18 @@ class ApplianceTest < MiniTest::Test
     _check_dishwasher(hpxml_doc, 115.1, 0.143, 0.6*0.5, 0.6*0.5)
     _check_refrigerator(hpxml_doc, 609.0)
     _check_cooking_range(hpxml_doc, "electricity", 421.0, 0, 0.8*0.9, 0.8*0.1)
+    
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
+      _check_clothes_dryer(hpxml_doc, "electricity", 971.0, 0, 0.1350, 0.0150)
+      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_refrigerator(hpxml_doc, 691.0)
+      _check_cooking_range(hpxml_doc, "electricity", 448.0, 0, 0.7197,	0.0800)
+    end
   end
   
   def test_appliances_gas
@@ -46,6 +56,18 @@ class ApplianceTest < MiniTest::Test
     _check_dishwasher(hpxml_doc, 115.1, 0.143, 0.6*0.5, 0.6*0.5)
     _check_refrigerator(hpxml_doc, 609.0)
     _check_cooking_range(hpxml_doc, "natural gas", 33.4, 31.7, 0.8*0.8, 0.8*0.2)
+    
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
+      _check_clothes_dryer(hpxml_doc, "natural gas", 76.1, 34.7, 0.1336,	0.0165)
+      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_refrigerator(hpxml_doc, 691.0)
+      _check_cooking_range(hpxml_doc, "natural gas", 30.7, 30.7, 0.6381,	0.1620)
+    end
   end
   
   def test_appliances_reference_elec
@@ -61,6 +83,18 @@ class ApplianceTest < MiniTest::Test
       _check_dishwasher(hpxml_doc, 202.0, 5.097, 0.3003, 0.3003)
       _check_refrigerator(hpxml_doc, 709.0)
       _check_cooking_range(hpxml_doc, "electricity", 487.0, 0, 0.7196, 0.0800)
+    end
+    
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
+      _check_clothes_dryer(hpxml_doc, "electricity", 971.0, 0, 0.1350, 0.0150)
+      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_refrigerator(hpxml_doc, 691.0)
+      _check_cooking_range(hpxml_doc, "electricity", 448.0, 0, 0.7197,	0.0800)
     end
   end
   
@@ -79,6 +113,17 @@ class ApplianceTest < MiniTest::Test
       _check_cooking_range(hpxml_doc, "natural gas", 33.4, 33.4, 0.6381, 0.1620)
     end
 
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
+      _check_clothes_dryer(hpxml_doc, "natural gas", 76.1, 34.7, 0.1336,	0.0165)
+      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_refrigerator(hpxml_doc, 691.0)
+      _check_cooking_range(hpxml_doc, "natural gas", 30.7, 30.7, 0.6381,	0.1620)
+    end
   end
 
   def _test_measure(hpxml_name, calc_type)

@@ -4,8 +4,6 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-# TODO: Add IAD
-
 class LightingTest < MiniTest::Test
 
   def test_lighting
@@ -18,6 +16,14 @@ class LightingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_lighting(hpxml_doc, 1645, 115, 0)
+    
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_lighting(hpxml_doc, 1248, 96, 0)
+    
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_lighting(hpxml_doc, 2375, 220, 0)
   end
   
   def test_lighting_pre_addendum_g
@@ -30,6 +36,14 @@ class LightingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_lighting(hpxml_doc, 2410, 172, 0)
+    
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_lighting(hpxml_doc, 1374, 96, 0)
+    
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_lighting(hpxml_doc, 2375, 220, 0)
   end
   
   def _test_measure(hpxml_name, calc_type)

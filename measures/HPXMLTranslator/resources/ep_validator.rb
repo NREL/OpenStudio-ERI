@@ -519,7 +519,6 @@ class EnergyPlusValidator
             '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
             'FractionDHWLoadServed' => one,
             'EnergyFactor' => one,
-            'extension/EnergyConsumptionAdjustmentFactor' => zero_or_one,
         },
         
             ## [WHType=Tank]
@@ -554,6 +553,7 @@ class EnergyPlusValidator
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
             'DrainWaterHeatRecovery' => zero_or_one, # See [DrainWaterHeatRecovery]
             'extension/MixedWaterGPD' => one,
+            'extension/EnergyConsumptionAdjustmentFactor' => zero_or_one,
         },
         
             ## [HWDistType=Standard]
