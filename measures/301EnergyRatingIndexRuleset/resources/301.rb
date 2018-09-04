@@ -1447,8 +1447,8 @@ class EnergyRatingIndex301Ruleset
       sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "FanType")
-      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "RatedFlowRate") # FIXME
-      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "RatedFlowRate")
+      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24) # FIXME: Is this right?
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "TotalRecoveryEfficiency")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "SensibleRecoveryEfficiency")
@@ -1465,8 +1465,7 @@ class EnergyRatingIndex301Ruleset
     
     q_tot = get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
     
-    # Calculate fan cfm for airflow rate using Reference Home infiltration
-    # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
+    # Calculate fan cfm for airflow rate using IAD Home infiltration
     sla = Float(XMLHelper.get_value(new_enclosure, "AirInfiltration/extension/BuildingSpecificLeakageArea"))
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
     
@@ -1838,10 +1837,6 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
     set_systems_water_heating_use_reference(new_systems, orig_details)
-    
-    new_hw_dist = new_systems.elements["WaterHeating/HotWaterDistribution"]
-    extension = new_hw_dist.elements["extension"]
-    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
     
   end
   
