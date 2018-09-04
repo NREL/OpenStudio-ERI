@@ -273,6 +273,22 @@ BuildingSurface:Detailed,
   -0.6096, 12.5, 0;                       !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
+  rimjoist-1,                             !- Name
+  Wall,                                   !- Surface Type
+  RimJoistConstruction,                   !- Construction Name
+  living,                                 !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -3.6576, 15, 0,                         !- X,Y,Z Vertex 1 {m}
+  -3.6576, 15, 2.286,                     !- X,Y,Z Vertex 2 {m}
+  3.6576, 15, 2.286,                      !- X,Y,Z Vertex 3 {m}
+  3.6576, 15, 0;                          !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
   Slab_ID1,                               !- Name
   Floor,                                  !- Surface Type
   SlabConstruction,                       !- Construction Name
@@ -299,10 +315,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -0.914943028485757, 15, 0,              !- X,Y,Z Vertex 1 {m}
-  -0.914943028485757, 15, 2.034016,       !- X,Y,Z Vertex 2 {m}
-  0.914943028485757, 15, 2.034016,        !- X,Y,Z Vertex 3 {m}
-  0.914943028485757, 15, 0;               !- X,Y,Z Vertex 4 {m}
+  -0.914943028485757, 17.5, 0,            !- X,Y,Z Vertex 1 {m}
+  -0.914943028485757, 17.5, 2.034016,     !- X,Y,Z Vertex 2 {m}
+  0.914943028485757, 17.5, 2.034016,      !- X,Y,Z Vertex 3 {m}
+  0.914943028485757, 17.5, 0;             !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   Door_agwall-1,                          !- Name
@@ -315,10 +331,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -0.913943028485757, 15, 0,              !- X,Y,Z Vertex 1 {m}
-  -0.913943028485757, 15, 2.033016,       !- X,Y,Z Vertex 2 {m}
-  0.913943028485757, 15, 2.033016,        !- X,Y,Z Vertex 3 {m}
-  0.913943028485757, 15, 0;               !- X,Y,Z Vertex 4 {m}
+  -0.913943028485757, 17.5, 0,            !- X,Y,Z Vertex 1 {m}
+  -0.913943028485757, 17.5, 2.033016,     !- X,Y,Z Vertex 2 {m}
+  0.913943028485757, 17.5, 2.033016,      !- X,Y,Z Vertex 3 {m}
+  0.913943028485757, 17.5, 0;             !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface Window_agwall-1_east,           !- Name
@@ -2865,7 +2881,7 @@ AirTerminal:SingleDuct:Uncontrolled,
   residential furnace gas and central ac living direct air, !- Name
   Always On Discrete,                     !- Availability Schedule Name
   Node 19,                                !- Zone Supply Air Node Name
-  0.616225333765651;                      !- Maximum Air Flow Rate {m3/s}
+  0.682459561039468;                      !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:EquipmentList,
   living Equipment List,                  !- Name
@@ -3198,6 +3214,28 @@ Material,
   0.1;                                    !- Visible Absorptance
 
 Material,
+  RimJoistSheathing,                      !- Name
+  Rough,                                  !- Roughness
+  0.0508,                                 !- Thickness {m}
+  0.1154577,                              !- Conductivity {W/m-K}
+  512.64,                                 !- Density {kg/m3}
+  1214.23,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
+
+Material,
+  RimJoistStudAndCavity,                  !- Name
+  Rough,                                  !- Roughness
+  0.0508,                                 !- Thickness {m}
+  0.124908304027652,                      !- Conductivity {W/m-K}
+  125.04411,                              !- Density {kg/m3}
+  1163.47425853565,                       !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.7,                                    !- Solar Absorptance
+  0.7;                                    !- Visible Absorptance
+
+Material,
   RoofUARoofIns,                          !- Name
   Rough,                                  !- Roughness
   0.0889,                                 !- Thickness {m}
@@ -3276,6 +3314,17 @@ Material,
 
 Material,
   Wood&#44 Light,                         !- Name
+  Rough,                                  !- Roughness
+  0.0254,                                 !- Thickness {m}
+  0.1024175,                              !- Conductivity {W/m-K}
+  544.68,                                 !- Density {kg/m3}
+  1172.36,                                !- Specific Heat {J/kg-K}
+  0.9,                                    !- Thermal Absorptance
+  0.75,                                   !- Solar Absorptance
+  0.75;                                   !- Visible Absorptance
+
+Material,
+  Wood&#44 Light 1,                       !- Name
   Rough,                                  !- Roughness
   0.0254,                                 !- Thickness {m}
   0.1024175,                              !- Conductivity {W/m-K}
@@ -3462,6 +3511,14 @@ Construction,
   residential furniture material living;  !- Layer 1
 
 Construction,
+  RimJoistConstruction,                   !- Name
+  Wood&#44 Light 1,                       !- Layer 1
+  FoundationExtVertIns,                   !- Layer 2
+  RimJoistSheathing,                      !- Layer 3
+  RimJoistStudAndCavity,                  !- Layer 4
+  Drywall 0.5 in.;                        !- Layer 5
+
+Construction,
   RoofConstruction,                       !- Name
   Asphalt Shingles&#44 Dark,              !- Layer 1
   WallSheathing,                          !- Layer 2
@@ -3516,7 +3573,7 @@ SurfaceProperty:ExposedFoundationPerimeter,
   1;                                      !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
+  Surface 1,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -3528,19 +3585,19 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
+  Surface 6,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
   Surface 5,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 6,                              !- Surface Name
+  Surface 3,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -29118,7 +29175,7 @@ AirLoopHVAC,
   residential furnace gas and central ac central air system, !- Name
   ,                                       !- Controller List Name
   residential furnace gas and central ac central air systemAvailability Manager List, !- Availability Manager List Name
-  0.616225333765651,                      !- Design Supply Air Flow Rate {m3/s}
+  0.682459561039468,                      !- Design Supply Air Flow Rate {m3/s}
   residential furnace gas and central ac central air system Supply Branches, !- Branch List Name
   ,                                       !- Connector List Name
   Node 15,                                !- Supply Side Inlet Node Name
@@ -29217,12 +29274,12 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0.564905285696405,                      !- Cooling Supply Air Flow Rate {m3/s}
+  0.563622824190304,                      !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
   SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
-  0.616225333765651,                      !- Heating Supply Air Flow Rate {m3/s}
+  0.682459561039468,                      !- Heating Supply Air Flow Rate {m3/s}
   ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -29246,10 +29303,10 @@ AirLoopHVAC:UnitarySystem,
 Fan:OnOff,
   residential furnace gas and central ac supply fan, !- Name
   Always On Discrete,                     !- Availability Schedule Name
-  0.094049686480896,                      !- Fan Total Efficiency
-  124.55,                                 !- Pressure Rise {Pa}
-  0.616230053240083,                      !- Maximum Flow Rate {m3/s}
-  0.8,                                    !- Motor Efficiency
+  0.75,                                   !- Fan Total Efficiency
+  543.916748726038,                       !- Pressure Rise {Pa}
+  0.6824642805139,                        !- Maximum Flow Rate {m3/s}
+  1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 15,                                !- Air Inlet Node Name
   residential furnace gas and central ac unitary system Fan - Cooling Coil Node, !- Air Outlet Node Name
@@ -29279,7 +29336,7 @@ Coil:Heating:Fuel,
   residential heating season,             !- Availability Schedule Name
   NaturalGas,                             !- Fuel Type
   0.624,                                  !- Burner Efficiency
-  17331.1135354431,                       !- Nominal Capacity {W}
+  19193.9271036555,                       !- Nominal Capacity {W}
   residential furnace gas and central ac unitary system Cooling Coil - Heating Coil Node, !- Air Inlet Node Name
   Node 16,                                !- Air Outlet Node Name
   ,                                       !- Temperature Setpoint Node Name
@@ -29346,10 +29403,10 @@ Curve:Quadratic,
 Coil:Cooling:DX:SingleSpeed,
   residential central ac cooling coil,    !- Name
   residential cooling season,             !- Availability Schedule Name
-  8435.98213479751,                       !- Gross Rated Total Cooling Capacity {W}
+  8416.83056615766,                       !- Gross Rated Total Cooling Capacity {W}
   0.740402528813699,                      !- Gross Rated Sensible Heat Ratio
   3.22691518426208,                       !- Gross Rated Cooling COP {W/W}
-  0.437094049714192,                      !- Rated Air Flow Rate {m3/s}
+  0.436101748336426,                      !- Rated Air Flow Rate {m3/s}
   773.3912012006,                         !- Rated Evaporator Fan Power Per Volume Flow Rate {W/(m3/s)}
   residential furnace gas and central ac unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
   residential furnace gas and central ac unitary system Cooling Coil - Heating Coil Node, !- Air Outlet Node Name

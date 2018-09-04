@@ -96,7 +96,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  if design == Constants.CalcTypeERIReferenceHome
+  if design == Constants.CalcTypeERIReferenceHome or design == Constants.CalcTypeERIIndexAdjustmentReferenceHome
     design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(hpxml_doc)
   end
   design_output[:hpxml_heat_fuel] = get_heating_fuel(hpxml_doc)
@@ -837,7 +837,8 @@ end
 
 run_designs = {Constants.CalcTypeERIRatedHome => true,
                Constants.CalcTypeERIReferenceHome => false,
-               Constants.CalcTypeERIIndexAdjustmentDesign => false}
+               Constants.CalcTypeERIIndexAdjustmentDesign => false,
+               Constants.CalcTypeERIIndexAdjustmentReferenceHome => false}
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
@@ -882,7 +883,7 @@ exit
 puts "Calculating ERI..."
 if using_iaf
   results_iad = calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign], 
-                              design_outputs[Constants.CalcTypeERIReferenceHome])
+                              design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
 else
   results_iad = nil
 end
