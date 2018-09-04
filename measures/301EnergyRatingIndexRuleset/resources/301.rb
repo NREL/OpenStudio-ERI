@@ -1447,8 +1447,8 @@ class EnergyRatingIndex301Ruleset
       sys_id = XMLHelper.add_element(new_vent_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "VentilationFan")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "FanType")
-      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "RatedFlowRate") # FIXME
-      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24)
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "RatedFlowRate")
+      XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24) # FIXME: Is this right?
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "TotalRecoveryEfficiency")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "SensibleRecoveryEfficiency")
@@ -1465,8 +1465,7 @@ class EnergyRatingIndex301Ruleset
     
     q_tot = get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
     
-    # Calculate fan cfm for airflow rate using Reference Home infiltration
-    # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
+    # Calculate fan cfm for airflow rate using IAD Home infiltration
     sla = Float(XMLHelper.get_value(new_enclosure, "AirInfiltration/extension/BuildingSpecificLeakageArea"))
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
     
@@ -1548,7 +1547,7 @@ class EnergyRatingIndex301Ruleset
     end
     XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
     extension = XMLHelper.add_element(new_wh_sys, "extension")
-    XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
+    XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
     
   end
     
@@ -1584,9 +1583,9 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
       extension = XMLHelper.add_element(new_wh_sys, "extension")
       if XMLHelper.get_value(new_wh_sys, "WaterHeaterType") == 'instantaneous water heater'
-        XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 0.92)
+        XMLHelper.add_element(extension, "EnergyFactorMultiplier", 0.92)
       else
-        XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
+        XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
       end
       
     else
@@ -1617,7 +1616,7 @@ class EnergyRatingIndex301Ruleset
       end
       XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
       extension = XMLHelper.add_element(new_wh_sys, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
+      XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
       
     end
     
@@ -1657,6 +1656,7 @@ class EnergyRatingIndex301Ruleset
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
       XMLHelper.add_element(extension, "RefLoopL", ref_loop_l)
+      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
       
       ref_f_gpd = get_fixtures_gpd_reference()
       
@@ -1668,8 +1668,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_fixture, "LowFlow", false)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
       
     else
     
@@ -1687,6 +1687,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
+      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
       
       ref_f_gpd = 0.0
       
@@ -1698,8 +1699,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_fixture, "LowFlow", false)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
       
     end
     
@@ -1715,11 +1716,15 @@ class EnergyRatingIndex301Ruleset
     
       orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
       
-      low_flow_fixtures = true
+      low_flow_fixtures_list = []
       orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |wf|
-        if not Boolean(XMLHelper.get_value(wf, "LowFlow"))
-          low_flow_fixtures = false
-        end
+        low_flow_fixtures_list << Boolean(XMLHelper.get_value(wf, "LowFlow"))
+      end
+      low_flow_fixtures_list.uniq!
+      if low_flow_fixtures_list.size == 1 and low_flow_fixtures_list[0]
+        low_flow_fixtures = true
+      else
+        low_flow_fixtures = false
       end
       
       bsmnt = get_conditioned_basement_integer(orig_details)
@@ -1817,8 +1822,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_fixture, "LowFlow", low_flow_fixtures)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
-      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
     
     else
       
@@ -1832,10 +1837,6 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
     set_systems_water_heating_use_reference(new_systems, orig_details)
-    
-    new_hw_dist = new_systems.elements["WaterHeating/HotWaterDistribution"]
-    extension = new_hw_dist.elements["extension"]
-    XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
     
   end
   
@@ -1895,17 +1896,12 @@ class EnergyRatingIndex301Ruleset
       end
       acy = ncy*((3.0*2.08 + 1.59)/(cap*2.08 + 1.59)) #Adjusted Cycles per Year
       clothes_washer_kwh = ((ler/392.0) - ((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*21.9825)*acy
-      clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
+      clothes_washer_sens = 0.3*0.9
+      clothes_washer_lat = 0.3*0.1
       clothes_washer_gpd = 60.0*((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*acy/365.0
       if not @eri_version.include? "A"
         clothes_washer_gpd -= 3.97 # Section 4.2.2.5.2.10
       end
-    elsif orig_details.elements["Appliances/ClothesWasher/extension/AnnualkWh"]
-      # Simplified
-      clothes_washer_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/AnnualkWh"))
-      clothes_washer_sens = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/FracSensible"))
-      clothes_washer_lat = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/FracLatent"))
-      clothes_washer_gpd = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/extension/HotWaterGPD"))
     else
       # Reference
       set_appliances_clothes_washer_reference(new_appliances)
@@ -1967,7 +1963,6 @@ class EnergyRatingIndex301Ruleset
         cef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/CombinedEnergyFactor"))
         ef_dry = cef * 1.15
       end
-      has_timer_control = Boolean(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer[ControlType='timer']"))
       
       ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
       cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
@@ -1982,9 +1977,9 @@ class EnergyRatingIndex301Ruleset
       
       # Eq 4.2-6 (FU)
       field_util_factor = nil
-      if has_timer_control
+      if XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/ControlType") == 'timer'
         field_util_factor = 1.18
-      else
+      elsif XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/ControlType") == 'moisture'
         field_util_factor = 1.04
       end
       clothes_dryer_kwh = 12.5*(164.0 + 46.5*@nbeds)*(field_util_factor/ef_dry)*((cap/mef) - ler/392.0)/(0.2184*(cap*4.08 + 0.24)) # Eq 4.2-6
@@ -1993,13 +1988,8 @@ class EnergyRatingIndex301Ruleset
         clothes_dryer_therm = clothes_dryer_kwh*3412.0*(1.0-0.07)*(3.01/ef_dry)/100000 # Eq 4.2-7a
         clothes_dryer_kwh = clothes_dryer_kwh*0.07*(3.01/ef_dry)
       end
-      clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
-    elsif orig_details.elements["Appliances/ClothesDryer/extension/AnnualkWh"]
-      # Simplified
-      clothes_dryer_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/AnnualkWh"))
-      clothes_dryer_therm = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/AnnualTherm"))
-      clothes_dryer_sens = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/FracSensible"))
-      clothes_dryer_lat = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/extension/FracLatent"))
+      clothes_dryer_sens = 0.15*0.9
+      clothes_dryer_lat = 0.15*0.1
     else
       # Reference
       set_appliances_clothes_dryer_reference(new_appliances, orig_details)
@@ -2061,18 +2051,13 @@ class EnergyRatingIndex301Ruleset
       end
       dwcpy = (88.4 + 34.9*@nbeds)*(12.0/cap) # Eq 4.2-8a (dWcpy)
       dishwasher_kwh = ((86.3 + 47.73/ef)/215.0)*dwcpy # Eq 4.2-8a
-      dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(dishwasher_kwh)
+      dishwasher_sens = 0.6*0.5
+      dishwasher_lat = 0.6*0.5
       if @eri_version.include? "A"
         dishwasher_gpd = dwcpy*(4.6415*(1.0/ef) - 1.9295)/365.0 # Eq. 4.2-11 (DWgpd)
       else
         dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16 - (88.4 + 34.9*@nbeds)*12.0/cap*(4.6415*(1.0/ef) - 1.9295))/365.0 # Eq 4.2-8b
       end
-    elsif orig_details.elements["Appliances/Dishwasher/extension/AnnualkWh"]
-      # Simplified
-      dishwasher_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/AnnualkWh"))
-      dishwasher_sens = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/FracSensible"))
-      dishwasher_lat = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/FracLatent"))
-      dishwasher_gpd = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/extension/HotWaterGPD"))
     else
       # Reference
       set_appliances_dishwasher_reference(new_appliances)
@@ -2142,11 +2127,12 @@ class EnergyRatingIndex301Ruleset
     range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
     oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
     
-    cooking_range_kwh = 331.0 + 0.0*@cfa + 39.0*@nbeds
-    cooking_range_therm = 0.0
     if range_fuel != 'electricity' or oven_fuel != 'electricity'
       cooking_range_kwh = 22.6 + 0.0*@cfa + 2.7*@nbeds
       cooking_range_therm = 22.6 + 0.0*@cfa + 2.7*@nbeds
+    else
+      cooking_range_kwh = 331.0 + 0.0*@cfa + 39.0*@nbeds
+      cooking_range_therm = 0.0
     end
     cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
     
@@ -2187,19 +2173,17 @@ class EnergyRatingIndex301Ruleset
         oven_ef = 0.95
       end
       
-      cooking_range_kwh = burner_ef*oven_ef*(331 + 39.0*@nbeds)
-      cooking_range_therm = 0.0
       if range_fuel != 'electricity' or oven_fuel != 'electricity'
         cooking_range_kwh = 22.6 + 2.7*@nbeds
         cooking_range_therm = oven_ef*(22.6 + 2.7*@nbeds)
+        cooking_range_sens = 0.8*0.8
+        cooking_range_lat = 0.8*0.2
+      else
+        cooking_range_kwh = burner_ef*oven_ef*(331 + 39.0*@nbeds)
+        cooking_range_therm = 0.0
+        cooking_range_sens = 0.8*0.9
+        cooking_range_lat = 0.8*0.1
       end
-      cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
-    elsif orig_details.elements["Appliances/CookingRange/extension/AnnualkWh"]
-      # Simplified
-      cooking_range_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/AnnualkWh"))
-      cooking_range_therm = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/AnnualTherm"))
-      cooking_range_sens = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/FracSensible"))
-      cooking_range_lat = Float(XMLHelper.get_value(orig_details, "Appliances/CookingRange/extension/FracLatent"))
     else
       # Reference
       set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
@@ -2263,16 +2247,6 @@ class EnergyRatingIndex301Ruleset
         qFF_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesExterior"))
         qFF_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesGarage"))
         int_kwh, ext_kwh, grg_kwh = calc_lighting(qFF_int, qFF_ext, qFF_grg)
-      end
-      
-    elsif orig_details.elements["Lighting/extension/AnnualInteriorkWh"]
-      
-      # Simplified
-      int_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualInteriorkWh"))
-      ext_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualExteriorkWh"))
-      grg_kwh = 0
-      if @garage_present
-        grg_kwh = Float(XMLHelper.get_value(orig_details, "Lighting/extension/AnnualGaragekWh"))
       end
       
     else
@@ -2545,9 +2519,9 @@ class EnergyRatingIndex301Ruleset
     
     f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
     
-    hw_gpd = f_eff*(o_w_gpd + s_w_gpd*wd_eff) # Eq. 4.2-11
+    mw_gpd = f_eff*(o_w_gpd + s_w_gpd*wd_eff) # Eq. 4.2-11
     
-    return hw_gpd
+    return mw_gpd
   end
   
   def self.get_clothes_washer_sens_lat(clothes_washer_kwh)
