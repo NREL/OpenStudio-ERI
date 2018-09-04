@@ -3170,100 +3170,78 @@ class HVAC
       
     end
     
-    def self.apply_eae_to_heating_fan(runner, model, eae, fuel, dse, has_furnace, has_boiler)
+    def self.apply_eae_to_heating_fan(runner, loop, eae, fuel, dse, has_furnace, has_boiler)
       # Applies Electric Auxiliary Energy (EAE) for fuel heating equipment to fan power.
-      # TODO: Handle multiple heating systems
       
-      if eae.nil? 
+      if has_boiler
       
-        if has_furnace # Use 301 defaults
-          # Get heating capacity
-          htg_capacity_kbtuh = 0.0
-          model.getCoilHeatingGass.each do |htg_coil|
-            htg_capacity_kbtuh += UnitConversions.convert(htg_coil.nominalCapacity.get,"W","kBtu/hr")
-          end
-        
+        if eae.nil?
           # From ANSI/RESNET/ICC 301 Standard
-          if fuel == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
-            eae = 149.0 + 10.3*htg_capacity_kbtuh # kWh/yr
-          elsif fuel == Constants.FuelTypeOil
-            eae = 439.0 + 5.5*htg_capacity_kbtuh # kWh/yr
-          end
-        elsif has_boiler # Use 301 defaults
           if fuel == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
             eae = 170.0
           elsif fuel == Constants.FuelTypeOil
             eae = 330.0
           end
-        else # Use zero
-          eae = 0.0
         end
-        
-      end
+        elec_power = eae / 2.08 # W
       
-      elec_power = eae / 2.08 # W
-      
-      if has_boiler
-      
-        set_pump = false
-        model.getPlantLoops.each do |pl|
-            pl.components.each do |plc|
-                next if not plc.to_BoilerHotWater.is_initialized
-                
-                boiler = plc.to_BoilerHotWater.get
-                boiler.setParasiticElectricLoad(0.0)
-                
-                pl.supplyComponents.each do |plc|
-                    next if not plc.to_PumpVariableSpeed.is_initialized
-                    if set_pump
-                      runner.registerError("Cannot handle multiple heating systems.")
-                      return false
-                    end
-                    
-                    pump = plc.to_PumpVariableSpeed.get
-                    pump_eff = 0.9
-                    pump_gpm = UnitConversions.convert(pump.ratedFlowRate.get,"m^3/s","gal/min")
-                    pump_w_gpm = elec_power / pump_gpm # W/gpm
-                    pump.setRatedPowerConsumption(elec_power/dse)
-                    pump.setRatedPumpHead(calculate_pump_head(pump_eff, pump_w_gpm/dse))
-                    pump.setMotorEfficiency(1.0)
-                    set_pump = true
-                    
-                end
-            end
+        loop.components.each do |plc|
+          if plc.to_BoilerHotWater.is_initialized
+            boiler = plc.to_BoilerHotWater.get
+            boiler.setParasiticElectricLoad(0.0)
+          elsif plc.to_PumpVariableSpeed.is_initialized
+            pump = plc.to_PumpVariableSpeed.get
+            pump_eff = 0.9
+            pump_gpm = UnitConversions.convert(pump.ratedFlowRate.get,"m^3/s","gal/min")
+            pump_w_gpm = elec_power / pump_gpm # W/gpm
+            pump.setRatedPowerConsumption(elec_power/dse)
+            pump.setRatedPumpHead(calculate_pump_head(pump_eff, pump_w_gpm/dse))
+            pump.setMotorEfficiency(1.0)
+          end
         end
-        
-        
         
       else # Furnace/WallFurnace/Stove
-
-        set_fan = false
-        model.getAirLoopHVACUnitarySystems.each do |system|
-          next if not system.heatingCoil.is_initialized
-          if set_fan
-            runner.registerError("Cannot handle multiple heating systems.")
-            return false
-          end
-          
-          htg_coil = system.heatingCoil.get.to_CoilHeatingGas.get
-          htg_coil.setParasiticElectricLoad(0.0)
-          
-          fan = system.supplyFan.get.to_FanOnOff.get
-          if elec_power > 0
-            fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-            htg_cfm = UnitConversions.convert(system.supplyAirFlowRateDuringHeatingOperation.get,"m^3/s","cfm")
-            fan_w_cfm = elec_power / htg_cfm # W/cfm
-            fan.setFanEfficiency(fan_eff)
-            fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_w_cfm/dse))
-          else
-            fan.setFanEfficiency(1)
-            fan.setPressureRise(0)
-          end
-          fan.setMotorEfficiency(1.0)
-          fan.setMotorInAirstreamFraction(1.0)  
-          set_fan = true
-          
+      
+        unitary_system = nil
+        loop.supplyComponents.each do |supply_component|
+          next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+          unitary_system = supply_component.to_AirLoopHVACUnitarySystem.get
         end
+
+        if eae.nil?
+          if has_furnace
+            # Get heating capacity
+            htg_coil = unitary_system.heatingCoil.get.to_CoilHeatingGas.get
+            htg_capacity_kbtuh = UnitConversions.convert(htg_coil.nominalCapacity.get,"W","kBtu/hr")
+          
+            # From ANSI/RESNET/ICC 301 Standard
+            if fuel == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
+              eae = 149.0 + 10.3*htg_capacity_kbtuh # kWh/yr
+            elsif fuel == Constants.FuelTypeOil
+              eae = 439.0 + 5.5*htg_capacity_kbtuh # kWh/yr
+            end
+          else
+            eae = 0.0
+          end
+        end
+        elec_power = eae / 2.08 # W
+      
+        htg_coil = unitary_system.heatingCoil.get.to_CoilHeatingGas.get
+        htg_coil.setParasiticElectricLoad(0.0)
+        
+        fan = unitary_system.supplyFan.get.to_FanOnOff.get
+        if elec_power > 0
+          fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
+          htg_cfm = UnitConversions.convert(unitary_system.supplyAirFlowRateDuringHeatingOperation.get,"m^3/s","cfm")
+          fan_w_cfm = elec_power / htg_cfm # W/cfm
+          fan.setFanEfficiency(fan_eff)
+          fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_w_cfm/dse))
+        else
+          fan.setFanEfficiency(1)
+          fan.setPressureRise(0)
+        end
+        fan.setMotorEfficiency(1.0)
+        fan.setMotorInAirstreamFraction(1.0)  
         
       end
       

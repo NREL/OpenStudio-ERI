@@ -305,13 +305,12 @@ class OSModel
     
     # HVAC
     
-    dse = get_dse(building)
-    duct_systems = {}
-    success = add_cooling_system(runner, model, building, unit, dse, duct_systems)
+    hvac_loops = {} # mapping between HPXML HVAC systems and model air/plant loops
+    success = add_cooling_system(runner, model, building, unit, hvac_loops)
     return false if not success
-    success = add_heating_system(runner, model, building, unit, dse, duct_systems)
+    success = add_heating_system(runner, model, building, unit, hvac_loops)
     return false if not success
-    success = add_heat_pump(runner, model, building, unit, dse, weather, duct_systems)
+    success = add_heat_pump(runner, model, building, unit, weather, hvac_loops)
     return false if not success
     success = add_setpoints(runner, model, building, weather) 
     return false if not success
@@ -329,11 +328,11 @@ class OSModel
     
     # Other
     
-    success = add_airflow(runner, model, building, unit, duct_systems)
+    success = add_airflow(runner, model, building, unit, hvac_loops)
     return false if not success
     success = add_hvac_sizing(runner, model, unit, weather)
     return false if not success
-    success = add_fuel_heating_eae(runner, model, building, dse)
+    success = add_fuel_heating_eae(runner, model, building, hvac_loops)
     return false if not success
     success = add_photovoltaics(runner, model, building)
     return false if not success
@@ -1995,7 +1994,7 @@ class OSModel
     return true
   end
   
-  def self.add_cooling_system(runner, model, building, unit, dse, duct_systems)
+  def self.add_cooling_system(runner, model, building, unit, hvac_loops)
   
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
     
@@ -2007,6 +2006,11 @@ class OSModel
       end
       
       load_frac = Float(XMLHelper.get_value(clgsys, "FractionCoolLoadServed")) # FIXME: Not yet used
+      
+      dse_heat, dse_cool = get_dse(building, clgsys)
+      
+      orig_air_loops = model.getAirLoopHVACs
+      orig_plant_loops = model.getPlantLoops
       
       if clg_type == "central air conditioning"
       
@@ -2023,7 +2027,7 @@ class OSModel
         end
         crankcase_kw = 0.0
         crankcase_temp = 55.0
-      
+        
         if num_speeds == "1-Speed"
         
           eers = [0.82 * seer_nom + 0.64]
@@ -2035,7 +2039,7 @@ class OSModel
                                                  fan_power_rated, fan_power_installed,
                                                  crankcase_kw, crankcase_temp,
                                                  eer_capacity_derates, cool_capacity_btuh, 
-                                                 dse)
+                                                 dse_cool)
           return false if not success
         
         elsif num_speeds == "2-Speed"
@@ -2052,7 +2056,7 @@ class OSModel
                                                  fan_power_rated, fan_power_installed,
                                                  crankcase_kw, crankcase_temp,
                                                  eer_capacity_derates, cool_capacity_btuh, 
-                                                 dse)
+                                                 dse_cool)
           return false if not success
           
         elsif num_speeds == "Variable-Speed"
@@ -2069,7 +2073,7 @@ class OSModel
                                                   fan_power_rated, fan_power_installed,
                                                   crankcase_kw, crankcase_temp,
                                                   eer_capacity_derates, cool_capacity_btuh, 
-                                                  dse)
+                                                  dse_cool)
           return false if not success
                                        
         else
@@ -2078,8 +2082,6 @@ class OSModel
           
         end
 
-        duct_systems = update_duct_systems(duct_systems, unit, clgsys)
-        
       elsif clg_type == "room air conditioner"
       
         eer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='EER']/Value"))
@@ -2092,13 +2094,15 @@ class OSModel
         
       end
       
+      hvac_loops = update_hvac_loops(hvac_loops, model, clgsys, orig_air_loops, orig_plant_loops)
+      
     end
     
-    return true, duct_systems
+    return true
 
   end
   
-  def self.add_heating_system(runner, model, building, unit, dse, duct_systems)
+  def self.add_heating_system(runner, model, building, unit, hvac_loops)
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htgsys|
 
@@ -2111,22 +2115,26 @@ class OSModel
       
       load_frac = Float(XMLHelper.get_value(htgsys, "FractionHeatLoadServed")) # FIXME: Not yet used
       
+      dse_heat, dse_cool = get_dse(building, htgsys)
+      
+      orig_air_loops = model.getAirLoopHVACs
+      orig_plant_loops = model.getPlantLoops
+      
       if XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
       
         afue = Float(XMLHelper.get_value(htgsys,"AnnualHeatingEfficiency[Units='AFUE']/Value"))
       
         fan_power = 0.5 # For fuel furnaces, will be overridden by EAE later
         success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
-                                     heat_capacity_btuh, fan_power, dse)
+                                     heat_capacity_btuh, fan_power, dse_heat)
         return false if not success
-
-        duct_systems = update_duct_systems(duct_systems, unit, htgsys)
 
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
       
         efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
         fan_power = 0.0
         airflow_rate = 0.0
+        # TODO: Allow DSE
         success = HVAC.apply_unit_heater(model, unit, runner, fuel,
                                          efficiency, heat_capacity_btuh, fan_power,
                                          airflow_rate)
@@ -2145,17 +2153,18 @@ class OSModel
         is_modulating = false
         success = HVAC.apply_boiler(model, unit, runner, fuel, system_type, afue,
                                     oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                                    heat_capacity_btuh, design_temp, is_modulating, dse)
+                                    heat_capacity_btuh, design_temp, is_modulating, dse_heat)
         return false if not success
       
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
       
         efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
+        # TODO: Allow DSE
         success = HVAC.apply_electric_baseboard(model, unit, runner, efficiency, 
                                                 heat_capacity_btuh)
         return false if not success
         
-    elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace") or XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
+      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace") or XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
       
         return false if not success
         if XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
@@ -2165,6 +2174,7 @@ class OSModel
         end
         airflow_rate = 125.0 # cfm/ton; doesn't affect energy consumption
         fan_power = 0.5 # For fuel equipment, will be overridden by EAE later
+        # TODO: Allow DSE
         success = HVAC.apply_unit_heater(model, unit, runner, fuel,
                                          efficiency, heat_capacity_btuh, fan_power,
                                          airflow_rate)
@@ -2172,208 +2182,218 @@ class OSModel
         
       end
       
+      hvac_loops = update_hvac_loops(hvac_loops, model, htgsys, orig_air_loops, orig_plant_loops)
+      
     end
     
-    return true, duct_systems
+    return true
 
   end
 
-  def self.add_heat_pump(runner, model, building, unit, dse, weather, duct_systems)
+  def self.add_heat_pump(runner, model, building, unit, weather, hvac_loops)
 
-    building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
+    building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hpsys|
     
-        hp_type = XMLHelper.get_value(hp, "HeatPumpType")
+      hp_type = XMLHelper.get_value(hpsys, "HeatPumpType")
+      
+      cool_capacity_btuh = XMLHelper.get_value(hpsys, "CoolingCapacity")
+      if cool_capacity_btuh.nil?
+        cool_capacity_btuh = Constants.SizingAuto
+      else
+        cool_capacity_btuh = Float(cool_capacity_btuh)
+      end
+      
+      load_frac_heat = Float(XMLHelper.get_value(hpsys, "FractionHeatLoadServed")) # FIXME: Not yet used
+      load_frac_cool = Float(XMLHelper.get_value(hpsys, "FractionCoolLoadServed")) # FIXME: Not yet used
+      
+      backup_heat_capacity_btuh = XMLHelper.get_value(hpsys, "BackupHeatingCapacity") # TODO: Require in ERI Use Case?
+      if backup_heat_capacity_btuh.nil?
+        backup_heat_capacity_btuh = Constants.SizingAuto
+      else
+        backup_heat_capacity_btuh = Float(backup_heat_capacity_btuh)
+      end
+      
+      dse_heat, dse_cool = get_dse(building, htgsys)
+      if dse_heat != dse_cool
+        fail "Cannot handle different distribution system efficiency (DSE) values for heating and cooling."
+      end
+      
+      orig_air_loops = model.getAirLoopHVACs
+      orig_plant_loops = model.getPlantLoops
+      
+      if hp_type == "air-to-air"        
+      
+        seer_nom = Float(XMLHelper.get_value(hpsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+        seer_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentSEER"))
+        seer = seer_nom * seer_adj
+        hspf_nom = Float(XMLHelper.get_value(hpsys, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+        hspf_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentHSPF"))
+        hspf = hspf_nom * hspf_adj
         
-        cool_capacity_btuh = XMLHelper.get_value(hp, "CoolingCapacity")
-        if cool_capacity_btuh.nil?
-          cool_capacity_btuh = Constants.SizingAuto
+        if seer_nom <= 15
+          num_speeds = "1-Speed"
+        elsif seer_nom <= 21
+          num_speeds = "2-Speed"
         else
-          cool_capacity_btuh = Float(cool_capacity_btuh)
+          num_speeds = "Variable-Speed"
         end
-        
-        load_frac_heat = Float(XMLHelper.get_value(hp, "FractionHeatLoadServed")) # FIXME: Not yet used
-        load_frac_cool = Float(XMLHelper.get_value(hp, "FractionCoolLoadServed")) # FIXME: Not yet used
-        
-        backup_heat_capacity_btuh = XMLHelper.get_value(hp, "BackupHeatingCapacity") # TODO: Require in ERI Use Case?
-        if backup_heat_capacity_btuh.nil?
-          backup_heat_capacity_btuh = Constants.SizingAuto
-        else
-          backup_heat_capacity_btuh = Float(backup_heat_capacity_btuh)
-        end
-        
-        if hp_type == "air-to-air"        
-        
-          seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-          seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
-          seer = seer_nom * seer_adj
-          hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-          hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
-          hspf = hspf_nom * hspf_adj
-          
-          if seer_nom <= 15
-            num_speeds = "1-Speed"
-          elsif seer_nom <= 21
-            num_speeds = "2-Speed"
-          else
-            num_speeds = "Variable-Speed"
-          end
 
-          crankcase_kw = 0.02
-          crankcase_temp = 55.0
-          
-          if num_speeds == "1-Speed"
-          
-            eers = [0.80 * seer_nom + 1.0]
-            cops = [0.45 * seer_nom - 0.34]
-            shrs = [0.73]
-            fan_power_rated = 0.365
-            fan_power_installed = 0.5
-            min_temp = 0.0
-            eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-            cop_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-            supplemental_efficiency = 1.0
-            success = HVAC.apply_central_ashp_1speed(model, unit, runner, seer, hspf, eers, cops, shrs,
-                                                     fan_power_rated, fan_power_installed, min_temp,
-                                                     crankcase_kw, crankcase_temp,
-                                                     eer_capacity_derates, cop_capacity_derates,
-                                                     cool_capacity_btuh, supplemental_efficiency, 
-                                                     backup_heat_capacity_btuh, dse)
-            return false if not success
-            
-          elsif num_speeds == "2-Speed"
-          
-            eers = [0.78 * seer_nom + 0.6, 0.68 * seer_nom + 1.0]
-            cops = [0.60 * seer_nom - 1.40, 0.50 * seer_nom - 0.94]
-            shrs = [0.71, 0.724]
-            capacity_ratios = [0.72, 1.0]
-            fan_speed_ratios_cooling = [0.86, 1.0]
-            fan_speed_ratios_heating = [0.8, 1.0]
-            fan_power_rated = 0.14
-            fan_power_installed = 0.3
-            min_temp = 0.0
-            eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-            cop_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-            supplemental_efficiency = 1.0
-            success = HVAC.apply_central_ashp_2speed(model, unit, runner, seer, hspf, eers, cops, shrs,
-                                                     capacity_ratios, fan_speed_ratios_cooling,
-                                                     fan_speed_ratios_heating,
-                                                     fan_power_rated, fan_power_installed, min_temp,
-                                                     crankcase_kw, crankcase_temp,
-                                                     eer_capacity_derates, cop_capacity_derates,
-                                                     cool_capacity_btuh, supplemental_efficiency,
-                                                     backup_heat_capacity_btuh, dse)
-            return false if not success
-            
-          elsif num_speeds == "Variable-Speed"
-          
-            eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
-            cops = [0.48 * seer_nom, 0.45 * seer_nom, 0.39 * seer_nom, 0.39 * seer_nom]
-            shrs = [0.84, 0.79, 0.76, 0.77]
-            capacity_ratios = [0.49, 0.67, 1.0, 1.2]
-            fan_speed_ratios_cooling = [0.7, 0.9, 1.0, 1.26]
-            fan_speed_ratios_heating = [0.74, 0.92, 1.0, 1.22]
-            fan_power_rated = 0.14
-            fan_power_installed = 0.3
-            min_temp = 0.0
-            eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-            cop_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
-            supplemental_efficiency = 1.0
-            success = HVAC.apply_central_ashp_4speed(model, unit, runner, seer, hspf, eers, cops, shrs,
-                                                     capacity_ratios, fan_speed_ratios_cooling,
-                                                     fan_speed_ratios_heating,
-                                                     fan_power_rated, fan_power_installed, min_temp,
-                                                     crankcase_kw, crankcase_temp,
-                                                     eer_capacity_derates, cop_capacity_derates,
-                                                     cool_capacity_btuh, supplemental_efficiency,
-                                                     backup_heat_capacity_btuh, dse)
-            return false if not success
-            
-          else
-          
-            fail "Unexpected number of speeds (#{num_speeds}) for heat pump system."
-            
-          end
-          
-        elsif hp_type == "mini-split"
-          
-          # FIXME: Generalize
-          seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-          seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
-          seer = seer_nom * seer_adj
-          hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-          hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
-          hspf = hspf_nom * hspf_adj
-          shr = 0.73
-          min_cooling_capacity = 0.4
-          max_cooling_capacity = 1.2
-          min_cooling_airflow_rate = 200.0
-          max_cooling_airflow_rate = 425.0
-          min_heating_capacity = 0.3
-          max_heating_capacity = 1.2
-          min_heating_airflow_rate = 200.0
-          max_heating_airflow_rate = 400.0
-          heating_capacity_offset = 2300.0
-          cap_retention_frac = 0.25
-          cap_retention_temp = -5.0
-          pan_heater_power = 0.0
-          fan_power = 0.07
-          is_ducted = false
+        crankcase_kw = 0.02
+        crankcase_temp = 55.0
+        
+        if num_speeds == "1-Speed"
+        
+          eers = [0.80 * seer_nom + 1.0]
+          cops = [0.45 * seer_nom - 0.34]
+          shrs = [0.73]
+          fan_power_rated = 0.365
+          fan_power_installed = 0.5
+          min_temp = 0.0
+          eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
+          cop_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
           supplemental_efficiency = 1.0
-          success = HVAC.apply_mshp(model, unit, runner, seer, hspf, shr,
-                                    min_cooling_capacity, max_cooling_capacity,
-                                    min_cooling_airflow_rate, max_cooling_airflow_rate,
-                                    min_heating_capacity, max_heating_capacity,
-                                    min_heating_airflow_rate, max_heating_airflow_rate, 
-                                    heating_capacity_offset, cap_retention_frac,
-                                    cap_retention_temp, pan_heater_power, fan_power,
-                                    is_ducted, cool_capacity_btuh,
-                                    supplemental_efficiency, backup_heat_capacity_btuh,
-                                    dse)
+          success = HVAC.apply_central_ashp_1speed(model, unit, runner, seer, hspf, eers, cops, shrs,
+                                                   fan_power_rated, fan_power_installed, min_temp,
+                                                   crankcase_kw, crankcase_temp,
+                                                   eer_capacity_derates, cop_capacity_derates,
+                                                   cool_capacity_btuh, supplemental_efficiency, 
+                                                   backup_heat_capacity_btuh, dse_heat)
           return false if not success
-                 
-        elsif hp_type == "ground-to-air"
+          
+        elsif num_speeds == "2-Speed"
         
-          # FIXME: Generalize
-          cop = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='COP']/Value"))
-          eer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='EER']/Value"))
-          shr = 0.732
-          ground_conductivity = 0.6
-          grout_conductivity = 0.4
-          bore_config = Constants.SizingAuto
-          bore_holes = Constants.SizingAuto
-          bore_depth = Constants.SizingAuto
-          bore_spacing = 20.0
-          bore_diameter = 5.0
-          pipe_size = 0.75
-          ground_diffusivity = 0.0208
-          fluid_type = Constants.FluidPropyleneGlycol
-          frac_glycol = 0.3
-          design_delta_t = 10.0
-          pump_head = 50.0
-          u_tube_leg_spacing = 0.9661
-          u_tube_spacing_type = "b"
-          fan_power = 0.5
-          heat_pump_capacity = cool_capacity_btuh
-          supplemental_efficiency = 1
-          supplemental_capacity = backup_heat_capacity_btuh
-          success = HVAC.apply_gshp(model, unit, runner, weather, cop, eer, shr,
-                                    ground_conductivity, grout_conductivity,
-                                    bore_config, bore_holes, bore_depth,
-                                    bore_spacing, bore_diameter, pipe_size,
-                                    ground_diffusivity, fluid_type, frac_glycol,
-                                    design_delta_t, pump_head,
-                                    u_tube_leg_spacing, u_tube_spacing_type,
-                                    fan_power, heat_pump_capacity, supplemental_efficiency,
-                                    supplemental_capacity, dse)
+          eers = [0.78 * seer_nom + 0.6, 0.68 * seer_nom + 1.0]
+          cops = [0.60 * seer_nom - 1.40, 0.50 * seer_nom - 0.94]
+          shrs = [0.71, 0.724]
+          capacity_ratios = [0.72, 1.0]
+          fan_speed_ratios_cooling = [0.86, 1.0]
+          fan_speed_ratios_heating = [0.8, 1.0]
+          fan_power_rated = 0.14
+          fan_power_installed = 0.3
+          min_temp = 0.0
+          eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
+          cop_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
+          supplemental_efficiency = 1.0
+          success = HVAC.apply_central_ashp_2speed(model, unit, runner, seer, hspf, eers, cops, shrs,
+                                                   capacity_ratios, fan_speed_ratios_cooling,
+                                                   fan_speed_ratios_heating,
+                                                   fan_power_rated, fan_power_installed, min_temp,
+                                                   crankcase_kw, crankcase_temp,
+                                                   eer_capacity_derates, cop_capacity_derates,
+                                                   cool_capacity_btuh, supplemental_efficiency,
+                                                   backup_heat_capacity_btuh, dse_heat)
           return false if not success
-                 
+          
+        elsif num_speeds == "Variable-Speed"
+        
+          eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
+          cops = [0.48 * seer_nom, 0.45 * seer_nom, 0.39 * seer_nom, 0.39 * seer_nom]
+          shrs = [0.84, 0.79, 0.76, 0.77]
+          capacity_ratios = [0.49, 0.67, 1.0, 1.2]
+          fan_speed_ratios_cooling = [0.7, 0.9, 1.0, 1.26]
+          fan_speed_ratios_heating = [0.74, 0.92, 1.0, 1.22]
+          fan_power_rated = 0.14
+          fan_power_installed = 0.3
+          min_temp = 0.0
+          eer_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
+          cop_capacity_derates = [1.0, 1.0, 1.0, 1.0, 1.0]
+          supplemental_efficiency = 1.0
+          success = HVAC.apply_central_ashp_4speed(model, unit, runner, seer, hspf, eers, cops, shrs,
+                                                   capacity_ratios, fan_speed_ratios_cooling,
+                                                   fan_speed_ratios_heating,
+                                                   fan_power_rated, fan_power_installed, min_temp,
+                                                   crankcase_kw, crankcase_temp,
+                                                   eer_capacity_derates, cop_capacity_derates,
+                                                   cool_capacity_btuh, supplemental_efficiency,
+                                                   backup_heat_capacity_btuh, dse_heat)
+          return false if not success
+          
+        else
+        
+          fail "Unexpected number of speeds (#{num_speeds}) for heat pump system."
+          
         end
+        
+      elsif hp_type == "mini-split"
+        
+        # FIXME: Generalize
+        seer_nom = Float(XMLHelper.get_value(hpsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+        seer_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentSEER"))
+        seer = seer_nom * seer_adj
+        hspf_nom = Float(XMLHelper.get_value(hpsys, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+        hspf_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentHSPF"))
+        hspf = hspf_nom * hspf_adj
+        shr = 0.73
+        min_cooling_capacity = 0.4
+        max_cooling_capacity = 1.2
+        min_cooling_airflow_rate = 200.0
+        max_cooling_airflow_rate = 425.0
+        min_heating_capacity = 0.3
+        max_heating_capacity = 1.2
+        min_heating_airflow_rate = 200.0
+        max_heating_airflow_rate = 400.0
+        heating_capacity_offset = 2300.0
+        cap_retention_frac = 0.25
+        cap_retention_temp = -5.0
+        pan_heater_power = 0.0
+        fan_power = 0.07
+        is_ducted = false
+        supplemental_efficiency = 1.0
+        success = HVAC.apply_mshp(model, unit, runner, seer, hspf, shr,
+                                  min_cooling_capacity, max_cooling_capacity,
+                                  min_cooling_airflow_rate, max_cooling_airflow_rate,
+                                  min_heating_capacity, max_heating_capacity,
+                                  min_heating_airflow_rate, max_heating_airflow_rate, 
+                                  heating_capacity_offset, cap_retention_frac,
+                                  cap_retention_temp, pan_heater_power, fan_power,
+                                  is_ducted, cool_capacity_btuh,
+                                  supplemental_efficiency, backup_heat_capacity_btuh,
+                                  dse_heat)
+        return false if not success
+               
+      elsif hp_type == "ground-to-air"
+      
+        # FIXME: Generalize
+        cop = Float(XMLHelper.get_value(hpsys, "AnnualHeatingEfficiency[Units='COP']/Value"))
+        eer = Float(XMLHelper.get_value(hpsys, "AnnualCoolingEfficiency[Units='EER']/Value"))
+        shr = 0.732
+        ground_conductivity = 0.6
+        grout_conductivity = 0.4
+        bore_config = Constants.SizingAuto
+        bore_holes = Constants.SizingAuto
+        bore_depth = Constants.SizingAuto
+        bore_spacing = 20.0
+        bore_diameter = 5.0
+        pipe_size = 0.75
+        ground_diffusivity = 0.0208
+        fluid_type = Constants.FluidPropyleneGlycol
+        frac_glycol = 0.3
+        design_delta_t = 10.0
+        pump_head = 50.0
+        u_tube_leg_spacing = 0.9661
+        u_tube_spacing_type = "b"
+        fan_power = 0.5
+        heat_pump_capacity = cool_capacity_btuh
+        supplemental_efficiency = 1
+        supplemental_capacity = backup_heat_capacity_btuh
+        success = HVAC.apply_gshp(model, unit, runner, weather, cop, eer, shr,
+                                  ground_conductivity, grout_conductivity,
+                                  bore_config, bore_holes, bore_depth,
+                                  bore_spacing, bore_diameter, pipe_size,
+                                  ground_diffusivity, fluid_type, frac_glycol,
+                                  design_delta_t, pump_head,
+                                  u_tube_leg_spacing, u_tube_spacing_type,
+                                  fan_power, heat_pump_capacity, supplemental_efficiency,
+                                  supplemental_capacity, dse_heat)
+        return false if not success
+               
+      end
 
-        duct_systems = update_duct_systems(duct_systems, unit, hp)
+      hvac_loops = update_hvac_loops(hvac_loops, model, hpsys, orig_air_loops, orig_plant_loops)
         
     end
     
-    return true, duct_systems
+    return true
 
   end
   
@@ -2446,39 +2466,45 @@ class OSModel
     return true
   end
   
-  def self.get_dse(building)
-    dse_cool = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualCoolingDistributionSystemEfficiency")
-    dse_heat = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/HVACDistribution/AnnualHeatingDistributionSystemEfficiency")
-    if dse_cool.nil? and dse_heat.nil?
-      dse_cool = 1.0
-      dse_heat = 1.0
-    elsif not dse_cool.nil? and not dse_heat.nil?
-      dse_cool = Float(dse_cool)
-      dse_heat = Float(dse_heat)
+  def self.get_dse(building, system)
+    if system.elements["DistributionSystem"].nil? # No distribution system
+      return 1.0, 1.0
     end
-    if dse_cool != dse_heat
-      fail "Cannot handle different distribution system efficiency (DSE) values for heating and cooling."
+    
+    # Get attached distribution system
+    ducts = nil
+    duct_id = system.elements["DistributionSystem"].attributes["idref"]
+    building.elements.each("BuildingDetails/Systems/HVAC/HVACDistribution") do |dist|
+      next if duct_id != dist.elements["SystemIdentifier"].attributes["id"]
+      next if dist.elements["DistributionSystemType[Other='DSE']"].nil?
+      ducts = dist
     end
-    return dse_cool
+    if ducts.nil? # No attached DSEs for system
+      return 1.0, 1.0
+    end
+    
+    dse_cool = Float(XMLHelper.get_value(ducts, "AnnualCoolingDistributionSystemEfficiency"))
+    dse_heat = Float(XMLHelper.get_value(ducts, "AnnualHeatingDistributionSystemEfficiency"))
+    return dse_heat, dse_cool
   end  
 
-  def self.update_duct_systems(duct_systems, unit, sys)
+  def self.update_hvac_loops(hvac_loops, model, sys, orig_air_loops, orig_plant_loops)
+    sys_id = sys.elements["SystemIdentifier"].attributes["id"]
+    hvac_loops[sys_id] = []
 
-    unless duct_systems.keys.include? sys.elements["DistributionSystem"].attributes["idref"]
-      duct_systems[sys.elements["DistributionSystem"].attributes["idref"]] = []
-    end
-    unit.spaces.each do |space|
-      thermal_zone = space.thermalZone.get
-      thermal_zone.airLoopHVACs.each do |air_loop|
-        next if duct_systems[sys.elements["DistributionSystem"].attributes["idref"]].include? air_loop
-        duct_systems[sys.elements["DistributionSystem"].attributes["idref"]] << air_loop
-      end
+    model.getAirLoopHVACs.each do |air_loop|
+      next if orig_air_loops.include? air_loop # Only include newly added air loops
+      hvac_loops[sys_id] << air_loop
     end
 
-    return duct_systems
+    model.getPlantLoops.each do |plant_loop|
+      next if orig_plant_loops.include? plant_loop # Only include newly added plant loops
+      hvac_loops[sys_id] << plant_loop
+    end
 
+    return hvac_loops
   end
-
+  
   def self.to_beopt_fuel(fuel)
     conv = {"natural gas"=>Constants.FuelTypeGas, 
             "fuel oil"=>Constants.FuelTypeOil, 
@@ -2530,7 +2556,7 @@ class OSModel
     return true
   end
   
-  def self.add_airflow(runner, model, building, unit, duct_systems)
+  def self.add_airflow(runner, model, building, unit, hvac_loops)
   
     # Infiltration
     infiltration = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
@@ -2658,6 +2684,7 @@ class OSModel
                                       nat_vent_max_oa_hr, nat_vent_max_oa_rh)
   
     # Ducts
+    duct_systems = {}
     building.elements.each("BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_distribution|
       air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
       if not air_distribution.nil?
@@ -2696,9 +2723,20 @@ class OSModel
       duct_norm_leakage_25pa = nil
       ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, 
                         duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, 
-                        duct_num_returns, duct_location)      
-      duct_systems[ducts] = duct_systems[hvac_distribution.elements["SystemIdentifier"].attributes["id"]]
-      duct_systems.delete(hvac_distribution.elements["SystemIdentifier"].attributes["id"])
+                        duct_num_returns, duct_location)
+      
+      # Connect AirLoopHVACs to ducts
+      duct_systems[ducts] = []
+      duct_id = hvac_distribution.elements["SystemIdentifier"].attributes["id"]
+      building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant[HeatingSystem | CoolingSystem | HeatPump]") do |sys|
+        next if sys.elements["DistributionSystem"].nil? or duct_id != sys.elements["DistributionSystem"].attributes["idref"]
+        sys_id = sys.elements["SystemIdentifier"].attributes["id"]
+        hvac_loops[sys_id].each do |loop|
+          next if not loop.is_a? OpenStudio::Model::Model::AirLoopHVAC
+          duct_systems[ducts] << loop
+        end
+      end
+      
     end
 
     success = Airflow.apply(model, runner, infil, mech_vent, nat_vent, duct_systems, File.dirname(__FILE__))
@@ -2717,31 +2755,35 @@ class OSModel
 
   end
   
-  def self.add_fuel_heating_eae(runner, model, building, dse)
+  def self.add_fuel_heating_eae(runner, model, building, hvac_loops)
   
-    # Needs to come after HVAC sizing (needs heating capacity and flowrate)
-    # TODO: Handle multiple heating systems
+    # Needs to come after HVAC sizing (needs heating capacity and airflow rate)
     
-    htgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
-    return true if htgsys.nil?
+    building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htgsys|
     
-    has_furnace = XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
-    has_wall_furnace = XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
-    has_stove = XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
-    has_boiler = XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
-    return true if not (has_furnace or has_wall_furnace or has_stove or has_boiler)
+      has_furnace = XMLHelper.has_element(htgsys, "HeatingSystemType/Furnace")
+      has_wall_furnace = XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
+      has_stove = XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
+      has_boiler = XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
+      next if not (has_furnace or has_wall_furnace or has_stove or has_boiler)
     
-    fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
-    return true if fuel == Constants.FuelTypeElectric
+      fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
+      next if fuel == Constants.FuelTypeElectric
     
-    fuel_eae = XMLHelper.get_value(htgsys, "ElectricAuxiliaryEnergy")
-    if not fuel_eae.nil?
-      fuel_eae = Float(fuel_eae)
+      fuel_eae = XMLHelper.get_value(htgsys, "ElectricAuxiliaryEnergy")
+      if not fuel_eae.nil?
+        fuel_eae = Float(fuel_eae)
+      end
+      
+      dse_heat, dse_cool = get_dse(building, htgsys)
+      
+      sys_id = htgsys.elements["SystemIdentifier"].attributes["id"]
+    
+      success = HVAC.apply_eae_to_heating_fan(runner, hvac_loops[sys_id][0], fuel_eae, fuel, dse_heat, 
+                                              has_furnace, has_boiler)
+      return false if not success
+      
     end
-    
-    success = HVAC.apply_eae_to_heating_fan(runner, model, fuel_eae, fuel, dse, 
-                                            has_furnace, has_boiler)
-    return false if not success
   
     return true
     
