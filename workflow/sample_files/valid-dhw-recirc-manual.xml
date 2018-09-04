@@ -311,14 +311,14 @@
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
               <Recirculation>
-                <ControlType>timer</ControlType>
+                <ControlType>manual demand control</ControlType>
                 <RecirculationPipingLoopLength>30</RecirculationPipingLoopLength>
                 <BranchPipingLoopLength>30</BranchPipingLoopLength>
                 <PumpPower>50</PumpPower>
               </Recirculation>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>0.0</PipeRValue>
+              <PipeRValue>3.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>

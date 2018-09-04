@@ -1810,13 +1810,6 @@ class OSModel
   
   def self.add_water_heater(runner, model, building, unit, weather, spaces)
   
-    ec_adj = XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor")
-    if ec_adj.nil?
-      ec_adj = 1.0
-    else
-      ec_adj = Float(ec_adj)
-    end
-  
     dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
     location = XMLHelper.get_value(dhw, "Location")
     setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
@@ -1840,6 +1833,8 @@ class OSModel
       fail "Water heater location was #{location} but building does not have this space type."
     end
     
+    ec_adj = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor"))
+    
     if wh_type == "storage water heater"
     
       tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
@@ -1860,7 +1855,7 @@ class OSModel
     elsif wh_type == "instantaneous water heater"
     
       ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
-      ef_adj = Float(XMLHelper.get_value(dhw, "extension/PerformanceAdjustmentEnergyFactor"))
+      ef_adj = Float(XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier"))
       capacity_kbtuh = 100000000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
@@ -1945,8 +1940,8 @@ class OSModel
     # Fixtures
     fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
     fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
-    fx_sens_btu = Float(XMLHelper.get_value(fx, "extension/SensibleGainsBtu"))
-    fx_lat_btu = Float(XMLHelper.get_value(fx, "extension/LatentGainsBtu"))
+    fx_sens_btu = Float(XMLHelper.get_value(fx, "extension/AnnualSensibleGainsBtu"))
+    fx_lat_btu = Float(XMLHelper.get_value(fx, "extension/AnnualLatentGainsBtu"))
     
     # Distribution
     dist = wh.elements["HotWaterDistribution"]

@@ -310,12 +310,9 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
-              <Recirculation>
-                <ControlType>timer</ControlType>
-                <RecirculationPipingLoopLength>30</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>30</BranchPipingLoopLength>
-                <PumpPower>50</PumpPower>
-              </Recirculation>
+              <Standard>
+                <PipingLength>30</PipingLength>
+              </Standard>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>0.0</PipeRValue>
@@ -336,37 +333,24 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher_ID1'/>
-          <ModifiedEnergyFactor>1.2</ModifiedEnergyFactor>
-          <RatedAnnualkWh>387.0</RatedAnnualkWh>
-          <LabelElectricRate>0.127</LabelElectricRate>
-          <LabelGasRate>1.003</LabelGasRate>
-          <LabelAnnualGasCost>24.0</LabelAnnualGasCost>
-          <Capacity>3.5</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer_ID1'/>
           <FuelType>electricity</FuelType>
-          <EnergyFactor>3.01</EnergyFactor>
-          <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher_ID1'/>
-          <RatedAnnualkWh>100</RatedAnnualkWh>
-          <PlaceSettingCapacity>12</PlaceSettingCapacity>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator_ID1'/>
-          <RatedAnnualkWh>609</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range_ID1'/>
           <FuelType>electricity</FuelType>
-          <IsInduction>true</IsInduction>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
           <FuelType>electricity</FuelType>
-          <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>
       <Lighting>

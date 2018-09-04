@@ -296,42 +296,6 @@
             </DistributionSystemType>
           </HVACDistribution>
         </HVAC>
-        <WaterHeating>
-          <WaterHeatingSystem>
-            <SystemIdentifier id='DHW_ID1'/>
-            <FuelType>electricity</FuelType>
-            <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>conditioned space</Location>
-            <TankVolume>40</TankVolume>
-            <FractionDHWLoadServed>1</FractionDHWLoadServed>
-            <HeatingCapacity>18767</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-          </WaterHeatingSystem>
-          <HotWaterDistribution>
-            <SystemIdentifier id='HWDist_ID1'/>
-            <SystemType>
-              <Recirculation>
-                <ControlType>timer</ControlType>
-                <RecirculationPipingLoopLength>30</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>30</BranchPipingLoopLength>
-                <PumpPower>50</PumpPower>
-              </Recirculation>
-            </SystemType>
-            <PipeInsulation>
-              <PipeRValue>0.0</PipeRValue>
-            </PipeInsulation>
-          </HotWaterDistribution>
-          <WaterFixture>
-            <SystemIdentifier id='WF_ID1'/>
-            <WaterFixtureType>shower head</WaterFixtureType>
-            <LowFlow>true</LowFlow>
-          </WaterFixture>
-          <WaterFixture>
-            <SystemIdentifier id='WF_ID2'/>
-            <WaterFixtureType>faucet</WaterFixtureType>
-            <LowFlow>false</LowFlow>
-          </WaterFixture>
-        </WaterHeating>
       </Systems>
       <Appliances>
         <ClothesWasher>

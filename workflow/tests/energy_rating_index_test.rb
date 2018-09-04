@@ -610,8 +610,8 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xml_water_sens = 0.0
     xml_water_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture") do |wf|
-      xml_water_sens += Float(XMLHelper.get_value(wf, "extension/SensibleGainsBtu"))
-      xml_water_lat += Float(XMLHelper.get_value(wf, "extension/LatentGainsBtu"))
+      xml_water_sens += Float(XMLHelper.get_value(wf, "extension/AnnualSensibleGainsBtu"))
+      xml_water_lat += Float(XMLHelper.get_value(wf, "extension/AnnualLatentGainsBtu"))
     end
     s += "#{xml_water_sens} #{xml_water_lat}\n"
     

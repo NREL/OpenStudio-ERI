@@ -556,7 +556,7 @@ class EnergyRatingIndex301Validator
         # [ClothesWasher]
         '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'ModifiedEnergyFactor' => zero_or_one, # Uses Reference Home if not provided; otherwise see [CWType=UserSpecified]
+            '[ModifiedEnergyFactor | IntegratedModifiedEnergyFactor]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CWType=UserSpecified]
         },
         
             ## [CWType=UserSpecified]
@@ -574,12 +574,12 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
-            'EfficiencyFactor' => zero_or_one, # Uses Reference Home if not provided; otherwise see [CDType=UserSpecified]
+            '[EnergyFactor | CombinedEnergyFactor]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CDType=UserSpecified]
         },
         
             ## [CDType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EfficiencyFactor]' => {
-                'ControlType' => one,
+            '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EnergyFactor]' => {
+                '[ControlType="timer" or ControlType="moisture"]' => one,
             },
         
         

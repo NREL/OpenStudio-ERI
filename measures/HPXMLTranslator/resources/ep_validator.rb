@@ -520,7 +520,7 @@ class EnergyPlusValidator
             '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
             'FractionDHWLoadServed' => one,
             'EnergyFactor' => one,
-            'extension/EnergyConsumptionAdjustmentFactor' => zero_or_one,
+            'extension/EnergyFactorMultiplier' => one,
         },
         
             ## [WHType=Tank]
@@ -538,7 +538,6 @@ class EnergyPlusValidator
             ## [WHType=Tankless]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="instantaneous water heater"]' => {
                 '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
-                'extension/PerformanceAdjustmentEnergyFactor' => one,
             },
             
             ## [WHType=HeatPump]
@@ -555,6 +554,7 @@ class EnergyPlusValidator
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
             'DrainWaterHeatRecovery' => zero_or_one, # See [DrainWaterHeatRecovery]
             'extension/MixedWaterGPD' => one,
+            'extension/EnergyConsumptionAdjustmentFactor' => one,
         },
         
             ## [HWDistType=Standard]
@@ -582,8 +582,8 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             'extension/MixedWaterGPD' => one,
-            'extension/SensibleGainsBtu' => one,
-            'extension/LatentGainsBtu' => one,
+            'extension/AnnualSensibleGainsBtu' => one,
+            'extension/AnnualLatentGainsBtu' => one,
         },
         
         
