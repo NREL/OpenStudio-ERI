@@ -1965,7 +1965,7 @@ class HVAC
         fan.setName(obj_name + " htg supply fan")
         fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
         fan.setFanEfficiency(fan_eff)
-        fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse)
+        fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_power_installed/dse))
         fan.setMotorEfficiency(1.0)
         fan.setMotorInAirstreamFraction(1.0)  
       
@@ -2291,6 +2291,7 @@ class HVAC
           fan.setMotorEfficiency(1.0)
           fan.setMotorInAirstreamFraction(1.0)  
           
+        
           # _processSystemAir
           
           unitary_system = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)

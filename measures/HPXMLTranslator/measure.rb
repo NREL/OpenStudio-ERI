@@ -2078,16 +2078,7 @@ class OSModel
           
         end
 
-        unless duct_systems.keys.include? clgsys.elements["DistributionSystem"].attributes["idref"]
-          duct_systems[clgsys.elements["DistributionSystem"].attributes["idref"]] = []
-        end
-        unit.spaces.each do |space|
-          thermal_zone = space.thermalZone.get
-          thermal_zone.airLoopHVACs.each do |air_loop|
-            next if duct_systems[clgsys.elements["DistributionSystem"].attributes["idref"]].include? air_loop
-            duct_systems[clgsys.elements["DistributionSystem"].attributes["idref"]] << air_loop
-          end
-        end
+        duct_systems = update_duct_systems(duct_systems, unit, clgsys)
         
       elsif clg_type == "room air conditioner"
       
@@ -2126,20 +2117,11 @@ class OSModel
       
         fan_power = 0.5 # For fuel furnaces, will be overridden by EAE later
         success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
-                                     heat_capacity_btuh, fan_power_installed, dse)
+                                     heat_capacity_btuh, fan_power, dse)
         return false if not success
 
-        unless duct_systems.keys.include? htgsys.elements["DistributionSystem"].attributes["idref"]
-          duct_systems[htgsys.elements["DistributionSystem"].attributes["idref"]] = []
-        end
-        unit.spaces.each do |space|
-          thermal_zone = space.thermalZone.get
-          thermal_zone.airLoopHVACs.each do |air_loop|
-            next if duct_systems[htgsys.elements["DistributionSystem"].attributes["idref"]].include? air_loop
-            duct_systems[htgsys.elements["DistributionSystem"].attributes["idref"]] << air_loop
-          end
-        end
-        
+        duct_systems = update_duct_systems(duct_systems, unit, htgsys)
+
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
       
         efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
@@ -2387,16 +2369,7 @@ class OSModel
                  
         end
 
-        unless duct_systems.keys.include? hp.elements["DistributionSystem"].attributes["idref"]
-          duct_systems[hp.elements["DistributionSystem"].attributes["idref"]] = []
-        end
-        unit.spaces.each do |space|
-          thermal_zone = space.thermalZone.get
-          thermal_zone.airLoopHVACs.each do |air_loop|
-            next if duct_systems[hp.elements["DistributionSystem"].attributes["idref"]].include? air_loop
-            duct_systems[hp.elements["DistributionSystem"].attributes["idref"]] << air_loop
-          end
-        end
+        duct_systems = update_duct_systems(duct_systems, unit, hp)
         
     end
     
@@ -2487,8 +2460,25 @@ class OSModel
       fail "Cannot handle different distribution system efficiency (DSE) values for heating and cooling."
     end
     return dse_cool
+  end  
+
+  def self.update_duct_systems(duct_systems, unit, sys)
+
+    unless duct_systems.keys.include? sys.elements["DistributionSystem"].attributes["idref"]
+      duct_systems[sys.elements["DistributionSystem"].attributes["idref"]] = []
+    end
+    unit.spaces.each do |space|
+      thermal_zone = space.thermalZone.get
+      thermal_zone.airLoopHVACs.each do |air_loop|
+        next if duct_systems[sys.elements["DistributionSystem"].attributes["idref"]].include? air_loop
+        duct_systems[sys.elements["DistributionSystem"].attributes["idref"]] << air_loop
+      end
+    end
+
+    return duct_systems
+
   end
-  
+
   def self.to_beopt_fuel(fuel)
     conv = {"natural gas"=>Constants.FuelTypeGas, 
             "fuel oil"=>Constants.FuelTypeOil, 
