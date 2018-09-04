@@ -310,12 +310,9 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
-              <Recirculation>
-                <ControlType>timer</ControlType>
-                <RecirculationPipingLoopLength>30</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>30</BranchPipingLoopLength>
-                <PumpPower>50</PumpPower>
-              </Recirculation>
+              <Standard>
+                <PipingLength>30</PipingLength>
+              </Standard>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>0.0</PipeRValue>
@@ -346,7 +343,7 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer_ID1'/>
           <FuelType>electricity</FuelType>
-          <EnergyFactor>3.01</EnergyFactor>
+          <CombinedEnergyFactor>2.62</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>

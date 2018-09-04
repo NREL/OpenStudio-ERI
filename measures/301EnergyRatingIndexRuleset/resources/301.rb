@@ -1721,7 +1721,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_washer_rated(new_appliances, orig_details)
   
     # 4.2.2.5.2.10. Clothes Washers
-    if orig_details.elements["Appliances/ClothesWasher/ModifiedEnergyFactor"]
+    if orig_details.elements["Appliances/ClothesWasher/ModifiedEnergyFactor"] or orig_details.elements["Appliances/ClothesWasher/IntegratedModifiedEnergyFactor"]
       # Detailed
       ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
       elec_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelElectricRate"))
@@ -1798,14 +1798,28 @@ class EnergyRatingIndex301Ruleset
   
     # 4.2.2.5.2.8. Clothes Dryers
     dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
-    if orig_details.elements["Appliances/ClothesDryer/EfficiencyFactor"]
+    if orig_details.elements["Appliances/ClothesDryer/EnergyFactor"] or orig_details.elements["Appliances/ClothesDryer/CombinedEnergyFactor"]
       # Detailed
-      ef_dry = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/EfficiencyFactor"))
+      ef_dry = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/EnergyFactor")
+      if not ef_dry.nil?
+        ef_dry = Float(ef_dry)
+      else
+        # Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF
+        cef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/CombinedEnergyFactor"))
+        ef_dry = cef * 1.15
+      end
       has_timer_control = Boolean(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer[ControlType='timer']"))
       
       ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
       cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
-      mef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/ModifiedEnergyFactor"))
+      mef = XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/ModifiedEnergyFactor")
+      if not mef.nil?
+        mef = Float(mef)
+      else
+        # Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF
+        imef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/IntegratedModifiedEnergyFactor"))
+        mef = 0.503 + 0.95 * imef
+      end
       
       # Eq 4.2-6 (FU)
       field_util_factor = nil
