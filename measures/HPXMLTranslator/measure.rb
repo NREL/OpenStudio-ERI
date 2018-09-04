@@ -2728,11 +2728,13 @@ class OSModel
       # Connect AirLoopHVACs to ducts
       duct_systems[ducts] = []
       duct_id = hvac_distribution.elements["SystemIdentifier"].attributes["id"]
-      building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant[HeatingSystem | CoolingSystem | HeatPump]") do |sys|
+      building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem | 
+                              BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem | 
+                              BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |sys|
         next if sys.elements["DistributionSystem"].nil? or duct_id != sys.elements["DistributionSystem"].attributes["idref"]
         sys_id = sys.elements["SystemIdentifier"].attributes["id"]
         hvac_loops[sys_id].each do |loop|
-          next if not loop.is_a? OpenStudio::Model::Model::AirLoopHVAC
+          next if not loop.is_a? OpenStudio::Model::AirLoopHVAC
           duct_systems[ducts] << loop
         end
       end
