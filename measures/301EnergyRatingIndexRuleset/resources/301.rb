@@ -1145,7 +1145,7 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       end
     end
-    if not heating_system.nil? and not heat_pump_system.nil?
+    if heating_system.nil? and heat_pump_system.nil?
       if has_fuel_access(orig_details)
         add_reference_heating_gas_furnace(new_hvac_plant, 1.0)
       else
