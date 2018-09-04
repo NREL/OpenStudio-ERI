@@ -1998,7 +1998,7 @@ class OSModel
   def self.add_cooling_system(runner, model, building, unit, dse, duct_systems)
   
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
-    
+
       clg_type = XMLHelper.get_value(clgsys, "CoolingSystemType")
       
       cool_capacity_btuh = Float(XMLHelper.get_value(clgsys, "CoolingCapacity"))
@@ -2470,7 +2470,7 @@ class OSModel
     unit.spaces.each do |space|
       thermal_zone = space.thermalZone.get
       thermal_zone.airLoopHVACs.each do |air_loop|
-        next if duct_systems[sys.elements["DistributionSystem"].attributes["idref"]].include? air_loop
+        next unless duct_systems[sys.elements["DistributionSystem"].attributes["idref"]].empty?
         duct_systems[sys.elements["DistributionSystem"].attributes["idref"]] << air_loop
       end
     end
@@ -2696,7 +2696,7 @@ class OSModel
       duct_norm_leakage_25pa = nil
       ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, 
                         duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, 
-                        duct_num_returns, duct_location)      
+                        duct_num_returns, duct_location)
       duct_systems[ducts] = duct_systems[hvac_distribution.elements["SystemIdentifier"].attributes["id"]]
       duct_systems.delete(hvac_distribution.elements["SystemIdentifier"].attributes["id"])
     end
