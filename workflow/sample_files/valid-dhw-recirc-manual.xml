@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='UTF-8'?> 
+<?xml version='1.0' encoding='UTF-8'?>
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
-    <XMLType>HPXML, HERS Rated Home</XMLType>
+    <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
@@ -25,19 +25,7 @@
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
-          <extension>
-            <ShelterCoefficient>0.5</ShelterCoefficient>
-          </extension>
         </Site>
-        <BuildingOccupancy>
-          <NumberofResidents>4.0</NumberofResidents>
-          <extension>
-            <HeatGainBtuPerPersonPerHr>400.0</HeatGainBtuPerPersonPerHr>
-            <PersonHrsPerDay>16.5</PersonHrsPerDay>
-            <FracSensible>0.563030303030303</FracSensible>
-            <FracLatent>0.43696969696969695</FracLatent>
-          </extension>
-        </BuildingOccupancy>
         <BuildingConstruction>
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
@@ -65,27 +53,13 @@
       <Enclosure>
         <AirInfiltration>
           <AirInfiltrationMeasurement>
-            <SystemIdentifier id='Infiltration_ACHnatural'/>
-            <BuildingAirLeakage>
-              <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <AirLeakage>0.17942989180951335</AirLeakage>
-            </BuildingAirLeakage>
-          </AirInfiltrationMeasurement>
-          <AirInfiltrationMeasurement>
-            <SystemIdentifier id='Infiltration_ACH50'/>
+            <SystemIdentifier id='InfiltMeas64'/>
             <HousePressure>50</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
-          <AirInfiltrationMeasurement>
-            <SystemIdentifier id='Infiltration_ELA_SLA'/>
-            <EffectiveLeakageArea>0.6123319570477266</EffectiveLeakageArea>
-          </AirInfiltrationMeasurement>
-          <extension>
-            <BuildingSpecificLeakageArea>0.00017495198772792187</BuildingSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <AtticAndRoof>
           <Attics>
@@ -123,7 +97,7 @@
                 <Wall>
                   <SystemIdentifier id='attic-wall-1'/>
                   <WallType>
-                    <WoodStud/>
+                    <WoodStud></WoodStud>
                   </WallType>
                   <Area>32</Area>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
@@ -193,7 +167,7 @@
           <Wall>
             <SystemIdentifier id='agwall-1'/>
             <WallType>
-              <WoodStud/>
+              <WoodStud></WoodStud>
             </WallType>
             <Area>3796</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
@@ -216,11 +190,6 @@
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <AttachedToWall idref='agwall-1'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID2'/>
@@ -229,11 +198,6 @@
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <AttachedToWall idref='agwall-1'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID3'/>
@@ -242,11 +206,6 @@
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <AttachedToWall idref='agwall-1'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='Window_ID4'/>
@@ -255,11 +214,6 @@
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <AttachedToWall idref='agwall-1'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
-            </extension>
           </Window>
         </Windows>
         <Doors>
@@ -269,9 +223,6 @@
             <Area>80</Area>
             <Azimuth>270</Azimuth>
             <RValue>4.4</RValue>
-            <extension>
-              <Height>6.67</Height>
-            </extension>
           </Door>
         </Doors>
       </Enclosure>
@@ -280,7 +231,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
-              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
@@ -294,7 +245,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='SpaceCool_ID1'/>
-              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>48000</CoolingCapacity>
@@ -303,24 +254,11 @@
                 <Units>SEER</Units>
                 <Value>16</Value>
               </AnnualCoolingEfficiency>
-              <extension>
-                <PerformanceAdjustmentSEER>1.0626992561105209</PerformanceAdjustmentSEER>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
-            <SystemIdentifier id='HVACControl'/>
+            <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>programmable thermostat</ControlType>
-            <SetpointTempHeatingSeason>68</SetpointTempHeatingSeason>
-            <SetbackTempHeatingSeason>66</SetbackTempHeatingSeason>
-            <TotalSetbackHoursperWeekHeating>49</TotalSetbackHoursperWeekHeating>
-            <SetupTempCoolingSeason>80</SetupTempCoolingSeason>
-            <SetpointTempCoolingSeason>78</SetpointTempCoolingSeason>
-            <TotalSetupHoursperWeekCooling>42</TotalSetupHoursperWeekCooling>
-            <extension>
-              <SetbackStartHour>23</SetbackStartHour>
-              <SetupStartHour>9</SetupStartHour>
-            </extension>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>
@@ -368,119 +306,81 @@
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <HeatingCapacity>18767</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125.0</HotWaterTemperature>
-            <extension>
-              <EnergyFactorMultiplier>1.0</EnergyFactorMultiplier>
-            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
-            <SystemIdentifier id='HotWaterDistribution'/>
+            <SystemIdentifier id='HWDist_ID1'/>
             <SystemType>
-              <Standard>
-                <PipingLength>30.0</PipingLength>
-              </Standard>
+              <Recirculation>
+                <ControlType>manual demand control</ControlType>
+                <RecirculationPipingLoopLength>30</RecirculationPipingLoopLength>
+                <BranchPipingLoopLength>30</BranchPipingLoopLength>
+                <PumpPower>50</PumpPower>
+              </Recirculation>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>0.0</PipeRValue>
+              <PipeRValue>3.0</PipeRValue>
             </PipeInsulation>
-            <extension>
-              <MixedWaterGPD>8.307472584560799</MixedWaterGPD>
-              <EnergyConsumptionAdjustmentFactor>0.8934086381727779</EnergyConsumptionAdjustmentFactor>
-            </extension>
           </HotWaterDistribution>
           <WaterFixture>
-            <SystemIdentifier id='WaterFixture'/>
+            <SystemIdentifier id='WF_ID1'/>
             <WaterFixtureType>shower head</WaterFixtureType>
+            <LowFlow>true</LowFlow>
+          </WaterFixture>
+          <WaterFixture>
+            <SystemIdentifier id='WF_ID2'/>
+            <WaterFixtureType>faucet</WaterFixtureType>
             <LowFlow>false</LowFlow>
-            <extension>
-              <MixedWaterGPD>54.6</MixedWaterGPD>
-              <AnnualSensibleGainsBtu>-1044995.0</AnnualSensibleGainsBtu>
-              <AnnualLatentGainsBtu>1060325.0</AnnualLatentGainsBtu>
-            </extension>
           </WaterFixture>
         </WaterHeating>
       </Systems>
       <Appliances>
         <ClothesWasher>
-          <SystemIdentifier id='ClothesWasher'/>
-          <extension>
-            <AnnualkWh>64.73207773783562</AnnualkWh>
-            <FracSensible>0.3288511341806826</FracSensible>
-            <FracLatent>0.038007920030933166</FracLatent>
-            <HotWaterGPD>1.9194494998024507</HotWaterGPD>
-          </extension>
+          <SystemIdentifier id='ClothesWasher_ID1'/>
+          <ModifiedEnergyFactor>1.2</ModifiedEnergyFactor>
+          <RatedAnnualkWh>387.0</RatedAnnualkWh>
+          <LabelElectricRate>0.127</LabelElectricRate>
+          <LabelGasRate>1.003</LabelGasRate>
+          <LabelAnnualGasCost>24.0</LabelAnnualGasCost>
+          <Capacity>3.5</Capacity>
         </ClothesWasher>
         <ClothesDryer>
-          <SystemIdentifier id='ClothesDryer'/>
+          <SystemIdentifier id='ClothesDryer_ID1'/>
           <FuelType>electricity</FuelType>
-          <extension>
-            <AnnualkWh>919.7140580084878</AnnualkWh>
-            <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.16434449138818952</FracSensible>
-            <FracLatent>0.018260499043132167</FracLatent>
-          </extension>
+          <EfficiencyFactor>3.01</EfficiencyFactor>
+          <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>
-          <SystemIdentifier id='Dishwasher'/>
-          <extension>
-            <AnnualkWh>115.06046511627906</AnnualkWh>
-            <FracSensible>0.5271360868061619</FracSensible>
-            <FracLatent>0.5271360868061619</FracLatent>
-            <HotWaterGPD>0.14325721567378133</HotWaterGPD>
-          </extension>
+          <SystemIdentifier id='Dishwasher_ID1'/>
+          <RatedAnnualkWh>100</RatedAnnualkWh>
+          <PlaceSettingCapacity>12</PlaceSettingCapacity>
         </Dishwasher>
         <Refrigerator>
-          <SystemIdentifier id='Refrigerator'/>
-          <RatedAnnualkWh>609.0</RatedAnnualkWh>
+          <SystemIdentifier id='Refrigerator_ID1'/>
+          <RatedAnnualkWh>609</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
-          <SystemIdentifier id='CookingRange'/>
+          <SystemIdentifier id='Range_ID1'/>
           <FuelType>electricity</FuelType>
-          <extension>
-            <AnnualkWh>421.01149999999996</AnnualkWh>
-            <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.8323687154572571</FracSensible>
-            <FracLatent>0.09248541282858413</FracLatent>
-          </extension>
+          <IsInduction>true</IsInduction>
         </CookingRange>
         <Oven>
-          <SystemIdentifier id='Oven'/>
+          <SystemIdentifier id='Oven_ID1'/>
           <FuelType>electricity</FuelType>
+          <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>
       <Lighting>
-        <extension>
-          <AnnualInteriorkWh>1645.0945945945946</AnnualInteriorkWh>
-          <AnnualExteriorkWh>114.58333333333333</AnnualExteriorkWh>
-          <AnnualGaragekWh>0.0</AnnualGaragekWh>
-        </extension>
+        <LightingFractions>
+          <extension>
+            <FractionQualifyingTierIFixturesInterior>0.5</FractionQualifyingTierIFixturesInterior>
+            <FractionQualifyingTierIFixturesExterior>0.5</FractionQualifyingTierIFixturesExterior>
+            <FractionQualifyingTierIFixturesGarage>0.5</FractionQualifyingTierIFixturesGarage>
+            <FractionQualifyingTierIIFixturesInterior>0.25</FractionQualifyingTierIIFixturesInterior>
+            <FractionQualifyingTierIIFixturesExterior>0.25</FractionQualifyingTierIIFixturesExterior>
+            <FractionQualifyingTierIIFixturesGarage>0.25</FractionQualifyingTierIIFixturesGarage>
+          </extension>
+        </LightingFractions>
       </Lighting>
-      <MiscLoads>
-        <PlugLoad>
-          <SystemIdentifier id='Residual_MELs'/>
-          <PlugLoadType>other</PlugLoadType>
-          <Load>
-            <Units>kWh/year</Units>
-            <Value>3185.0</Value>
-          </Load>
-          <extension>
-            <FracSensible>0.8545920200609892</FracSensible>
-            <FracLatent>0.04466918399218376</FracLatent>
-          </extension>
-        </PlugLoad>
-        <PlugLoad>
-          <SystemIdentifier id='Television'/>
-          <PlugLoadType>TV other</PlugLoadType>
-          <Load>
-            <Units>kWh/year</Units>
-            <Value>689.0</Value>
-          </Load>
-          <extension>
-            <FracSensible>0.9999997510703025</FracSensible>
-            <FracLatent>0.0</FracLatent>
-          </extension>
-        </PlugLoad>
-      </MiscLoads>
     </BuildingDetails>
   </Building>
 </HPXML>

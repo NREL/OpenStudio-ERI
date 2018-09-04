@@ -396,7 +396,7 @@ def get_eec_dhw(hpxml_doc)
   
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
-    value_adj = XMLHelper.get_value(dhw_system, "extension/PerformanceAdjustmentEnergyFactor")
+    value_adj = XMLHelper.get_value(dhw_system, "extension/EnergyFactorMultiplier")
     if not value.nil? and not value_adj.nil?
       eec_dhws << get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end

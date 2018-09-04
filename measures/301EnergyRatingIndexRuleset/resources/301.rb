@@ -1548,7 +1548,7 @@ class EnergyRatingIndex301Ruleset
     end
     XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
     extension = XMLHelper.add_element(new_wh_sys, "extension")
-    XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
+    XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
     
   end
     
@@ -1584,9 +1584,9 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
       extension = XMLHelper.add_element(new_wh_sys, "extension")
       if XMLHelper.get_value(new_wh_sys, "WaterHeaterType") == 'instantaneous water heater'
-        XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 0.92)
+        XMLHelper.add_element(extension, "EnergyFactorMultiplier", 0.92)
       else
-        XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
+        XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
       end
       
     else
@@ -1617,7 +1617,7 @@ class EnergyRatingIndex301Ruleset
       end
       XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
       extension = XMLHelper.add_element(new_wh_sys, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentEnergyFactor", 1.0)
+      XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
       
     end
     
@@ -1657,6 +1657,7 @@ class EnergyRatingIndex301Ruleset
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
       XMLHelper.add_element(extension, "RefLoopL", ref_loop_l)
+      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
       
       ref_f_gpd = get_fixtures_gpd_reference()
       
@@ -1668,8 +1669,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_fixture, "LowFlow", false)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
       
     else
     
@@ -1687,6 +1688,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
+      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
       
       ref_f_gpd = 0.0
       
@@ -1698,8 +1700,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_fixture, "LowFlow", false)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
       
     end
     
@@ -1715,11 +1717,15 @@ class EnergyRatingIndex301Ruleset
     
       orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
       
-      low_flow_fixtures = true
+      low_flow_fixtures_list = []
       orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |wf|
-        if not Boolean(XMLHelper.get_value(wf, "LowFlow"))
-          low_flow_fixtures = false
-        end
+        low_flow_fixtures_list << Boolean(XMLHelper.get_value(wf, "LowFlow"))
+      end
+      low_flow_fixtures_list.uniq!
+      if low_flow_fixtures_list.size == 1 and low_flow_fixtures_list[0]
+        low_flow_fixtures = true
+      else
+        low_flow_fixtures = false
       end
       
       bsmnt = get_conditioned_basement_integer(orig_details)
@@ -1817,8 +1823,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_fixture, "LowFlow", low_flow_fixtures)
       extension = XMLHelper.add_element(new_fixture, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
-      XMLHelper.add_element(extension, "SensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "LatentGainsBtu", lat_gain)
+      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
+      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
     
     else
       
@@ -2503,9 +2509,9 @@ class EnergyRatingIndex301Ruleset
     
     f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
     
-    hw_gpd = f_eff*(o_w_gpd + s_w_gpd*wd_eff) # Eq. 4.2-11
+    mw_gpd = f_eff*(o_w_gpd + s_w_gpd*wd_eff) # Eq. 4.2-11
     
-    return hw_gpd
+    return mw_gpd
   end
   
   def self.get_clothes_washer_sens_lat(clothes_washer_kwh)

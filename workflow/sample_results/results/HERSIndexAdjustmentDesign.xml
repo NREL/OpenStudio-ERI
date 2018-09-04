@@ -375,7 +375,7 @@
             <EnergyFactor>0.9172</EnergyFactor>
             <HotWaterTemperature>125.0</HotWaterTemperature>
             <extension>
-              <PerformanceAdjustmentEnergyFactor>1.0</PerformanceAdjustmentEnergyFactor>
+              <EnergyFactorMultiplier>1.0</EnergyFactorMultiplier>
             </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
@@ -400,8 +400,8 @@
             <LowFlow>false</LowFlow>
             <extension>
               <MixedWaterGPD>44.6</MixedWaterGPD>
-              <SensibleGainsBtu>-895710.0</SensibleGainsBtu>
-              <LatentGainsBtu>908850.0</LatentGainsBtu>
+              <AnnualSensibleGainsBtu>-895710.0</AnnualSensibleGainsBtu>
+              <AnnualLatentGainsBtu>908850.0</AnnualLatentGainsBtu>
             </extension>
           </WaterFixture>
         </WaterHeating>
