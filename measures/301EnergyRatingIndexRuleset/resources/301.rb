@@ -1176,6 +1176,7 @@ class EnergyRatingIndex301Ruleset
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
     sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACControl")
+    control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType")
     if control_type == "programmable thermostat"
       setpoint_offset = 2 # F
       XMLHelper.add_element(new_hvac_control, "ControlType", "programmable thermostat")
@@ -1188,7 +1189,7 @@ class EnergyRatingIndex301Ruleset
       extension = XMLHelper.add_element(new_hvac_control, "extension")
       XMLHelper.add_element(extension, "SetbackStartHour", 23) # 11 p.m.
       XMLHelper.add_element(extension, "SetupStartHour", 9) # 9 a.m.
-    elsif control_type == "manual thermostat"
+    elsif control_type == "manual thermostat" or control_type.nil?
       XMLHelper.add_element(new_hvac_control, "ControlType", "manual thermostat")
       XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
       XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
