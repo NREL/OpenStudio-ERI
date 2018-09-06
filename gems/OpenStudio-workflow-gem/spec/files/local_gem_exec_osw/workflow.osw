@@ -1,9 +1,0 @@
-{
-	"weather_file": "empty.epw",
-	"steps": [
-		{
-			"measure_dir_name": "test_local_gem_installation",
-			"arguments": {}
-		}
-	]
-}

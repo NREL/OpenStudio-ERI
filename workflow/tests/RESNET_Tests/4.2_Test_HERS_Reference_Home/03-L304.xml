@@ -153,22 +153,6 @@
             </Slab>
           </Foundation>
         </Foundations>
-        <RimJoists>
-          <RimJoist>
-            <SystemIdentifier id='RimJoist_ID1'/>
-            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>conditioned basement</InteriorAdjacentTo>
-            <Area>126</Area>
-            <Insulation>
-              <SystemIdentifier id='RimJoist_Ins_ID1'/>
-              <AssemblyEffectiveRValue>5.01</AssemblyEffectiveRValue>
-            </Insulation>
-            <extension>
-              <SolarAbsorptance>0.6</SolarAbsorptance>
-              <Emittance>0.9</Emittance>
-            </extension>
-          </RimJoist>
-        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
@@ -249,6 +233,7 @@
                 <ElectricResistance/>
               </HeatingSystemType>
               <HeatingSystemFuel>electricity</HeatingSystemFuel>
+              <HeatingCapacity>60000</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>Percent</Units>
                 <Value>1.0</Value>
@@ -260,6 +245,7 @@
               <DistributionSystem idref="HVAC_Dist_ID1"/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>60000</CoolingCapacity>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -295,14 +281,12 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>100.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>100.0</DuctSurfaceArea>
                 </Ducts>
               </AirDistribution>

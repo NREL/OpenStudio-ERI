@@ -5,11 +5,9 @@ require 'csv'
 require 'pathname'
 require 'fileutils'
 require 'parallel'
-require 'openstudio'
+require File.join(File.dirname(__FILE__), "design.rb")
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
 require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/util"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/unit_conversions"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
@@ -20,103 +18,70 @@ def rm_path(path)
   if Dir.exists?(path)
     FileUtils.rm_r(path)
   end
-  for retries in 1..50
+  while true
     break if not Dir.exists?(path)
     sleep(0.01)
   end
 end
-      
-def remove_design_dir(design, basedir)
 
-  designdir = File.join(basedir, design.gsub(' ',''))
+def run_design_direct(basedir, design, resultsdir, hpxml, debug, skip_validation, run)
+  # Calls design.rb methods directly. Should only be called from a forked 
+  # process. This is the fastest approach.
+  designdir = get_designdir(basedir, design)
   rm_path(designdir)
-  
-  return designdir
-end
-      
-def create_osw(design, designdir, basedir, resultsdir, options, run_design)
 
-  # Create dir
-  Dir.mkdir(designdir)
+  return nil if not run
   
-  # Create OSW
-  osw_path = File.join(designdir, "run.osw")
-  osw = OpenStudio::WorkflowJSON.new
-  osw.setOswPath(osw_path)
-  osw.addMeasurePath("../../measures")
-  
-  # Add measures (w/args) to OSW
-  schemas_dir = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
-  weather_dir = File.absolute_path(File.join(basedir, "..", "weather"))
-  output_hpxml_path = File.join(resultsdir, File.basename(designdir) + ".xml")
-  measures = {}
-  measures['301EnergyRatingIndexRuleset'] = {}
-  measures['301EnergyRatingIndexRuleset']['calc_type'] = design
-  measures['301EnergyRatingIndexRuleset']['hpxml_file_path'] = options[:hpxml]
-  measures['301EnergyRatingIndexRuleset']['weather_dir'] = weather_dir
-  #measures['301EnergyRatingIndexRuleset']['schemas_dir'] = schemas_dir # FIXME
-  measures['301EnergyRatingIndexRuleset']['hpxml_output_file_path'] = output_hpxml_path
-  if options[:debug]
-    measures['301EnergyRatingIndexRuleset']['debug'] = 'true'
-    measures['301EnergyRatingIndexRuleset']['osm_output_file_path'] = output_hpxml_path.gsub(".xml",".osm")
-  end
-  steps = OpenStudio::WorkflowStepVector.new
-  measures.keys.each do |measure|
-    step = OpenStudio::MeasureStep.new(measure)
-    step.setName(measure)
-    measures[measure].each do |arg,val|
-      step.setArgument(arg, val)
-    end
-    steps.push(step)
-  end  
-  osw.setWorkflowSteps(steps)
-  
-  # Save OSW
-  osw.save
-  
-  return osw_path, output_hpxml_path
-  
+  output_hpxml_path = run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
+  return output_hpxml_path, designdir
 end
 
-def run_osw(osw_path, options)
+def run_design_spawn(basedir, design, resultsdir, hpxml, debug, skip_validation, run)
+  # Calls design.rb in a new spawned process in order to utilize multiple 
+  # processes. Not as efficient as calling design.rb methods directly in 
+  # forked processes for a couple reasons:
+  # 1. There is overhead to using the CLI
+  # 2. There is overhead to spawning processes vs using forked processes
+  designdir = get_designdir(basedir, design)
+  rm_path(designdir)
 
-  # Redirect to a log file
-  log_str = " >> \"#{osw_path.gsub('.osw','.log')}\""
+  return nil if not run
   
-  # FIXME: Push changes upstream to OpenStudio-workflow gem
-  gem_str = '-I ../gems/OpenStudio-workflow-gem/lib/ '
-  
-  debug_str = ''
-  verbose_str = ''
-  if options[:debug]
-    debug_str = '--debug '
-    verbose_str = '--verbose '
-  end
-
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" #{verbose_str}#{gem_str}run #{debug_str}-w \"#{osw_path}\"#{log_str}"
-  system(command)
+  system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation}")
   
-  return File.join(File.dirname(osw_path), "run", "eplusout.sql")
+  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  return output_hpxml_path, designdir
+end
+
+def process_design_output(design, designdir, resultsdir, output_hpxml_path)
+  return nil if output_hpxml_path.nil?
   
+  print "[#{design}] Processing output...\n"
+  design_output = read_output(design, designdir, output_hpxml_path)
+  write_results_annual_output(resultsdir, design, design_output)
+  print "[#{design}] Done.\n"
+  
+  return design_output
 end
 
 def get_sql_query_result(sqlFile, query)
   result = sqlFile.execAndReturnFirstDouble(query)
   if result.is_initialized
-    return UnitConversions.convert(result.get, "GJ", "MBtu")
+    return result.get * 0.9478171203133172 # GJ => MBtu
   end
   return 0
 end
 
 def get_sql_result(sqlValue, design)
   if sqlValue.is_initialized
-    return UnitConversions.convert(sqlValue.get, "GJ", "MBtu")
+    return sqlValue.get * 0.9478171203133172 # GJ => MBtu
   end
   fail "ERROR: Simulation unsuccessful for #{design}."
 end
 
-def read_output(design, sql_path, output_hpxml_path)
+def read_output(design, designdir, output_hpxml_path)
+  sql_path = File.join(designdir, "run", "eplusout.sql")
   if not File.exists?(sql_path)
     fail "ERROR: Simulation unsuccessful for #{design}."
   end
@@ -127,18 +92,18 @@ def read_output(design, sql_path, output_hpxml_path)
   
   # HPXML
   design_output[:hpxml] = output_hpxml_path
-  design_output[:hpxml_doc] = REXML::Document.new(File.read(design_output[:hpxml]))
-  design_output[:hpxml_cfa] = get_cfa(design_output[:hpxml_doc])
-  design_output[:hpxml_nbr] = get_nbr(design_output[:hpxml_doc])
-  design_output[:hpxml_nst] = get_nst(design_output[:hpxml_doc])
-  if design == Constants.CalcTypeERIReferenceHome
-    design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(design_output[:hpxml_doc])
+  hpxml_doc = REXML::Document.new(File.read(design_output[:hpxml]))
+  design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
+  design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
+  design_output[:hpxml_nst] = get_nst(hpxml_doc)
+  if design == Constants.CalcTypeERIReferenceHome or design == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+    design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(hpxml_doc)
   end
-  design_output[:hpxml_heat_fuel] = get_heating_fuel(design_output[:hpxml_doc])
-  design_output[:hpxml_dwh_fuel] = get_dhw_fuel(design_output[:hpxml_doc])
-  design_output[:hpxml_eec_heat] = get_eec_heat(design_output[:hpxml_doc])
-  design_output[:hpxml_eec_cool] = get_eec_cool(design_output[:hpxml_doc])
-  design_output[:hpxml_eec_dhw] = get_eec_dhw(design_output[:hpxml_doc])
+  design_output[:hpxml_heat_fuel] = get_heating_fuel(hpxml_doc)
+  design_output[:hpxml_dwh_fuel] = get_dhw_fuel(hpxml_doc)
+  design_output[:hpxml_eec_heat] = get_eec_heat(hpxml_doc)
+  design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
+  design_output[:hpxml_eec_dhw] = get_eec_dhw(hpxml_doc)
   
   # Total site energy
   design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design)
@@ -222,17 +187,17 @@ def read_output(design, sql_path, output_hpxml_path)
   design_output[:elecAppliances] -= design_output[:elecRecircPump]
   
   # Other - Space Heating Load
-  vars = "'" + BuildingLoadVars.get_space_heating_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsSpaceHeating.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeating] = get_sql_query_result(sqlFile, query)
   
   # Other - Space Cooling Load
-  vars = "'" + BuildingLoadVars.get_space_cooling_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsSpaceCooling.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCooling] = get_sql_query_result(sqlFile, query)
   
   # Other - Water Heating Load
-  vars = "'" + BuildingLoadVars.get_water_heating_load_vars.join("','") + "'"
+  vars = "'" + Constants.LoadVarsWaterHeating.join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHotWater] = get_sql_query_result(sqlFile, query)
   
@@ -378,7 +343,7 @@ def get_eec_heat(hpxml_doc)
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
     units.each do |unit|
-      value = XMLHelper.get_value(heat_pump, "AnnualHeatEfficiency[Units='#{unit}']/Value")
+      value = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
       eec_heats << get_eec_value_numerator(unit) / Float(value)
     end
@@ -409,7 +374,7 @@ def get_eec_cool(hpxml_doc)
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
     units.each do |unit|
-      value = XMLHelper.get_value(heat_pump, "AnnualCoolEfficiency[Units='#{unit}']/Value")
+      value = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
       eec_cools << get_eec_value_numerator(unit) / Float(value)
     end
@@ -431,7 +396,7 @@ def get_eec_dhw(hpxml_doc)
   
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
-    value_adj = XMLHelper.get_value(dhw_system, "extension/PerformanceAdjustmentEnergyFactor")
+    value_adj = XMLHelper.get_value(dhw_system, "extension/EnergyFactorMultiplier")
     if not value.nil? and not value_adj.nil?
       eec_dhws << get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end
@@ -465,7 +430,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
   results[:xeul_cool] = 0 # TODO
   results[:xeul_dhw] = 0 # TODO
   
-  # Table 4.2.1(1) Coefficients ‘a’ and ‘b’
+  # Table 4.2.1(1) Coefficients ï¿½aï¿½ and ï¿½bï¿½
   results[:coeff_cool_a] = 3.8090
   results[:coeff_cool_b] = 0.0
   results[:coeff_heat_a] = nil
@@ -493,29 +458,29 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     fail "ERROR: Could not identify EEC coefficients for water heating system."
   end
   
-  # EEC_x = Equipment Efficiency Coefficient for the Rated Home’s equipment, such that EEC_x equals the 
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer’s 
+  # EEC_x = Equipment Efficiency Coefficient for the Rated Homeï¿½s equipment, such that EEC_x equals the 
+  # energy consumption per unit load in like units as the load, and as derived from the Manufacturerï¿½s 
   # Equipment Performance Rating (MEPR) such that EEC_x equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_x equals 3.413 / MEPR for HSPF, EER or SEER ratings.
   results[:eec_x_heat] = rated_output[:hpxml_eec_heat]
   results[:eec_x_cool] = rated_output[:hpxml_eec_cool]
   results[:eec_x_dhw] = rated_output[:hpxml_eec_dhw]
   
-  # EEC_r = Equipment Efficiency Coefficient for the Reference Home’s equipment, such that EEC_r equals the 
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer’s 
+  # EEC_r = Equipment Efficiency Coefficient for the Reference Homeï¿½s equipment, such that EEC_r equals the 
+  # energy consumption per unit load in like units as the load, and as derived from the Manufacturerï¿½s 
   # Equipment Performance Rating (MEPR) such that EEC_r equals 1.0 / MEPR for AFUE, COP or EF ratings, or 
   # such that EEC_r equals 3.413 / MEPR for HSPF, EER or SEER ratings
   results[:eec_r_heat] = ref_output[:hpxml_eec_heat]
   results[:eec_r_cool] = ref_output[:hpxml_eec_cool]
   results[:eec_r_dhw] = ref_output[:hpxml_eec_dhw]
   
-  # EC_x = estimated Energy Consumption for the Rated Home’s end uses (for heating, including Auxiliary 
+  # EC_x = estimated Energy Consumption for the Rated Homeï¿½s end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_x_heat] = rated_output[:elecHeating] + rated_output[:fuelHeating]
   results[:ec_x_cool] = rated_output[:elecCooling]
   results[:ec_x_dhw] = rated_output[:elecHotWater] + rated_output[:fuelHotWater] + rated_output[:elecRecircPump]
   
-  # EC_r = estimated Energy Consumption for the Reference Home’s end uses (for heating, including Auxiliary 
+  # EC_r = estimated Energy Consumption for the Reference Homeï¿½s end uses (for heating, including Auxiliary 
   # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
   results[:ec_r_heat] = ref_output[:elecHeating] + ref_output[:fuelHeating]
   results[:ec_r_cool] = ref_output[:elecCooling]
@@ -532,7 +497,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
   results[:dse_r_cool] = results[:reul_cool] / results[:ec_r_cool] * results[:eec_r_cool]
   results[:dse_r_dhw] = results[:reul_dhw] / results[:ec_r_dhw] * results[:eec_r_dhw]
   
-  # nEC_x = (a* EEC_x – b)*(EC_x * EC_r * DSE_r) / (EEC_x * REUL) (Eq 4.1-1a)
+  # nEC_x = (a* EEC_x ï¿½ b)*(EC_x * EC_r * DSE_r) / (EEC_x * REUL) (Eq 4.1-1a)
   results[:nec_x_heat] = 0
   results[:nec_x_cool] = 0
   results[:nec_x_dhw] = 0
@@ -598,7 +563,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     # ANSI/RESNET/ICC 301-2014 Addendum E-2018 House Size Index Adjustment Factors (IAF)
     
     # 4.3.3 The saving represented by the IAD shall be calculated using equation 4.3.3-1.
-    # IADSAVE = (100 – ERIIAD) / 100
+    # IADSAVE = (100 ï¿½ ERIIAD) / 100
     results[:iad_save] = (100.0 - results_iad[:hers_index]) / 100.0
     
     # 4.3.4 The IAF for the Rated Home (IAFPD) shall be calculated in accordance with equation 4.3.4-1.
@@ -634,33 +599,33 @@ def write_results_annual_output(resultsdir, design, design_output)
   out_csv = File.join(resultsdir, "#{design.gsub(' ','')}.csv")
   
   results_out = {}
-  results_out["Electricity, Total (MBtu)"] = design_output[:elecTotal]
-  results_out["Electricity, Net (MBtu)"] = design_output[:elecTotal]-design_output[:elecPV]
-  results_out["Natural Gas, Total (MBtu)"] = design_output[:ngTotal]
-  results_out["Other Fuels, Total (MBtu)"] = design_output[:otherTotal]
-  results_out[""] = "", # line break
-  results_out["Electricity, Heating (MBtu)"] = design_output[:elecHeating]
-  results_out["Electricity, Cooling (MBtu)"] = design_output[:elecCooling]
-  results_out["Electricity, Fans/Pumps (MBtu)"] = design_output[:elecFans]+design_output[:elecPumps]
-  results_out["Electricity, Hot Water (MBtu)"] = design_output[:elecHotWater]+design_output[:elecRecircPump]
-  results_out["Electricity, Lighting (MBtu)"] = design_output[:elecIntLighting]+design_output[:elecExtLighting]
-  results_out["Electricity, Mech Vent (MBtu)"] = design_output[:elecMechVent]
-  results_out["Electricity, Refrigerator (MBtu)"] = design_output[:elecFridge]
-  results_out["Electricity, Dishwasher (MBtu)"] = design_output[:elecDishwasher]
-  results_out["Electricity, Clothes Washer (MBtu)"] = design_output[:elecClothesWasher]
-  results_out["Electricity, Clothes Dryer (MBtu)"] = design_output[:elecClothesDryer]
-  results_out["Electricity, Range/Oven (MBtu)"] = design_output[:elecRangeOven]
-  results_out["Electricity, Ceiling Fan (MBtu)"] = design_output[:elecCeilingFan]
-  results_out["Electricity, Plug Loads (MBtu)"] = design_output[:elecMELs]+design_output[:elecTV]
-  results_out["Electricity, PV (MBtu)"] = design_output[:elecPV]
-  results_out["Natural Gas, Heating (MBtu)"] = design_output[:ngHeating]
-  results_out["Natural Gas, Hot Water (MBtu)"] = design_output[:ngHotWater]
-  results_out["Natural Gas, Clothes Dryer (MBtu)"] = design_output[:ngClothesDryer]
-  results_out["Natural Gas, Range/Oven (MBtu)"] = design_output[:ngRangeOven]
-  results_out["Other Fuels, Heating (MBtu)"] = design_output[:otherHeating]
-  results_out["Other Fuels, Hot Water (MBtu)"] = design_output[:otherHotWater]
-  results_out["Other Fuels, Clothes Dryer (MBtu)"] = design_output[:otherClothesDryer]
-  results_out["Other Fuels, Range/Oven (MBtu)"] = design_output[:otherRangeOven]
+  results_out["Electricity: Total (MBtu)"] = design_output[:elecTotal]
+  results_out["Electricity: Net (MBtu)"] = design_output[:elecTotal]-design_output[:elecPV]
+  results_out["Natural Gas: Total (MBtu)"] = design_output[:ngTotal]
+  results_out["Other Fuels: Total (MBtu)"] = design_output[:otherTotal]
+  results_out[""] = "" # line break
+  results_out["Electricity: Heating (MBtu)"] = design_output[:elecHeating]
+  results_out["Electricity: Cooling (MBtu)"] = design_output[:elecCooling]
+  results_out["Electricity: Fans/Pumps (MBtu)"] = design_output[:elecFans]+design_output[:elecPumps]
+  results_out["Electricity: Hot Water (MBtu)"] = design_output[:elecHotWater]+design_output[:elecRecircPump]
+  results_out["Electricity: Lighting (MBtu)"] = design_output[:elecIntLighting]+design_output[:elecExtLighting]
+  results_out["Electricity: Mech Vent (MBtu)"] = design_output[:elecMechVent]
+  results_out["Electricity: Refrigerator (MBtu)"] = design_output[:elecFridge]
+  results_out["Electricity: Dishwasher (MBtu)"] = design_output[:elecDishwasher]
+  results_out["Electricity: Clothes Washer (MBtu)"] = design_output[:elecClothesWasher]
+  results_out["Electricity: Clothes Dryer (MBtu)"] = design_output[:elecClothesDryer]
+  results_out["Electricity: Range/Oven (MBtu)"] = design_output[:elecRangeOven]
+  results_out["Electricity: Ceiling Fan (MBtu)"] = design_output[:elecCeilingFan]
+  results_out["Electricity: Plug Loads (MBtu)"] = design_output[:elecMELs]+design_output[:elecTV]
+  results_out["Electricity: PV (MBtu)"] = design_output[:elecPV]
+  results_out["Natural Gas: Heating (MBtu)"] = design_output[:ngHeating]
+  results_out["Natural Gas: Hot Water (MBtu)"] = design_output[:ngHotWater]
+  results_out["Natural Gas: Clothes Dryer (MBtu)"] = design_output[:ngClothesDryer]
+  results_out["Natural Gas: Range/Oven (MBtu)"] = design_output[:ngRangeOven]
+  results_out["Other Fuels: Heating (MBtu)"] = design_output[:otherHeating]
+  results_out["Other Fuels: Hot Water (MBtu)"] = design_output[:otherHotWater]
+  results_out["Other Fuels: Clothes Dryer (MBtu)"] = design_output[:otherClothesDryer]
+  results_out["Other Fuels: Range/Oven (MBtu)"] = design_output[:otherRangeOven]
   CSV.open(out_csv, "wb") {|csv| results_out.to_a.each {|elem| csv << elem} }
   
 end
@@ -728,7 +693,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
     worksheet_out["Total Loads TRL*IAF"] = (results[:trl] * results[:iaf_rh]).round(4)
   end
   worksheet_out["HERS Index"] = results[:hers_index].round(2)
-  worksheet_out[""] = "", # line break
+  worksheet_out[""] = "" # line break
   worksheet_out["Ref Home CFA"] = ref_output[:hpxml_cfa]
   worksheet_out["Ref Home Nbr"] = ref_output[:hpxml_nbr]
   if using_iaf
@@ -755,7 +720,9 @@ def download_epws
   
   num_epws_expected = File.readlines(File.join(weather_dir, "data.csv")).size - 1
   num_epws_actual = Dir[File.join(weather_dir, "*.epw")].count
-  if num_epws_actual == num_epws_expected
+  num_cache_expcted = num_epws_expected
+  num_cache_actual = Dir[File.join(weather_dir, "*.cache")].count
+  if num_epws_actual == num_epws_expected and num_cache_actual == num_cache_expcted
     puts "Weather directory is already up-to-date."
     puts "#{num_epws_actual} weather files are available in the weather directory."
     puts "Completed."
@@ -767,7 +734,7 @@ def download_epws
   
   tmpfile = Tempfile.new("epw")
 
-  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/openstudio-eri-tmy3s.zip")
+  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/openstudio-eri-tmy3s-cache.zip")
   http = Net::HTTP.new(url.host, url.port)
 
   params = { 'User-Agent' => 'curl/7.43.0', 'Accept-Encoding' => 'identity' }
@@ -807,7 +774,7 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/valid.xml\n"
+  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -s -x sample_files/valid.xml\n"
 
   opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
     options[:hpxml] = t
@@ -820,6 +787,11 @@ OptionParser.new do |opts|
   options[:debug] = false
   opts.on('-d', '--debug') do |t|
     options[:debug] = true
+  end
+  
+  options[:skip_validation] = false
+  opts.on('-s', '--skip-validation') do |t|
+    options[:skip_validation] = true
   end
   
   opts.on_tail('-h', '--help', 'Display help') do
@@ -838,14 +810,14 @@ if not options[:hpxml]
 end
 
 unless (Pathname.new options[:hpxml]).absolute?
-  options[:hpxml] = File.expand_path(File.join(File.dirname(__FILE__), options[:hpxml]))
+  options[:hpxml] = File.expand_path(options[:hpxml])
 end 
 unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xml"
   fail "ERROR: '#{options[:hpxml]}' does not exist or is not an .xml file."
 end
 
 # Check for correct versions of OS
-os_version = "2.5.1"
+os_version = "2.6.0"
 if OpenStudio.openStudioVersion != os_version
   fail "ERROR: OpenStudio version #{os_version} is required."
 end
@@ -865,27 +837,44 @@ end
 
 run_designs = {Constants.CalcTypeERIRatedHome => true,
                Constants.CalcTypeERIReferenceHome => true,
-               Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf}
+               Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf,
+               Constants.CalcTypeERIIndexAdjustmentReferenceHome => using_iaf}
 
 # Run simulations
-design_outputs = {}
 puts "HPXML: #{options[:hpxml]}"
-Parallel.map(run_designs.keys, in_threads: run_designs.size) do |design|
-  # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
+design_outputs = {}
+if Process.respond_to?(:fork) # e.g., most Unix systems
   
-  designdir = remove_design_dir(design, basedir)
+  # Code runs in forked child processes and makes direct calls. This is the fastest 
+  # approach but isn't available on, e.g., Windows.
   
-  if run_designs[design]
-    print "[#{design}] Running workflow...\n"
-    osw_path, output_hpxml_path = create_osw(design, designdir, basedir, resultsdir, options, run_designs[design])
-    sql_path = run_osw(osw_path, options)
-    
-    print "[#{design}] Gathering results...\n"
-    design_outputs[design] = read_output(design, sql_path, output_hpxml_path)
-    
-    write_results_annual_output(resultsdir, design, design_outputs[design])
-    
-    print "[#{design}] Done.\n"
+  # Setup IO.pipe to communicate output from child processes to this parent process
+  readers,writers = {},{}
+  run_designs.keys.each do |design|
+    readers[design],writers[design] = IO.pipe
+  end
+  
+  Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
+    output_hpxml_path, designdir = run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+    writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
+  end
+  
+  # Retrieve output data from child processes
+  readers.each do |design,reader|
+    writers[design].close
+    next if not run_designs[design]
+    design_outputs[design] = Marshal.load(reader.read)
+  end
+  
+else # e.g., Windows
+  
+  # Fallback. Code runs in spawned child processes in order to take advantage of
+  # multiple processors.
+  
+  Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
+    output_hpxml_path, designdir = run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
+    design_outputs[design] = process_design_output(design, designdir, resultsdir, output_hpxml_path)
   end
   
 end
@@ -894,7 +883,7 @@ end
 puts "Calculating ERI..."
 if using_iaf
   results_iad = calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign], 
-                              design_outputs[Constants.CalcTypeERIReferenceHome])
+                              design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
 else
   results_iad = nil
 end
@@ -902,7 +891,6 @@ results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome],
                         design_outputs[Constants.CalcTypeERIReferenceHome], 
                         results_iad)
 
-puts "Writing output files..."
 write_results(results, resultsdir, design_outputs, using_iaf)
 
 puts "Output files written to '#{File.basename(resultsdir)}' directory."

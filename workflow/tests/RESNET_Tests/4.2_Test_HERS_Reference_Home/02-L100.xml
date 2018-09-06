@@ -140,7 +140,7 @@
               <Height>4</Height>
               <Area>672</Area>
               <Thickness>8</Thickness>
-              <BelowGradeDepth>3</BelowGradeDepth>
+              <DepthBelowGrade>3</DepthBelowGrade>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <AssemblyEffectiveRValue>8.165</AssemblyEffectiveRValue>
@@ -257,16 +257,17 @@
               <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatPumpType>air-to-air</HeatPumpType>
+              <CoolingCapacity>60000</CoolingCapacity>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
-              <AnnualCoolEfficiency>
+              <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>12</Value>
-              </AnnualCoolEfficiency>
-              <AnnualHeatEfficiency>
+              </AnnualCoolingEfficiency>
+              <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>7.5</Value>
-              </AnnualHeatEfficiency>
+              </AnnualHeatingEfficiency>
             </HeatPump>
           </HVACPlant>
           <HVACControl>
@@ -297,14 +298,12 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>100.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>100.0</DuctSurfaceArea>
                 </Ducts>
               </AirDistribution>

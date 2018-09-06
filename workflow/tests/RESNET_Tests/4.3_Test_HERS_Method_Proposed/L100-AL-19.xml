@@ -141,7 +141,7 @@
               <Height>2</Height>
               <Area>3078</Area>
               <Thickness>6</Thickness>
-              <BelowGradeDepth>0</BelowGradeDepth>
+              <DepthBelowGrade>0</DepthBelowGrade>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <AssemblyEffectiveRValue>1.34</AssemblyEffectiveRValue>
@@ -261,16 +261,17 @@
               <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatPumpType>air-to-air</HeatPumpType>
+              <CoolingCapacity>60000</CoolingCapacity>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
-              <AnnualCoolEfficiency>
+              <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>14.0</Value>
-              </AnnualCoolEfficiency>
-              <AnnualHeatEfficiency>
+              </AnnualCoolingEfficiency>
+              <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>8.2</Value>
-              </AnnualHeatEfficiency>
+              </AnnualHeatingEfficiency>
             </HeatPump>
           </HVACPlant>
           <HVACControl>
@@ -301,14 +302,12 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>0.001</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>0.001</DuctSurfaceArea>
                 </Ducts>
               </AirDistribution>
@@ -351,12 +350,12 @@
           <WaterFixture>
             <SystemIdentifier id='WF_ID1'/>
             <WaterFixtureType>shower head</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WF_ID2'/>
             <WaterFixtureType>faucet</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
         </WaterHeating>
       </Systems>

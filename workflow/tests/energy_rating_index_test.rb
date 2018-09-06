@@ -2,17 +2,17 @@ require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/xmlhelper'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/schedules'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/constants'
-require_relative '../../measures/301EnergyRatingIndexRuleset/resources/unit_conversions'
+require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
+require_relative '../../measures/HPXMLTranslator/resources/schedules'
+require_relative '../../measures/HPXMLTranslator/resources/constants'
+require_relative '../../measures/HPXMLTranslator/resources/unit_conversions'
 
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
   def test_valid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
-    Dir["#{xmldir}/valid*.xml"].each do |xml|
+    Dir["#{xmldir}/valid*.xml"].sort.each do |xml|
       run_and_check(xml, parent_dir, false)
     end
   end
@@ -20,7 +20,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_invalid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files"
-    Dir["#{xmldir}/invalid*.xml"].each do |xml|
+    Dir["#{xmldir}/invalid*.xml"].sort.each do |xml|
       run_and_check(xml, parent_dir, true)
     end
   end
@@ -30,12 +30,16 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb --download-weather"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" --download-weather"
     system(command)
     
     num_epws_expected = File.readlines(File.join(parent_dir, "..", "weather", "data.csv")).size - 1
     num_epws_actual = Dir[File.join(parent_dir, "..", "weather", "*.epw")].count
     assert_equal(num_epws_expected, num_epws_actual)
+    
+    num_cache_expected = File.readlines(File.join(parent_dir, "..", "weather", "data.csv")).size - 1
+    num_cache_actual = Dir[File.join(parent_dir, "..", "weather", "*.cache")].count
+    assert_equal(num_cache_expected, num_cache_actual)
   end
   
   def test_resnet_ashrae_140
@@ -46,7 +50,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     test_num = 0
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_Test_HERS_Reference_Home")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next if xml.end_with? "HERSReferenceHome.xml"
       test_num += 1
       
@@ -65,7 +69,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_resnet_hers_method
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
       _check_method_results(results_csv, test_num, test_num == 2, false)
@@ -75,7 +79,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_resnet_hers_method_iaf
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_IAF")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, true)
       _check_method_results(results_csv, test_num, test_num == 2, true)
@@ -87,7 +91,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     # Approved by RESNET Board of Directors June 16, 2016
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_Proposed")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       if xml.include? 'AC'
         test_num = File.basename(xml).gsub('L100-AC-','').gsub('.xml','').to_i
         test_loc = 'AC'
@@ -115,7 +119,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num += 1
       
       # Run test
@@ -158,7 +162,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water_PreAddendumA")
-    Dir["#{xmldir}/*.xml"].each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num += 1
       
       # Run test
@@ -202,11 +206,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def test_running_with_cli
-    # Verifies that these tests can be run from the CLI
+    # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" #{File.absolute_path(__FILE__)} --name=foo"
+    command = "\"#{cli_path}\" --no-ssl #{File.absolute_path(__FILE__)} --name=foo"
     success = system(command)
     assert(success)
   end
@@ -219,7 +223,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "cd #{parent_dir} && \"#{cli_path}\" energy_rating_index.rb -x #{xml}"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}"
     system(command)
     
     results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
@@ -606,8 +610,8 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xml_water_sens = 0.0
     xml_water_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture") do |wf|
-      xml_water_sens += Float(XMLHelper.get_value(wf, "extension/SensibleGainsBtu"))
-      xml_water_lat += Float(XMLHelper.get_value(wf, "extension/LatentGainsBtu"))
+      xml_water_sens += Float(XMLHelper.get_value(wf, "extension/AnnualSensibleGainsBtu"))
+      xml_water_lat += Float(XMLHelper.get_value(wf, "extension/AnnualLatentGainsBtu"))
     end
     s += "#{xml_water_sens} #{xml_water_lat}\n"
     
@@ -655,12 +659,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       num_seer += 1
     end
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
-      if hp.elements["AnnualHeatEfficiency[Units='HSPF']"]
-        hspf += Float(XMLHelper.get_value(hp, "AnnualHeatEfficiency[Units='HSPF']/Value"))
+      if hp.elements["AnnualHeatingEfficiency[Units='HSPF']"]
+        hspf += Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
         num_hspf += 1
       end
-      if hp.elements["AnnualCoolEfficiency[Units='SEER']"]
-        seer += Float(XMLHelper.get_value(hp, "AnnualCoolEfficiency[Units='SEER']/Value"))
+      if hp.elements["AnnualCoolingEfficiency[Units='SEER']"]
+        seer += Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
         num_seer += 1
       end
     end
@@ -890,7 +894,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       min_max_mn_delta_percent = [43.35, 45.00]
     elsif test_num == 9
       min_max_abs = [13.17, 13.68]
-      min_max_base_delta_percent = [-24.54, -23.40] # FIXME: Should be [-24.54, -23.47]
+      min_max_base_delta_percent = [-24.54, -23.47]
       min_max_mn_delta_percent = [47.26, 48.93]
     elsif test_num == 10
       min_max_abs = [8.81, 9.13]
@@ -906,7 +910,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       min_max_mn_delta_percent = [44.41, 45.99]
     elsif test_num == 13
       min_max_abs = [11.90, 12.38]
-      min_max_base_delta_percent = [9.3, 9.74] # FIXME: Should be [9.38, 9.74]
+      min_max_base_delta_percent = [9.38, 9.74]
       min_max_mn_delta_percent = [45.60, 47.33]
     elsif test_num == 14
       min_max_abs = [11.68, 12.14]

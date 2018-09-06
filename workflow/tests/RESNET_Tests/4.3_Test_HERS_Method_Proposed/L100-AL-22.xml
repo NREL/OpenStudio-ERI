@@ -141,7 +141,7 @@
               <Height>2</Height>
               <Area>3078</Area>
               <Thickness>6</Thickness>
-              <BelowGradeDepth>0</BelowGradeDepth>
+              <DepthBelowGrade>0</DepthBelowGrade>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <AssemblyEffectiveRValue>1.34</AssemblyEffectiveRValue>
@@ -264,6 +264,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>60000</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.80</Value>
@@ -275,6 +276,7 @@
               <DistributionSystem idref="HVAC_Dist_ID1"/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>60000</CoolingCapacity>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -310,14 +312,12 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>0.001</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace</DuctLocation>
-                  <FractionDuctArea>1.0</FractionDuctArea>
                   <DuctSurfaceArea>0.001</DuctSurfaceArea>
                 </Ducts>
               </AirDistribution>
@@ -360,12 +360,12 @@
           <WaterFixture>
             <SystemIdentifier id='WF_ID1'/>
             <WaterFixtureType>shower head</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WF_ID2'/>
             <WaterFixtureType>faucet</WaterFixtureType>
-            <FlowRate>1.0</FlowRate>
+            <LowFlow>true</LowFlow>
           </WaterFixture>
         </WaterHeating>
       </Systems>
