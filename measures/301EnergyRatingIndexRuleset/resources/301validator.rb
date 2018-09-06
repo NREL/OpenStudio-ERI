@@ -406,7 +406,7 @@ class EnergyRatingIndex301Validator
         # [HVACControl]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'ControlType' => one,
+            '[ControlType="manual thermostat" or ControlType="programmable thermostat"]' => one,
         },
 
         

@@ -310,17 +310,9 @@
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
-            <ControlType>programmable thermostat</ControlType>
+            <ControlType>manual thermostat</ControlType>
             <SetpointTempHeatingSeason>68</SetpointTempHeatingSeason>
-            <SetbackTempHeatingSeason>66</SetbackTempHeatingSeason>
-            <TotalSetbackHoursperWeekHeating>49</TotalSetbackHoursperWeekHeating>
-            <SetupTempCoolingSeason>80</SetupTempCoolingSeason>
             <SetpointTempCoolingSeason>78</SetpointTempCoolingSeason>
-            <TotalSetupHoursperWeekCooling>42</TotalSetupHoursperWeekCooling>
-            <extension>
-              <SetbackStartHour>23</SetbackStartHour>
-              <SetupStartHour>9</SetupStartHour>
-            </extension>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>
@@ -405,8 +397,8 @@
           <SystemIdentifier id='ClothesWasher'/>
           <extension>
             <AnnualkWh>64.73207773783562</AnnualkWh>
-            <FracSensible>0.3288511341806826</FracSensible>
-            <FracLatent>0.038007920030933166</FracLatent>
+            <FracSensible>0.27</FracSensible>
+            <FracLatent>0.03</FracLatent>
             <HotWaterGPD>1.9194494998024507</HotWaterGPD>
           </extension>
         </ClothesWasher>
@@ -414,18 +406,18 @@
           <SystemIdentifier id='ClothesDryer'/>
           <FuelType>electricity</FuelType>
           <extension>
-            <AnnualkWh>919.7140580084878</AnnualkWh>
+            <AnnualkWh>1043.5217196634765</AnnualkWh>
             <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.16434449138818952</FracSensible>
-            <FracLatent>0.018260499043132167</FracLatent>
+            <FracSensible>0.135</FracSensible>
+            <FracLatent>0.015</FracLatent>
           </extension>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
           <extension>
             <AnnualkWh>115.06046511627906</AnnualkWh>
-            <FracSensible>0.5271360868061619</FracSensible>
-            <FracLatent>0.5271360868061619</FracLatent>
+            <FracSensible>0.3</FracSensible>
+            <FracLatent>0.3</FracLatent>
             <HotWaterGPD>0.14325721567378133</HotWaterGPD>
           </extension>
         </Dishwasher>
@@ -439,8 +431,8 @@
           <extension>
             <AnnualkWh>421.01149999999996</AnnualkWh>
             <AnnualTherm>0.0</AnnualTherm>
-            <FracSensible>0.8323687154572571</FracSensible>
-            <FracLatent>0.09248541282858413</FracLatent>
+            <FracSensible>0.7200000000000001</FracSensible>
+            <FracLatent>0.08000000000000002</FracLatent>
           </extension>
         </CookingRange>
         <Oven>

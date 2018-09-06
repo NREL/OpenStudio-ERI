@@ -2395,27 +2395,50 @@ class OSModel
   def self.add_setpoints(runner, model, building, weather) 
 
     control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
+    controltype = XMLHelper.get_value(control, "ControlType")
     
     # TODO: Setbacks and setups
   
     htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
-    weekday_setpoints = [htg_sp]*24
-    weekend_setpoints = [htg_sp]*24
-    use_auto_season = false
-    season_start_month = 1
-    season_end_month = 12
-    success = HVAC.apply_heating_setpoints(model, runner, weather, weekday_setpoints, weekend_setpoints,
-                                           use_auto_season, season_start_month, season_end_month)
+    if controltype == "manual thermostat"
+      htg_weekday_setpoints = [htg_sp]*24
+    elsif controltype == "programmable thermostat"
+      htg_weekday_setpoints = [htg_sp]*24
+      setback_temp = Float(XMLHelper.get_value(control, "SetbackTempHeatingSeason"))
+      setback_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetbackHoursperWeekHeating"))/7.0)
+      setback_start_hr = Integer(XMLHelper.get_value(control, "extension/SetbackStartHour"))
+      for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
+        htg_weekday_setpoints[hr % 24] = setback_temp
+      end
+      puts "htg_weekday_setpoints #{htg_weekday_setpoints}"
+    end
+    htg_weekend_setpoints = htg_weekday_setpoints
+    htg_use_auto_season = false
+    htg_season_start_month = 1
+    htg_season_end_month = 12
+    success = HVAC.apply_heating_setpoints(model, runner, weather, htg_weekday_setpoints, htg_weekend_setpoints,
+                                           htg_use_auto_season, htg_season_start_month, htg_season_end_month)
     return false if not success
     
     clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
-    weekday_setpoints = [clg_sp]*24
-    weekend_setpoints = [clg_sp]*24
-    use_auto_season = false
-    season_start_month = 1
-    season_end_month = 12
-    success = HVAC.apply_cooling_setpoints(model, runner, weather, weekday_setpoints, weekend_setpoints,
-                                           use_auto_season, season_start_month, season_end_month)
+    if controltype == "manual thermostat"
+      clg_weekday_setpoints = [clg_sp]*24
+    else
+      clg_weekday_setpoints = [clg_sp]*24
+      setup_temp = Float(XMLHelper.get_value(control, "SetupTempCoolingSeason"))
+      setup_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetupHoursperWeekCooling"))/7.0)
+      setup_start_hr = Integer(XMLHelper.get_value(control, "extension/SetupStartHour"))
+      for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
+        clg_weekday_setpoints[hr % 24] = setup_temp
+      end
+      puts "clg_weekday_setpoints #{clg_weekday_setpoints}"
+    end
+    clg_weekend_setpoints = clg_weekday_setpoints
+    clg_use_auto_season = false
+    clg_season_start_month = 1
+    clg_season_end_month = 12
+    success = HVAC.apply_cooling_setpoints(model, runner, weather, clg_weekday_setpoints, clg_weekend_setpoints,
+                                           clg_use_auto_season, clg_season_start_month, clg_season_end_month)
     return false if not success
 
     return true

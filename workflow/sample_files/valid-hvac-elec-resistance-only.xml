@@ -245,7 +245,7 @@
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
-            <ControlType>programmable thermostat</ControlType>
+            <ControlType>manual thermostat</ControlType>
           </HVACControl>
         </HVAC>
         <WaterHeating>

@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.09.01 07:52,
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.09.05 18:18,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 BATH EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
@@ -183,4 +183,4 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.09.01 07:52,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 9831 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  6.30sec
+   ************* EnergyPlus Completed Successfully-- 9831 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  6.54sec

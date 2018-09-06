@@ -3573,7 +3573,7 @@ SurfaceProperty:ExposedFoundationPerimeter,
   1;                                      !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
+  Surface 3,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -3585,7 +3585,13 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 6,                              !- Surface Name
+  Surface 4,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 1,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -3597,13 +3603,7 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 4,                              !- Surface Name
+  Surface 6,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
