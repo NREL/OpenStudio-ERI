@@ -839,6 +839,10 @@ run_designs = {Constants.CalcTypeERIRatedHome => true,
                Constants.CalcTypeERIReferenceHome => false,
                Constants.CalcTypeERIIndexAdjustmentDesign => false,
                Constants.CalcTypeERIIndexAdjustmentReferenceHome => false}
+# run_designs = {Constants.CalcTypeERIRatedHome => true,
+#                Constants.CalcTypeERIReferenceHome => true,
+#                Constants.CalcTypeERIIndexAdjustmentDesign => true,
+#                Constants.CalcTypeERIIndexAdjustmentReferenceHome => true}
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
@@ -878,7 +882,7 @@ else # e.g., Windows
   end
   
 end
-exit
+=begin
 # Calculate and write results
 puts "Calculating ERI..."
 if using_iaf
@@ -895,3 +899,4 @@ write_results(results, resultsdir, design_outputs, using_iaf)
 
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
 puts "Completed in #{(Time.now - start_time).round(1)} seconds."
+=end

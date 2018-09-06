@@ -1081,6 +1081,16 @@ class Constants
             self.SpaceTypePierBeam,
             self.SpaceTypeUnfinishedAttic,
             self.SpaceTypeUnfinishedBasement]
-  end 
+  end
+  def self.ZoneHVACPriorityList
+     return ["ZoneHVACEnergyRecoveryVentilator", 
+             "ZoneHVACTerminalUnitVariableRefrigerantFlow", 
+             "AirLoopHVACUnitarySystem",
+             "ZoneHVACBaseboardConvectiveElectric", 
+             "ZoneHVACBaseboardConvectiveWater", 
+             "AirTerminalSingleDuctUncontrolled", 
+             "ZoneHVACDehumidifierDX", 
+             "ZoneHVACPackagedTerminalAirConditioner"] 
+  end
   
 end

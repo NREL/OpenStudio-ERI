@@ -229,34 +229,42 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <HeatingSystem>
-              <SystemIdentifier id='SpaceHeat_ID1'/>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
-              <HeatingSystemType>
-                <Furnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>64000</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>0.92</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1</FractionHeatLoadServed>
-            </HeatingSystem>
-            <HeatingSystem>
-              <SystemIdentifier id='SpaceHeat_ID2'/>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>48000</CoolingCapacity>
+              <FractionCoolLoadServed>0.33</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>16</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID2'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
-              <HeatingSystemType>
-                <Furnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>64000</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>0.92</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1</FractionHeatLoadServed>
-            </HeatingSystem>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>48000</CoolingCapacity>
+              <FractionCoolLoadServed>0.33</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>16</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID3'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>48000</CoolingCapacity>
+              <FractionCoolLoadServed>0.33</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>16</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>

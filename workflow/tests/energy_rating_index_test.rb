@@ -215,9 +215,28 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     assert(success)
   end
 
+  def test_multiple_hvac_same_type
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    xmldir = "#{parent_dir}/sample_files/moreloops"
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      next unless xml.include? 'only-x3'
+
+      # Run three of the same system types
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false, 'rated')
+
+      # R only one of the system types
+      single_sys_xml = xml.gsub('-x3', '')
+      xml = File.absolute_path(File.join(File.dirname(single_sys_xml), "..", File.basename(single_sys_xml)))
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false, 'rated')
+
+      # Compare results
+      # TODO
+    end
+  end
+
   private
   
-  def run_and_check(xml, parent_dir, expect_error, using_iaf=false)
+  def run_and_check(xml, parent_dir, expect_error, using_iaf=false, run_only=false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
     
@@ -231,10 +250,14 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       assert(!File.exists?(results_csv))
     else
       # Check all output files exist
-      ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
+      unless run_only == 'rated'
+        ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
+      end
       rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
       worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
-      assert(File.exists?(ref_hpxml))
+      unless run_only == 'rated'
+        assert(File.exists?(ref_hpxml))
+      end
       assert(File.exists?(rated_hpxml))
       assert(File.exists?(results_csv))
       assert(File.exists?(worksheet_csv))
@@ -244,7 +267,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       end
       
       # Check Reference/Rated HPXMLs are valid
-      _test_schema_validation(parent_dir, ref_hpxml)
+      unless run_only == 'rated'
+        _test_schema_validation(parent_dir, ref_hpxml)
+      end
       _test_schema_validation(parent_dir, rated_hpxml)
       if using_iaf
         _test_schema_validation(parent_dir, iad_hpxml)
@@ -268,7 +293,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def _check_reference_home_components(ref_hpxml, test_num)
     hpxml_doc = REXML::Document.new(File.read(ref_hpxml))
 
-    # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 – 4
+    # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 ï¿½ 4
     
     epsilon = 0.0005 # 0.05%
     
