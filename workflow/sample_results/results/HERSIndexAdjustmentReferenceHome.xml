@@ -394,6 +394,7 @@
             <extension>
               <MixedWaterGPD>15.717671770088979</MixedWaterGPD>
               <RefLoopL>158.5640646055102</RefLoopL>
+              <EnergyConsumptionAdjustmentFactor>1.0</EnergyConsumptionAdjustmentFactor>
             </extension>
           </HotWaterDistribution>
           <WaterFixture>

@@ -1333,22 +1333,18 @@ class EnergyRatingIndex301Ruleset
     end
     
     # Table 303.4.1(1) - Thermostat
-    has_programmable_tstat = false
     control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType")
-    if control_type == "programmable thermostat"
-      has_programmable_tstat = true
-    end
     
-    programmable_offset = 2 # F
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
     sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACControl")
-    if has_programmable_tstat
+    if control_type == "programmable thermostat"
+      setpoint_offset = 2 # F
       XMLHelper.add_element(new_hvac_control, "ControlType", "programmable thermostat")
       XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
-      XMLHelper.add_element(new_hvac_control, "SetbackTempHeatingSeason", 68-programmable_offset)
+      XMLHelper.add_element(new_hvac_control, "SetbackTempHeatingSeason", 68-setpoint_offset)
       XMLHelper.add_element(new_hvac_control, "TotalSetbackHoursperWeekHeating", 7*7) # 11 p.m. to 5:59 a.m., 7 days a week
-      XMLHelper.add_element(new_hvac_control, "SetupTempCoolingSeason", 78+programmable_offset)
+      XMLHelper.add_element(new_hvac_control, "SetupTempCoolingSeason", 78+setpoint_offset)
       XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
       XMLHelper.add_element(new_hvac_control, "TotalSetupHoursperWeekCooling", 6*7) # 9 a.m. to 2:59 p.m., 7 days a week
       extension = XMLHelper.add_element(new_hvac_control, "extension")
