@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.09.01 07:52,
+Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.09.05 18:18,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Day:Interval="RES MV_1 BATH EXHAUST SCHEDULE ALLDAY1", Blank Schedule Type Limits Name input -- will not be validated.
@@ -139,12 +139,12 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.09.01 07:52,
    ************* Beginning Simulation
    ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1.
    **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/01 16:00 - 17:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 1.168E-004 m3/s/W
+   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 1.167E-004 m3/s/W
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
    **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
    ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2.
    **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/01 16:00 - 17:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 9.775E-005 m3/s/W
+   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005] Current value is 9.769E-005 m3/s/W
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components or
    **   ~~~   ** inconsistent supply air fan operation modes in coil and unitary system objects.
    ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-ELECTRICITY" has no energy cost. 
@@ -172,17 +172,17 @@ Program Version,EnergyPlus, Version 8.9.0-eba93e8e1b, YMD=2018.09.01 07:52,
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 1 error continues...
-   *************  **   ~~~   **   This error occurred 32465 total times;
+   *************  **   ~~~   **   This error occurred 32229 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=1.216166E-004  Min=1.167600E-004
+   *************  **   ~~~   **   Max=1.215357E-004  Min=1.166809E-004
    *************
    *************  ** Warning ** Coil:Cooling:DX:MultiSpeed "RESIDENTIAL CENTRAL AC COOLING COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at speed 2 error continues...
-   *************  **   ~~~   **   This error occurred 6698 total times;
+   *************  **   ~~~   **   This error occurred 6655 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=1.018118E-004  Min=9.775252E-005
+   *************  **   ~~~   **   Max=1.017440E-004  Min=9.768636E-005
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 39289 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  6.98sec
+   ************* EnergyPlus Completed Successfully-- 39010 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.05sec

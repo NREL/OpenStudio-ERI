@@ -421,11 +421,22 @@ class EnergyPlusValidator
         # [HVACControl]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => {
             'SystemIdentifier' => one, # Required by HPXML schema
+            '[ControlType="manual thermostat" or ControlType="programmable thermostat"]' => one, # See [HVACControlType=Programmable]
             'SetpointTempHeatingSeason' => one,
             'SetpointTempCoolingSeason' => one,
         },
 
+            ## [HVACControlType=Programmable]
+            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl[ControlType="programmable thermostat"]' => {
+                'SetbackTempHeatingSeason' => one,
+                'TotalSetbackHoursperWeekHeating' => one,
+                'SetupTempCoolingSeason' => one,
+                'TotalSetupHoursperWeekCooling' => one,
+                'extension/SetbackStartHour' => one, # e.g., 23 => 11pm
+                'extension/SetupStartHour' => one, # e.g., 9 => 9am
+            },
         
+
         
         # [Dehumidifier]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/Dehumidifier' => {
