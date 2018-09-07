@@ -1726,19 +1726,11 @@ class OSModel
       else
         fenestration_areas[skylight.elements["AttachedToRoof"].attributes["idref"]] += skylight_area
       end
-      skylight_space = nil
       skylight_tilt = nil
       building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
         attic_type = attic.elements["AtticType"].text
         attic.elements.each("Roofs/Roof") do |roof|
           next unless roof.elements["SystemIdentifier"].attributes["id"] == skylight.elements["AttachedToRoof"].attributes["idref"]
-          if ["vented attic", "unvented attic"].include? attic_type
-            skylight_space = spaces[Constants.SpaceTypeUnfinishedAttic]
-          elsif ["cape cod", "flat roof", "cathedral ceiling"].include? attic_type
-            skylight_space = spaces[Constants.SpaceTypeLiving]
-          else
-            fail "Unhandled value (#{attic_type})."
-          end
           skylight_tilt = Float(roof.elements["Pitch"].text)/12.0
         end
       end
@@ -1748,7 +1740,7 @@ class OSModel
                                                                 skylight_azimuth, skylight_tilt), model)
       surface.setName("surface #{skylight_id}")
       surface.setSurfaceType("RoofCeiling")
-      surface.setSpace(skylight_space)
+      surface.setSpace(spaces[Constants.SpaceTypeLiving]) # Ensures it is included in Manual J sizing
       surface.setOutsideBoundaryCondition("Outdoors") # cannot be adiabatic or OS won't create subsurface
       surfaces << surface
       sub_surface = OpenStudio::Model::SubSurface.new(add_roof_polygon(UnitConversions.convert(skylight_width,"ft","m"), 
