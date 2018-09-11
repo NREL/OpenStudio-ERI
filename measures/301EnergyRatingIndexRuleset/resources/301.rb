@@ -1127,7 +1127,7 @@ class EnergyRatingIndex301Ruleset
     added_reference_heating = false
     if not heating_system.nil?
       # Retain heating system(s)
-      XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
+      XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
     end
     if not heat_pump_system.nil?
       # Retain heating system(s)

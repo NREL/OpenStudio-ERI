@@ -790,8 +790,12 @@ OptionParser.new do |opts|
   end
   
   options[:skip_validation] = false
-  opts.on('-s', '--skip-validation') do |t|
+  opts.on('-s', '--skip-validation', 'Skip HPXML validation') do |t|
     options[:skip_validation] = true
+  end
+  
+  opts.on('-r', '--run-only <Design>') do |t|
+    options[:run_only] = t
   end
   
   opts.on_tail('-h', '--help', 'Display help') do
@@ -836,13 +840,15 @@ if ['2014AE', '2014AEG'].include? eri_version
 end
 
 run_designs = {Constants.CalcTypeERIRatedHome => true,
-               Constants.CalcTypeERIReferenceHome => false,
-               Constants.CalcTypeERIIndexAdjustmentDesign => false,
-               Constants.CalcTypeERIIndexAdjustmentReferenceHome => false}
-# run_designs = {Constants.CalcTypeERIRatedHome => true,
-#                Constants.CalcTypeERIReferenceHome => true,
-#                Constants.CalcTypeERIIndexAdjustmentDesign => true,
-#                Constants.CalcTypeERIIndexAdjustmentReferenceHome => true}
+               Constants.CalcTypeERIReferenceHome => true,
+               Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf,
+               Constants.CalcTypeERIIndexAdjustmentReferenceHome => using_iaf}
+
+if not options[:run_only].nil? # Override
+  run_designs.each do |k, v|
+    run_designs[k] = (options[:run_only] == k)
+  end
+end
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
@@ -882,21 +888,23 @@ else # e.g., Windows
   end
   
 end
-=begin
-# Calculate and write results
-puts "Calculating ERI..."
-if using_iaf
-  results_iad = calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign], 
-                              design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
-else
-  results_iad = nil
-end
-results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome], 
-                        design_outputs[Constants.CalcTypeERIReferenceHome], 
-                        results_iad)
 
-write_results(results, resultsdir, design_outputs, using_iaf)
+if not options[:run_only]
+
+  # Calculate and write results
+  puts "Calculating ERI..."
+  if using_iaf
+    results_iad = calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign], 
+                                design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
+  else
+    results_iad = nil
+  end
+  results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome], 
+                          design_outputs[Constants.CalcTypeERIReferenceHome], 
+                          results_iad)
+
+  write_results(results, resultsdir, design_outputs, using_iaf)
+end
 
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
 puts "Completed in #{(Time.now - start_time).round(1)} seconds."
-=end

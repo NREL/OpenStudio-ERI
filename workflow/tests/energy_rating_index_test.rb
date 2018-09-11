@@ -81,7 +81,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_IAF")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-','').gsub('.xml','').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, true)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false)
       _check_method_results(results_csv, test_num, test_num == 2, true)
     end
   end
@@ -222,12 +222,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       next unless xml.include? 'only-x3'
 
       # Run three of the same system types
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false, 'rated')
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, Constants.CalcTypeERIRatedHome)
 
       # R only one of the system types
       single_sys_xml = xml.gsub('-x3', '')
       xml = File.absolute_path(File.join(File.dirname(single_sys_xml), "..", File.basename(single_sys_xml)))
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false, 'rated')
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, Constants.CalcTypeERIRatedHome)
 
       # Compare results
       # TODO
@@ -236,9 +236,16 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
   private
   
-  def run_and_check(xml, parent_dir, expect_error, using_iaf=false, run_only=false)
+  def run_and_check(xml, parent_dir, expect_error, run_only=nil)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
+    
+    using_iaf = false
+    hpxml_doc = REXML::Document.new(File.read(xml))
+    eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+    if ['2014AE', '2014AEG'].include? eri_version
+      using_iaf = true
+    end
     
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
@@ -246,34 +253,38 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     system(command)
     
     results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
-    if expect_error
-      assert(!File.exists?(results_csv))
-    else
-      # Check all output files exist
-      unless run_only == 'rated'
-        ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
-      end
-      rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
-      worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
-      unless run_only == 'rated'
-        assert(File.exists?(ref_hpxml))
-      end
-      assert(File.exists?(rated_hpxml))
-      assert(File.exists?(results_csv))
-      assert(File.exists?(worksheet_csv))
-      if using_iaf
-        iad_hpxml = File.join(parent_dir, "results", "HERSIndexAdjustmentDesign.xml")
-        assert(File.exists?(iad_hpxml))
-      end
+    assert_equal(File.exists?(results_csv), !expect_error)
+    if not expect_error
       
-      # Check Reference/Rated HPXMLs are valid
-      unless run_only == 'rated'
+      # Check output files exist
+      # Check HPXMLs are valid
+      
+      if run_only.nil? or run_only == Constants.CalcTypeERIReferenceHome
+        ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
+        assert(File.exists?(ref_hpxml))
         _test_schema_validation(parent_dir, ref_hpxml)
       end
-      _test_schema_validation(parent_dir, rated_hpxml)
-      if using_iaf
-        _test_schema_validation(parent_dir, iad_hpxml)
+      if run_only.nil? or run_only == Constants.CalcTypeERIRatedHome
+        rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
+        assert(File.exists?(rated_hpxml))
+        _test_schema_validation(parent_dir, rated_hpxml)
       end
+      if using_iaf
+        if run_only.nil? or run_only == Constants.CalcTypeERIIndexAdjustmentDesign
+          iad_hpxml = File.join(parent_dir, "results", "HERSIndexAdjustmentDesign.xml")
+          assert(File.exists?(iad_hpxml))
+          _test_schema_validation(parent_dir, iad_hpxml)
+        end
+        if run_only.nil? or run_only == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+          iadref_hpxml = File.join(parent_dir, "results", "HERSIndexAdjustmentReferenceHome.xml")
+          assert(File.exists?(iadref_hpxml))
+          _test_schema_validation(parent_dir, iadref_hpxml)
+        end
+      end
+      
+      worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
+      assert(File.exists?(worksheet_csv))
+      
     end
   
     return ref_hpxml, rated_hpxml, results_csv
