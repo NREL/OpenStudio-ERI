@@ -396,8 +396,8 @@ class Airflow
     elsif terrain == Constants.TerrainCity
       wind_speed.site_terrain_multiplier = 0.47 # Used for DOE-2's correlation
       wind_speed.site_terrain_exponent = 0.35 # Used for DOE-2's correlation
-      wind_speed.ashrae_site_terrain_thickness = 460 # Towns, city outskirs, center of large cities
-      wind_speed.ashrae_site_terrain_exponent = 0.33 # Towns, city outskirs, center of large cities
+      wind_speed.ashrae_site_terrain_thickness = 460 # Towns, city outskirts, center of large cities
+      wind_speed.ashrae_site_terrain_exponent = 0.33 # Towns, city outskirts, center of large cities
     end
 
     # Local Shielding

@@ -1208,7 +1208,14 @@ class EnergyRatingIndex301Ruleset
   
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Heating systems
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Cooling systems
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Thermostat
     set_systems_hvac_reference(new_systems, orig_details)
+    
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Thermal distribution systems
+    # Change DSE to 1.0
+    new_hvac_dist = new_systems.elements["HVAC/HVACDistribution"]
+    new_hvac_dist.elements["AnnualHeatingDistributionSystemEfficiency"].text = 1.0
+    new_hvac_dist.elements["AnnualCoolingDistributionSystemEfficiency"].text = 1.0
   
   end
   

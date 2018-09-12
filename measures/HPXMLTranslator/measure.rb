@@ -372,6 +372,12 @@ class OSModel
   
   def self.add_geometry_envelope(runner, model, building, weather)
   
+    # FIXME - Check cooling_season
+    heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
+    if heating_season.nil? or cooling_season.nil?
+      return false
+    end
+    
     # FIXME
     avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
     if avg_ceil_hgt.nil?
@@ -388,7 +394,10 @@ class OSModel
   
     fenestration_areas = {}
     
-    success = add_windows(runner, model, building, spaces, fenestration_areas, weather)
+    success = add_windows(runner, model, building, spaces, fenestration_areas, weather, cooling_season)
+    return false if not success
+    
+    success = add_skylights(runner, model, building, spaces, fenestration_areas, weather, cooling_season)
     return false if not success
     
     success = add_doors(runner, model, building, spaces, fenestration_areas)
@@ -501,7 +510,7 @@ class OSModel
     model.getSurfaces.sort.each do |surface|
 
       next unless surface.surfaceType.downcase == "wall"
-      next if surface.subSurfaces.any? { |subsurface| subsurface.subSurfaceType.downcase == "fixedwindow" }
+      next if surface.subSurfaces.any? { |subsurface| ["fixedwindow", "skylight"].include? subsurface.subSurfaceType.downcase }
       
       if surface.adjacentSurface.is_initialized
         next if surfaces_moved.include? surface.adjacentSurface.get
@@ -545,19 +554,24 @@ class OSModel
       end
       surface.setVertices(transformation * surface.vertices)
       
+      surface.subSurfaces.each do |subsurface|
+        next unless subsurface.subSurfaceType.downcase == "skylight"
+        subsurface.setVertices(transformation * subsurface.vertices)
+      end
+      
       floor_offset += 2.5
       
       surfaces_moved << surface
       
     end
     
-    # Explode the windows TODO: calculate window_offset dynamically
-    window_offset = 50.0
+    # Explode the windows/skylights TODO: calculate glazing_offset dynamically
+    glazing_offset = 50.0
     model.getSubSurfaces.sort.each do |sub_surface|
 
-      next unless sub_surface.subSurfaceType.downcase == "fixedwindow"
+      next unless ["fixedwindow", "skylight"].include? sub_surface.subSurfaceType.downcase
       
-      transformation = get_surface_transformation(window_offset, sub_surface.outwardNormal.x, sub_surface.outwardNormal.y, 0)
+      transformation = get_surface_transformation(glazing_offset, sub_surface.outwardNormal.x, sub_surface.outwardNormal.y, 0)
 
       surface = sub_surface.surface.get
       sub_surface.setVertices(transformation * sub_surface.vertices)      
@@ -573,7 +587,7 @@ class OSModel
         end
       end
       
-      window_offset += 2.5
+      glazing_offset += 2.5
       
     end
     
@@ -1442,10 +1456,10 @@ class OSModel
   
         roof_id = roof.elements["SystemIdentifier"].attributes["id"]
      
-        # FIXME: Calculate net from gross due to skylights
-        roof_area = Float(roof.elements["Area"].text)
-        roof_width = Math::sqrt(roof_area)
-        roof_length = roof_area / roof_width
+        roof_gross_area = Float(roof.elements["Area"].text)
+        roof_net_area = net_wall_area(roof_gross_area, fenestration_areas, roof_id)
+        roof_width = Math::sqrt(roof_net_area)
+        roof_length = roof_net_area / roof_width
         z_origin = 0
         roof_tilt = Float(roof.elements["Pitch"].text)/12.0
 
@@ -1613,12 +1627,7 @@ class OSModel
       
   end
 
-  def self.add_windows(runner, model, building, spaces, fenestration_areas, weather)
-  
-    heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
-    if heating_season.nil? or cooling_season.nil?
-      return false
-    end
+  def self.add_windows(runner, model, building, spaces, fenestration_areas, weather, cooling_season)
   
     surfaces = []
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
@@ -1701,6 +1710,67 @@ class OSModel
    
   end
   
+  def self.add_skylights(runner, model, building, spaces, fenestration_areas, weather, cooling_season)
+  
+    surfaces = []
+    building.elements.each("BuildingDetails/Enclosure/Skylights/Skylight") do |skylight|
+    
+      skylight_id = skylight.elements["SystemIdentifier"].attributes["id"]
+      skylight_area = Float(skylight.elements["Area"].text)
+      skylight_height = 5.0 # FIXME
+      skylight_width = skylight_area / skylight_height
+      skylight_azimuth = Float(skylight.elements["Azimuth"].text)
+      z_origin = 0
+      if not fenestration_areas.keys.include? skylight.elements["AttachedToRoof"].attributes["idref"]
+        fenestration_areas[skylight.elements["AttachedToRoof"].attributes["idref"]] = skylight_area
+      else
+        fenestration_areas[skylight.elements["AttachedToRoof"].attributes["idref"]] += skylight_area
+      end
+      skylight_tilt = nil
+      building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
+        attic_type = attic.elements["AtticType"].text
+        attic.elements.each("Roofs/Roof") do |roof|
+          next unless roof.elements["SystemIdentifier"].attributes["id"] == skylight.elements["AttachedToRoof"].attributes["idref"]
+          skylight_tilt = Float(roof.elements["Pitch"].text)/12.0
+        end
+      end
+      surface = OpenStudio::Model::Surface.new(add_roof_polygon(UnitConversions.convert(skylight_width,"ft","m") + 0.0001, # base surface must be at least slightly larger than subsurface
+                                                                UnitConversions.convert(skylight_height,"ft","m") + 0.0001, # base surface must be at least slightly larger than subsurface
+                                                                UnitConversions.convert(z_origin,"ft","m"), 
+                                                                skylight_azimuth, skylight_tilt), model)
+      surface.setName("surface #{skylight_id}")
+      surface.setSurfaceType("RoofCeiling")
+      surface.setSpace(spaces[Constants.SpaceTypeLiving]) # Ensures it is included in Manual J sizing
+      surface.setOutsideBoundaryCondition("Outdoors") # cannot be adiabatic or OS won't create subsurface
+      surfaces << surface
+      sub_surface = OpenStudio::Model::SubSurface.new(add_roof_polygon(UnitConversions.convert(skylight_width,"ft","m"), 
+                                                                       UnitConversions.convert(skylight_height,"ft","m"), 
+                                                                       UnitConversions.convert(z_origin,"ft","m"), 
+                                                                       skylight_azimuth, skylight_tilt), model)
+      sub_surface.setName(skylight_id)
+      sub_surface.setSurface(surface)
+      sub_surface.setSubSurfaceType("Skylight")
+      
+      # Apply construction
+      ufactor = Float(XMLHelper.get_value(skylight, "UFactor"))
+      shgc = Float(XMLHelper.get_value(skylight, "SHGC"))
+      cool_shade_mult = 1.0 # FIXME Float(XMLHelper.get_value(skylight, "extension/InteriorShadingFactorSummer"))
+      heat_shade_mult = 1.0 # FIXME Float(XMLHelper.get_value(skylight, "extension/InteriorShadingFactorWinter"))
+      
+      success = SubsurfaceConstructions.apply_skylight(runner, model, [sub_surface],
+                                                       "SkylightConstruction",
+                                                       weather, cooling_season, ufactor, shgc,
+                                                       heat_shade_mult, cool_shade_mult)
+      return false if not success
+    end
+    
+    success = apply_adiabatic_construction(runner, model, surfaces, "roof")
+    return false if not success
+      
+    return true
+   
+  end
+  
   def self.add_doors(runner, model, building, spaces, fenestration_areas)
   
     surfaces = []
@@ -1773,6 +1843,7 @@ class OSModel
   def self.apply_adiabatic_construction(runner, model, surfaces, type)
     
     # Arbitrary constructions, only heat capacitance matters
+    # Used for surfaces that solely contain subsurfaces (windows, doors, skylights)
     
     if type == "wall"
     
@@ -1801,6 +1872,18 @@ class OSModel
                                                        "AdiabaticFloorConstruction",
                                                        plywood_thick_in, drywall_thick_in,
                                                        mat_floor_covering, mat_carpet)
+        return false if not success
+        
+    elsif type == "roof"
+        
+        framing_thick_in = 7.25
+        framing_factor = 0.07
+        osb_thick_in = 0.75
+        mat_roofing = Material.RoofingAsphaltShinglesMed
+        success = RoofConstructions.apply_uninsulated_roofs(runner, model, surfaces,
+                                                            "AdiabaticRoofConstruction",
+                                                            framing_thick_in, framing_factor,
+                                                            osb_thick_in, mat_roofing)
         return false if not success
         
     end
