@@ -4,8 +4,6 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-# TODO: Test HVACDistribution
-
 class HVACtest < MiniTest::Test
 
   def test_heating_none
@@ -19,12 +17,18 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heating_system(hpxml_doc, "Furnace", "natural gas", 0.78)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_heating_system(hpxml_doc, "Furnace", "natural gas", 0.78)
     _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_dse(hpxml_doc, 0.8)
   end
   
   def test_heating_none_with_no_fuel_access
@@ -38,12 +42,18 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
     _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_dse(hpxml_doc, 0.8)
   end
   
   def test_heating_boiler_elec
@@ -57,6 +67,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -76,6 +91,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heating_system(hpxml_doc, "Boiler", "natural gas", 0.80)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -95,6 +115,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -114,6 +139,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heating_system(hpxml_doc, "Furnace", "natural gas", 0.78)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -133,6 +163,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heating_system(hpxml_doc, "Furnace", "natural gas", 0.78)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -152,6 +187,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heating_system(hpxml_doc, "Furnace", "natural gas", 0.78)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -171,6 +211,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -190,6 +235,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -209,6 +259,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -228,6 +283,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_heat_pump_heating(hpxml_doc, "air-to-air", 7.7)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -247,6 +307,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml_doc, "central air conditioning", 13)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -266,6 +331,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml_doc, "central air conditioning", 13)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -285,6 +355,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml_doc, "central air conditioning", 13)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -304,6 +379,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml_doc, "central air conditioning", 13)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -323,6 +403,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml_doc, "central air conditioning", 13)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -342,6 +427,11 @@ class HVACtest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml_doc, "central air conditioning", 13)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -362,6 +452,11 @@ class HVACtest < MiniTest::Test
       _check_cooling_system(hpxml_doc, "central air conditioning", 13)
       _check_heating_system(hpxml_doc, "Furnace", "natural gas", 0.78)
       _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
     end
     
     # Rated Home
@@ -478,6 +573,12 @@ class HVACtest < MiniTest::Test
     else
       assert_equal(Float(tstat.elements["TotalSetupHoursperWeekCooling"].text), setup_hrs)
     end
+  end
+  
+  def _check_dse(hpxml_doc, dse)
+    dist_dse = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution[DistributionSystemType[Other='DSE']]"]
+    assert_equal(Float(dist_dse.elements["AnnualHeatingDistributionSystemEfficiency"].text), dse)
+    assert_equal(Float(dist_dse.elements["AnnualCoolingDistributionSystemEfficiency"].text), dse)
   end
   
 end
