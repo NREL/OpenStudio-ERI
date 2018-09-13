@@ -229,46 +229,58 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <CoolingSystem>
-              <SystemIdentifier id='SpaceCool_ID1'/>
+            <HeatPump>
+              <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
-              <CoolingSystemType>central air conditioning</CoolingSystemType>
-              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <HeatPumpType>air-to-air</HeatPumpType>
               <CoolingCapacity>16000</CoolingCapacity>
+              <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.33</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>16</Value>
+                <Value>19.0</Value>
               </AnnualCoolingEfficiency>
-            </CoolingSystem>
-            <CoolingSystem>
-              <SystemIdentifier id='SpaceCool_ID2'/>
+              <AnnualHeatingEfficiency>
+                <Units>HSPF</Units>
+                <Value>10.0</Value>
+              </AnnualHeatingEfficiency>
+            </HeatPump>
+            <HeatPump>
+              <SystemIdentifier id='SpaceHeatPump_ID2'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
-              <CoolingSystemType>central air conditioning</CoolingSystemType>
-              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <HeatPumpType>air-to-air</HeatPumpType>
               <CoolingCapacity>16000</CoolingCapacity>
+              <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.33</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>16</Value>
+                <Value>19.0</Value>
               </AnnualCoolingEfficiency>
-            </CoolingSystem>
-            <CoolingSystem>
-              <SystemIdentifier id='SpaceCool_ID3'/>
+              <AnnualHeatingEfficiency>
+                <Units>HSPF</Units>
+                <Value>10.0</Value>
+              </AnnualHeatingEfficiency>
+            </HeatPump>
+            <HeatPump>
+              <SystemIdentifier id='SpaceHeatPump_ID3'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
-              <CoolingSystemType>central air conditioning</CoolingSystemType>
-              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <HeatPumpType>air-to-air</HeatPumpType>
               <CoolingCapacity>16000</CoolingCapacity>
+              <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.33</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>16</Value>
+                <Value>19.0</Value>
               </AnnualCoolingEfficiency>
-            </CoolingSystem>
+              <AnnualHeatingEfficiency>
+                <Units>HSPF</Units>
+                <Value>10.0</Value>
+              </AnnualHeatingEfficiency>
+            </HeatPump>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
-            <ControlType>programmable thermostat</ControlType>
+            <ControlType>manual thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>

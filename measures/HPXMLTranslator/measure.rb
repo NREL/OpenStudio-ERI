@@ -318,6 +318,21 @@ class OSModel
     return false if not success
     success = add_ceiling_fans(runner, model, building, unit)
     return false if not success
+
+    # FIXME: remove the following logic eventually
+    thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+    control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
+    control_slave_zones_hash.each do |control_zone, slave_zones|
+      ([control_zone] + slave_zones).each do |zone|
+        load_distribution_scheme = "UniformLoad"
+        zone.equipment.each do |object|
+          if ( object.respond_to?("to_ZoneHVACEnergyRecoveryVentilator") or object.respond_to?("to_ZoneHVACDehumidifierDX") ) and ( object.public_send("to_ZoneHVACEnergyRecoveryVentilator").is_initialized or object.public_send("to_ZoneHVACDehumidifierDX").is_initialized )
+            load_distribution_scheme = "SequentialLoad" # we don't want to share load across erv or dehumidifier
+          end
+        end
+        HVAC.prioritize_zone_hvac(model, runner, zone, load_distribution_scheme)
+      end
+    end
     
     # Plug Loads & Lighting
     
@@ -2291,7 +2306,7 @@ class OSModel
         backup_heat_capacity_btuh = Float(backup_heat_capacity_btuh)
       end
       
-      dse_heat, dse_cool = get_dse(building, htgsys)
+      dse_heat, dse_cool = get_dse(building, hpsys)
       if dse_heat != dse_cool
         fail "Cannot handle different distribution system efficiency (DSE) values for heating and cooling."
       end
@@ -2493,7 +2508,6 @@ class OSModel
       for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
         htg_weekday_setpoints[hr % 24] = setback_temp
       end
-      puts "htg_weekday_setpoints #{htg_weekday_setpoints}"
     end
     htg_weekend_setpoints = htg_weekday_setpoints
     htg_use_auto_season = false
@@ -2514,7 +2528,6 @@ class OSModel
       for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
         clg_weekday_setpoints[hr % 24] = setup_temp
       end
-      puts "clg_weekday_setpoints #{clg_weekday_setpoints}"
     end
     clg_weekend_setpoints = clg_weekday_setpoints
     clg_use_auto_season = false

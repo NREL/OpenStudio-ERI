@@ -216,21 +216,41 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
 
   def test_multiple_hvac_same_type
+    require 'csv'
+
+    results = []
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files/moreloops"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next unless xml.include? 'only-x3'
+      next unless xml.include? 'x3'
 
       # Run three of the same system types
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, Constants.CalcTypeERIRatedHome)
 
-      # R only one of the system types
-      single_sys_xml = xml.gsub('-x3', '')
-      xml = File.absolute_path(File.join(File.dirname(single_sys_xml), "..", File.basename(single_sys_xml)))
+      results1 = {}
+      CSV.foreach(results_csv) do |row|
+        results1[row[0]] = row[1].to_f
+      end
+
+      # Run only one of the system types
+      xml = xml.gsub('-x3', '')
+      xml = File.absolute_path(File.join(File.dirname(xml), "..", File.basename(xml)))
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, Constants.CalcTypeERIRatedHome)
 
-      # Compare results
-      # TODO
+      results2 = {}
+      CSV.foreach(results_csv) do |row|
+        results2[row[0]] = row[1].to_f
+      end
+
+      # Compare energy results      
+      results1.each do |k, v|
+        puts "x1, x3: #{results2[k].round(1)}, #{v.round(1)} [#{k}]"
+        results << [results2[k], v]
+      end
+
+    end
+    results.each do |result|
+      assert_in_epsilon(result[0], result[1], 0.01)
     end
   end
 
@@ -249,11 +269,20 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
+    puts cli_path
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}"
+    unless run_only.nil?
+      command += " -r \"#{run_only}\" -d"
+    end
     system(command)
     
-    results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
-    assert_equal(File.exists?(results_csv), !expect_error)
+    if run_only.nil?
+      results_csv = File.join(parent_dir, "results", "ERI_Results.csv")
+      assert_equal(File.exists?(results_csv), !expect_error)
+    else
+      results_csv = File.join(parent_dir, "results", "#{run_only.gsub(" ", "")}.csv")
+      assert_equal(File.exists?(results_csv), !expect_error)
+    end
     if not expect_error
       
       # Check output files exist
@@ -282,8 +311,10 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         end
       end
       
-      worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
-      assert(File.exists?(worksheet_csv))
+      if run_only.nil?
+        worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
+        assert(File.exists?(worksheet_csv))
+      end
       
     end
   

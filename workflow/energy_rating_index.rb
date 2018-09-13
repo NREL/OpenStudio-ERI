@@ -780,7 +780,7 @@ OptionParser.new do |opts|
     options[:hpxml] = t
   end
 
-  opts.on('--download-weather', 'Downloads all weather files') do |t|
+  opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
     options[:epws] = t
   end
   
@@ -794,7 +794,7 @@ OptionParser.new do |opts|
     options[:skip_validation] = true
   end
   
-  opts.on('-r', '--run-only <Design>') do |t|
+  opts.on('-r', '--run-only <DESIGN>', Constants.CalcTypeERIRatedHome, Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome) do |t|
     options[:run_only] = t
   end
   
@@ -821,7 +821,7 @@ unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xm
 end
 
 # Check for correct versions of OS
-os_version = "2.6.1"
+os_version = "2.6.2"
 if OpenStudio.openStudioVersion != os_version
   fail "ERROR: OpenStudio version #{os_version} is required."
 end
