@@ -1167,7 +1167,8 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
         XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       end
-    else
+    end
+    if cooling_system.nil? and heat_pump_system.nil?
       add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
       added_reference_cooling = true
     end
