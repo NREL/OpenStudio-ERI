@@ -787,7 +787,7 @@ class HVAC
         perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
         perf.setSingleModeOperation(false)
         for speed in 1..num_speeds
-          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], fan_speed_ratios_cooling[speed-1])
+          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], Constants.small)
           perf.addSupplyAirflowRatioField(f)
         end
 
@@ -805,7 +805,6 @@ class HVAC
         air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
         air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
         air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
-
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central htg air system")
@@ -885,6 +884,13 @@ class HVAC
         fan.setMotorEfficiency(1.0)
         fan.setMotorInAirstreamFraction(1.0)
         
+        perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
+        perf.setSingleModeOperation(false)
+        for speed in 1..num_speeds
+          f = OpenStudio::Model::SupplyAirflowRatioField.new(Constants.small, fan_speed_ratios_cooling[speed-1])
+          perf.addSupplyAirflowRatioField(f)
+        end
+
         # _processSystemAir
                  
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
@@ -1061,7 +1067,7 @@ class HVAC
         perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
         perf.setSingleModeOperation(false)
         for speed in 1..num_speeds
-          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], fan_speed_ratios_cooling[speed-1])
+          f = OpenStudio::Model::SupplyAirflowRatioField.new(fan_speed_ratios_heating[speed-1], Constants.small)
           perf.addSupplyAirflowRatioField(f)
         end
 
@@ -1158,6 +1164,13 @@ class HVAC
         fan.setMotorEfficiency(1.0)
         fan.setMotorInAirstreamFraction(1.0)    
         
+        perf = OpenStudio::Model::UnitarySystemPerformanceMultispeed.new(model)
+        perf.setSingleModeOperation(false)
+        for speed in 1..num_speeds
+          f = OpenStudio::Model::SupplyAirflowRatioField.new(Constants.small, fan_speed_ratios_cooling[speed-1])
+          perf.addSupplyAirflowRatioField(f)
+        end
+
         # _processSystemAir
                  
         air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
@@ -4381,7 +4394,7 @@ class HVAC
       end
     end 
     
-    def self.prioritize_zone_hvac(model, runner, zone)
+    def self.prioritize_zone_hvac(model, runner, zone, load_distribution_scheme="SequentialLoad")
       zone_hvac_list = []
       Constants.ZoneHVACPriorityList.each do |zone_hvac_type|
         zone.equipment.each do |object|
@@ -4395,6 +4408,7 @@ class HVAC
         zone.setCoolingPriority(object, 1)
         zone.setHeatingPriority(object, 1)
       end
+      zone.setLoadDistributionScheme(load_distribution_scheme)
     end
     
     def self.calc_heating_and_cooling_seasons(model, weather, runner=nil)
