@@ -1127,11 +1127,11 @@ class EnergyRatingIndex301Ruleset
     added_reference_heating = false
     if not heating_system.nil?
       # Retain heating system(s)
-      XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
+      XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
     end
     if not heat_pump_system.nil?
       # Retain heating system(s)
-      XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
+      XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
       new_hvac_plant.elements.each("HeatPump") do |heat_pump_system|
         extension = heat_pump_system.elements["extension"]
         if extension.nil?
@@ -1158,7 +1158,7 @@ class EnergyRatingIndex301Ruleset
     added_reference_cooling = false
     if not cooling_system.nil?
       # Retain cooling system(s)
-      XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
+      XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
       new_hvac_plant.elements.each("CoolingSystem") do |cooling_system|
         extension = cooling_system.elements["extension"]
         if extension.nil?
@@ -1196,7 +1196,7 @@ class EnergyRatingIndex301Ruleset
     end
     
     # Table 4.2.2(1) - Thermal distribution systems
-    XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
+    XMLHelper.copy_elements(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
     if added_reference_heating or added_reference_cooling
       # Add DSE distribution for these systems
       add_reference_distribution_system(new_hvac)
