@@ -191,9 +191,10 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
         if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
           clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get).name.to_s
         elsif clg_equip.to_ZoneHVACComponent.is_initialized
-          if clg_equip.coolingCoil.is_initialized
-            clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
+          if clg_equip.is_a?(OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
+            next unless clg_equip.coolingCoil.is_initialized
           end
+          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
         end
       end
       HVAC.existing_heating_equipment(model, runner, zone).each do |htg_equip|
