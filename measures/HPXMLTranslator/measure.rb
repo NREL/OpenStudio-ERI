@@ -2622,6 +2622,12 @@ class OSModel
       hvac_loops[sys_id] << plant_loop
     end
 
+    hvac_loops.each do |sys_id, loops|
+      if loops.empty?
+        hvac_loops.delete(sys_id)
+      end
+    end
+
     return hvac_loops
   end
   
@@ -2900,10 +2906,12 @@ class OSModel
       dse_heat, dse_cool = get_dse(building, htgsys)
       
       sys_id = htgsys.elements["SystemIdentifier"].attributes["id"]
-    
-      success = HVAC.apply_eae_to_heating_fan(runner, hvac_loops[sys_id][0], fuel_eae, fuel, dse_heat, 
-                                              has_furnace, has_boiler)
-      return false if not success
+
+      if hvac_loops.keys.include? sys_id
+        success = HVAC.apply_eae_to_heating_fan(runner, hvac_loops[sys_id][0], fuel_eae, fuel, dse_heat, 
+                                                has_furnace, has_boiler)
+        return false if not success
+      end
       
     end
   
