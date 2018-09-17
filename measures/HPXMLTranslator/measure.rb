@@ -202,9 +202,10 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
           htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get).name.to_s
         elsif htg_equip.to_ZoneHVACComponent.is_initialized
           if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
-            if htg_equip.heatingCoil.is_initialized
-              htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
+            if htg_equip.is_a?(OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow)
+              next unless htg_equip.heatingCoil.is_initialized
             end
+            htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
           else
             htg_objs << htg_equip.name.to_s
           end
