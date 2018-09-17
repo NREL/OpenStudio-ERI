@@ -191,7 +191,9 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
         if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
           clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get).name.to_s
         elsif clg_equip.to_ZoneHVACComponent.is_initialized
-          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
+          if clg_equip.coolingCoil.is_initialized
+            clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
+          end
         end
       end
       HVAC.existing_heating_equipment(model, runner, zone).each do |htg_equip|
@@ -199,7 +201,9 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
           htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get).name.to_s
         elsif htg_equip.to_ZoneHVACComponent.is_initialized
           if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
-            htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
+            if htg_equip.heatingCoil.is_initialized
+              htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
+            end
           else
             htg_objs << htg_equip.name.to_s
           end

@@ -150,12 +150,10 @@ class Airflow
       cfis_programs = {}
       cfis_outputs = {}
       duct_systems.each do |ducts, air_loops|
-
         success, ducts_output = process_ducts_for_unit(model, runner, ducts, building, unit, unit_index, unit_ffa, unit_has_mshp, unit_living, unit_finished_basement, has_forced_air_equipment)
         return false if not success
 
-        duct_programs, cfis_programs, cfis_outputs = create_ducts_objects(model, runner, unit, unit_living, unit_finished_basement, ducts, mech_vent, ducts_output, tin_sensor, pbar_sensor, has_forced_air_equipment, unit_has_mshp, adiabatic_const, air_loops, duct_programs, cfis_programs, cfis_outputs)
-
+        duct_programs, cfis_programs, cfis_outputs = create_ducts_objects(model, runner, unit, unit_living, unit_finished_basement, mech_vent, ducts_output, tin_sensor, pbar_sensor, has_forced_air_equipment, unit_has_mshp, adiabatic_const, air_loops, duct_programs, cfis_programs, cfis_outputs)
       end      
 
       infil_program = create_infil_mech_vent_objects(model, runner, obj_name_infil, obj_name_mech_vent, unit_living, infil, mech_vent, wind_speed, mv_output, infil_output, tin_sensor, tout_sensor, vwind_sensor, duct_programs, cfis_outputs, nbeds)
@@ -344,7 +342,9 @@ class Airflow
           end
           space.remove
         end
-        thermal_zone.removeReturnPlenum
+        thermal_zone.airLoopHVACs.each do |air_loop|
+          thermal_zone.removeReturnPlenum(air_loop)
+        end
         thermal_zone.remove
       end
       
@@ -1313,7 +1313,7 @@ class Airflow
 
   end
 
-  def self.create_ducts_objects(model, runner, unit, unit_living, unit_finished_basement, ducts, mech_vent, ducts_output, tin_sensor, pbar_sensor, has_forced_air_equipment, unit_has_mshp, adiabatic_const, air_loops, duct_programs, cfis_programs, cfis_outputs)
+  def self.create_ducts_objects(model, runner, unit, unit_living, unit_finished_basement, mech_vent, ducts_output, tin_sensor, pbar_sensor, has_forced_air_equipment, unit_has_mshp, adiabatic_const, air_loops, duct_programs, cfis_programs, cfis_outputs)
 
     if ducts_output.location_name == unit_living.zone.name.to_s or ducts_output.location_name == "none" or not has_forced_air_equipment
       runner.registerInfo("Either no forced air equipment or ducts in conditioned space.")
@@ -1358,14 +1358,21 @@ class Airflow
       end
 
       # Set the return plenums
-      unit_living.zone.setReturnPlenum(ra_duct_zone)
-      unless unit_finished_basement.nil?
-        unit_finished_basement.zone.setReturnPlenum(ra_duct_zone)
+      if air_loop.to_AirLoopHVAC.is_initialized
+        unit_living.zone.setReturnPlenum(ra_duct_zone, air_loop)
+        unless unit_finished_basement.nil?
+          unit_finished_basement.zone.setReturnPlenum(ra_duct_zone, air_loop)
+        end
+        air_loop.demandComponents.each do |demand_component|
+          next unless demand_component.to_AirLoopHVACReturnPlenum.is_initialized
+          demand_component.setName("#{air_loop.name} return plenum")
+        end
       end
 
       living_zone_return_air_node = nil
-      if unit_living.zone.returnAirModelObject.is_initialized
-        living_zone_return_air_node = unit_living.zone.returnAirModelObject.get
+      unit_living.zone.returnAirModelObjects.each do |return_air_model_obj|
+        next if return_air_model_obj.to_Node.get.airLoopHVAC.get != air_loop
+        living_zone_return_air_node = return_air_model_obj 
       end
 
       # Other equipment objects to cancel out the supply air leakage directly into the return plenum

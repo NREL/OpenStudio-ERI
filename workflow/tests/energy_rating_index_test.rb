@@ -269,7 +269,6 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    puts cli_path
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}"
     unless run_only.nil?
       command += " -r \"#{run_only}\" -d"
