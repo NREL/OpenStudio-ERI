@@ -308,7 +308,7 @@ class OSModel
     return false if not success
     success = add_hot_water_and_appliances(runner, model, building, unit, weather)
     return false if not success
-    
+
     # HVAC
     
     hvac_loops = {} # mapping between HPXML HVAC systems and model air/plant loops
@@ -2263,14 +2263,9 @@ class OSModel
                                                 heat_capacity_btuh)
         return false if not success
         
-      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace") or XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
+      elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
       
-        return false if not success
-        if XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
-          efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
-        elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Stove")
-          efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
-        end
+        efficiency = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='Percent']/Value"))
         airflow_rate = 125.0 # cfm/ton; doesn't affect energy consumption
         fan_power = 0.5 # For fuel equipment, will be overridden by EAE later
         # TODO: Allow DSE
