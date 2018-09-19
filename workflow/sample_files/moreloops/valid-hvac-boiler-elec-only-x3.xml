@@ -235,14 +235,13 @@
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
               <HeatingCapacity>21333.33</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
-                <Value>0.92</Value>
+                <Value>1.0</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>200</ElectricAuxiliaryEnergy>
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID2'/>
@@ -250,14 +249,13 @@
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
               <HeatingCapacity>21333.33</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
-                <Value>0.92</Value>
+                <Value>1.0</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>200</ElectricAuxiliaryEnergy>
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID3'/>
@@ -265,14 +263,13 @@
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
               <HeatingCapacity>21333.33</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
-                <Value>0.92</Value>
+                <Value>1.0</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>200</ElectricAuxiliaryEnergy>
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>
