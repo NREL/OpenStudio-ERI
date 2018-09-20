@@ -1648,6 +1648,8 @@ class EnergyRatingIndex301Ruleset
       ref_loop_l = get_loop_length_reference(ref_pipe_l)
       
       # New hot water distribution
+      daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(false)
+      daily_mw_fractions = calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
       new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
       sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
@@ -1658,6 +1660,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
+      XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
+      XMLHelper.add_element(extension, "WaterHeaterDailyInletTemperatures", daily_wh_inlet_temperatures.join(","))
       XMLHelper.add_element(extension, "RefLoopL", ref_loop_l)
       XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
       
@@ -1681,6 +1685,8 @@ class EnergyRatingIndex301Ruleset
       ref_w_gpd = 0.0
     
       # New hot water distribution
+      daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(false)
+      daily_mw_fractions = calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
       new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
       sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
@@ -1690,6 +1696,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
+      XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
+      XMLHelper.add_element(extension, "WaterHeaterDailyInletTemperatures", daily_wh_inlet_temperatures.join(","))
       XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
       
       ref_f_gpd = 0.0
@@ -1771,15 +1779,19 @@ class EnergyRatingIndex301Ruleset
       has_dwhr = false
       if not orig_hw_dist.nil? and not orig_hw_dist.elements["DrainWaterHeatRecovery"].nil?
         has_dwhr = true
-        eff = Float(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/Efficiency"))
+        dwhr_eff = Float(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/Efficiency"))
         equal_flow = Boolean(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/EqualFlow"))
         if XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "all"
           all_showers = true
         elsif XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "one"
           all_showers = false
         end
-        dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
+        dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, dwhr_eff, equal_flow, all_showers, low_flow_fixtures)
+        daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(true, dwhr_iFrac, dwhr_eff, dwhr_eff_adj, dwhr_plc, dwhr_locF, dwhr_fixF)
+      else
+        daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(false)
       end
+      daily_mw_fractions = calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
       
       # New hot water distribution
       new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
@@ -1809,6 +1821,8 @@ class EnergyRatingIndex301Ruleset
       end
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", rated_w_gpd)
+      XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
+      XMLHelper.add_element(extension, "WaterHeaterDailyInletTemperatures", daily_wh_inlet_temperatures.join(","))
       XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj)
       if is_recirc
         XMLHelper.add_element(recirc, "extension/PumpAnnualkWh", recirc_pump_annual_kwh)
@@ -2847,6 +2861,41 @@ class EnergyRatingIndex301Ruleset
       grg_kwh = 100.0*((1.0 - fFI_grg - fFII_grg) + 15.0/60.0*fFI_grg + 15.0/90.0*fFII_grg) # Eq 4.2-4
     end
     return int_kwh, ext_kwh, grg_kwh
+  end
+  
+  def self.calc_water_heater_daily_inlet_temperatures(dwhr_avail=false, dwhr_iFrac=nil, dwhr_eff=nil, dwhr_eff_adj=nil, 
+                                                      dwhr_plc=nil, dwhr_locF=nil, dwhr_fixF=nil)
+    # Get daily mains temperatures
+    avgOAT = @weather.data.AnnualAvgDrybulb
+    maxDiffMonthlyAvgOAT = @weather.data.MonthlyAvgDrybulbs.max - @weather.data.MonthlyAvgDrybulbs.min
+    tmains_daily = WeatherProcess.calc_mains_temperatures(avgOAT, maxDiffMonthlyAvgOAT, @weather.header.Latitude)[2]
+    
+    wh_temps_daily = tmains_daily
+    if dwhr_avail
+      # Adjust inlet temperatures
+      dwhr_inT = 97.0 # F
+      for day in 0..364
+        dwhr_WHinTadj = dwhr_iFrac * (dwhr_inT - tmains_daily[day]) * dwhr_eff * dwhr_eff_adj * dwhr_plc * dwhr_locF * dwhr_fixF
+        wh_temps_daily[day] = (wh_temps_daily[day] + dwhr_WHinTadj).round(3)
+      end
+    else
+      for day in 0..364
+        wh_temps_daily[day] = (wh_temps_daily[day]).round(3)
+      end
+    end
+    
+    return wh_temps_daily
+  end
+  
+  def self.calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
+    tHot = get_water_heater_tank_temperature() # F, Water heater set point temperature
+    tMix = 105.0 # F, Temperature of mixed water at fixtures
+    adjFmix = []
+    for day in 0..364
+      adjFmix << (1.0 - ((tHot - tMix) / (tHot - daily_wh_inlet_temperatures[day]))).round(4)
+    end
+    
+    return adjFmix
   end
 
 end

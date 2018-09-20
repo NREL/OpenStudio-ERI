@@ -2036,23 +2036,13 @@ class OSModel
       dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/extension/PumpAnnualkWh"))
     end
     dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
-    
-    # Drain Water Heat Recovery
-    dwhr_avail = false
-    dwhr_eff = 0.0
-    dwhr_eff_adj = 0.0
-    dwhr_iFrac = 0.0
-    dwhr_plc = 0.0
-    dwhr_locF = 0.0
-    dwhr_fixF = 0.0
-    if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
-      dwhr_avail = true
-      dwhr_eff = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
-      dwhr_eff_adj = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/EfficiencyAdjustment"))
-      dwhr_iFrac = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FracImpactedHotWater"))
-      dwhr_plc = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/PipingLossCoefficient"))
-      dwhr_locF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/LocationFactor"))
-      dwhr_fixF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FixtureFactor"))
+    daily_mw_fractions = XMLHelper.get_value(dist, "extension/MixedWaterDailyFractions").split(",").map(&:to_f)
+    if daily_mw_fractions.size != 365
+      fail "HotWaterDistribution/extension/MixedWaterDailyFractions must have 365 comma-separated values."
+    end
+    daily_wh_inlet_temperatures = XMLHelper.get_value(dist, "extension/WaterHeaterDailyInletTemperatures").split(",").map(&:to_f)
+    if daily_wh_inlet_temperatures.size != 365
+      fail "HotWaterDistribution/extension/WaterHeaterDailyInletTemperatures must have 365 comma-separated values."
     end
     
     success = Waterheater.apply_eri_hw_appl(model, unit, runner, weather,
@@ -2064,9 +2054,8 @@ class OSModel
                                             cook_annual_therm, cook_frac_sens, 
                                             cook_frac_lat, cook_fuel_type, fx_gpd,
                                             fx_sens_btu, fx_lat_btu, dist_type, 
-                                            dist_gpd, dist_pump_annual_kwh, dwhr_avail,
-                                            dwhr_eff, dwhr_eff_adj, dwhr_iFrac,
-                                            dwhr_plc, dwhr_locF, dwhr_fixF)
+                                            dist_gpd, dist_pump_annual_kwh, 
+                                            daily_wh_inlet_temperatures, daily_mw_fractions)
     return false if not success
     
     return true
