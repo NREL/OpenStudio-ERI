@@ -562,8 +562,9 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
-            'DrainWaterHeatRecovery' => zero_or_one, # See [DrainWaterHeatRecovery]
             'extension/MixedWaterGPD' => one,
+            'extension/MixedWaterDailyFractions' => one,
+            'extension/WaterHeaterDailyInletTemperatures' => one,
             'extension/EnergyConsumptionAdjustmentFactor' => one,
         },
         
@@ -574,16 +575,6 @@ class EnergyPlusValidator
             ## [HWDistType=Recirculation]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => {
                 'extension/PumpAnnualkWh' => one,
-            },
-        
-            ## [DrainWaterHeatRecovery]
-            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => {
-                'Efficiency' => one,
-                'extension/EfficiencyAdjustment' => one,
-                'extension/FracImpactedHotWater' => one,
-                'extension/PipingLossCoefficient' => one,
-                'extension/LocationFactor' => one,
-                'extension/FixtureFactor' => one,
             },
         
         
