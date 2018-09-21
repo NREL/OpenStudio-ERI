@@ -2845,9 +2845,9 @@ class OSModel
       ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, 
                         duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, 
                         duct_num_returns, duct_location)
-      
+                        
       # Connect AirLoopHVACs to ducts
-      duct_systems[ducts] = []
+      systems_for_this_duct = []
       duct_id = hvac_distribution.elements["SystemIdentifier"].attributes["id"]
       building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem | 
                               BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem | 
@@ -2856,9 +2856,15 @@ class OSModel
         sys_id = sys.elements["SystemIdentifier"].attributes["id"]
         hvac_loops[sys_id].each do |loop|
           next if not loop.is_a? OpenStudio::Model::AirLoopHVAC
-          duct_systems[ducts] << loop
+          systems_for_this_duct << loop
         end
       end
+      
+      # FIXME: Temporary to re-allocate duct properties for multiple systems
+      ducts.supply_area_mult = ducts.supply_area_mult / systems_for_this_duct.size
+      ducts.return_area_mult = ducts.return_area_mult / systems_for_this_duct.size
+      
+      duct_systems[ducts] = systems_for_this_duct
       
     end
 
