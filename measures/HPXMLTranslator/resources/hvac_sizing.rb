@@ -4163,13 +4163,15 @@ class HVACSizing
             # Unitary System
             system.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
             if not clg_coil.nil?
-                system.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
+                # system.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
+                system.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
             else
                 system.setSupplyAirFlowRateDuringCoolingOperation(0.00001) # A value of 0 does not change from autosize
             end
             system.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
             if not htg_coil.nil?
-                system.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
+                # system.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
+                system.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
             else
                 system.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
             end
@@ -4177,10 +4179,12 @@ class HVACSizing
             # Fan
             fanonoff = system.supplyFan.get.to_FanOnOff.get
             if not clg_coil.nil?
-                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
+                # fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
+                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s"))
             end
             if not htg_coil.nil?
-                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
+                # fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
+                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s"))
             end
 
             if not air_loop.nil?
@@ -4193,10 +4197,12 @@ class HVACSizing
                     next unless aterm.to_AirTerminalSingleDuctUncontrolled.is_initialized
                     aterm = aterm.to_AirTerminalSingleDuctUncontrolled.get
                     if not clg_coil.nil?
-                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
+                        # aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
+                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone])
                     end
                     if not htg_coil.nil?
-                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
+                        # aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
+                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone])
                     end
                 end
 
@@ -4513,7 +4519,8 @@ class HVACSizing
     # Heating coil
     if htg_coil.is_a? OpenStudio::Model::CoilHeatingElectric
         if not equip.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner
-            htg_coil.setNominalCapacity(zone_ratio * UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") / hvac.NumCoilHeatingElectric)
+            # htg_coil.setNominalCapacity(zone_ratio * UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") / hvac.NumCoilHeatingElectric)
+            htg_coil.setNominalCapacity(zone_ratio * UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W"))
         end
         
     elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingGas

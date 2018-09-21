@@ -1,5 +1,5 @@
 require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
+require 'openstudio/measure/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
@@ -7,7 +7,7 @@ require_relative '../../measures/HPXMLTranslator/resources/schedules'
 require_relative '../../measures/HPXMLTranslator/resources/constants'
 require_relative '../../measures/HPXMLTranslator/resources/unit_conversions'
 
-class EnergyRatingIndexTest < Minitest::Unit::TestCase
+class EnergyRatingIndexTest < Minitest::Test
 
   def test_valid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
@@ -231,6 +231,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       CSV.foreach(results_csv) do |row|
         results1[row[0]] = row[1].to_f
       end
+      # exit # TODO
 
       # Run only one of the system types
       xml = xml.gsub('-x3', '')
@@ -244,6 +245,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
       # Compare energy results      
       results1.each do |k, v|
+        next if k == ""
         puts "x1, x3: #{results2[k].round(1)}, #{v.round(1)} [#{k}]"
         results << [results2[k], v]
       end

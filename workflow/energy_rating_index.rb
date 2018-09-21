@@ -102,7 +102,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_heat_fuel] = get_heating_fuel(hpxml_doc)
   design_output[:hpxml_dwh_fuel] = get_dhw_fuel(hpxml_doc)
   design_output[:hpxml_eec_heat] = get_eec_heat(hpxml_doc)
-  design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
+  # design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
   design_output[:hpxml_eec_dhw] = get_eec_dhw(hpxml_doc)
   
   # Total site energy

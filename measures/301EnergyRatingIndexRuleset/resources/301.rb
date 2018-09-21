@@ -1145,14 +1145,14 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       end
     end
-    if heating_system.nil? and heat_pump_system.nil?
-      if has_fuel_access(orig_details)
-        add_reference_heating_gas_furnace(new_hvac_plant, 1.0)
-      else
-        add_reference_heating_heat_pump(new_hvac_plant, 1.0)
-      end
-      added_reference_heating = true
-    end
+    # if heating_system.nil? and heat_pump_system.nil?
+    #   if has_fuel_access(orig_details)
+    #     add_reference_heating_gas_furnace(new_hvac_plant, 1.0)
+    #   else
+    #     add_reference_heating_heat_pump(new_hvac_plant, 1.0)
+    #   end
+    #   added_reference_heating = true
+    # end
     
     # Cooling
     added_reference_cooling = false
@@ -1168,10 +1168,10 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       end
     end
-    if cooling_system.nil? and heat_pump_system.nil?
-      add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
-      added_reference_cooling = true
-    end
+    # if cooling_system.nil? and heat_pump_system.nil?
+    #   add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
+    #   added_reference_cooling = true
+    # end
     
     # Table 303.4.1(1) - Thermostat
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")

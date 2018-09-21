@@ -213,13 +213,13 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
       end
     end
     
-    if clg_objs.size == 0
-      runner.registerError("Could not identify cooling object.")
-      return false
-    elsif htg_objs.size == 0
-      runner.registerError("Could not identify heating coil.")
-      return false
-    end
+    # if clg_objs.size == 0
+    #   runner.registerError("Could not identify cooling object.")
+    #   return false
+    # elsif htg_objs.size == 0
+    #   runner.registerError("Could not identify heating coil.")
+    #   return false
+    # end
     
     # TODO: Make variables specific to the equipment
     add_output_variables(model, Constants.LoadVarsSpaceHeating, htg_objs)
@@ -348,7 +348,7 @@ class OSModel
     return false if not success
     
     # Other
-    
+
     success = add_airflow(runner, model, building, unit, hvac_loops)
     return false if not success
     success = add_hvac_sizing(runner, model, unit, weather)
