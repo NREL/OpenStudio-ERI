@@ -1108,6 +1108,12 @@ class EnergyRatingIndex301Ruleset
     # Distribution system
     add_reference_distribution_system(new_hvac)
     
+    # FIXME: Temporary
+    load_distribution = XMLHelper.get_value(orig_details, "Systems/HVAC/extension/LoadDistributionScheme")
+    if not load_distribution.nil?
+      XMLHelper.add_element(new_hvac, "extension/LoadDistributionScheme", load_distribution)
+    end
+
   end
   
   def self.set_systems_hvac_rated(new_systems, orig_details)
@@ -1201,6 +1207,12 @@ class EnergyRatingIndex301Ruleset
     if added_reference_heating or added_reference_cooling
       # Add DSE distribution for these systems
       add_reference_distribution_system(new_hvac)
+    end
+    
+    # FIXME: Temporary
+    load_distribution = XMLHelper.get_value(orig_details, "Systems/HVAC/extension/LoadDistributionScheme")
+    if not load_distribution.nil?
+      XMLHelper.add_element(new_hvac, "extension/LoadDistributionScheme", load_distribution)
     end
 
   end

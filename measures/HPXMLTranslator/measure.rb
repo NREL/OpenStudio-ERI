@@ -326,17 +326,17 @@ class OSModel
     return false if not success
 
     # FIXME: remove the following logic eventually
-    thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
-    control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
-    control_slave_zones_hash.each do |control_zone, slave_zones|
-      ([control_zone] + slave_zones).each do |zone|
-        load_distribution_scheme = "UniformLoad"
-        zone.equipment.each do |object|
-          if ( object.respond_to?("to_ZoneHVACEnergyRecoveryVentilator") or object.respond_to?("to_ZoneHVACDehumidifierDX") ) and ( object.public_send("to_ZoneHVACEnergyRecoveryVentilator").is_initialized or object.public_send("to_ZoneHVACDehumidifierDX").is_initialized )
-            load_distribution_scheme = "SequentialLoad" # we don't want to share load across erv or dehumidifier
-          end
+    load_distribution = XMLHelper.get_value(building, "BuildingDetails/Systems/HVAC/extension/LoadDistributionScheme")
+    if not load_distribution.nil?
+      if not ["UniformLoad","SequentialLoad"].include? load_distribution
+        fail "Unexpected load distribution scheme #{load_distribution}."
+      end
+      thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
+      control_slave_zones_hash = HVAC.get_control_and_slave_zones(thermal_zones)
+      control_slave_zones_hash.each do |control_zone, slave_zones|
+        ([control_zone] + slave_zones).each do |zone|
+          HVAC.prioritize_zone_hvac(model, runner, zone, load_distribution)
         end
-        HVAC.prioritize_zone_hvac(model, runner, zone, load_distribution_scheme)
       end
     end
     
