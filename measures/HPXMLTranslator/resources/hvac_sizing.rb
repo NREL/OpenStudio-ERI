@@ -3039,7 +3039,7 @@ class HVACSizing
                 hvac.NumSpeedsCooling = 1
                 
                 if hvac.HasRoomAirConditioner
-                    coolingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACCoolingCFMs, 'string')
+                    coolingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACCoolingCFMs(clg_equip), 'string')
                     return nil if coolingCFMs.nil?
                     hvac.CoolingCFMs = coolingCFMs.split(",").map(&:to_f)
                 end
@@ -3056,7 +3056,7 @@ class HVACSizing
                 end
                 
                 if not hvac.HasRoomAirConditioner
-                    capacityDerateFactorEER = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorEER, 'string')
+                    capacityDerateFactorEER = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorEER(clg_equip), 'string')
                     return nil if capacityDerateFactorEER.nil?
                     hvac.CapacityDerateFactorEER = capacityDerateFactorEER.split(",").map(&:to_f)
                 end
@@ -3071,7 +3071,7 @@ class HVACSizing
                     hvac.OverSizeLimit = 1.3
                 end
                 
-                capacityRatioCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioCooling, 'string')
+                capacityRatioCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioCooling(clg_equip), 'string')
                 return nil if capacityRatioCooling.nil?
                 hvac.CapacityRatioCooling = capacityRatioCooling.split(",").map(&:to_f)
                 
@@ -3102,14 +3102,14 @@ class HVACSizing
                     hvac.FixedCoolingCapacity = UnitConversions.convert(stage.grossRatedTotalCoolingCapacity.get,"W","ton")
                 end
                 hvac.COOL_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsCooling)
-                capacityDerateFactorEER = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorEER, 'string')
+                capacityDerateFactorEER = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorEER(clg_equip), 'string')
                 return nil if capacityDerateFactorEER.nil?
                 hvac.CapacityDerateFactorEER = capacityDerateFactorEER.split(",").map(&:to_f)
 
                 hvac.NumCoilCoolingDXMultiSpeed += 1
                 
             elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow
-                capacityRatioCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioCooling, 'string')
+                capacityRatioCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioCooling(clg_equip), 'string')
                 return nil if capacityRatioCooling.nil?
                 hvac.CapacityRatioCooling = capacityRatioCooling.split(",").map(&:to_f)
                 
@@ -3124,11 +3124,11 @@ class HVACSizing
                     return nil
                 end
                 
-                shr_rated = get_unit_feature(runner, unit, Constants.SizingInfoHVACSHR, 'string')
+                shr_rated = get_unit_feature(runner, unit, Constants.SizingInfoHVACSHR(clg_equip), 'string')
                 return nil if shr_rated.nil?
                 hvac.SHRRated = shr_rated.split(",").map(&:to_f)
 
-                coolingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACCoolingCFMs, 'string')
+                coolingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACCoolingCFMs(clg_equip), 'string')
                 return nil if coolingCFMs.nil?
                 hvac.CoolingCFMs = coolingCFMs.split(",").map(&:to_f)
                 
@@ -3155,15 +3155,15 @@ class HVACSizing
                                 clg_coil.sensibleCoolingCapacityCoefficient6]
                 hvac.COOL_SH_FT_SPEC = [HVAC.convert_curve_gshp(cOOL_SH_FT_SPEC, true)]
                 
-                cOIL_BF_FT_SPEC = get_unit_feature(runner, unit, Constants.SizingInfoGSHPCoil_BF_FT_SPEC, 'string')
+                cOIL_BF_FT_SPEC = get_unit_feature(runner, unit, Constants.SizingInfoGSHPCoil_BF_FT_SPEC(clg_equip), 'string')
                 return nil if cOIL_BF_FT_SPEC.nil?
                 hvac.COIL_BF_FT_SPEC = [cOIL_BF_FT_SPEC.split(",").map(&:to_f)]
                 
-                shr_rated = get_unit_feature(runner, unit, Constants.SizingInfoHVACSHR, 'string')
+                shr_rated = get_unit_feature(runner, unit, Constants.SizingInfoHVACSHR(clg_equip), 'string')
                 return nil if shr_rated.nil?
                 hvac.SHRRated = shr_rated.split(",").map(&:to_f)
                 
-                hvac.CoilBF = get_unit_feature(runner, unit, Constants.SizingInfoGSHPCoilBF, 'double')
+                hvac.CoilBF = get_unit_feature(runner, unit, Constants.SizingInfoGSHPCoilBF(clg_equip), 'double')
                 return nil if hvac.CoilBF.nil?
                 
                 if clg_coil.ratedTotalCoolingCapacity.is_initialized
@@ -3233,7 +3233,7 @@ class HVACSizing
                 if htg_coil.ratedTotalHeatingCapacity.is_initialized
                     hvac.FixedHeatingCapacity = UnitConversions.convert(htg_coil.ratedTotalHeatingCapacity.get,"W","ton")
                 end
-                capacityDerateFactorCOP = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorCOP, 'string')
+                capacityDerateFactorCOP = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorCOP(htg_equip), 'string')
                 return nil if capacityDerateFactorCOP.nil?
                 hvac.CapacityDerateFactorCOP = capacityDerateFactorCOP.split(",").map(&:to_f)
 
@@ -3250,14 +3250,14 @@ class HVACSizing
                     hvac.FixedHeatingCapacity = UnitConversions.convert(stage.grossRatedHeatingCapacity.get,"W","ton")
                 end
                 hvac.HEAT_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
-                capacityDerateFactorCOP = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorCOP, 'string')
+                capacityDerateFactorCOP = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityDerateFactorCOP(htg_equip), 'string')
                 return nil if capacityDerateFactorCOP.nil?
                 hvac.CapacityDerateFactorCOP = capacityDerateFactorCOP.split(",").map(&:to_f)
 
                 hvac.NumCoilHeatingDXMultiSpeed += 1
                 
             elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow
-                capacityRatioHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioHeating, 'string')
+                capacityRatioHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACCapacityRatioHeating(htg_equip), 'string')
                 return nil if capacityRatioHeating.nil?
                 hvac.CapacityRatioHeating = capacityRatioHeating.split(",").map(&:to_f)
                 
@@ -3268,11 +3268,11 @@ class HVACSizing
                 curves = [vrf.heatingCapacityRatioModifierFunctionofLowTemperatureCurve.get]
                 hvac.HEAT_CAP_FT_SPEC = get_2d_vector_from_CAP_FT_SPEC_curves(curves, hvac.NumSpeedsHeating)
                 
-                heatingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACHeatingCFMs, 'string')
+                heatingCFMs = get_unit_feature(runner, unit, Constants.SizingInfoHVACHeatingCFMs(htg_equip), 'string')
                 return nil if heatingCFMs.nil?
                 hvac.HeatingCFMs = heatingCFMs.split(",").map(&:to_f)
                 
-                hvac.HeatingCapacityOffset = get_unit_feature(runner, unit, Constants.SizingInfoHVACHeatingCapacityOffset, 'double')
+                hvac.HeatingCapacityOffset = get_unit_feature(runner, unit, Constants.SizingInfoHVACHeatingCapacityOffset(htg_equip), 'double')
                 return nil if hvac.HeatingCapacityOffset.nil?
 
                 hvac.NumCoilHeatingDXVariableRefrigerantFlow += 1
@@ -4163,15 +4163,13 @@ class HVACSizing
             # Unitary System
             system.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
             if not clg_coil.nil?
-                # system.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
-                system.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
+                system.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
             else
                 system.setSupplyAirFlowRateDuringCoolingOperation(0.00001) # A value of 0 does not change from autosize
             end
             system.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
             if not htg_coil.nil?
-                # system.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
-                system.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
+                system.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
             else
                 system.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
             end
@@ -4179,12 +4177,10 @@ class HVACSizing
             # Fan
             fanonoff = system.supplyFan.get.to_FanOnOff.get
             if not clg_coil.nil?
-                # fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
-                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s"))
+                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
             end
             if not htg_coil.nil?
-                # fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
-                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s"))
+                fanonoff.setMaximumFlowRate(hvac.FanspeedRatioCooling.max * UnitConversions.convert(fan_airflow + 0.01,"cfm","m^3/s") / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
             end
 
             if not air_loop.nil?
@@ -4197,12 +4193,10 @@ class HVACSizing
                     next unless aterm.to_AirTerminalSingleDuctUncontrolled.is_initialized
                     aterm = aterm.to_AirTerminalSingleDuctUncontrolled.get
                     if not clg_coil.nil?
-                        # aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
-                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone])
+                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_clg_coils(model, runner, thermal_zone))
                     end
                     if not htg_coil.nil?
-                        # aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
-                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone])
+                        aterm.setMaximumAirFlowRate(UnitConversions.convert(fan_airflow,"cfm","m^3/s") * unit_final.Zone_Ratios[thermal_zone] / HVAC.num_air_loop_hvac_unitary_system_htg_coils(model, runner, thermal_zone))
                     end
                 end
 
@@ -4326,7 +4320,7 @@ class HVACSizing
         vrfs = HVAC.get_vrfs(model, runner, thermal_zone)
         vrfs.each do |vrf|
 
-            mshp_indices = get_unit_feature(runner, unit, Constants.SizingInfoMSHPIndices, 'string')
+            mshp_indices = get_unit_feature(runner, unit, Constants.SizingInfoMSHPIndices(vrf), 'string')
             return nil if mshp_indices.nil?
             mshp_indices = mshp_indices.split(",").map(&:to_i)
             mshp_index = mshp_indices[-1]
@@ -4470,11 +4464,11 @@ class HVACSizing
   
     clg_coil, htg_coil, supp_htg_coil = HVAC.get_coils_from_hvac_equip(equip)
     
-    ratedCFMperTonCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonCooling, 'string', false)
+    ratedCFMperTonCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonCooling(equip), 'string', false)
     if not ratedCFMperTonCooling.nil?
         ratedCFMperTonCooling = ratedCFMperTonCooling.split(",").map(&:to_f)
     end
-    ratedCFMperTonHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonHeating, 'string', false)
+    ratedCFMperTonHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonHeating(equip), 'string', false)
     if not ratedCFMperTonHeating.nil?
         ratedCFMperTonHeating = ratedCFMperTonHeating.split(",").map(&:to_f)
     end
@@ -4482,7 +4476,7 @@ class HVACSizing
     # Cooling coil
     if clg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
         if ratedCFMperTonCooling.nil?
-            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling}' with datatype 'string'.")
+            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling(equip)}' with datatype 'string'.")
             return false
         end
         clg_coil.setRatedTotalCoolingCapacity(UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","W") / hvac.NumCoilCoolingDXSingleSpeed)
@@ -4493,7 +4487,7 @@ class HVACSizing
         
     elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
         if ratedCFMperTonCooling.nil?
-            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling}' with datatype 'string'.")
+            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling(equip)}' with datatype 'string'.")
             return false
         end
         clg_coil.stages.each_with_index do |stage, speed|
@@ -4519,8 +4513,7 @@ class HVACSizing
     # Heating coil
     if htg_coil.is_a? OpenStudio::Model::CoilHeatingElectric
         if not equip.is_a? OpenStudio::Model::ZoneHVACPackagedTerminalAirConditioner
-            # htg_coil.setNominalCapacity(zone_ratio * UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") / hvac.NumCoilHeatingElectric)
-            htg_coil.setNominalCapacity(zone_ratio * UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W"))
+            htg_coil.setNominalCapacity(zone_ratio * UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") / hvac.NumCoilHeatingElectric)
         end
         
     elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingGas
@@ -4528,7 +4521,7 @@ class HVACSizing
     
     elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
         if ratedCFMperTonHeating.nil?
-            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating}' with datatype 'string'.")
+            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating(equip)}' with datatype 'string'.")
             return false
         end
         htg_coil.setRatedTotalHeatingCapacity(UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") / hvac.NumCoilHeatingDXSingleSpeed)
@@ -4539,7 +4532,7 @@ class HVACSizing
         
     elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
         if ratedCFMperTonHeating.nil?
-            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating}' with datatype 'string'.")
+            runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating(equip)}' with datatype 'string'.")
             return false
         end
         htg_coil.stages.each_with_index do |stage, speed|

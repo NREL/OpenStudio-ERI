@@ -246,6 +246,7 @@ class EnergyRatingIndexTest < Minitest::Test
       # Compare energy results      
       results1.each do |k, v|
         next if k == ""
+        next if results2[k] == 0.0 and v == 0.0
         puts "x1, x3: #{results2[k].round(1)}, #{v.round(1)} [#{k}]"
         results << [results2[k], v]
       end

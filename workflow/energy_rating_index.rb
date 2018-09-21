@@ -96,15 +96,17 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  # FIXME: Temporary
-  #if design == Constants.CalcTypeERIReferenceHome or design == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-  #  design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(hpxml_doc)
-  #end
-  #design_output[:hpxml_heat_fuel] = get_heating_fuel(hpxml_doc)
-  #design_output[:hpxml_dwh_fuel] = get_dhw_fuel(hpxml_doc)
-  #design_output[:hpxml_eec_heat] = get_eec_heat(hpxml_doc)
-  # design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
-  #design_output[:hpxml_eec_dhw] = get_eec_dhw(hpxml_doc)
+  # FIXME: Temporary begin/end
+  begin
+    if design == Constants.CalcTypeERIReferenceHome or design == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+      design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(hpxml_doc)
+    end
+    design_output[:hpxml_heat_fuel] = get_heating_fuel(hpxml_doc)
+    design_output[:hpxml_dwh_fuel] = get_dhw_fuel(hpxml_doc)
+    design_output[:hpxml_eec_heat] = get_eec_heat(hpxml_doc)
+    design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
+    design_output[:hpxml_eec_dhw] = get_eec_dhw(hpxml_doc)
+  end
   
   # Total site energy
   design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design)

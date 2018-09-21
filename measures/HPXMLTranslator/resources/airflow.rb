@@ -10,10 +10,10 @@ require "#{File.dirname(__FILE__)}/hvac"
 class Airflow
 
   def self.apply(model, runner, infil, mech_vent, nat_vent, duct_systems, measure_dir)
-  
+
     @measure_dir = measure_dir
   
-    weather = WeatherProcess.new(model, runner, File.dirname(__FILE__))
+    weather = WeatherProcess.new(model, runner, measure_dir)
     if weather.error?
       return false
     end

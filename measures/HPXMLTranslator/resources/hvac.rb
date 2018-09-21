@@ -10,7 +10,8 @@ class HVAC
     def self.apply_central_ac_1speed(model, unit, runner, seer, eers, shrs,
                                      fan_power_rated, fan_power_installed,
                                      crankcase_capacity, crankcase_temp,
-                                     eer_capacity_derates, capacity, dse)
+                                     eer_capacity_derates, capacity, dse,
+                                     frac_cool_load_served)
     
       num_speeds = 1
 
@@ -119,7 +120,7 @@ class HVAC
         runner.registerInfo("Added '#{air_loop.name}' to '#{control_zone.name}' of #{unit.name}")
 
         prioritize_zone_hvac(model, runner, control_zone)
-        
+
         slave_zones.each do |slave_zone|
 
           diffuser_fbsmt = OpenStudio::Model::AirTerminalSingleDuctUncontrolled.new(model, model.alwaysOnDiscreteSchedule)
@@ -133,11 +134,12 @@ class HVAC
           
         end # slave_zone
       
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER(air_loop_unitary), eer_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling(air_loop_unitary), cfms_ton_rated.join(","))
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(air_loop_unitary), frac_cool_load_served)
+
       end # control_zone
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cfms_ton_rated.join(","))
       
       return true
     
@@ -147,7 +149,8 @@ class HVAC
                                      capacity_ratios, fan_speed_ratios,
                                      fan_power_rated, fan_power_installed,
                                      crankcase_capacity, crankcase_temp,
-                                     eer_capacity_derates, capacity, dse)
+                                     eer_capacity_derates, capacity, dse,
+                                     frac_cool_load_served)
     
       num_speeds = 2
       
@@ -277,12 +280,13 @@ class HVAC
           
         end # slave_zone
       
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling(air_loop_unitary), capacity_ratios.join(","))
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER(air_loop_unitary), eer_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling(air_loop_unitary), cfms_ton_rated.join(","))
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(air_loop_unitary), frac_cool_load_served)
+
       end # control_zone
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_ratios.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cfms_ton_rated.join(","))
       
       return true
       
@@ -292,7 +296,8 @@ class HVAC
                                      capacity_ratios, fan_speed_ratios,
                                      fan_power_rated, fan_power_installed,
                                      crankcase_capacity, crankcase_temp,
-                                     eer_capacity_derates, capacity, dse)
+                                     eer_capacity_derates, capacity, dse,
+                                     frac_cool_load_served)
        
       num_speeds = 4
       
@@ -424,12 +429,13 @@ class HVAC
           
         end # slave_zone
       
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling(air_loop_unitary), capacity_ratios.join(","))
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER(air_loop_unitary), eer_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling(air_loop_unitary), cfms_ton_rated.join(","))
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(air_loop_unitary), frac_cool_load_served)
+
       end # control_zone
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_ratios.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cfms_ton_rated.join(","))
       
       return true
     end
@@ -439,8 +445,9 @@ class HVAC
                                        crankcase_capacity, crankcase_temp,
                                        eer_capacity_derates, cop_capacity_derates,
                                        heat_pump_capacity, supplemental_efficiency,
-                                       supplemental_capacity, dse)
-    
+                                       supplemental_capacity, dse,
+                                       frac_heat_load_served=1, frac_cool_load_served=1)
+
       if heat_pump_capacity == Constants.SizingAutoMaxLoad
           runner.registerWarning("Using #{Constants.SizingAutoMaxLoad} is not recommended for single-speed heat pumps. When sized larger than the cooling load, this can lead to humidity concerns due to reduced dehumidification performance by the heat pump.")
       end
@@ -527,17 +534,17 @@ class HVAC
         
         # _processSystemAir
                 
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " htg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        htg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        htg_air_loop_unitary.setName(obj_name + " htg unitary system")
+        htg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        htg_air_loop_unitary.setSupplyFan(fan)
+        htg_air_loop_unitary.setHeatingCoil(htg_coil)
+        htg_air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        htg_air_loop_unitary.setFanPlacement("BlowThrough")
+        htg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        htg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        htg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        htg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central htg air system")
@@ -546,13 +553,13 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        htg_air_loop_unitary.addToNode(air_supply_inlet_node)
 
-        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{fan.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        htg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
 
         # _processSystemDemandSideAir
         # Demand Side
@@ -620,16 +627,16 @@ class HVAC
         
         # _processSystemAir
                  
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " clg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        clg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        clg_air_loop_unitary.setName(obj_name + " clg unitary system")
+        clg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        clg_air_loop_unitary.setSupplyFan(fan)
+        clg_air_loop_unitary.setCoolingCoil(clg_coil)
+        clg_air_loop_unitary.setFanPlacement("BlowThrough")
+        clg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        clg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        clg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        clg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central clg air system")
@@ -638,12 +645,12 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        clg_air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{fan.name}' to '#{clg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{clg_coil.name}' to '#{clg_air_loop_unitary.name}' of '#{air_loop.name}'")
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        clg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
         # _processSystemDemandSideAir
         # Demand Side
@@ -676,15 +683,17 @@ class HVAC
           prioritize_zone_hvac(model, runner, slave_zone)
           
         end # slave_zone
+
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER(clg_air_loop_unitary), eer_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP(htg_air_loop_unitary), cop_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad(htg_air_loop_unitary), (heat_pump_capacity == Constants.SizingAutoMaxLoad))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating(htg_air_loop_unitary), cfms_ton_rated_heating.join(","))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling(clg_air_loop_unitary), cfms_ton_rated_cooling.join(","))
+        unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(htg_air_loop_unitary), frac_heat_load_served)
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(clg_air_loop_unitary), frac_cool_load_served)
       
       end # control_zone
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, cop_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (heat_pump_capacity == Constants.SizingAutoMaxLoad))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating, cfms_ton_rated_heating.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cfms_ton_rated_cooling.join(","))
     
       return true
     end
@@ -696,7 +705,8 @@ class HVAC
                                        crankcase_capacity, crankcase_temp,
                                        eer_capacity_derates, cop_capacity_derates,
                                        heat_pump_capacity, supplemental_efficiency,
-                                       supplemental_capacity, dse)
+                                       supplemental_capacity, dse,
+                                       frac_heat_load_served=1, frac_cool_load_served=1)
                                        
       num_speeds = 2
       
@@ -793,18 +803,18 @@ class HVAC
 
         # _processSystemAir
                  
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " htg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
-        air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
+        htg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        htg_air_loop_unitary.setName(obj_name + " htg unitary system")
+        htg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        htg_air_loop_unitary.setSupplyFan(fan)
+        htg_air_loop_unitary.setHeatingCoil(htg_coil)
+        htg_air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        htg_air_loop_unitary.setFanPlacement("BlowThrough")
+        htg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        htg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        htg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        htg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        htg_air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central htg air system")
@@ -813,13 +823,13 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        htg_air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
+        runner.registerInfo("Added '#{fan.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")    
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        htg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
         # _processSystemDemandSideAir
         # Demand Side
@@ -893,17 +903,17 @@ class HVAC
 
         # _processSystemAir
                  
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " clg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
-        air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
+        clg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        clg_air_loop_unitary.setName(obj_name + " clg unitary system")
+        clg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        clg_air_loop_unitary.setSupplyFan(fan)
+        clg_air_loop_unitary.setCoolingCoil(clg_coil)
+        clg_air_loop_unitary.setFanPlacement("BlowThrough")
+        clg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        clg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        clg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        clg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        clg_air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central clg air system")
@@ -912,12 +922,12 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        clg_air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{fan.name}' to '#{clg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{clg_coil.name}' to '#{clg_air_loop_unitary.name}' of '#{air_loop.name}'")
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        clg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
         # _processSystemDemandSideAir
         # Demand Side
@@ -950,16 +960,18 @@ class HVAC
           prioritize_zone_hvac(model, runner, slave_zone)
           
         end # slave_zone
+
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling(clg_air_loop_unitary), capacity_ratios.join(","))
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER(clg_air_loop_unitary), eer_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP(htg_air_loop_unitary), cop_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad(htg_air_loop_unitary), (heat_pump_capacity == Constants.SizingAutoMaxLoad))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating(htg_air_loop_unitary), cfms_ton_rated_heating.join(","))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling(clg_air_loop_unitary), cfms_ton_rated_cooling.join(","))
+        unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(htg_air_loop_unitary), frac_heat_load_served)
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(clg_air_loop_unitary), frac_cool_load_served)
       
       end # control_zone
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_ratios.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, cop_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (heat_pump_capacity == Constants.SizingAutoMaxLoad))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating, cfms_ton_rated_heating.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cfms_ton_rated_cooling.join(","))
     
       return true
     end
@@ -971,7 +983,8 @@ class HVAC
                                        crankcase_capacity, crankcase_temp,
                                        eer_capacity_derates, cop_capacity_derates,
                                        heat_pump_capacity, supplemental_efficiency,
-                                       supplemental_capacity, dse)
+                                       supplemental_capacity, dse,
+                                       frac_heat_load_served=1, frac_cool_load_served=1)
                                   
       num_speeds = 4
       
@@ -1073,18 +1086,18 @@ class HVAC
 
         # _processSystemAir
                  
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " htg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
-        air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
+        htg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        htg_air_loop_unitary.setName(obj_name + " htg unitary system")
+        htg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        htg_air_loop_unitary.setSupplyFan(fan)
+        htg_air_loop_unitary.setHeatingCoil(htg_coil)
+        htg_air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        htg_air_loop_unitary.setFanPlacement("BlowThrough")
+        htg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        htg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        htg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        htg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        htg_air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central htg air system")
@@ -1093,13 +1106,13 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        htg_air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")    
+        runner.registerInfo("Added '#{fan.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{supp_htg_coil.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")    
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        htg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
         # _processSystemDemandSideAir
         # Demand Side
@@ -1173,17 +1186,17 @@ class HVAC
 
         # _processSystemAir
                  
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " clg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
-        air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
+        clg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        clg_air_loop_unitary.setName(obj_name + " clg unitary system")
+        clg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        clg_air_loop_unitary.setSupplyFan(fan)
+        clg_air_loop_unitary.setCoolingCoil(clg_coil)
+        clg_air_loop_unitary.setFanPlacement("BlowThrough")
+        clg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        clg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
+        clg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        clg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
+        clg_air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
         
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central clg air system")
@@ -1192,12 +1205,12 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        clg_air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{fan.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
-        runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{fan.name}' to '#{clg_air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{clg_coil.name}' to '#{clg_air_loop_unitary.name}' of '#{air_loop.name}'")
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        clg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
           
         # _processSystemDemandSideAir
         # Demand Side
@@ -1231,15 +1244,17 @@ class HVAC
           
         end # slave_zone
       
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling(clg_air_loop_unitary), capacity_ratios.join(","))
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER(clg_air_loop_unitary), eer_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP(htg_air_loop_unitary), cop_capacity_derates.join(","))
+        unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad(htg_air_loop_unitary), (heat_pump_capacity == Constants.SizingAutoMaxLoad))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating(htg_air_loop_unitary), cfms_ton_rated_heating.join(","))
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling(clg_air_loop_unitary), cfms_ton_rated_cooling.join(","))
+        unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(htg_air_loop_unitary), frac_heat_load_served)
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(clg_air_loop_unitary), frac_cool_load_served)
+
       end # control_zone
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_ratios.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, cop_capacity_derates.join(","))
-      unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (heat_pump_capacity == Constants.SizingAutoMaxLoad))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating, cfms_ton_rated_heating.join(","))
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cfms_ton_rated_cooling.join(","))
       
       return true
     end
@@ -1253,7 +1268,7 @@ class HVAC
                         cap_retention_temp, pan_heater_power, fan_power,
                         is_ducted, heat_pump_capacity,
                         supplemental_efficiency, supplemental_capacity,
-                        dse)
+                        dse, frac_heat_load_served, frac_cool_load_served)
     
       num_speeds = 10
       
@@ -1407,17 +1422,17 @@ class HVAC
             
             # _processSystemDemandSideAir
             
-            tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
-            tu_vrf.coolingCoil.get.remove
-            tu_vrf.setName(obj_name + " #{zone.name} h vrf".gsub(" zone", ""))
-            tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
-            tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-            tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
-            tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
-            tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
-            tu_vrf.addToThermalZone(zone)
-            vrf.addTerminal(tu_vrf)
-            runner.registerInfo("Added '#{tu_vrf.name}' to '#{zone.name}' of #{unit.name}")        
+            htg_tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
+            htg_tu_vrf.coolingCoil.get.remove
+            htg_tu_vrf.setName(obj_name + " #{zone.name} h vrf".gsub(" zone", ""))
+            htg_tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
+            htg_tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+            htg_tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
+            htg_tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
+            htg_tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
+            htg_tu_vrf.addToThermalZone(zone)
+            vrf.addTerminal(htg_tu_vrf)
+            runner.registerInfo("Added '#{htg_tu_vrf.name}' to '#{zone.name}' of #{unit.name}")        
             
             prioritize_zone_hvac(model, runner, zone)
 
@@ -1449,19 +1464,34 @@ class HVAC
             
             # _processSystemDemandSideAir
             
-            tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
-            tu_vrf.heatingCoil.get.remove
-            tu_vrf.setName(obj_name + " #{zone.name} c vrf".gsub(" zone", ""))
-            tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
-            tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-            tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
-            tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
-            tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
-            tu_vrf.addToThermalZone(zone)
-            vrf.addTerminal(tu_vrf)
-            runner.registerInfo("Added '#{tu_vrf.name}' to '#{zone.name}' of #{unit.name}")        
+            clg_tu_vrf = OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow.new(model, clg_coil, htg_coil, fan)
+            clg_tu_vrf.heatingCoil.get.remove
+            clg_tu_vrf.setName(obj_name + " #{zone.name} c vrf".gsub(" zone", ""))
+            clg_tu_vrf.setTerminalUnitAvailabilityschedule(model.alwaysOnDiscreteSchedule)
+            clg_tu_vrf.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+            clg_tu_vrf.setZoneTerminalUnitOnParasiticElectricEnergyUse(0)
+            clg_tu_vrf.setZoneTerminalUnitOffParasiticElectricEnergyUse(0)
+            clg_tu_vrf.setRatedTotalHeatingCapacitySizingRatio(1)
+            clg_tu_vrf.addToThermalZone(zone)
+            vrf.addTerminal(clg_tu_vrf)
+            runner.registerInfo("Added '#{clg_tu_vrf.name}' to '#{zone.name}' of #{unit.name}")        
             
             prioritize_zone_hvac(model, runner, zone)
+
+            # Store is_ducted bool
+            unit.setFeature(Constants.DuctedInfoMiniSplitHeatPump(vrf), is_ducted)
+            
+            # Store info for HVAC Sizing measure
+            unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling(clg_tu_vrf), capacity_ratios_cooling.join(","))
+            unit.setFeature(Constants.SizingInfoHVACCapacityRatioHeating(htg_tu_vrf), capacity_ratios_heating.join(","))
+            unit.setFeature(Constants.SizingInfoHVACCoolingCFMs(clg_tu_vrf), cfms_cooling.join(","))
+            unit.setFeature(Constants.SizingInfoHVACHeatingCFMs(htg_tu_vrf), cfms_heating.join(","))
+            unit.setFeature(Constants.SizingInfoHVACHeatingCapacityOffset(htg_tu_vrf), heating_capacity_offset)
+            unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad(htg_tu_vrf), (heat_pump_capacity == Constants.SizingAutoMaxLoad))
+            unit.setFeature(Constants.SizingInfoHVACSHR(clg_tu_vrf), shrs_rated.join(","))
+            unit.setFeature(Constants.SizingInfoMSHPIndices(vrf), mshp_indices.join(","))
+            unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(htg_tu_vrf), frac_heat_load_served)
+            unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(clg_tu_vrf), frac_cool_load_served)
         
         end
         
@@ -1529,22 +1559,9 @@ class HVAC
           program_calling_manager.setCallingPoint("BeginTimestepBeforePredictor")
           program_calling_manager.addProgram(program)
           
-        end # slave_zone
+        end # pan heater power
       
       end # control_zone
-      
-      # Store is_ducted bool
-      unit.setFeature(Constants.DuctedInfoMiniSplitHeatPump, is_ducted)
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_ratios_cooling.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCapacityRatioHeating, capacity_ratios_heating.join(","))
-      unit.setFeature(Constants.SizingInfoHVACCoolingCFMs, cfms_cooling.join(","))
-      unit.setFeature(Constants.SizingInfoHVACHeatingCFMs, cfms_heating.join(","))
-      unit.setFeature(Constants.SizingInfoHVACHeatingCapacityOffset, heating_capacity_offset)
-      unit.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (heat_pump_capacity == Constants.SizingAutoMaxLoad))
-      unit.setFeature(Constants.SizingInfoHVACSHR, shrs_rated.join(","))
-      unit.setFeature(Constants.SizingInfoMSHPIndices, mshp_indices.join(","))
     
       return true
     end
@@ -1557,7 +1574,8 @@ class HVAC
                         design_delta_t, pump_head, 
                         u_tube_leg_spacing, u_tube_spacing_type,
                         fan_power, heat_pump_capacity, supplemental_efficiency,
-                        supplemental_capacity, dse)
+                        supplemental_capacity, dse,
+                        frac_heat_load_served, frac_cool_load_served)
     
       if frac_glycol == 0
         fluid_type = Constants.FluidWater
@@ -1704,17 +1722,17 @@ class HVAC
         fan.setMotorEfficiency(1.0)
         fan.setMotorInAirstreamFraction(1.0)
           
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " htg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setHeatingCoil(htg_coil)
-        air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
+        htg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        htg_air_loop_unitary.setName(obj_name + " htg unitary system")
+        htg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        htg_air_loop_unitary.setSupplyFan(fan)
+        htg_air_loop_unitary.setHeatingCoil(htg_coil)
+        htg_air_loop_unitary.setSupplementalHeatingCoil(supp_htg_coil)
+        htg_air_loop_unitary.setFanPlacement("BlowThrough")
+        htg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        htg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
+        htg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        htg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central htg air system")
@@ -1723,11 +1741,11 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        htg_air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{htg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{htg_coil.name}' to '#{htg_air_loop_unitary.name}' of '#{air_loop.name}'")
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        htg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
         
         zone_splitter = air_loop.zoneSplitter
         zone_splitter.setName(obj_name + " htg zone splitter")
@@ -1797,16 +1815,16 @@ class HVAC
         fan.setMotorEfficiency(1.0)
         fan.setMotorInAirstreamFraction(1.0)
           
-        air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
-        air_loop_unitary.setName(obj_name + " clg unitary system")
-        air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-        air_loop_unitary.setSupplyFan(fan)
-        air_loop_unitary.setCoolingCoil(clg_coil)
-        air_loop_unitary.setFanPlacement("BlowThrough")
-        air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
-        air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
-        air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
-        air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
+        clg_air_loop_unitary = OpenStudio::Model::AirLoopHVACUnitarySystem.new(model)
+        clg_air_loop_unitary.setName(obj_name + " clg unitary system")
+        clg_air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
+        clg_air_loop_unitary.setSupplyFan(fan)
+        clg_air_loop_unitary.setCoolingCoil(clg_coil)
+        clg_air_loop_unitary.setFanPlacement("BlowThrough")
+        clg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
+        clg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(170.0,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.    
+        clg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        clg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)          
           
         air_loop = OpenStudio::Model::AirLoopHVAC.new(model)
         air_loop.setName(obj_name + " central clg air system")
@@ -1815,11 +1833,11 @@ class HVAC
         air_demand_inlet_node = air_loop.demandInletNode
         air_demand_outlet_node = air_loop.demandOutletNode    
         
-        air_loop_unitary.addToNode(air_supply_inlet_node)
+        clg_air_loop_unitary.addToNode(air_supply_inlet_node)
         
-        runner.registerInfo("Added '#{clg_coil.name}' to '#{air_loop_unitary.name}' of '#{air_loop.name}'")
+        runner.registerInfo("Added '#{clg_coil.name}' to '#{clg_air_loop_unitary.name}' of '#{air_loop.name}'")
         
-        air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
+        clg_air_loop_unitary.setControllingZoneorThermostatLocation(control_zone)
         
         zone_splitter = air_loop.zoneSplitter
         zone_splitter.setName(obj_name + " clg zone splitter")
@@ -1849,23 +1867,27 @@ class HVAC
           
         end        
       
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACSHR(clg_air_loop_unitary), shr.to_s)
+        unit.setFeature(Constants.SizingInfoGSHPCoil_BF_FT_SPEC(clg_air_loop_unitary), cOIL_BF_FT_SPEC.join(","))
+        unit.setFeature(Constants.SizingInfoGSHPCoilBF(clg_air_loop_unitary), coilBF)
+        unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(htg_air_loop_unitary), frac_heat_load_served)
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(clg_air_loop_unitary), frac_cool_load_served)
+
       end
-      
+
       # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACSHR, shr.to_s)
-      unit.setFeature(Constants.SizingInfoGSHPCoil_BF_FT_SPEC, cOIL_BF_FT_SPEC.join(","))
-      unit.setFeature(Constants.SizingInfoGSHPCoilBF, coilBF)
-      unit.setFeature(Constants.SizingInfoGSHPBoreSpacing, bore_spacing)
-      unit.setFeature(Constants.SizingInfoGSHPBoreHoles, bore_holes)
-      unit.setFeature(Constants.SizingInfoGSHPBoreDepth, bore_depth)
-      unit.setFeature(Constants.SizingInfoGSHPBoreConfig, bore_config)
-      unit.setFeature(Constants.SizingInfoGSHPUTubeSpacingType, u_tube_spacing_type)
+      unit.setFeature(Constants.SizingInfoGSHPBoreSpacing(ground_heat_exch_vert), bore_spacing)
+      unit.setFeature(Constants.SizingInfoGSHPBoreHoles(ground_heat_exch_vert), bore_holes)
+      unit.setFeature(Constants.SizingInfoGSHPBoreDepth(ground_heat_exch_vert), bore_depth)
+      unit.setFeature(Constants.SizingInfoGSHPBoreConfig(ground_heat_exch_vert), bore_config)
+      unit.setFeature(Constants.SizingInfoGSHPUTubeSpacingType(ground_heat_exch_vert), u_tube_spacing_type)
     
       return true
     end
     
     def self.apply_room_ac(model, unit, runner, eer, shr,
-                           airflow_rate, capacity)
+                           airflow_rate, capacity, frac_cool_load_served)
     
       # Performance curves
       # From Frigidaire 10.7 EER unit in Winkler et. al. Lab Testing of Window ACs (2013)
@@ -1931,17 +1953,19 @@ class HVAC
           
         end # slave_zone
       
+        # Store info for HVAC Sizing measure
+        unit.setFeature(Constants.SizingInfoHVACCoolingCFMs(ptac), airflow_rate.to_s)
+        unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling(ptac), cfms_ton_rated.join(","))
+        unit.setFeature(Constants.SizingInfoHVACFracCoolLoadServed(ptac), frac_cool_load_served)
+
       end # control_zone
-      
-      # Store info for HVAC Sizing measure
-      unit.setFeature(Constants.SizingInfoHVACCoolingCFMs, airflow_rate.to_s)
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonCooling, cfms_ton_rated.join(","))
       
       return true
     end
     
     def self.apply_furnace(model, unit, runner, fuel_type, afue,
-                           capacity, fan_power_installed, dse)
+                           capacity, fan_power_installed, dse,
+                           frac_heat_load_served)
     
       # Parasitic Electricity (Source: DOE. (2007). Technical Support Document: Energy Efficiency Program for Consumer Products: "Energy Conservation Standards for Residential Furnaces and Boilers". www.eere.energy.gov/buildings/appliance_standards/residential/furnaces_boilers.html)
       furnaceParasiticElecDict = {Constants.FuelTypeGas=>76.0, # W during operation
@@ -2044,7 +2068,9 @@ class HVAC
         
           prioritize_zone_hvac(model, runner, slave_zone)
         
-        end    
+        end
+
+        unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(air_loop_unitary), frac_heat_load_served)
       
       end
     
@@ -2053,7 +2079,8 @@ class HVAC
     
     def self.apply_boiler(model, unit, runner, fuel_type, system_type, afue,
                           oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                          capacity, design_temp, is_modulating, dse)
+                          capacity, design_temp, is_modulating, dse,
+                          frac_heat_load_served)
     
       boilerIsCondensing = false
       if system_type == Constants.BoilerTypeCondensing
@@ -2230,11 +2257,14 @@ class HVAC
         end
         
       end
+
+      # Store info for HVAC Sizing measure
+      unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(boiler), frac_heat_load_served)
       
       return true
     end
     
-    def self.apply_electric_baseboard(model, unit, runner, efficiency, capacity)
+    def self.apply_electric_baseboard(model, unit, runner, efficiency, capacity, frac_heat_load_served)
     
       obj_name = Constants.ObjectNameElectricBaseboard(unit.name.to_s)
       
@@ -2256,6 +2286,9 @@ class HVAC
           runner.registerInfo("Added '#{htg_coil.name}' to '#{zone.name}' of #{unit.name}")
          
           prioritize_zone_hvac(model, runner, zone)
+
+          # Store info for HVAC Sizing measure
+          unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(htg_coil), frac_heat_load_served)
           
         end
         
@@ -2266,7 +2299,7 @@ class HVAC
     
     def self.apply_unit_heater(model, unit, runner, fuel_type,
                                efficiency, capacity, fan_power,
-                               airflow_rate)
+                               airflow_rate, frac_heat_load_served)
     
       if fan_power > 0 and airflow_rate == 0
         runner.registerError("If Fan Power > 0, then Airflow Rate cannot be zero.")
@@ -2307,8 +2340,7 @@ class HVAC
             fan.setPressureRise(0)
           end
           fan.setMotorEfficiency(1.0)
-          fan.setMotorInAirstreamFraction(1.0)  
-          
+          fan.setMotorInAirstreamFraction(1.0)          
         
           # _processSystemAir
           
@@ -2331,12 +2363,14 @@ class HVAC
           unitary_system.addToThermalZone(zone)
 
           prioritize_zone_hvac(model, runner, zone)
+
+          # Store info for HVAC Sizing measure
+          unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating(unitary_system), airflow_rate.to_s)
+          unit.setFeature(Constants.SizingInfoHVACFracHeatLoadServed(unitary_system), frac_heat_load_served)
           
         end
       
       end
-      
-      unit.setFeature(Constants.SizingInfoHVACRatedCFMperTonHeating, airflow_rate.to_s)
     
       return true
     end
@@ -4109,12 +4143,13 @@ class HVAC
       end
       model.getBuildingUnits.each do |unit|
         next if not Geometry.get_thermal_zones_from_spaces(unit.spaces).include?(thermal_zone)
-        is_ducted = unit.getFeatureAsBoolean(Constants.DuctedInfoMiniSplitHeatPump)
-        if not is_ducted.is_initialized
-          runner.registerError("Could not find value for '#{Constants.DuctedInfoMiniSplitHeatPump}' with datatype boolean.")
-          return nil
+        model.getAirConditionerVariableRefrigerantFlows.each do |vrf|
+          vrf.terminals.each do |terminal|
+            next unless thermal_zone.handle.to_s == terminal.thermalZone.get.handle.to_s
+            is_ducted = unit.getFeatureAsBoolean(Constants.DuctedInfoMiniSplitHeatPump(vrf)).get
+            return is_ducted
+          end
         end
-        return is_ducted.get
       end
       return false
     end

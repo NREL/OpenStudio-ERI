@@ -2057,23 +2057,13 @@ class OSModel
       dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/extension/PumpAnnualkWh"))
     end
     dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
-    
-    # Drain Water Heat Recovery
-    dwhr_avail = false
-    dwhr_eff = 0.0
-    dwhr_eff_adj = 0.0
-    dwhr_iFrac = 0.0
-    dwhr_plc = 0.0
-    dwhr_locF = 0.0
-    dwhr_fixF = 0.0
-    if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
-      dwhr_avail = true
-      dwhr_eff = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
-      dwhr_eff_adj = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/EfficiencyAdjustment"))
-      dwhr_iFrac = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FracImpactedHotWater"))
-      dwhr_plc = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/PipingLossCoefficient"))
-      dwhr_locF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/LocationFactor"))
-      dwhr_fixF = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/extension/FixtureFactor"))
+    daily_mw_fractions = XMLHelper.get_value(dist, "extension/MixedWaterDailyFractions").split(",").map(&:to_f)
+    if daily_mw_fractions.size != 365
+      fail "HotWaterDistribution/extension/MixedWaterDailyFractions must have 365 comma-separated values."
+    end
+    daily_wh_inlet_temperatures = XMLHelper.get_value(dist, "extension/WaterHeaterDailyInletTemperatures").split(",").map(&:to_f)
+    if daily_wh_inlet_temperatures.size != 365
+      fail "HotWaterDistribution/extension/WaterHeaterDailyInletTemperatures must have 365 comma-separated values."
     end
     
     success = Waterheater.apply_eri_hw_appl(model, unit, runner, weather,
@@ -2085,9 +2075,8 @@ class OSModel
                                             cook_annual_therm, cook_frac_sens, 
                                             cook_frac_lat, cook_fuel_type, fx_gpd,
                                             fx_sens_btu, fx_lat_btu, dist_type, 
-                                            dist_gpd, dist_pump_annual_kwh, dwhr_avail,
-                                            dwhr_eff, dwhr_eff_adj, dwhr_iFrac,
-                                            dwhr_plc, dwhr_locF, dwhr_fixF)
+                                            dist_gpd, dist_pump_annual_kwh, 
+                                            daily_wh_inlet_temperatures, daily_mw_fractions)
     return false if not success
     
     return true
@@ -2104,7 +2093,7 @@ class OSModel
         cool_capacity_btuh = Constants.SizingAuto
       end
       
-      load_frac = Float(XMLHelper.get_value(clgsys, "FractionCoolLoadServed")) # FIXME: Not yet used
+      load_frac = Float(XMLHelper.get_value(clgsys, "FractionCoolLoadServed"))
       
       dse_heat, dse_cool = get_dse(building, clgsys)
       
@@ -2138,7 +2127,7 @@ class OSModel
                                                  fan_power_rated, fan_power_installed,
                                                  crankcase_kw, crankcase_temp,
                                                  eer_capacity_derates, cool_capacity_btuh, 
-                                                 dse_cool)
+                                                 dse_cool, load_frac)
           return false if not success
         
         elsif num_speeds == "2-Speed"
@@ -2155,7 +2144,7 @@ class OSModel
                                                  fan_power_rated, fan_power_installed,
                                                  crankcase_kw, crankcase_temp,
                                                  eer_capacity_derates, cool_capacity_btuh, 
-                                                 dse_cool)
+                                                 dse_cool, load_frac)
           return false if not success
           
         elsif num_speeds == "Variable-Speed"
@@ -2172,7 +2161,7 @@ class OSModel
                                                   fan_power_rated, fan_power_installed,
                                                   crankcase_kw, crankcase_temp,
                                                   eer_capacity_derates, cool_capacity_btuh, 
-                                                  dse_cool)
+                                                  dse_cool, load_frac)
           return false if not success
                                        
         else
@@ -2212,7 +2201,7 @@ class OSModel
         heat_capacity_btuh = Constants.SizingAuto
       end
       
-      load_frac = Float(XMLHelper.get_value(htgsys, "FractionHeatLoadServed")) # FIXME: Not yet used
+      load_frac = Float(XMLHelper.get_value(htgsys, "FractionHeatLoadServed"))
       
       dse_heat, dse_cool = get_dse(building, htgsys)
       
@@ -2225,7 +2214,8 @@ class OSModel
       
         fan_power = 0.5 # For fuel furnaces, will be overridden by EAE later
         success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
-                                     heat_capacity_btuh, fan_power, dse_heat)
+                                     heat_capacity_btuh, fan_power, dse_heat,
+                                     load_frac)
         return false if not success
 
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/WallFurnace")
@@ -2236,7 +2226,7 @@ class OSModel
         # TODO: Allow DSE
         success = HVAC.apply_unit_heater(model, unit, runner, fuel,
                                          efficiency, heat_capacity_btuh, fan_power,
-                                         airflow_rate)
+                                         airflow_rate, load_frac)
         return false if not success
         
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
@@ -2252,7 +2242,8 @@ class OSModel
         is_modulating = false
         success = HVAC.apply_boiler(model, unit, runner, fuel, system_type, afue,
                                     oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                                    heat_capacity_btuh, design_temp, is_modulating, dse_heat)
+                                    heat_capacity_btuh, design_temp, is_modulating, dse_heat,
+                                    load_frac)
         return false if not success
       
       elsif XMLHelper.has_element(htgsys, "HeatingSystemType/ElectricResistance")
@@ -2271,7 +2262,7 @@ class OSModel
         # TODO: Allow DSE
         success = HVAC.apply_unit_heater(model, unit, runner, fuel,
                                          efficiency, heat_capacity_btuh, fan_power,
-                                         airflow_rate)
+                                         airflow_rate, load_frac)
         return false if not success
         
       end
@@ -2297,8 +2288,8 @@ class OSModel
         cool_capacity_btuh = Float(cool_capacity_btuh)
       end
       
-      load_frac_heat = Float(XMLHelper.get_value(hpsys, "FractionHeatLoadServed")) # FIXME: Not yet used
-      load_frac_cool = Float(XMLHelper.get_value(hpsys, "FractionCoolLoadServed")) # FIXME: Not yet used
+      load_frac_heat = Float(XMLHelper.get_value(hpsys, "FractionHeatLoadServed"))
+      load_frac_cool = Float(XMLHelper.get_value(hpsys, "FractionCoolLoadServed"))
       
       backup_heat_capacity_btuh = XMLHelper.get_value(hpsys, "BackupHeatingCapacity") # TODO: Require in ERI Use Case?
       if backup_heat_capacity_btuh.nil?
@@ -2351,7 +2342,8 @@ class OSModel
                                                    crankcase_kw, crankcase_temp,
                                                    eer_capacity_derates, cop_capacity_derates,
                                                    cool_capacity_btuh, supplemental_efficiency, 
-                                                   backup_heat_capacity_btuh, dse_heat)
+                                                   backup_heat_capacity_btuh, dse_heat,
+                                                   load_frac_heat, load_frac_cool)
           return false if not success
           
         elsif num_speeds == "2-Speed"
@@ -2375,7 +2367,8 @@ class OSModel
                                                    crankcase_kw, crankcase_temp,
                                                    eer_capacity_derates, cop_capacity_derates,
                                                    cool_capacity_btuh, supplemental_efficiency,
-                                                   backup_heat_capacity_btuh, dse_heat)
+                                                   backup_heat_capacity_btuh, dse_heat,
+                                                   load_frac_heat, load_frac_cool)
           return false if not success
           
         elsif num_speeds == "Variable-Speed"
@@ -2399,7 +2392,8 @@ class OSModel
                                                    crankcase_kw, crankcase_temp,
                                                    eer_capacity_derates, cop_capacity_derates,
                                                    cool_capacity_btuh, supplemental_efficiency,
-                                                   backup_heat_capacity_btuh, dse_heat)
+                                                   backup_heat_capacity_btuh, dse_heat,
+                                                   load_frac_heat, load_frac_cool)
           return false if not success
           
         else
@@ -2442,7 +2436,7 @@ class OSModel
                                   cap_retention_temp, pan_heater_power, fan_power,
                                   is_ducted, cool_capacity_btuh,
                                   supplemental_efficiency, backup_heat_capacity_btuh,
-                                  dse_heat)
+                                  dse_heat, load_frac_heat, load_frac_cool)
         return false if not success
                
       elsif hp_type == "ground-to-air"
@@ -2478,7 +2472,8 @@ class OSModel
                                   design_delta_t, pump_head,
                                   u_tube_leg_spacing, u_tube_spacing_type,
                                   fan_power, heat_pump_capacity, supplemental_efficiency,
-                                  supplemental_capacity, dse_heat)
+                                  supplemental_capacity, dse_heat, 
+                                  load_frac_heat, load_frac_cool)
         return false if not success
                
       end
