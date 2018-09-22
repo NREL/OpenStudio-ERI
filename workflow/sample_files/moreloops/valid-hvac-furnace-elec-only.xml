@@ -231,42 +231,17 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>electricity</HeatingSystemFuel>
-              <HeatingCapacity>21333.33</HeatingCapacity>
+              <HeatingCapacity>64000</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>1.0</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-            </HeatingSystem>
-            <HeatingSystem>
-              <SystemIdentifier id='SpaceHeat_ID2'/>
-              <HeatingSystemType>
-                <Furnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>electricity</HeatingSystemFuel>
-              <HeatingCapacity>21333.33</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>1.0</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-            </HeatingSystem>
-            <HeatingSystem>
-              <SystemIdentifier id='SpaceHeat_ID3'/>
-              <HeatingSystemType>
-                <Furnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>electricity</HeatingSystemFuel>
-              <HeatingCapacity>21333.33</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>1.0</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
+              <FractionHeatLoadServed>1</FractionHeatLoadServed>
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>
@@ -309,7 +284,7 @@
             </DistributionSystemType>
           </HVACDistribution>
           <extension>
-            <LoadDistributionScheme>UniformLoad</LoadDistributionScheme>
+            <SkipAddHeatCoolSystem>true</SkipAddHeatCoolSystem>
           </extension>
         </HVAC>
         <WaterHeating>

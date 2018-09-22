@@ -2038,12 +2038,9 @@ class HVACSizing
     elsif hvac.HasUnitHeater
         unit_final.Heat_Capacity = unit_final.Heat_Load
         
-        ratedCFMperTonHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonHeating, 'string')
-        return nil if ratedCFMperTonHeating.nil?
-        ratedCFMperTonHeating = ratedCFMperTonHeating.to_f
-        if ratedCFMperTonHeating > 0
+        if hvac.RatedCFMperTonHeating[0] > 0
             # Fixed airflow rate
-            unit_final.Heat_Airflow = UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","ton") * ratedCFMperTonHeating
+            unit_final.Heat_Airflow = UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","ton") * hvac.RatedCFMperTonHeating[0]
         else
             # Autosized airflow rate
             unit_final.Heat_Airflow = calc_heat_cfm(unit_final.Heat_Capacity, mj8.acf, mj8.heat_setpoint, hvac.HtgSupplyAirTemp)
@@ -2101,13 +2098,6 @@ class HVACSizing
             unit_final.Heat_Capacity_Supp = unit_final.Heat_Capacity
         end
         
-        bore_spacing = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreSpacing, 'double')
-        bore_holes = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreHoles, 'string')
-        bore_depth = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreDepth, 'string')
-        bore_config = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreConfig, 'string')
-        spacing_type = get_unit_feature(runner, unit, Constants.SizingInfoGSHPUTubeSpacingType, 'string')
-        return nil if bore_spacing.nil? or bore_holes.nil? or bore_depth.nil? or bore_config.nil? or spacing_type.nil?
-        
         ground_conductivity = UnitConversions.convert(hvac.GroundHXVertical.groundThermalConductivity.get,"W/(m*K)","Btu/(hr*ft*R)")
         grout_conductivity = UnitConversions.convert(hvac.GroundHXVertical.groutThermalConductivity.get,"W/(m*K)","Btu/(hr*ft*R)")
         bore_diameter = UnitConversions.convert(hvac.GroundHXVertical.boreHoleRadius.get * 2.0,"m","in")
@@ -2117,7 +2107,7 @@ class HVACSizing
         pipe_r_value = gshp_hx_pipe_rvalue(pipe_od, pipe_id, pipe_cond)
 
         # Autosize ground loop heat exchanger length
-        nom_length_heat, nom_length_cool = gshp_hxbore_ft_per_ton(weather, mj8.htd, mj8.ctd, bore_spacing, ground_conductivity, spacing_type, grout_conductivity, bore_diameter, pipe_od, pipe_r_value, hvac.HeatingEIR, hvac.CoolingEIR, hvac.HXCHWDesign, hvac.HXHWDesign, hvac.HXDTDesign)
+        nom_length_heat, nom_length_cool = gshp_hxbore_ft_per_ton(weather, mj8.htd, mj8.ctd, hvac.GSHPBoreSpacing, ground_conductivity, hvac.GSHPSpacingType, grout_conductivity, bore_diameter, pipe_od, pipe_r_value, hvac.HeatingEIR, hvac.CoolingEIR, hvac.HXCHWDesign, hvac.HXHWDesign, hvac.HXDTDesign)
         
         bore_length_heat = nom_length_heat * unit_final.Heat_Capacity / UnitConversions.convert(1.0,"ton","Btu/hr")
         bore_length_cool = nom_length_cool * unit_final.Cool_Capacity / UnitConversions.convert(1.0,"ton","Btu/hr")
@@ -2141,7 +2131,7 @@ class HVACSizing
                  (aNNL_Grnd_Cool - aNNL_Grnd_Heat) / ((2 * hvac.HXDTDesign + hvac.HXDTDesign) / 2 - weather.data.AnnualAvgDrybulb)].max / bore_length 
 
                  
-        if bore_spacing > 15 and bore_spacing <= 20
+        if hvac.GSHPBoreSpacing > 15 and hvac.GSHPBoreSpacing <= 20
             bore_length_mult = 1.0 + nNAGL / 7000 * (0.55 / ground_conductivity)
         else
             bore_length_mult = 1.0 + nNAGL / 6700 * (1.00 / ground_conductivity)
@@ -2160,50 +2150,50 @@ class HVACSizing
         
         loop_flow = [1.0, UnitConversions.convert([unit_final.Heat_Capacity, unit_final.Cool_Capacity].max,"Btu/hr","ton")].max.floor * 3.0
     
-        if bore_holes == Constants.SizingAuto and bore_depth == Constants.SizingAuto
-            bore_holes = [1, (UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","ton") + 0.5).floor].max
-            bore_depth = (bore_length / bore_holes).floor
-            min_bore_depth = 0.15 * bore_spacing # 0.15 is the maximum Spacing2DepthRatio defined for the G-function
+        if hvac.GSHPBoreHoles == Constants.SizingAuto and hvac.GSHPBoreDepth == Constants.SizingAuto
+            hvac.GSHPBoreHoles = [1, (UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","ton") + 0.5).floor].max
+            hvac.GSHPBoreDepth = (bore_length / hvac.GSHPBoreHoles).floor
+            min_bore_depth = 0.15 * hvac.GSHPBoreSpacing # 0.15 is the maximum Spacing2DepthRatio defined for the G-function
           
             (0..4).to_a.each do |tmp|
-                if bore_depth < min_bore_depth and bore_holes > 1
-                    bore_holes -= 1
-                    bore_depth = (bore_length / bore_holes).floor
-                elsif bore_depth > 345
-                    bore_holes += 1
-                    bore_depth = (bore_length / bore_holes).floor
+                if hvac.GSHPBoreDepth < min_bore_depth and hvac.GSHPBoreHoles > 1
+                    hvac.GSHPBoreHoles -= 1
+                    hvac.GSHPBoreDepth = (bore_length / hvac.GSHPBoreHoles).floor
+                elsif hvac.GSHPBoreDepth > 345
+                    hvac.GSHPBoreHoles += 1
+                    hvac.GSHPBoreDepth = (bore_length / hvac.GSHPBoreHoles).floor
                 end
             end
             
-            bore_depth = (bore_length / bore_holes).floor + 5
+            hvac.GSHPBoreDepth = (bore_length / hvac.GSHPBoreHoles).floor + 5
             
-        elsif bore_holes == Constants.SizingAuto and bore_depth != Constants.SizingAuto
-            bore_holes = (bore_length / bore_depth.to_f + 0.5).floor
-            bore_depth = bore_depth.to_f
-        elsif bore_holes != Constants.SizingAuto and bore_depth == Constants.SizingAuto
-            bore_holes = bore_holes.to_f
-            bore_depth = (bore_length / bore_holes).floor + 5
+        elsif hvac.GSHPBoreHoles == Constants.SizingAuto and hvac.GSHPBoreDepth != Constants.SizingAuto
+            hvac.GSHPBoreHoles = (bore_length / hvac.GSHPBoreDepth.to_f + 0.5).floor
+            hvac.GSHPBoreDepth = hvac.GSHPBoreDepth.to_f
+        elsif hvac.GSHPBoreHoles != Constants.SizingAuto and hvac.GSHPBoreDepth == Constants.SizingAuto
+            hvac.GSHPBoreHoles = hvac.GSHPBoreHoles.to_f
+            hvac.GSHPBoreDepth = (bore_length / hvac.GSHPBoreHoles).floor + 5
         else
             runner.registerWarning("User is hard sizing the bore field, improper sizing may lead to unbalanced / unsteady ground loop temperature and erroneous prediction of system energy related cost.")
-            bore_holes = bore_holes.to_f
-            bore_depth = bore_depth.to_f
+            hvac.GSHPBoreHoles = hvac.GSHPBoreHoles.to_f
+            hvac.GSHPBoreDepth = hvac.GSHPBoreDepth.to_f
         end
     
-        bore_length = bore_depth * bore_holes
+        bore_length = hvac.GSHPBoreDepth * hvac.GSHPBoreHoles
 
-        if bore_config == Constants.SizingAuto
-            if bore_holes == 1
-                bore_config = Constants.BoreConfigSingle
-            elsif bore_holes == 2
-                bore_config = Constants.BoreConfigLine
-            elsif bore_holes == 3
-                bore_config = Constants.BoreConfigLine
-            elsif bore_holes == 4
-                bore_config = Constants.BoreConfigRectangle
-            elsif bore_holes == 5
-                bore_config = Constants.BoreConfigUconfig
-            elsif bore_holes > 5
-                bore_config = Constants.BoreConfigLine
+        if hvac.GSHPBoreConfig == Constants.SizingAuto
+            if hvac.GSHPBoreHoles == 1
+                hvac.GSHPBoreConfig = Constants.BoreConfigSingle
+            elsif hvac.GSHPBoreHoles == 2
+                hvac.GSHPBoreConfig = Constants.BoreConfigLine
+            elsif hvac.GSHPBoreHoles == 3
+                hvac.GSHPBoreConfig = Constants.BoreConfigLine
+            elsif hvac.GSHPBoreHoles == 4
+                hvac.GSHPBoreConfig = Constants.BoreConfigRectangle
+            elsif hvac.GSHPBoreHoles == 5
+                hvac.GSHPBoreConfig = Constants.BoreConfigUconfig
+            elsif hvac.GSHPBoreHoles > 5
+                hvac.GSHPBoreConfig = Constants.BoreConfigLine
             end
         end
         
@@ -2215,28 +2205,28 @@ class HVACSizing
                          Constants.BoreConfigUconfig=>[5,7,9], 
                          Constants.BoreConfigL2config=>[8], 
                          Constants.BoreConfigOpenRectangle=>[8]}
-        valid_num_bores = valid_configs[bore_config]
+        valid_num_bores = valid_configs[hvac.GSHPBoreConfig]
         max_valid_configs = {Constants.BoreConfigLine=>10, Constants.BoreConfigLconfig=>6}
-        unless valid_num_bores.include? bore_holes
+        unless valid_num_bores.include? hvac.GSHPBoreHoles
             # Any configuration with a max_valid_configs value can accept any number of bores up to the maximum    
-            if max_valid_configs.keys.include? bore_config
-                max_bore_holes = max_valid_configs[bore_config]
-                runner.registerWarning("Maximum number of bore holes for '#{bore_config}' bore configuration is #{max_bore_holes}. Overriding value of #{bore_holes} bore holes to #{max_bore_holes}.")
-                bore_holes = max_bore_holes
+            if max_valid_configs.keys.include? hvac.GSHPBoreConfig
+                max_bore_holes = max_valid_configs[hvac.GSHPBoreConfig]
+                runner.registerWarning("Maximum number of bore holes for '#{hvac.GSHPBoreConfig}' bore configuration is #{max_bore_holes}. Overriding value of #{hvac.GSHPBoreHoles} bore holes to #{max_bore_holes}.")
+                hvac.GSHPBoreHoles = max_bore_holes
             else
                 # Search for first valid bore field
                 new_bore_config = nil
                 valid_field_found = false
                 valid_configs.keys.each do |bore_config|
-                    if valid_configs[bore_config].include? bore_holes
+                    if valid_configs[bore_config].include? hvac.GSHPBoreHoles
                         valid_field_found = true
                         new_bore_config = bore_config
                         break
                     end
                 end
                 if valid_field_found
-                    runner.registerWarning("Bore field '#{bore_config}' with #{bore_holes.to_i} bore holes is an invalid configuration. Changing layout to '#{new_bore_config}' configuration.")
-                    bore_config = new_bore_config
+                    runner.registerWarning("Bore field '#{hvac.GSHPBoreConfig}' with #{hvac.GSHPBoreHoles.to_i} bore holes is an invalid configuration. Changing layout to '#{new_bore_config}' configuration.")
+                    hvac.GSHPBoreConfig = new_bore_config
                 else
                     runner.registerError("Could not construct a valid GSHP bore field configuration.")
                     return nil
@@ -2244,14 +2234,14 @@ class HVACSizing
             end
         end
 
-        spacing_to_depth_ratio = bore_spacing / bore_depth
+        spacing_to_depth_ratio = hvac.GSHPBoreSpacing / hvac.GSHPBoreDepth
         
         lntts = [-8.5,-7.8,-7.2,-6.5,-5.9,-5.2,-4.5,-3.963,-3.27,-2.864,-2.577,-2.171,-1.884,-1.191,-0.497,-0.274,-0.051,0.196,0.419,0.642,0.873,1.112,1.335,1.679,2.028,2.275,3.003]
-        gfnc_coeff = gshp_gfnc_coeff(bore_config, bore_holes, spacing_to_depth_ratio)
+        gfnc_coeff = gshp_gfnc_coeff(hvac.GSHPBoreConfig, hvac.GSHPBoreHoles, spacing_to_depth_ratio)
 
         unit_final.GSHP_Loop_flow = loop_flow
-        unit_final.GSHP_Bore_Depth = bore_depth
-        unit_final.GSHP_Bore_Holes = bore_holes
+        unit_final.GSHP_Bore_Depth = hvac.GSHPBoreDepth
+        unit_final.GSHP_Bore_Holes = hvac.GSHPBoreHoles
         unit_final.GSHP_G_Functions = [lntts, gfnc_coeff]
 
     else
@@ -2974,6 +2964,13 @@ class HVACSizing
     hvac.NumCoilHeatingWaterToAirHeatPumpEquationFit = 0
     hvac.NumZoneHVACBaseboardConvectiveElectric = 0
     hvac.NumDehumidifier = 0
+    hvac.RatedCFMperTonCooling = nil
+    hvac.RatedCFMperTonHeating = nil
+    hvac.GSHPBoreSpacing = nil
+    hvac.GSHPBoreHoles = nil
+    hvac.GSHPBoreDepth = nil
+    hvac.GSHPBoreConfig = nil
+    hvac.GSHPSpacingType = nil
     
     clg_equips = []
     htg_equips = []
@@ -3011,11 +3008,6 @@ class HVACSizing
     hvac.HasMiniSplitHeatPump = HVAC.has_mshp(model, runner, control_zone)
     has_ducted_mshp = HVAC.has_ducted_mshp(model, runner, control_zone)
     
-    if hvac.HasAirSourceHeatPump or hvac.HasMiniSplitHeatPump
-        hvac.HPSizedForMaxLoad = get_unit_feature(runner, unit, Constants.SizingInfoHPSizedForMaxLoad, 'boolean', true)
-        return nil if hvac.HPSizedForMaxLoad.nil?
-    end
-    
     # Cooling equipment
     if clg_equips.size > 0
         hvac.HasCooling = true
@@ -3032,6 +3024,11 @@ class HVACSizing
                 if has_ducted_mshp
                     hvac.HasDuctedCooling = true
                 end
+            end
+            
+            ratedCFMperTonCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonCooling(clg_equip), 'string', false)
+            if not ratedCFMperTonCooling.nil?
+              hvac.RatedCFMperTonCooling = ratedCFMperTonCooling.split(",").map(&:to_f)
             end
             
             # Cooling coil
@@ -3174,6 +3171,13 @@ class HVACSizing
 
                 hvac.NumCoilCoolingWaterToAirHeatPumpEquationFit += 1
                 
+                hvac.GSHPBoreSpacing = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreSpacing(clg_equip), 'double')
+                hvac.GSHPBoreHoles = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreHoles(clg_equip), 'string')
+                hvac.GSHPBoreDepth = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreDepth(clg_equip), 'string')
+                hvac.GSHPBoreConfig = get_unit_feature(runner, unit, Constants.SizingInfoGSHPBoreConfig(clg_equip), 'string')
+                hvac.GSHPSpacingType = get_unit_feature(runner, unit, Constants.SizingInfoGSHPUTubeSpacingType(clg_equip), 'string')
+                return nil if hvac.GSHPBoreSpacing.nil? or hvac.GSHPBoreHoles.nil? or hvac.GSHPBoreDepth.nil? or hvac.GSHPBoreConfig.nil? or hvac.GSHPSpacingType.nil?
+
             elsif not clg_coil.nil?
                 runner.registerError("Unexpected cooling coil: #{clg_coil.name}.")
                 return nil
@@ -3193,10 +3197,21 @@ class HVACSizing
                 if htg_equip.airLoopHVAC.is_initialized
                     hvac.HasDuctedHeating = true
                 end
+                if hvac.HasAirSourceHeatPump
+                    hvac.HPSizedForMaxLoad = get_unit_feature(runner, unit, Constants.SizingInfoHPSizedForMaxLoad(htg_equip), 'boolean', true)
+                    return nil if hvac.HPSizedForMaxLoad.nil?
+                end
             elsif htg_equip.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
                 if has_ducted_mshp
                     hvac.HasDuctedHeating = true
                 end
+                hvac.HPSizedForMaxLoad = get_unit_feature(runner, unit, Constants.SizingInfoHPSizedForMaxLoad(htg_equip), 'boolean', true)
+                return nil if hvac.HPSizedForMaxLoad.nil?
+            end
+            
+            ratedCFMperTonHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonHeating(htg_equip), 'string', false)
+            if not ratedCFMperTonHeating.nil?
+              hvac.RatedCFMperTonHeating = ratedCFMperTonHeating.split(",").map(&:to_f)
             end
             
             # Heating coil
@@ -4464,35 +4479,28 @@ class HVACSizing
   
     clg_coil, htg_coil, supp_htg_coil = HVAC.get_coils_from_hvac_equip(equip)
     
-    ratedCFMperTonCooling = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonCooling(equip), 'string', false)
-    if not ratedCFMperTonCooling.nil?
-        ratedCFMperTonCooling = ratedCFMperTonCooling.split(",").map(&:to_f)
-    end
-    ratedCFMperTonHeating = get_unit_feature(runner, unit, Constants.SizingInfoHVACRatedCFMperTonHeating(equip), 'string', false)
-    if not ratedCFMperTonHeating.nil?
-        ratedCFMperTonHeating = ratedCFMperTonHeating.split(",").map(&:to_f)
-    end
-    
     # Cooling coil
     if clg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
-        if ratedCFMperTonCooling.nil?
+        if hvac.RatedCFMperTonCooling.nil?
             runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling(equip)}' with datatype 'string'.")
             return false
         end
+        
         clg_coil.setRatedTotalCoolingCapacity(UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","W") / hvac.NumCoilCoolingDXSingleSpeed)
-        clg_coil.setRatedAirFlowRate(UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","ton") * UnitConversions.convert(ratedCFMperTonCooling[0],"cfm","m^3/s") / hvac.NumCoilCoolingDXSingleSpeed)
+        clg_coil.setRatedAirFlowRate(UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","ton") * UnitConversions.convert(hvac.RatedCFMperTonCooling[0],"cfm","m^3/s") / hvac.NumCoilCoolingDXSingleSpeed)
         
         # Adjust COP as appropriate
         clg_coil.setRatedCOP(OpenStudio::OptionalDouble.new(clg_coil.ratedCOP.get * unit_final.EER_Multiplier))
         
     elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
-        if ratedCFMperTonCooling.nil?
+        if hvac.RatedCFMperTonCooling.nil?
             runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonCooling(equip)}' with datatype 'string'.")
             return false
         end
+        
         clg_coil.stages.each_with_index do |stage, speed|
             stage.setGrossRatedTotalCoolingCapacity(UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","W") * hvac.CapacityRatioCooling[speed] / hvac.NumCoilCoolingDXMultiSpeed)
-            stage.setRatedAirFlowRate(UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","ton") * UnitConversions.convert(ratedCFMperTonCooling[speed],"cfm","m^3/s") * hvac.CapacityRatioCooling[speed] / hvac.NumCoilCoolingDXMultiSpeed)
+            stage.setRatedAirFlowRate(UnitConversions.convert(unit_final.Cool_Capacity,"Btu/hr","ton") * UnitConversions.convert(hvac.RatedCFMperTonCooling[speed],"cfm","m^3/s") * hvac.CapacityRatioCooling[speed] / hvac.NumCoilCoolingDXMultiSpeed)
             
             # Adjust COP as appropriate
             stage.setGrossRatedCoolingCOP(stage.grossRatedCoolingCOP * unit_final.EER_Multiplier)
@@ -4520,24 +4528,26 @@ class HVACSizing
         htg_coil.setNominalCapacity(zone_ratio * UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") / hvac.NumCoilHeatingGas)
     
     elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
-        if ratedCFMperTonHeating.nil?
+        if hvac.RatedCFMperTonHeating.nil?
             runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating(equip)}' with datatype 'string'.")
             return false
         end
+        
         htg_coil.setRatedTotalHeatingCapacity(UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") / hvac.NumCoilHeatingDXSingleSpeed)
-        htg_coil.setRatedAirFlowRate(UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","ton") * UnitConversions.convert(ratedCFMperTonHeating[0],"cfm","m^3/s") / hvac.NumCoilHeatingDXSingleSpeed)
+        htg_coil.setRatedAirFlowRate(UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","ton") * UnitConversions.convert(hvac.RatedCFMperTonHeating[0],"cfm","m^3/s") / hvac.NumCoilHeatingDXSingleSpeed)
         
         # Adjust COP as appropriate
         htg_coil.setRatedCOP(htg_coil.ratedCOP * unit_final.COP_Multiplier)
         
     elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
-        if ratedCFMperTonHeating.nil?
+        if hvac.RatedCFMperTonHeating.nil?
             runner.registerError("Could not find value for '#{Constants.SizingInfoHVACRatedCFMperTonHeating(equip)}' with datatype 'string'.")
             return false
         end
+        
         htg_coil.stages.each_with_index do |stage, speed|
             stage.setGrossRatedHeatingCapacity(UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","W") * hvac.CapacityRatioHeating[speed] / hvac.NumCoilHeatingDXMultiSpeed)
-            stage.setRatedAirFlowRate(UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","ton") * UnitConversions.convert(ratedCFMperTonHeating[speed],"cfm","m^3/s") * hvac.CapacityRatioHeating[speed] / hvac.NumCoilHeatingDXMultiSpeed) 
+            stage.setRatedAirFlowRate(UnitConversions.convert(unit_final.Heat_Capacity,"Btu/hr","ton") * UnitConversions.convert(hvac.RatedCFMperTonHeating[speed],"cfm","m^3/s") * hvac.CapacityRatioHeating[speed] / hvac.NumCoilHeatingDXMultiSpeed) 
             
             # Adjust COP as appropriate
             stage.setGrossRatedHeatingCOP(stage.grossRatedHeatingCOP * unit_final.COP_Multiplier)
@@ -4715,7 +4725,10 @@ class HVACInfo
                 :NumCoilHeatingWaterBaseboard, :NumCoilHeatingDXSingleSpeed,
                 :NumCoilHeatingDXMultiSpeed, :NumCoilHeatingDXVariableRefrigerantFlow, 
                 :NumCoilHeatingWaterToAirHeatPumpEquationFit,
-                :NumZoneHVACBaseboardConvectiveElectric, :NumDehumidifier)
+                :NumZoneHVACBaseboardConvectiveElectric, :NumDehumidifier,
+                :RatedCFMperTonCooling, :RatedCFMperTonHeating,
+                :GSHPBoreSpacing, :GSHPBoreHoles, :GSHPBoreDepth, 
+                :GSHPBoreConfig, :GSHPSpacingType)
 
 end
 

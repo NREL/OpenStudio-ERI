@@ -228,7 +228,6 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
               <HeatingSystemType>
                 <ElectricResistance/>
               </HeatingSystemType>

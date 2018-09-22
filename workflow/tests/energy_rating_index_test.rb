@@ -221,8 +221,7 @@ class EnergyRatingIndexTest < Minitest::Test
     results = []
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/sample_files/moreloops"
-    Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next unless xml.include? 'x3'
+    Dir["#{xmldir}/*x3.xml"].sort.each do |xml|
 
       # Run three of the same system types
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, Constants.CalcTypeERIRatedHome)
@@ -235,7 +234,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
       # Run only one of the system types
       xml = xml.gsub('-x3', '')
-      xml = File.absolute_path(File.join(File.dirname(xml), "..", File.basename(xml)))
       ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, Constants.CalcTypeERIRatedHome)
 
       results2 = {}
@@ -660,8 +658,13 @@ class EnergyRatingIndexTest < Minitest::Test
     xml_appl_sens = 0.0
     xml_appl_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange | /HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher | /HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
-      frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
-      frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
+      if XMLHelper.has_element(appl, "extension/FracSensible")
+        frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
+        frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
+      else
+        frac_sens = 1.0
+        frac_lat = 0.0
+      end
       if appl.elements["RatedAnnualkWh"]
         btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu")
       else

@@ -1043,7 +1043,6 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
     
-    # Heating
     heating_systems = {} # Build up reference heating systems
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
       has_boiler = XMLHelper.has_element(heating_system, "HeatingSystemType/Boiler")
@@ -1084,19 +1083,26 @@ class EnergyRatingIndex301Ruleset
         heating_systems[htg_type] += load_frac # Previously assigned, aggregate load_frac
       end
     end
+    
+    # Heating
     heating_systems.each do |htg_type, load_frac|
-      if htg_type == 'HeatPump'
-        add_reference_heating_heat_pump(new_hvac_plant, load_frac)
-      elsif htg_type == 'GasBoiler'
+      if htg_type == 'GasBoiler'
         add_reference_heating_gas_boiler(new_hvac_plant, load_frac)
       elsif htg_type == 'GasFurnace'
         add_reference_heating_gas_furnace(new_hvac_plant, load_frac)
       end
     end
-  
+    
     # Cooling
     add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
     
+    # HeatPump
+    heating_systems.each do |htg_type, load_frac|
+      if htg_type == 'HeatPump'
+        add_reference_heating_heat_pump(new_hvac_plant, load_frac)
+      end
+    end
+  
     # Table 303.4.1(1) - Thermostat
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
     sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
@@ -1129,37 +1135,25 @@ class EnergyRatingIndex301Ruleset
     
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
     
+    # FIXME: Temporary code
+    skip_add = XMLHelper.get_value(orig_details, "Systems/HVAC/extension/SkipAddHeatCoolSystem")
+    if skip_add.nil?
+      skip_add = false
+    else
+      skip_add = Boolean(skip_add)
+    end
+    
     # Heating
     added_reference_heating = false
     if not heating_system.nil?
       # Retain heating system(s)
       XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
     end
-    if not heat_pump_system.nil?
-      # Retain heating system(s)
-      XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
-      new_hvac_plant.elements.each("HeatPump") do |heat_pump_system|
-        extension = heat_pump_system.elements["extension"]
-        if extension.nil?
-          extension = XMLHelper.add_element(heat_pump_system, "extension")
-        end
-        if not heat_pump_system.elements["AnnualCoolingEfficiency"].nil?
-          XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
-          XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-        end
-        XMLHelper.delete_element(extension, "PerformanceAdjustmentHSPF")
-        XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
-      end
+    if heating_system.nil? and heat_pump_system.nil? and has_fuel_access(orig_details) and not skip_add
+      add_reference_heating_gas_furnace(new_hvac_plant, 1.0)
+      added_reference_heating = true
     end
-    # if heating_system.nil? and heat_pump_system.nil?
-    #   if has_fuel_access(orig_details)
-    #     add_reference_heating_gas_furnace(new_hvac_plant, 1.0)
-    #   else
-    #     add_reference_heating_heat_pump(new_hvac_plant, 1.0)
-    #   end
-    #   added_reference_heating = true
-    # end
-    
+
     # Cooling
     added_reference_cooling = false
     if not cooling_system.nil?
@@ -1174,10 +1168,32 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       end
     end
-    # if cooling_system.nil? and heat_pump_system.nil?
-    #   add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
-    #   added_reference_cooling = true
-    # end
+    if cooling_system.nil? and heat_pump_system.nil? and not skip_add
+      add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
+      added_reference_cooling = true
+    end
+    
+    # HeatPump
+    if not heat_pump_system.nil?
+      # Retain heat pump(s)
+      XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
+      new_hvac_plant.elements.each("HeatPump") do |heat_pump_system|
+        extension = heat_pump_system.elements["extension"]
+        if extension.nil?
+          extension = XMLHelper.add_element(heat_pump_system, "extension")
+        end
+        if not heat_pump_system.elements["AnnualCoolingEfficiency"].nil?
+          XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
+          XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
+        end
+        XMLHelper.delete_element(extension, "PerformanceAdjustmentHSPF")
+        XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
+      end
+    end
+    if heating_system.nil? and heat_pump_system.nil? and not has_fuel_access(orig_details) and not skip_add
+      add_reference_heating_heat_pump(new_hvac_plant, 1.0)
+      added_reference_heating = true
+    end
     
     # Table 303.4.1(1) - Thermostat
     new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
@@ -1960,9 +1976,6 @@ class EnergyRatingIndex301Ruleset
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
     XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
-    extension = XMLHelper.add_element(new_fridge, "extension")
-    XMLHelper.add_element(extension, "FracSensible", 1.0)
-    XMLHelper.add_element(extension, "FracLatent", 0.0)
     
   end
   
