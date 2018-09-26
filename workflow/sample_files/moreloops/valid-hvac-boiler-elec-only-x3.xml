@@ -245,7 +245,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID2'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref="HVAC_Dist_ID2"/>
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
@@ -259,7 +259,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID3'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref="HVAC_Dist_ID3"/>
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
@@ -278,6 +278,18 @@
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <HydronicDistribution/>
+            </DistributionSystemType>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID2'/>
+            <DistributionSystemType>
+              <HydronicDistribution/>
+            </DistributionSystemType>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID3'/>
             <DistributionSystemType>
               <HydronicDistribution/>
             </DistributionSystemType>

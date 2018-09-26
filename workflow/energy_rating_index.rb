@@ -96,7 +96,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  # FIXME: Temporary begin/end
+  # FIXME: Temporary begin/rescue/end
   begin
     if design == Constants.CalcTypeERIReferenceHome or design == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(hpxml_doc)
@@ -106,6 +106,8 @@ def read_output(design, designdir, output_hpxml_path)
     design_output[:hpxml_eec_heat] = get_eec_heat(hpxml_doc)
     design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
     design_output[:hpxml_eec_dhw] = get_eec_dhw(hpxml_doc)
+  rescue
+    # nop
   end
   
   # Total site energy

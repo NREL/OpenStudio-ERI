@@ -241,7 +241,7 @@
                 <Value>0.80</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>200</ElectricAuxiliaryEnergy>
+              <ElectricAuxiliaryEnergy>66.67</ElectricAuxiliaryEnergy>
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID2'/>
@@ -255,7 +255,7 @@
                 <Value>0.80</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>200</ElectricAuxiliaryEnergy>
+              <ElectricAuxiliaryEnergy>66.67</ElectricAuxiliaryEnergy>
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID3'/>
@@ -269,7 +269,7 @@
                 <Value>0.80</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.33</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>200</ElectricAuxiliaryEnergy>
+              <ElectricAuxiliaryEnergy>66.67</ElectricAuxiliaryEnergy>
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>

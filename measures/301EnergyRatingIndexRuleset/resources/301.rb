@@ -1116,8 +1116,15 @@ class EnergyRatingIndex301Ruleset
     
     # FIXME: Temporary
     load_distribution = XMLHelper.get_value(orig_details, "Systems/HVAC/extension/LoadDistributionScheme")
+    skip_add = XMLHelper.get_value(orig_details, "Systems/HVAC/extension/SkipAddHeatCoolSystem")
+    if not load_distribution.nil? or not skip_add.nil?
+      extension = XMLHelper.add_element(new_hvac, "extension")
+    end
     if not load_distribution.nil?
-      XMLHelper.add_element(new_hvac, "extension/LoadDistributionScheme", load_distribution)
+      XMLHelper.add_element(extension, "LoadDistributionScheme", load_distribution)
+    end
+    if not skip_add.nil?
+      XMLHelper.add_element(extension, "SkipAddHeatCoolSystem", skip_add)
     end
 
   end
@@ -1227,8 +1234,15 @@ class EnergyRatingIndex301Ruleset
     
     # FIXME: Temporary
     load_distribution = XMLHelper.get_value(orig_details, "Systems/HVAC/extension/LoadDistributionScheme")
+    skip_add = XMLHelper.get_value(orig_details, "Systems/HVAC/extension/SkipAddHeatCoolSystem")
+    if not load_distribution.nil? or not skip_add.nil?
+      extension = XMLHelper.add_element(new_hvac, "extension")
+    end
     if not load_distribution.nil?
-      XMLHelper.add_element(new_hvac, "extension/LoadDistributionScheme", load_distribution)
+      XMLHelper.add_element(extension, "LoadDistributionScheme", load_distribution)
+    end
+    if not skip_add.nil?
+      XMLHelper.add_element(extension, "SkipAddHeatCoolSystem", skip_add)
     end
 
   end

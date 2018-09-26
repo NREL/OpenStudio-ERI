@@ -169,7 +169,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     end
     
     # Add output variables for RESNET building loads
-    if not generate_building_loads(model, runner)
+    if not generate_building_loads(model, runner, hpxml_doc)
       return false
     end
     
@@ -177,7 +177,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
 
   end
   
-  def generate_building_loads(model, runner)
+  def generate_building_loads(model, runner, hpxml_doc)
     # Note: Duct losses are included the heating/cooling energy values. For the 
     # RESNET Reference Home, the effect of DSE is removed during post-processing.
     
@@ -213,12 +213,22 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
       end
     end
     
-    if clg_objs.size == 0
-      runner.registerError("Could not identify cooling object.")
-      return false
-    elsif htg_objs.size == 0
-      runner.registerError("Could not identify heating coil.")
-      return false
+    # FIXME: Temporary code
+    skip_add = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Systems/HVAC/extension/SkipAddHeatCoolSystem")
+    if skip_add.nil?
+      skip_add = false
+    else
+      skip_add = Boolean(skip_add)
+    end
+    
+    if not skip_add
+      if clg_objs.size == 0
+        runner.registerError("Could not identify cooling object.")
+        return false
+      elsif htg_objs.size == 0
+        runner.registerError("Could not identify heating object.")
+        return false
+      end
     end
     
     # TODO: Make variables specific to the equipment
@@ -2803,40 +2813,29 @@ class OSModel
     duct_systems = {}
     building.elements.each("BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_distribution|
       air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
-      if not air_distribution.nil?
-        # Ducts
-        supply_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
-        return_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
-        supply_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctInsulationRValue"))
-        return_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue"))
-        supply_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctSurfaceArea"))
-        return_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctSurfaceArea"))
-        # FIXME: Values below
-        duct_location = Constants.Auto
-        duct_total_leakage = 0.3
-        duct_supply_frac = 0.6
-        duct_return_frac = 0.067
-        duct_ah_supply_frac = 0.067
-        duct_ah_return_frac = 0.267
-        duct_location_frac = Constants.Auto
-        duct_num_returns = 1
-        duct_supply_area_mult = 1.0
-        duct_return_area_mult = 1.0
-        duct_r = 4.0
-      else
-        duct_location = "none"
-        duct_total_leakage = 0.0
-        duct_supply_frac = 0.0
-        duct_return_frac = 0.0
-        duct_ah_supply_frac = 0.0
-        duct_ah_return_frac = 0.0
-        duct_location_frac = Constants.Auto
-        duct_num_returns = Constants.Auto
-        duct_supply_area_mult = 1.0
-        duct_return_area_mult = 1.0
-        duct_r = 0.0
-      end
+      next if air_distribution.nil?
+      
+      # Ducts
+      supply_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+      return_cfm25 = Float(XMLHelper.get_value(air_distribution, "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value"))
+      supply_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctInsulationRValue"))
+      return_r = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctInsulationRValue"))
+      supply_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='supply']/DuctSurfaceArea"))
+      return_area = Float(XMLHelper.get_value(air_distribution, "Ducts[DuctType='return']/DuctSurfaceArea"))
+      # FIXME: Values below
+      duct_location = Constants.Auto
+      duct_total_leakage = 0.3
+      duct_supply_frac = 0.6
+      duct_return_frac = 0.067
+      duct_ah_supply_frac = 0.067
+      duct_ah_return_frac = 0.267
+      duct_location_frac = Constants.Auto
+      duct_num_returns = 1
+      duct_supply_area_mult = supply_area / 100.0
+      duct_return_area_mult = return_area / 100.0
+      duct_r = 4.0
       duct_norm_leakage_25pa = nil
+
       ducts = Ducts.new(duct_total_leakage, duct_norm_leakage_25pa, duct_supply_area_mult, duct_return_area_mult, duct_r, 
                         duct_supply_frac, duct_return_frac, duct_ah_supply_frac, duct_ah_return_frac, duct_location_frac, 
                         duct_num_returns, duct_location)
@@ -2855,13 +2854,31 @@ class OSModel
         end
       end
       
-      # FIXME: Temporary to re-allocate duct properties for multiple systems
-      ducts.supply_area_mult = ducts.supply_area_mult / systems_for_this_duct.size
-      ducts.return_area_mult = ducts.return_area_mult / systems_for_this_duct.size
-      
       duct_systems[ducts] = systems_for_this_duct
       
     end
+
+    # Set no ducts for HVAC without duct systems
+    systems_for_no_duct = []
+    no_ducts = Ducts.new(0.0, nil, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, Constants.Auto, Constants.Auto, "none")
+    hvac_loops.each do |sys_id, loops|
+      loops.each do |loop|
+        next if not loop.is_a? OpenStudio::Model::AirLoopHVAC
+        # Look for loop already associated with a duct system
+        loop_found = false
+        duct_systems.keys.each do |duct_system|
+          if duct_systems[duct_system].include? loop
+            loop_found = true
+          end
+        end
+        next if loop_found
+        # Loop has no associated ducts; associate with no duct system
+        systems_for_no_duct << loop
+      end
+    end
+    duct_systems[no_ducts] = systems_for_no_duct
+    
+    # FIXME: Throw error if, e.g., multiple heating systems connected to same distribution system?
 
     success = Airflow.apply(model, runner, infil, mech_vent, nat_vent, duct_systems, File.dirname(__FILE__))
     return false if not success
