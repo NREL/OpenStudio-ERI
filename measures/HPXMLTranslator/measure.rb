@@ -168,7 +168,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
       runner.registerInfo("Wrote file: #{osm_output_path.get}")
     end
     
-    # Add output variables for RESNET building loads
+    # Add output variables for building loads
     if not generate_building_loads(model, runner)
       return false
     end
@@ -179,29 +179,36 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
   
   def generate_building_loads(model, runner)
     # Note: Duct losses are included the heating/cooling energy values. For the 
-    # RESNET Reference Home, the effect of DSE is removed during post-processing.
+    # Reference Home, the effect of DSE is removed during post-processing.
     
     # FIXME: Are HW distribution losses included in the HW energy values?
     # FIXME: Handle fan/pump energy (requires EMS or timeseries output to split apart heating/cooling)
+    # FIXME: Need to request supplemental heating coils too?
     
     clg_objs = []
     htg_objs = []
     model.getThermalZones.each do |zone|
       HVAC.existing_cooling_equipment(model, runner, zone).each do |clg_equip|
         if clg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get).name.to_s
+          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil.get)
         elsif clg_equip.to_ZoneHVACComponent.is_initialized
-          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil).name.to_s
+          if clg_equip.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
+            next unless clg_equip.coolingCoil.is_initialized
+          end
+          clg_objs << HVAC.get_coil_from_hvac_component(clg_equip.coolingCoil)
         end
       end
       HVAC.existing_heating_equipment(model, runner, zone).each do |htg_equip|
         if htg_equip.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
-          htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get).name.to_s
+          htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil.get)
         elsif htg_equip.to_ZoneHVACComponent.is_initialized
-          if not htg_equip.is_a?(OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric)
-            htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil).name.to_s
+          if htg_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric or htg_equip.is_a? OpenStudio::Model::ZoneHVACBaseboardConvectiveWater
+            htg_objs << htg_equip
           else
-            htg_objs << htg_equip.name.to_s
+            if htg_equip.is_a? OpenStudio::Model::ZoneHVACTerminalUnitVariableRefrigerantFlow
+              next unless htg_equip.heatingCoil.is_initialized
+            end
+            htg_objs << HVAC.get_coil_from_hvac_component(htg_equip.heatingCoil)
           end
         end
       end
@@ -218,19 +225,27 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
     # TODO: Make variables specific to the equipment
     add_output_variables(model, Constants.LoadVarsSpaceHeating, htg_objs)
     add_output_variables(model, Constants.LoadVarsSpaceCooling, clg_objs)
-    add_output_variables(model, Constants.LoadVarsWaterHeating)
+    add_output_variables(model, Constants.LoadVarsWaterHeating, nil)
     
     return true
     
   end
+
+  def add_output_variables(model, vars, objects)
   
-  def add_output_variables(model, vars, keys=['*'])
-  
-    vars.each do |var|
-      keys.each do |key|
-        outputVariable = OpenStudio::Model::OutputVariable.new(var, model)
+    if objects.nil?
+      vars[nil].each do |object_var|
+        outputVariable = OpenStudio::Model::OutputVariable.new(object_var, model)
         outputVariable.setReportingFrequency('runperiod')
-        outputVariable.setKeyValue(key)
+        outputVariable.setKeyValue('*')
+      end
+    else
+      objects.each do |object|
+        vars[object.class.to_s].each do |object_var|
+          outputVariable = OpenStudio::Model::OutputVariable.new(object_var, model)
+          outputVariable.setReportingFrequency('runperiod')
+          outputVariable.setKeyValue(object.name.to_s)
+        end
       end
     end
     
