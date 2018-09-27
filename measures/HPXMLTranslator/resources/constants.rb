@@ -249,20 +249,23 @@ class Constants
     return 'wood'
   end
   def self.LoadVarsSpaceHeating
-    return ['Heating Coil Total Heating Energy',
-            'Heating Coil Air Heating Energy',
-            'Boiler Heating Energy',
-            'Baseboard Total Heating Energy',
-            'Heating Coil Heating Energy',
-            'Zone Ideal Loads Zone Total Heating Energy']
+    vars = {'OpenStudio::Model::CoilHeatingDXSingleSpeed' => ['Heating Coil Heating Energy'],
+            'OpenStudio::Model::CoilHeatingDXMultiSpeed' => ['Heating Coil Heating Energy'],
+            'OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow' => ['Heating Coil Heating Energy'],
+            'OpenStudio::Model::CoilHeatingElectric' => ['Heating Coil Heating Energy'],
+            'OpenStudio::Model::CoilHeatingGas' => ['Heating Coil Heating Energy'],
+            'OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric' => ['Baseboard Total Heating Energy'],
+            'OpenStudio::Model::ZoneHVACBaseboardConvectiveWater' => ['Baseboard Total Heating Energy'],
+            'OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit' => ['Heating Coil Heating Energy']}
   end
   def self.LoadVarsSpaceCooling
-    return ['Cooling Coil Sensible Cooling Energy',
-            'Cooling Coil Latent Cooling Energy',
-            'Zone Ideal Loads Zone Total Cooling Energy']
+    vars = {'OpenStudio::Model::CoilCoolingDXSingleSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
+            'OpenStudio::Model::CoilCoolingDXMultiSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
+            'OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
+            'OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy']}
   end
   def self.LoadVarsWaterHeating
-    return ['Water Use Connections Plant Hot Water Energy']
+    return {nil => ['Water Use Connections Plant Hot Water Energy']}
   end
   def self.LocationInterior
     return 'interior'

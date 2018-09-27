@@ -192,19 +192,28 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecAppliances] -= design_output[:elecRecircPump]
   
   # Other - Space Heating Load
-  vars = "'" + Constants.LoadVarsSpaceHeating.join("','") + "'"
+  vars = "'" + get_all_var_keys(Constants.LoadVarsSpaceHeating).join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeating] = get_sql_query_result(sqlFile, query)
+  if design_output[:elecHeating] + design_output[:fuelHeating] > 0 and design_output[:loadHeating] == 0
+    fail "ERROR: No heating load for corresponding heating energy."
+  end
   
   # Other - Space Cooling Load
-  vars = "'" + Constants.LoadVarsSpaceCooling.join("','") + "'"
+  vars = "'" + get_all_var_keys(Constants.LoadVarsSpaceCooling).join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCooling] = get_sql_query_result(sqlFile, query)
+  if design_output[:elecCooling] > 0 and design_output[:loadCooling] == 0
+    fail "ERROR: No cooling load for corresponding cooling energy."
+  end
   
   # Other - Water Heating Load
-  vars = "'" + Constants.LoadVarsWaterHeating.join("','") + "'"
+  vars = "'" + get_all_var_keys(Constants.LoadVarsWaterHeating).join("','") + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHotWater] = get_sql_query_result(sqlFile, query)
+  if design_output[:elecHotWater] + design_output[:fuelHotWater] > 0 and design_output[:loadHotWater] == 0
+    fail "ERROR: No cooling load for corresponding cooling energy."
+  end
   
   # Error Checking
   tolerance = 0.1 # MMBtu
@@ -245,6 +254,16 @@ def read_output(design, designdir, output_hpxml_path)
   
   return design_output
   
+end
+
+def get_all_var_keys(var)
+  var_keys = []
+  var.keys.each do |key|
+    var[key].each do |var_key|
+      var_keys << var_key
+    end
+  end
+  return var_keys
 end
 
 def get_cfa(hpxml_doc)
