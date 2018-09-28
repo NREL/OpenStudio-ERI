@@ -774,8 +774,8 @@ class OSModel
     model.getBuilding.setStandardsNumberOfStories(num_floors)
     
     # Store info for HVAC Sizing measure
-    if building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"].text == "true"
-      unit.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 1.0) # FIXME: assumption
+    if Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+      unit.additionalProperties.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 0.5) # FIXME: assumption
     end
     
     return true, unit
@@ -1093,7 +1093,11 @@ class OSModel
       
       # Apply constructions
       
-      if wall_surface.nil?
+      if wall_surface.nil? and slab_surface.nil?
+      
+        # nop
+      
+      elsif wall_surface.nil?
       
         # Foundation slab only
         
@@ -1104,7 +1108,7 @@ class OSModel
         return false if not success
         
         # FIXME: Temporary code for sizing
-        unit.setFeature(Constants.SizingInfoSlabRvalue(slab_surface), 5.0)
+        slab_surface.additionalProperties.setFeature(Constants.SizingInfoSlabRvalue, 5.0)
         
       else
       
