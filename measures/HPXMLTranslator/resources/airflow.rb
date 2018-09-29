@@ -996,36 +996,44 @@ class Airflow
   def self.process_ducts_for_unit(model, runner, obj_name_ducts, ducts, building, unit, unit_index, unit_ffa, unit_has_mshp, unit_living, unit_finished_basement, has_forced_air_equipment)
 
     # Validate Inputs
-    if ducts.total_leakage < 0
-      runner.registerError("Ducts: Total Leakage must be greater than or equal to 0.")
+    if ducts.supply_leakage_frac.nil? == ducts.supply_leakage_cfm25.nil?
+      runner.registerError("Ducts: Must provide either supply leakage fraction or cfm25, but not both.")
       return false
     end
-    if ducts.supply_frac < 0 or ducts.supply_frac > 1
-      runner.registerError("Ducts: Supply Leakage Fraction of Total must be greater than or equal to 0 and less than or equal to 1.")
+    if not ducts.supply_leakage_frac.nil? and (ducts.supply_leakage_frac < 0 or ducts.supply_leakage_frac > 1)
+      runner.registerError("Ducts: Supply Leakage Fraction must be greater than or equal to 0 and less than or equal to 1.")
       return false
     end
-    if ducts.return_frac < 0 or ducts.return_frac > 1
-      runner.registerError("Ducts: Return Leakage Fraction of Total must be greater than or equal to 0 and less than or equal to 1.")
+    if not ducts.supply_leakage_cfm25.nil? and ducts.supply_leakage_cfm25 < 0
+      runner.registerError("Ducts: Supply Leakage CFM25 must be greater than or equal to 0.")
       return false
     end
-    if ducts.ah_supply_frac < 0 or ducts.ah_supply_frac > 1
-      runner.registerError("Ducts: Supply Air Handler Leakage Fraction of Total must be greater than or equal to 0 and less than or equal to 1.")
+    if ducts.return_leakage_frac.nil? == ducts.return_leakage_cfm25.nil?
+      runner.registerError("Ducts: Must provide either return leakage fraction or cfm25, but not both.")
       return false
     end
-    if ducts.ah_return_frac < 0 or ducts.ah_return_frac > 1
-      runner.registerError("Ducts: Return Air Handler Leakage Fraction of Total must be greater than or equal to 0 and less than or equal to 1.")
+    if not ducts.return_leakage_frac.nil? and (ducts.return_leakage_frac < 0 or ducts.return_leakage_frac > 1)
+      runner.registerError("Ducts: Return Leakage Fraction must be greater than or equal to 0 and less than or equal to 1.")
       return false
     end
-    if ducts.r < 0
-      runner.registerError("Ducts: Insulation Nominal R-Value must be greater than or equal to 0.")
+    if not ducts.return_leakage_cfm25.nil? and ducts.return_leakage_cfm25 < 0
+      runner.registerError("Ducts: Return Leakage CFM25 must be greater than or equal to 0.")
       return false
     end
-    if ducts.supply_area_mult < 0
-      runner.registerError("Ducts: Supply Surface Area Multiplier must be greater than or equal to 0.")
+    if ducts.supply_r < 0
+      runner.registerError("Ducts: Supply Insulation Nominal R-Value must be greater than or equal to 0.")
       return false
     end
-    if ducts.return_area_mult < 0
-      runner.registerError("Ducts: Return Surface Area Multiplier must be greater than or equal to 0.")
+    if ducts.return_r < 0
+      runner.registerError("Ducts: Return Insulation Nominal R-Value must be greater than or equal to 0.")
+      return false
+    end
+    if ducts.supply_area < 0
+      runner.registerError("Ducts: Supply Surface Area must be greater than or equal to 0.")
+      return false
+    end
+    if ducts.return_area < 0
+      runner.registerError("Ducts: Return Surface Area must be greater than or equal to 0.")
       return false
     end
     
@@ -1053,43 +1061,12 @@ class Airflow
       location_name = unit_living.zone.name.to_s
     end
 
-    num_stories = building.stories
-    unless unit_finished_basement.nil?
-      num_stories +=  1
-    end
-
-    if ducts.norm_leakage_25pa.nil?
-      # Normalize values in case user inadvertently entered values that add up to the total duct leakage,
-      # as opposed to adding up to 1
-      sumFractionOfTotal = (ducts.supply_frac + ducts.return_frac + ducts.ah_supply_frac + ducts.ah_return_frac)
-      if sumFractionOfTotal > 0
-        ducts.supply_frac = ducts.supply_frac / sumFractionOfTotal
-        ducts.return_frac = ducts.return_frac / sumFractionOfTotal
-        ducts.ah_supply_frac = ducts.ah_supply_frac / sumFractionOfTotal
-        ducts.ah_return_frac = ducts.ah_return_frac / sumFractionOfTotal
-      end
-      # Calculate actual leakages from percentages
-      supply_leakage = ducts.supply_frac * ducts.total_leakage
-      return_leakage = ducts.return_frac * ducts.total_leakage
-      ah_supply_leakage = ducts.ah_supply_frac * ducts.total_leakage
-      ah_return_leakage = ducts.ah_return_frac * ducts.total_leakage
-    end
-
-    # Fraction of ducts in primary duct location (remaining ducts are in above-grade conditioned space).
-    location_frac_leakage = Airflow.get_location_frac_leakage(ducts.location_frac, num_stories)
-
-    location_frac_conduction = location_frac_leakage
-    ducts.num_returns = Airflow.get_num_returns(ducts.num_returns, num_stories)
-    supply_surface_area = Airflow.get_duct_supply_surface_area(ducts.supply_area_mult, unit_ffa, num_stories)
-    return_surface_area = Airflow.get_return_surface_area(ducts.return_area_mult, unit_ffa, num_stories, ducts.num_returns)
-
     # Calculate Duct UA value
     if location_name != unit_living.zone.name.to_s
-      unconditioned_duct_area = supply_surface_area * location_frac_conduction
-      supply_r = Airflow.get_duct_insulation_rvalue(ducts.r, true)
-      return_r = Airflow.get_duct_insulation_rvalue(ducts.r, false)
-      unconditioned_ua = unconditioned_duct_area / supply_r
-      return_ua = return_surface_area / return_r
+      supply_r = Airflow.get_duct_insulation_rvalue(ducts.supply_r, true)
+      return_r = Airflow.get_duct_insulation_rvalue(ducts.return_r, false)
+      unconditioned_ua = ducts.supply_area / supply_r
+      return_ua = ducts.return_area / return_r
     else
       location_frac_conduction = 0
       unconditioned_ua = 0
@@ -1101,29 +1078,23 @@ class Airflow
     # Calculate Duct Volume
     if location_name != unit_living.zone.name.to_s
       # Assume ducts are 3 ft by 1 ft, (8 is the perimeter)
-      supply_volume = (unconditioned_duct_area / 8.0) * 3.0
-      return_volume = (return_surface_area / 8.0) * 3.0
+      supply_volume = (ducts.supply_area / 8.0) * 3.0
+      return_volume = (ducts.return_area / 8.0) * 3.0
     else
       supply_volume = 0
       return_volume = 0
     end
 
-    # Only if using the Fractional Leakage Option Type:
-    if ducts.norm_leakage_25pa.nil?
-      supply_loss = location_frac_leakage * supply_leakage + ah_supply_leakage
-      return_loss = return_leakage + ah_return_leakage
+    if not ducts.supply_leakage_frac.nil?
+      has_leakage_imbalance = ((ducts.supply_leakage_frac - ducts.return_leakage_frac).abs > 0)
+    elsif not ducts.supply_leakage_cfm25.nil?
+      has_leakage_imbalance = ((ducts.supply_leakage_cfm25 - ducts.return_leakage_cfm25).abs > 0)
     end
 
-    unless ducts.norm_leakage_25pa.nil?
-      fan_AirFlowRate = 1000.0 # TODO: what should fan_AirFlowRate be?
-      ducts = calc_duct_leakage_from_test(ducts, unit_ffa, fan_AirFlowRate)
-    end
-
-    total_unbalance = (supply_loss - return_loss).abs
-
-    if not location_name == unit_living.zone.name.to_s and not location_name == "none" and supply_loss > 0
+    # FIXME: Improve this
+    if not location_name == unit_living.zone.name.to_s and not location_name == "none" and (ducts.supply_leakage_frac.to_f > 0 or ducts.supply_leakage_cfm25.to_f > 0)
       # Calculate d.frac_oa = fraction of unbalanced make-up air that is outside air
-      if total_unbalance <=  0
+      if not has_leakage_imbalance
         # Handle the exception for if there is no leakage unbalance.
         frac_oa = 0
       elsif not unit_finished_basement.nil? and unit_finished_basement.zone == location_zone
@@ -1146,16 +1117,17 @@ class Airflow
     end
     
     # Store info for HVAC Sizing measure
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyRvalue, supply_r.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnRvalue, return_r.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyLoss, supply_loss.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnLoss, return_loss.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplySurfaceArea, supply_surface_area.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnSurfaceArea, return_surface_area.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyRvalue, ducts.supply_r.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnRvalue, ducts.return_r.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyLeakageFrac, ducts.return_leakage_frac.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyLeakageCFM25, ducts.return_leakage_cfm25.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnLeakageFrac, ducts.return_leakage_frac.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnLeakageCFM25, ducts.return_leakage_cfm25.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyArea, ducts.supply_area.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnArea, ducts.return_area.to_f)
     unit.additionalProperties.setFeature(Constants.SizingInfoDuctsLocationZone, location_name)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsLocationFrac, location_frac_leakage.to_f)
 
-    ducts_output = DuctsOutput.new(location_name, location_zone, return_volume, supply_loss, return_loss, frac_oa, total_unbalance, unconditioned_ua, return_ua)
+    ducts_output = DuctsOutput.new(location_name, location_zone, return_volume, frac_oa, unconditioned_ua, return_ua)
     return true, ducts_output
 
   end
@@ -1565,14 +1537,31 @@ class Airflow
 
       duct_subroutine = OpenStudio::Model::EnergyManagementSystemSubroutine.new(model)
       duct_subroutine.setName("#{obj_name_ducts} lk subrout")
-      duct_subroutine.addLine("Set f_sup = #{ducts_output.supply_loss}")
-      duct_subroutine.addLine("Set f_ret = #{ducts_output.return_loss}")
-      duct_subroutine.addLine("Set f_OA = #{ducts_output.frac_oa * ducts_output.total_unbalance}")
+      if not ducts.supply_leakage_frac.nil?
+        duct_subroutine.addLine("Set f_sup = #{ducts.supply_leakage_frac}")
+        duct_subroutine.addLine("Set f_ret = #{ducts.return_leakage_frac}")
+      elsif not ducts.supply_leakage_cfm25.nil?
+        duct_subroutine.addLine("If #{ah_vfr_var.name} > 0")
+        duct_subroutine.addLine("  Set f_sup = #{UnitConversions.convert(ducts.supply_leakage_cfm25,"cfm","m^3/s").round(6)} / #{ah_vfr_var.name}")
+        duct_subroutine.addLine("  Set f_ret = #{UnitConversions.convert(ducts.return_leakage_cfm25,"cfm","m^3/s").round(6)} / #{ah_vfr_var.name}")
+        duct_subroutine.addLine("Else")
+        duct_subroutine.addLine("  Set f_sup = 0")
+        duct_subroutine.addLine("  Set f_ret = 0")
+        duct_subroutine.addLine("EndIf")
+      end
+      duct_subroutine.addLine("Set f_imbalance = (@Abs (f_sup-f_ret))")
+      duct_subroutine.addLine("Set f_OA = #{ducts_output.frac_oa} * f_imbalance")
       duct_subroutine.addLine("Set oafrate = f_OA * #{ah_vfr_var.name}")
       duct_subroutine.addLine("Set suplkfrate = f_sup * #{ah_vfr_var.name}")
       duct_subroutine.addLine("Set retlkfrate = f_ret * #{ah_vfr_var.name}")
+      
+      if not ducts.return_leakage_frac.nil?
+        has_more_return_leakage = (ducts.return_leakage_frac > ducts.supply_leakage_frac)
+      elsif not ducts.return_leakage_cfm25.nil?
+        has_more_return_leakage = (ducts.return_leakage_cfm25 > ducts.supply_leakage_cfm25)
+      end
 
-      if ducts_output.return_loss > ducts_output.supply_loss
+      if has_more_return_leakage
         # Supply air flow rate is greater than return flow rate
         # Living zone is pressurized in this case
         duct_subroutine.addLine("Set #{liv_to_ah_flow_rate_var.name} = (@Abs (retlkfrate-suplkfrate-oafrate))")
@@ -2085,69 +2074,6 @@ class Airflow
     return location_zone, location_name
   end
 
-  def self.calc_duct_leakage_from_test(ducts, ffa, fan_AirFlowRate)
-    '''
-    Calculates duct leakage inputs based on duct blaster type lkage measurements (cfm @ 25 Pa per 100 ft2 conditioned floor area).
-    Requires assumptions about supply/return leakage split, air handler leakage, and duct plenum (de)pressurization.
-    '''
-    
-    '''
-    # Assumptions
-    supply_duct_lkage_frac = 0.67 # 2013 RESNET Standards, Appendix A, p.A-28
-    return_duct_lkage_frac = 0.33 # 2013 RESNET Standards, Appendix A, p.A-28
-    ah_lkage = 0.025 # 2.5% of air handler flow at 25 P (Reference: ASHRAE Standard 152-2004, Annex C, p 33; Walker et al 2010. "Air Leakage of Furnaces and Air Handlers")
-    ducts.ah_supply_frac = 0.20 # (Reference: Walker et al 2010. "Air Leakage of Furnaces and Air Handlers")
-    ducts.ah_return_frac = 0.80 # (Reference: Walker et al 2010. "Air Leakage of Furnaces and Air Handlers")
-    p_supply = 25.0 # Assume average operating pressure in ducts is 25 Pa,
-    p_return = 25.0 # though it is likely lower (Reference: Pigg and Francisco 2008 "A Field Study of Exterior Duct Leakage in New Wisconsin Homes")
-
-    # Conversion
-    cfm25 = ducts.norm_leakage_25pa * ffa / 100.0 #denormalize leakage
-    ah_cfm25 = ah_lkage * fan_AirFlowRate # air handler leakage flow rate at 25 Pa
-    ah_supply_lk_cfm25 = [ah_cfm25 * ducts.ah_supply_frac, cfm25 * supply_duct_lkage_frac].min
-    ah_return_lk_cfm25 = [ah_cfm25 * ducts.ah_return_frac, cfm25 * return_duct_lkage_frac].min
-    supply_lk_cfm25 = [cfm25 * supply_duct_lkage_frac - ah_supply_lk_cfm25, 0].max
-    return_lk_cfm25 = [cfm25 * return_duct_lkage_frac - ah_return_lk_cfm25, 0].max
-
-    supply_lk_oper = Airflow.calc_duct_leakage_at_diff_pressure(supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
-    return_lk_oper = Airflow.calc_duct_leakage_at_diff_pressure(return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
-    ah_supply_lk_oper = Airflow.calc_duct_leakage_at_diff_pressure(ah_supply_lk_cfm25, 25.0, p_supply) # cfm at operating pressure
-    ah_return_lk_oper = Airflow.calc_duct_leakage_at_diff_pressure(ah_return_lk_cfm25, 25.0, p_return) # cfm at operating pressure
-
-    if fan_AirFlowRate == 0
-        supply_leakage = 0
-        return_leakage = 0
-        ah_supply_leakage = 0
-        ah_return_leakage = 0
-    else
-        supply_leakage = supply_lk_oper / fan_AirFlowRate
-        return_leakage = return_lk_oper / fan_AirFlowRate
-        ah_supply_leakage = ah_supply_lk_oper / fan_AirFlowRate
-        ah_return_leakage = ah_return_lk_oper / fan_AirFlowRate
-    end
-
-    supply_loss = supply_leakage + ah_supply_leakage
-    return_loss = return_leakage + ah_return_leakage
-
-    # Leakage to outside was specified, so dont account for location fraction
-    location_frac_leakage = 1
-    '''
-  end
-  
-  def self.get_location_frac_leakage(location_frac, stories)
-    if location_frac == Constants.Auto
-      # Duct location fraction per 2010 BA Benchmark
-      if stories == 1
-        location_frac_leakage = 1
-      else
-        location_frac_leakage = 0.65
-      end
-    else
-      location_frac_leakage = location_frac.to_f
-    end
-    return location_frac_leakage
-  end
-
   def self.get_infiltration_ACH_from_SLA(sla, numStories, weather)
     # Returns the infiltration annual average ACH given a SLA.
     w = calc_infiltration_w_factor(weather)
@@ -2201,34 +2127,6 @@ class Airflow
     end
   end
 
-  def self.get_duct_supply_surface_area(mult, ffa, num_stories)
-    # Duct Surface Areas per 2010 BA Benchmark
-    if num_stories == 1
-      return 0.27 * ffa * mult # ft^2
-    else
-      return 0.2 * ffa * mult
-    end
-  end
-  
-  def self.get_return_surface_area(mult, ffa, num_stories, num_returns)
-    # Duct Surface Areas per 2010 BA Benchmark
-    if num_stories == 1
-      return [0.05 * num_returns * ffa, 0.25 * ffa].min * mult
-    else
-      return [0.04 * num_returns * ffa, 0.19 * ffa].min * mult
-    end
-  end
-
-  def self.get_num_returns(num_returns, num_stories)
-    if num_returns.nil?
-      return 0
-    elsif num_returns == Constants.Auto
-      # Duct Number Returns per 2010 BA Benchmark Addendum
-      return 1 + num_stories
-    end
-    return num_returns.to_i
-  end  
-
   def self.get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
     # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
     if std == '2013'
@@ -2255,36 +2153,30 @@ class Airflow
 end
 
 class Ducts
-  def initialize(total_leakage, norm_leakage_25pa, supply_area_mult, return_area_mult, r, supply_frac, return_frac, ah_supply_frac, ah_return_frac, location_frac, num_returns, location)
-    @total_leakage = total_leakage
-    @norm_leakage_25pa = norm_leakage_25pa
-    @supply_area_mult = supply_area_mult
-    @return_area_mult = return_area_mult
-    @r = r
-    @supply_frac = supply_frac
-    @return_frac = return_frac
-    @ah_supply_frac = ah_supply_frac
-    @ah_return_frac = ah_return_frac
-    @location_frac = location_frac
-    @num_returns = num_returns
+  def initialize(supply_leakage_frac, supply_leakage_cfm25, return_leakage_frac, return_leakage_cfm25, supply_area, return_area, supply_r, return_r, location)
+    @supply_area = supply_area
+    @return_area = return_area
+    @supply_r = supply_r
+    @return_r = return_r
+    @supply_leakage_frac = supply_leakage_frac
+    @supply_leakage_cfm25 = supply_leakage_cfm25
+    @return_leakage_frac = return_leakage_frac
+    @return_leakage_cfm25 = return_leakage_cfm25
     @location = location
   end
-  attr_accessor(:total_leakage, :norm_leakage_25pa, :supply_area_mult, :return_area_mult, :r, :supply_frac, :return_frac, :ah_supply_frac, :ah_return_frac, :location_frac, :num_returns, :location)
+  attr_accessor(:supply_leakage_frac, :supply_leakage_cfm25, :return_leakage_frac, :return_leakage_cfm25, :supply_area, :return_area, :supply_r, :return_r, :location)
 end
 
 class DuctsOutput
-  def initialize(location_name, location_zone, return_volume, supply_loss, return_loss, frac_oa, total_unbalance, unconditioned_ua, return_ua)
+  def initialize(location_name, location_zone, return_volume, frac_oa, unconditioned_ua, return_ua)
     @location_name = location_name
     @location_zone = location_zone
     @return_volume = return_volume
-    @supply_loss = supply_loss
-    @return_loss = return_loss
     @frac_oa = frac_oa
-    @total_unbalance = total_unbalance
     @unconditioned_ua = unconditioned_ua
     @return_ua = return_ua
   end
-  attr_accessor(:location_name, :location_zone, :return_volume, :supply_loss, :return_loss, :frac_oa, :total_unbalance, :unconditioned_ua, :return_ua)
+  attr_accessor(:location_name, :location_zone, :return_volume, :frac_oa, :unconditioned_ua, :return_ua)
 end
 
 class Infiltration

@@ -246,7 +246,7 @@ class Constants
     return 'wood'
   end
   def self.LoadVarsSpaceHeating
-    vars = {'OpenStudio::Model::CoilHeatingDXSingleSpeed' => ['Heating Coil Heating Energy'],
+    return {'OpenStudio::Model::CoilHeatingDXSingleSpeed' => ['Heating Coil Heating Energy'],
             'OpenStudio::Model::CoilHeatingDXMultiSpeed' => ['Heating Coil Heating Energy'],
             'OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow' => ['Heating Coil Heating Energy'],
             'OpenStudio::Model::CoilHeatingElectric' => ['Heating Coil Heating Energy'],
@@ -256,7 +256,7 @@ class Constants
             'OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit' => ['Heating Coil Heating Energy']}
   end
   def self.LoadVarsSpaceCooling
-    vars = {'OpenStudio::Model::CoilCoolingDXSingleSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
+    return {'OpenStudio::Model::CoilCoolingDXSingleSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
             'OpenStudio::Model::CoilCoolingDXMultiSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
             'OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
             'OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy']}
@@ -788,28 +788,31 @@ class Constants
   def self.SizingInfoCMUWallFurringInsRvalue
     return __method__.to_s
   end
-  def self.SizingInfoDuctsLocationFrac
-    return __method__.to_s
-  end
   def self.SizingInfoDuctsLocationZone
     return __method__.to_s
   end
-  def self.SizingInfoDuctsReturnLoss
+  def self.SizingInfoDuctsReturnLeakageFrac
+    return __method__.to_s
+  end
+  def self.SizingInfoDuctsReturnLeakageCFM25
     return __method__.to_s
   end
   def self.SizingInfoDuctsReturnRvalue
     return __method__.to_s
   end
-  def self.SizingInfoDuctsReturnSurfaceArea
+  def self.SizingInfoDuctsReturnArea
     return __method__.to_s
   end
-  def self.SizingInfoDuctsSupplyLoss
+  def self.SizingInfoDuctsSupplyLeakageFrac
+    return __method__.to_s
+  end
+  def self.SizingInfoDuctsSupplyLeakageCFM25
     return __method__.to_s
   end
   def self.SizingInfoDuctsSupplyRvalue
     return __method__.to_s
   end
-  def self.SizingInfoDuctsSupplySurfaceArea
+  def self.SizingInfoDuctsSupplyArea
     return __method__.to_s
   end
   def self.SizingInfoGSHPBoreConfig
