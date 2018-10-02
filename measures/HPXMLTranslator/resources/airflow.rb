@@ -1112,13 +1112,13 @@ class Airflow
     end
     
     # Store info for HVAC Sizing measure
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyLeakageFrac, ducts.supply_leakage_frac.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyLeakageCFM25, ducts.supply_leakage_cfm25.to_f)
     unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyRvalue, ducts.supply_r.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnRvalue, ducts.return_r.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyLeakageFrac, ducts.return_leakage_frac.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyLeakageCFM25, ducts.return_leakage_cfm25.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyArea, ducts.supply_area.to_f)
     unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnLeakageFrac, ducts.return_leakage_frac.to_f)
     unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnLeakageCFM25, ducts.return_leakage_cfm25.to_f)
-    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsSupplyArea, ducts.supply_area.to_f)
+    unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnRvalue, ducts.return_r.to_f)
     unit.additionalProperties.setFeature(Constants.SizingInfoDuctsReturnArea, ducts.return_area.to_f)
     unit.additionalProperties.setFeature(Constants.SizingInfoDuctsLocationZone, location_zone.name.to_s)
 
@@ -1316,10 +1316,9 @@ class Airflow
     
     if ducts_output.location_zone.name.to_s != unit_living.zone.name.to_s and has_forced_air_equipment
 
-      # Other equipment objects to cancel out the supply air leakage directly into the return plenum
-      
       living_space = unit_living.zone.spaces[0]
 
+      # Other equipment objects to cancel out the supply air leakage directly into the return plenum
       other_equip_def = OpenStudio::Model::OtherEquipmentDefinition.new(model)
       other_equip_def.setName("#{obj_name_ducts} sup s lk to lv equip")
       other_equip = OpenStudio::Model::OtherEquipment.new(other_equip_def)
@@ -1522,11 +1521,15 @@ class Airflow
         cfis_t_sum_open_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, "#{obj_name_ducts} cfis t sum open".gsub(" ","_")) # Sums the time during an hour the CFIS damper has been open
         cfis_on_for_hour_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, "#{obj_name_ducts} cfis on for hour".gsub(" ","_")) # Flag to open the CFIS damper for the remainder of the hour
         cfis_f_damper_open_var = OpenStudio::Model::EnergyManagementSystemGlobalVariable.new(model, "#{obj_name_ducts} cfis_f_open".gsub(" ","_")) # Fraction of timestep the CFIS damper is open. Used by infiltration and duct leakage programs
-
-        max_supply_fan_mfr = OpenStudio::Model::EnergyManagementSystemInternalVariable.new(model, "Fan Maximum Mass Flow Rate")
-        max_supply_fan_mfr.setName("#{obj_name_ducts} max_supply_fan_mfr".gsub(" ","_"))
-        max_supply_fan_mfr.setInternalDataIndexKeyName(supply_fan.name.to_s)
       end
+      
+      # Internal Variables
+      
+      max_supply_fan_mfr = OpenStudio::Model::EnergyManagementSystemInternalVariable.new(model, "Fan Maximum Mass Flow Rate")
+      max_supply_fan_mfr.setName("#{obj_name_ducts} max_supply_fan_mfr".gsub(" ","_"))
+      max_supply_fan_mfr.setInternalDataIndexKeyName(supply_fan.name.to_s)
+      
+      air_density = 1.16 # Density of 1.16 was back calculated using E+ results (kg/m3)
 
       # Duct Subroutine
 
@@ -1536,13 +1539,8 @@ class Airflow
         duct_subroutine.addLine("Set f_sup = #{ducts.supply_leakage_frac}")
         duct_subroutine.addLine("Set f_ret = #{ducts.return_leakage_frac}")
       elsif not ducts.supply_leakage_cfm25.nil?
-        duct_subroutine.addLine("If #{ah_vfr_var.name} > 0")
-        duct_subroutine.addLine("  Set f_sup = #{UnitConversions.convert(ducts.supply_leakage_cfm25,"cfm","m^3/s").round(6)} / #{ah_vfr_var.name}")
-        duct_subroutine.addLine("  Set f_ret = #{UnitConversions.convert(ducts.return_leakage_cfm25,"cfm","m^3/s").round(6)} / #{ah_vfr_var.name}")
-        duct_subroutine.addLine("Else")
-        duct_subroutine.addLine("  Set f_sup = 0")
-        duct_subroutine.addLine("  Set f_ret = 0")
-        duct_subroutine.addLine("EndIf")
+        duct_subroutine.addLine("Set f_sup = #{UnitConversions.convert(ducts.supply_leakage_cfm25,"cfm","m^3/s").round(6)} / (#{max_supply_fan_mfr.name} / 1.0135)")
+        duct_subroutine.addLine("Set f_ret = #{UnitConversions.convert(ducts.return_leakage_cfm25,"cfm","m^3/s").round(6)} / (#{max_supply_fan_mfr.name} / 1.0135)")
       end
       duct_subroutine.addLine("Set f_imbalance = (@Abs (f_sup-f_ret))")
       duct_subroutine.addLine("Set f_OA = #{ducts_output.frac_oa} * f_imbalance")

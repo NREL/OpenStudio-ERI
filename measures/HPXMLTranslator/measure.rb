@@ -2415,6 +2415,9 @@ class OSModel
       pan_heater_power = 0.0
       fan_power = 0.07
       is_ducted = false
+      if XMLHelper.has_element(hp, "DistributionSystem")
+        is_ducted = true
+      end
       supplemental_efficiency = 1.0
       success = HVAC.apply_mshp(model, unit, runner, seer, hspf, shr,
                                 min_cooling_capacity, max_cooling_capacity,
