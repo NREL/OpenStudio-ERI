@@ -314,7 +314,7 @@ class EnergyRatingIndex301Validator
             
             ## [HeatingType=Furnace]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]; TODO: Ensure correct one
                 '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
             },
@@ -327,6 +327,7 @@ class EnergyRatingIndex301Validator
         
             ## [HeatingType=Boiler]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]; TODO: Ensure correct one
                 '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
             },
@@ -356,13 +357,12 @@ class EnergyRatingIndex301Validator
     
             ## [CoolingType=CentralAC]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]; TODO: Ensure correct one
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
             },
             
             ## [CoolingType=RoomAC]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioning"]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
             },
             
@@ -380,21 +380,21 @@ class EnergyRatingIndex301Validator
             
             ## [HeatPumpType=ASHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]; TODO: Ensure correct one
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
             },
 
             ## [HeatPumpType=MSHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="mini-split"]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]; TODO: Ensure correct one
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
             },
 
             ## [HeatPumpType=GSHP]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]; TODO: Ensure correct one
                 'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="COP"]/Value' => one,
             },
@@ -412,15 +412,15 @@ class EnergyRatingIndex301Validator
         # [HVACDistribution]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            '[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=DSE]
+            '[DistributionSystemType/AirDistribution | DistributionSystemType/HydronicDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=DSE]
         },
             
             ## [HVACDistType=Air]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
                 'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
                 'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
-                'Ducts[DuctType="supply"]' => one_or_more, # See [HVACDucts]
-                'Ducts[DuctType="return"]' => one_or_more, # See [HVACDucts]
+                'Ducts[DuctType="supply"]' => one_or_more, # See [HVACDuct]
+                'Ducts[DuctType="return"]' => one_or_more, # See [HVACDuct]
             },
         
             ## [HVACDistType=DSE]
@@ -428,7 +428,7 @@ class EnergyRatingIndex301Validator
                 '[AnnualHeatingDistributionSystemEfficiency | AnnualCoolingDistributionSystemEfficiency]' => one_or_more,
             },
             
-            ## [HVACDucts]
+            ## [HVACDuct]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
                 'DuctInsulationRValue' => one,
                 'DuctLocation' => one, # TODO: Restrict values
@@ -462,7 +462,7 @@ class EnergyRatingIndex301Validator
         
         # [WaterHeatingSystem]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => {
-            '../HotWaterDistribution' => one, # See [HotWaterDistribution]
+            '../HotWaterDistribution' => one, # See [HotWaterDistribution]; TODO: Ensure correct one
             '../WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => one_or_more, # See [WaterFixture]
             'SystemIdentifier' => one, # Required by HPXML schema
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => one, # See [WHType=Tank]

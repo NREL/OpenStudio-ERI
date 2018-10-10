@@ -337,6 +337,7 @@ class EnergyPlusValidator
         
             ## [HeatingType=Boiler]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
+                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
             },
@@ -373,7 +374,6 @@ class EnergyPlusValidator
             
             ## [CoolingType=RoomAC]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioning"]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
             },
             
@@ -467,15 +467,15 @@ class EnergyPlusValidator
         # [HVACDistribution]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            '[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=DSE]
+            '[DistributionSystemType/AirDistribution | DistributionSystemType/HydronicDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=DSE]
         },
             
             ## [HVACDistType=Air]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
                 'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
                 'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
-                'Ducts[DuctType="supply"]' => one_or_more, # See [HVACDucts]
-                'Ducts[DuctType="return"]' => one_or_more, # See [HVACDucts]
+                'Ducts[DuctType="supply"]' => one_or_more, # See [HVACDuct]
+                'Ducts[DuctType="return"]' => one_or_more, # See [HVACDuct]
             },
         
             ## [HVACDistType=DSE]
@@ -483,7 +483,7 @@ class EnergyPlusValidator
                 '[AnnualHeatingDistributionSystemEfficiency | AnnualCoolingDistributionSystemEfficiency]' => one_or_more,
             },
             
-            ## [HVACDucts]
+            ## [HVACDuct]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
                 'DuctInsulationRValue' => one,
                 'DuctLocation' => one, # TODO: Restrict values
