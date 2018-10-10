@@ -327,7 +327,6 @@ class EnergyRatingIndex301Validator
         
             ## [HeatingType=Boiler]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
                 'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
             },
@@ -413,7 +412,7 @@ class EnergyRatingIndex301Validator
         # [HVACDistribution]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            '[DistributionSystemType/AirDistribution | DistributionSystemType/HydronicDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=Hydronic] or [HVACDistType=DSE]
+            '[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=DSE]
         },
             
             ## [HVACDistType=Air]
@@ -424,11 +423,6 @@ class EnergyRatingIndex301Validator
                 'Ducts[DuctType="return"]' => one_or_more, # See [HVACDucts]
             },
         
-            ## [HVACDistType=Hydronic]
-            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution' => {
-                # TODO
-            },
-            
             ## [HVACDistType=DSE]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution[DistributionSystemType[Other="DSE"]]' => {
                 '[AnnualHeatingDistributionSystemEfficiency | AnnualCoolingDistributionSystemEfficiency]' => one_or_more,
@@ -546,8 +540,8 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             'ArrayAzimuth' => one,
             'ArrayTilt' => one,
-            'InverterEfficiency' => one,
             'MaxPowerOutput' => one,
+            'InverterEfficiency' => one,
         },
         
         
