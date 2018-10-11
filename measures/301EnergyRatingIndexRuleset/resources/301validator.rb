@@ -538,10 +538,13 @@ class EnergyRatingIndex301Validator
         # [PVSystem]
         '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => {
             'SystemIdentifier' => one, # Required by HPXML schema
+            '[ModuleType="standard" or ModuleType="premium" or ModuleType="thin film"]' => one,
+            '[ArrayType="fixed roof mount" or ArrayType="fixed open rack" or ArrayType="1-axis" or ArrayType="1-axis backtracked" or ArrayType="2-axis"]' => one,
             'ArrayAzimuth' => one,
             'ArrayTilt' => one,
             'MaxPowerOutput' => one,
-            'InverterEfficiency' => one,
+            'InverterEfficiency' => one, # PVWatts default is 0.96
+            'SystemLossesFraction' => one, # PVWatts default is 0.14
         },
         
         
