@@ -916,10 +916,18 @@ class OSModel
       
         slab_id = fnd_slab.elements["SystemIdentifier"].attributes["id"]
       
-        slab_length = Float(fnd_slab.elements["ExposedPerimeter"].text)
-        perim_exp += slab_length
+        slab_perim = Float(fnd_slab.elements["ExposedPerimeter"].text)
+        perim_exp += slab_perim
         slab_area = Float(fnd_slab.elements["Area"].text)
-        slab_width = slab_area/slab_length
+        # Calculate length/width given perimeter/area
+        sqrt_term = slab_perim**2 - 16.0*slab_area
+        if sqrt_term < 0
+          slab_length = slab_perim/4.0
+          slab_width = slab_perim/4.0
+        else
+          slab_length = slab_perim/4.0 + Math.sqrt(sqrt_term)/4.0
+          slab_width = slab_perim/4.0 - Math.sqrt(sqrt_term)/4.0
+        end
         
         z_origin = 0
         unless fnd_slab.elements["DepthBelowGrade"].nil?
@@ -2862,8 +2870,6 @@ class OSModel
                     
     building.elements.each("BuildingDetails/Systems/Photovoltaics/PVSystem") do |pvsys|
     
-      # FIXME: Need to double-check azimuth/tilt inputs
-      
       pv_id = pvsys.elements["SystemIdentifier"].attributes["id"]
       module_type = modules_map[XMLHelper.get_value(pvsys, "ModuleType")]
       array_type = arrays_map[XMLHelper.get_value(pvsys, "ArrayType")]
@@ -2875,7 +2881,6 @@ class OSModel
       
       success = PV.apply(model, runner, pv_id, power_w, module_type, 
                          system_losses, inv_eff, tilt, az, array_type)
-
       return false if not success
       
     end
