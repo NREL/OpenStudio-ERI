@@ -799,8 +799,8 @@ class OSModel
     model.getBuilding.setStandardsNumberOfStories(num_floors)
     
     # Store info for HVAC Sizing measure
-    if building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"].text == "true"
-      unit.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 1.0) # FIXME: assumption
+    if Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+      unit.additionalProperties.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 0.5) # FIXME: assumption
     end
     
     return true, unit
@@ -941,10 +941,18 @@ class OSModel
       
         slab_id = fnd_slab.elements["SystemIdentifier"].attributes["id"]
       
-        slab_length = Float(fnd_slab.elements["ExposedPerimeter"].text)
-        perim_exp += slab_length
+        slab_perim = Float(fnd_slab.elements["ExposedPerimeter"].text)
+        perim_exp += slab_perim
         slab_area = Float(fnd_slab.elements["Area"].text)
-        slab_width = slab_area/slab_length
+        # Calculate length/width given perimeter/area
+        sqrt_term = slab_perim**2 - 16.0*slab_area
+        if sqrt_term < 0
+          slab_length = slab_perim/4.0
+          slab_width = slab_perim/4.0
+        else
+          slab_length = slab_perim/4.0 + Math.sqrt(sqrt_term)/4.0
+          slab_width = slab_perim/4.0 - Math.sqrt(sqrt_term)/4.0
+        end
         
         z_origin = 0
         unless fnd_slab.elements["DepthBelowGrade"].nil?
@@ -1118,7 +1126,11 @@ class OSModel
       
       # Apply constructions
       
-      if wall_surface.nil?
+      if wall_surface.nil? and slab_surface.nil?
+      
+        # nop
+      
+      elsif wall_surface.nil?
       
         # Foundation slab only
         
@@ -1129,7 +1141,7 @@ class OSModel
         return false if not success
         
         # FIXME: Temporary code for sizing
-        unit.setFeature(Constants.SizingInfoSlabRvalue(slab_surface), 5.0)
+        slab_surface.additionalProperties.setFeature(Constants.SizingInfoSlabRvalue, 5.0)
         
       else
       
@@ -2945,19 +2957,29 @@ class OSModel
 
     return true if building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].nil?
   
+    modules_map = {"standard"=>Constants.PVModuleTypeStandard,
+                   "premium"=>Constants.PVModuleTypePremium,
+                   "thin film"=>Constants.PVModuleTypeThinFilm}
+    
+    arrays_map = {"fixed open rack"=>Constants.PVArrayTypeFixedOpenRack,
+                  "fixed roof mount"=>Constants.PVArrayTypeFixedRoofMount,
+                  "1-axis"=>Constants.PVArrayTypeFixed1Axis,
+                  "1-axis backtracked"=>Constants.PVArrayTypeFixed1AxisBacktracked,
+                  "2-axis"=>Constants.PVArrayTypeFixed2Axis}
+                    
     building.elements.each("BuildingDetails/Systems/Photovoltaics/PVSystem") do |pvsys|
     
       pv_id = pvsys.elements["SystemIdentifier"].attributes["id"]
+      module_type = modules_map[XMLHelper.get_value(pvsys, "ModuleType")]
+      array_type = arrays_map[XMLHelper.get_value(pvsys, "ArrayType")]
       az = Float(XMLHelper.get_value(pvsys, "ArrayAzimuth"))
       tilt = Float(XMLHelper.get_value(pvsys, "ArrayTilt"))
-      inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
       power_w = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))
+      inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
+      system_losses = Float(XMLHelper.get_value(pvsys, "SystemLossesFraction"))
       
-      # FIXME: Need to double-check azimuth/tilt inputs
-      module_type = Constants.PVModuleTypeStandard
-      system_losses = 0.14
       success = PV.apply(model, runner, pv_id, power_w, module_type, 
-                         system_losses, inv_eff, tilt, az)
+                         system_losses, inv_eff, tilt, az, array_type)
       return false if not success
       
     end

@@ -205,6 +205,14 @@ class EnergyRatingIndexTest < Minitest::Test
     # TODO
   end
   
+  def test_naseo_technical_exercises
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    xmldir = "#{parent_dir}/tests/NASEO_Technical_Exercises"
+    Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
+      run_and_check(xml, parent_dir, false)
+    end
+  end
+  
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
