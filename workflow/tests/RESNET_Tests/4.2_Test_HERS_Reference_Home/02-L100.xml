@@ -156,7 +156,7 @@
               <ExposedPerimeter>168</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
-              <DepthBelowGrade>0</DepthBelowGrade>
+              <DepthBelowGrade>3</DepthBelowGrade>
               <PerimeterInsulation>
                 <SystemIdentifier id='PerimeterInsulation_ID1'/>
                 <Layer>
