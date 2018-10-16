@@ -2858,18 +2858,27 @@ class OSModel
 
     return true if building.elements["BuildingDetails/Systems/Photovoltaics/PVSystem"].nil?
   
+    modules_map = {"standard"=>Constants.PVModuleTypeStandard,
+                   "premium"=>Constants.PVModuleTypePremium,
+                   "thin film"=>Constants.PVModuleTypeThinFilm}
+    
+    arrays_map = {"fixed open rack"=>Constants.PVArrayTypeFixedOpenRack,
+                  "fixed roof mount"=>Constants.PVArrayTypeFixedRoofMount,
+                  "1-axis"=>Constants.PVArrayTypeFixed1Axis,
+                  "1-axis backtracked"=>Constants.PVArrayTypeFixed1AxisBacktracked,
+                  "2-axis"=>Constants.PVArrayTypeFixed2Axis}
+                    
     building.elements.each("BuildingDetails/Systems/Photovoltaics/PVSystem") do |pvsys|
     
       pv_id = pvsys.elements["SystemIdentifier"].attributes["id"]
+      module_type = modules_map[XMLHelper.get_value(pvsys, "ModuleType")]
+      array_type = arrays_map[XMLHelper.get_value(pvsys, "ArrayType")]
       az = Float(XMLHelper.get_value(pvsys, "ArrayAzimuth"))
       tilt = Float(XMLHelper.get_value(pvsys, "ArrayTilt"))
-      inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
       power_w = Float(XMLHelper.get_value(pvsys, "MaxPowerOutput"))
+      inv_eff = Float(XMLHelper.get_value(pvsys, "InverterEfficiency"))
+      system_losses = Float(XMLHelper.get_value(pvsys, "SystemLossesFraction"))
       
-      # FIXME: Need to double-check azimuth/tilt inputs
-      module_type = Constants.PVModuleTypeStandard
-      array_type = Constants.PVArrayTypeFixedRoofMount
-      system_losses = 0.14
       success = PV.apply(model, runner, pv_id, power_w, module_type, 
                          system_losses, inv_eff, tilt, az, array_type)
       return false if not success
