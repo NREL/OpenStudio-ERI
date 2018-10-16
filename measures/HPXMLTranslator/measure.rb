@@ -2868,9 +2868,10 @@ class OSModel
       
       # FIXME: Need to double-check azimuth/tilt inputs
       module_type = Constants.PVModuleTypeStandard
+      array_type = Constants.PVArrayTypeFixedRoofMount
       system_losses = 0.14
       success = PV.apply(model, runner, pv_id, power_w, module_type, 
-                         system_losses, inv_eff, tilt, az)
+                         system_losses, inv_eff, tilt, az, array_type)
       return false if not success
       
     end

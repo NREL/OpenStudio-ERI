@@ -246,7 +246,7 @@ class Constants
     return 'wood'
   end
   def self.LoadVarsSpaceHeating
-    vars = {'OpenStudio::Model::CoilHeatingDXSingleSpeed' => ['Heating Coil Heating Energy'],
+    return {'OpenStudio::Model::CoilHeatingDXSingleSpeed' => ['Heating Coil Heating Energy'],
             'OpenStudio::Model::CoilHeatingDXMultiSpeed' => ['Heating Coil Heating Energy'],
             'OpenStudio::Model::CoilHeatingDXVariableRefrigerantFlow' => ['Heating Coil Heating Energy'],
             'OpenStudio::Model::CoilHeatingElectric' => ['Heating Coil Heating Energy'],
@@ -256,7 +256,7 @@ class Constants
             'OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit' => ['Heating Coil Heating Energy']}
   end
   def self.LoadVarsSpaceCooling
-    vars = {'OpenStudio::Model::CoilCoolingDXSingleSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
+    return {'OpenStudio::Model::CoilCoolingDXSingleSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
             'OpenStudio::Model::CoilCoolingDXMultiSpeed' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
             'OpenStudio::Model::CoilCoolingDXVariableRefrigerantFlow' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy'],
             'OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit' => ['Cooling Coil Sensible Cooling Energy','Cooling Coil Latent Cooling Energy']}
@@ -284,6 +284,21 @@ class Constants
   end
   def self.MaterialPEX
     return 'pex'
+  end
+  def self.PVArrayTypeFixedOpenRack
+    return 'FixedOpenRack'
+  end
+  def self.PVArrayTypeFixedRoofMount
+    return 'FixedRoofMounted'
+  end
+  def self.PVArrayTypeFixed1Axis
+    return 'OneAxis'
+  end
+  def self.PVArrayTypeFixed1AxisBacktracked
+    return 'OneAxisBacktracking'
+  end
+  def self.PVArrayTypeFixed2Axis
+    return 'TwoAxis'
   end
   def self.PVModuleTypeStandard
     return 'Standard'
