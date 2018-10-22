@@ -41,7 +41,7 @@ class HVAC
 
         # _processCurvesDXCooling
         
-        clg_coil_stage_data = calc_coil_stage_data_cooling(model, capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
+        clg_coil_stage_data = calc_coil_stage_data_cooling(model, capacity, (0...num_speeds).to_a, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
 
         # _processSystemCoolingCoil
         
@@ -181,7 +181,7 @@ class HVAC
 
         # _processCurvesDXCooling
         
-        clg_coil_stage_data = calc_coil_stage_data_cooling(model, capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
+        clg_coil_stage_data = calc_coil_stage_data_cooling(model, capacity, (0...num_speeds).to_a, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
 
         # _processSystemCoolingCoil
         
@@ -330,7 +330,7 @@ class HVAC
 
         # _processCurvesDXCooling
         
-        clg_coil_stage_data = calc_coil_stage_data_cooling(model, capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
+        clg_coil_stage_data = calc_coil_stage_data_cooling(model, capacity, (0...num_speeds).to_a, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
 
         # _processSystemCoolingCoil
         
@@ -494,7 +494,7 @@ class HVAC
     
         # _processCurvesDXHeating
 
-        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
+        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, (0...num_speeds).to_a, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
       
         # _processSystemHeatingCoil
         
@@ -595,7 +595,7 @@ class HVAC
 
         # _processCurvesDXCooling
 
-        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
+        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, (0...num_speeds).to_a, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
         
         # _processSystemCoolingCoil
         
@@ -753,7 +753,7 @@ class HVAC
       control_slave_zones_hash.each do |control_zone, slave_zones|
     
         # _processCurvesDXHeating
-        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
+        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, (0...num_speeds).to_a, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
       
         # _processSystemHeatingCoil        
 
@@ -865,7 +865,7 @@ class HVAC
 
         # _processCurvesDXCooling
 
-        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
+        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, (0...num_speeds).to_a, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
         
         # _processSystemCoolingCoil
         
@@ -1036,7 +1036,7 @@ class HVAC
     
         # _processCurvesDXHeating
         
-        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
+        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, (0...num_speeds).to_a, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
       
         # _processSystemHeatingCoil        
 
@@ -1148,7 +1148,7 @@ class HVAC
         
         # _processCurvesDXCooling
 
-        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
+        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, (0...num_speeds).to_a, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
         
         # _processSystemCoolingCoil
         
@@ -1264,24 +1264,56 @@ class HVAC
                         min_cooling_airflow_rate, max_cooling_airflow_rate,
                         min_heating_capacity, max_heating_capacity,
                         min_heating_airflow_rate, max_heating_airflow_rate, 
-                        heating_capacity_offset,
-                        fan_power, min_temp, is_ducted, 
+                        heating_capacity_offset, cap_retention_frac, cap_retention_temp,
+                        pan_heater_power, fan_power, is_ducted, 
                         heat_pump_capacity, supplemental_efficiency, supplemental_capacity,
                         dse, frac_heat_load_served=1.0, frac_cool_load_served=1.0)
     
-      num_speeds = 4
-      supp_htg_max_supply_temp = 200.0
+      num_speeds = 10
 
-      # NOTE: These coefficients are in SI UNITS, which differs from the coefficients for 1, 2, and 4 speed units, which are in IP UNITS
+      # htg_supply_air_temp = 105
+      supp_htg_max_supply_temp = 200.0
+      min_hp_temp = -30.0 # F; Minimum temperature for Heat Pump operation      
+      supp_htg_max_outdoor_temp = 40.0
+      max_defrost_temp = 40.0 # F
+          
+      # Performance curves
+      # NOTE: These coefficients are in SI UNITS
       cOOL_CAP_FT_SPEC = [[1.008993521905866, 0.006512749025457, 0.0, 0.003917565735935, -0.000222646705889, 0.0]] * num_speeds
-      cOOL_EIR_FT_SPEC = [[0.429214441601141, -0.003604841598515, 0.000045783162727, 0.026490875804937, -0.000159212286878, -0.000159062656483]] * num_speeds      
+      cOOL_EIR_FT_SPEC = [[0.429214441601141, -0.003604841598515, 0.000045783162727, 0.026490875804937, -0.000159212286878, -0.000159062656483]] * num_speeds                
       cOOL_CAP_FFLOW_SPEC = [[1, 0, 0]] * num_speeds
+
       cOOL_EIR_FFLOW_SPEC = [[1, 0, 0]] * num_speeds
-      hEAT_CAP_FT_SPEC = [[1.1527124655908571, -0.010386676170938, 0.0, 0.011263752411403, -0.000392549621117, 0.0]] * num_speeds            
-      hEAT_EIR_FT_SPEC = [[0.966475472847719, 0.005914950101249, 0.000191201688297, -0.012965668198361, 0.000042253229429, -0.000524002558712]] * num_speeds      
+      
+      # Mini-Split Heat Pump Heating Curve Coefficients
+      # Derive coefficients from user input for capacity retention at outdoor drybulb temperature X [C].
+      # Biquadratic: capacity multiplier = a + b*IAT + c*IAT^2 + d*OAT + e*OAT^2 + f*IAT*OAT
+      x_A = UnitConversions.convert(cap_retention_temp,"F", "C")
+      y_A = cap_retention_frac
+      x_B = UnitConversions.convert(47.0,"F","C") # 47F is the rating point
+      y_B = 1.0 # Maximum capacity factor is 1 at the rating point, by definition (this is maximum capacity, not nominal capacity)
+      oat_slope = (y_B - y_A) / (x_B - x_A)
+      oat_intercept = y_A - (x_A*oat_slope)
+      
+      # Coefficients for the indoor temperature relationship are retained from the BEoptDefault curve (Daikin lab data).
+      iat_slope = -0.010386676170938
+      iat_intercept = 0.219274275 
+      
+      a = oat_intercept + iat_intercept
+      b = iat_slope
+      c = 0
+      d = oat_slope
+      e = 0
+      f = 0
+      hEAT_CAP_FT_SPEC = [[a, b, c, d, e, f]] * num_speeds         
+      
+      # COP/EIR as a function of temperature
+      # Generic "BEoptDefault" curves (=Daikin from lab data)            
+      hEAT_EIR_FT_SPEC = [[0.966475472847719, 0.005914950101249, 0.000191201688297, -0.012965668198361, 0.000042253229429, -0.000524002558712]] * num_speeds
+
       hEAT_CAP_FFLOW_SPEC = [[1, 0, 0]] * num_speeds
       hEAT_EIR_FFLOW_SPEC = [[1, 0, 0]] * num_speeds
-      
+
       # Cooling Coil
       c_d_cooling = 0.25
       cOOL_CLOSS_FPLR_SPEC = [calc_plr_coefficients_cooling(num_speeds, seer, c_d_cooling)] * num_speeds
@@ -1291,14 +1323,14 @@ class HVAC
       cooling_eirs = calc_mshp_cooling_eirs(runner, seer, fan_power, c_d_cooling, num_speeds, capacity_ratios_cooling, cfms_cooling, cOOL_EIR_FT_SPEC, cOOL_CAP_FT_SPEC)
 
       # Heating Coil
-      max_defrost_temp = 40.0
       c_d_heating = 0.40
       hEAT_CLOSS_FPLR_SPEC = [calc_plr_coefficients_heating(num_speeds, hspf, c_d_heating)] * num_speeds
       cfms_heating, capacity_ratios_heating = calc_mshp_cfms_ton_heating(min_heating_capacity, max_heating_capacity, min_heating_airflow_rate, max_heating_airflow_rate, num_speeds)
-      heating_eirs = calc_mshp_heating_eirs(runner, hspf, fan_power, min_temp, c_d_heating, cfms_cooling, num_speeds, capacity_ratios_heating, cfms_heating, hEAT_EIR_FT_SPEC, hEAT_CAP_FT_SPEC)
+      heating_eirs = calc_mshp_heating_eirs(runner, hspf, fan_power, min_hp_temp, c_d_heating, cfms_cooling, num_speeds, capacity_ratios_heating, cfms_heating, hEAT_EIR_FT_SPEC, hEAT_CAP_FT_SPEC)
 
-      # Heating defrost curve for reverse cycle
       defrost_eir_curve = create_curve_biquadratic(model, [0.1528, 0, 0, 0, 0, 0], "DefrostEIR", -100, 100, -100, 100)
+
+      mshp_indices = [1,3,5,9]
 
       obj_name = Constants.ObjectNameMiniSplitHeatPump(unit.name.to_s)
 
@@ -1309,13 +1341,13 @@ class HVAC
 
         # _processCurvesDXHeating
         
-        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
+        htg_coil_stage_data = calc_coil_stage_data_heating(model, heat_pump_capacity, mshp_indices, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, dse)
       
         # _processSystemHeatingCoil
 
         htg_coil = OpenStudio::Model::CoilHeatingDXMultiSpeed.new(model)
         htg_coil.setName(obj_name + " htg coil")
-        htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(UnitConversions.convert(min_temp,"F","C"))
+        htg_coil.setMinimumOutdoorDryBulbTemperatureforCompressorOperation(UnitConversions.convert(min_hp_temp,"F","C"))
         htg_coil.setCrankcaseHeaterCapacity(0)
         htg_coil.setDefrostEnergyInputRatioFunctionofTemperatureCurve(defrost_eir_curve)
         htg_coil.setMaximumOutdoorDryBulbTemperatureforDefrostOperation(UnitConversions.convert(max_defrost_temp,"F","C"))
@@ -1367,7 +1399,7 @@ class HVAC
         htg_air_loop_unitary.setFanPlacement("BlowThrough")
         htg_air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
         htg_air_loop_unitary.setMaximumSupplyAirTemperature(UnitConversions.convert(supp_htg_max_supply_temp,"F","C")) # higher temp for supplemental heat as to not severely limit its use, resulting in unmet hours.
-        htg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(40.0,"F","C"))
+        htg_air_loop_unitary.setMaximumOutdoorDryBulbTemperatureforSupplementalHeaterOperation(UnitConversions.convert(supp_htg_max_outdoor_temp,"F","C"))
         htg_air_loop_unitary.setSupplyAirFlowRateWhenNoCoolingorHeatingisRequired(0)
         htg_air_loop_unitary.setDesignSpecificationMultispeedObject(perf)
         
@@ -1417,10 +1449,63 @@ class HVAC
           prioritize_zone_hvac(model, runner, slave_zone)
           
         end # slave_zone
+
+        if pan_heater_power > 0
+
+          vrf_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "VRF Heat Pump Heating Electric Energy")
+          vrf_sensor.setName("#{obj_name} vrf energy sensor".gsub("|","_"))
+          vrf_sensor.setKeyName(obj_name + " #{control_zone.name} ac vrf")
+     
+          equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+          equip_def.setName(obj_name + " pan heater equip")
+          equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
+          equip.setName(equip_def.name.to_s)
+          equip.setSpace(control_zone.spaces[0])
+          equip_def.setFractionRadiant(0)
+          equip_def.setFractionLatent(0)
+          equip_def.setFractionLost(1)
+          equip.setSchedule(model.alwaysOnDiscreteSchedule)
+
+          pan_heater_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(equip, "ElectricEquipment", "Electric Power Level")
+          pan_heater_actuator.setName("#{obj_name} pan heater actuator".gsub("|","_"))
+
+          tout_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Zone Outdoor Air Drybulb Temperature")
+          tout_sensor.setName("#{obj_name} tout sensor".gsub("|","_"))
+          thermal_zones.each do |thermal_zone|
+            if Geometry.is_living(thermal_zone)
+              tout_sensor.setKeyName(thermal_zone.name.to_s)
+              break
+            end
+          end
+
+          program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
+          program.setName(obj_name + " pan heater program")
+          if heat_pump_capacity != Constants.SizingAuto and heat_pump_capacity != Constants.SizingAutoMaxLoad
+            num_outdoor_units = (UnitConversions.convert(heat_pump_capacity,"Btu/hr","ton") / 1.5).ceil # Assume 1.5 tons max per outdoor unit
+          else
+            num_outdoor_units = 2
+          end
+          unless slave_zones.empty?
+            num_outdoor_units = [num_outdoor_units, 2].max
+          end
+          pan_heater_power = pan_heater_power * num_outdoor_units # W
+          program.addLine("Set #{pan_heater_actuator.name} = 0")
+          program.addLine("If #{vrf_sensor.name} > 0")
+          program.addLine("If #{tout_sensor.name} <= #{UnitConversions.convert(32.0,"F","C").round(3)}")
+          program.addLine("Set #{pan_heater_actuator.name} = #{pan_heater_power}")
+          program.addLine("EndIf")
+          program.addLine("EndIf")
+         
+          program_calling_manager = OpenStudio::Model::EnergyManagementSystemProgramCallingManager.new(model)
+          program_calling_manager.setName(obj_name + " pan heater program calling manager")
+          program_calling_manager.setCallingPoint("BeginTimestepBeforePredictor")
+          program_calling_manager.addProgram(program)
+
+        end
         
         # _processCurvesDXCooling
 
-        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, num_speeds, cooling_eirs, shrs_rated, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
+        clg_coil_stage_data = calc_coil_stage_data_cooling(model, heat_pump_capacity, mshp_indices, cooling_eirs, shrs_rated, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, dse)
         
         # _processSystemCoolingCoil
         
@@ -3501,12 +3586,12 @@ class HVAC
       return curve
     end
       
-    def self.calc_coil_stage_data_cooling(model, outputCapacity, num_speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, distributionSystemEfficiency)
+    def self.calc_coil_stage_data_cooling(model, outputCapacity, speeds, cooling_eirs, shrs_rated_gross, cOOL_CAP_FT_SPEC, cOOL_EIR_FT_SPEC, cOOL_CLOSS_FPLR_SPEC, cOOL_CAP_FFLOW_SPEC, cOOL_EIR_FFLOW_SPEC, distributionSystemEfficiency)
 
       const_biquadratic = self.create_curve_biquadratic_constant(model)
     
       clg_coil_stage_data = []
-      (0...num_speeds).to_a.each do |speed|
+      speeds.each_with_index do |speed, i|
       
         cool_cap_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(cOOL_CAP_FT_SPEC[speed], true), "Cool-Cap-fT#{speed+1}", 13.88, 23.88, 18.33, 51.66)
         cool_eir_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(cOOL_EIR_FT_SPEC[speed], true), "Cool-EIR-fT#{speed+1}", 13.88, 23.88, 18.33, 51.66)
@@ -3531,18 +3616,18 @@ class HVAC
         stage_data.setMaximumCyclingRate(3)
         stage_data.setLatentCapacityTimeConstant(45)
         stage_data.setRatedWasteHeatFractionofPowerInput(0.2)
-        clg_coil_stage_data[speed] = stage_data
+        clg_coil_stage_data[i] = stage_data
       end
       return clg_coil_stage_data
     end
       
-    def self.calc_coil_stage_data_heating(model, outputCapacity, num_speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, distributionSystemEfficiency)
+    def self.calc_coil_stage_data_heating(model, outputCapacity, speeds, heating_eirs, hEAT_CAP_FT_SPEC, hEAT_EIR_FT_SPEC, hEAT_CLOSS_FPLR_SPEC, hEAT_CAP_FFLOW_SPEC, hEAT_EIR_FFLOW_SPEC, distributionSystemEfficiency)
     
       const_biquadratic = self.create_curve_biquadratic_constant(model)
 
       htg_coil_stage_data = []
       # Loop through speeds to create curves for each speed
-      (0...num_speeds).to_a.each do |speed|
+      speeds.each_with_index do |speed, i|
 
         hp_heat_cap_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(hEAT_CAP_FT_SPEC[speed], true), "HP_Heat-Cap-fT#{speed+1}", -100, 100, -100, 100)
         hp_heat_eir_ft_curve = self.create_curve_biquadratic(model, self.convert_curve_biquadratic(hEAT_EIR_FT_SPEC[speed], true), "HP_Heat-EIR-fT#{speed+1}", -100, 100, -100, 100)
@@ -3562,7 +3647,7 @@ class HVAC
         end   
         stage_data.setGrossRatedHeatingCOP(distributionSystemEfficiency / heating_eirs[speed])
         stage_data.setRatedWasteHeatFractionofPowerInput(0.2)
-        htg_coil_stage_data[speed] = stage_data
+        htg_coil_stage_data[i] = stage_data
       end
       return htg_coil_stage_data
     end
@@ -4240,6 +4325,33 @@ class HVAC
         system.supplyFan.get.remove
         runner.registerInfo("Removed '#{air_loop.name}' from #{thermal_zone.name}.")
         air_loop.remove        
+      end
+      obj_name = Constants.ObjectNameMiniSplitHeatPump(unit.name.to_s)      
+      model.getEnergyManagementSystemSensors.each do |sensor|
+        next unless sensor.name.to_s == "#{obj_name} vrf energy sensor".gsub(" ","_").gsub("|","_")
+        sensor.remove
+      end
+      model.getEnergyManagementSystemSensors.each do |sensor|
+        next unless sensor.name.to_s == "#{obj_name} tout sensor".gsub(" ","_").gsub("|","_")
+        sensor.remove
+      end
+      model.getEnergyManagementSystemActuators.each do |actuator|
+        next unless actuator.name.to_s == "#{obj_name} pan heater actuator".gsub(" ","_").gsub("|","_")
+        actuator.remove
+      end
+      model.getEnergyManagementSystemPrograms.each do |program|
+        next unless program.name.to_s == "#{obj_name} pan heater program".gsub(" ","_")
+        program.remove
+      end          
+      model.getEnergyManagementSystemProgramCallingManagers.each do |program_calling_manager|
+        next unless program_calling_manager.name.to_s == obj_name + " pan heater program calling manager"
+        program_calling_manager.remove
+      end      
+      thermal_zone.spaces.each do |space|
+        space.electricEquipment.each do |equip|
+          next unless equip.name.to_s == obj_name + " pan heater equip"
+          equip.electricEquipmentDefinition.remove
+        end
       end
       return true
     end
