@@ -178,7 +178,7 @@ class EnergyRatingIndex301Validator
     
             ## [FoundationType=Ambient]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient]' => {
-                'FrameFloor' => one_or_more, # See [FoundationSlab]
+                'FrameFloor' => one_or_more, # See [FoundationFrameFloor]
             },
     
             ## [FoundationFrameFloor]
