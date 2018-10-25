@@ -323,9 +323,12 @@
       <Lighting>
         <LightingFractions>
           <extension>
-            <FractionQualifyingFixturesInterior>0.75</FractionQualifyingFixturesInterior>
-            <FractionQualifyingFixturesExterior>0.75</FractionQualifyingFixturesExterior>
-            <FractionQualifyingFixturesGarage>0</FractionQualifyingFixturesGarage>
+            <FractionQualifyingTierIFixturesInterior>0.75</FractionQualifyingTierIFixturesInterior>
+            <FractionQualifyingTierIFixturesExterior>0.75</FractionQualifyingTierIFixturesExterior>
+            <FractionQualifyingTierIFixturesGarage>0.0</FractionQualifyingTierIFixturesGarage>
+            <FractionQualifyingTierIIFixturesInterior>0.0</FractionQualifyingTierIIFixturesInterior>
+            <FractionQualifyingTierIIFixturesExterior>0.0</FractionQualifyingTierIIFixturesExterior>
+            <FractionQualifyingTierIIFixturesGarage>0.0</FractionQualifyingTierIIFixturesGarage>
           </extension>
         </LightingFractions>
       </Lighting>
