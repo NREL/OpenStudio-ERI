@@ -618,18 +618,11 @@ class EnergyRatingIndex301Validator
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified] or [LtgType=UserSpecifiedAppendixG]
+            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified]
         },
         
             ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE"]]' => {
-                'extension/FractionQualifyingFixturesInterior' => one,
-                'extension/FractionQualifyingFixturesExterior' => one,
-                'extension/FractionQualifyingFixturesGarage' => one,
-            },
-            
-            ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014AEG"]]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation]' => {
                 'extension/FractionQualifyingTierIFixturesInterior' => one,
                 'extension/FractionQualifyingTierIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIFixturesGarage' => one,

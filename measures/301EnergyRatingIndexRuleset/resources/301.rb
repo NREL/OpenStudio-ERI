@@ -2251,19 +2251,16 @@ class EnergyRatingIndex301Ruleset
     if orig_details.elements["Lighting/LightingFractions"]
 
       # Detailed
+      fFI_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesInterior"))
+      fFI_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesExterior"))
+      fFI_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesGarage"))
+      fFII_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesInterior"))
+      fFII_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesExterior"))
+      fFII_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesGarage"))
       if @eri_version.include? "G"
-        fFI_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesInterior"))
-        fFI_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesExterior"))
-        fFI_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesGarage"))
-        fFII_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesInterior"))
-        fFII_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesExterior"))
-        fFII_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesGarage"))
         int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(fFI_int, fFII_int, fFI_ext, fFII_ext, fFI_grg, fFII_grg)
       else
-        qFF_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesInterior"))
-        qFF_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesExterior"))
-        qFF_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingFixturesGarage"))
-        int_kwh, ext_kwh, grg_kwh = calc_lighting(qFF_int, qFF_ext, qFF_grg)
+        int_kwh, ext_kwh, grg_kwh = calc_lighting(fFI_int+fFII_int, fFI_ext+fFII_ext, fFI_grg+fFII_grg)
       end
       
     else
