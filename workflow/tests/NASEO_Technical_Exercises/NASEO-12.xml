@@ -313,12 +313,12 @@
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range_ID1'/>
-          <FuelType>electric</FuelType>
+          <FuelType>electricity</FuelType>
           <IsInduction>true</IsInduction>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>electric</FuelType>
+          <FuelType>electricity</FuelType>
           <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>
