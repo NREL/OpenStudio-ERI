@@ -87,7 +87,7 @@ class EnergyRatingIndex301Ruleset
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_reference(new_lighting, orig_details)
-    set_lighting_ceiling_fans_reference(new_lighting)
+    set_ceiling_fans_reference(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -140,7 +140,7 @@ class EnergyRatingIndex301Ruleset
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_rated(new_lighting, orig_details)
-    set_lighting_ceiling_fans_rated(new_lighting)
+    set_ceiling_fans_rated(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -193,7 +193,7 @@ class EnergyRatingIndex301Ruleset
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_iad(new_lighting, orig_details)
-    set_lighting_ceiling_fans_iad(new_lighting)
+    set_ceiling_fans_iad(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -2294,16 +2294,52 @@ class EnergyRatingIndex301Ruleset
     
   end
 
-  def self.set_lighting_ceiling_fans_reference(new_lighting)
-    # FIXME
+  def self.set_ceiling_fans_reference(new_lighting, orig_details)
+    
+    # No ceiling fans?
+    return if orig_details.elements["Lighting/CeilingFan"].nil?
+    
+    for i in 1..@nbeds+1
+      new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
+      sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "CeilingFan#{i}")
+      airflow = XMLHelper.add_element(new_ceiling_fan, "Airflow")
+      XMLHelper.add_element(airflow, "FanSpeed", "medium")
+      XMLHelper.add_element(airflow, "Efficiency", 3000.0/42.6)
+    end
+    
   end
   
-  def self.set_lighting_ceiling_fans_rated(new_lighting)
-    # FIXME
+  def self.set_ceiling_fans_rated(new_lighting, orig_details)
+    
+    # No ceiling fans?
+    return if orig_details.elements["Lighting/CeilingFan"].nil?
+    
+    medium_cfm = 3000.0
+    
+    # Calculate average ceiling fan wattage
+    sum_w = 0.0
+    num_cfs = 0
+    orig_details.elements.each("Lighting/CeilingFan") do |ceiling_fan|
+      num_cfs += 1
+      sum_w += (medium_cfm / Float(XMLHelper.get_value(ceiling_fan, "Airflow[FanSpeed='medium']/Efficiency")))
+    end
+    avg_w = sum_w / num_cfs
+    
+    for i in 1..@nbeds+1
+      new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
+      sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "CeilingFan#{i}")
+      airflow = XMLHelper.add_element(new_ceiling_fan, "Airflow")
+      XMLHelper.add_element(airflow, "FanSpeed", "medium")
+      XMLHelper.add_element(airflow, "Efficiency", medium_cfm / avg_w)
+    end
+    
   end
   
-  def self.set_lighting_ceiling_fans_iad(new_lighting)
-    # FIXME
+  def self.set_ceiling_fans_iad(new_lighting, orig_details)
+    # Not described in Addendum E; use Reference Home?
+    set_ceiling_fans_reference(new_lighting, orig_details)
   end
 
   def self.set_misc_loads_reference(new_misc_loads)

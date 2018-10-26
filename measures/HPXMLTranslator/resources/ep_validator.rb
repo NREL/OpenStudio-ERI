@@ -79,7 +79,7 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
-            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting] and [CeilingFan]
             
             '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="other"]' => one, # See [PlugLoads]
             '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="TV other"]' => one, # See [Television]
@@ -656,6 +656,14 @@ class EnergyPlusValidator
             'extension/AnnualInteriorkWh' => one,
             'extension/AnnualExteriorkWh' => one,
             'extension/AnnualGaragekWh' => one,
+        },
+        
+        
+        
+        # [CeilingFan]
+        '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            'Airflow[FanSpeed="medium"]/Efficiency' => one,
         },
         
         

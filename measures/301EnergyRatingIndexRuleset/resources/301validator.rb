@@ -77,7 +77,7 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
-            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting] and [CeilingFan]
         },
         
         
@@ -630,6 +630,12 @@ class EnergyRatingIndex301Validator
                 'extension/FractionQualifyingTierIIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIIFixturesGarage' => one,
             },
+            
+        # [CeilingFan]
+        '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            'Airflow[FanSpeed="medium"]/Efficiency' => one,
+        },
             
     }
     
