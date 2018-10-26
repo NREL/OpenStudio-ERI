@@ -46,6 +46,28 @@ class LightingTest < MiniTest::Test
     _check_lighting(hpxml_doc, 2375, 220, 0)
   end
   
+  def test_ceiling_fans
+    hpxml_name = "valid-misc-ceiling-fans.xml"
+    
+    medium_cfm = 3000.0
+    
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_ceiling_fans(hpxml_doc, 5, medium_cfm/42.6)
+    
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_ceiling_fans(hpxml_doc, 5, medium_cfm/((medium_cfm/30.0 + medium_cfm/50.0)/2))
+    
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_ceiling_fans(hpxml_doc, 4, medium_cfm/42.6)
+    
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_ceiling_fans(hpxml_doc, 4, medium_cfm/42.6)
+  end
+  
   def _test_measure(hpxml_name, calc_type)
     root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
@@ -97,6 +119,15 @@ class LightingTest < MiniTest::Test
     assert_in_epsilon(Float(ltg.elements["extension/AnnualInteriorkWh"].text), interior_kwh, 0.01)
     assert_in_epsilon(Float(ltg.elements["extension/AnnualExteriorkWh"].text), exterior_kwh, 0.01)
     assert_in_epsilon(Float(ltg.elements["extension/AnnualGaragekWh"].text), garage_kwh, 0.01)
+  end
+  
+  def _check_ceiling_fans(hpxml_doc, number, cfm_per_w)
+    num_cfs = 0
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting/CeilingFan") do |cf|
+      num_cfs += 1
+      assert_in_epsilon(Float(cf.elements["Airflow[FanSpeed='medium']/Efficiency"].text), cfm_per_w, 0.01)
+    end
+    assert_equal(number, num_cfs)
   end
   
 end

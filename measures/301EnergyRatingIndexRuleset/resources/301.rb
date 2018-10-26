@@ -86,8 +86,8 @@ class EnergyRatingIndex301Ruleset
     
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_lighting_reference(new_lighting, orig_details)
     set_ceiling_fans_reference(new_lighting, orig_details)
+    set_lighting_reference(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -139,8 +139,8 @@ class EnergyRatingIndex301Ruleset
     
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_lighting_rated(new_lighting, orig_details)
     set_ceiling_fans_rated(new_lighting, orig_details)
+    set_lighting_rated(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -192,8 +192,8 @@ class EnergyRatingIndex301Ruleset
     
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_lighting_iad(new_lighting, orig_details)
     set_ceiling_fans_iad(new_lighting, orig_details)
+    set_lighting_iad(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
