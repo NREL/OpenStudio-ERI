@@ -86,8 +86,8 @@ class EnergyRatingIndex301Ruleset
     
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_ceiling_fans_reference(new_lighting, orig_details)
     set_lighting_reference(new_lighting, orig_details)
+    set_ceiling_fans_reference(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -139,8 +139,8 @@ class EnergyRatingIndex301Ruleset
     
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_ceiling_fans_rated(new_lighting, orig_details)
     set_lighting_rated(new_lighting, orig_details)
+    set_ceiling_fans_rated(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -192,8 +192,8 @@ class EnergyRatingIndex301Ruleset
     
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_ceiling_fans_iad(new_lighting, orig_details)
     set_lighting_iad(new_lighting, orig_details)
+    set_ceiling_fans_iad(new_lighting, orig_details)
     
     # MiscLoads
     new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
@@ -2239,7 +2239,8 @@ class EnergyRatingIndex301Ruleset
       grg_kwh = 100.0
     end
     
-    extension = XMLHelper.add_element(new_lighting, "extension")
+    ltg_frac = XMLHelper.add_element(new_lighting, "LightingFractions")
+    extension = XMLHelper.add_element(ltg_frac, "extension")
     XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
     XMLHelper.add_element(extension, "AnnualExteriorkWh", ext_kwh)
     XMLHelper.add_element(extension, "AnnualGaragekWh", grg_kwh)
@@ -2271,7 +2272,8 @@ class EnergyRatingIndex301Ruleset
       
     end
     
-    extension = XMLHelper.add_element(new_lighting, "extension")
+    ltg_frac = XMLHelper.add_element(new_lighting, "LightingFractions")
+    extension = XMLHelper.add_element(ltg_frac, "extension")
     XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
     XMLHelper.add_element(extension, "AnnualExteriorkWh", ext_kwh)
     XMLHelper.add_element(extension, "AnnualGaragekWh", grg_kwh)
@@ -2287,7 +2289,8 @@ class EnergyRatingIndex301Ruleset
       int_kwh, ext_kwh, grg_kwh = calc_lighting(0.75, 0.75, 0.75)
     end
       
-    extension = XMLHelper.add_element(new_lighting, "extension")
+    ltg_frac = XMLHelper.add_element(new_lighting, "LightingFractions")
+    extension = XMLHelper.add_element(ltg_frac, "extension")
     XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
     XMLHelper.add_element(extension, "AnnualExteriorkWh", ext_kwh)
     XMLHelper.add_element(extension, "AnnualGaragekWh", grg_kwh)
@@ -2305,8 +2308,14 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_attribute(sys_id, "id", "CeilingFan#{i}")
       airflow = XMLHelper.add_element(new_ceiling_fan, "Airflow")
       XMLHelper.add_element(airflow, "FanSpeed", "medium")
-      XMLHelper.add_element(airflow, "Efficiency", 3000.0/42.6)
+      XMLHelper.add_element(airflow, "Efficiency", 3000.0/42.6) # cfm/W
+      extension = XMLHelper.add_element(new_ceiling_fan, "extension")
+      XMLHelper.add_element(extension, "HoursInOperation", 10.5) # full hrs/day
     end
+    
+    extension = XMLHelper.add_element(new_lighting, "extension")
+    XMLHelper.add_element(extension, "CeilingFanCoolingSetpointOffset", 0.5) # F
+    XMLHelper.add_element(extension, "CeilingFanMonthlyOutdoorTempControl", 63) # F
     
   end
   
@@ -2332,8 +2341,14 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_attribute(sys_id, "id", "CeilingFan#{i}")
       airflow = XMLHelper.add_element(new_ceiling_fan, "Airflow")
       XMLHelper.add_element(airflow, "FanSpeed", "medium")
-      XMLHelper.add_element(airflow, "Efficiency", medium_cfm / avg_w)
+      XMLHelper.add_element(airflow, "Efficiency", medium_cfm / avg_w) # cfm/W
+      extension = XMLHelper.add_element(new_ceiling_fan, "extension")
+      XMLHelper.add_element(extension, "HoursInOperation", 10.5) # full hrs/day
     end
+    
+    extension = XMLHelper.add_element(new_lighting, "extension")
+    XMLHelper.add_element(extension, "CeilingFanCoolingSetpointOffset", 0.5) # F
+    XMLHelper.add_element(extension, "CeilingFanMonthlyOutdoorTempControl", 63) # F
     
   end
   

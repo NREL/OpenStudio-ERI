@@ -331,7 +331,7 @@ class OSModel
     return false if not success
     success = add_dehumidifier(runner, model, building, unit)
     return false if not success
-    success = add_ceiling_fans(runner, model, building, unit)
+    success = add_ceiling_fans(runner, model, building, unit, weather)
     return false if not success
     
     # Plug Loads & Lighting
@@ -2548,23 +2548,29 @@ class OSModel
     
   end
   
-  def self.add_ceiling_fans(runner, model, building, unit)
+  def self.add_ceiling_fans(runner, model, building, unit, weather)
 
-    # FIXME
     cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
-    coverage = nil
-    specified_num = nil
-    power = nil
-    control = nil
-    use_benchmark_energy = true
-    mult = 1.0
-    cooling_setpoint_offset = 0.0
-    weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
-    weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
-    monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
-    #success = HVAC.apply_ceiling_fans(model, unit, runner, coverage, specified_num, power,
-    #                                  control, use_benchmark_energy, cooling_setpoint_offset,
-    #                                  mult, weekday_sch, weekend_sch, monthly_sch, sch=nil)
+    return true if cf.nil?
+    
+    medium_cfm = 3000.0
+    
+    kWh_per_day = 0.0
+    building.elements.each("BuildingDetails/Lighting/CeilingFan") do |cf|
+      hours_per_day = Float(XMLHelper.get_value(cf, "extension/HoursInOperation"))
+      fan_W = (medium_cfm / Float(XMLHelper.get_value(cf, "Airflow[FanSpeed='medium']/Efficiency")))
+      kWh_per_day += (hours_per_day * fan_W)
+    end
+    
+    ltg = building.elements["BuildingDetails/Lighting"]
+    cooling_setpoint_offset = Float(XMLHelper.get_value(ltg, "extension/CeilingFanCoolingSetpointOffset"))
+    monthly_avg_temp_control = Float(XMLHelper.get_value(ltg, "extension/CeilingFanMonthlyOutdoorTempControl"))
+    weekday_sch = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+    weekend_sch = weekday_sch
+    
+    #TODO: Implement and uncomment below
+    #success = HVAC.apply_eri_ceiling_fans(model, unit, runner, weather, kWh_per_day, weekday_sch, weekend_sch,
+    #                                      cooling_setpoint_offset, monthly_avg_temp_control)
     #return false if not success
 
     return true
@@ -2621,16 +2627,16 @@ class OSModel
   
     lighting = building.elements["BuildingDetails/Lighting"]
   
-    annual_kwh_interior = Float(XMLHelper.get_value(lighting, "extension/AnnualInteriorkWh"))
+    annual_kwh_interior = Float(XMLHelper.get_value(lighting, "LightingFractions/extension/AnnualInteriorkWh"))
     success, sch = Lighting.apply_interior(model, unit, runner, weather, 
                                                     nil, annual_kwh_interior)
     return false if not success
     
-    annual_kwh_garage = Float(XMLHelper.get_value(lighting, "extension/AnnualGaragekWh"))
+    annual_kwh_garage = Float(XMLHelper.get_value(lighting, "LightingFractions/extension/AnnualGaragekWh"))
     success = Lighting.apply_garage(model, runner, sch, annual_kwh_garage)
     return false if not success
 
-    annual_kwh_exterior = Float(XMLHelper.get_value(lighting, "extension/AnnualExteriorkWh"))
+    annual_kwh_exterior = Float(XMLHelper.get_value(lighting, "LightingFractions/extension/AnnualExteriorkWh"))
     success = Lighting.apply_exterior(model, runner, sch, annual_kwh_exterior)
     return false if not success
     

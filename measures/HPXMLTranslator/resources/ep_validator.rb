@@ -653,9 +653,9 @@ class EnergyPlusValidator
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'extension/AnnualInteriorkWh' => one,
-            'extension/AnnualExteriorkWh' => one,
-            'extension/AnnualGaragekWh' => one,
+            'LightingFractions/extension/AnnualInteriorkWh' => one,
+            'LightingFractions/extension/AnnualExteriorkWh' => one,
+            'LightingFractions/extension/AnnualGaragekWh' => one,
         },
         
         
@@ -664,6 +664,9 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             'Airflow[FanSpeed="medium"]/Efficiency' => one,
+            'extension/HoursInOperation' => one,
+            '../extension/CeilingFanCoolingSetpointOffset' => one,
+            '../extension/CeilingFanMonthlyOutdoorTempControl' => one,
         },
         
         
