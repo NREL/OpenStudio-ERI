@@ -2485,7 +2485,6 @@ class OSModel
       for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
         htg_weekday_setpoints[hr % 24] = setback_temp
       end
-      puts "htg_weekday_setpoints #{htg_weekday_setpoints}"
     end
     htg_weekend_setpoints = htg_weekday_setpoints
     htg_use_auto_season = false
@@ -2506,7 +2505,6 @@ class OSModel
       for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
         clg_weekday_setpoints[hr % 24] = setup_temp
       end
-      puts "clg_weekday_setpoints #{clg_weekday_setpoints}"
     end
     clg_weekend_setpoints = clg_weekday_setpoints
     clg_use_auto_season = false
