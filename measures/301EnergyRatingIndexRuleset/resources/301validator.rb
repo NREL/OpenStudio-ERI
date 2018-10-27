@@ -501,7 +501,7 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
             'PipeInsulation/PipeRValue' => one,
-            'DrainWaterHeatRecovery' => zero_or_one, # See [HotWaterDistribution DrainWaterHeatRecovery]
+            'DrainWaterHeatRecovery' => zero_or_one, # See [DrainWaterHeatRecovery]
         },
         
             ## [HWDistType=Standard]
@@ -517,7 +517,7 @@ class EnergyRatingIndex301Validator
                 'PumpPower' => one,
             },
         
-            ## [HotWaterDistribution DrainWaterHeatRecovery]
+            ## [DrainWaterHeatRecovery]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => {
                 'FacilitiesConnected' => one,
                 'EqualFlow' => one,
@@ -618,18 +618,15 @@ class EnergyRatingIndex301Validator
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified]
+            'LightingFractions/extension/FractionQualifyingTierIFixturesInterior' => zero_or_one, # Uses Reference Home if not provided
+            'LightingFractions/extension/FractionQualifyingTierIFixturesExterior' => zero_or_one, # Uses Reference Home if not provided
+            'LightingFractions/extension/FractionQualifyingTierIFixturesGarage' => zero_or_one, # Uses Reference Home if not provided
+            'LightingFractions/extension/FractionQualifyingTierIIFixturesInterior' => zero_or_one, # Uses Reference Home if not provided
+            'LightingFractions/extension/FractionQualifyingTierIIFixturesExterior' => zero_or_one, # Uses Reference Home if not provided
+            'LightingFractions/extension/FractionQualifyingTierIIFixturesGarage' => zero_or_one, # Uses Reference Home if not provided
         },
         
-            ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation]' => {
-                'extension/FractionQualifyingTierIFixturesInterior' => one,
-                'extension/FractionQualifyingTierIFixturesExterior' => one,
-                'extension/FractionQualifyingTierIFixturesGarage' => one,
-                'extension/FractionQualifyingTierIIFixturesInterior' => one,
-                'extension/FractionQualifyingTierIIFixturesExterior' => one,
-                'extension/FractionQualifyingTierIIFixturesGarage' => one,
-            },
+        
             
         # [CeilingFan]
         '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {

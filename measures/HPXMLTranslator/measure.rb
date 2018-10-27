@@ -2106,12 +2106,10 @@ class OSModel
     if clg_type == "central air conditioning"
     
       # FIXME: Generalize
-      seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-      seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
-      seer = seer_nom * seer_adj
-      if seer_nom <= 15
+      seer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      if seer <= 15
         num_speeds = "1-Speed"
-      elsif seer_nom <= 21
+      elsif seer <= 21
         num_speeds = "2-Speed"
       else
         num_speeds = "Variable-Speed"
@@ -2121,7 +2119,7 @@ class OSModel
     
       if num_speeds == "1-Speed"
       
-        eers = [0.82 * seer_nom + 0.64]
+        eers = [0.82 * seer + 0.64]
         shrs = [0.73]
         fan_power_rated = 0.365
         fan_power_installed = 0.5
@@ -2135,7 +2133,7 @@ class OSModel
       
       elsif num_speeds == "2-Speed"
       
-        eers = [0.83 * seer_nom + 0.15, 0.56 * seer_nom + 3.57]
+        eers = [0.83 * seer + 0.15, 0.56 * seer + 3.57]
         shrs = [0.71, 0.73]
         capacity_ratios = [0.72, 1.0]
         fan_speed_ratios = [0.86, 1.0]
@@ -2152,7 +2150,7 @@ class OSModel
         
       elsif num_speeds == "Variable-Speed"
       
-        eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
+        eers = [0.80 * seer, 0.75 * seer, 0.65 * seer, 0.60 * seer]
         shrs = [0.98, 0.82, 0.745, 0.77]
         capacity_ratios = [0.36, 0.64, 1.0, 1.16]
         fan_speed_ratios = [0.51, 0.84, 1.0, 1.19]
@@ -2302,22 +2300,17 @@ class OSModel
     
       # FIXME: Generalize
       if not hp.elements["AnnualCoolingEfficiency"].nil?
-        seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
+        seer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       else
         # FIXME: Currently getting from AC
         clgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
-        seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
+        seer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       end
-      seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-      hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
-      hspf = hspf_nom * hspf_adj
+      hspf = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       
-      if seer_nom <= 15
+      if seer <= 15
         num_speeds = "1-Speed"
-      elsif seer_nom <= 21
+      elsif seer <= 21
         num_speeds = "2-Speed"
       else
         num_speeds = "Variable-Speed"
@@ -2328,8 +2321,8 @@ class OSModel
       
       if num_speeds == "1-Speed"
       
-        eers = [0.80 * seer_nom + 1.0]
-        cops = [0.45 * seer_nom - 0.34]
+        eers = [0.80 * seer + 1.0]
+        cops = [0.45 * seer - 0.34]
         shrs = [0.73]
         fan_power_rated = 0.365
         fan_power_installed = 0.5
@@ -2347,8 +2340,8 @@ class OSModel
         
       elsif num_speeds == "2-Speed"
       
-        eers = [0.78 * seer_nom + 0.6, 0.68 * seer_nom + 1.0]
-        cops = [0.60 * seer_nom - 1.40, 0.50 * seer_nom - 0.94]
+        eers = [0.78 * seer + 0.6, 0.68 * seer + 1.0]
+        cops = [0.60 * seer - 1.40, 0.50 * seer - 0.94]
         shrs = [0.71, 0.724]
         capacity_ratios = [0.72, 1.0]
         fan_speed_ratios_cooling = [0.86, 1.0]
@@ -2371,8 +2364,8 @@ class OSModel
         
       elsif num_speeds == "Variable-Speed"
       
-        eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
-        cops = [0.48 * seer_nom, 0.45 * seer_nom, 0.39 * seer_nom, 0.39 * seer_nom]
+        eers = [0.80 * seer, 0.75 * seer, 0.65 * seer, 0.60 * seer]
+        cops = [0.48 * seer, 0.45 * seer, 0.39 * seer, 0.39 * seer]
         shrs = [0.84, 0.79, 0.76, 0.77]
         capacity_ratios = [0.49, 0.67, 1.0, 1.2]
         fan_speed_ratios_cooling = [0.7, 0.9, 1.0, 1.26]
@@ -2402,12 +2395,8 @@ class OSModel
     elsif hp_type == "mini-split"
       
       # FIXME: Generalize
-      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-      seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
-      seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-      hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
-      hspf = hspf_nom * hspf_adj
+      seer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      hspf = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       shr = 0.73
       min_cooling_capacity = 0.4
       max_cooling_capacity = 1.2
@@ -2553,23 +2542,14 @@ class OSModel
     cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
     return true if cf.nil?
     
-    medium_cfm = 3000.0
-    
-    kWh_per_day = 0.0
-    building.elements.each("BuildingDetails/Lighting/CeilingFan") do |cf|
-      hours_per_day = Float(XMLHelper.get_value(cf, "extension/HoursInOperation"))
-      fan_W = (medium_cfm / Float(XMLHelper.get_value(cf, "Airflow[FanSpeed='medium']/Efficiency")))
-      kWh_per_day += (hours_per_day * fan_W)
-    end
-    
-    ltg = building.elements["BuildingDetails/Lighting"]
-    cooling_setpoint_offset = Float(XMLHelper.get_value(ltg, "extension/CeilingFanCoolingSetpointOffset"))
-    monthly_avg_temp_control = Float(XMLHelper.get_value(ltg, "extension/CeilingFanMonthlyOutdoorTempControl"))
+    annual_kWh = Float(XMLHelper.get_value(cf, "extension/AnnualkWh"))
+    cooling_setpoint_offset = Float(XMLHelper.get_value(cf, "extension/CoolingSetpointOffset"))
+    monthly_avg_temp_control = Float(XMLHelper.get_value(cf, "extension/MonthlyOutdoorTempControl"))
     weekday_sch = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
     weekend_sch = weekday_sch
     
     #TODO: Implement and uncomment below
-    #success = HVAC.apply_eri_ceiling_fans(model, unit, runner, weather, kWh_per_day, weekday_sch, weekend_sch,
+    #success = HVAC.apply_eri_ceiling_fans(model, unit, runner, weather, annual_kWh, weekday_sch, weekend_sch,
     #                                      cooling_setpoint_offset, monthly_avg_temp_control)
     #return false if not success
 

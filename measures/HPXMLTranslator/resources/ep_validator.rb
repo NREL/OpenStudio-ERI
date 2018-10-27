@@ -79,7 +79,8 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
-            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting] and [CeilingFan]
+            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => zero_or_one, # See [CeilingFan]
             
             '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="other"]' => one, # See [PlugLoads]
             '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="TV other"]' => one, # See [Television]
@@ -369,7 +370,6 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => {
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
             },
             
             ## [CoolingType=RoomAC]
@@ -394,8 +394,6 @@ class EnergyPlusValidator
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
-                'extension/PerformanceAdjustmentHSPF' => one,
             },
 
             ## [HeatPumpType=MSHP]
@@ -403,8 +401,6 @@ class EnergyPlusValidator
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
-                'extension/PerformanceAdjustmentHSPF' => one,
             },
 
             ## [HeatPumpType=GSHP]
@@ -663,10 +659,9 @@ class EnergyPlusValidator
         # [CeilingFan]
         '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'Airflow[FanSpeed="medium"]/Efficiency' => one,
-            'extension/HoursInOperation' => one,
-            '../extension/CeilingFanCoolingSetpointOffset' => one,
-            '../extension/CeilingFanMonthlyOutdoorTempControl' => one,
+            'extension/AnnualkWh' => one,
+            'extension/CoolingSetpointOffset' => one,
+            'extension/MonthlyOutdoorTempControl' => one,
         },
         
         

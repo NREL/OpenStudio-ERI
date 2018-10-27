@@ -1136,8 +1136,6 @@ class EnergyRatingIndex301Ruleset
       cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", seer)
-      extension = XMLHelper.add_element(cool_sys, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       
     end
     
@@ -1165,11 +1163,6 @@ class EnergyRatingIndex301Ruleset
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
-      extension = XMLHelper.add_element(heat_pump, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
-      if prevent_hp_and_ac
-        XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      end
       
     end
     
@@ -1258,12 +1251,6 @@ class EnergyRatingIndex301Ruleset
       
       # Retain cooling system
       cooling_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
-      extension = cooling_system.elements["extension"]
-      if extension.nil?
-        extension = XMLHelper.add_element(cooling_system, "extension")
-      end
-      XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       
     elsif cool_type == "AirConditioner"
       
@@ -1283,8 +1270,6 @@ class EnergyRatingIndex301Ruleset
       cool_eff = XMLHelper.add_element(cooling_system, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", seer)
-      extension = XMLHelper.add_element(cooling_system, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       
     end
     
@@ -1293,16 +1278,6 @@ class EnergyRatingIndex301Ruleset
     
       # Retain heating system
       heat_pump_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
-      extension = heat_pump_system.elements["extension"]
-      if extension.nil?
-        extension = XMLHelper.add_element(heat_pump_system, "extension")
-      end
-      if not heat_pump_system.elements["AnnualCoolingEfficiency"].nil?
-        XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
-        XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      end
-      XMLHelper.delete_element(extension, "PerformanceAdjustmentHSPF")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       
     elsif heat_type == "HeatPump"
     
@@ -1326,9 +1301,6 @@ class EnergyRatingIndex301Ruleset
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
-      extension = XMLHelper.add_element(heat_pump, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       
     end
     
@@ -1657,7 +1629,7 @@ class EnergyRatingIndex301Ruleset
       standard = XMLHelper.add_element(sys_type, "Standard")
       XMLHelper.add_element(standard, "PipingLength", ref_pipe_l)
       pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
-      XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
+      XMLHelper.add_element(pipe_ins, "PipeRValue", 0.0)
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
       XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
@@ -1693,7 +1665,7 @@ class EnergyRatingIndex301Ruleset
       sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
       standard = XMLHelper.add_element(sys_type, "Standard")
       pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
-      XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
+      XMLHelper.add_element(pipe_ins, "PipeRValue", 0.0)
       extension = XMLHelper.add_element(new_hw_dist, "extension")
       XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
       XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
@@ -2128,6 +2100,9 @@ class EnergyRatingIndex301Ruleset
     sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
     XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
+    extension = XMLHelper.add_element(new_fridge, "extension")
+    XMLHelper.add_element(extension, "FracSensible", 1.0)
+    XMLHelper.add_element(extension, "FracLatent", 0.0)
     
   end
   
@@ -2249,29 +2224,54 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_lighting_rated(new_lighting, orig_details)
 
-    if orig_details.elements["Lighting/LightingFractions"]
-
-      # Detailed
-      fFI_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesInterior"))
-      fFI_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesExterior"))
-      fFI_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesGarage"))
-      fFII_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesInterior"))
-      fFII_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesExterior"))
-      fFII_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesGarage"))
-      if @eri_version.include? "G"
-        int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(fFI_int, fFII_int, fFI_ext, fFII_ext, fFI_grg, fFII_grg)
-      else
-        int_kwh, ext_kwh, grg_kwh = calc_lighting(fFI_int+fFII_int, fFI_ext+fFII_ext, fFI_grg+fFII_grg)
-      end
-      
+    fFI_int = XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesInterior")
+    if fFI_int.nil?
+      fFI_int = 0.1
     else
-      
-      # Reference
-      set_lighting_reference(new_lighting, orig_details)
-      return
-      
+      fFI_int = Float(fFI_int)
     end
     
+    fFI_ext = XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesExterior")
+    if fFI_ext.nil?
+      fFI_ext = 0
+    else
+      fFI_ext = Float(fFI_ext)
+    end
+      
+    fFI_grg = XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesGarage")
+    if fFI_grg.nil?
+      fFI_grg = 0
+    else
+      fFI_grg = Float(fFI_grg)
+    end
+    
+    fFII_int = XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesInterior")
+    if fFII_int.nil?
+      fFII_int = 0
+    else
+      fFII_int = Float(fFII_int)
+    end
+    
+    fFII_ext = XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesExterior")
+    if fFII_ext.nil?
+      fFII_ext = 0
+    else
+      fFII_ext = Float(fFII_ext)
+    end
+    
+    fFII_grg = XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesGarage")
+    if fFII_grg.nil?
+      fFII_grg = 0
+    else
+      fFII_grg = Float(fFII_grg)
+    end
+    
+    if @eri_version.include? "G"
+      int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(fFI_int, fFII_int, fFI_ext, fFII_ext, fFI_grg, fFII_grg)
+    else
+      int_kwh, ext_kwh, grg_kwh = calc_lighting(fFI_int+fFII_int, fFI_ext+fFII_ext, fFI_grg+fFII_grg)
+    end
+      
     ltg_frac = XMLHelper.add_element(new_lighting, "LightingFractions")
     extension = XMLHelper.add_element(ltg_frac, "extension")
     XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
@@ -2302,20 +2302,15 @@ class EnergyRatingIndex301Ruleset
     # No ceiling fans?
     return if orig_details.elements["Lighting/CeilingFan"].nil?
     
-    for i in 1..@nbeds+1
-      new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
-      sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "CeilingFan#{i}")
-      airflow = XMLHelper.add_element(new_ceiling_fan, "Airflow")
-      XMLHelper.add_element(airflow, "FanSpeed", "medium")
-      XMLHelper.add_element(airflow, "Efficiency", 3000.0/42.6) # cfm/W
-      extension = XMLHelper.add_element(new_ceiling_fan, "extension")
-      XMLHelper.add_element(extension, "HoursInOperation", 10.5) # full hrs/day
-    end
+    annual_kwh = 42.6*10.5*365*(@nbeds+1)/1000
     
-    extension = XMLHelper.add_element(new_lighting, "extension")
-    XMLHelper.add_element(extension, "CeilingFanCoolingSetpointOffset", 0.5) # F
-    XMLHelper.add_element(extension, "CeilingFanMonthlyOutdoorTempControl", 63) # F
+    new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
+    sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "CeilingFans")
+    extension = XMLHelper.add_element(new_ceiling_fan, "extension")
+    XMLHelper.add_element(extension, "AnnualkWh", annual_kwh)
+    XMLHelper.add_element(extension, "CoolingSetpointOffset", 0.5) # F
+    XMLHelper.add_element(extension, "MonthlyOutdoorTempControl", 63) # F
     
   end
   
@@ -2335,20 +2330,15 @@ class EnergyRatingIndex301Ruleset
     end
     avg_w = sum_w / num_cfs
     
-    for i in 1..@nbeds+1
-      new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
-      sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "CeilingFan#{i}")
-      airflow = XMLHelper.add_element(new_ceiling_fan, "Airflow")
-      XMLHelper.add_element(airflow, "FanSpeed", "medium")
-      XMLHelper.add_element(airflow, "Efficiency", medium_cfm / avg_w) # cfm/W
-      extension = XMLHelper.add_element(new_ceiling_fan, "extension")
-      XMLHelper.add_element(extension, "HoursInOperation", 10.5) # full hrs/day
-    end
+    annual_kwh = avg_w*10.5*365*(@nbeds+1)/1000
     
-    extension = XMLHelper.add_element(new_lighting, "extension")
-    XMLHelper.add_element(extension, "CeilingFanCoolingSetpointOffset", 0.5) # F
-    XMLHelper.add_element(extension, "CeilingFanMonthlyOutdoorTempControl", 63) # F
+    new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
+    sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "CeilingFans")
+    extension = XMLHelper.add_element(new_ceiling_fan, "extension")
+    XMLHelper.add_element(extension, "AnnualkWh", annual_kwh)
+    XMLHelper.add_element(extension, "CoolingSetpointOffset", 0.5) # F
+    XMLHelper.add_element(extension, "MonthlyOutdoorTempControl", 63) # F
     
   end
   

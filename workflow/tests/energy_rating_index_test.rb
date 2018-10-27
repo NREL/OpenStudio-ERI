@@ -637,7 +637,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Lighting
     xml_ltg_sens = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting") do |ltg|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting/LightingFractions") do |ltg|
       ltg_kwh = Float(XMLHelper.get_value(ltg, "extension/AnnualInteriorkWh")) + Float(XMLHelper.get_value(ltg, "extension/AnnualGaragekWh"))
       xml_ltg_sens += UnitConversions.convert(ltg_kwh, "kWh", "Btu")
     end
