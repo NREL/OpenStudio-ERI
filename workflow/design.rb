@@ -89,12 +89,8 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
 end
 
 def run_energyplus(design, rundir)
-  ep_path = OpenStudio.getEnergyPlusDirectory.to_s
-  if ep_path.empty? # Bug in OS, should remove at some point in the future
-    # Probably run on linux w/o absolute path
-    ep_path = "/usr/local/openstudio-#{OpenStudio.openStudioVersion}/EnergyPlus"
-  end
-  ep_path = File.join(ep_path, "energyplus")
+  # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
+  ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s,'..','..','EnergyPlus','energyplus'))
   command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
   system(command, :err => File::NULL)
 end
