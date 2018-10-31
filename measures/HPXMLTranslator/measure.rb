@@ -2506,6 +2506,13 @@ class OSModel
         clg_weekday_setpoints[hr % 24] = setup_temp
       end
     end
+    cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
+    if not cf.nil?
+      cooling_setpoint_offset = Float(XMLHelper.get_value(cf, "extension/CoolingSetpointOffset"))
+      monthly_avg_temp_control = Float(XMLHelper.get_value(cf, "extension/MonthlyOutdoorTempControl"))
+      # TODO: Apply cooling_setpoint_offset for months where avg outdoor temperature > monthly_avg_temp_control
+      # ...
+    end
     clg_weekend_setpoints = clg_weekday_setpoints
     clg_use_auto_season = false
     clg_season_start_month = 1
@@ -2535,20 +2542,18 @@ class OSModel
     
   end
   
-  def self.add_ceiling_fans(runner, model, building, unit, weather)
+  def self.add_ceiling_fans(runner, model, building, unit)
 
     cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
     return true if cf.nil?
-    
+
     annual_kWh = Float(XMLHelper.get_value(cf, "extension/AnnualkWh"))
-    cooling_setpoint_offset = Float(XMLHelper.get_value(cf, "extension/CoolingSetpointOffset"))
-    monthly_avg_temp_control = Float(XMLHelper.get_value(cf, "extension/MonthlyOutdoorTempControl"))
     weekday_sch = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
     weekend_sch = weekday_sch
     
     #TODO: Implement and uncomment below
-    #success = HVAC.apply_eri_ceiling_fans(model, unit, runner, weather, annual_kWh, weekday_sch, weekend_sch,
-    #                                      cooling_setpoint_offset, monthly_avg_temp_control)
+    #success = HVAC.apply_eri_ceiling_fans(model, unit, runner, annual_kWh, weekday_sch, weekend_sch,
+    #                                      monthly_avg_temp_control)
     #return false if not success
 
     return true
