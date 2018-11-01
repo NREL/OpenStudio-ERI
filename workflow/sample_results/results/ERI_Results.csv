@@ -1,12 +1,12 @@
-HERS Index,94.76
-REUL Heating (MBtu),42.81
-REUL Cooling (MBtu),5.28
+ERI,101.46
+REUL Heating (MBtu),29.62
+REUL Cooling (MBtu),2.64
 REUL Hot Water (MBtu),12.4
-EC_r Heating (MBtu),85.75
-EC_r Cooling (MBtu),1.87
+EC_r Heating (MBtu),59.34
+EC_r Cooling (MBtu),0.96
 EC_r Hot Water (MBtu),13.49
-EC_x Heating (MBtu),71.56
-EC_x Cooling (MBtu),6.14
+EC_x Heating (MBtu),53.6
+EC_x Cooling (MBtu),5.72
 EC_x Hot Water (MBtu),12.65
 EC_x L&A (MBtu),26.89
-IAD_Save (%),0.1376788997407155
+IAD_Save (%),0.2171734293097967

@@ -583,7 +583,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     
     # 4.3.3 The saving represented by the IAD shall be calculated using equation 4.3.3-1.
     # IADSAVE = (100 � ERIIAD) / 100
-    results[:iad_save] = (100.0 - results_iad[:hers_index]) / 100.0
+    results[:iad_save] = (100.0 - results_iad[:eri]) / 100.0
     
     # 4.3.4 The IAF for the Rated Home (IAFPD) shall be calculated in accordance with equation 4.3.4-1.
     # IAFRH = IAFCFA * IAFNbr * IAFNS (Eq. 4.3.4-1)
@@ -600,13 +600,13 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     # ERI = PEfrac * (TnML / (TRL * IAFRH)) * 100 (Eq 4.1-2)
     # where:
     #   IAFRH = Index Adjustment Factor of Rated Home
-    results[:hers_index] = results[:pefrac] * results[:tnml] / (results[:trl] * results[:iaf_rh]) * 100.0
+    results[:eri] = results[:pefrac] * results[:tnml] / (results[:trl] * results[:iaf_rh]) * 100.0
     
   else
   
-    # The HERS Index shall be determined in accordance with Equation 4.1-2:
-    # HERS Index = PEfrac * (TnML / TRL) * 100
-    results[:hers_index] = results[:pefrac] * results[:tnml] / results[:trl] * 100.0
+    # ERI shall be determined in accordance with Equation 4.1-2:
+    # ERI = PEfrac * (TnML / TRL) * 100
+    results[:eri] = results[:pefrac] * results[:tnml] / results[:trl] * 100.0
     
   end
 
@@ -656,7 +656,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   # Results file
   results_csv = File.join(resultsdir, "ERI_Results.csv")
   results_out = {}
-  results_out["HERS Index"] = results[:hers_index].round(2)
+  results_out["ERI"] = results[:eri].round(2)
   results_out["REUL Heating (MBtu)"] = results[:reul_heat].round(2)
   results_out["REUL Cooling (MBtu)"] = results[:reul_cool].round(2)
   results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].round(2)
@@ -711,7 +711,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   if using_iaf
     worksheet_out["Total Loads TRL*IAF"] = (results[:trl] * results[:iaf_rh]).round(4)
   end
-  worksheet_out["HERS Index"] = results[:hers_index].round(2)
+  worksheet_out["ERI"] = results[:eri].round(2)
   worksheet_out[""] = "" # line break
   worksheet_out["Ref Home CFA"] = ref_output[:hpxml_cfa]
   worksheet_out["Ref Home Nbr"] = ref_output[:hpxml_nbr]
