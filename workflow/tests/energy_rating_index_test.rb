@@ -51,7 +51,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     test_num = 0
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_Test_HERS_Reference_Home")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next if xml.end_with? "HERSReferenceHome.xml"
+      next if xml.end_with? "ERIReferenceHome.xml"
       test_num += 1
       
       # Run test
@@ -87,7 +87,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def test_resnet_hers_method_proposed
-    # Proposed New HERS Method Test Suite
+    # Proposed New Method Test Suite
     # Approved by RESNET Board of Directors June 16, 2016
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_Proposed")
@@ -239,15 +239,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       assert(!File.exists?(results_csv))
     else
       # Check all output files exist
-      ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
-      rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
+      ref_hpxml = File.join(parent_dir, "results", "ERIReferenceHome.xml")
+      rated_hpxml = File.join(parent_dir, "results", "ERIRatedHome.xml")
       worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
       assert(File.exists?(ref_hpxml))
       assert(File.exists?(rated_hpxml))
       assert(File.exists?(results_csv))
       assert(File.exists?(worksheet_csv))
       if using_iaf
-        iad_hpxml = File.join(parent_dir, "results", "HERSIndexAdjustmentDesign.xml")
+        iad_hpxml = File.join(parent_dir, "results", "ERIIndexAdjustmentDesign.xml")
         assert(File.exists?(iad_hpxml))
       end
       
@@ -733,13 +733,13 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
   def _check_e_ratio(results_csv)
     require 'csv'
-    hers_index = nil
+    eri = nil
     CSV.foreach(results_csv) do |row|
-      next if row[0] != "HERS Index"
-      hers_index = Float(row[1])
+      next if row[0] != "ERI"
+      eri = Float(row[1])
       break
     end
-    assert_in_epsilon(100, hers_index, 0.005)
+    assert_in_epsilon(100, eri, 0.005)
   end
   
   def _check_method_results(results_csv, test_num, has_tankless_water_heater, using_iaf)
@@ -761,7 +761,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     nbr = {1=>3,    2=>3,    3=>2,    4=>4,    5=>3}
     nst = {1=>1,    2=>1,    3=>1,    4=>1,    5=>1}
       
-    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
+    _check_method_results_eri(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
     
   end
   
@@ -790,11 +790,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       ec_x_la =       {6=>21.86,  7=>21.86,  8=>21.86,  9=>20.70,  10=>23.02,  11=>23.92,  12=>21.86,  13=>21.86,  14=>21.86,  15=>21.86,  16=>21.86,  17=>21.86,  18=>21.86,  19=>21.86,  20=>21.86,  21=>21.86,  22=>21.86}
     end
     
-    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
+    _check_method_results_eri(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
     
   end
   
-  def _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
+  def _check_method_results_eri(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
                                        
     if heating_fuel[test_num] == 'gas'
       heating_a = 1.0943
@@ -852,12 +852,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     if using_iaf
       trl_iaf = trl * iaf_rh
-      hers_score = 100 * tnml / trl_iaf
+      eri = 100 * tnml / trl_iaf
     else
-      hers_score = 100 * tnml / trl
+      eri = 100 * tnml / trl
     end
     
-    assert_operator((values['HERS Index'] - hers_score).abs / values['HERS Index'], :<, 0.005)
+    assert_operator((values['ERI'] - eri).abs / values['ERI'], :<, 0.005)
   end
   
   def _get_hot_water(results_csv)
@@ -952,7 +952,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
   def _check_hot_water_pre_addendum_a(test_num, curr_val, base_val=nil, mn_val=nil)
     
-    # Acceptance criteria from HERS Hot Water Performance Tests Excel spreadsheet
+    # Acceptance criteria from Hot Water Performance Tests Excel spreadsheet
     min_max_abs = nil
     min_max_fl_delta_abs = nil
     min_max_base_delta_percent = nil
