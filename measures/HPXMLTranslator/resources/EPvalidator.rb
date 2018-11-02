@@ -668,10 +668,18 @@ class EnergyPlusValidator
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'extension/AnnualInteriorkWh' => one,
-            'extension/AnnualExteriorkWh' => one,
-            'extension/AnnualGaragekWh' => one,
+            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified]
         },
+        
+            ## [LtgType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation]' => {
+                'extension/FractionQualifyingTierIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIFixturesGarage' => one,
+                'extension/FractionQualifyingTierIIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIIFixturesGarage' => one,
+            },
         
         
         

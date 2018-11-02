@@ -1,9 +1,10 @@
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constants"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/xmlhelper"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/unit_conversions"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/airflow"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/waterheater"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constants"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/hotwater_appliances"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/lighting"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/waterheater"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/xmlhelper"
 
 class EnergyRatingIndex301Ruleset
 
@@ -2011,11 +2012,8 @@ class EnergyRatingIndex301Ruleset
     refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
     
     new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
-    if new_fridge.elements["RatedAnnualkWh"].nil?
-      XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
-    else
-      new_fridge.elements["RatedAnnualkWh"].text = refrigerator_kwh
-    end
+    XMLHelper.delete_element(new_fridge, "RatedAnnualkWh")
+    XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
     
   end
   
@@ -2044,18 +2042,12 @@ class EnergyRatingIndex301Ruleset
     is_convection = HotWaterAndAppliances.get_range_oven_reference_is_convection()
   
     new_cooking_range = XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
-    if new_cooking_range.elements["IsInduction"].nil?
-      XMLHelper.add_element(new_cooking_range, "IsInduction", is_induction)
-    else
-      new_cooking_range.elements["IsInduction"].text = is_induction
-    end
+    XMLHelper.delete_element(new_cooking_range, "IsInduction")
+    XMLHelper.add_element(new_cooking_range, "IsInduction", is_induction)
     
     new_oven = XMLHelper.copy_element(new_appliances, orig_appliances, "Oven")
-    if new_oven.elements["IsConvection"].nil?
-      XMLHelper.add_element(new_oven, "IsConvection", is_convection)
-    else
-      new_oven.elements["IsConvection"].text = is_convection
-    end
+    XMLHelper.delete_element(new_oven, "IsConvection")
+    XMLHelper.add_element(new_oven, "IsConvection", is_convection)
     
   end
   
@@ -2078,67 +2070,60 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_lighting_reference(new_lighting, orig_details)
+  
+    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
 
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    int_kwh = 455.0 + 0.80*@cfa + 0.0*@nbeds
-    ext_kwh = 100.0 + 0.05*@cfa + 0.0*@nbeds
-    grg_kwh = 0.0
-    if @garage_present
-      grg_kwh = 100.0
+    new_lighting_fractions = XMLHelper.copy_element(new_lighting, orig_details, "LightingFractions")
+    if new_lighting_fractions.nil?
+      new_lighting_fractions = XMLHelper.add_element(new_lighting, "LightingFractions")
     end
-    
-    extension = XMLHelper.add_element(new_lighting, "extension")
-    XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
-    XMLHelper.add_element(extension, "AnnualExteriorkWh", ext_kwh)
-    XMLHelper.add_element(extension, "AnnualGaragekWh", grg_kwh)
+    XMLHelper.delete_element(new_lighting_fractions, "extension")
+    extension = XMLHelper.add_element(new_lighting_fractions, "extension")
+    XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesInterior", fFI_int)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesExterior", fFI_ext)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesGarage", fFI_grg)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIIFixturesInterior", fFII_int)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIIFixturesExterior", fFII_ext)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIIFixturesGarage", fFII_grg)
     
   end
   
   def self.set_lighting_rated(new_lighting, orig_details)
 
-    if orig_details.elements["Lighting/LightingFractions"]
-
-      # Detailed
-      fFI_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesInterior"))
-      fFI_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesExterior"))
-      fFI_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIFixturesGarage"))
-      fFII_int = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesInterior"))
-      fFII_ext = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesExterior"))
-      fFII_grg = Float(XMLHelper.get_value(orig_details, "Lighting/LightingFractions/extension/FractionQualifyingTierIIFixturesGarage"))
-      if @eri_version.include? "G"
-        int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(fFI_int, fFII_int, fFI_ext, fFII_ext, fFI_grg, fFII_grg)
-      else
-        int_kwh, ext_kwh, grg_kwh = calc_lighting(fFI_int+fFII_int, fFI_ext+fFII_ext, fFI_grg+fFII_grg)
-      end
-      
-    else
-      
-      # Reference
-      set_lighting_reference(new_lighting, orig_details)
+    if orig_details.elements["Lighting/LightingFractions"].nil?
+      self.set_lighting_reference(new_lighting, orig_details)
       return
-      
     end
     
-    extension = XMLHelper.add_element(new_lighting, "extension")
-    XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
-    XMLHelper.add_element(extension, "AnnualExteriorkWh", ext_kwh)
-    XMLHelper.add_element(extension, "AnnualGaragekWh", grg_kwh)
+    orig_lighting = orig_details.elements["Lighting"]
+    new_lighting_fractions = XMLHelper.copy_element(new_lighting, orig_lighting, "LightingFractions")
+    # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
+    if not new_lighting_fractions.elements["extension/FractionQualifyingTierIFixturesInterior"].nil?
+      fFI_int = Float(XMLHelper.get_value(new_lighting_fractions, "extension/FractionQualifyingTierIFixturesInterior"))
+      fFII_int = Float(XMLHelper.get_value(new_lighting_fractions, "extension/FractionQualifyingTierIIFixturesInterior"))
+      if fFI_int + fFII_int < 0.1
+        new_lighting_fractions.elements["extension/FractionQualifyingTierIFixturesInterior"].text = 0.1 - fFII_int
+      end
+    end
     
   end
   
   def self.set_lighting_iad(new_lighting, orig_details)
 
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    if @eri_version.include? "G"
-      int_kwh, ext_kwh, grg_kwh = calc_lighting_addendum_g(0.75, 0.0, 0.75, 0.0, 0.75, 0.0)
-    else
-      int_kwh, ext_kwh, grg_kwh = calc_lighting(0.75, 0.75, 0.75)
+    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
+    
+    new_lighting_fractions = XMLHelper.copy_element(new_lighting, orig_details, "LightingFractions")
+    if new_lighting_fractions.nil?
+      new_lighting_fractions = XMLHelper.add_element(new_lighting, "LightingFractions")
     end
-      
-    extension = XMLHelper.add_element(new_lighting, "extension")
-    XMLHelper.add_element(extension, "AnnualInteriorkWh", int_kwh)
-    XMLHelper.add_element(extension, "AnnualExteriorkWh", ext_kwh)
-    XMLHelper.add_element(extension, "AnnualGaragekWh", grg_kwh)
+    XMLHelper.delete_element(new_lighting_fractions, "extension")
+    extension = XMLHelper.add_element(new_lighting_fractions, "extension")
+    XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesInterior", fFI_int)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesExterior", fFI_ext)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesGarage", fFI_grg)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIIFixturesInterior", fFII_int)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIIFixturesExterior", fFII_ext)
+    XMLHelper.add_element(extension, "FractionQualifyingTierIIFixturesGarage", fFII_grg)
     
   end
 
@@ -2641,30 +2626,6 @@ class EnergyRatingIndex301Ruleset
     return q_tot - q_inf
   end
 
-  def self.calc_lighting(qFF_int, qFF_ext, qFF_grg)
-    if qFF_int < 0.1
-      qFF_int = 0.1
-    end
-    int_kwh = 0.8*((4.0 - 3.0*qFF_int)/3.7)*(455.0 + 0.8*@cfa) + 0.2*(455.0 + 0.8*@cfa) # Eq 4.2-2
-    ext_kwh = (100.0 + 0.05*@cfa)*(1.0 - qFF_ext) + 0.25*(100.0 + 0.05*@cfa)*qFF_ext # Eq 4.2-3
-    grg_kwh = 0.0
-    if @garage_present
-      grg_kwh = 100.0*(1.0 - qFF_grg) + 25.0*qFF_grg # Eq 4.2-4
-    end
-    return int_kwh, ext_kwh, grg_kwh
-  end
-  
-  def self.calc_lighting_addendum_g(fFI_int, fFII_int, fFI_ext, fFII_ext, fFI_grg, fFII_grg)
-    # ANSI/RESNET/ICC 301-2014 Addendum G-2018, Solid State Lighting
-    int_kwh = 0.9/0.925*(455.0 + 0.8*@cfa)*((1.0 - fFII_int - fFI_int) + fFI_int*15.0/60.0 + fFII_int*15.0/90.0) + 0.1*(455.0 + 0.8*@cfa) # Eq 4.2-2)
-    ext_kwh = (100.0 + 0.05*@cfa)*(1.0 - fFI_ext - fFII_ext) + 15.0/60.0*(100.0 + 0.05*@cfa)*fFI_ext + 15.0/90.0*(100.0 + 0.05*@cfa)*fFII_ext # Eq 4.2-3
-    grg_kwh = 0.0
-    if @garage_present
-      grg_kwh = 100.0*((1.0 - fFI_grg - fFII_grg) + 15.0/60.0*fFI_grg + 15.0/90.0*fFII_grg) # Eq 4.2-4
-    end
-    return int_kwh, ext_kwh, grg_kwh
-  end
-  
   def self.calc_water_heater_daily_inlet_temperatures(dwhr_avail=false, dwhr_iFrac=nil, dwhr_eff=nil, dwhr_eff_adj=nil, 
                                                       dwhr_plc=nil, dwhr_locF=nil, dwhr_fixF=nil)
     # Get daily mains temperatures

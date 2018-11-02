@@ -300,10 +300,13 @@ class OSModel
     success = add_simulation_params(runner, model)
     return false if not success
 
-    building = hpxml_doc.elements["/HPXML/Building"]
-    
     @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
     fail "Could not find ERI Version" if @eri_version.nil?
+    
+    building = hpxml_doc.elements["/HPXML/Building"]
+    @cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    @nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    @garage_present = Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
   
     # Geometry/Envelope
     
@@ -753,7 +756,7 @@ class OSModel
     model.getBuilding.setStandardsNumberOfAboveGroundStories(num_stories_above_grade)
     
     # Store info for HVAC Sizing measure
-    if Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+    if @garage_present
       unit.additionalProperties.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 0.5) # FIXME: assumption
     end
     
@@ -1989,9 +1992,6 @@ class OSModel
   
   def self.add_hot_water_and_appliances(runner, model, building, unit, weather)
   
-    cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    
     wh = building.elements["BuildingDetails/Systems/WaterHeating"]
     appl = building.elements["BuildingDetails/Appliances"]
     
@@ -2076,7 +2076,7 @@ class OSModel
     fridge = appl.elements["Refrigerator"]
     fridge_annual_kwh = XMLHelper.get_value(fridge, "RatedAnnualkWh")
     if fridge_annual_kwh.nil?
-      fridge_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(nbeds)
+      fridge_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
     else
       fridge_annual_kwh = Float(fridge_annual_kwh)
     end
@@ -2656,19 +2656,26 @@ class OSModel
   
   def self.add_lighting(runner, model, building, unit, weather)
   
-    lighting = building.elements["BuildingDetails/Lighting"]
+    lighting_fractions = building.elements["BuildingDetails/Lighting/LightingFractions"]
+    if lighting_fractions.nil?
+      fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = get_reference_fractions()
+    else
+      fFI_int = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesInterior"))
+      fFI_ext = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesExterior"))
+      fFI_grg = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesGarage"))
+      fFII_int = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesInterior"))
+      fFII_ext = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesExterior"))
+      fFII_grg = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesGarage"))
+    end
+    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(@eri_version, @cfa, @garage_present, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
   
-    annual_kwh_interior = Float(XMLHelper.get_value(lighting, "extension/AnnualInteriorkWh"))
-    success, sch = Lighting.apply_interior(model, unit, runner, weather, 
-                                                    nil, annual_kwh_interior)
+    success, sch = Lighting.apply_interior(model, unit, runner, weather, nil, int_kwh)
     return false if not success
     
-    annual_kwh_garage = Float(XMLHelper.get_value(lighting, "extension/AnnualGaragekWh"))
-    success = Lighting.apply_garage(model, runner, sch, annual_kwh_garage)
+    success = Lighting.apply_garage(model, runner, sch, grg_kwh)
     return false if not success
 
-    annual_kwh_exterior = Float(XMLHelper.get_value(lighting, "extension/AnnualExteriorkWh"))
-    success = Lighting.apply_exterior(model, runner, sch, annual_kwh_exterior)
+    success = Lighting.apply_exterior(model, runner, sch, ext_kwh)
     return false if not success
     
     return true

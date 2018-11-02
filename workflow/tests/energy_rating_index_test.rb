@@ -585,7 +585,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
     s = ""
     nbeds = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
     eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+    garage_present = Boolean(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
   
     # Plug loads
     xml_pl_sens = 0.0
@@ -681,9 +683,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Lighting
     xml_ltg_sens = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting") do |ltg|
-      ltg_kwh = Float(XMLHelper.get_value(ltg, "extension/AnnualInteriorkWh")) + Float(XMLHelper.get_value(ltg, "extension/AnnualGaragekWh"))
-      xml_ltg_sens += UnitConversions.convert(ltg_kwh, "kWh", "Btu")
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting/LightingFractions") do |ltg|
+      fFI_int = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesInterior"))
+      fFI_ext = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesExterior"))
+      fFI_grg = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesGarage"))
+      fFII_int = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesInterior"))
+      fFII_ext = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesExterior"))
+      fFII_grg = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesGarage"))
+      int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, garage_present, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+      xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, "kWh", "Btu")
     end
     s += "#{xml_ltg_sens}\n"
     

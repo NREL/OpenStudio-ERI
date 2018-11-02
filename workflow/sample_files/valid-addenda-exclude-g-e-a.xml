@@ -371,9 +371,9 @@
             <FractionQualifyingTierIFixturesInterior>0.5</FractionQualifyingTierIFixturesInterior>
             <FractionQualifyingTierIFixturesExterior>0.5</FractionQualifyingTierIFixturesExterior>
             <FractionQualifyingTierIFixturesGarage>0.5</FractionQualifyingTierIFixturesGarage>
-            <FractionQualifyingTierIIFixturesInterior>0.0</FractionQualifyingTierIIFixturesInterior>
-            <FractionQualifyingTierIIFixturesExterior>0.0</FractionQualifyingTierIIFixturesExterior>
-            <FractionQualifyingTierIIFixturesGarage>0.0</FractionQualifyingTierIIFixturesGarage>
+            <FractionQualifyingTierIIFixturesInterior>0.25</FractionQualifyingTierIIFixturesInterior>
+            <FractionQualifyingTierIIFixturesExterior>0.25</FractionQualifyingTierIIFixturesExterior>
+            <FractionQualifyingTierIIFixturesGarage>0.25</FractionQualifyingTierIIFixturesGarage>
           </extension>
         </LightingFractions>
       </Lighting>
