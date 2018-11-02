@@ -2050,9 +2050,9 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.delete_element(new_dishwasher, "RatedAnnualkWh")
     end
     if new_dishwasher.elements["PlaceSettingCapacity"].nil?
-      XMLHelper.add_element(new_dishwasher, "PlaceSettingCapacity", dw_cap)
+      XMLHelper.add_element(new_dishwasher, "PlaceSettingCapacity", Integer(dw_cap))
     else
-      new_dishwasher.elements["PlaceSettingCapacity"].text = dw_cap
+      new_dishwasher.elements["PlaceSettingCapacity"].text = Integer(dw_cap)
     end
     
   end
