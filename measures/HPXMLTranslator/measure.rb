@@ -11,6 +11,7 @@ require "#{File.dirname(__FILE__)}/resources/airflow"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/constructions"
 require "#{File.dirname(__FILE__)}/resources/geometry"
+require "#{File.dirname(__FILE__)}/resources/hotwater_appliances"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/hvac_sizing"
 require "#{File.dirname(__FILE__)}/resources/lighting"
@@ -2017,7 +2018,7 @@ class OSModel
     fridge = appl.elements["Refrigerator"]
     fridge_annual_kwh = XMLHelper.get_value(fridge, "RatedAnnualkWh")
     if fridge_annual_kwh.nil?
-      fridge_annual_kwh = 637.0 + 18.0*nbeds
+      fridge_annual_kwh = HotWaterAndAppliances.calc_reference_fridge_energy(nbeds)
     else
       fridge_annual_kwh = Float(fridge_annual_kwh)
     end
@@ -2064,16 +2065,16 @@ class OSModel
       fail "HotWaterDistribution/extension/WaterHeaterDailyInletTemperatures must have 365 comma-separated values."
     end
     
-    success = Waterheater.apply_eri_hw_appl(model, unit, runner, weather,
-                                            cw_annual_kwh, cw_frac_sens, cw_frac_lat,
-                                            cw_gpd, cd_annual_kwh, cd_annual_therm,
-                                            cd_frac_sens, cd_frac_lat, cd_fuel_type,
-                                            dw_annual_kwh, dw_frac_sens, dw_frac_lat,
-                                            dw_gpd, fridge_annual_kwh, cook_fuel_type,
-                                            cook_is_induction, oven_is_convection, fx_gpd,
-                                            fx_sens_btu, fx_lat_btu, dist_type, 
-                                            dist_gpd, dist_pump_annual_kwh, 
-                                            daily_wh_inlet_temperatures, daily_mw_fractions)
+    success = HotWaterAndAppliances.apply(model, unit, runner, weather, 
+                                          cw_annual_kwh, cw_frac_sens, cw_frac_lat,
+                                          cw_gpd, cd_annual_kwh, cd_annual_therm,
+                                          cd_frac_sens, cd_frac_lat, cd_fuel_type,
+                                          dw_annual_kwh, dw_frac_sens, dw_frac_lat,
+                                          dw_gpd, fridge_annual_kwh, cook_fuel_type,
+                                          cook_is_induction, oven_is_convection,
+                                          fx_gpd, fx_sens_btu, fx_lat_btu, dist_type, 
+                                          dist_gpd, dist_pump_annual_kwh, 
+                                          daily_wh_inlet_temperatures, daily_mw_fractions)
     return false if not success
     
     return true

@@ -6,7 +6,7 @@ require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
 require_relative '../../measures/HPXMLTranslator/resources/schedules'
 require_relative '../../measures/HPXMLTranslator/resources/constants'
 require_relative '../../measures/HPXMLTranslator/resources/unit_conversions'
-require_relative '../../measures/HPXMLTranslator/resources/waterheater'
+require_relative '../../measures/HPXMLTranslator/resources/hotwater_appliances'
 
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
@@ -610,7 +610,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       cook_fuel_type = hpxml_to_beopt_fuel[XMLHelper.get_value(appl, "FuelType")]
       cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
       oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
-      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = Waterheater.calc_eri_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
+      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
       btu = UnitConversions.convert(cook_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cook_annual_therm, "therm", "Btu")
       xml_appl_sens += (cook_frac_sens * btu)
       xml_appl_lat += (cook_frac_lat * btu)

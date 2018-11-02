@@ -6,8 +6,8 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
+require_relative "../measures/HPXMLTranslator/resources/constants"
+require_relative "../measures/HPXMLTranslator/resources/xmlhelper"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors

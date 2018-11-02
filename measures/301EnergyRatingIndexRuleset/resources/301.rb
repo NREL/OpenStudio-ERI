@@ -1,6 +1,9 @@
-require "#{File.dirname(__FILE__)}/constants"
-require "#{File.dirname(__FILE__)}/xmlhelper"
-require "#{File.dirname(__FILE__)}/unit_conversions"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constants"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/xmlhelper"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/airflow"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/waterheater"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/hotwater_appliances"
 
 class EnergyRatingIndex301Ruleset
 
@@ -304,8 +307,8 @@ class EnergyRatingIndex301Ruleset
     sla = 0.00036
     
     # Convert to other forms
-    nach = get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
-    ach50 = get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
+    nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
     
     # nACH
     new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
@@ -354,15 +357,15 @@ class EnergyRatingIndex301Ruleset
         nach = 0.30
       end
       # Convert to other forms
-      sla = get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+      sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
       ela = sla * @cfa
-      ach50 = get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
+      ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
     elsif not orig_infil.elements["AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
       ach50 = Float(XMLHelper.get_value(orig_infil, "AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
       # Convert to other forms
-      sla = get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+      sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
       ela = sla * @cfa
-      nach = get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
+      nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
     end
     
     # nACH
@@ -407,8 +410,8 @@ class EnergyRatingIndex301Ruleset
     end
     
     # Convert to other forms
-    sla = get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
-    nach = get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+    nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
     
     # nACH
     new_infil_meas = XMLHelper.add_element(new_infil, "AirInfiltrationMeasurement")
@@ -1391,7 +1394,7 @@ class EnergyRatingIndex301Ruleset
       
       fan_type = XMLHelper.get_value(orig_whole_house_fan, "FanType")
       
-      q_tot = get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+      q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
       
       # Calculate fan cfm for airflow rate using Reference Home infiltration
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
@@ -1402,10 +1405,10 @@ class EnergyRatingIndex301Ruleset
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
       if not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"].nil?
         nach = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
-        sla = get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
       elsif not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
         ach50 = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
-        sla = get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
       end
       q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
       
@@ -1466,7 +1469,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
     
-    q_tot = get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
     
     # Calculate fan cfm for airflow rate using IAD Home infiltration
     sla = Float(XMLHelper.get_value(new_enclosure, "AirInfiltration/extension/BuildingSpecificLeakageArea"))
@@ -1476,10 +1479,10 @@ class EnergyRatingIndex301Ruleset
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
     if not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"].nil?
       nach = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage"))
-      sla = get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
+      sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
     elsif not orig_details.elements["Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].nil?
       ach50 = Float(XMLHelper.get_value(orig_details, "Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
-      sla = get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+      sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
     end
     q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
     
@@ -1532,7 +1535,7 @@ class EnergyRatingIndex301Ruleset
     wh_type = 'storage water heater'
     
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
+    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
     
     # New water heater
     new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1600,7 +1603,7 @@ class EnergyRatingIndex301Ruleset
         wh_fuel_type = 'electricity'
       end
       wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-      wh_cap = calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
+      wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
       wh_location = 'conditioned space' # 301 Standard doesn't specify the location
     
       # New water heater
@@ -2102,7 +2105,7 @@ class EnergyRatingIndex301Ruleset
     orig_appliances = orig_details.elements["Appliances"]
   
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    refrigerator_kwh = 637.0 + 0.0*@cfa + 18.0*@nbeds
+    refrigerator_kwh = HotWaterAndAppliances.calc_reference_fridge_energy(@nbeds)
     
     new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
     if new_fridge.elements["RatedAnnualkWh"].nil?
@@ -2120,7 +2123,7 @@ class EnergyRatingIndex301Ruleset
     new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
     if new_fridge.elements["RatedAnnualkWh"].nil?
       # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-      refrigerator_kwh = 637.0 + 0.0*@cfa + 18.0*@nbeds
+      refrigerator_kwh = HotWaterAndAppliances.calc_reference_fridge_energy(@nbeds)
       XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
     end
     
@@ -2896,100 +2899,5 @@ def get_exterior_wall_area_fracs(orig_details)
   end
   
   return wall_area_fracs
-end
-
-def calc_water_heater_capacity(fuel, num_beds)
-  #Calculate the capacity of the water heater based on the fuel type and number of bedrooms and bathrooms in a home
-  #returns the capacity in kBtu/hr
-  
-  # From https://www.sansomeandgeorge.co.uk/news-updates/what-is-the-ideal-ratio-of-bathrooms-to-bedrooms.html
-  # "According to 70% of estate agents, a property should have two bathrooms for every three bedrooms..."
-  num_baths = 2.0/3.0 * num_beds
-  
-  if fuel != Constants.FuelTypeElectric
-    if num_beds <= 3
-      input_power = 36
-    elsif num_beds == 4
-      if num_baths <= 2.5
-        input_power = 36
-      else
-        input_power = 38
-      end
-    elsif num_beds == 5
-      input_power = 47
-    else
-      input_power = 50
-    end
-    return input_power
-  else
-    if num_beds == 1
-      input_power = UnitConversions.convert(2.5,"kW","kBtu/hr")
-    elsif num_beds == 2
-      if num_baths <= 1.5
-        input_power = UnitConversions.convert(3.5,"kW","kBtu/hr")
-      else
-        input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
-      end
-    elsif num_beds == 3
-      if num_baths <= 1.5
-        input_power = UnitConversions.convert(4.5,"kW","kBtu/hr")
-      else
-        input_power = UnitConversions.convert(5.5,"kW","kBtu/hr")
-      end
-    else
-      input_power = UnitConversions.convert(5.5,"kW","kBtu/hr")
-    end
-    return input_power
-  end
-end
-
-def get_infiltration_ACH_from_SLA(sla, numStories, weather)
-  # Returns the infiltration annual average ACH given a SLA.
-  w = calc_infiltration_w_factor(weather)
-
-  # Equation from ASHRAE 119-1998 (using numStories for simplification)
-  norm_lkage = 1000.0 * sla * numStories ** 0.3
-
-  # Equation from ASHRAE 136-1993
-  return norm_lkage * w
-end  
-
-def get_infiltration_ACH50_from_SLA(sla, n_i, conditionedFloorArea, conditionedVolume, pressure_difference_Pa=50)
-  # Returns the infiltration ACH50 given a SLA.
-  return ((sla * conditionedFloorArea * UnitConversions.convert(1.0,"ft^2","in^2") * pressure_difference_Pa ** n_i * 60.0)/(0.2835 * 4.0 ** n_i * conditionedVolume))
-end
-
-def get_infiltration_SLA_from_ACH(ach, numStories, weather)
-  # Returns the infiltration SLA given an annual average ACH.
-  w = calc_infiltration_w_factor(weather)
-  return ach/(w * 1000 * numStories**0.3) 
-end
-
-def get_infiltration_SLA_from_ACH50(ach50, n_i, conditionedFloorArea, conditionedVolume, pressure_difference_Pa=50)
-  # Returns the infiltration SLA given a ACH50.
-  return ((ach50 * 0.2835 * 4.0 ** n_i * conditionedVolume) / (conditionedFloorArea * UnitConversions.convert(1.0,"ft^2","in^2") * pressure_difference_Pa ** n_i * 60.0))
-end  
-
-def get_mech_vent_whole_house_cfm(frac622, num_beds, ffa, std)
-  # Returns the ASHRAE 62.2 whole house mechanical ventilation rate, excluding any infiltration credit.
-  if std == '2013'
-    return frac622 * ((num_beds + 1.0) * 7.5 + 0.03 * ffa)
-  end
-  return frac622 * ((num_beds + 1.0) * 7.5 + 0.01 * ffa)
-end  
-
-def calc_infiltration_w_factor(weather)
-  # Returns a w factor for infiltration calculations; see ticket #852 for derivation.
-  hdd65f = weather.data.HDD65F
-  ws = weather.data.AnnualAvgWindspeed
-  a = 0.36250748
-  b = 0.365317169
-  c = 0.028902855
-  d = 0.050181043
-  e = 0.009596674
-  f = -0.041567541
-  # in ACH
-  w = (a + b * hdd65f / 10000.0 + c * (hdd65f / 10000.0) ** 2.0 + d * ws + e * ws ** 2 + f * hdd65f / 10000.0 * ws)
-  return w
 end
 
