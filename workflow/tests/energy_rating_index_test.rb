@@ -673,9 +673,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xml_occ_sens = 0.0
     xml_occ_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy") do |occ|
-      frac_sens = Float(XMLHelper.get_value(occ, "extension/FracSensible"))
-      frac_lat = Float(XMLHelper.get_value(occ, "extension/FracLatent"))
-      btu = Float(XMLHelper.get_value(occ, "NumberofResidents")) * Float(XMLHelper.get_value(occ, "extension/HeatGainBtuPerPersonPerHr")) * Float(XMLHelper.get_value(occ, "extension/PersonHrsPerDay")) * 365.0
+      num_occ = Float(XMLHelper.get_value(occ, "NumberofResidents"))
+      heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_reference_values()
+      btu = num_occ * heat_gain * hrs_per_day * 365.0
       xml_occ_sens += (frac_sens * btu)
       xml_occ_lat += (frac_lat * btu)
     end

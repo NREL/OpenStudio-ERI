@@ -40,10 +40,6 @@ class EnergyPlusValidator
         
             '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable[Fuel="electricity" or Fuel="natural gas" or Fuel="fuel oil" or Fuel="propane" or Fuel="kerosene" or Fuel="diesel" or Fuel="anthracite coal" or Fuel="bituminous coal" or Fuel="coke" or Fuel="wood" or Fuel="wood pellets"]' => one_or_more,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
@@ -186,7 +182,7 @@ class EnergyPlusValidator
     
             ## [FoundationType=Ambient]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient]' => {
-                'FrameFloor' => one_or_more, # See [FoundationSlab]
+                'FrameFloor' => one_or_more, # See [FoundationFrameFloor]
             },
     
             ## [FoundationFrameFloor]
@@ -226,9 +222,9 @@ class EnergyPlusValidator
                 'extension/CarpetFraction' => one,
                 'extension/CarpetRValue' => one,
             },
-            
-            
-            
+          
+
+          
         # [RimJoist]
         '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => {
             'SystemIdentifier' => one, # Required by HPXML schema
@@ -238,9 +234,9 @@ class EnergyPlusValidator
             'Insulation/SystemIdentifier' => one, # Required by HPXML schema
             'Insulation/AssemblyEffectiveRValue' => one,
         },
-        
-        
-        
+            
+            
+            
         # [Wall]
         '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => {
             'SystemIdentifier' => one, # Required by HPXML schema
@@ -275,7 +271,6 @@ class EnergyPlusValidator
                 'Depth' => one,
                 'DistanceToTopOfWindow' => one,
             },
-
     
     
     
@@ -372,7 +367,6 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => {
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
             },
             
             ## [CoolingType=RoomAC]
@@ -397,8 +391,6 @@ class EnergyPlusValidator
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
-                'extension/PerformanceAdjustmentHSPF' => one,
             },
 
             ## [HeatPumpType=MSHP]
@@ -406,8 +398,6 @@ class EnergyPlusValidator
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
-                'extension/PerformanceAdjustmentHSPF' => one,
             },
 
             ## [HeatPumpType=GSHP]
@@ -672,7 +662,7 @@ class EnergyPlusValidator
         },
         
             ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
                 'extension/FractionQualifyingTierIFixturesInterior' => one,
                 'extension/FractionQualifyingTierIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIFixturesGarage' => one,

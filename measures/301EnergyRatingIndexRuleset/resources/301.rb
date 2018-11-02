@@ -213,15 +213,9 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(new_site, "extension")
     XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
     
-    num_occ, heat_gain, sens, lat, hrs_per_day = get_occupants_heat_gain_sens_lat()
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
-    XMLHelper.add_element(new_occupancy, "NumberofResidents", num_occ)
-    extension = XMLHelper.add_element(new_occupancy, "extension")
-    XMLHelper.add_element(extension, "HeatGainBtuPerPersonPerHr", heat_gain)
-    XMLHelper.add_element(extension, "PersonHrsPerDay", hrs_per_day)
-    XMLHelper.add_element(extension, "FracSensible", sens)
-    XMLHelper.add_element(extension, "FracLatent", lat)
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", @nbeds)
     
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
@@ -242,15 +236,9 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(new_site, "extension")
     XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
     
-    num_occ, heat_gain, sens, lat, hrs_per_day = get_occupants_heat_gain_sens_lat()
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
-    XMLHelper.add_element(new_occupancy, "NumberofResidents", num_occ)
-    extension = XMLHelper.add_element(new_occupancy, "extension")
-    XMLHelper.add_element(extension, "HeatGainBtuPerPersonPerHr", heat_gain)
-    XMLHelper.add_element(extension, "PersonHrsPerDay", hrs_per_day)
-    XMLHelper.add_element(extension, "FracSensible", sens)
-    XMLHelper.add_element(extension, "FracLatent", lat)
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", @nbeds)
     
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
@@ -279,15 +267,9 @@ class EnergyRatingIndex301Ruleset
     extension = XMLHelper.add_element(new_site, "extension")
     XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
     
-    num_occ, heat_gain, sens, lat, hrs_per_day = get_occupants_heat_gain_sens_lat()
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
-    XMLHelper.add_element(new_occupancy, "NumberofResidents", num_occ)
-    extension = XMLHelper.add_element(new_occupancy, "extension")
-    XMLHelper.add_element(extension, "HeatGainBtuPerPersonPerHr", heat_gain)
-    XMLHelper.add_element(extension, "PersonHrsPerDay", hrs_per_day)
-    XMLHelper.add_element(extension, "FracSensible", sens)
-    XMLHelper.add_element(extension, "FracLatent", lat)
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", @nbeds)
     
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
@@ -2554,25 +2536,6 @@ class EnergyRatingIndex301Ruleset
       return 125.0
     end
     return 120.0
-  end
-  
-  def self.get_service_water_heating_use_gpd()
-    # Table 4.2.2(1) - Service water heating systems
-    return 30.0*@ndu + 10.0*@nbeds
-  end
-
-  def self.get_occupants_heat_gain_sens_lat()
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
-    hrs_per_day = 16.5
-    sens_gains = 3716.0 # Btu/person/day
-    lat_gains = 2884.0 # Btu/person/day
-    tot_gains = sens_gains + lat_gains
-    
-    num_occ = @nbeds
-    heat_gain = tot_gains/hrs_per_day # Btu/person/hr
-    sens = sens_gains/tot_gains
-    lat = lat_gains/tot_gains
-    return num_occ, heat_gain, sens, lat, hrs_per_day
   end
   
   def self.get_general_water_use_gains_sens_lat()
