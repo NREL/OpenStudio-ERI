@@ -603,11 +603,17 @@ class EnergyPlusValidator
         # [ClothesWasher]
         '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'extension/AnnualkWh' => one,
-            'extension/HotWaterGPD' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            '[ModifiedEnergyFactor | IntegratedModifiedEnergyFactor]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CWType=UserSpecified]
         },
+        
+            ## [CWType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[ModifiedEnergyFactor]' => {
+                'RatedAnnualkWh' => one,
+                'LabelElectricRate' => one,
+                'LabelGasRate' => one,
+                'LabelAnnualGasCost' => one,
+                'Capacity' => one,
+            },
         
         
         
@@ -615,11 +621,13 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
-            'extension/AnnualkWh' => one,
-            'extension/AnnualTherm' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            '[EnergyFactor | CombinedEnergyFactor]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CDType=UserSpecified]
         },
+        
+            ## [CDType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EnergyFactor]' => {
+                '[ControlType="timer" or ControlType="moisture"]' => one,
+            },
         
         
         

@@ -2,6 +2,7 @@ require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
+require_relative '../../measures/HPXMLTranslator/measure'
 require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
 require_relative '../../measures/HPXMLTranslator/resources/schedules'
 require_relative '../../measures/HPXMLTranslator/resources/constants'
@@ -601,14 +602,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xml_appl_sens = 0.0
     xml_appl_lat = 0.0
     
-    hpxml_to_beopt_fuel = {"natural gas"=>Constants.FuelTypeGas, 
-                           "fuel oil"=>Constants.FuelTypeOil, 
-                           "propane"=>Constants.FuelTypePropane, 
-                           "electricity"=>Constants.FuelTypeElectric}
-            
     # Appliances: CookingRange
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange") do |appl|
-      cook_fuel_type = hpxml_to_beopt_fuel[XMLHelper.get_value(appl, "FuelType")]
+      cook_fuel_type = hpxml_to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
       cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
       oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
       cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
@@ -633,17 +629,33 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       xml_appl_lat += (dw_frac_lat * btu)
     end
     
-    # Appliances: ClothesWasher, ClothesDryer, Dishwasher
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
-      frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
-      frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
-      btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualkWh")), "kWh", "Btu")
-      if appl.elements["extension/AnnualTherm"]
-        btu += UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualTherm")), "therm", "Btu")
-      end
-      xml_appl_sens += (frac_sens * btu)
-      xml_appl_lat += (frac_lat * btu)
+    # Appliances: ClothesWasher
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher") do |appl|
+      cw_ler = Float(XMLHelper.get_value(appl, "RatedAnnualkWh"))
+      cw_elec_rate = Float(XMLHelper.get_value(appl, "LabelElectricRate"))
+      cw_gas_rate = Float(XMLHelper.get_value(appl, "LabelGasRate"))
+      cw_agc = Float(XMLHelper.get_value(appl, "LabelAnnualGasCost"))
+      cw_cap = Float(XMLHelper.get_value(appl, "Capacity"))
+      cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, cw_ler, cw_elec_rate, cw_gas_rate, cw_agc, cw_cap)
+      btu = UnitConversions.convert(cw_annual_kwh, "kWh", "Btu")
+      xml_appl_sens += (cw_frac_sens * btu)
+      xml_appl_lat += (cw_frac_lat * btu)
     end
+    
+    # Appliances: ClothesDryer
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
+      cd_fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cd_ef = Float(XMLHelper.get_value(appl, "EnergyFactor"))
+      cd_control = XMLHelper.get_value(appl, "ControlType")
+      cw_ler = Float(XMLHelper.get_value(appl, "../ClothesWasher/RatedAnnualkWh"))
+      cw_cap = Float(XMLHelper.get_value(appl, "../ClothesWasher/Capacity"))
+      cw_mef = Float(XMLHelper.get_value(appl, "../ClothesWasher/ModifiedEnergyFactor"))
+      cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nbeds, cd_fuel, cd_ef, cd_control, cw_ler, cw_cap, cw_mef)
+      btu = UnitConversions.convert(cd_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cd_annual_therm, "therm", "Btu")
+      xml_appl_sens += (cd_frac_sens * btu)
+      xml_appl_lat += (cd_frac_lat * btu)
+    end
+    
     s += "#{xml_appl_sens} #{xml_appl_lat}\n"
     
     # Water Use

@@ -344,7 +344,7 @@
           <SystemIdentifier id='ClothesDryer_ID1'/>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>2.62</CombinedEnergyFactor>
-          <ControlType>timer</ControlType>
+          <ControlType>moisture</ControlType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher_ID1'/>

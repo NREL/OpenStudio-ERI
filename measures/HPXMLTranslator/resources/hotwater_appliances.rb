@@ -6,9 +6,8 @@ require "#{File.dirname(__FILE__)}/constants"
 class HotWaterAndAppliances
 
   def self.apply(model, unit, runner, weather, 
-                 cw_annual_kwh, cw_frac_sens, cw_frac_lat,
-                 cw_gpd, cd_annual_kwh, cd_annual_therm,
-                 cd_frac_sens, cd_frac_lat, cd_fuel_type,
+                 cw_mef, cw_ler, cw_elec_rate, cw_gas_rate,
+                 cw_agc, cw_cap, cd_fuel, cd_ef, cd_control,
                  dw_ef, dw_cap, fridge_annual_kwh, cook_fuel_type,
                  cook_is_induction, oven_is_convection,
                  fx_gpd, fx_sens_btu, fx_lat_btu, dist_type, 
@@ -96,16 +95,16 @@ class HotWaterAndAppliances
                           Constants.SpaceTypeFinishedBasement]
 
     # Clothes washer
-    if cw_gpd > 0
-      cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
-      cw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
-      cw_peak_flow_gpm = cw_gpd/sum_fractions_hw/timestep_minutes*365.0
-      cw_design_level_w = UnitConversions.convert(cw_annual_kwh*60.0/(cw_gpd*365.0/cw_peak_flow_gpm), "kW", "W")
-      add_electric_equipment(model, cw_name, cw_space, cw_design_level_w, cw_frac_sens, cw_frac_lat, schedule_hw)
-      add_water_use_equipment(model, cw_name, cw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
-    end
+    cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = self.calc_clothes_washer_energy_gpd(eri_version, nbeds, cw_ler, cw_elec_rate, cw_gas_rate, cw_agc, cw_cap)
+    cw_name = Constants.ObjectNameClothesWasher(unit.name.to_s)
+    cw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
+    cw_peak_flow_gpm = cw_gpd/sum_fractions_hw/timestep_minutes*365.0
+    cw_design_level_w = UnitConversions.convert(cw_annual_kwh*60.0/(cw_gpd*365.0/cw_peak_flow_gpm), "kW", "W")
+    add_electric_equipment(model, cw_name, cw_space, cw_design_level_w, cw_frac_sens, cw_frac_lat, schedule_hw)
+    add_water_use_equipment(model, cw_name, cw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
     
     # Clothes dryer
+    cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = self.calc_clothes_dryer_energy(nbeds, cd_fuel, cd_ef, cd_control, cw_ler, cw_cap, cw_mef)
     cd_name_e = Constants.ObjectNameClothesDryer(Constants.FuelTypeElectric, unit.name.to_s)
     cd_name_f = Constants.ObjectNameClothesDryer(Constants.FuelTypeGas, unit.name.to_s)
     cd_weekday_sch = "0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024"
@@ -115,7 +114,7 @@ class HotWaterAndAppliances
     cd_design_level_e = cd_schedule.calcDesignLevelFromDailykWh(cd_annual_kwh/365.0)
     cd_design_level_f = cd_schedule.calcDesignLevelFromDailyTherm(cd_annual_therm/365.0)
     add_electric_equipment(model, cd_name_e, cd_space, cd_design_level_e, cd_frac_sens, cd_frac_lat, cd_schedule.schedule)
-    add_other_equipment(model, cd_name_f, cd_space, cd_design_level_f, cd_frac_sens, cd_frac_lat, cd_schedule.schedule, cd_fuel_type)
+    add_other_equipment(model, cd_name_f, cd_space, cd_design_level_f, cd_frac_sens, cd_frac_lat, cd_schedule.schedule, cd_fuel)
     
     # Dishwasher
     dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = self.calc_dishwasher_energy_gpd(eri_version, nbeds, dw_ef, dw_cap)
@@ -220,17 +219,19 @@ class HotWaterAndAppliances
   end
   
   def self.get_dishwasher_reference_cap()
-    return 12.0
+    return 12.0 # number of place settings
   end
   
   def self.calc_dishwasher_energy_gpd(eri_version, nbeds, ef, cap)
     dwcpy = (88.4 + 34.9*nbeds)*(12.0/cap) # Eq 4.2-8a (dWcpy)
     annual_kwh = ((86.3 + 47.73/ef)/215.0)*dwcpy # Eq 4.2-8a
     tot_btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    
     gains_sens = (219.0 + 87.0*nbeds)*365 # Btu
     gains_lat = (219.0 + 87.0*nbeds)*365 # Btu
     frac_sens = gains_sens/tot_btu
     frac_lat = gains_lat/tot_btu
+    
     if eri_version.include? "A"
       gpd = dwcpy*(4.6415*(1.0/ef) - 1.9295)/365.0 # Eq. 4.2-11 (DWgpd)
     else
@@ -242,8 +243,98 @@ class HotWaterAndAppliances
   end
   
   def self.get_refrigerator_reference_annual_kwh(nbeds)
-    annual_kwh = 637.0 + 18.0*nbeds
+    annual_kwh = 637.0 + 18.0*nbeds # kWh/yr
     return annual_kwh
+  end
+  
+  def self.get_clothes_dryer_reference_ef(fuel_type)
+    if fuel_type == Constants.FuelTypeElectric
+      return 3.01 # lb/kWh
+    else
+      return 2.67 # lb/kWh
+    end
+  end
+  
+  def self.get_clothes_dryer_reference_control()
+    return 'timer'
+  end
+  
+  def self.calc_clothes_dryer_energy(nbeds, fuel_type, ef, control_type, cw_ler, cw_cap, cw_mef)
+    # Eq 4.2-6 (FU)
+    field_util_factor = nil
+    if control_type == 'timer'
+      field_util_factor = 1.18
+    elsif control_type == 'moisture'
+      field_util_factor = 1.04
+    end
+    if fuel_type == Constants.FuelTypeElectric
+      annual_kwh = 12.5*(164.0 + 46.5*nbeds)*(field_util_factor/ef)*((cw_cap/cw_mef) - cw_ler/392.0)/(0.2184*(cw_cap*4.08 + 0.24)) # Eq 4.2-6
+      annual_therm = 0.0
+    else
+      annual_kwh = 12.5*(164.0 + 46.5*nbeds)*(field_util_factor/3.01)*((cw_cap/cw_mef) - cw_ler/392.0)/(0.2184*(cw_cap*4.08 + 0.24)) # Eq 4.2-6
+      annual_therm = annual_kwh*3412.0*(1.0-0.07)*(3.01/ef)/100000 # Eq 4.2-7a
+      annual_kwh = annual_kwh*0.07*(3.01/ef)
+    end
+    tot_btu = UnitConversions.convert(annual_kwh, "kWh", "Btu") + UnitConversions.convert(annual_therm, "therm", "Btu")
+    
+    if fuel_type != Constants.FuelTypeElectric
+      gains_sens = (738.0 + 209.0*nbeds)*365 # Btu
+      gains_lat = (91.0 + 26.0*nbeds)*365 # Btu
+    else
+      gains_sens = (661.0 + 188.0*nbeds)*365 # Btu
+      gains_lat = (73.0 + 21.0*nbeds)*365 # Btu
+    end
+    frac_sens = gains_sens/tot_btu
+    frac_lat = gains_lat/tot_btu
+    
+    return annual_kwh, annual_therm, frac_sens, frac_lat
+  end
+  
+  def self.get_clothes_washer_reference_mef()
+    return 0.817
+  end
+  
+  def self.get_clothes_washer_reference_ler()
+    return 704.0 # kWh/yr
+  end
+  
+  def self.get_clothes_washer_reference_elec_rate()
+    return 0.08 # $/kWh
+  end
+  
+  def self.get_clothes_washer_reference_gas_rate()
+    return 0.58 # $/therm
+  end
+  
+  def self.get_clothes_washer_reference_agc()
+    return 23.0 # $
+  end
+  
+  def self.get_clothes_washer_reference_cap()
+    return 2.874 # ft^3
+  end
+  
+  def self.calc_clothes_washer_energy_gpd(eri_version, nbeds, ler, elec_rate, gas_rate, agc, cap)
+    # Eq 4.2-9a
+    ncy = (3.0/2.847)*(164 + nbeds*45.6)
+    if eri_version.include? "A"
+      ncy = (3.0/2.847)*(164 + nbeds*46.5)
+    end
+    acy = ncy*((3.0*2.08 + 1.59)/(cap*2.08 + 1.59)) #Adjusted Cycles per Year
+    annual_kwh = ((ler/392.0) - ((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*21.9825)*acy
+    tot_btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    
+    gains_sens = (95.0 + 26.0*nbeds)*365 # Btu
+    gains_lat = (11.0 + 3.0*nbeds)*365 # Btu
+    frac_sens = gains_sens/tot_btu
+    frac_lat = gains_lat/tot_btu
+    
+    gpd = 60.0*((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*acy/365.0
+    if not eri_version.include? "A"
+      gpd -= 3.97 # Section 4.2.2.5.2.10
+    end
+
+    return annual_kwh, frac_sens, frac_lat, gpd
   end
       
   private

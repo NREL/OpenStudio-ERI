@@ -1997,18 +1997,62 @@ class OSModel
     
     # Clothes Washer
     cw = appl.elements["ClothesWasher"]
-    cw_annual_kwh = Float(XMLHelper.get_value(cw, "extension/AnnualkWh"))
-    cw_frac_sens = Float(XMLHelper.get_value(cw, "extension/FracSensible"))
-    cw_frac_lat = Float(XMLHelper.get_value(cw, "extension/FracLatent"))
-    cw_gpd = Float(XMLHelper.get_value(cw, "extension/HotWaterGPD"))
+    cw_mef = XMLHelper.get_value(cw, "ModifiedEnergyFactor")
+    cw_imef = XMLHelper.get_value(cw, "IntegratedModifiedEnergyFactor")
+    if cw_mef.nil? and cw_imef.nil?
+      cw_mef = HotWaterAndAppliances.get_clothes_washer_reference_mef()
+    elsif not cw_mef.nil?
+      cw_mef = Float(cw_mef)
+    elsif not cw_imef.nil?
+      cw_mef = 0.503 + 0.95 * Float(cw_imef) # Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF
+    end
+    cw_ler = XMLHelper.get_value(cw, "RatedAnnualkWh")
+    if cw_ler.nil?
+      cw_ler = HotWaterAndAppliances.get_clothes_washer_reference_ler()
+    else
+      cw_ler = Float(cw_ler)
+    end
+    cw_elec_rate = XMLHelper.get_value(cw, "LabelElectricRate")
+    if cw_elec_rate.nil?
+      cw_elec_rate = HotWaterAndAppliances.get_clothes_washer_reference_elec_rate()
+    else
+      cw_elec_rate = Float(cw_elec_rate)
+    end
+    cw_gas_rate = XMLHelper.get_value(cw, "LabelGasRate")
+    if cw_gas_rate.nil?
+      cw_gas_rate = HotWaterAndAppliances.get_clothes_washer_reference_gas_rate()
+    else
+      cw_gas_rate = Float(cw_gas_rate)
+    end
+    cw_agc = XMLHelper.get_value(cw, "LabelAnnualGasCost")
+    if cw_agc.nil?
+      cw_agc = HotWaterAndAppliances.get_clothes_washer_reference_agc()
+    else
+      cw_agc = Float(cw_agc)
+    end
+    cw_cap = XMLHelper.get_value(cw, "Capacity")
+    if cw_cap.nil?
+      cw_cap = HotWaterAndAppliances.get_clothes_washer_reference_cap()
+    else
+      cw_cap = Float(cw_cap)
+    end
     
     # Clothes Dryer
     cd = appl.elements["ClothesDryer"]
-    cd_annual_kwh = Float(XMLHelper.get_value(cd, "extension/AnnualkWh"))
-    cd_annual_therm = Float(XMLHelper.get_value(cd, "extension/AnnualTherm"))
-    cd_frac_sens = Float(XMLHelper.get_value(cd, "extension/FracSensible"))
-    cd_frac_lat = Float(XMLHelper.get_value(cd, "extension/FracLatent"))
-    cd_fuel_type = hpxml_to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
+    cd_fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
+    cd_ef = XMLHelper.get_value(cd, "EnergyFactor")
+    cd_cef = XMLHelper.get_value(cd, "CombinedEnergyFactor")
+    if cd_ef.nil? and cd_cef.nil?
+      cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(cd_fuel)
+    elsif not cd_ef.nil?
+      cd_ef = Float(cd_ef)
+    elsif not cd_cef.nil?
+      cd_ef = Float(cd_cef) * 1.15 # Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF
+    end
+    cd_control = XMLHelper.get_value(cd, "ControlType")
+    if cd_control.nil?
+      cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
+    end
     
     # Dishwasher
     dw = appl.elements["Dishwasher"]
@@ -2080,9 +2124,8 @@ class OSModel
     end
     
     success = HotWaterAndAppliances.apply(model, unit, runner, weather, 
-                                          cw_annual_kwh, cw_frac_sens, cw_frac_lat,
-                                          cw_gpd, cd_annual_kwh, cd_annual_therm,
-                                          cd_frac_sens, cd_frac_lat, cd_fuel_type,
+                                          cw_mef, cw_ler, cw_elec_rate, cw_gas_rate,
+                                          cw_agc, cw_cap, cd_fuel, cd_ef, cd_control,
                                           dw_ef, dw_cap, fridge_annual_kwh, cook_fuel_type,
                                           cook_is_induction, oven_is_convection,
                                           fx_gpd, fx_sens_btu, fx_lat_btu, dist_type, 
@@ -2588,14 +2631,6 @@ class OSModel
     return dse_cool
   end
   
-  def self.hpxml_to_beopt_fuel(fuel)
-    conv = {"natural gas"=>Constants.FuelTypeGas, 
-            "fuel oil"=>Constants.FuelTypeOil, 
-            "propane"=>Constants.FuelTypePropane, 
-            "electricity"=>Constants.FuelTypeElectric}
-    return conv[fuel]
-  end
-  
   def self.add_mels(runner, model, building, unit, living_space)
   
     # Misc
@@ -2968,6 +3003,13 @@ class WoodStudConstructionSet
   end
   attr_accessor(:wood_stud_material, :framing_factor, :rigid_r, :osb_thick_in, :drywall_thick_in, :exterior_material)
 
+end
+
+def hpxml_to_beopt_fuel(fuel)
+  return {"natural gas"=>Constants.FuelTypeGas, 
+          "fuel oil"=>Constants.FuelTypeOil, 
+          "propane"=>Constants.FuelTypePropane, 
+          "electricity"=>Constants.FuelTypeElectric}[fuel]
 end
 
 # register the measure to be used by the application

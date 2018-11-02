@@ -81,7 +81,7 @@ class EnergyRatingIndex301Ruleset
     
     # Appliances
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
-    set_appliances_clothes_washer_reference(new_appliances)
+    set_appliances_clothes_washer_reference(new_appliances, orig_details)
     set_appliances_clothes_dryer_reference(new_appliances, orig_details)
     set_appliances_dishwasher_reference(new_appliances, orig_details)
     set_appliances_refrigerator_reference(new_appliances, orig_details)
@@ -1876,155 +1876,87 @@ class EnergyRatingIndex301Ruleset
     
   end
   
-  def self.set_appliances_clothes_washer_reference(new_appliances)
+  def self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
   
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    clothes_washer_kwh = 38.0 + 0.0*@cfa + 10.0*@nbeds
-    clothes_washer_sens, clothes_washer_lat = get_clothes_washer_sens_lat(clothes_washer_kwh)
-    if @eri_version.include? "A"
-      clothes_washer_gpd = (4.52*(164.0 + 46.5*@nbeds))*((3.0*2.08 + 1.59)/(2.874*2.08 + 1.59))/365.0
-    else
-      clothes_washer_gpd = 0.0 # delta DHW change made to rated home
-    end
+    orig_appliances = orig_details.elements["Appliances"]
     
-    new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
-    sys_id = XMLHelper.add_element(new_clothes_washer, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "ClothesWasher")
-    extension = XMLHelper.add_element(new_clothes_washer, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", clothes_washer_kwh)
-    XMLHelper.add_element(extension, "FracSensible", clothes_washer_sens)
-    XMLHelper.add_element(extension, "FracLatent", clothes_washer_lat)
-    XMLHelper.add_element(extension, "HotWaterGPD", clothes_washer_gpd)
+    cw_mef = HotWaterAndAppliances.get_clothes_washer_reference_mef()
+    cw_ler = HotWaterAndAppliances.get_clothes_washer_reference_ler()
+    cw_elec_rate = HotWaterAndAppliances.get_clothes_washer_reference_elec_rate()
+    cw_gas_rate = HotWaterAndAppliances.get_clothes_washer_reference_gas_rate()
+    cw_agc = HotWaterAndAppliances.get_clothes_washer_reference_agc()
+    cw_cap = HotWaterAndAppliances.get_clothes_washer_reference_cap()
+    
+    new_washer = XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesWasher")
+    if new_washer.elements["ModifiedEnergyFactor"].nil? and new_washer.elements["IntegratedModifiedEnergyFactor"].nil?
+      XMLHelper.add_element(new_washer, "ModifiedEnergyFactor", cw_mef)
+    elsif not new_washer.elements["ModifiedEnergyFactor"].nil?
+      new_washer.elements["ModifiedEnergyFactor"].text = cw_mef
+    elsif not new_washer.elements["IntegratedModifiedEnergyFactor"].nil?
+      XMLHelper.add_element(new_washer, "ModifiedEnergyFactor", cw_mef)
+      XMLHelper.delete_element(new_washer, "IntegratedModifiedEnergyFactor")
+    end
+    XMLHelper.delete_element(new_washer, "RatedAnnualkWh")
+    XMLHelper.add_element(new_washer, "RatedAnnualkWh", cw_ler)
+    XMLHelper.delete_element(new_washer, "LabelElectricRate")
+    XMLHelper.add_element(new_washer, "LabelElectricRate", cw_elec_rate)
+    XMLHelper.delete_element(new_washer, "LabelGasRate")
+    XMLHelper.add_element(new_washer, "LabelGasRate", cw_gas_rate)
+    XMLHelper.delete_element(new_washer, "LabelAnnualGasCost")
+    XMLHelper.add_element(new_washer, "LabelAnnualGasCost", cw_agc)
+    XMLHelper.delete_element(new_washer, "Capacity")
+    XMLHelper.add_element(new_washer, "Capacity", cw_cap)
     
   end
   
   def self.set_appliances_clothes_washer_rated(new_appliances, orig_details)
   
-    # 4.2.2.5.2.10. Clothes Washers
-    if orig_details.elements["Appliances/ClothesWasher/ModifiedEnergyFactor"] or orig_details.elements["Appliances/ClothesWasher/IntegratedModifiedEnergyFactor"]
-      # Detailed
-      ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
-      elec_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelElectricRate"))
-      gas_rate = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelGasRate"))
-      agc = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/LabelAnnualGasCost"))
-      cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
-      
-      # Eq 4.2-9a
-      ncy = (3.0/2.847)*(164 + @nbeds*45.6)
-      if @eri_version.include? "A"
-        ncy = (3.0/2.847)*(164 + @nbeds*46.5)
-      end
-      acy = ncy*((3.0*2.08 + 1.59)/(cap*2.08 + 1.59)) #Adjusted Cycles per Year
-      clothes_washer_kwh = ((ler/392.0) - ((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*21.9825)*acy
-      clothes_washer_sens = 0.3*0.9
-      clothes_washer_lat = 0.3*0.1
-      clothes_washer_gpd = 60.0*((ler*elec_rate - agc)/(21.9825*elec_rate - gas_rate)/392.0)*acy/365.0
-      if not @eri_version.include? "A"
-        clothes_washer_gpd -= 3.97 # Section 4.2.2.5.2.10
-      end
-    else
-      # Reference
-      set_appliances_clothes_washer_reference(new_appliances)
+    if orig_details.elements["Appliances/ClothesWasher/ModifiedEnergyFactor"].nil? and orig_details.elements["Appliances/ClothesWasher/IntegratedModifiedEnergyFactor"].nil?
+      self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
       return
     end
-    
-    new_clothes_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
-    sys_id = XMLHelper.add_element(new_clothes_washer, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "ClothesWasher")
-    extension = XMLHelper.add_element(new_clothes_washer, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", clothes_washer_kwh)
-    XMLHelper.add_element(extension, "FracSensible", clothes_washer_sens)
-    XMLHelper.add_element(extension, "FracLatent", clothes_washer_lat)
-    XMLHelper.add_element(extension, "HotWaterGPD", clothes_washer_gpd)
+
+    orig_appliances = orig_details.elements["Appliances"]
+    XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesWasher")
 
   end
   
   def self.set_appliances_clothes_washer_iad(new_appliances, orig_details)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_clothes_washer_reference(new_appliances)
+    self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
   end
 
   def self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
     
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    # Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
-    dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
-    clothes_dryer_kwh = 524.0 + 0.0*@cfa + 149.0*@nbeds
-    clothes_dryer_therm = 0.0
-    if dryer_fuel != 'electricity'
-      clothes_dryer_kwh = 41.0 + 0.0*@cfa + 11.7*@nbeds
-      clothes_dryer_therm = 18.8 + 0.0*@cfa + 5.3*@nbeds
-    end
-    clothes_dryer_sens, clothes_dryer_lat = get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
+    orig_appliances = orig_details.elements["Appliances"]
     
-    new_clothes_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
-    sys_id = XMLHelper.add_element(new_clothes_dryer, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "ClothesDryer")
-    XMLHelper.add_element(new_clothes_dryer, "FuelType", dryer_fuel)
-    extension = XMLHelper.add_element(new_clothes_dryer, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", clothes_dryer_kwh)
-    XMLHelper.add_element(extension, "AnnualTherm", clothes_dryer_therm)
-    XMLHelper.add_element(extension, "FracSensible", clothes_dryer_sens)
-    XMLHelper.add_element(extension, "FracLatent", clothes_dryer_lat)
+    cd_fuel = XMLHelper.get_value(orig_appliances, "ClothesDryer/FuelType")
+    cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(to_beopt_fuel(cd_fuel))
+    cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
+    
+    new_dryer = XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesDryer")
+    if new_dryer.elements["EnergyFactor"].nil? and new_dryer.elements["CombinedEnergyFactor"].nil?
+      XMLHelper.add_element(new_dryer, "EnergyFactor", cd_ef)
+    elsif not new_dryer.elements["EnergyFactor"].nil?
+      new_dryer.elements["EnergyFactor"].text = cd_ef
+    elsif not new_dryer.elements["CombinedEnergyFactor"].nil?
+      XMLHelper.add_element(new_dryer, "EnergyFactor", cd_ef)
+      XMLHelper.delete_element(new_dryer, "CombinedEnergyFactor")
+    end
+    XMLHelper.delete_element(new_dryer, "ControlType")
+    XMLHelper.add_element(new_dryer, "ControlType", cd_control)
     
   end
   
   def self.set_appliances_clothes_dryer_rated(new_appliances, orig_details)
   
-    # 4.2.2.5.2.8. Clothes Dryers
-    dryer_fuel = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/FuelType")
-    if orig_details.elements["Appliances/ClothesDryer/EnergyFactor"] or orig_details.elements["Appliances/ClothesDryer/CombinedEnergyFactor"]
-      # Detailed
-      ef_dry = XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/EnergyFactor")
-      if not ef_dry.nil?
-        ef_dry = Float(ef_dry)
-      else
-        # Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF
-        cef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/CombinedEnergyFactor"))
-        ef_dry = cef * 1.15
-      end
-      
-      ler = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/RatedAnnualkWh"))
-      cap = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/Capacity"))
-      mef = XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/ModifiedEnergyFactor")
-      if not mef.nil?
-        mef = Float(mef)
-      else
-        # Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF
-        imef = Float(XMLHelper.get_value(orig_details, "Appliances/ClothesWasher/IntegratedModifiedEnergyFactor"))
-        mef = 0.503 + 0.95 * imef
-      end
-      
-      # Eq 4.2-6 (FU)
-      field_util_factor = nil
-      if XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/ControlType") == 'timer'
-        field_util_factor = 1.18
-      elsif XMLHelper.get_value(orig_details, "Appliances/ClothesDryer/ControlType") == 'moisture'
-        field_util_factor = 1.04
-      end
-      clothes_dryer_kwh = 12.5*(164.0 + 46.5*@nbeds)*(field_util_factor/ef_dry)*((cap/mef) - ler/392.0)/(0.2184*(cap*4.08 + 0.24)) # Eq 4.2-6
-      clothes_dryer_therm = 0.0
-      if dryer_fuel != 'electricity'
-        clothes_dryer_therm = clothes_dryer_kwh*3412.0*(1.0-0.07)*(3.01/ef_dry)/100000 # Eq 4.2-7a
-        clothes_dryer_kwh = clothes_dryer_kwh*0.07*(3.01/ef_dry)
-      end
-      clothes_dryer_sens = 0.15*0.9
-      clothes_dryer_lat = 0.15*0.1
-    else
-      # Reference
-      set_appliances_clothes_dryer_reference(new_appliances, orig_details)
+    if orig_details.elements["Appliances/ClothesDryer/EnergyFactor"].nil? and orig_details.elements["Appliances/ClothesDryer/CombinedEnergyFactor"].nil?
+      self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
       return
     end
-    
-    new_clothes_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
-    sys_id = XMLHelper.add_element(new_clothes_dryer, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "ClothesDryer")
-    XMLHelper.add_element(new_clothes_dryer, "FuelType", dryer_fuel)
-    extension = XMLHelper.add_element(new_clothes_dryer, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", clothes_dryer_kwh)
-    XMLHelper.add_element(extension, "AnnualTherm", clothes_dryer_therm)
-    XMLHelper.add_element(extension, "FracSensible", clothes_dryer_sens)
-    XMLHelper.add_element(extension, "FracLatent", clothes_dryer_lat)
+
+    orig_appliances = orig_details.elements["Appliances"]
+    XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesDryer")
 
   end
   
@@ -2049,11 +1981,8 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_dishwasher, "EnergyFactor", dw_ef)
       XMLHelper.delete_element(new_dishwasher, "RatedAnnualkWh")
     end
-    if new_dishwasher.elements["PlaceSettingCapacity"].nil?
-      XMLHelper.add_element(new_dishwasher, "PlaceSettingCapacity", Integer(dw_cap))
-    else
-      new_dishwasher.elements["PlaceSettingCapacity"].text = Integer(dw_cap)
-    end
+    XMLHelper.delete_element(new_dishwasher, "PlaceSettingCapacity")
+    XMLHelper.add_element(new_dishwasher, "PlaceSettingCapacity", Integer(dw_cap))
     
   end
   
@@ -2457,28 +2386,6 @@ class EnergyRatingIndex301Ruleset
     return mw_gpd
   end
   
-  def self.get_clothes_washer_sens_lat(clothes_washer_kwh)
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
-    load_sens = 95.0 + 26.0*@nbeds # Btu/day
-    load_lat = 11.0 + 3.0*@nbeds # Btu/day
-    total = UnitConversions.convert(clothes_washer_kwh, "kWh", "Btu")/365.0 # Btu/day
-    return load_sens/total, load_lat/total
-  end
-  
-  def self.get_clothes_dryer_sens_lat(dryer_fuel, clothes_dryer_kwh, clothes_dryer_therm)
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
-    if dryer_fuel != 'electricity'
-      load_sens = 738.0 + 209.0*@nbeds # Btu/day
-      load_lat = 91.0 + 26.0*@nbeds # Btu/day
-    else
-      load_sens = 661.0 + 188.0*@nbeds # Btu/day
-      load_lat = 73.0 + 21.0*@nbeds # Btu/day
-    end
-    total = UnitConversions.convert(clothes_dryer_kwh, "kWh", "Btu")/365.0  # Btu/day
-    total += UnitConversions.convert(clothes_dryer_therm, "therm", "Btu")/365.0 # Btu/day
-    return load_sens/total, load_lat/total
-  end
-  
   def self.get_residual_mels_kwh()
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
     return 0.91*@cfa
@@ -2695,6 +2602,7 @@ class EnergyRatingIndex301Ruleset
     return 0.5
   end
   
+  # TODO: Duplicate method in HPXMLTranslator
   def self.to_beopt_fuel(fuel)
     conv = {"natural gas"=>Constants.FuelTypeGas, 
             "fuel oil"=>Constants.FuelTypeOil, 
