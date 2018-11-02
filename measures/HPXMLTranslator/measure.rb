@@ -1985,6 +1985,9 @@ class OSModel
   
   def self.add_hot_water_and_appliances(runner, model, building, unit, weather)
   
+    cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    
     wh = building.elements["BuildingDetails/Systems/WaterHeating"]
     appl = building.elements["BuildingDetails/Appliances"]
     
@@ -2012,7 +2015,12 @@ class OSModel
   
     # Refrigerator
     fridge = appl.elements["Refrigerator"]
-    fridge_annual_kwh = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
+    fridge_annual_kwh = XMLHelper.get_value(fridge, "RatedAnnualkWh")
+    if fridge_annual_kwh.nil?
+      fridge_annual_kwh = 637.0 + 18.0*nbeds
+    else
+      fridge_annual_kwh = Float(fridge_annual_kwh)
+    end
     
     # Cooking Range/Oven
     cook = appl.elements["CookingRange"]

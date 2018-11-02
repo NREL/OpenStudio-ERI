@@ -990,7 +990,7 @@ class Waterheater
         add_electric_equipment(model, fridge_name, fridge_space, fridge_design_level, 1.0, 0.0, fridge_schedule.schedule)
         
         # Cooking Range
-        cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = self.calculate_cooking_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
+        cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = self.calc_eri_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
         cook_name_e = Constants.ObjectNameCookingRange(Constants.FuelTypeElectric, unit.name.to_s)
         cook_name_f = Constants.ObjectNameCookingRange(Constants.FuelTypeGas, unit.name.to_s)
         cook_weekday_sch = "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011"
@@ -1030,7 +1030,7 @@ class Waterheater
         return true
     end
     
-    def self.calculate_cooking_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
+    def self.calc_eri_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
         if cook_is_induction
           burner_ef = 0.91
         else

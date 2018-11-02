@@ -81,7 +81,7 @@ class EnergyRatingIndex301Ruleset
     set_appliances_clothes_washer_reference(new_appliances)
     set_appliances_clothes_dryer_reference(new_appliances, orig_details)
     set_appliances_dishwasher_reference(new_appliances)
-    set_appliances_refrigerator_reference(new_appliances)
+    set_appliances_refrigerator_reference(new_appliances, orig_details)
     set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
     
     # Lighting
@@ -2097,60 +2097,60 @@ class EnergyRatingIndex301Ruleset
     self.set_appliances_dishwasher_reference(new_appliances)
   end
 
-  def self.set_appliances_refrigerator_reference(new_appliances)
+  def self.set_appliances_refrigerator_reference(new_appliances, orig_details)
 
+    orig_appliances = orig_details.elements["Appliances"]
+  
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
     refrigerator_kwh = 637.0 + 0.0*@cfa + 18.0*@nbeds
-
-    new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
-    sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
-    XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
-    extension = XMLHelper.add_element(new_fridge, "extension")
-    XMLHelper.add_element(extension, "FracSensible", 1.0)
-    XMLHelper.add_element(extension, "FracLatent", 0.0)
+    
+    new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
+    if new_fridge.elements["RatedAnnualkWh"].nil?
+      XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
+    else
+      new_fridge.elements["RatedAnnualkWh"].text = refrigerator_kwh
+    end
     
   end
   
   def self.set_appliances_refrigerator_rated(new_appliances, orig_details)
 
-    # 4.2.2.5.2.5. Refrigerators
-    if orig_details.elements["Appliances/Refrigerator/RatedAnnualkWh"]
-      # Detailed
-      refrigerator_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Refrigerator/RatedAnnualkWh"))
-    else
-      # Reference
-      set_appliances_refrigerator_reference(new_appliances)
-      return
+    orig_appliances = orig_details.elements["Appliances"]
+  
+    new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
+    if new_fridge.elements["RatedAnnualkWh"].nil?
+      # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+      refrigerator_kwh = 637.0 + 0.0*@cfa + 18.0*@nbeds
+      XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
     end
-    
-    new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
-    sys_id = XMLHelper.add_element(new_fridge, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Refrigerator")
-    XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
     
   end
   
   def self.set_appliances_refrigerator_iad(new_appliances, orig_details)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_refrigerator_reference(new_appliances)
+    self.set_appliances_refrigerator_reference(new_appliances, orig_details)
   end
 
   def self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
     
-    orig_cooking_range = orig_details.elements["Appliances/CookingRange"]
-    orig_oven = orig_details.elements["Appliances/Oven"]
+    orig_appliances = orig_details.elements["Appliances"]
     
-    new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")
-    sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "CookingRange")
-    XMLHelper.copy_element(new_cooking_range, orig_cooking_range, "FuelType")
-    XMLHelper.add_element(new_cooking_range, "IsInduction", false)
+    is_induction = false
+    is_convection = false
+  
+    new_cooking_range = XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
+    if new_cooking_range.elements["IsInduction"].nil?
+      XMLHelper.add_element(new_cooking_range, "IsInduction", is_induction)
+    else
+      new_cooking_range.elements["IsInduction"].text = is_induction
+    end
     
-    new_oven = XMLHelper.add_element(new_appliances, "Oven")
-    sys_id = XMLHelper.add_element(new_oven, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Oven")
-    XMLHelper.add_element(new_oven, "IsConvection", false)
+    new_oven = XMLHelper.copy_element(new_appliances, orig_appliances, "Oven")
+    if new_oven.elements["IsConvection"].nil?
+      XMLHelper.add_element(new_oven, "IsConvection", is_convection)
+    else
+      new_oven.elements["IsConvection"].text = is_convection
+    end
     
   end
   

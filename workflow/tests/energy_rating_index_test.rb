@@ -610,23 +610,25 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       cook_fuel_type = hpxml_to_beopt_fuel[XMLHelper.get_value(appl, "FuelType")]
       cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
       oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
-      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = Waterheater.calculate_cooking_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
+      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = Waterheater.calc_eri_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
       btu = UnitConversions.convert(cook_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cook_annual_therm, "therm", "Btu")
       xml_appl_sens += (cook_frac_sens * btu)
       xml_appl_lat += (cook_frac_lat * btu)
     end
     
-    # Appliances: ClothesWasher, ClothesDryer, Dishwasher, Refrigerator
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher | /HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
+    # Appliances: Refrigerator
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
+      btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu")
+      xml_appl_sens += btu
+    end
+    
+    # Appliances: ClothesWasher, ClothesDryer, Dishwasher
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher") do |appl|
       frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
-      if appl.elements["RatedAnnualkWh"]
-        btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu")
-      else
-        btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualkWh")), "kWh", "Btu")
-        if appl.elements["extension/AnnualTherm"]
-          btu += UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualTherm")), "therm", "Btu")
-        end
+      btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualkWh")), "kWh", "Btu")
+      if appl.elements["extension/AnnualTherm"]
+        btu += UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualTherm")), "therm", "Btu")
       end
       xml_appl_sens += (frac_sens * btu)
       xml_appl_lat += (frac_lat * btu)

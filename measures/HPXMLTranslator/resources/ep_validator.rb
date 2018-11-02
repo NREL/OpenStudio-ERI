@@ -636,7 +636,7 @@ class EnergyPlusValidator
         # [Refrigerator]
         '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'RatedAnnualkWh' => zero_or_one,
+            'RatedAnnualkWh' => zero_or_one, # Uses Reference Home if not provided
         },
         
         
