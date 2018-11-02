@@ -33,10 +33,10 @@ task :generate_sample_outputs do
   command = "\"#{cli_path}\" --no-ssl energy_rating_index.rb -x sample_files/valid.xml"
   system(command)
   
-  dirs = ["HERSRatedHome", 
-          "HERSReferenceHome", 
-          "HERSIndexAdjustmentDesign", 
-          "HERSIndexAdjustmentReferenceHome", 
+  dirs = ["ERIRatedHome", 
+          "ERIReferenceHome", 
+          "ERIIndexAdjustmentDesign", 
+          "ERIIndexAdjustmentReferenceHome", 
           "results"]
   dirs.each do |dir|
     FileUtils.copy_entry dir, "sample_results/#{dir}"

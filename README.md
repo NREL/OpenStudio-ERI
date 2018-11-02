@@ -39,7 +39,7 @@ There are additional ways that software developers using this workflow can reduc
 ## Outputs
 
 Upon completion, multiple outputs are currently available:
-* ERI_Results.csv and ERI_Worksheet.csv files (that mirror the [HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
+* ERI_Results.csv and ERI_Worksheet.csv files (that mirror the [RESNET HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
 * Reference/Rated/IndexAdjustment Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
 * Summary annual energy consumption by fuel type and/or end use
 * EnergyPlus input/output files
@@ -56,7 +56,7 @@ Continuous integration tests are automatically run for any change to this reposi
 
 Tests can be run locally as follows. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
 ```openstudio tests/energy_rating_index_test.rb``` (all tests)  
-```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (HERS Method tests only)
+```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
 
 At the completion of the test, there will be output that denotes the number of failures/errors like so:  
 ```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  

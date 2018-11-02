@@ -2122,7 +2122,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_misc_loads_reference(new_misc_loads)
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric Reference Homes
     
     # Residual MELs
     residual_mels_kwh = get_residual_mels_kwh()
@@ -2195,7 +2195,7 @@ class EnergyRatingIndex301Ruleset
   private
 
   def self.get_reference_component_characteristics(component_type)
-    # Table 4.2.2(2) - Component Heat Transfer Characteristics for HERS Reference Home
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
     if component_type == "window" or component_type == "door"
       # Fenestration and Opaque Door U-Factor
       # Glazed Fenestration Assembly SHGC
@@ -2354,12 +2354,12 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_residual_mels_kwh()
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric Reference Homes
     return 0.91*@cfa
   end
   
   def self.get_residual_mels_sens_lat(residual_mels_kwh)
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    # Table 4.2.2(3). Internal Gains for Reference Homes
     load_sens = 7.27*@cfa # Btu/day
     load_lat = 0.38*@cfa # Btu/day
     total = UnitConversions.convert(residual_mels_kwh, "kWh", "Btu")/365.0 # Btu/day
@@ -2367,12 +2367,12 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_televisions_kwh()
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric Reference Homes
     return 413.0 + 0.0*@cfa + 69.0*@nbeds
   end
   
   def self.get_televisions_sens_lat(televisions_kwh)
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    # Table 4.2.2(3). Internal Gains for Reference Homes
     load_sens = 3861.0 + 645.0*@nbeds # Btu/day
     load_lat = 0.0 # Btu/day
     total = UnitConversions.convert(televisions_kwh, "kWh", "Btu")/365.0 # Btu/day
@@ -2539,7 +2539,7 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_general_water_use_gains_sens_lat()
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
+    # Table 4.2.2(3). Internal Gains for Reference Homes
     sens_gains = -1227.0 - 409.0*@nbeds # Btu/day
     lat_gains = 1245.0 + 415.0*@nbeds # Btu/day
     return sens_gains*365.0, lat_gains*365.0
