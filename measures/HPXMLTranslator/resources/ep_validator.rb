@@ -43,6 +43,8 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume' => one,
@@ -643,11 +645,13 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
-            'extension/AnnualkWh' => one,
-            'extension/AnnualTherm' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            'IsInduction' => zero_or_one, # Uses Reference Home if not provided; otherwise see [CRType=UserSpecified]
         },
+        
+            ## [CRType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]' => {
+                '../Oven/IsConvection' => one,
+            },
         
         
         

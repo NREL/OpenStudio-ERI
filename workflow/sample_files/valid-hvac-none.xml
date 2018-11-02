@@ -293,7 +293,6 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>electricity</FuelType>
           <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>

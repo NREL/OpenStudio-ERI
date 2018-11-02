@@ -37,7 +37,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
 
   # human readable description of modeling approach
   def modeler_description
-    return "TODO"
+    return ""
   end
 
   # define the arguments that the user will input
@@ -387,19 +387,8 @@ class OSModel
   
   def self.add_geometry_envelope(runner, model, building, weather)
   
-    # FIXME - Check cooling_season
     heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
-    if heating_season.nil? or cooling_season.nil?
-      return false
-    end
-    
-    # FIXME
-    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
-    if avg_ceil_hgt.nil?
-      avg_ceil_hgt = 8.0
-    else
-      avg_ceil_hgt = Float(avg_ceil_hgt.text)
-    end
+    return false if heating_season.nil? or cooling_season.nil?
     
     spaces = create_all_spaces_and_zones(model, building)
     return false if spaces.empty?
@@ -421,13 +410,13 @@ class OSModel
     success = add_foundations(runner, model, building, spaces, fenestration_areas, unit) # TODO: Don't need to pass unit once slab hvac sizing is updated
     return false if not success
     
-    success = add_walls(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+    success = add_walls(runner, model, building, spaces, fenestration_areas)
     return false if not success
     
     success = add_rim_joists(runner, model, building, spaces)
     return false if not success
     
-    success = add_attics(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+    success = add_attics(runner, model, building, spaces, fenestration_areas)
     return false if not success
     
     success = add_finished_floor_area(runner, model, building, spaces)
@@ -517,7 +506,7 @@ class OSModel
   
   def self.explode_surfaces(runner, model)
     # Re-position surfaces so as to not shade each other. 
-    # TODO: Might be able to use the new self-shading options in E+ 8.9 ShadowCalculation object
+    # FUTURE: Might be able to use the new self-shading options in E+ 8.9 ShadowCalculation object?
   
     # Explode the walls
     wall_offset = 10.0
@@ -753,25 +742,11 @@ class OSModel
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(1)    
     
-    # Store number of stories TODO: Review this
-    num_floors = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
-    if num_floors.nil?
-      num_floors = 1
-    else
-      num_floors = num_floors.text.to_i
-    end    
-    
-    if (REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cape cod'])")) > 0
-      num_floors += 1
-    end
-    model.getBuilding.setStandardsNumberOfAboveGroundStories(num_floors)
-    model.getSpaces.each do |space|
-      if space.name.to_s == Constants.SpaceTypeFinishedBasement
-        num_floors += 1  
-        break
-      end
-    end
-    model.getBuilding.setStandardsNumberOfStories(num_floors)
+    # Store number of stories
+    num_stories = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    model.getBuilding.setStandardsNumberOfStories(num_stories)
+    num_stories_above_grade = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
+    model.getBuilding.setStandardsNumberOfAboveGroundStories(num_stories_above_grade)
     
     # Store info for HVAC Sizing measure
     if Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
@@ -1218,7 +1193,7 @@ class OSModel
     return true
   end
   
-  def self.add_walls(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+  def self.add_walls(runner, model, building, spaces, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
@@ -1232,7 +1207,7 @@ class OSModel
       if wall_net_area <= 0
         fail "Calculated a negative net surface area for Wall '#{wall_id}'."
       end
-      wall_height = avg_ceil_hgt
+      wall_height = 8.0
       wall_length = wall_net_area / wall_height
       z_origin = 0
 
@@ -1406,7 +1381,7 @@ class OSModel
     
   end
   
-  def self.add_attics(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+  def self.add_attics(runner, model, building, spaces, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -1567,7 +1542,7 @@ class OSModel
         if wall_net_area <= 0
           fail "Calculated a negative net surface area for Wall '#{wall_id}'."
         end
-        wall_height = avg_ceil_hgt
+        wall_height = 8.0
         wall_length = wall_net_area / wall_height
         z_origin = 0
 
@@ -1957,7 +1932,7 @@ class OSModel
       capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity")) / 1000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tank(model, unit, runner, space, hpxml_to_beopt_fuel(fuel), 
                                        capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
                                        oncycle_power, offcycle_power, ec_adj)
       return false if not success
@@ -1969,7 +1944,7 @@ class OSModel
       capacity_kbtuh = 100000000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tankless(model, unit, runner, space, to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tankless(model, unit, runner, space, hpxml_to_beopt_fuel(fuel), 
                                            capacity_kbtuh, ef, ef_adj,
                                            setpoint_temp, oncycle_power, offcycle_power, ec_adj)
       return false if not success
@@ -2026,7 +2001,7 @@ class OSModel
     cd_annual_therm = Float(XMLHelper.get_value(cd, "extension/AnnualTherm"))
     cd_frac_sens = Float(XMLHelper.get_value(cd, "extension/FracSensible"))
     cd_frac_lat = Float(XMLHelper.get_value(cd, "extension/FracLatent"))
-    cd_fuel_type = to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
+    cd_fuel_type = hpxml_to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
     
     # Dishwasher
     dw = appl.elements["Dishwasher"]
@@ -2039,13 +2014,22 @@ class OSModel
     fridge = appl.elements["Refrigerator"]
     fridge_annual_kwh = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
     
-    # Cooking Range
+    # Cooking Range/Oven
     cook = appl.elements["CookingRange"]
-    cook_annual_kwh = Float(XMLHelper.get_value(cook, "extension/AnnualkWh"))
-    cook_annual_therm = Float(XMLHelper.get_value(cook, "extension/AnnualTherm"))
-    cook_frac_sens = Float(XMLHelper.get_value(cook, "extension/FracSensible"))
-    cook_frac_lat = Float(XMLHelper.get_value(cook, "extension/FracLatent"))
-    cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(cook, "FuelType"))
+    oven = appl.elements["Oven"]
+    cook_fuel_type = hpxml_to_beopt_fuel(XMLHelper.get_value(cook, "FuelType"))
+    cook_is_induction = XMLHelper.get_value(cook, "IsInduction")
+    if cook_is_induction.nil?
+      cook_is_induction = false
+    else
+      cook_is_induction = Boolean(cook_is_induction)
+    end
+    oven_is_convection = XMLHelper.get_value(oven, "IsConvection")
+    if oven_is_convection.nil?
+      oven_is_convection = false
+    else
+      oven_is_convection = Boolean(oven_is_convection)
+    end
     
     # Fixtures
     fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
@@ -2077,9 +2061,8 @@ class OSModel
                                             cw_gpd, cd_annual_kwh, cd_annual_therm,
                                             cd_frac_sens, cd_frac_lat, cd_fuel_type,
                                             dw_annual_kwh, dw_frac_sens, dw_frac_lat,
-                                            dw_gpd, fridge_annual_kwh, cook_annual_kwh,
-                                            cook_annual_therm, cook_frac_sens, 
-                                            cook_frac_lat, cook_fuel_type, fx_gpd,
+                                            dw_gpd, fridge_annual_kwh, cook_fuel_type,
+                                            cook_is_induction, oven_is_convection, fx_gpd,
                                             fx_sens_btu, fx_lat_btu, dist_type, 
                                             dist_gpd, dist_pump_annual_kwh, 
                                             daily_wh_inlet_temperatures, daily_mw_fractions)
@@ -2197,7 +2180,7 @@ class OSModel
     
     return true if htgsys.nil?
     
-    fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
+    fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
     
     heat_capacity_btuh = Float(XMLHelper.get_value(htgsys, "HeatingCapacity"))
     if heat_capacity_btuh <= 0.0
@@ -2483,8 +2466,6 @@ class OSModel
     control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
     controltype = XMLHelper.get_value(control, "ControlType")
     
-    # TODO: Setbacks and setups
-  
     htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
     if controltype == "manual thermostat"
       htg_weekday_setpoints = [htg_sp]*24
@@ -2496,7 +2477,6 @@ class OSModel
       for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
         htg_weekday_setpoints[hr % 24] = setback_temp
       end
-      puts "htg_weekday_setpoints #{htg_weekday_setpoints}"
     end
     htg_weekend_setpoints = htg_weekday_setpoints
     htg_use_auto_season = false
@@ -2517,7 +2497,6 @@ class OSModel
       for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
         clg_weekday_setpoints[hr % 24] = setup_temp
       end
-      puts "clg_weekday_setpoints #{clg_weekday_setpoints}"
     end
     clg_weekend_setpoints = clg_weekday_setpoints
     clg_use_auto_season = false
@@ -2586,7 +2565,7 @@ class OSModel
     return dse_cool
   end
   
-  def self.to_beopt_fuel(fuel)
+  def self.hpxml_to_beopt_fuel(fuel)
     conv = {"natural gas"=>Constants.FuelTypeGas, 
             "fuel oil"=>Constants.FuelTypeOil, 
             "propane"=>Constants.FuelTypePropane, 
@@ -2838,7 +2817,7 @@ class OSModel
     has_boiler = XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
     return true if not (has_furnace or has_wall_furnace or has_stove or has_boiler)
     
-    fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
+    fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
     return true if fuel == Constants.FuelTypeElectric
     
     fuel_eae = XMLHelper.get_value(htgsys, "ElectricAuxiliaryEnergy")

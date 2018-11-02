@@ -610,7 +610,6 @@ class EnergyRatingIndex301Validator
         
             ## [CRType=UserSpecified]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]' => {
-                '../Oven/FuelType' => one,
                 '../Oven/IsConvection' => one,
             },
         

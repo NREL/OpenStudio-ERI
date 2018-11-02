@@ -2137,90 +2137,36 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    # Table 4.2.2.5(2) Natural Gas Appliance Loads for HERS Reference Homes with gas appliances
     
-    # TODO: How to handle different fuel types for CookingRange vs Oven?
-    range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
-    oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
-    
-    if range_fuel != 'electricity' or oven_fuel != 'electricity'
-      cooking_range_kwh = 22.6 + 0.0*@cfa + 2.7*@nbeds
-      cooking_range_therm = 22.6 + 0.0*@cfa + 2.7*@nbeds
-    else
-      cooking_range_kwh = 331.0 + 0.0*@cfa + 39.0*@nbeds
-      cooking_range_therm = 0.0
-    end
-    cooking_range_sens, cooking_range_lat = get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
+    orig_cooking_range = orig_details.elements["Appliances/CookingRange"]
+    orig_oven = orig_details.elements["Appliances/Oven"]
     
     new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")
     sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "CookingRange")
-    XMLHelper.add_element(new_cooking_range, "FuelType", range_fuel)
-    extension = XMLHelper.add_element(new_cooking_range, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", cooking_range_kwh)
-    XMLHelper.add_element(extension, "AnnualTherm", cooking_range_therm)
-    XMLHelper.add_element(extension, "FracSensible", cooking_range_sens)
-    XMLHelper.add_element(extension, "FracLatent", cooking_range_lat)
+    XMLHelper.copy_element(new_cooking_range, orig_cooking_range, "FuelType")
+    XMLHelper.add_element(new_cooking_range, "IsInduction", false)
     
-    new_cooking_range = XMLHelper.add_element(new_appliances, "Oven")
-    sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
+    new_oven = XMLHelper.add_element(new_appliances, "Oven")
+    sys_id = XMLHelper.add_element(new_oven, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "Oven")
-    XMLHelper.add_element(new_cooking_range, "FuelType", oven_fuel)
+    XMLHelper.add_element(new_oven, "IsConvection", false)
     
   end
   
   def self.set_appliances_cooking_range_oven_rated(new_appliances, orig_details)
 
-    # 4.2.2.5.2.7 Range/Oven
-    range_fuel = XMLHelper.get_value(orig_details, "Appliances/CookingRange/FuelType")
-    oven_fuel = XMLHelper.get_value(orig_details, "Appliances/Oven/FuelType")
-    if orig_details.elements["Appliances/CookingRange/IsInduction"]
-      # Detailed
-      range_is_induction = Boolean(XMLHelper.get_value(orig_details, "Appliances/CookingRange/IsInduction"))
-      oven_is_convection = Boolean(XMLHelper.get_value(orig_details, "Appliances/Oven/IsConvection"))
-      
-      burner_ef = 1.0
-      if range_is_induction
-        burner_ef = 0.91
-      end
-      
-      oven_ef = 1.0
-      if oven_is_convection
-        oven_ef = 0.95
-      end
-      
-      if range_fuel != 'electricity' or oven_fuel != 'electricity'
-        cooking_range_kwh = 22.6 + 2.7*@nbeds
-        cooking_range_therm = oven_ef*(22.6 + 2.7*@nbeds)
-        cooking_range_sens = 0.8*0.8
-        cooking_range_lat = 0.8*0.2
-      else
-        cooking_range_kwh = burner_ef*oven_ef*(331 + 39.0*@nbeds)
-        cooking_range_therm = 0.0
-        cooking_range_sens = 0.8*0.9
-        cooking_range_lat = 0.8*0.1
-      end
-    else
-      # Reference
-      set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
-      return
+    orig_appliances = orig_details.elements["Appliances"]
+  
+    new_cooking_range = XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
+    if new_cooking_range.elements["IsInduction"].nil?
+      XMLHelper.add_element(new_cooking_range, "IsInduction", false)
     end
     
-    new_cooking_range = XMLHelper.add_element(new_appliances, "CookingRange")
-    sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "CookingRange")
-    XMLHelper.add_element(new_cooking_range, "FuelType", range_fuel)
-    extension = XMLHelper.add_element(new_cooking_range, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", cooking_range_kwh)
-    XMLHelper.add_element(extension, "AnnualTherm", cooking_range_therm)
-    XMLHelper.add_element(extension, "FracSensible", cooking_range_sens)
-    XMLHelper.add_element(extension, "FracLatent", cooking_range_lat)
-    
-    new_cooking_range = XMLHelper.add_element(new_appliances, "Oven")
-    sys_id = XMLHelper.add_element(new_cooking_range, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Oven")
-    XMLHelper.add_element(new_cooking_range, "FuelType", oven_fuel)
+    new_oven = XMLHelper.copy_element(new_appliances, orig_appliances, "Oven")
+    if new_oven.elements["IsConvection"].nil?
+      XMLHelper.add_element(new_oven, "IsConvection", false)
+    end
 
   end
   
@@ -2565,20 +2511,6 @@ class EnergyRatingIndex301Ruleset
     load_sens = 219.0 + 87.0*@nbeds # Btu/day
     load_lat = 219.0 + 87.0*@nbeds # Btu/day
     total = UnitConversions.convert(dishwasher_kwh, "kWh", "Btu")/365.0
-    return load_sens/total, load_lat/total
-  end
-  
-  def self.get_cooking_range_sens_lat(range_fuel, oven_fuel, cooking_range_kwh, cooking_range_therm)
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
-    if range_fuel != 'electricity' or oven_fuel != 'electricity'
-      load_sens = 4086.0 + 488.0*@nbeds # Btu/day
-      load_lat = 1037.0 + 124.0*@nbeds # Btu/day
-    else
-      load_sens = 2228.0 + 262.0*@nbeds # Btu/day
-      load_lat = 248.0 + 29.0*@nbeds # Btu/day
-    end
-    total = UnitConversions.convert(cooking_range_kwh, "kWh", "Btu")/365.0 # Btu/day
-    total += UnitConversions.convert(cooking_range_therm, "therm", "Btu")/365.0 # Btu/day
     return load_sens/total, load_lat/total
   end
   

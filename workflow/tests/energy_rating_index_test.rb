@@ -6,6 +6,7 @@ require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
 require_relative '../../measures/HPXMLTranslator/resources/schedules'
 require_relative '../../measures/HPXMLTranslator/resources/constants'
 require_relative '../../measures/HPXMLTranslator/resources/unit_conversions'
+require_relative '../../measures/HPXMLTranslator/resources/waterheater'
 
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
@@ -582,6 +583,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def _get_internal_gains(hpxml_doc)
   
     s = ""
+    nbeds = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
   
     # Plug loads
     xml_pl_sens = 0.0
@@ -595,10 +597,27 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
     s += "#{xml_pl_sens} #{xml_pl_lat}\n"
     
-    # Range, ClothesWasher, ClothesDryer, Dishwasher, Refrigerator
     xml_appl_sens = 0.0
     xml_appl_lat = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange | /HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher | /HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
+    
+    hpxml_to_beopt_fuel = {"natural gas"=>Constants.FuelTypeGas, 
+                           "fuel oil"=>Constants.FuelTypeOil, 
+                           "propane"=>Constants.FuelTypePropane, 
+                           "electricity"=>Constants.FuelTypeElectric}
+            
+    # Appliances: CookingRange
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange") do |appl|
+      cook_fuel_type = hpxml_to_beopt_fuel[XMLHelper.get_value(appl, "FuelType")]
+      cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
+      oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
+      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = Waterheater.calculate_cooking_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
+      btu = UnitConversions.convert(cook_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cook_annual_therm, "therm", "Btu")
+      xml_appl_sens += (cook_frac_sens * btu)
+      xml_appl_lat += (cook_frac_lat * btu)
+    end
+    
+    # Appliances: ClothesWasher, ClothesDryer, Dishwasher, Refrigerator
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher | /HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
       frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
       if appl.elements["RatedAnnualkWh"]

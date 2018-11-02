@@ -325,7 +325,6 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>electricity</FuelType>
         </Oven>
       </Appliances>
       <Lighting/>

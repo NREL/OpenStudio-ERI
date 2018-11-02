@@ -861,9 +861,8 @@ class Waterheater
                                cw_gpd, cd_annual_kwh, cd_annual_therm,
                                cd_frac_sens, cd_frac_lat, cd_fuel_type,
                                dw_annual_kwh, dw_frac_sens, dw_frac_lat,
-                               dw_gpd, fridge_annual_kwh, cook_annual_kwh,
-                               cook_annual_therm, cook_frac_sens, 
-                               cook_frac_lat, cook_fuel_type, fx_gpd,
+                               dw_gpd, fridge_annual_kwh, cook_fuel_type,
+                               cook_is_induction, oven_is_convection, fx_gpd,
                                fx_sens_btu, fx_lat_btu, dist_type, 
                                dist_gpd, dist_pump_annual_kwh, 
                                daily_wh_inlet_temperatures, daily_mw_fractions)
@@ -991,6 +990,7 @@ class Waterheater
         add_electric_equipment(model, fridge_name, fridge_space, fridge_design_level, 1.0, 0.0, fridge_schedule.schedule)
         
         # Cooking Range
+        cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = self.calculate_cooking_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
         cook_name_e = Constants.ObjectNameCookingRange(Constants.FuelTypeElectric, unit.name.to_s)
         cook_name_f = Constants.ObjectNameCookingRange(Constants.FuelTypeGas, unit.name.to_s)
         cook_weekday_sch = "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011"
@@ -1028,6 +1028,37 @@ class Waterheater
         add_electric_equipment(model, dist_pump_obj_name, dist_pump_space, dist_pump_design_level, 0.0, 0.0, dist_pump_schedule.schedule)
           
         return true
+    end
+    
+    def self.calculate_cooking_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
+        if cook_is_induction
+          burner_ef = 0.91
+        else
+          burner_ef = 1.0
+        end
+        if oven_is_convection
+          oven_ef = 0.95
+        else
+          oven_ef = 1.0
+        end
+        if cook_fuel_type != Constants.FuelTypeElectric
+          annual_kwh = 22.6 + 2.7*nbeds
+          annual_therm = oven_ef*(22.6 + 2.7*nbeds)
+          tot_btu = UnitConversions.convert(annual_kwh, "kWh", "Btu") + UnitConversions.convert(annual_therm, "therm", "Btu")
+          gains_sens = (4086.0 + 488.0*nbeds)*365 # Btu
+          gains_lat = (1037.0 + 124.0*nbeds)*365 # Btu
+          frac_sens = gains_sens/tot_btu
+          frac_lat = gains_lat/tot_btu
+        else
+          annual_kwh = burner_ef*oven_ef*(331 + 39.0*nbeds)
+          annual_therm = 0.0
+          tot_btu = UnitConversions.convert(annual_kwh, "kWh", "Btu") + UnitConversions.convert(annual_therm, "therm", "Btu")
+          gains_sens = (2228.0 + 262.0*nbeds)*365 # Btu
+          gains_lat = (248.0 + 29.0*nbeds)*365 # Btu
+          frac_sens = gains_sens/tot_btu
+          frac_lat = gains_lat/tot_btu
+        end
+        return annual_kwh, annual_therm, frac_sens, frac_lat
     end
     
     def self.get_location_hierarchy(ba_cz_name)

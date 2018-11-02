@@ -358,7 +358,6 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>natural gas</FuelType>
         </Oven>
       </Appliances>
       <Lighting/>
