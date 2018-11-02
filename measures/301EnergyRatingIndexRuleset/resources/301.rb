@@ -83,7 +83,7 @@ class EnergyRatingIndex301Ruleset
     new_appliances = XMLHelper.add_element(new_details, "Appliances")
     set_appliances_clothes_washer_reference(new_appliances)
     set_appliances_clothes_dryer_reference(new_appliances, orig_details)
-    set_appliances_dishwasher_reference(new_appliances)
+    set_appliances_dishwasher_reference(new_appliances, orig_details)
     set_appliances_refrigerator_reference(new_appliances, orig_details)
     set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
     
@@ -2033,71 +2033,45 @@ class EnergyRatingIndex301Ruleset
     self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
   end
 
-  def self.set_appliances_dishwasher_reference(new_appliances)
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    dishwasher_kwh = 78.0 + 0.0*@cfa + 31.0*@nbeds
-    dishwasher_sens, dishwasher_lat = get_dishwasher_sens_lat(dishwasher_kwh)
-    if @eri_version.include? "A"
-      dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16)/365.0 # Eq. 4.2-2 (refDWgpd)
-    else
-      dishwasher_gpd = 0.0 # delta DHW change made to rated home
-      # Add service water heating GPD here
-      dishwasher_gpd += get_service_water_heating_use_gpd()
-    end
+  def self.set_appliances_dishwasher_reference(new_appliances, orig_details)
+  
+    orig_appliances = orig_details.elements["Appliances"]
     
-    new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
-    sys_id = XMLHelper.add_element(new_dishwasher, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Dishwasher")
-    extension = XMLHelper.add_element(new_dishwasher, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", dishwasher_kwh)
-    XMLHelper.add_element(extension, "FracSensible", dishwasher_sens)
-    XMLHelper.add_element(extension, "FracLatent", dishwasher_lat)
-    XMLHelper.add_element(extension, "HotWaterGPD", dishwasher_gpd)
+    dw_ef = HotWaterAndAppliances.get_dishwasher_reference_ef()
+    dw_cap = HotWaterAndAppliances.get_dishwasher_reference_cap()
+    
+    new_dishwasher = XMLHelper.copy_element(new_appliances, orig_appliances, "Dishwasher")
+    if new_dishwasher.elements["EnergyFactor"].nil? and new_dishwasher.elements["RatedAnnualkWh"].nil?
+      XMLHelper.add_element(new_dishwasher, "EnergyFactor", dw_ef)
+    elsif not new_dishwasher.elements["EnergyFactor"].nil?
+      new_dishwasher.elements["EnergyFactor"].text = dw_ef
+    elsif not new_dishwasher.elements["RatedAnnualkWh"].nil?
+      XMLHelper.add_element(new_dishwasher, "EnergyFactor", dw_ef)
+      XMLHelper.delete_element(new_dishwasher, "RatedAnnualkWh")
+    end
+    if new_dishwasher.elements["PlaceSettingCapacity"].nil?
+      XMLHelper.add_element(new_dishwasher, "PlaceSettingCapacity", dw_cap)
+    else
+      new_dishwasher.elements["PlaceSettingCapacity"].text = dw_cap
+    end
     
   end
   
   def self.set_appliances_dishwasher_rated(new_appliances, orig_details)
   
-    # 4.2.2.5.2.9. Dishwashers
-    if orig_details.elements["Appliances/Dishwasher/EnergyFactor"] or orig_details.elements["Appliances/Dishwasher/RatedAnnualkWh"]
-      # Detailed
-      cap = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/PlaceSettingCapacity"))
-      ef = XMLHelper.get_value(orig_details, "Appliances/Dishwasher/EnergyFactor")
-      if ef.nil?
-        rated_annual_kwh = Float(XMLHelper.get_value(orig_details, "Appliances/Dishwasher/RatedAnnualkWh"))
-        ef = 215.0/rated_annual_kwh # Eq 4.2-8a (EF)
-      else
-        ef = ef.to_f
-      end
-      dwcpy = (88.4 + 34.9*@nbeds)*(12.0/cap) # Eq 4.2-8a (dWcpy)
-      dishwasher_kwh = ((86.3 + 47.73/ef)/215.0)*dwcpy # Eq 4.2-8a
-      dishwasher_sens = 0.6*0.5
-      dishwasher_lat = 0.6*0.5
-      if @eri_version.include? "A"
-        dishwasher_gpd = dwcpy*(4.6415*(1.0/ef) - 1.9295)/365.0 # Eq. 4.2-11 (DWgpd)
-      else
-        dishwasher_gpd = ((88.4 + 34.9*@nbeds)*8.16 - (88.4 + 34.9*@nbeds)*12.0/cap*(4.6415*(1.0/ef) - 1.9295))/365.0 # Eq 4.2-8b
-      end
-    else
-      # Reference
-      set_appliances_dishwasher_reference(new_appliances)
+    if orig_details.elements["Appliances/Dishwasher/EnergyFactor"].nil? and orig_details.elements["Appliances/Dishwasher/RatedAnnualkWh"].nil?
+      self.set_appliances_dishwasher_reference(new_appliances, orig_details)
       return
     end
-  
-    new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
-    sys_id = XMLHelper.add_element(new_dishwasher, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Dishwasher")
-    extension = XMLHelper.add_element(new_dishwasher, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", dishwasher_kwh)
-    XMLHelper.add_element(extension, "FracSensible", dishwasher_sens)
-    XMLHelper.add_element(extension, "FracLatent", dishwasher_lat)
-    XMLHelper.add_element(extension, "HotWaterGPD", dishwasher_gpd)
+
+    orig_appliances = orig_details.elements["Appliances"]
+    XMLHelper.copy_element(new_appliances, orig_appliances, "Dishwasher")
     
   end
   
   def self.set_appliances_dishwasher_iad(new_appliances, orig_details)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_dishwasher_reference(new_appliances)
+    self.set_appliances_dishwasher_reference(new_appliances, orig_details)
   end
 
   def self.set_appliances_refrigerator_reference(new_appliances, orig_details)
@@ -2105,7 +2079,7 @@ class EnergyRatingIndex301Ruleset
     orig_appliances = orig_details.elements["Appliances"]
   
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-    refrigerator_kwh = HotWaterAndAppliances.calc_reference_fridge_energy(@nbeds)
+    refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
     
     new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
     if new_fridge.elements["RatedAnnualkWh"].nil?
@@ -2118,14 +2092,13 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_appliances_refrigerator_rated(new_appliances, orig_details)
 
-    orig_appliances = orig_details.elements["Appliances"]
-  
-    new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
-    if new_fridge.elements["RatedAnnualkWh"].nil?
-      # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
-      refrigerator_kwh = HotWaterAndAppliances.calc_reference_fridge_energy(@nbeds)
-      XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
+    if orig_details.elements["Appliances/Refrigerator/RatedAnnualkWh"].nil?
+      self.set_appliances_refrigerator_reference(new_appliances, orig_details)
+      return
     end
+    
+    orig_appliances = orig_details.elements["Appliances"]
+    XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
     
   end
   
@@ -2138,8 +2111,8 @@ class EnergyRatingIndex301Ruleset
     
     orig_appliances = orig_details.elements["Appliances"]
     
-    is_induction = false
-    is_convection = false
+    is_induction = HotWaterAndAppliances.get_range_oven_reference_is_induction()
+    is_convection = HotWaterAndAppliances.get_range_oven_reference_is_convection()
   
     new_cooking_range = XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
     if new_cooking_range.elements["IsInduction"].nil?
@@ -2159,17 +2132,14 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_appliances_cooking_range_oven_rated(new_appliances, orig_details)
 
-    orig_appliances = orig_details.elements["Appliances"]
-  
-    new_cooking_range = XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
-    if new_cooking_range.elements["IsInduction"].nil?
-      XMLHelper.add_element(new_cooking_range, "IsInduction", false)
+    if orig_details.elements["Appliances/CookingRange/IsInduction"].nil?
+      self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
+      return
     end
     
-    new_oven = XMLHelper.copy_element(new_appliances, orig_appliances, "Oven")
-    if new_oven.elements["IsConvection"].nil?
-      XMLHelper.add_element(new_oven, "IsConvection", false)
-    end
+    orig_appliances = orig_details.elements["Appliances"]
+    XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
+    XMLHelper.copy_element(new_appliances, orig_appliances, "Oven")
 
   end
   
@@ -2506,14 +2476,6 @@ class EnergyRatingIndex301Ruleset
     end
     total = UnitConversions.convert(clothes_dryer_kwh, "kWh", "Btu")/365.0  # Btu/day
     total += UnitConversions.convert(clothes_dryer_therm, "therm", "Btu")/365.0 # Btu/day
-    return load_sens/total, load_lat/total
-  end
-  
-  def self.get_dishwasher_sens_lat(dishwasher_kwh)
-    # Table 4.2.2(3). Internal Gains for HERS Reference Homes
-    load_sens = 219.0 + 87.0*@nbeds # Btu/day
-    load_lat = 219.0 + 87.0*@nbeds # Btu/day
-    total = UnitConversions.convert(dishwasher_kwh, "kWh", "Btu")/365.0
     return load_sens/total, load_lat/total
   end
   

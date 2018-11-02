@@ -9,12 +9,12 @@ class HotWaterAndAppliances
                  cw_annual_kwh, cw_frac_sens, cw_frac_lat,
                  cw_gpd, cd_annual_kwh, cd_annual_therm,
                  cd_frac_sens, cd_frac_lat, cd_fuel_type,
-                 dw_annual_kwh, dw_frac_sens, dw_frac_lat,
-                 dw_gpd, fridge_annual_kwh, cook_fuel_type,
+                 dw_ef, dw_cap, fridge_annual_kwh, cook_fuel_type,
                  cook_is_induction, oven_is_convection,
                  fx_gpd, fx_sens_btu, fx_lat_btu, dist_type, 
                  dist_gpd, dist_pump_annual_kwh, 
-                 daily_wh_inlet_temperatures, daily_mw_fractions)
+                 daily_wh_inlet_temperatures, daily_mw_fractions,
+                 eri_version)
   
     # Table 4.6.1.1(1): Hourly Hot Water Draw Fraction for Hot Water Tests
     daily_fraction = [0.0085, 0.0085, 0.0085, 0.0085, 0.0085, 0.0100, 0.0750, 0.0750, 
@@ -118,14 +118,13 @@ class HotWaterAndAppliances
     add_other_equipment(model, cd_name_f, cd_space, cd_design_level_f, cd_frac_sens, cd_frac_lat, cd_schedule.schedule, cd_fuel_type)
     
     # Dishwasher
-    if dw_gpd > 0
-      dw_name = Constants.ObjectNameDishwasher(unit.name.to_s)
-      dw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
-      dw_peak_flow_gpm = dw_gpd/sum_fractions_hw/timestep_minutes*365.0
-      dw_design_level_w = UnitConversions.convert(dw_annual_kwh*60.0/(dw_gpd*365.0/dw_peak_flow_gpm), "kW", "W")
-      add_electric_equipment(model, dw_name, dw_space, dw_design_level_w, dw_frac_sens, dw_frac_lat, schedule_hw)
-      add_water_use_equipment(model, dw_name, dw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
-    end
+    dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = self.calc_dishwasher_energy_gpd(eri_version, nbeds, dw_ef, dw_cap)
+    dw_name = Constants.ObjectNameDishwasher(unit.name.to_s)
+    dw_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
+    dw_peak_flow_gpm = dw_gpd/sum_fractions_hw/timestep_minutes*365.0
+    dw_design_level_w = UnitConversions.convert(dw_annual_kwh*60.0/(dw_gpd*365.0/dw_peak_flow_gpm), "kW", "W")
+    add_electric_equipment(model, dw_name, dw_space, dw_design_level_w, dw_frac_sens, dw_frac_lat, schedule_hw)
+    add_water_use_equipment(model, dw_name, dw_peak_flow_gpm, schedule_hw, setpoint_sched, water_use_connection)
     
     # Refrigerator
     fridge_name = Constants.ObjectNameRefrigerator(unit.name.to_s)
@@ -177,6 +176,14 @@ class HotWaterAndAppliances
     return true
   end
   
+  def self.get_range_oven_reference_is_induction()
+    return false
+  end
+  
+  def self.get_range_oven_reference_is_convection()
+    return false
+  end
+  
   def self.calc_range_oven_energy(nbeds, fuel_type, is_induction, is_convection)
     if is_induction
       burner_ef = 0.91
@@ -208,8 +215,34 @@ class HotWaterAndAppliances
     return annual_kwh, annual_therm, frac_sens, frac_lat
   end
   
-  def self.calc_reference_fridge_energy(nbeds)
-    return 637.0 + 18.0*nbeds
+  def self.get_dishwasher_reference_ef()
+    return 0.46
+  end
+  
+  def self.get_dishwasher_reference_cap()
+    return 12.0
+  end
+  
+  def self.calc_dishwasher_energy_gpd(eri_version, nbeds, ef, cap)
+    dwcpy = (88.4 + 34.9*nbeds)*(12.0/cap) # Eq 4.2-8a (dWcpy)
+    annual_kwh = ((86.3 + 47.73/ef)/215.0)*dwcpy # Eq 4.2-8a
+    tot_btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    gains_sens = (219.0 + 87.0*nbeds)*365 # Btu
+    gains_lat = (219.0 + 87.0*nbeds)*365 # Btu
+    frac_sens = gains_sens/tot_btu
+    frac_lat = gains_lat/tot_btu
+    if eri_version.include? "A"
+      gpd = dwcpy*(4.6415*(1.0/ef) - 1.9295)/365.0 # Eq. 4.2-11 (DWgpd)
+    else
+      gpd = ((88.4 + 34.9*nbeds)*8.16 - (88.4 + 34.9*nbeds)*12.0/cap*(4.6415*(1.0/ef) - 1.9295))/365.0 # Eq 4.2-8b
+    end
+
+    return annual_kwh, frac_sens, frac_lat, gpd
+  end
+  
+  def self.get_refrigerator_reference_annual_kwh(nbeds)
+    annual_kwh = 637.0 + 18.0*nbeds
+    return annual_kwh
   end
       
   private

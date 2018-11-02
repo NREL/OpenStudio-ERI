@@ -32,6 +32,7 @@ class EnergyPlusValidator
             '/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy' => one, # Required by HPXML schema
             '/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime' => one, # Required by HPXML schema
             '/HPXML/XMLTransactionHeaderInformation/Transaction' => one, # Required by HPXML schema
+            '/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE" or Version="2014AEG"]' => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
 
             '/HPXML/Building' => one,
             '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
@@ -625,11 +626,13 @@ class EnergyPlusValidator
         # [Dishwasher]
         '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'extension/AnnualkWh' => one,
-            'extension/HotWaterGPD' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            '[EnergyFactor | RatedAnnualkWh]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [DWType=UserSpecified]
         },
+        
+            ## [DWType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/Dishwasher[EnergyFactor | RatedAnnualkWh]' => {
+                'PlaceSettingCapacity' => one,
+            },
         
         
         

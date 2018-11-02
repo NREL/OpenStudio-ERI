@@ -6,7 +6,7 @@ require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname'
 require 'csv'
-require "#{File.dirname(__FILE__)}/resources/ep_validator"
+require "#{File.dirname(__FILE__)}/resources/EPvalidator"
 require "#{File.dirname(__FILE__)}/resources/airflow"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/constructions"
@@ -301,6 +301,9 @@ class OSModel
     return false if not success
 
     building = hpxml_doc.elements["/HPXML/Building"]
+    
+    @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+    fail "Could not find ERI Version" if @eri_version.nil?
   
     # Geometry/Envelope
     
@@ -2009,16 +2012,27 @@ class OSModel
     
     # Dishwasher
     dw = appl.elements["Dishwasher"]
-    dw_annual_kwh = Float(XMLHelper.get_value(dw, "extension/AnnualkWh"))
-    dw_frac_sens = Float(XMLHelper.get_value(dw, "extension/FracSensible"))
-    dw_frac_lat = Float(XMLHelper.get_value(dw, "extension/FracLatent"))
-    dw_gpd = Float(XMLHelper.get_value(dw, "extension/HotWaterGPD"))
+    dw_ef = XMLHelper.get_value(dw, "EnergyFactor")
+    dw_annual_kwh = XMLHelper.get_value(dw, "RatedAnnualkWh")
+    if dw_ef.nil? and dw_annual_kwh.nil?
+      dw_ef = HotWaterAndAppliances.get_dishwasher_reference_ef()
+    elsif not dw_ef.nil?
+      dw_ef = Float(dw_ef)
+    elsif not dw_annual_kwh.nil?
+      dw_ef = 215.0/Float(dw_annual_kwh)
+    end
+    dw_cap = XMLHelper.get_value(dw, "PlaceSettingCapacity")
+    if dw_cap.nil?
+      dw_cap = HotWaterAndAppliances.get_dishwasher_reference_cap()
+    else
+      dw_cap = Float(dw_cap)
+    end
   
     # Refrigerator
     fridge = appl.elements["Refrigerator"]
     fridge_annual_kwh = XMLHelper.get_value(fridge, "RatedAnnualkWh")
     if fridge_annual_kwh.nil?
-      fridge_annual_kwh = HotWaterAndAppliances.calc_reference_fridge_energy(nbeds)
+      fridge_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(nbeds)
     else
       fridge_annual_kwh = Float(fridge_annual_kwh)
     end
@@ -2069,12 +2083,12 @@ class OSModel
                                           cw_annual_kwh, cw_frac_sens, cw_frac_lat,
                                           cw_gpd, cd_annual_kwh, cd_annual_therm,
                                           cd_frac_sens, cd_frac_lat, cd_fuel_type,
-                                          dw_annual_kwh, dw_frac_sens, dw_frac_lat,
-                                          dw_gpd, fridge_annual_kwh, cook_fuel_type,
+                                          dw_ef, dw_cap, fridge_annual_kwh, cook_fuel_type,
                                           cook_is_induction, oven_is_convection,
                                           fx_gpd, fx_sens_btu, fx_lat_btu, dist_type, 
                                           dist_gpd, dist_pump_annual_kwh, 
-                                          daily_wh_inlet_temperatures, daily_mw_fractions)
+                                          daily_wh_inlet_temperatures, daily_mw_fractions,
+                                          @eri_version)
     return false if not success
     
     return true

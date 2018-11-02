@@ -584,6 +584,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
     s = ""
     nbeds = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
   
     # Plug loads
     xml_pl_sens = 0.0
@@ -622,8 +623,18 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       xml_appl_sens += btu
     end
     
+    # Appliances: Dishwasher
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/Dishwasher") do |appl|
+      dw_ef = Float(XMLHelper.get_value(appl, "EnergyFactor"))
+      dw_cap = Float(XMLHelper.get_value(appl, "PlaceSettingCapacity"))
+      dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dw_ef, dw_cap)
+      btu = UnitConversions.convert(dw_annual_kwh, "kWh", "Btu")
+      xml_appl_sens += (dw_frac_sens * btu)
+      xml_appl_lat += (dw_frac_lat * btu)
+    end
+    
     # Appliances: ClothesWasher, ClothesDryer, Dishwasher
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher") do |appl|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
       frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
       frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
       btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualkWh")), "kWh", "Btu")
