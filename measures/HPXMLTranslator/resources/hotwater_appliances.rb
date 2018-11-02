@@ -234,7 +234,8 @@ class HotWaterAndAppliances
     if eri_version.include? "A"
       gpd = dwcpy*(4.6415*(1.0/ef) - 1.9295)/365.0 # Eq. 4.2-11 (DWgpd)
     else
-      gpd = ((88.4 + 34.9*nbeds)*8.16 - (88.4 + 34.9*nbeds)*12.0/cap*(4.6415*(1.0/ef) - 1.9295))/365.0 # Eq 4.2-8b
+      gpd = 30.0 + 10.0*nbeds # Table 4.2.2(1) Service water heating systems
+      gpd += ((88.4 + 34.9*nbeds)*8.16 - (88.4 + 34.9*nbeds)*12.0/cap*(4.6415*(1.0/ef) - 1.9295))/365.0 # Eq 4.2-8b
     end
 
     return annual_kwh, frac_sens, frac_lat, gpd
