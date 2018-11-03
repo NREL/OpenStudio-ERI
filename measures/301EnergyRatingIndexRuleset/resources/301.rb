@@ -1,5 +1,7 @@
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/measure"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/airflow"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constants"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/geometry"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/hotwater_appliances"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/lighting"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/unit_conversions"
@@ -211,11 +213,11 @@ class EnergyRatingIndex301Ruleset
     orig_site = orig_details.elements["BuildingSummary/Site"]
     XMLHelper.copy_element(new_site, orig_site, "FuelTypesAvailable")
     extension = XMLHelper.add_element(new_site, "extension")
-    XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
+    XMLHelper.add_element(extension, "ShelterCoefficient", Airflow.get_default_shelter_coefficient())
     
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
-    XMLHelper.add_element(new_occupancy, "NumberofResidents", @nbeds)
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", Geometry.get_occupancy_default_num(@nbeds))
     
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
@@ -234,11 +236,11 @@ class EnergyRatingIndex301Ruleset
     orig_site = orig_details.elements["BuildingSummary/Site"]
     XMLHelper.copy_element(new_site, orig_site, "FuelTypesAvailable")
     extension = XMLHelper.add_element(new_site, "extension")
-    XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
+    XMLHelper.add_element(extension, "ShelterCoefficient", Airflow.get_default_shelter_coefficient())
     
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
-    XMLHelper.add_element(new_occupancy, "NumberofResidents", @nbeds)
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", Geometry.get_occupancy_default_num(@nbeds))
     
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
@@ -265,11 +267,11 @@ class EnergyRatingIndex301Ruleset
     orig_site = orig_details.elements["BuildingSummary/Site"]
     XMLHelper.copy_element(new_site, orig_site, "FuelTypesAvailable")
     extension = XMLHelper.add_element(new_site, "extension")
-    XMLHelper.add_element(extension, "ShelterCoefficient", get_shelter_coefficient())
+    XMLHelper.add_element(extension, "ShelterCoefficient", Airflow.get_default_shelter_coefficient())
     
     new_occupancy = XMLHelper.add_element(new_summary, "BuildingOccupancy")
     orig_occupancy = orig_details.elements["BuildingSummary/BuildingOccupancy"]
-    XMLHelper.add_element(new_occupancy, "NumberofResidents", @nbeds)
+    XMLHelper.add_element(new_occupancy, "NumberofResidents", Geometry.get_occupancy_default_num(@nbeds))
     
     new_construction = XMLHelper.add_element(new_summary, "BuildingConstruction")
     orig_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
@@ -1164,8 +1166,6 @@ class EnergyRatingIndex301Ruleset
     sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "HVACControl")
     XMLHelper.add_element(new_hvac_control, "ControlType", "manual thermostat")
-    XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
-    XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
     
     # Table 4.2.2(1) - Thermal distribution systems
     new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
@@ -1319,28 +1319,7 @@ class EnergyRatingIndex301Ruleset
     end
     
     # Table 303.4.1(1) - Thermostat
-    control_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACControl/ControlType")
-    
-    new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
-    sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "HVACControl")
-    if control_type == "programmable thermostat"
-      setpoint_offset = 2 # F
-      XMLHelper.add_element(new_hvac_control, "ControlType", "programmable thermostat")
-      XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
-      XMLHelper.add_element(new_hvac_control, "SetbackTempHeatingSeason", 68-setpoint_offset)
-      XMLHelper.add_element(new_hvac_control, "TotalSetbackHoursperWeekHeating", 7*7) # 11 p.m. to 5:59 a.m., 7 days a week
-      XMLHelper.add_element(new_hvac_control, "SetupTempCoolingSeason", 78+setpoint_offset)
-      XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
-      XMLHelper.add_element(new_hvac_control, "TotalSetupHoursperWeekCooling", 6*7) # 9 a.m. to 2:59 p.m., 7 days a week
-      extension = XMLHelper.add_element(new_hvac_control, "extension")
-      XMLHelper.add_element(extension, "SetbackStartHour", 23) # 11 p.m.
-      XMLHelper.add_element(extension, "SetupStartHour", 9) # 9 a.m.
-    else
-      XMLHelper.add_element(new_hvac_control, "ControlType", "manual thermostat")
-      XMLHelper.add_element(new_hvac_control, "SetpointTempHeatingSeason", 68)
-      XMLHelper.add_element(new_hvac_control, "SetpointTempCoolingSeason", 78)
-    end
+    XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACControl")
     
     # Table 4.2.2(1) - Thermal distribution systems
     # FIXME: There can be no distribution system when HVAC prescribed via above
@@ -1534,9 +1513,9 @@ class EnergyRatingIndex301Ruleset
     if not wh_re.nil?
       XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
     end
-    XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
+    XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", Waterheater.get_default_hot_water_temperature(@eri_version))
     extension = XMLHelper.add_element(new_wh_sys, "extension")
-    XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
+    XMLHelper.add_element(extension, "EnergyFactorMultiplier", Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type)))
     
   end
     
@@ -1565,20 +1544,13 @@ class EnergyRatingIndex301Ruleset
         wh_uef = Float(XMLHelper.get_value(orig_wh_sys, "UniformEnergyFactor"))
         wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
         wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
-        beopt_type = {'storage water heater'=>Constants.WaterHeaterTypeTank,
-                      'instantaneous water heater'=>Constants.WaterHeaterTypeTankless,
-                      'heat pump water heater'=>Constants.WaterHeaterTypeHeatPump}
-        wh_ef = Waterheater.calc_ef_from_uef(wh_uef, beopt_type[wh_type], to_beopt_fuel(wh_fuel_type))
+        wh_ef = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_type), to_beopt_fuel(wh_fuel_type))
         XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
-      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
+      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", Waterheater.get_default_hot_water_temperature(@eri_version))
       extension = XMLHelper.add_element(new_wh_sys, "extension")
-      if XMLHelper.get_value(new_wh_sys, "WaterHeaterType") == 'instantaneous water heater'
-        XMLHelper.add_element(extension, "EnergyFactorMultiplier", 0.92)
-      else
-        XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
-      end
+      XMLHelper.add_element(extension, "EnergyFactorMultiplier", Waterheater.get_ef_multiplier(to_beopt_wh_type(XMLHelper.get_value(new_wh_sys, "WaterHeaterType"))))
       
     else
     
@@ -1606,9 +1578,9 @@ class EnergyRatingIndex301Ruleset
       if not wh_re.nil?
         XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
       end
-      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", get_water_heater_tank_temperature())
+      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", Waterheater.get_default_hot_water_temperature(@eri_version))
       extension = XMLHelper.add_element(new_wh_sys, "extension")
-      XMLHelper.add_element(extension, "EnergyFactorMultiplier", 1.0)
+      XMLHelper.add_element(extension, "EnergyFactorMultiplier", Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type)))
       
     end
     
@@ -1851,7 +1823,7 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_systems_photovoltaics_rated(new_systems, orig_details)
-    new_pv = XMLHelper.copy_element(new_systems, orig_details, "Systems/Photovoltaics")
+    XMLHelper.copy_element(new_systems, orig_details, "Systems/Photovoltaics")
   end
   
   def self.set_systems_photovoltaics_iad(new_systems)
@@ -2513,24 +2485,11 @@ class EnergyRatingIndex301Ruleset
     return eff_adj, iFrac, plc, locF, fixF
   end
   
-  def self.get_water_heater_tank_temperature()
-    # Table 4.2.2(1) - Service water heating systems
-    if @eri_version.include? "A"
-      return 125.0
-    end
-    return 120.0
-  end
-  
   def self.get_general_water_use_gains_sens_lat()
     # Table 4.2.2(3). Internal Gains for Reference Homes
     sens_gains = -1227.0 - 409.0*@nbeds # Btu/day
     lat_gains = 1245.0 + 415.0*@nbeds # Btu/day
     return sens_gains*365.0, lat_gains*365.0
-  end
-  
-  def self.get_shelter_coefficient()
-    # Table 4.2.2(1)(g)
-    return 0.5
   end
   
   # TODO: Duplicate method in HPXMLTranslator
@@ -2597,7 +2556,7 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
-    tHot = get_water_heater_tank_temperature() # F, Water heater set point temperature
+    tHot = Waterheater.get_default_hot_water_temperature(@eri_version) # F, Water heater set point temperature
     tMix = 105.0 # F, Temperature of mixed water at fixtures
     adjFmix = []
     for day in 0..364
@@ -2677,4 +2636,3 @@ def get_exterior_wall_area_fracs(orig_details)
   
   return wall_area_fracs
 end
-

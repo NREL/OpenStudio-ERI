@@ -418,9 +418,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
     assert_equal("manual", tstat)
     assert_equal(68, htg_sp)
-    assert_equal(0, htg_setback)
+    assert_nil(htg_setback)
     assert_equal(78, clg_sp)
-    assert_equal(0, clg_setup)
+    assert_nil(clg_setup)
     
     # Mechanical ventilation
     mv_kwh = _get_mech_vent(hpxml_doc)
@@ -674,7 +674,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xml_occ_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy") do |occ|
       num_occ = Float(XMLHelper.get_value(occ, "NumberofResidents"))
-      heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_reference_values()
+      heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
       btu = num_occ * heat_gain * hrs_per_day * 365.0
       xml_occ_sens += (frac_sens * btu)
       xml_occ_lat += (frac_lat * btu)
@@ -738,25 +738,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def _get_tstat(hpxml_doc)
-    tstat = ""
-    htg_sp = 0.0
-    htg_setback = 0.0
-    clg_sp = 0.0
-    clg_setup = 0.0
-    num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl") do |ctrl|
-      tstat = XMLHelper.get_value(ctrl, "ControlType").gsub(" thermostat", "")
-      htg_sp += Float(XMLHelper.get_value(ctrl, "SetpointTempHeatingSeason"))
-      if ctrl.elements["SetbackTempHeatingSeason"]
-        htg_setback += Float(XMLHelper.get_value(ctrl, "SetbackTempHeatingSeason"))
-      end
-      clg_sp += Float(XMLHelper.get_value(ctrl, "SetpointTempCoolingSeason"))
-      if ctrl.elements["SetupTempCoolingSeason"]
-        clg_setup += Float(XMLHelper.get_value(ctrl, "SetupTempCoolingSeason"))
-      end
-      num += 1
-    end
-    return tstat, htg_sp/num, htg_setback/num, clg_sp/num, clg_setup/num
+    control = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl"]
+    control_type = XMLHelper.get_value(control, "ControlType")
+    tstat = control_type.gsub(" thermostat", "")
+    htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
+    clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
+    return tstat, htg_sp, htg_setback_sp, clg_sp, clg_setup_sp
   end
   
   def _get_mech_vent(hpxml_doc)

@@ -867,8 +867,13 @@ class OSModel
     return false if not success
     
     # Occupants
-    num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
-    occ_gain, hrs_per_day, sens_frac, lat_frac = Geometry.get_occupancy_reference_values()
+    num_occ = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")
+    if num_occ.nil?
+      num_occ = Geometry.get_occupancy_default_num(num_bedrooms)
+    else
+      num_occ = Float(num_occ)
+    end
+    occ_gain, hrs_per_day, sens_frac, lat_frac = Geometry.get_occupancy_default_values()
     weekday_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000" # TODO: Normalize schedule based on hrs_per_day
     weekend_sch = weekday_sch
     monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
@@ -1901,7 +1906,12 @@ class OSModel
   
     dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
     location = XMLHelper.get_value(dhw, "Location")
-    setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
+    setpoint_temp = XMLHelper.get_value(dhw, "HotWaterTemperature")
+    if setpoint_temp.nil?
+      setpoint_temp = Waterheater.get_default_hot_water_temperature(@eri_version)
+    else
+      setpoint_temp = Float(setpoint_temp)
+    end
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
     fuel = XMLHelper.get_value(dhw, "FuelType")
     
@@ -1925,12 +1935,15 @@ class OSModel
     ef = XMLHelper.get_value(dhw, "EnergyFactor")
     if ef.nil?
       uef = Float(XMLHelper.get_value(dhw, "UniformEnergyFactor"))
-      beopt_type = {'storage water heater'=>Constants.WaterHeaterTypeTank,
-                    'instantaneous water heater'=>Constants.WaterHeaterTypeTankless,
-                    'heat pump water heater'=>Constants.WaterHeaterTypeHeatPump}
-      ef = Waterheater.calc_ef_from_uef(uef, beopt_type[type], to_beopt_fuel(fuel_type))
+      ef = Waterheater.calc_ef_from_uef(uef, to_beopt_wh_type(type), to_beopt_fuel(fuel_type))
     else
       ef = Float(ef)
+    end
+    ef_adj = XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier")
+    if ef_adj.nil?
+      ef_adj = get_ef_multiplier(to_beopt_wh_type(wh_type))
+    else
+      ef_adj = Float(ef_adj)
     end
     ec_adj = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor"))
     
@@ -1946,13 +1959,12 @@ class OSModel
       oncycle_power = 0.0
       offcycle_power = 0.0
       success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
-                                       capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
+                                       capacity_kbtuh, tank_vol, ef*ef_adj, re, setpoint_temp, 
                                        oncycle_power, offcycle_power, ec_adj)
       return false if not success
       
     elsif wh_type == "instantaneous water heater"
     
-      ef_adj = Float(XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier"))
       capacity_kbtuh = 100000000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
@@ -1977,7 +1989,7 @@ class OSModel
       int_factor = 1.0 # FIXME
       temp_depress = 0.0 # FIXME
       ducting = "none"
-      # FIXME: Use ec_adj
+      # FIXME: Use ef, ef_adj, ec_adj
       success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
                                            e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
                                            cap, cop, shr, airflow_rate, fan_power,
@@ -2535,18 +2547,15 @@ class OSModel
     def self.add_setpoints(runner, model, building, weather) 
 
     control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
-    controltype = XMLHelper.get_value(control, "ControlType")
+    control_type = XMLHelper.get_value(control, "ControlType")
     
-    htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
-    if controltype == "manual thermostat"
+    htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
+    if htg_setback_sp.nil?
       htg_weekday_setpoints = [htg_sp]*24
-    elsif controltype == "programmable thermostat"
+    else
       htg_weekday_setpoints = [htg_sp]*24
-      setback_temp = Float(XMLHelper.get_value(control, "SetbackTempHeatingSeason"))
-      setback_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetbackHoursperWeekHeating"))/7.0)
-      setback_start_hr = Integer(XMLHelper.get_value(control, "extension/SetbackStartHour"))
-      for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
-        htg_weekday_setpoints[hr % 24] = setback_temp
+      for hr in htg_setback_start_hr..htg_setback_start_hr+Integer(htg_setback_hrs_per_week/7.0)-1
+        htg_weekday_setpoints[hr % 24] = htg_setback_sp
       end
     end
     htg_weekend_setpoints = htg_weekday_setpoints
@@ -2557,16 +2566,13 @@ class OSModel
                                            htg_use_auto_season, htg_season_start_month, htg_season_end_month)
     return false if not success
     
-    clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
-    if controltype == "manual thermostat"
+    clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
+    if clg_setup_sp.nil?
       clg_weekday_setpoints = [clg_sp]*24
     else
       clg_weekday_setpoints = [clg_sp]*24
-      setup_temp = Float(XMLHelper.get_value(control, "SetupTempCoolingSeason"))
-      setup_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetupHoursperWeekCooling"))/7.0)
-      setup_start_hr = Integer(XMLHelper.get_value(control, "extension/SetupStartHour"))
-      for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
-        clg_weekday_setpoints[hr % 24] = setup_temp
+      for hr in clg_setup_start_hr..clg_setup_start_hr+Integer(clg_setup_hrs_per_week/7.0)-1
+        clg_weekday_setpoints[hr % 24] = clg_setup_sp
       end
     end
     clg_weekend_setpoints = clg_weekday_setpoints
@@ -2726,7 +2732,12 @@ class OSModel
     unfinished_basement_ach = 0.1 # TODO: Need to handle above-grade basement
     crawl_ach = crawl_sla # FIXME: sla vs ach
     pier_beam_ach = 100
-    shelter_coef = Constants.Auto # FIXME
+    shelter_coef = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/Site/extension/ShelterCoefficient")
+    if shelter_coef.nil?
+      shelter_coef = Airflow.get_default_shelter_coefficient()
+    else
+      shelter_coef = Float(shelter_coef)
+    end
     has_flue_chimney = false
     is_existing_home = false
     terrain = Constants.TerrainSuburban
@@ -3022,6 +3033,12 @@ def to_beopt_fuel(fuel)
           "fuel oil"=>Constants.FuelTypeOil, 
           "propane"=>Constants.FuelTypePropane, 
           "electricity"=>Constants.FuelTypeElectric}[fuel]
+end
+
+def to_beopt_wh_type(type)
+  return {'storage water heater'=>Constants.WaterHeaterTypeTank,
+          'instantaneous water heater'=>Constants.WaterHeaterTypeTankless,
+          'heat pump water heater'=>Constants.WaterHeaterTypeHeatPump}[type]
 end
 
 # register the measure to be used by the application

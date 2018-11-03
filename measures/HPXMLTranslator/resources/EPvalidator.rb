@@ -39,7 +39,8 @@ class EnergyPlusValidator
             '/HPXML/Building/ProjectStatus/EventType' => one, # Required by HPXML schema
         
             '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable[Fuel="electricity" or Fuel="natural gas" or Fuel="fuel oil" or Fuel="propane" or Fuel="kerosene" or Fuel="diesel" or Fuel="anthracite coal" or Fuel="bituminous coal" or Fuel="coke" or Fuel="wood" or Fuel="wood pellets"]' => one_or_more,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/Site/extension/ShelterCoefficient' => zero_or_one, # Uses ERI assumption if not provided
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents' => zero_or_one, # Uses ERI assumption if not provided
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
@@ -412,21 +413,9 @@ class EnergyPlusValidator
         # [HVACControl]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            '[ControlType="manual thermostat" or ControlType="programmable thermostat"]' => one, # See [HVACControlType=Programmable]
-            'SetpointTempHeatingSeason' => one,
-            'SetpointTempCoolingSeason' => one,
+            '[ControlType="manual thermostat" or ControlType="programmable thermostat"]' => one,
         },
 
-            ## [HVACControlType=Programmable]
-            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl[ControlType="programmable thermostat"]' => {
-                'SetbackTempHeatingSeason' => one,
-                'TotalSetbackHoursperWeekHeating' => one,
-                'SetupTempCoolingSeason' => one,
-                'TotalSetupHoursperWeekCooling' => one,
-                'extension/SetbackStartHour' => one, # e.g., 23 => 11pm
-                'extension/SetupStartHour' => one, # e.g., 9 => 9am
-            },
-        
 
         
         # [Dehumidifier]
@@ -517,7 +506,8 @@ class EnergyPlusValidator
             '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
             'FractionDHWLoadServed' => one,
             '[EnergyFactor | UniformEnergyFactor]' => one,
-            'extension/EnergyFactorMultiplier' => one,
+            'HotWaterTemperature' => zero_or_one, # Uses ERI assumption if not provided
+            'extension/EnergyFactorMultiplier' => zero_or_one, # Uses ERI assumption if not provided
         },
         
             ## [WHType=Tank]

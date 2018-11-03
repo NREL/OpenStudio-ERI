@@ -1525,7 +1525,11 @@ class Geometry
 
   end
   
-  def self.get_occupancy_reference_values()
+  def self.get_occupancy_default_num(nbeds)
+    return Float(nbeds)
+  end
+  
+  def self.get_occupancy_default_values()
     # Table 4.2.2(3). Internal Gains for Reference Homes
     hrs_per_day = 16.5 # hrs/day
     sens_gains = 3716.0 # Btu/person/day
