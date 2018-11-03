@@ -242,6 +242,10 @@ class HotWaterAndAppliances
     return annual_kwh, frac_sens, frac_lat, gpd
   end
   
+  def self.calc_dishwasher_ef_from_annual_kwh(annual_kwh)
+    return 215.0/annual_kwh # 4.2.2.5.2.9. Dishwashers
+  end
+  
   def self.get_refrigerator_reference_annual_kwh(nbeds)
     annual_kwh = 637.0 + 18.0*nbeds # kWh/yr
     return annual_kwh
@@ -290,6 +294,10 @@ class HotWaterAndAppliances
     return annual_kwh, annual_therm, frac_sens, frac_lat
   end
   
+  def self.calc_clothes_dryer_ef_from_cef(cef)
+    return cef * 1.15 # Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF
+  end
+  
   def self.get_clothes_washer_reference_mef()
     return 0.817
   end
@@ -335,6 +343,10 @@ class HotWaterAndAppliances
     end
 
     return annual_kwh, frac_sens, frac_lat, gpd
+  end
+      
+  def self.calc_clothes_washer_mef_from_imef(imef)
+    return 0.503 + 0.95 * imef # Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF
   end
       
   private

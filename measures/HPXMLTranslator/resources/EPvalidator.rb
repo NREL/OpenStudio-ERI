@@ -516,7 +516,7 @@ class EnergyPlusValidator
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => one, # See [WHType=Tank]
             '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
             'FractionDHWLoadServed' => one,
-            'EnergyFactor' => one,
+            '[EnergyFactor | UniformEnergyFactor]' => one,
             'extension/EnergyFactorMultiplier' => one,
         },
         

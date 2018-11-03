@@ -1922,12 +1922,21 @@ class OSModel
       fail "Water heater location was #{location} but building does not have this space type."
     end
     
+    ef = XMLHelper.get_value(dhw, "EnergyFactor")
+    if ef.nil?
+      uef = Float(XMLHelper.get_value(dhw, "UniformEnergyFactor"))
+      beopt_type = {'storage water heater'=>Constants.WaterHeaterTypeTank,
+                    'instantaneous water heater'=>Constants.WaterHeaterTypeTankless,
+                    'heat pump water heater'=>Constants.WaterHeaterTypeHeatPump}
+      ef = Waterheater.calc_ef_from_uef(uef, beopt_type[type], to_beopt_fuel(fuel_type))
+    else
+      ef = Float(ef)
+    end
     ec_adj = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor"))
     
     if wh_type == "storage water heater"
     
       tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
-      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
       if fuel != "electricity"
         re = Float(XMLHelper.get_value(dhw, "RecoveryEfficiency"))
       else
@@ -1936,19 +1945,18 @@ class OSModel
       capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity")) / 1000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tank(model, unit, runner, space, hpxml_to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
                                        capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
                                        oncycle_power, offcycle_power, ec_adj)
       return false if not success
       
     elsif wh_type == "instantaneous water heater"
     
-      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
       ef_adj = Float(XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier"))
       capacity_kbtuh = 100000000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
-      success = Waterheater.apply_tankless(model, unit, runner, space, hpxml_to_beopt_fuel(fuel), 
+      success = Waterheater.apply_tankless(model, unit, runner, space, to_beopt_fuel(fuel), 
                                            capacity_kbtuh, ef, ef_adj,
                                            setpoint_temp, oncycle_power, offcycle_power, ec_adj)
       return false if not success
@@ -2001,7 +2009,7 @@ class OSModel
     elsif not cw_mef.nil?
       cw_mef = Float(cw_mef)
     elsif not cw_imef.nil?
-      cw_mef = 0.503 + 0.95 * Float(cw_imef) # Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF
+      cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(Float(cw_imef))
     end
     cw_ler = XMLHelper.get_value(cw, "RatedAnnualkWh")
     if cw_ler.nil?
@@ -2036,7 +2044,7 @@ class OSModel
     
     # Clothes Dryer
     cd = appl.elements["ClothesDryer"]
-    cd_fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
+    cd_fuel = to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
     cd_ef = XMLHelper.get_value(cd, "EnergyFactor")
     cd_cef = XMLHelper.get_value(cd, "CombinedEnergyFactor")
     if cd_ef.nil? and cd_cef.nil?
@@ -2044,7 +2052,7 @@ class OSModel
     elsif not cd_ef.nil?
       cd_ef = Float(cd_ef)
     elsif not cd_cef.nil?
-      cd_ef = Float(cd_cef) * 1.15 # Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF
+      cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(Float(cd_cef))
     end
     cd_control = XMLHelper.get_value(cd, "ControlType")
     if cd_control.nil?
@@ -2060,7 +2068,7 @@ class OSModel
     elsif not dw_ef.nil?
       dw_ef = Float(dw_ef)
     elsif not dw_annual_kwh.nil?
-      dw_ef = 215.0/Float(dw_annual_kwh)
+      dw_ef = HotWaterAndAppliances.calc_dishwasher_ef_from_annual_kwh(Float(dw_annual_kwh))
     end
     dw_cap = XMLHelper.get_value(dw, "PlaceSettingCapacity")
     if dw_cap.nil?
@@ -2081,16 +2089,16 @@ class OSModel
     # Cooking Range/Oven
     cook = appl.elements["CookingRange"]
     oven = appl.elements["Oven"]
-    cook_fuel_type = hpxml_to_beopt_fuel(XMLHelper.get_value(cook, "FuelType"))
+    cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(cook, "FuelType"))
     cook_is_induction = XMLHelper.get_value(cook, "IsInduction")
     if cook_is_induction.nil?
-      cook_is_induction = false
+      cook_is_induction = HotWaterAndAppliances.get_range_oven_reference_is_induction()
     else
       cook_is_induction = Boolean(cook_is_induction)
     end
     oven_is_convection = XMLHelper.get_value(oven, "IsConvection")
     if oven_is_convection.nil?
-      oven_is_convection = false
+      oven_is_convection = HotWaterAndAppliances.get_range_oven_reference_is_convection()
     else
       oven_is_convection = Boolean(oven_is_convection)
     end
@@ -2243,7 +2251,7 @@ class OSModel
     
     return true if htgsys.nil?
     
-    fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
+    fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
     
     heat_capacity_btuh = Float(XMLHelper.get_value(htgsys, "HeatingCapacity"))
     if heat_capacity_btuh <= 0.0
@@ -2879,7 +2887,7 @@ class OSModel
     has_boiler = XMLHelper.has_element(htgsys, "HeatingSystemType/Boiler")
     return true if not (has_furnace or has_wall_furnace or has_stove or has_boiler)
     
-    fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
+    fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
     return true if fuel == Constants.FuelTypeElectric
     
     fuel_eae = XMLHelper.get_value(htgsys, "ElectricAuxiliaryEnergy")
@@ -3009,7 +3017,7 @@ class WoodStudConstructionSet
 
 end
 
-def hpxml_to_beopt_fuel(fuel)
+def to_beopt_fuel(fuel)
   return {"natural gas"=>Constants.FuelTypeGas, 
           "fuel oil"=>Constants.FuelTypeOil, 
           "propane"=>Constants.FuelTypePropane, 

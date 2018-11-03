@@ -1565,7 +1565,10 @@ class EnergyRatingIndex301Ruleset
         wh_uef = Float(XMLHelper.get_value(orig_wh_sys, "UniformEnergyFactor"))
         wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
         wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
-        wh_ef = get_water_heater_ef_from_uef(wh_uef, wh_type, wh_fuel_type)
+        beopt_type = {'storage water heater'=>Constants.WaterHeaterTypeTank,
+                      'instantaneous water heater'=>Constants.WaterHeaterTypeTankless,
+                      'heat pump water heater'=>Constants.WaterHeaterTypeHeatPump}
+        wh_ef = Waterheater.calc_ef_from_uef(wh_uef, beopt_type[type], to_beopt_fuel(fuel_type))
         XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
@@ -2396,26 +2399,6 @@ class EnergyRatingIndex301Ruleset
     return ef, re
   end
   
-  def self.get_water_heater_ef_from_uef(wh_uef, wh_type, wh_fuel_type)
-    # Interpretation on Water Heater UEF
-    if wh_fuel_type == 'electricity'
-      if wh_type == 'storage water heater'
-        return [2.4029*wh_uef - 1.2844, 0.96].min
-      elsif wh_type == 'instantaneous water heater'
-        return wh_uef
-      elsif wh_type == 'heat pump water heater'
-        return 1.2101*wh_uef - 0.6052
-      end
-    else # Fuel
-      if wh_type == 'storage water heater'
-        return 0.9066*wh_uef + 0.0711
-      elsif wh_type == 'instantaneous water heater'
-        return wh_uef
-      end
-    end
-    fail "Unable to calculated water heater EF from UEF."
-  end
-  
   def self.get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_rvalue)
     # ANSI/RESNET 301-2014 Addendum A-2015 
     # Amendment on Domestic Hot Water (DHW) Systems
@@ -2572,8 +2555,8 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.get_conditioned_basement_integer(orig_details)
+    # TODO: Double-check this
     bsmnt = 0.0
-    # FIXME: Looks wrong. Should be 'true'?
     if not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?
       bsmnt = 1.0
     end
