@@ -1319,7 +1319,14 @@ class EnergyRatingIndex301Ruleset
     end
     
     # Table 303.4.1(1) - Thermostat
-    XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACControl")
+    if not orig_details.elements["Systems/HVAC/HVACControl"].nil?
+      XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACControl")
+    else
+      new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
+      sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "HVACControl")
+      XMLHelper.add_element(new_hvac_control, "ControlType", "manual thermostat")
+    end
     
     # Table 4.2.2(1) - Thermal distribution systems
     # FIXME: There can be no distribution system when HVAC prescribed via above
