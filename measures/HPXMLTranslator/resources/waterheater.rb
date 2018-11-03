@@ -975,17 +975,17 @@ end
         # Interpretation on Water Heater UEF
         if fuel_type == Constants.FuelTypeElectric
           if type == Constants.WaterHeaterTypeTank
-            return [2.4029*wh_uef - 1.2844, 0.96].min
+            return [2.4029*uef - 1.2844, 0.96].min
           elsif type == Constants.WaterHeaterTypeTankless
-            return wh_uef
+            return uef
           elsif type == Constants.WaterHeaterTypeHeatPump
-            return 1.2101*wh_uef - 0.6052
+            return 1.2101*uef - 0.6052
           end
         else # Fuel
           if type == Constants.WaterHeaterTypeTank
-            return 0.9066*wh_uef + 0.0711
+            return 0.9066*uef + 0.0711
           elsif type == Constants.WaterHeaterTypeTankless
-            return wh_uef
+            return uef
           end
         end
         return nil

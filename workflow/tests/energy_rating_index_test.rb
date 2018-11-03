@@ -606,7 +606,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Appliances: CookingRange
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange") do |appl|
-      cook_fuel_type = hpxml_to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
       cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
       oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
       cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
@@ -646,7 +646,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Appliances: ClothesDryer
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
-      cd_fuel = hpxml_to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cd_fuel = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
       cd_ef = Float(XMLHelper.get_value(appl, "EnergyFactor"))
       cd_control = XMLHelper.get_value(appl, "ControlType")
       cw_ler = Float(XMLHelper.get_value(appl, "../ClothesWasher/RatedAnnualkWh"))

@@ -305,7 +305,7 @@
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <HeatingCapacity>18767</HeatingCapacity>
-            <UniformEnergyFactor>0.93</UniformEnergyFactor>
+            <EnergyFactor>0.95</EnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>

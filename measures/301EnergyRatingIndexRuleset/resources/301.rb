@@ -1568,7 +1568,7 @@ class EnergyRatingIndex301Ruleset
         beopt_type = {'storage water heater'=>Constants.WaterHeaterTypeTank,
                       'instantaneous water heater'=>Constants.WaterHeaterTypeTankless,
                       'heat pump water heater'=>Constants.WaterHeaterTypeHeatPump}
-        wh_ef = Waterheater.calc_ef_from_uef(wh_uef, beopt_type[type], to_beopt_fuel(fuel_type))
+        wh_ef = Waterheater.calc_ef_from_uef(wh_uef, beopt_type[wh_type], to_beopt_fuel(wh_fuel_type))
         XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
