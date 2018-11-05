@@ -80,9 +80,6 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
             '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
-            
-            '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="other"]' => one, # See [PlugLoads]
-            '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="TV other"]' => one, # See [Television]
         },
         
         
@@ -649,22 +646,6 @@ class EnergyPlusValidator
                 'extension/FractionQualifyingTierIIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIIFixturesGarage' => one,
             },
-        
-        
-        
-        # [PlugLoads]
-        '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="other"]' => {
-            'Load[Units="kWh/year"]/Value' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
-        },
-        
-        
-        
-        # [Television]
-        '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="TV other"]' => {
-            'Load[Units="kWh/year"]/Value' => one,
-        },
         
     }
     

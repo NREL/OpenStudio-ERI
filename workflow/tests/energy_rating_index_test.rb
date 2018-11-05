@@ -589,16 +589,21 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
     garage_present = Boolean(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
   
-    # Plug loads
     xml_pl_sens = 0.0
     xml_pl_lat = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad") do |pl|
-      frac_sens = Float(XMLHelper.get_value(pl, "extension/FracSensible"))
-      frac_lat = Float(XMLHelper.get_value(pl, "extension/FracLatent"))
-      btu = UnitConversions.convert(Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value")), "kWh", "Btu")
-      xml_pl_sens += (frac_sens * btu)
-      xml_pl_lat += (frac_lat * btu)
-    end
+  
+    # Plug loads: Televisions
+    annual_kwh, frac_sens, frac_lat = MiscLoads.get_televisions_values(cfa, nbeds)
+    btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    xml_pl_sens += (frac_sens * btu)
+    xml_pl_lat += (frac_lat * btu)
+    s += "#{xml_pl_sens} #{xml_pl_lat}\n"
+    
+    # Plug loads: Residual
+    annual_kwh, frac_sens, frac_lat = MiscLoads.get_residual_mels_values(cfa)
+    btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    xml_pl_sens += (frac_sens * btu)
+    xml_pl_lat += (frac_lat * btu)
     s += "#{xml_pl_sens} #{xml_pl_lat}\n"
     
     xml_appl_sens = 0.0

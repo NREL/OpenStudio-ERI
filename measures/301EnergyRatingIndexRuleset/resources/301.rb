@@ -96,10 +96,6 @@ class EnergyRatingIndex301Ruleset
     set_lighting_reference(new_lighting, orig_details)
     set_lighting_ceiling_fans_reference(new_lighting)
     
-    # MiscLoads
-    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
-    set_misc_loads_reference(new_misc_loads)
-    
   end
   
   def self.apply_rated_home_ruleset(building)
@@ -148,10 +144,6 @@ class EnergyRatingIndex301Ruleset
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_rated(new_lighting, orig_details)
     set_lighting_ceiling_fans_rated(new_lighting)
-    
-    # MiscLoads
-    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
-    set_misc_loads_rated(new_misc_loads)
     
   end
   
@@ -202,10 +194,6 @@ class EnergyRatingIndex301Ruleset
     set_lighting_iad(new_lighting, orig_details)
     set_lighting_ceiling_fans_iad(new_lighting)
     
-    # MiscLoads
-    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
-    set_misc_loads_iad(new_misc_loads)
-  
   end
   
   def self.set_summary_reference(new_summary, orig_details)
@@ -2044,49 +2032,6 @@ class EnergyRatingIndex301Ruleset
     # FIXME
   end
 
-  def self.set_misc_loads_reference(new_misc_loads)
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric Reference Homes
-    
-    # Residual MELs
-    residual_mels_kwh = get_residual_mels_kwh()
-    residual_mels_sens, residual_mels_lat = get_residual_mels_sens_lat(residual_mels_kwh)
-    residual_mels = XMLHelper.add_element(new_misc_loads, "PlugLoad")
-    sys_id = XMLHelper.add_element(residual_mels, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Residual_MELs")
-    XMLHelper.add_element(residual_mels, "PlugLoadType", "other")
-    residual_mels_load = XMLHelper.add_element(residual_mels, "Load")
-    XMLHelper.add_element(residual_mels_load, "Units", "kWh/year")
-    XMLHelper.add_element(residual_mels_load, "Value", residual_mels_kwh)
-    extension = XMLHelper.add_element(residual_mels, "extension")
-    XMLHelper.add_element(extension, "FracSensible", residual_mels_sens)
-    XMLHelper.add_element(extension, "FracLatent", residual_mels_lat)
-    
-    # Televisions
-    televisions_kwh = get_televisions_kwh()
-    televisions_sens, televisions_lat = get_televisions_sens_lat(televisions_kwh)
-    television = XMLHelper.add_element(new_misc_loads, "PlugLoad")
-    sys_id = XMLHelper.add_element(television, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Television")
-    XMLHelper.add_element(television, "PlugLoadType", "TV other")
-    television_load = XMLHelper.add_element(television, "Load")
-    XMLHelper.add_element(television_load, "Units", "kWh/year")
-    XMLHelper.add_element(television_load, "Value", televisions_kwh)
-    extension = XMLHelper.add_element(television, "extension")
-    XMLHelper.add_element(extension, "FracSensible", televisions_sens)
-    XMLHelper.add_element(extension, "FracLatent", televisions_lat)
-    
-  end
-  
-  def self.set_misc_loads_rated(new_misc_loads)
-    # Table 4.2.2(1) - Internal gains
-    self.set_misc_loads_reference(new_misc_loads)
-  end
-  
-  def self.set_misc_loads_iad(new_misc_loads)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_misc_loads_reference(new_misc_loads)
-  end
-  
   private
 
   def self.get_reference_component_characteristics(component_type)
@@ -2163,32 +2108,6 @@ class EnergyRatingIndex301Ruleset
     else
       return nil
     end
-  end
-  
-  def self.get_residual_mels_kwh()
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric Reference Homes
-    return 0.91*@cfa
-  end
-  
-  def self.get_residual_mels_sens_lat(residual_mels_kwh)
-    # Table 4.2.2(3). Internal Gains for Reference Homes
-    load_sens = 7.27*@cfa # Btu/day
-    load_lat = 0.38*@cfa # Btu/day
-    total = UnitConversions.convert(residual_mels_kwh, "kWh", "Btu")/365.0 # Btu/day
-    return load_sens/total, load_lat/total
-  end
-  
-  def self.get_televisions_kwh()
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric Reference Homes
-    return 413.0 + 0.0*@cfa + 69.0*@nbeds
-  end
-  
-  def self.get_televisions_sens_lat(televisions_kwh)
-    # Table 4.2.2(3). Internal Gains for Reference Homes
-    load_sens = 3861.0 + 645.0*@nbeds # Btu/day
-    load_lat = 0.0 # Btu/day
-    total = UnitConversions.convert(televisions_kwh, "kWh", "Btu")/365.0 # Btu/day
-    return load_sens/total, load_lat/total
   end
   
   def self.get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
