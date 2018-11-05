@@ -383,6 +383,10 @@
             <FanSpeed>medium</FanSpeed>
             <Efficiency>30.0</Efficiency>
           </Airflow>
+          <extension>
+            <CoolingSetpointOffset>0.5</CoolingSetpointOffset>
+            <MonthlyOutdoorTempControl>63.0</MonthlyOutdoorTempControl>
+          </extension>
         </CeilingFan>
         <CeilingFan>
           <SystemIdentifier id='CeilingFan_ID2'/>
@@ -390,6 +394,10 @@
             <FanSpeed>medium</FanSpeed>
             <Efficiency>50.0</Efficiency>
           </Airflow>
+          <extension>
+            <CoolingSetpointOffset>0.5</CoolingSetpointOffset>
+            <MonthlyOutdoorTempControl>63.0</MonthlyOutdoorTempControl>
+          </extension>
         </CeilingFan>
       </Lighting>
     </BuildingDetails>

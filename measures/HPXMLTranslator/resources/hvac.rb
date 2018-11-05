@@ -2300,8 +2300,8 @@ class HVAC
         end
       end
       
-      weekday_setpoints = weekday_setpoints.map {|i| UnitConversions.convert(i,"F","C")}
-      weekend_setpoints = weekend_setpoints.map {|i| UnitConversions.convert(i,"F","C")}   
+      weekday_setpoints = weekday_setpoints.map {|i| i.map {|j| UnitConversions.convert(j,"F","C")}}
+      weekend_setpoints = weekend_setpoints.map {|i| i.map {|j| UnitConversions.convert(j,"F","C")}} 
       
       finished_zones = []
       model.getThermalZones.each do |thermal_zone|
@@ -2360,13 +2360,13 @@ class HVAC
           clg_wked_monthly = []
           (0..11).to_a.each do |i|        
             if cooling_season[i] == 1 and heating_season[i] == 1
-              htg_wkdy_monthly << weekday_setpoints.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : h}
-              htg_wked_monthly << weekend_setpoints.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : h}
-              clg_wkdy_monthly << weekday_setpoints.zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : c}
-              clg_wked_monthly << weekend_setpoints.zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : c}
+              htg_wkdy_monthly << weekday_setpoints[i].zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              htg_wked_monthly << weekend_setpoints[i].zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              clg_wkdy_monthly << weekday_setpoints[i].zip(clg_wkdy).map {|h, c| c < h ? (h + c) / 2.0 : c}
+              clg_wked_monthly << weekend_setpoints[i].zip(clg_wked).map {|h, c| c < h ? (h + c) / 2.0 : c}
             elsif heating_season[i] == 1
-              htg_wkdy_monthly << weekday_setpoints
-              htg_wked_monthly << weekend_setpoints
+              htg_wkdy_monthly << weekday_setpoints[i]
+              htg_wked_monthly << weekend_setpoints[i]
               clg_wkdy_monthly << Array.new(24, Constants.NoCoolingSetpoint)
               clg_wked_monthly << Array.new(24, Constants.NoCoolingSetpoint)
             else
@@ -2391,21 +2391,24 @@ class HVAC
           
         else
           
-          htg_monthly_sch = Array.new(12, 1)
-          for m in 1..12
-            if heating_season[m-1] == 1
-              htg_monthly_sch[m-1] = 1
+          htg_wkdy_monthly = []
+          htg_wked_monthly = []
+          clg_wkdy_monthly = []
+          clg_wked_monthly = []
+          (0..11).to_a.each do |i|
+            if heating_season[i] == 1
+              htg_wkdy_monthly << weekday_setpoints[i]
+              htg_wked_monthly << weekend_setpoints[i]
             else
-              htg_monthly_sch[m-1] = Constants.NoHeatingSetpoint
+              htg_wkdy_monthly << Array.new(24, Constants.NoHeatingSetpoint)
+              htg_wked_monthly << Array.new(24, Constants.NoHeatingSetpoint)
             end
-          end        
-          clg_monthly_sch = Array.new(12, 1)
-          for m in 1..12
-            clg_monthly_sch[m-1] = Constants.NoCoolingSetpoint
+            clg_wkdy_monthly << Array.new(24, Constants.NoCoolingSetpoint)
+            clg_wked_monthly << Array.new(24, Constants.NoCoolingSetpoint)
           end
-          
-          heating_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, weekday_setpoints, weekend_setpoints, htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-          cooling_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, Array.new(24, 1), Array.new(24, 1), clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+
+          heating_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
+          cooling_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
 
           unless heating_setpoint.validated? and cooling_setpoint.validated?
             return false
@@ -2489,9 +2492,9 @@ class HVAC
           end
         end
       end
-      
-      weekday_setpoints = weekday_setpoints.map {|i| UnitConversions.convert(i,"F","C")}
-      weekend_setpoints = weekend_setpoints.map {|i| UnitConversions.convert(i,"F","C")}  
+
+      weekday_setpoints = weekday_setpoints.map {|i| i.map {|j| UnitConversions.convert(j,"F","C")}}
+      weekend_setpoints = weekend_setpoints.map {|i| i.map {|j| UnitConversions.convert(j,"F","C")}}
       
       finished_zones = []
       model.getThermalZones.each do |thermal_zone|
@@ -2550,15 +2553,15 @@ class HVAC
           clg_wked_monthly = []
           (0..11).to_a.each do |i|       
             if cooling_season[i] == 1 and heating_season[i] == 1
-              htg_wkdy_monthly << htg_wkdy.zip(weekday_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : h}
-              htg_wked_monthly << htg_wked.zip(weekend_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : h}
-              clg_wkdy_monthly << htg_wkdy.zip(weekday_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : c}
-              clg_wked_monthly << htg_wked.zip(weekend_setpoints).map {|h, c| c < h ? (h + c) / 2.0 : c}
+              htg_wkdy_monthly << htg_wkdy.zip(weekday_setpoints[i]).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              htg_wked_monthly << htg_wked.zip(weekend_setpoints[i]).map {|h, c| c < h ? (h + c) / 2.0 : h}
+              clg_wkdy_monthly << htg_wkdy.zip(weekday_setpoints[i]).map {|h, c| c < h ? (h + c) / 2.0 : c}
+              clg_wked_monthly << htg_wked.zip(weekend_setpoints[i]).map {|h, c| c < h ? (h + c) / 2.0 : c}
             elsif cooling_season[i] == 1
               htg_wkdy_monthly << Array.new(24, Constants.NoHeatingSetpoint)
               htg_wked_monthly << Array.new(24, Constants.NoHeatingSetpoint)
-              clg_wkdy_monthly << weekday_setpoints
-              clg_wked_monthly << weekend_setpoints          
+              clg_wkdy_monthly << weekday_setpoints[i]
+              clg_wked_monthly << weekend_setpoints[i]
             else
               htg_wkdy_monthly << htg_wkdy
               htg_wked_monthly << htg_wked
@@ -2581,21 +2584,24 @@ class HVAC
           
         else
           
-          clg_monthly_sch = Array.new(12, 1)
-          for m in 1..12
-            if cooling_season[m-1] == 1
-              clg_monthly_sch[m-1] = 1
+          htg_wkdy_monthly = []
+          htg_wked_monthly = []
+          clg_wkdy_monthly = []
+          clg_wked_monthly = []          
+          (0..11).to_a.each do |i|
+            if cooling_season[i] == 1
+              clg_wkdy_monthly << weekday_setpoints[i]
+              clg_wked_monthly << weekend_setpoints[i]
             else
-              clg_monthly_sch[m-1] = Constants.NoCoolingSetpoint
+              clg_wkdy_monthly << Array.new(24, Constants.NoCoolingSetpoint)
+              clg_wked_monthly << Array.new(24, Constants.NoCoolingSetpoint)
             end
-          end        
-          htg_monthly_sch = Array.new(12, 1)
-          for m in 1..12
-            htg_monthly_sch[m-1] = Constants.NoHeatingSetpoint
+            htg_wkdy_monthly << Array.new(24, Constants.NoHeatingSetpoint)
+            htg_wked_monthly << Array.new(24, Constants.NoHeatingSetpoint)
           end
-          
-          heating_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, Array.new(24, 1), Array.new(24, 1), htg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
-          cooling_setpoint = MonthWeekdayWeekendSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, weekday_setpoints, weekend_setpoints, clg_monthly_sch, mult_weekday=1.0, mult_weekend=1.0, normalize_values=false)
+
+          heating_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameHeatingSetpoint, htg_wkdy_monthly, htg_wked_monthly, normalize_values=false)
+          cooling_setpoint = HourlyByMonthSchedule.new(model, runner, Constants.ObjectNameCoolingSetpoint, clg_wkdy_monthly, clg_wked_monthly, normalize_values=false)
 
           unless heating_setpoint.validated? and cooling_setpoint.validated?
             return false

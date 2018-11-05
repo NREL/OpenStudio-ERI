@@ -331,7 +331,7 @@ class OSModel
     return false if not success
     success = add_dehumidifier(runner, model, building, unit)
     return false if not success
-    success = add_ceiling_fans(runner, model, building, unit, weather)
+    success = add_ceiling_fans(runner, model, building, unit)
     return false if not success
     
     # Plug Loads & Lighting
@@ -2467,7 +2467,7 @@ class OSModel
 
   end
   
-    def self.add_setpoints(runner, model, building, weather) 
+  def self.add_setpoints(runner, model, building, weather) 
 
     control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
     controltype = XMLHelper.get_value(control, "ControlType")
@@ -2476,14 +2476,16 @@ class OSModel
   
     htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
     if controltype == "manual thermostat"
-      htg_weekday_setpoints = [htg_sp]*24
+      htg_weekday_setpoints = [[htg_sp]*24]*12
     elsif controltype == "programmable thermostat"
-      htg_weekday_setpoints = [htg_sp]*24
+      htg_weekday_setpoints = [[htg_sp]*24]*12
       setback_temp = Float(XMLHelper.get_value(control, "SetbackTempHeatingSeason"))
       setback_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetbackHoursperWeekHeating"))/7.0)
       setback_start_hr = Integer(XMLHelper.get_value(control, "extension/SetbackStartHour"))
-      for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
-        htg_weekday_setpoints[hr % 24] = setback_temp
+      (0..11).to_a.each do |m|
+        for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
+          htg_weekday_setpoints[m][hr % 24] = setback_temp
+        end
       end
     end
     htg_weekend_setpoints = htg_weekday_setpoints
@@ -2495,25 +2497,27 @@ class OSModel
     return false if not success
     
     clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
-    if controltype == "manual thermostat"
-      clg_weekday_setpoints = [clg_sp]*24
-    else
-      clg_weekday_setpoints = [clg_sp]*24
+    clg_weekday_setpoints = [[clg_sp]*24]*12
+    unless controltype == "manual thermostat"
       setup_temp = Float(XMLHelper.get_value(control, "SetupTempCoolingSeason"))
       setup_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetupHoursperWeekCooling"))/7.0)
       setup_start_hr = Integer(XMLHelper.get_value(control, "extension/SetupStartHour"))
-      for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
-        clg_weekday_setpoints[hr % 24] = setup_temp
+      (0..11).to_a.each do |m|
+        for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
+          clg_weekday_setpoints[m][hr % 24] = setup_temp
+        end
       end
     end
-    clg_weekend_setpoints = clg_weekday_setpoints
     cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
     if not cf.nil?
       cooling_setpoint_offset = Float(XMLHelper.get_value(cf, "extension/CoolingSetpointOffset"))
       monthly_avg_temp_control = Float(XMLHelper.get_value(cf, "extension/MonthlyOutdoorTempControl"))
-      # TODO: Apply cooling_setpoint_offset for months where avg outdoor temperature > monthly_avg_temp_control
-      # ...
+      weather.data.MonthlyAvgDrybulbs.each_with_index do |val, m|
+        next unless val > monthly_avg_temp_control
+        clg_weekday_setpoints[m] = [clg_weekday_setpoints[m], Array.new(24, cooling_setpoint_offset)].transpose.map {|i| i.reduce(:+)}
+      end
     end
+    clg_weekend_setpoints = clg_weekday_setpoints
     clg_use_auto_season = false
     clg_season_start_month = 1
     clg_season_end_month = 12
