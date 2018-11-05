@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/measure"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/airflow"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constants"
+require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constructions"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/geometry"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/hotwater_appliances"
 require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/lighting"
@@ -888,15 +889,17 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_window_interior_shading_reference(window)
 
+    shade_summer, shade_winter = SubsurfaceConstructions.get_default_interior_shading_factors()
+  
     # Table 4.2.2(1) - Glazing
     extension = window.elements["extension"]
     if extension.nil?
       extension = XMLHelper.add_element(window, "extension")
     end
     XMLHelper.delete_element(extension, "InteriorShadingFactorSummer")
-    XMLHelper.add_element(extension, "InteriorShadingFactorSummer", 0.70)
+    XMLHelper.add_element(extension, "InteriorShadingFactorSummer", shade_summer)
     XMLHelper.delete_element(extension, "InteriorShadingFactorWinter")
-    XMLHelper.add_element(extension, "InteriorShadingFactorWinter", 0.85)
+    XMLHelper.add_element(extension, "InteriorShadingFactorWinter", shade_winter)
     
   end
   
@@ -1000,8 +1003,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_door, "Area", door_area * wall_area_frac)
       XMLHelper.add_element(new_door, "Azimuth", 0)
       XMLHelper.add_element(new_door, "RValue", 1.0/ufactor)
-      extension = XMLHelper.add_element(new_door, "extension")
-      XMLHelper.add_element(extension, "Height", 6.67)
     end
     
   end
@@ -1018,8 +1019,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_door, orig_door, "Area")
       XMLHelper.copy_element(new_door, orig_door, "Azimuth")
       XMLHelper.copy_element(new_door, orig_door, "RValue")
-      extension = XMLHelper.add_element(new_door, "extension")
-      XMLHelper.add_element(extension, "Height", 6.67)
     end
     
   end

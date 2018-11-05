@@ -263,8 +263,8 @@ class EnergyPlusValidator
             'Overhangs' => zero_or_one, # See [WindowOverhang]
             'AttachedToWall' => one,
             'extension/Height' => one,
-            'extension/InteriorShadingFactorSummer' => one,
-            'extension/InteriorShadingFactorWinter' => one,
+            'extension/InteriorShadingFactorSummer' => zero_or_one, # Uses ERI assumption if not provided
+            'extension/InteriorShadingFactorWinter' => zero_or_one, # Uses ERI assumption if not provided
         },
         
             ## [WindowOverhang]
@@ -294,7 +294,6 @@ class EnergyPlusValidator
             'Azimuth' => one,
             'RValue' => one,
             'AttachedToWall' => one,
-            'extension/Height' => one,
         },
         
         
@@ -424,24 +423,6 @@ class EnergyPlusValidator
             'WaterRemovalRrate' => one,
             'AirFlowRate' => one,
             'HumiditySetpoint' => one,
-        },
-
-        
-        
-        # [NaturalVentilation]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/NaturalVentilation' => {
-            'HeatingSeasonTemperatureOffset' => one,
-            'CoolingSeasonTemperatureOffset' => one,
-            'OverlapSeasonTemperatureOffset' => one,
-            'EnabledForHeatingSeason' => one,
-            'EnabledForCoolingSeason' => one,
-            'EnabledForOverlapSeason' => one,
-            'EnabledNumberOfWeekdays' => one,
-            'EnabledNumberOfWeekendDays' => one,
-            'FractionWindowsOpen' => one,
-            'FractionWindowAreaOpenable' => one,
-            'ControlMaximumHumidityRatio' => one,
-            'ControlMaximumRelativeHumidity' => one,
         },
 
         

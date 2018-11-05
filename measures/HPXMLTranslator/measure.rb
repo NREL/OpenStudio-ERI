@@ -1703,9 +1703,19 @@ class OSModel
       # Apply construction
       ufactor = Float(XMLHelper.get_value(window, "UFactor"))
       shgc = Float(XMLHelper.get_value(window, "SHGC"))
-      cool_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer"))
-      heat_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter"))
-      
+      default_shade_summer, default_shade_winter = SubsurfaceConstructions.get_default_interior_shading_factors()
+      cool_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer")
+      if cool_shade_mult.nil?
+        cool_shade_mult = default_shade_summer
+      else
+        cool_shade_mult = Float(cool_shade_mult)
+      end
+      heat_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter")
+      if heat_shade_mult.nil?
+        heat_shade_mult = default_shade_winter
+      else
+        heat_shade_mult = Float(heat_shade_mult)
+      end
       success = SubsurfaceConstructions.apply_window(runner, model, [sub_surface],
                                                      "WindowConstruction",
                                                      weather, cooling_season, ufactor, shgc,
@@ -1765,9 +1775,8 @@ class OSModel
       # Apply construction
       ufactor = Float(XMLHelper.get_value(skylight, "UFactor"))
       shgc = Float(XMLHelper.get_value(skylight, "SHGC"))
-      cool_shade_mult = 1.0 # FIXME Float(XMLHelper.get_value(skylight, "extension/InteriorShadingFactorSummer"))
-      heat_shade_mult = 1.0 # FIXME Float(XMLHelper.get_value(skylight, "extension/InteriorShadingFactorWinter"))
-      
+      cool_shade_mult = 1.0
+      heat_shade_mult = 1.0
       success = SubsurfaceConstructions.apply_skylight(runner, model, [sub_surface],
                                                        "SkylightConstruction",
                                                        weather, cooling_season, ufactor, shgc,
@@ -1790,7 +1799,7 @@ class OSModel
       door_id = door.elements["SystemIdentifier"].attributes["id"]
 
       door_area = Float(door.elements["Area"].text)
-      door_height = Float(door.elements["extension/Height"].text)
+      door_height = 6.67 # ft
       door_width = door_area / door_height
       door_azimuth = Float(door.elements["Azimuth"].text)
       z_origin = 0
@@ -2790,35 +2799,18 @@ class OSModel
                                           bathroom_exhaust_hour)
 
     # Natural Ventilation
-    natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/NaturalVentilation"]
-    if natural_ventilation.nil?
-      # Assume Building America HSP defaults
-      nat_vent_htg_offset = 1.0
-      nat_vent_clg_offset = 1.0
-      nat_vent_ovlp_offset = 1.0
-      nat_vent_htg_season = true
-      nat_vent_clg_season = true
-      nat_vent_ovlp_season = true
-      nat_vent_num_weekdays = 5
-      nat_vent_num_weekends = 2
-      nat_vent_frac_windows_open = 0.33
-      nat_vent_frac_window_area_openable = 0.2
-      nat_vent_max_oa_hr = 0.0115
-      nat_vent_max_oa_rh = 0.7
-    else
-      nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "HeatingSeasonTemperatureOffset")
-      nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "CoolingSeasonTemperatureOffset")
-      nat_vent_ovlp_offset = XMLHelper.get_value(natural_ventilation, "OverlapSeasonTemperatureOffset")
-      nat_vent_htg_season = XMLHelper.get_value(natural_ventilation, "EnabledForHeatingSeason")
-      nat_vent_clg_season = XMLHelper.get_value(natural_ventilation, "EnabledForCoolingSeason")
-      nat_vent_ovlp_season = XMLHelper.get_value(natural_ventilation, "EnabledForOverlapSeason")
-      nat_vent_num_weekdays = XMLHelper.get_value(natural_ventilation, "EnabledNumberOfWeekdays")
-      nat_vent_num_weekends = XMLHelper.get_value(natural_ventilation, "EnabledNumberOfWeekendDays")
-      nat_vent_frac_windows_open = XMLHelper.get_value(natural_ventilation, "FractionWindowsOpen")
-      nat_vent_frac_window_area_openable = XMLHelper.get_value(natural_ventilation, "FractionWindowAreaOpenable")
-      nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "ControlMaximumHumidityRatio")
-      nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "ControlMaximumRelativeHumidity")
-    end
+    nat_vent_htg_offset = 1.0
+    nat_vent_clg_offset = 1.0
+    nat_vent_ovlp_offset = 1.0
+    nat_vent_htg_season = true
+    nat_vent_clg_season = true
+    nat_vent_ovlp_season = true
+    nat_vent_num_weekdays = 5
+    nat_vent_num_weekends = 2
+    nat_vent_frac_windows_open = 0.33
+    nat_vent_frac_window_area_openable = 0.2
+    nat_vent_max_oa_hr = 0.0115
+    nat_vent_max_oa_rh = 0.7
     nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season,
                                       nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays, 
                                       nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable, 
