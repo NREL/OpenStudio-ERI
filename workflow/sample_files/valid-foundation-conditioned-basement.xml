@@ -162,7 +162,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
@@ -170,7 +169,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
