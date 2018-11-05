@@ -960,6 +960,8 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_skylights_rated(new_enclosure, orig_details)
   
+    return if not XMLHelper.has_element(new_enclosure, "Skylights")
+  
     new_skylights = XMLHelper.add_element(new_enclosure, "Skylights")
   
     # Table 4.2.2(1) - Skylights
