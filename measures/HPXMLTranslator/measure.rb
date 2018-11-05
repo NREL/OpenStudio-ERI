@@ -305,8 +305,10 @@ class OSModel
     
     building = hpxml_doc.elements["/HPXML/Building"]
     @cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    @ncfl = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
     @nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     @garage_present = Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+    @has_uncond_bsmnt = (not building.elements["BuildingDetails/Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
   
     # Geometry/Envelope
     
@@ -320,9 +322,7 @@ class OSModel
     
     # Hot Water
     
-    success = add_water_heater(runner, model, building, unit, weather, spaces)
-    return false if not success
-    success = add_hot_water_and_appliances(runner, model, building, unit, weather)
+    success = add_hot_water_and_appliances(runner, model, building, unit, weather, spaces)
     return false if not success
     
     # HVAC
@@ -1911,114 +1911,10 @@ class OSModel
     return true
   end
   
-  def self.add_water_heater(runner, model, building, unit, weather, spaces)
-  
-    dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
-    location = XMLHelper.get_value(dhw, "Location")
-    setpoint_temp = XMLHelper.get_value(dhw, "HotWaterTemperature")
-    if setpoint_temp.nil?
-      setpoint_temp = Waterheater.get_default_hot_water_temperature(@eri_version)
-    else
-      setpoint_temp = Float(setpoint_temp)
-    end
-    wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
-    fuel = XMLHelper.get_value(dhw, "FuelType")
-    
-    if location == 'conditioned space'
-      space = spaces[Constants.SpaceTypeLiving]
-    elsif location == 'basement - unconditioned'
-      space = spaces[Constants.SpaceTypeUnfinishedBasement]
-    elsif location == 'attic - unconditioned'
-      space = spaces[Constants.SpaceTypeUnfinishedAttic]
-    elsif location == 'garage - unconditioned'
-      space = spaces[Constants.SpaceTypeGarage]
-    elsif location == 'crawlspace - unvented' or location == 'crawlspace - vented'
-      space = spaces[Constants.SpaceTypeCrawl]
-    else
-      fail "Unhandled water heater space: #{location}."
-    end
-    if space.nil?
-      fail "Water heater location was #{location} but building does not have this space type."
-    end
-    
-    ef = XMLHelper.get_value(dhw, "EnergyFactor")
-    if ef.nil?
-      uef = Float(XMLHelper.get_value(dhw, "UniformEnergyFactor"))
-      ef = Waterheater.calc_ef_from_uef(uef, to_beopt_wh_type(type), to_beopt_fuel(fuel_type))
-    else
-      ef = Float(ef)
-    end
-    ef_adj = XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier")
-    if ef_adj.nil?
-      ef_adj = get_ef_multiplier(to_beopt_wh_type(wh_type))
-    else
-      ef_adj = Float(ef_adj)
-    end
-    ec_adj = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor"))
-    
-    if wh_type == "storage water heater"
-    
-      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
-      if fuel != "electricity"
-        re = Float(XMLHelper.get_value(dhw, "RecoveryEfficiency"))
-      else
-        re = 0.98
-      end
-      capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity")) / 1000.0
-      oncycle_power = 0.0
-      offcycle_power = 0.0
-      success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
-                                       capacity_kbtuh, tank_vol, ef*ef_adj, re, setpoint_temp, 
-                                       oncycle_power, offcycle_power, ec_adj)
-      return false if not success
-      
-    elsif wh_type == "instantaneous water heater"
-    
-      capacity_kbtuh = 100000000.0
-      oncycle_power = 0.0
-      offcycle_power = 0.0
-      success = Waterheater.apply_tankless(model, unit, runner, space, to_beopt_fuel(fuel), 
-                                           capacity_kbtuh, ef, ef_adj,
-                                           setpoint_temp, oncycle_power, offcycle_power, ec_adj)
-      return false if not success
-      
-    elsif wh_type == "heat pump water heater"
-    
-      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
-      e_cap = 4.5 # FIXME
-      min_temp = 45.0 # FIXME
-      max_temp = 120.0 # FIXME
-      cap = 0.5 # FIXME
-      cop = 2.8 # FIXME
-      shr = 0.88 # FIXME
-      airflow_rate = 181.0 # FIXME
-      fan_power = 0.0462 # FIXME
-      parasitics = 3.0 # FIXME
-      tank_ua = 3.9 # FIXME
-      int_factor = 1.0 # FIXME
-      temp_depress = 0.0 # FIXME
-      ducting = "none"
-      # FIXME: Use ef, ef_adj, ec_adj
-      success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
-                                           e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
-                                           cap, cop, shr, airflow_rate, fan_power,
-                                           parasitics, tank_ua, int_factor, temp_depress,
-                                           ducting, 0)
-      return false if not success
-      
-    else
-    
-      fail "Unhandled water heater (#{wh_type})."
-      
-    end
-    
-    return true
-
-  end
-  
-  def self.add_hot_water_and_appliances(runner, model, building, unit, weather)
+  def self.add_hot_water_and_appliances(runner, model, building, unit, weather, spaces)
   
     wh = building.elements["BuildingDetails/Systems/WaterHeating"]
+    dhw = wh.elements["WaterHeatingSystem"]
     appl = building.elements["BuildingDetails/Appliances"]
     
     # Clothes Washer
@@ -2125,39 +2021,172 @@ class OSModel
     end
     
     # Fixtures
-    fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
-    fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
-    fx_sens_btu = Float(XMLHelper.get_value(fx, "extension/AnnualSensibleGainsBtu"))
-    fx_lat_btu = Float(XMLHelper.get_value(fx, "extension/AnnualLatentGainsBtu"))
+    low_flow_fixtures_list = []
+    wh.elements.each("WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |wf|
+      low_flow_fixtures_list << Boolean(XMLHelper.get_value(wf, "LowFlow"))
+    end
+    low_flow_fixtures_list.uniq!
+    if low_flow_fixtures_list.size == 1 and low_flow_fixtures_list[0]
+      has_low_flow_fixtures = true
+    else
+      has_low_flow_fixtures = false
+    end
     
     # Distribution
     dist = wh.elements["HotWaterDistribution"]
     if XMLHelper.has_element(dist, "SystemType/Standard")
       dist_type = "standard"
-      dist_pump_annual_kwh = 0.0
+      std_pipe_length = XMLHelper.get_value(dist, "SystemType/Standard/PipingLength")
+      if std_pipe_length.nil?
+        std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl)
+      else
+        std_pipe_length = Float(std_pipe_length)
+      end
+      recirc_loop_length = nil
+      recirc_branch_length = nil
+      recirc_control_type = nil
+      recirc_pump_power = nil
     elsif XMLHelper.has_element(dist, "SystemType/Recirculation")
       dist_type = "recirculation"
-      dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/extension/PumpAnnualkWh"))
+      recirc_loop_length = XMLHelper.get_value(dist, "SystemType/Recirculation/RecirculationPipingLoopLength")
+      if recirc_loop_length.nil?
+        std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl)
+        recirc_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)
+      else
+        recirc_loop_length = Float(recirc_loop_length)
+      end
+      recirc_branch_length = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/BranchPipingLoopLength"))
+      recirc_control_type = XMLHelper.get_value(dist, "SystemType/Recirculation/ControlType")
+      recirc_pump_power = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/PumpPower"))
+      std_pipe_length = nil
     end
-    dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
-    daily_mw_fractions = XMLHelper.get_value(dist, "extension/MixedWaterDailyFractions").split(",").map(&:to_f)
-    if daily_mw_fractions.size != 365
-      fail "HotWaterDistribution/extension/MixedWaterDailyFractions must have 365 comma-separated values."
+    pipe_r = Float(XMLHelper.get_value(dist, "PipeInsulation/PipeRValue"))
+    
+    # Drain Water Heat Recovery
+    dwhr_present = false
+    dwhr_facilities_connected = nil
+    dwhr_is_equal_flow = nil
+    dwhr_efficiency = nil
+    if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
+      dwhr_present = true
+      dwhr_facilities_connected = XMLHelper.get_value(dist, "DrainWaterHeatRecovery/FacilitiesConnected")
+      dwhr_is_equal_flow = Boolean(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/EqualFlow"))
+      dwhr_efficiency = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
     end
-    daily_wh_inlet_temperatures = XMLHelper.get_value(dist, "extension/WaterHeaterDailyInletTemperatures").split(",").map(&:to_f)
-    if daily_wh_inlet_temperatures.size != 365
-      fail "HotWaterDistribution/extension/WaterHeaterDailyInletTemperatures must have 365 comma-separated values."
+
+    # Water Heater
+    location = XMLHelper.get_value(dhw, "Location")
+    setpoint_temp = XMLHelper.get_value(dhw, "HotWaterTemperature")
+    if setpoint_temp.nil?
+      setpoint_temp = Waterheater.get_default_hot_water_temperature(@eri_version)
+    else
+      setpoint_temp = Float(setpoint_temp)
+    end
+    wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
+    fuel = XMLHelper.get_value(dhw, "FuelType")
+    
+    if location == 'conditioned space'
+      space = spaces[Constants.SpaceTypeLiving]
+    elsif location == 'basement - unconditioned'
+      space = spaces[Constants.SpaceTypeUnfinishedBasement]
+    elsif location == 'attic - unconditioned'
+      space = spaces[Constants.SpaceTypeUnfinishedAttic]
+    elsif location == 'garage - unconditioned'
+      space = spaces[Constants.SpaceTypeGarage]
+    elsif location == 'crawlspace - unvented' or location == 'crawlspace - vented'
+      space = spaces[Constants.SpaceTypeCrawl]
+    else
+      fail "Unhandled water heater space: #{location}."
+    end
+    if space.nil?
+      fail "Water heater location was #{location} but building does not have this space type."
+    end
+    
+    ef = XMLHelper.get_value(dhw, "EnergyFactor")
+    if ef.nil?
+      uef = Float(XMLHelper.get_value(dhw, "UniformEnergyFactor"))
+      ef = Waterheater.calc_ef_from_uef(uef, to_beopt_wh_type(type), to_beopt_fuel(fuel_type))
+    else
+      ef = Float(ef)
+    end
+    ef_adj = XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier")
+    if ef_adj.nil?
+      ef_adj = get_ef_multiplier(to_beopt_wh_type(wh_type))
+    else
+      ef_adj = Float(ef_adj)
+    end
+    ec_adj = HotWaterAndAppliances.get_dist_energy_consumption_adjustment(@has_uncond_bsmnt, @cfa, @ncfl,
+                                                                          dist_type, recirc_control_type, 
+                                                                          pipe_r, std_pipe_length, recirc_loop_length)
+    
+    if wh_type == "storage water heater"
+    
+      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
+      if fuel != "electricity"
+        re = Float(XMLHelper.get_value(dhw, "RecoveryEfficiency"))
+      else
+        re = 0.98
+      end
+      capacity_kbtuh = Float(XMLHelper.get_value(dhw, "HeatingCapacity")) / 1000.0
+      oncycle_power = 0.0
+      offcycle_power = 0.0
+      success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
+                                       capacity_kbtuh, tank_vol, ef*ef_adj, re, setpoint_temp, 
+                                       oncycle_power, offcycle_power, ec_adj)
+      return false if not success
+      
+    elsif wh_type == "instantaneous water heater"
+    
+      capacity_kbtuh = 100000000.0
+      oncycle_power = 0.0
+      offcycle_power = 0.0
+      success = Waterheater.apply_tankless(model, unit, runner, space, to_beopt_fuel(fuel), 
+                                           capacity_kbtuh, ef, ef_adj,
+                                           setpoint_temp, oncycle_power, offcycle_power, ec_adj)
+      return false if not success
+      
+    elsif wh_type == "heat pump water heater"
+    
+      tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
+      e_cap = 4.5 # FIXME
+      min_temp = 45.0 # FIXME
+      max_temp = 120.0 # FIXME
+      cap = 0.5 # FIXME
+      cop = 2.8 # FIXME
+      shr = 0.88 # FIXME
+      airflow_rate = 181.0 # FIXME
+      fan_power = 0.0462 # FIXME
+      parasitics = 3.0 # FIXME
+      tank_ua = 3.9 # FIXME
+      int_factor = 1.0 # FIXME
+      temp_depress = 0.0 # FIXME
+      ducting = "none"
+      # FIXME: Use ef, ef_adj, ec_adj
+      success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
+                                           e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
+                                           cap, cop, shr, airflow_rate, fan_power,
+                                           parasitics, tank_ua, int_factor, temp_depress,
+                                           ducting, 0)
+      return false if not success
+      
+    else
+    
+      fail "Unhandled water heater (#{wh_type})."
+      
     end
     
     success = HotWaterAndAppliances.apply(model, unit, runner, weather, 
+                                          @cfa, @nbeds, @ncfl, @has_uncond_bsmnt,
                                           cw_mef, cw_ler, cw_elec_rate, cw_gas_rate,
                                           cw_agc, cw_cap, cd_fuel, cd_ef, cd_control,
                                           dw_ef, dw_cap, fridge_annual_kwh, cook_fuel_type,
                                           cook_is_induction, oven_is_convection,
-                                          fx_gpd, fx_sens_btu, fx_lat_btu, dist_type, 
-                                          dist_gpd, dist_pump_annual_kwh, 
-                                          daily_wh_inlet_temperatures, daily_mw_fractions,
-                                          @eri_version)
+                                          has_low_flow_fixtures, dist_type, pipe_r,
+                                          std_pipe_length, recirc_loop_length, 
+                                          recirc_branch_length, recirc_control_type,
+                                          recirc_pump_power, dwhr_present, 
+                                          dwhr_facilities_connected, dwhr_is_equal_flow, 
+                                          dwhr_efficiency, setpoint_temp, @eri_version)
     return false if not success
     
     return true

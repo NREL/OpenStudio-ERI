@@ -6,14 +6,17 @@ require "#{File.dirname(__FILE__)}/constants"
 class HotWaterAndAppliances
 
   def self.apply(model, unit, runner, weather, 
+                 cfa, nbeds, ncfl, has_uncond_bsmnt,
                  cw_mef, cw_ler, cw_elec_rate, cw_gas_rate,
                  cw_agc, cw_cap, cd_fuel, cd_ef, cd_control,
                  dw_ef, dw_cap, fridge_annual_kwh, cook_fuel_type,
                  cook_is_induction, oven_is_convection,
-                 fx_gpd, fx_sens_btu, fx_lat_btu, dist_type, 
-                 dist_gpd, dist_pump_annual_kwh, 
-                 daily_wh_inlet_temperatures, daily_mw_fractions,
-                 eri_version)
+                 has_low_flow_fixtures, dist_type, pipe_r,
+                 std_pipe_length, recirc_loop_length, 
+                 recirc_branch_length, recirc_control_type,
+                 recirc_pump_power, dwhr_present, 
+                 dwhr_facilities_connected, dwhr_is_equal_flow, 
+                 dwhr_efficiency, setpoint_temp, eri_version)
   
     # Table 4.6.1.1(1): Hourly Hot Water Draw Fraction for Hot Water Tests
     daily_fraction = [0.0085, 0.0085, 0.0085, 0.0085, 0.0085, 0.0100, 0.0750, 0.0750, 
@@ -30,18 +33,6 @@ class HotWaterAndAppliances
     timestep_interval = OpenStudio::Time.new(0, 0, timestep_minutes)
     timestep_day = OpenStudio::Time.new(0, 0, 60*24)
     temp_sch_limits = model.getScheduleTypeLimitsByName("Temperature")
-    
-    # Get unit beds/baths
-    nbeds, nbaths = Geometry.get_unit_beds_baths(model, unit, runner)
-    if nbeds.nil? or nbaths.nil?
-      return false
-    end
-      
-    # Get FFA
-    ffa = Geometry.get_finished_floor_area_from_spaces(unit.spaces, false, runner)
-    if ffa.nil?
-      return false
-    end
     
     # Get plant loop
     plant_loop = Waterheater.get_plant_loop_from_string(model.getPlantLoops, Constants.Auto, unit, Constants.ObjectNameWaterHeater(unit.name.to_s.gsub("unit ", "")).gsub("|","_"), runner)
@@ -72,6 +63,9 @@ class HotWaterAndAppliances
     schedule_hw.setName("Hot Water Draw Profile")
     
     # Create mixed water draw profile schedule
+    dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(nbeds, dist_type, std_pipe_length, recirc_branch_length, dwhr_is_equal_flow, dwhr_facilities_connected, has_low_flow_fixtures)
+    daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(weather, dwhr_present, dwhr_iFrac, dwhr_efficiency, dwhr_eff_adj, dwhr_plc, dwhr_locF, dwhr_fixF)
+    daily_mw_fractions = calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures, setpoint_temp)
     fractions_mw = []
     for day in 0..364
       for hr in 0..23
@@ -85,7 +79,7 @@ class HotWaterAndAppliances
     schedule_mw.setName("Mixed Water Draw Profile")
     
     # Replace mains water temperature schedule with water heater inlet temperature schedule.
-    # Unless there is a DWHR, these are identical.
+    # These are identical unless there is a DWHR.
     daily_wh_inlet_temperatures_c = daily_wh_inlet_temperatures.map {|t| UnitConversions.convert(t, "F", "C")}
     time_series_tmains = OpenStudio::TimeSeries.new(start_date, timestep_day, OpenStudio::createVector(daily_wh_inlet_temperatures_c), "")
     schedule_tmains = OpenStudio::Model::ScheduleInterval.fromTimeSeries(time_series_tmains, model).get
@@ -148,6 +142,8 @@ class HotWaterAndAppliances
     add_other_equipment(model, cook_name_f, cook_space, cook_design_level_f, cook_frac_sens, cook_frac_lat, cook_schedule.schedule, cook_fuel_type)
     
     # Fixtures (showers, sinks, baths)
+    fx_gpd = get_fixtures_gpd(eri_version, nbeds, has_low_flow_fixtures)
+    fx_sens_btu, fx_lat_btu = get_fixtures_gains_sens_lat(nbeds)
     fx_obj_name = Constants.ObjectNameShower(unit.name.to_s)
     fx_obj_name_sens = "#{fx_obj_name} Sensible"
     fx_obj_name_lat = "#{fx_obj_name} Latent"
@@ -161,11 +157,13 @@ class HotWaterAndAppliances
     add_other_equipment(model, fx_obj_name_lat, fx_space, fx_design_level_lat, 0.0, 1.0, fx_schedule.schedule, nil)
     
     # Distribution losses
+    dist_gpd = get_dist_waste_gpd(eri_version, nbeds, has_uncond_bsmnt, cfa, ncfl, dist_type, pipe_r, std_pipe_length, recirc_branch_length, has_low_flow_fixtures)
     dist_obj_name = Constants.ObjectNameHotWaterDistribution(unit.name.to_s)
     dist_peak_flow_gpm = dist_gpd/sum_fractions_hw/timestep_minutes*365.0
     add_water_use_equipment(model, dist_obj_name, dist_peak_flow_gpm, schedule_mw, setpoint_sched, water_use_connection)
     
     # Recirculation pump
+    dist_pump_annual_kwh = get_hwdist_recirc_pump_energy(dist_type, recirc_control_type, recirc_pump_power)
     dist_pump_obj_name = Constants.ObjectNameHotWaterRecircPump(unit.name.to_s)
     dist_pump_space = Geometry.get_space_from_location(unit, Constants.Auto, location_hierarchy)
     dist_pump_schedule = cd_schedule
@@ -349,6 +347,41 @@ class HotWaterAndAppliances
     return 0.503 + 0.95 * imef # Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF
   end
       
+  def self.get_dist_energy_consumption_adjustment(has_uncond_bsmnt, cfa, ncfl,
+                                                  dist_type, recirc_control_type, 
+                                                  pipe_r, std_pipe_length, recirc_loop_length)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Eq. 4.2-16
+    ew_fact = get_dist_energy_waste_factor(dist_type, recirc_control_type, pipe_r)
+    o_frac = 0.25 # fraction of hot water waste from standard operating conditions
+    oew_fact = ew_fact * o_frac # standard operating condition portion of hot water energy waste
+    ocd_eff = 0.0 # TODO: Need an HPXML input for this?
+    sew_fact = ew_fact - oew_fact
+    ref_pipe_l = get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+    if dist_type == "standard"
+      pe_ratio = std_pipe_length/ref_pipe_l
+    elsif dist_type == "recirculation"
+      ref_loop_l = get_default_recirc_loop_length(ref_pipe_l)
+      pe_ratio = recirc_loop_length/ref_loop_l
+    end
+    e_waste = oew_fact*(1.0 - ocd_eff) + sew_fact*pe_ratio
+    return (e_waste + 128.0)/160.0
+  end
+  
+  def self.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    bsmnt = has_uncond_bsmnt ? 1 : 0
+    return 2.0*(cfa/ncfl)**0.5 + 10.0*ncfl + 5.0*bsmnt # Eq. 4.2-13 (refPipeL)
+  end
+  
+  def self.get_default_recirc_loop_length(std_pipe_length)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    return 2.0*std_pipe_length - 20.0 # Eq. 4.2-17 (refLoopL)
+  end
+  
   private
   
   def self.add_electric_equipment(model, obj_name, space, design_level_w, frac_sens, frac_lat, schedule)
@@ -397,6 +430,217 @@ class HotWaterAndAppliances
     wu.setFlowRateFractionSchedule(schedule)
     wu_def.setTargetTemperatureSchedule(temp_schedule)
     water_use_connection.addWaterUseEquipment(wu)
+  end
+  
+  def self.get_dwhr_factors(nbeds, dist_type, std_pipe_length, recirc_branch_length, is_equal_flow, facilities_connected, has_low_flow_fixtures)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Eq. 4.2-14
+    
+    eff_adj = 1.0
+    if has_low_flow_fixtures
+      eff_adj = 1.082
+    end
+    
+    iFrac = 0.56 + 0.015*nbeds - 0.0004*nbeds**2 # fraction of hot water use impacted by DWHR
+    
+    if dist_type == "recirculation"
+      pLength = recirc_branch_length
+    elsif dist_type == "standard"
+      pLength = std_pipe_length
+    end
+    plc = 1 - 0.0002*pLength # piping loss coefficient
+    
+    # Location factors for DWHR placement
+    if is_equal_flow
+      locF = 1.000
+    else
+      locF = 0.777
+    end
+    
+    # Fixture Factor
+    if facilities_connected == "all"
+      fixF = 1.0
+    elsif facilities_connected == "one"
+      fixF = 0.5
+    end
+    
+    return eff_adj, iFrac, plc, locF, fixF
+  end
+  
+  def self.calc_water_heater_daily_inlet_temperatures(weather, dwhr_present=false, dwhr_iFrac=nil, dwhr_eff=nil, 
+                                                      dwhr_eff_adj=nil, dwhr_plc=nil, dwhr_locF=nil, dwhr_fixF=nil)
+    
+    # Get daily mains temperatures
+    avgOAT = weather.data.AnnualAvgDrybulb
+    maxDiffMonthlyAvgOAT = weather.data.MonthlyAvgDrybulbs.max - weather.data.MonthlyAvgDrybulbs.min
+    tmains_daily = WeatherProcess.calc_mains_temperatures(avgOAT, maxDiffMonthlyAvgOAT, weather.header.Latitude)[2]
+    
+    wh_temps_daily = tmains_daily
+    if dwhr_present
+      # Adjust inlet temperatures
+      dwhr_inT = 97.0 # F
+      for day in 0..364
+        dwhr_WHinTadj = dwhr_iFrac * (dwhr_inT - tmains_daily[day]) * dwhr_eff * dwhr_eff_adj * dwhr_plc * dwhr_locF * dwhr_fixF
+        wh_temps_daily[day] = (wh_temps_daily[day] + dwhr_WHinTadj).round(3)
+      end
+    else
+      for day in 0..364
+        wh_temps_daily[day] = (wh_temps_daily[day]).round(3)
+      end
+    end
+    
+    return wh_temps_daily
+  end
+  
+  def self.calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures, tHot)
+    tMix = 105.0 # F, Temperature of mixed water at fixtures
+    adjFmix = []
+    for day in 0..364
+      adjFmix << (1.0 - ((tHot - tMix) / (tHot - daily_wh_inlet_temperatures[day]))).round(4)
+    end
+    
+    return adjFmix
+  end
+  
+  def self.get_hwdist_recirc_pump_energy(dist_type, recirc_control_type, recirc_pump_power)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Table 4.2.2.5.2.11(5) Annual electricity consumption factor for hot water recirculation system pumps
+    if dist_type == "recirculation"
+      if recirc_control_type == "no control" or recirc_control_type == "timer"
+        return 8.76*recirc_pump_power
+      elsif recirc_control_type == "temperature"
+        return 1.46*recirc_pump_power
+      elsif recirc_control_type == "presence sensor demand control"
+        return 0.15*recirc_pump_power
+      elsif recirc_control_type == "manual demand control"
+        return 0.10*recirc_pump_power
+      end
+    elsif dist_type == "standard"
+      return 0.0
+    end
+    return nil
+  end
+  
+  def self.get_fixtures_effectiveness(has_low_flow_fixtures)
+    f_eff = has_low_flow_fixtures ? 0.95 : 1.0
+    return f_eff
+  end
+  
+  def self.get_fixtures_gpd(eri_version, nbeds, has_low_flow_fixtures)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    
+    if not eri_version.include? "A"
+      # Hot (not mixed) water GPD defined, so added to dishwasher instead.
+      # Mixed water GPD here set to zero.
+      return 0.0
+    end
+    
+    ref_f_gpd = 14.6 + 10.0*nbeds # Eq. 4.2-2 (refFgpd)
+    f_eff = get_fixtures_effectiveness(has_low_flow_fixtures)
+    return f_eff*ref_f_gpd
+  end
+  
+  def self.get_fixtures_gains_sens_lat(nbeds)
+    # Table 4.2.2(3). Internal Gains for Reference Homes
+    sens_gains = -1227.0 - 409.0*nbeds # Btu/day
+    lat_gains = 1245.0 + 415.0*nbeds # Btu/day
+    return sens_gains*365.0, lat_gains*365.0
+  end
+  
+  def self.get_dist_waste_gpd(eri_version, nbeds, has_uncond_bsmnt, cfa, ncfl, 
+                              dist_type, pipe_r, std_pipe_length, 
+                              recirc_branch_length, has_low_flow_fixtures)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # 4.2.2.5.2.11 Service Hot Water Use
+    
+    if not eri_version.include? "A"
+      # Hot (not mixed) water GPD defined, so added to dishwasher instead.
+      # Mixed water GPD here set to zero.
+      return 0.0
+    end
+    
+    # Table 4.2.2.5.2.11(2) Hot Water Distribution System Insulation Factors
+    sys_factor = nil
+    if dist_type == "recirculation" and pipe_r < 3.0
+      sys_factor = 1.11
+    elsif dist_type == "recirculation" and pipe_r >= 3.0
+      sys_factor = 1.0
+    elsif dist_type == "standard" and pipe_r >= 3.0
+      sys_factor = 0.90
+    elsif dist_type == "standard" and pipe_r < 3.0
+      sys_factor = 1.0
+    end
+    
+    ref_w_gpd = 9.8*(nbeds**0.43) # Eq. 4.2-2 (refWgpd)
+    o_frac = 0.25
+    o_cd_eff = 0.0
+    
+    if dist_type == "recirculation"
+      p_ratio = recirc_branch_length/10.0
+    elsif dist_type == "standard"
+      ref_pipe_l = get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+      p_ratio = std_pipe_length/ref_pipe_l
+    end
+    
+    o_w_gpd = ref_w_gpd*o_frac*(1.0 - o_cd_eff) # Eq. 4.2-12
+    s_w_gpd = (ref_w_gpd - ref_w_gpd*o_frac)*p_ratio*sys_factor # Eq. 4.2-13
+    
+    # Table 4.2.2.5.2.11(3) Distribution system water use effectiveness
+    if dist_type == "recirculation"
+      wd_eff = 0.1
+    elsif dist_type == "standard"
+      wd_eff = 1.0
+    end
+    
+    f_eff = get_fixtures_effectiveness(has_low_flow_fixtures)
+    
+    mw_gpd = f_eff*(o_w_gpd + s_w_gpd*wd_eff) # Eq. 4.2-11
+    
+    return mw_gpd
+  end
+  
+  def self.get_dist_energy_waste_factor(dist_type, recirc_control_type, pipe_r)
+    # ANSI/RESNET 301-2014 Addendum A-2015 
+    # Amendment on Domestic Hot Water (DHW) Systems
+    # Table 4.2.2.5.2.11(6) Hot water distribution system relative annual energy waste factors
+    if dist_type == "recirculation"
+      if recirc_control_type == "no control" or recirc_control_type == "timer"
+        if pipe_r < 3.0
+          return 500.0
+        else
+          return 250.0
+        end
+      elsif recirc_control_type == "temperature"
+        if pipe_r < 3.0
+          return 375.0
+        else
+          return 187.5
+        end
+      elsif recirc_control_type == "presence sensor demand control"
+        if pipe_r < 3.0
+          return 64.8
+        else
+          return 43.2
+        end
+      elsif recirc_control_type == "manual demand control"
+        if pipe_r < 3.0
+          return 43.2
+        else
+          return 28.8
+        end
+      end
+    elsif dist_type == "standard"
+      if pipe_r < 3.0
+        return 32.0
+      else
+        return 28.8
+      end
+    end
+    return nil
   end
 
 end

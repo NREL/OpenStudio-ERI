@@ -661,12 +661,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     s += "#{xml_appl_sens} #{xml_appl_lat}\n"
     
     # Water Use
-    xml_water_sens = 0.0
-    xml_water_lat = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture") do |wf|
-      xml_water_sens += Float(XMLHelper.get_value(wf, "extension/AnnualSensibleGainsBtu"))
-      xml_water_lat += Float(XMLHelper.get_value(wf, "extension/AnnualLatentGainsBtu"))
-    end
+    xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_fixtures_gains_sens_lat(nbeds)
     s += "#{xml_water_sens} #{xml_water_lat}\n"
     
     # Occupants
@@ -757,16 +752,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def _get_dhw(hpxml_doc)
-    ref_pipe_l = 0.0
-    ref_loop_l = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution") do |hwdist|
-      if hwdist.elements["SystemType/Standard/PipingLength"]
-        ref_pipe_l += Float(XMLHelper.get_value(hwdist, "SystemType/Standard/PipingLength"))
-      end
-      if hwdist.elements["extension/RefLoopL"]
-        ref_loop_l += Float(XMLHelper.get_value(hwdist, "extension/RefLoopL"))
-      end
-    end
+    has_uncond_bsmnt = (not hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
+    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    ncfl = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+    ref_loop_l = HotWaterAndAppliances.get_default_recirc_loop_length(ref_pipe_l)
     return ref_pipe_l, ref_loop_l
   end
   

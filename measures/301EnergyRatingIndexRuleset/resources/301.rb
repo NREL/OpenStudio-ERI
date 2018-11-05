@@ -1614,224 +1614,112 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_systems_water_heating_use_reference(new_systems, orig_details)
   
-    new_water_heating = new_systems.elements["WaterHeating"]
-  
     # Table 4.2.2(1) - Service water heating systems
     
-    sens_gain, lat_gain = get_general_water_use_gains_sens_lat()
-      
-    if @eri_version.include? "A"
+    new_water_heating = new_systems.elements["WaterHeating"]
+    orig_water_heating = orig_details.elements["Systems/WaterHeating"]
     
-      ref_w_gpd = get_waste_gpd_reference()
-      bsmnt = get_conditioned_basement_integer(orig_details)
-      ref_pipe_l = get_pipe_length_reference(bsmnt)
-      ref_loop_l = get_loop_length_reference(ref_pipe_l)
-      
-      # New hot water distribution
-      daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(false)
-      daily_mw_fractions = calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
-      new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
+    has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
+    std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
+    
+    # New hot water distribution
+    new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
+    if orig_water_heating.nil?
       sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
-      sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
-      standard = XMLHelper.add_element(sys_type, "Standard")
-      XMLHelper.add_element(standard, "PipingLength", ref_pipe_l)
-      pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
-      XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
-      extension = XMLHelper.add_element(new_hw_dist, "extension")
-      XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
-      XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
-      XMLHelper.add_element(extension, "WaterHeaterDailyInletTemperatures", daily_wh_inlet_temperatures.join(","))
-      XMLHelper.add_element(extension, "RefLoopL", ref_loop_l)
-      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
-      
-      ref_f_gpd = get_fixtures_gpd_reference()
-      
-      # New water fixture (aggregate)
-      new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
-      sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
-      XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
-      XMLHelper.add_element(new_fixture, "LowFlow", false)
-      extension = XMLHelper.add_element(new_fixture, "extension")
-      XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
-      
     else
+      XMLHelper.copy_element(new_hw_dist, orig_water_heating, "HotWaterDistribution/SystemIdentifier")
+    end
+    sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
+    standard = XMLHelper.add_element(sys_type, "Standard")
+    XMLHelper.add_element(standard, "PipingLength", std_pipe_length)
+    pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
+    XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
     
-      # Hot (not mixed) water GPD defined, so added to dishwasher instead.
-      # Mixed water GPD here set to zero.
-      ref_w_gpd = 0.0
-    
-      # New hot water distribution
-      daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(false)
-      daily_mw_fractions = calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
-      new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
-      sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
-      sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
-      standard = XMLHelper.add_element(sys_type, "Standard")
-      pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
-      XMLHelper.add_element(pipe_ins, "PipeRValue", 0)
-      extension = XMLHelper.add_element(new_hw_dist, "extension")
-      XMLHelper.add_element(extension, "MixedWaterGPD", ref_w_gpd)
-      XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
-      XMLHelper.add_element(extension, "WaterHeaterDailyInletTemperatures", daily_wh_inlet_temperatures.join(","))
-      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", 1.0)
-      
-      ref_f_gpd = 0.0
-      
-      # New water fixture (aggregate)
+    # New water fixtures
+    if orig_water_heating.nil?
+      # Shower Head
       new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
       sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
+      XMLHelper.add_attribute(sys_id, "id", "ShowerHead")
       XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
       XMLHelper.add_element(new_fixture, "LowFlow", false)
-      extension = XMLHelper.add_element(new_fixture, "extension")
-      XMLHelper.add_element(extension, "MixedWaterGPD", ref_f_gpd)
-      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
       
+      # Faucet
+      new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
+      sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Faucet")
+      XMLHelper.add_element(new_fixture, "WaterFixtureType", "faucet")
+      XMLHelper.add_element(new_fixture, "LowFlow", false)
+    else
+      orig_water_heating.elements.each("WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |orig_fixture|
+        new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
+        XMLHelper.copy_element(new_fixture, orig_fixture, "SystemIdentifier")
+        XMLHelper.copy_element(new_fixture, orig_fixture, "WaterFixtureType")
+        XMLHelper.add_element(new_fixture, "LowFlow", false)
+      end
     end
-    
+  
   end
   
   def self.set_systems_water_heating_use_rated(new_systems, orig_details)
   
-    new_water_heating = new_systems.elements["WaterHeating"]
-    
     # Table 4.2.2(1) - Service water heating systems
     
-    if @eri_version.include? "A"
-    
-      orig_hw_dist = orig_details.elements["Systems/WaterHeating/HotWaterDistribution"]
-      
-      low_flow_fixtures_list = []
-      orig_details.elements.each("Systems/WaterHeating/WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |wf|
-        low_flow_fixtures_list << Boolean(XMLHelper.get_value(wf, "LowFlow"))
-      end
-      low_flow_fixtures_list.uniq!
-      if low_flow_fixtures_list.size == 1 and low_flow_fixtures_list[0]
-        low_flow_fixtures = true
-      else
-        low_flow_fixtures = false
-      end
-      
-      bsmnt = get_conditioned_basement_integer(orig_details)
-      
-      is_recirc = false
-      recirc_control_type = nil
-      recirc_pump_power = nil
-      if orig_hw_dist.nil?
-        pipe_l = get_pipe_length_reference(bsmnt)
-        pipe_rvalue = 0
-      else
-        if not orig_hw_dist.elements["SystemType/Recirculation"].nil?
-          is_recirc = true
-          recirc_branch_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/BranchPipingLoopLength"))
-          if not orig_hw_dist.elements["SystemType/Recirculation/RecirculationPipingLoopLength"].nil?
-            recirc_loop_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/RecirculationPipingLoopLength"))
-          else
-            recirc_loop_l = get_loop_length_reference(get_pipe_length_reference(bsmnt))
-          end
-          recirc_control_type = XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/ControlType")
-          recirc_pump_power = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Recirculation/PumpPower"))
-        else
-          if not orig_hw_dist.elements["SystemType/Standard/PipingLength"].nil?
-            pipe_l = Float(XMLHelper.get_value(orig_hw_dist, "SystemType/Standard/PipingLength"))
-          else
-            pipe_l = get_pipe_length_reference(bsmnt)
-          end
-        end
-        pipe_rvalue = Float(XMLHelper.get_value(orig_hw_dist, "PipeInsulation/PipeRValue"))
-      end
-      
-      # Waste gpd
-      rated_w_gpd = get_waste_gpd_rated(is_recirc, pipe_rvalue, pipe_l, recirc_branch_l, bsmnt, low_flow_fixtures)
-      
-      # Recirc pump annual electricity consumption
-      recirc_pump_annual_kwh = get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
-      
-      # Calculate energy delivery effectiveness adjustment for energy consumption
-      ec_adj = get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_rvalue, pipe_l, recirc_loop_l, bsmnt)
-
-      has_dwhr = false
-      orig_dwhr = nil
-      if not orig_hw_dist.nil?
-        orig_dwhr = orig_hw_dist.elements["DrainWaterHeatRecovery"]
-      end
-      if not orig_dwhr.nil?
-        has_dwhr = true
-        dwhr_eff = Float(XMLHelper.get_value(orig_dwhr, "Efficiency"))
-        equal_flow = Boolean(XMLHelper.get_value(orig_dwhr, "EqualFlow"))
-        if XMLHelper.get_value(orig_dwhr, "FacilitiesConnected") == "all"
-          all_showers = true
-        elsif XMLHelper.get_value(orig_dwhr, "FacilitiesConnected") == "one"
-          all_showers = false
-        end
-        dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, dwhr_eff, equal_flow, all_showers, low_flow_fixtures)
-        daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(true, dwhr_iFrac, dwhr_eff, dwhr_eff_adj, dwhr_plc, dwhr_locF, dwhr_fixF)
-      else
-        daily_wh_inlet_temperatures = calc_water_heater_daily_inlet_temperatures(false)
-      end
-      daily_mw_fractions = calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
-      
-      # New hot water distribution
-      new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
-      sys_id = XMLHelper.add_element(new_hw_dist, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "HotWaterDistribution")
-      systype = XMLHelper.add_element(new_hw_dist, "SystemType")
-      if is_recirc
-        recirc = XMLHelper.add_element(systype, "Recirculation")
-        XMLHelper.add_element(recirc, "ControlType", recirc_control_type)
-        XMLHelper.add_element(recirc, "RecirculationPipingLoopLength", recirc_loop_l)
-        XMLHelper.add_element(recirc, "BranchPipingLoopLength", recirc_branch_l)
-        XMLHelper.add_element(recirc, "PumpPower", recirc_pump_power)
-      else
-        standard = XMLHelper.add_element(systype, "Standard")
-        XMLHelper.add_element(standard, "PipingLength", pipe_l)
-      end
-      insulation = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
-      XMLHelper.add_element(insulation, "PipeRValue", pipe_rvalue)
-      if has_dwhr
-        
-        new_dwhr = XMLHelper.add_element(new_hw_dist, "DrainWaterHeatRecovery")
-        XMLHelper.copy_element(new_dwhr, orig_dwhr, "SystemIdentifier")
-        extension = XMLHelper.add_element(new_dwhr, "extension")
-        XMLHelper.add_element(extension, "EfficiencyAdjustment", dwhr_eff_adj)
-        XMLHelper.add_element(extension, "FracImpactedHotWater", dwhr_iFrac)
-        XMLHelper.add_element(extension, "PipingLossCoefficient", dwhr_plc)
-        XMLHelper.add_element(extension, "LocationFactor", dwhr_locF)
-        XMLHelper.add_element(extension, "FixtureFactor", dwhr_fixF)
-      end
-      extension = XMLHelper.add_element(new_hw_dist, "extension")
-      XMLHelper.add_element(extension, "MixedWaterGPD", rated_w_gpd)
-      XMLHelper.add_element(extension, "MixedWaterDailyFractions", daily_mw_fractions.join(","))
-      XMLHelper.add_element(extension, "WaterHeaterDailyInletTemperatures", daily_wh_inlet_temperatures.join(","))
-      XMLHelper.add_element(extension, "EnergyConsumptionAdjustmentFactor", ec_adj)
-      if is_recirc
-        XMLHelper.add_element(recirc, "extension/PumpAnnualkWh", recirc_pump_annual_kwh)
-      end
-
-      rated_f_gpd = get_fixtures_gpd_rated(low_flow_fixtures)
-      sens_gain, lat_gain = get_general_water_use_gains_sens_lat()
-      
-      # New water fixture (aggregate)
-      new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
-      sys_id = XMLHelper.add_element(new_fixture, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "WaterFixture")
-      XMLHelper.add_element(new_fixture, "WaterFixtureType", "shower head")
-      XMLHelper.add_element(new_fixture, "LowFlow", low_flow_fixtures)
-      extension = XMLHelper.add_element(new_fixture, "extension")
-      XMLHelper.add_element(extension, "MixedWaterGPD", rated_f_gpd)
-      XMLHelper.add_element(extension, "AnnualSensibleGainsBtu", sens_gain)
-      XMLHelper.add_element(extension, "AnnualLatentGainsBtu", lat_gain)
-    
-    else
-      
+    new_water_heating = new_systems.elements["WaterHeating"]
+    orig_water_heating = orig_details.elements["Systems/WaterHeating"]
+    if orig_water_heating.nil?
       set_systems_water_heating_use_reference(new_systems, orig_details)
-      
+      return
+    end
+    
+    orig_hw_dist = orig_water_heating.elements["HotWaterDistribution"]
+    
+    has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
+    std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
+        
+    # New hot water distribution
+    new_hw_dist = XMLHelper.add_element(new_water_heating, "HotWaterDistribution")
+    XMLHelper.copy_element(new_hw_dist, orig_hw_dist, "SystemIdentifier")
+    orig_standard = orig_hw_dist.elements["SystemType/Standard"]
+    orig_recirc = orig_hw_dist.elements["SystemType/Recirculation"]
+    if not orig_standard.nil?
+      new_sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
+      new_standard = XMLHelper.add_element(new_sys_type, "Standard")
+      if orig_standard.elements["PipingLength"].nil?
+        XMLHelper.add_element(new_standard, "PipingLength", std_pipe_length)
+      else
+        XMLHelper.copy_element(new_standard, orig_standard, "PipingLength")
+      end
+    elsif not orig_recirc.nil?
+      new_sys_type = XMLHelper.add_element(new_hw_dist, "SystemType")
+      new_recirc = XMLHelper.add_element(new_sys_type, "Recirculation")
+      XMLHelper.copy_element(new_recirc, orig_recirc, "ControlType")
+      if orig_recirc.elements["RecirculationPipingLoopLength"].nil?
+        recirc_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)
+        XMLHelper.add_element(new_recirc, "RecirculationPipingLoopLength", recirc_loop_length)
+      else
+        XMLHelper.copy_element(new_recirc, orig_recirc, "RecirculationPipingLoopLength")
+      end
+      XMLHelper.copy_element(new_recirc, orig_recirc, "BranchPipingLoopLength")
+      XMLHelper.copy_element(new_recirc, orig_recirc, "PumpPower")
+    end
+    pipe_ins = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
+    XMLHelper.copy_element(pipe_ins, orig_hw_dist, "PipeInsulation/PipeRValue")
+    orig_dwhr = orig_hw_dist.elements["DrainWaterHeatRecovery"]
+    if not orig_dwhr.nil?
+      new_dwhr = XMLHelper.add_element(new_hw_dist, "DrainWaterHeatRecovery")
+      XMLHelper.copy_element(new_dwhr, orig_dwhr, "FacilitiesConnected")
+      XMLHelper.copy_element(new_dwhr, orig_dwhr, "EqualFlow")
+      XMLHelper.copy_element(new_dwhr, orig_dwhr, "Efficiency")
+    end
+    
+    # New water fixtures
+    orig_water_heating.elements.each("WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |orig_fixture|
+      new_fixture = XMLHelper.add_element(new_water_heating, "WaterFixture")
+      XMLHelper.copy_element(new_fixture, orig_fixture, "SystemIdentifier")
+      XMLHelper.copy_element(new_fixture, orig_fixture, "WaterFixtureType")
+      XMLHelper.copy_element(new_fixture, orig_fixture, "LowFlow")
     end
 
   end
@@ -2200,35 +2088,7 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_misc_loads_rated(new_misc_loads)
     # Table 4.2.2(1) - Internal gains
-
-    # Residual MELs
-    residual_mels_kwh = get_residual_mels_kwh()
-    residual_mels_sens, residual_mels_lat = get_residual_mels_sens_lat(residual_mels_kwh)
-    residual_mels = XMLHelper.add_element(new_misc_loads, "PlugLoad")
-    sys_id = XMLHelper.add_element(residual_mels, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Residual_MELs")
-    XMLHelper.add_element(residual_mels, "PlugLoadType", "other")
-    residual_mels_load = XMLHelper.add_element(residual_mels, "Load")
-    XMLHelper.add_element(residual_mels_load, "Units", "kWh/year")
-    XMLHelper.add_element(residual_mels_load, "Value", residual_mels_kwh)
-    extension = XMLHelper.add_element(residual_mels, "extension")
-    XMLHelper.add_element(extension, "FracSensible", residual_mels_sens)
-    XMLHelper.add_element(extension, "FracLatent", residual_mels_lat)
-    
-    # Televisions
-    televisions_kwh = get_televisions_kwh()
-    televisions_sens, televisions_lat = get_televisions_sens_lat(televisions_kwh)
-    television = XMLHelper.add_element(new_misc_loads, "PlugLoad")
-    sys_id = XMLHelper.add_element(television, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Television")
-    XMLHelper.add_element(television, "PlugLoadType", "TV other")
-    television_load = XMLHelper.add_element(television, "Load")
-    XMLHelper.add_element(television_load, "Units", "kWh/year")
-    XMLHelper.add_element(television_load, "Value", televisions_kwh)
-    extension = XMLHelper.add_element(television, "extension")
-    XMLHelper.add_element(extension, "FracSensible", televisions_sens)
-    XMLHelper.add_element(extension, "FracLatent", televisions_lat)
-    
+    self.set_misc_loads_reference(new_misc_loads)
   end
   
   def self.set_misc_loads_iad(new_misc_loads)
@@ -2314,89 +2174,6 @@ class EnergyRatingIndex301Ruleset
     end
   end
   
-  def self.get_pipe_length_reference(bsmnt)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    return 2.0*(@cfa/@ncfl)**0.5 + 10.0*@ncfl + 5.0*bsmnt # Eq. 4.2-13 (refPipeL)
-  end
-  
-  def self.get_loop_length_reference(ref_pipe_l)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    return 2.0*ref_pipe_l - 20.0 # Eq. 4.2-17 (refLoopL)
-  end
-  
-  def self.get_fixture_effectiveness_rated(low_flow_fixtures)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    # Table 4.2.2.5.2.11(1) Hot water fixture effectiveness
-    f_eff = 1.0
-    if low_flow_fixtures
-      f_eff = 0.95
-    end
-    return f_eff
-  end
-  
-  def self.get_fixtures_gpd_reference()
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    return 14.6 + 10.0*@nbeds # Eq. 4.2-2 (refFgpd)
-  end
-  
-  def self.get_fixtures_gpd_rated(low_flow_fixtures)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    ref_f_gpd = get_fixtures_gpd_reference()
-    f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
-    return f_eff*ref_f_gpd
-  end
-  
-  def self.get_waste_gpd_reference()
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    return 9.8*(@nbeds**0.43) # Eq. 4.2-2 (refWgpd)
-  end
-  
-  def self.get_waste_gpd_rated(is_recirc, pipe_rvalue, pipe_l, recirc_branch_l, bsmnt, low_flow_fixtures)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    # 4.2.2.5.2.11 Service Hot Water Use
-    
-    # Table 4.2.2.5.2.11(2) Hot Water Distribution System Insulation Factors
-    sys_factor = 1.0
-    if is_recirc and pipe_rvalue < 3.0
-      sys_factor = 1.11
-    elsif not is_recirc and pipe_rvalue >= 3.0
-      sys_factor = 0.90
-    end
-    
-    ref_w_gpd = get_waste_gpd_reference()
-    o_frac = 0.25
-    o_cd_eff = 0.0
-    
-    if is_recirc
-      p_ratio = recirc_branch_l/10.0
-    else
-      ref_pipe_l = get_pipe_length_reference(bsmnt)
-      p_ratio = pipe_l/ref_pipe_l
-    end
-    
-    o_w_gpd = ref_w_gpd*o_frac*(1.0 - o_cd_eff) # Eq. 4.2-12
-    s_w_gpd = (ref_w_gpd - ref_w_gpd*o_frac)*p_ratio*sys_factor # Eq. 4.2-13
-    
-    # Table 4.2.2.5.2.11(3) Distribution system water use effectiveness
-    wd_eff = 1.0
-    if is_recirc
-      wd_eff = 0.10
-    end
-    
-    f_eff = get_fixture_effectiveness_rated(low_flow_fixtures)
-    
-    mw_gpd = f_eff*(o_w_gpd + s_w_gpd*wd_eff) # Eq. 4.2-11
-    
-    return mw_gpd
-  end
-  
   def self.get_residual_mels_kwh()
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric Reference Homes
     return 0.91*@cfa
@@ -2440,136 +2217,6 @@ class EnergyRatingIndex301Ruleset
     return ef, re
   end
   
-  def self.get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_rvalue)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    # Table 4.2.2.5.2.11(6) Hot water distribution system relative annual energy waste factors
-    if is_recirc
-      if recirc_control_type == "no control" or recirc_control_type == "timer"
-        if pipe_rvalue < 3.0
-          return 500.0
-        else
-          return 250.0
-        end
-      elsif recirc_control_type == "temperature"
-        if pipe_rvalue < 3.0
-          return 375.0
-        else
-          return 187.5
-        end
-      elsif recirc_control_type == "presence sensor demand control"
-        if pipe_rvalue < 3.0
-          return 64.8
-        else
-          return 43.2
-        end
-      elsif recirc_control_type == "manual demand control"
-        if pipe_rvalue < 3.0
-          return 43.2
-        else
-          return 28.8
-        end
-      end
-    else # standard distribution
-      if pipe_rvalue < 3.0
-        return 32.0
-      else
-        return 28.8
-      end
-    end
-    return nil
-  end
-  
-  def self.get_hwdist_recirc_pump_energy(is_recirc, recirc_control_type, recirc_pump_power)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    # Table 4.2.2.5.2.11(5) Annual electricity consumption factor for hot water recirculation system pumps
-    if is_recirc
-      if recirc_control_type == "no control" or recirc_control_type == "timer"
-        return 8.76*recirc_pump_power
-      elsif recirc_control_type == "temperature"
-        return 1.46*recirc_pump_power
-      elsif recirc_control_type == "presence sensor demand control"
-        return 0.15*recirc_pump_power
-      elsif recirc_control_type == "manual demand control"
-        return 0.10*recirc_pump_power
-      end
-    end
-    return nil
-  end
-  
-  def self.get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_rvalue, pipe_l, loop_l, bsmnt)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    # Eq. 4.2-16
-    ew_fact = get_hwdist_energy_waste_factor(is_recirc, recirc_control_type, pipe_rvalue)
-    o_frac = 0.25 # fraction of hot water waste from standard operating conditions
-    oew_fact = ew_fact*o_frac # standard operating condition portion of hot water energy waste
-    ocd_eff = 0.0 # TODO: Need an HPXML input for this?
-    sew_fact = ew_fact - oew_fact
-    ref_pipe_l = get_pipe_length_reference(bsmnt)
-    if not is_recirc
-      pe_ratio = pipe_l/ref_pipe_l
-    else
-      ref_loop_l = get_loop_length_reference(ref_pipe_l)
-      pe_ratio = loop_l/ref_loop_l
-    end
-    e_waste = oew_fact*(1.0 - ocd_eff) + sew_fact*pe_ratio
-    return (e_waste + 128.0)/160.0
-  end
-  
-  def self.get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, eff, equal_flow, all_showers, low_flow_fixtures)
-    # ANSI/RESNET 301-2014 Addendum A-2015 
-    # Amendment on Domestic Hot Water (DHW) Systems
-    # Eq. 4.2-14
-    
-    eff_adj = 1.0
-    if low_flow_fixtures
-      eff_adj = 1.082
-    end
-    
-    iFrac = 0.56 + 0.015*@nbeds - 0.0004*@nbeds**2 # fraction of hot water use impacted by DWHR
-    
-    if is_recirc
-      pLength = recirc_branch_l
-    else
-      pLength = pipe_l
-    end
-    plc = 1 - 0.0002*pLength # piping loss coefficient
-    
-    # Location factors for DWHR placement
-    if equal_flow
-      locF = 1.000
-    else
-      locF = 0.777
-    end
-    
-    # Fixture Factor
-    if all_showers
-      fixF = 1.0
-    else
-      fixF = 0.5
-    end
-    
-    return eff_adj, iFrac, plc, locF, fixF
-  end
-  
-  def self.get_general_water_use_gains_sens_lat()
-    # Table 4.2.2(3). Internal Gains for Reference Homes
-    sens_gains = -1227.0 - 409.0*@nbeds # Btu/day
-    lat_gains = 1245.0 + 415.0*@nbeds # Btu/day
-    return sens_gains*365.0, lat_gains*365.0
-  end
-  
-  # TODO: Duplicate method in HPXMLTranslator
-  def self.to_beopt_fuel(fuel)
-    conv = {"natural gas"=>Constants.FuelTypeGas, 
-            "fuel oil"=>Constants.FuelTypeOil, 
-            "propane"=>Constants.FuelTypePropane, 
-            "electricity"=>Constants.FuelTypeElectric}
-    return conv[fuel]
-  end
-  
   def self.has_fuel_access(orig_details)
     orig_details.elements.each("BuildingSummary/Site/FuelTypesAvailable/Fuel") do |fuel|
       fuels = ["natural gas", "fuel oil", "propane", "kerosene", "diesel",
@@ -2582,15 +2229,6 @@ class EnergyRatingIndex301Ruleset
     return false
   end
   
-  def self.get_conditioned_basement_integer(orig_details)
-    # TODO: Double-check this
-    bsmnt = 0.0
-    if not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?
-      bsmnt = 1.0
-    end
-    return bsmnt
-  end
-  
   def self.calc_mech_vent_q_fan(q_tot, sla)
     nl = 1000.0 * sla * @ncfl_ag ** 0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa/7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
@@ -2598,41 +2236,6 @@ class EnergyRatingIndex301Ruleset
       return q_tot - 2.0/3.0 * q_tot
     end
     return q_tot - q_inf
-  end
-
-  def self.calc_water_heater_daily_inlet_temperatures(dwhr_avail=false, dwhr_iFrac=nil, dwhr_eff=nil, dwhr_eff_adj=nil, 
-                                                      dwhr_plc=nil, dwhr_locF=nil, dwhr_fixF=nil)
-    # Get daily mains temperatures
-    avgOAT = @weather.data.AnnualAvgDrybulb
-    maxDiffMonthlyAvgOAT = @weather.data.MonthlyAvgDrybulbs.max - @weather.data.MonthlyAvgDrybulbs.min
-    tmains_daily = WeatherProcess.calc_mains_temperatures(avgOAT, maxDiffMonthlyAvgOAT, @weather.header.Latitude)[2]
-    
-    wh_temps_daily = tmains_daily
-    if dwhr_avail
-      # Adjust inlet temperatures
-      dwhr_inT = 97.0 # F
-      for day in 0..364
-        dwhr_WHinTadj = dwhr_iFrac * (dwhr_inT - tmains_daily[day]) * dwhr_eff * dwhr_eff_adj * dwhr_plc * dwhr_locF * dwhr_fixF
-        wh_temps_daily[day] = (wh_temps_daily[day] + dwhr_WHinTadj).round(3)
-      end
-    else
-      for day in 0..364
-        wh_temps_daily[day] = (wh_temps_daily[day]).round(3)
-      end
-    end
-    
-    return wh_temps_daily
-  end
-  
-  def self.calc_mixed_water_daily_fractions(daily_wh_inlet_temperatures)
-    tHot = Waterheater.get_default_hot_water_temperature(@eri_version) # F, Water heater set point temperature
-    tMix = 105.0 # F, Temperature of mixed water at fixtures
-    adjFmix = []
-    for day in 0..364
-      adjFmix << (1.0 - ((tHot - tMix) / (tHot - daily_wh_inlet_temperatures[day]))).round(4)
-    end
-    
-    return adjFmix
   end
 
 end

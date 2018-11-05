@@ -481,7 +481,7 @@ class EnergyPlusValidator
         # [WaterHeatingSystem]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => {
             '../HotWaterDistribution' => one, # See [HotWaterDistribution]
-            '../WaterFixture[WaterFixtureType="shower head"]' => one, # See [WaterFixture]
+            '../WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => one_or_more, # See [WaterFixture]
             'SystemIdentifier' => one, # Required by HPXML schema
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => one, # See [WHType=Tank]
             '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
@@ -520,19 +520,28 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
-            'extension/MixedWaterGPD' => one,
-            'extension/MixedWaterDailyFractions' => one,
-            'extension/WaterHeaterDailyInletTemperatures' => one,
-            'extension/EnergyConsumptionAdjustmentFactor' => one,
+            'PipeInsulation/PipeRValue' => one,
+            'DrainWaterHeatRecovery' => zero_or_one, # See [HotWaterDistribution DrainWaterHeatRecovery]
         },
         
             ## [HWDistType=Standard]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard' => {
+                'PipingLength' => zero_or_one, # Uses Reference Home if not provided
             },
             
             ## [HWDistType=Recirculation]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => {
-                'extension/PumpAnnualkWh' => one,
+                'ControlType' => one,
+                'RecirculationPipingLoopLength' => zero_or_one, # Uses Reference Home if not provided
+                'BranchPipingLoopLength' => one,
+                'PumpPower' => one,
+            },
+        
+            ## [HotWaterDistribution DrainWaterHeatRecovery]
+            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => {
+                'FacilitiesConnected' => one,
+                'EqualFlow' => one,
+                'Efficiency' => one,
             },
         
         
@@ -540,9 +549,8 @@ class EnergyPlusValidator
         # [WaterFixture]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'extension/MixedWaterGPD' => one,
-            'extension/AnnualSensibleGainsBtu' => one,
-            'extension/AnnualLatentGainsBtu' => one,
+            'WaterFixtureType' => one, # Required by HPXML schema
+            'LowFlow' => one,
         },
         
         
