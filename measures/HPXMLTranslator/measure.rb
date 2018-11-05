@@ -2705,7 +2705,7 @@ class OSModel
   
     lighting_fractions = building.elements["BuildingDetails/Lighting/LightingFractions"]
     if lighting_fractions.nil?
-      fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = get_reference_fractions()
+      fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
     else
       fFI_int = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesInterior"))
       fFI_ext = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesExterior"))
