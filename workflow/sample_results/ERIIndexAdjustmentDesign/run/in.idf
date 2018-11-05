@@ -1705,12 +1705,12 @@ ElectricEquipment,
   living,                                 !- Zone or ZoneList Name
   residential clothes dryer electric,     !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
-  215.697889670492,                       !- Design Level {W}
+  217.671865484641,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
-  0.0149825416306376,                     !- Fraction Latent
-  0.0809718242538135,                     !- Fraction Radiant
-  0.85006441794634,                       !- Fraction Lost
+  0.0148466711783515,                     !- Fraction Latent
+  0.0802375243830028,                     !- Fraction Radiant
+  0.851424121516644,                      !- Fraction Lost
   residential clothes dryer electric;     !- End-Use Subcategory
 
 ElectricEquipment,
@@ -1718,12 +1718,12 @@ ElectricEquipment,
   living,                                 !- Zone or ZoneList Name
   Hot Water Draw Profile,                 !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
-  13.972602739726,                        !- Design Level {W}
+  14.3154830974782,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
-  0.0314620413567239,                     !- Fraction Latent
-  0.163287994641397,                      !- Fraction Radiant
-  0.696391300907615,                      !- Fraction Lost
+  0.0307084715384683,                     !- Fraction Latent
+  0.159376967284651,                      !- Fraction Radiant
+  0.703663249653781,                      !- Fraction Lost
   residential clothes washer;             !- End-Use Subcategory
 
 ElectricEquipment,
@@ -1731,12 +1731,12 @@ ElectricEquipment,
   living,                                 !- Zone or ZoneList Name
   Hot Water Draw Profile,                 !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
-  35.1369863013698,                       !- Design Level {W}
+  35.0755851351164,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
-  0.30026930698347,                       !- Fraction Latent
-  0.180161584190082,                      !- Fraction Radiant
-  0.39946138603306,                       !- Fraction Lost
+  0.300794940000506,                      !- Fraction Latent
+  0.180476964000304,                      !- Fraction Radiant
+  0.398410119998987,                      !- Fraction Lost
   residential dishwasher;                 !- End-Use Subcategory
 
 ElectricEquipment,
@@ -3918,6 +3918,24 @@ SurfaceProperty:ExposedFoundationPerimeter,
   1;                                      !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
+  Surface 1,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 6,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 3,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
   Surface 5,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
@@ -3930,25 +3948,7 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
   Surface 4,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 6,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -31507,14 +31507,14 @@ WaterUse:Connections,
 WaterUse:Equipment,
   residential clothes washer,             !- Name
   residential clothes washer,             !- End-Use Subcategory
-  3.06663005461744e-007,                  !- Peak Flow Rate {m3/s}
+  3.09357379153286e-007,                  !- Peak Flow Rate {m3/s}
   Hot Water Draw Profile,                 !- Flow Rate Fraction Schedule Name
   WH Setpoint Temp;                       !- Target Temperature Schedule Name
 
 WaterUse:Equipment,
   residential dishwasher,                 !- Name
   residential dishwasher,                 !- End-Use Subcategory
-  3.4044852775994e-007,                   !- Peak Flow Rate {m3/s}
+  3.40478458496875e-007,                  !- Peak Flow Rate {m3/s}
   Hot Water Draw Profile,                 !- Flow Rate Fraction Schedule Name
   WH Setpoint Temp;                       !- Target Temperature Schedule Name
 
@@ -31802,7 +31802,7 @@ EnergyManagementSystem:Program,
   Set Cs = 0.1019,                        !- Program Line 11
   Set Cw = 0.0866,                        !- Program Line 12
   Set n = 0.67,                           !- Program Line 13
-  Set sft = (f_t*0.9),                    !- Program Line 14
+  Set sft = (f_t*0.5),                    !- Program Line 14
   Set temp1 = ((c*Cw)*((sft*res_af_vw_s)^(2*n)))^2, !- Program Line 15
   Set Qn = (((c*Cs*(dT^n))^2)+temp1)^0.5, !- Program Line 16
   Set Tdiff = res_af_1_tin_s-res_af_1_tt_s, !- Program Line 17
@@ -31834,7 +31834,7 @@ EnergyManagementSystem:Program,
   Set pt = (@RhFnTdbWPb res_af_1_tt_s res_nv_wt_s res_nv_pb_s), !- Program Line 3
   Set NVA = 15893.108858880001,           !- Program Line 4
   Set Cs = 0.00029406234873561763,        !- Program Line 5
-  Set Cw = 0.00036140379208226154,        !- Program Line 6
+  Set Cw = 0.00011154438027230292,        !- Program Line 6
   Set MNV = 3.2092426137600003,           !- Program Line 7
   Set MHR = 0.0115,                       !- Program Line 8
   Set MRH = 0.7,                          !- Program Line 9

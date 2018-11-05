@@ -1616,9 +1616,9 @@ ElectricEquipment,
   231.807860717544,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
-  0.015,                                  !- Fraction Latent
-  0.081,                                  !- Fraction Radiant
-  0.85,                                   !- Fraction Lost
+  0.0160939991566589,                     !- Fraction Latent
+  0.0869075954459578,                     !- Fraction Radiant
+  0.839060008433411,                      !- Fraction Lost
   residential clothes dryer electric;     !- End-Use Subcategory
 
 ElectricEquipment,
@@ -1629,9 +1629,9 @@ ElectricEquipment,
   13.3011118639388,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
-  0.03,                                   !- Fraction Latent
-  0.162,                                  !- Fraction Radiant
-  0.7,                                    !- Fraction Lost
+  0.0380079200309332,                     !- Fraction Latent
+  0.19731068050841,                       !- Fraction Radiant
+  0.633140945788384,                      !- Fraction Lost
   residential clothes washer;             !- End-Use Subcategory
 
 ElectricEquipment,
@@ -1642,9 +1642,9 @@ ElectricEquipment,
   23.6425613252628,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
-  0.3,                                    !- Fraction Latent
-  0.18,                                   !- Fraction Radiant
-  0.4,                                    !- Fraction Lost
+  0.527136086806162,                      !- Fraction Latent
+  0.316281652083697,                      !- Fraction Radiant
+  ,                                       !- Fraction Lost
   residential dishwasher;                 !- End-Use Subcategory
 
 ElectricEquipment,
@@ -1681,9 +1681,9 @@ ElectricEquipment,
   189.201977652427,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
-  0.08,                                   !- Fraction Latent
-  0.432,                                  !- Fraction Radiant
-  0.2,                                    !- Fraction Lost
+  0.0924854128285841,                     !- Fraction Latent
+  0.499421229274354,                      !- Fraction Radiant
+  0.0751458717141588,                     !- Fraction Lost
   residential range electric;             !- End-Use Subcategory
 
 ElectricEquipment,
@@ -2942,7 +2942,7 @@ AirTerminal:SingleDuct:ConstantVolume:NoReheat,
   Always On Discrete,                     !- Availability Schedule Name
   Node 21,                                !- Air Inlet Node Name
   Node 19,                                !- Air Outlet Node Name
-  1.36876945979336;                       !- Maximum Air Flow Rate {m3/s}
+  1.15095567377932;                       !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
   ADU residential furnace gas and central ac living direct air, !- Name
@@ -2967,7 +2967,7 @@ Zone,
   ,                                       !- Type
   ,                                       !- Multiplier
   ,                                       !- Ceiling Height {m}
-  1.8582930576,                           !- Volume {m3}
+  1.48663444608,                          !- Volume {m3}
   ,                                       !- Floor Area {m2}
   ,                                       !- Zone Inside Convection Algorithm
   ;                                       !- Zone Outside Convection Algorithm
@@ -3782,7 +3782,19 @@ SurfaceProperty:ExposedFoundationPerimeter,
   1;                                      !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
+  Surface 3,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
   Surface 2,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 1,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -3801,18 +3813,6 @@ SurfaceProperty:ConvectionCoefficients,
 
 SurfaceProperty:ConvectionCoefficients,
   Surface 4,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -5504,168 +5504,168 @@ Schedule:Day:Interval,
 
 Schedule:Day:Interval,
   residential cooling season allday1,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday10,    !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday11,    !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday12,    !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday2,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday3,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday4,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday5,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday6,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday7,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday8,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential cooling season allday9,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday1,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday10,    !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday11,    !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday12,    !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday2,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday3,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday4,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday5,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday6,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday7,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday8,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   residential heating season allday9,     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   1;                                      !- Value Until Time 1
@@ -7647,14 +7647,14 @@ Schedule:Day:Interval,
 
 Schedule:Day:Interval,
   Schedule Day 10,                        !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   0;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   Schedule Day 13,                        !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   0;                                      !- Value Until Time 1
@@ -10638,7 +10638,7 @@ Schedule:Week:Daily,
 
 Schedule:Year,
   residential cooling season,             !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   residential cooling season Week Rule - Jan1-Jan6, !- Schedule:Week Name 1
   1,                                      !- Start Month 1
   1,                                      !- Start Day 1
@@ -11082,7 +11082,7 @@ Schedule:Week:Daily,
 
 Schedule:Year,
   residential heating season,             !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   residential heating season Week Rule - Jan1-Jan6, !- Schedule:Week Name 1
   1,                                      !- Start Month 1
   1,                                      !- Start Day 1
@@ -30845,7 +30845,7 @@ AirLoopHVAC,
   residential furnace gas and central ac central air system, !- Name
   ,                                       !- Controller List Name
   residential furnace gas and central ac central air systemAvailability Manager List, !- Availability Manager List Name
-  1.36876945979336,                       !- Design Supply Air Flow Rate {m3/s}
+  1.15095567377932,                       !- Design Supply Air Flow Rate {m3/s}
   residential furnace gas and central ac central air system Supply Branches, !- Branch List Name
   ,                                       !- Connector List Name
   Node 15,                                !- Supply Side Inlet Node Name
@@ -30944,7 +30944,7 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  1.36876945979336,                       !- Cooling Supply Air Flow Rate {m3/s}
+  1.15095567377932,                       !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -30981,7 +30981,7 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
   436.969142031719,                       !- Pressure Rise {Pa}
-  1.36877417926779,                       !- Maximum Flow Rate {m3/s}
+  1.15096039325375,                       !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 15,                                !- Air Inlet Node Name
@@ -31978,7 +31978,7 @@ EnergyManagementSystem:Program,
   Set Cs = 0.0471,                        !- Program Line 11
   Set Cw = 0.1406,                        !- Program Line 12
   Set n = 0.67,                           !- Program Line 13
-  Set sft = (f_t*0.9),                    !- Program Line 14
+  Set sft = (f_t*0.5),                    !- Program Line 14
   Set temp1 = ((c*Cw)*((sft*res_af_vw_s)^(2*n)))^2, !- Program Line 15
   Set Qn = (((c*Cs*(dT^n))^2)+temp1)^0.5, !- Program Line 16
   Set Tdiff = res_af_1_tin_s-res_af_1_tt_s, !- Program Line 17
@@ -32011,7 +32011,7 @@ EnergyManagementSystem:Program,
   Set pt = (@RhFnTdbWPb res_af_1_tt_s res_nv_wt_s res_nv_pb_s), !- Program Line 3
   Set NVA = 22073.762303999996,           !- Program Line 4
   Set Cs = 8.963020389461627e-05,         !- Program Line 5
-  Set Cw = 0.00019952631717120038,        !- Program Line 6
+  Set Cw = 6.158219665777789e-05,         !- Program Line 6
   Set MNV = 5.31530807904,                !- Program Line 7
   Set MHR = 0.0115,                       !- Program Line 8
   Set MRH = 0.7,                          !- Program Line 9
@@ -32030,7 +32030,7 @@ EnergyManagementSystem:Program,
 
 EnergyManagementSystem:Subroutine,
   res_ds_1_lk_subrout,                    !- Name
-  Set f_sup = 0.19990009990009988,        !- Program Line 1
+  Set f_sup = 0.13696303696303697,        !- Program Line 1
   Set f_ret = 0.10009990009990012,        !- Program Line 2
   Set f_OA = 0.0,                         !- Program Line 3
   Set oafrate = f_OA * res_ds_1_ah_vfr,   !- Program Line 4
@@ -32049,14 +32049,14 @@ EnergyManagementSystem:Subroutine,
   Set temp1 = h_fg*(res_ds_1_ra_w-res_ds_1_ah_wt), !- Program Line 17
   Set res_ds_1_sup_lat_lk_to_lv = f_sup*res_ds_1_ah_mfr*temp1, !- Program Line 18
   Set res_ds_1_sup_s_lk_to_lv = SALeakageQtot-res_ds_1_sup_lat_lk_to_lv, !- Program Line 19
-  Set eTm = (res_ds_1_fan_rtf/(res_ds_1_ah_mfr*1006.0))*110.987, !- Program Line 20
+  Set eTm = (res_ds_1_fan_rtf/(res_ds_1_ah_mfr*1006.0))*53.438, !- Program Line 20
   Set eTm = 0-eTm,                        !- Program Line 21
   Set temp4 = res_ds_1_ah_t,              !- Program Line 22
   Set tsup = temp4+((res_ds_1_ah_tt-res_ds_1_ah_t)*(@Exp eTm)), !- Program Line 23
   Set temp5 = tsup-res_ds_1_ah_tt,        !- Program Line 24
   Set res_ds_1_sup_d_cn_to_lv = res_ds_1_ah_mfr*1006.0*temp5, !- Program Line 25
   Set res_ds_1_sup_d_cn_to_ah = 0-res_ds_1_sup_d_cn_to_lv, !- Program Line 26
-  Set eTm = (res_ds_1_fan_rtf/(res_ds_1_ah_mfr*1006.0))*18.994, !- Program Line 27
+  Set eTm = (res_ds_1_fan_rtf/(res_ds_1_ah_mfr*1006.0))*15.195, !- Program Line 27
   Set eTm = 0-eTm,                        !- Program Line 28
   Set temp6 = res_ds_1_ah_t,              !- Program Line 29
   Set tret = temp6+((res_ds_1_ra_t-res_ds_1_ah_t)*(@Exp eTm)), !- Program Line 30
