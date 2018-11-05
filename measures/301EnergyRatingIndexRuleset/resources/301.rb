@@ -1851,17 +1851,19 @@ class EnergyRatingIndex301Ruleset
     
     return if not XMLHelper.has_element(orig_details, "Systems/Photovoltaics")
     
-    orig_pv = orig_details.elements["Systems/Photovoltaics"]
-  
-    new_pv = XMLHelper.add_element(new_systems, "Photovoltaics")
-    XMLHelper.copy_element(new_pv, orig_pv, "SystemIdentifier")
-    XMLHelper.copy_element(new_pv, orig_pv, "ModuleType")
-    XMLHelper.copy_element(new_pv, orig_pv, "ArrayType")
-    XMLHelper.copy_element(new_pv, orig_pv, "ArrayAzimuth")
-    XMLHelper.copy_element(new_pv, orig_pv, "ArrayTilt")
-    XMLHelper.copy_element(new_pv, orig_pv, "MaxPowerOutput")
-    XMLHelper.copy_element(new_pv, orig_pv, "InverterEfficiency")
-    XMLHelper.copy_element(new_pv, orig_pv, "SystemLossesFraction")
+    new_pvs = XMLHelper.add_element(new_systems, "Photovoltaics")
+
+    orig_details.elements.each("Systems/Photovoltaics/PVSystem") do |orig_pv|
+      new_pv = XMLHelper.add_element(new_pvs, "PVSystem")
+      XMLHelper.copy_element(new_pv, orig_pv, "SystemIdentifier")
+      XMLHelper.copy_element(new_pv, orig_pv, "ModuleType")
+      XMLHelper.copy_element(new_pv, orig_pv, "ArrayType")
+      XMLHelper.copy_element(new_pv, orig_pv, "ArrayAzimuth")
+      XMLHelper.copy_element(new_pv, orig_pv, "ArrayTilt")
+      XMLHelper.copy_element(new_pv, orig_pv, "MaxPowerOutput")
+      XMLHelper.copy_element(new_pv, orig_pv, "InverterEfficiency")
+      XMLHelper.copy_element(new_pv, orig_pv, "SystemLossesFraction")
+    end
     
   end
   
