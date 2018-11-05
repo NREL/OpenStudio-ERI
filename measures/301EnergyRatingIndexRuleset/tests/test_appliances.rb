@@ -270,54 +270,82 @@ class ApplianceTest < MiniTest::Test
 
   def _check_clothes_washer(hpxml_doc, mef, imef, annual_kwh, elec_rate, gas_rate, agc, cap)
     appl = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/ClothesWasher"]
-    if not mef.nil?
+    if mef.nil?
+      assert_nil(appl.elements["ModifiedEnergyFactor"])
+    else
       assert_in_epsilon(Float(appl.elements["ModifiedEnergyFactor"].text), mef, 0.01)
     end
-    if not imef.nil?
+    if imef.nil?
+      assert_nil(appl.elements["IntegratedModifiedEnergyFactor"])
+    else
       assert_in_epsilon(Float(appl.elements["IntegratedModifiedEnergyFactor"].text), imef, 0.01)
     end
-    if not annual_kwh.nil?
+    if annual_kwh.nil?
+      assert_nil(appl.elements["RatedAnnualkWh"])
+    else
       assert_in_epsilon(Float(appl.elements["RatedAnnualkWh"].text), annual_kwh, 0.01)
     end
-    if not elec_rate.nil?
+    if elec_rate.nil?
+      assert_nil(appl.elements["LabelElectricRate"])
+    else
       assert_in_epsilon(Float(appl.elements["LabelElectricRate"].text), elec_rate, 0.01)
     end
-    if not gas_rate.nil?
+    if gas_rate.nil?
+      assert_nil(appl.elements["LabelGasRate"])
+    else
       assert_in_epsilon(Float(appl.elements["LabelGasRate"].text), gas_rate, 0.01)
     end
-    if not agc.nil?
+    if agc.nil?
+      assert_nil(appl.elements["LabelAnnualGasCost"])
+    else
       assert_in_epsilon(Float(appl.elements["LabelAnnualGasCost"].text), agc, 0.01)
     end
-    if not cap.nil?
+    if cap.nil?
+      assert_nil(appl.elements["Capacity"])
+    else
       assert_in_epsilon(Float(appl.elements["Capacity"].text), cap, 0.01)
     end
   end
   
   def _check_clothes_dryer(hpxml_doc, fuel_type, ef, cef, control)
     appl = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/ClothesDryer"]
-    if not fuel_type.nil?
+    if fuel_type.nil?
+      assert_nil(appl.elements["FuelType"])
+    else
       assert_equal(appl.elements["FuelType"].text, fuel_type)
     end
-    if not ef.nil?
+    if ef.nil?
+      assert_nil(appl.elements["EnergyFactor"])
+    else
       assert_in_epsilon(Float(appl.elements["EnergyFactor"].text), ef, 0.01)
     end
-    if not cef.nil?
+    if cef.nil?
+      assert_nil(appl.elements["CombinedEnergyFactor"])
+    else
       assert_in_epsilon(Float(appl.elements["CombinedEnergyFactor"].text), cef, 0.01)
     end
-    if not control.nil?
+    if control.nil?
+      assert_nil(appl.elements["ControlType"])
+    else
       assert_equal(appl.elements["ControlType"].text, control)
     end
   end
   
   def _check_dishwasher(hpxml_doc, ef, annual_kwh, cap)
     appl = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/Dishwasher"]
-    if not ef.nil?
+    if ef.nil?
+      assert_nil(appl.elements["EnergyFactor"])
+    else
       assert_in_epsilon(Float(appl.elements["EnergyFactor"].text), ef, 0.01)
     end
-    if not annual_kwh.nil?
+    if annual_kwh.nil?
+      assert_nil(appl.elements["RatedAnnualkWh"])
+    else
       assert_in_epsilon(Float(appl.elements["RatedAnnualkWh"].text), annual_kwh, 0.01)
     end
-    if not cap.nil?
+    if cap.nil?
+      assert_nil(appl.elements["PlaceSettingCapacity"])
+    else
       assert_in_epsilon(Float(appl.elements["PlaceSettingCapacity"].text), cap, 0.01)
     end
   end
@@ -330,11 +358,15 @@ class ApplianceTest < MiniTest::Test
   def _check_cooking_range(hpxml_doc, fuel_type, cook_is_induction, oven_is_convection)
     cook = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/CookingRange"]
     assert_equal(cook.elements["FuelType"].text, fuel_type)
-    if not cook_is_induction.nil?
+    if cook_is_induction.nil?
+      assert_nil(cook.elements["IsInduction"])
+    else
       assert_equal(Boolean(cook.elements["IsInduction"].text), cook_is_induction)
     end
     oven = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/Oven"]
-    if not oven_is_convection.nil?
+    if oven_is_convection.nil?
+      assert_nil(oven.elements["IsConvection"])
+    else
       assert_equal(Boolean(oven.elements["IsConvection"].text), oven_is_convection)
     end
   end

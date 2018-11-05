@@ -6,8 +6,10 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
+require_relative "../measures/HPXMLTranslator/measure"
 require_relative "../measures/HPXMLTranslator/resources/constants"
 require_relative "../measures/HPXMLTranslator/resources/xmlhelper"
+require_relative "../measures/HPXMLTranslator/resources/waterheater"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
@@ -415,7 +417,8 @@ def get_eec_dhw(hpxml_doc)
   
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
-    value_adj = XMLHelper.get_value(dhw_system, "extension/EnergyFactorMultiplier")
+    wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
+    value_adj = Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type))
     if not value.nil? and not value_adj.nil?
       eec_dhws << get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end

@@ -1532,9 +1532,6 @@ class EnergyRatingIndex301Ruleset
     if not wh_re.nil?
       XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
     end
-    XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", Waterheater.get_default_hot_water_temperature(@eri_version))
-    extension = XMLHelper.add_element(new_wh_sys, "extension")
-    XMLHelper.add_element(extension, "EnergyFactorMultiplier", Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type)))
     
   end
     
@@ -1567,9 +1564,6 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
-      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", Waterheater.get_default_hot_water_temperature(@eri_version))
-      extension = XMLHelper.add_element(new_wh_sys, "extension")
-      XMLHelper.add_element(extension, "EnergyFactorMultiplier", Waterheater.get_ef_multiplier(to_beopt_wh_type(XMLHelper.get_value(new_wh_sys, "WaterHeaterType"))))
       
     else
     
@@ -1597,9 +1591,6 @@ class EnergyRatingIndex301Ruleset
       if not wh_re.nil?
         XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
       end
-      XMLHelper.add_element(new_wh_sys, "HotWaterTemperature", Waterheater.get_default_hot_water_temperature(@eri_version))
-      extension = XMLHelper.add_element(new_wh_sys, "extension")
-      XMLHelper.add_element(extension, "EnergyFactorMultiplier", Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type)))
       
     end
     

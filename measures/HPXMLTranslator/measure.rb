@@ -2111,7 +2111,7 @@ class OSModel
     end
     ef_adj = XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier")
     if ef_adj.nil?
-      ef_adj = get_ef_multiplier(to_beopt_wh_type(wh_type))
+      ef_adj = Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type))
     else
       ef_adj = Float(ef_adj)
     end
