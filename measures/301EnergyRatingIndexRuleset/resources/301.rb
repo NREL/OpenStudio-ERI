@@ -957,10 +957,18 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_enclosure_skylights_rated(new_enclosure, orig_details)
   
-    new_skylights = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Skylights")
-
+    new_skylights = XMLHelper.add_element(new_enclosure, "Skylights")
+  
     # Table 4.2.2(1) - Skylights
-    # nop
+    orig_details.elements.each("Enclosure/Skylights/Skylight") do |orig_skylight|
+      new_skylight = XMLHelper.add_element(new_skylights, "Skylight")
+      XMLHelper.copy_element(new_skylight, orig_skylight, "SystemIdentifier")
+      XMLHelper.copy_element(new_skylight, orig_skylight, "Area")
+      XMLHelper.copy_element(new_skylight, orig_skylight, "Azimuth")
+      XMLHelper.copy_element(new_skylight, orig_skylight, "UFactor")
+      XMLHelper.copy_element(new_skylight, orig_skylight, "SHGC")
+      XMLHelper.copy_element(new_skylight, orig_skylight, "AttachedToRoof")
+    end
     
   end
   
@@ -1320,7 +1328,10 @@ class EnergyRatingIndex301Ruleset
     
     # Table 303.4.1(1) - Thermostat
     if not orig_details.elements["Systems/HVAC/HVACControl"].nil?
-      XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACControl")
+      orig_hvac_control = orig_details.elements["Systems/HVAC/HVACControl"]
+      new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
+      XMLHelper.copy_element(new_hvac_control, orig_hvac_control, "SystemIdentifier")
+      XMLHelper.copy_element(new_hvac_control, orig_hvac_control, "ControlType")
     else
       new_hvac_control = XMLHelper.add_element(new_hvac, "HVACControl")
       sys_id = XMLHelper.add_element(new_hvac_control, "SystemIdentifier")
@@ -1745,13 +1756,17 @@ class EnergyRatingIndex301Ruleset
       ec_adj = get_hwdist_energy_consumption_adjustment(is_recirc, recirc_control_type, pipe_rvalue, pipe_l, recirc_loop_l, bsmnt)
 
       has_dwhr = false
-      if not orig_hw_dist.nil? and not orig_hw_dist.elements["DrainWaterHeatRecovery"].nil?
+      orig_dwhr = nil
+      if not orig_hw_dist.nil?
+        orig_dwhr = orig_hw_dist.elements["DrainWaterHeatRecovery"]
+      end
+      if not orig_dwhr.nil?
         has_dwhr = true
-        dwhr_eff = Float(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/Efficiency"))
-        equal_flow = Boolean(XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/EqualFlow"))
-        if XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "all"
+        dwhr_eff = Float(XMLHelper.get_value(orig_dwhr, "Efficiency"))
+        equal_flow = Boolean(XMLHelper.get_value(orig_dwhr, "EqualFlow"))
+        if XMLHelper.get_value(orig_dwhr, "FacilitiesConnected") == "all"
           all_showers = true
-        elsif XMLHelper.get_value(orig_hw_dist, "DrainWaterHeatRecovery/FacilitiesConnected") == "one"
+        elsif XMLHelper.get_value(orig_dwhr, "FacilitiesConnected") == "one"
           all_showers = false
         end
         dwhr_eff_adj, dwhr_iFrac, dwhr_plc, dwhr_locF, dwhr_fixF = get_dwhr_factors(bsmnt, pipe_l, is_recirc, recirc_branch_l, dwhr_eff, equal_flow, all_showers, low_flow_fixtures)
@@ -1779,7 +1794,9 @@ class EnergyRatingIndex301Ruleset
       insulation = XMLHelper.add_element(new_hw_dist, "PipeInsulation")
       XMLHelper.add_element(insulation, "PipeRValue", pipe_rvalue)
       if has_dwhr
-        new_dwhr = XMLHelper.copy_element(new_hw_dist, orig_hw_dist, "DrainWaterHeatRecovery")
+        
+        new_dwhr = XMLHelper.add_element(new_hw_dist, "DrainWaterHeatRecovery")
+        XMLHelper.copy_element(new_dwhr, orig_dwhr, "SystemIdentifier")
         extension = XMLHelper.add_element(new_dwhr, "extension")
         XMLHelper.add_element(extension, "EfficiencyAdjustment", dwhr_eff_adj)
         XMLHelper.add_element(extension, "FracImpactedHotWater", dwhr_iFrac)
@@ -1830,7 +1847,19 @@ class EnergyRatingIndex301Ruleset
   end
   
   def self.set_systems_photovoltaics_rated(new_systems, orig_details)
-    XMLHelper.copy_element(new_systems, orig_details, "Systems/Photovoltaics")
+    
+    orig_pv = orig_details.elements["Systems/Photovoltaics"]
+  
+    new_pv = XMLHelper.add_element(new_systems, "Photovoltaics")
+    XMLHelper.copy_element(new_pv, orig_pv, "SystemIdentifier")
+    XMLHelper.copy_element(new_pv, orig_pv, "ModuleType")
+    XMLHelper.copy_element(new_pv, orig_pv, "ArrayType")
+    XMLHelper.copy_element(new_pv, orig_pv, "ArrayAzimuth")
+    XMLHelper.copy_element(new_pv, orig_pv, "ArrayTilt")
+    XMLHelper.copy_element(new_pv, orig_pv, "MaxPowerOutput")
+    XMLHelper.copy_element(new_pv, orig_pv, "InverterEfficiency")
+    XMLHelper.copy_element(new_pv, orig_pv, "SystemLossesFraction")
+    
   end
   
   def self.set_systems_photovoltaics_iad(new_systems)
@@ -1844,6 +1873,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
   
     orig_appliances = orig_details.elements["Appliances"]
+    orig_washer = orig_appliances.elements["ClothesWasher"]
     
     cw_mef = HotWaterAndAppliances.get_clothes_washer_reference_mef()
     cw_ler = HotWaterAndAppliances.get_clothes_washer_reference_ler()
@@ -1852,37 +1882,39 @@ class EnergyRatingIndex301Ruleset
     cw_agc = HotWaterAndAppliances.get_clothes_washer_reference_agc()
     cw_cap = HotWaterAndAppliances.get_clothes_washer_reference_cap()
     
-    new_washer = XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesWasher")
-    if new_washer.elements["ModifiedEnergyFactor"].nil? and new_washer.elements["IntegratedModifiedEnergyFactor"].nil?
-      XMLHelper.add_element(new_washer, "ModifiedEnergyFactor", cw_mef)
-    elsif not new_washer.elements["ModifiedEnergyFactor"].nil?
-      new_washer.elements["ModifiedEnergyFactor"].text = cw_mef
-    elsif not new_washer.elements["IntegratedModifiedEnergyFactor"].nil?
-      XMLHelper.add_element(new_washer, "ModifiedEnergyFactor", cw_mef)
-      XMLHelper.delete_element(new_washer, "IntegratedModifiedEnergyFactor")
-    end
-    XMLHelper.delete_element(new_washer, "RatedAnnualkWh")
+    new_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
+    XMLHelper.copy_element(new_washer, orig_washer, "SystemIdentifier")
+    XMLHelper.add_element(new_washer, "ModifiedEnergyFactor", cw_mef)
     XMLHelper.add_element(new_washer, "RatedAnnualkWh", cw_ler)
-    XMLHelper.delete_element(new_washer, "LabelElectricRate")
     XMLHelper.add_element(new_washer, "LabelElectricRate", cw_elec_rate)
-    XMLHelper.delete_element(new_washer, "LabelGasRate")
     XMLHelper.add_element(new_washer, "LabelGasRate", cw_gas_rate)
-    XMLHelper.delete_element(new_washer, "LabelAnnualGasCost")
     XMLHelper.add_element(new_washer, "LabelAnnualGasCost", cw_agc)
-    XMLHelper.delete_element(new_washer, "Capacity")
     XMLHelper.add_element(new_washer, "Capacity", cw_cap)
     
   end
   
   def self.set_appliances_clothes_washer_rated(new_appliances, orig_details)
   
-    if orig_details.elements["Appliances/ClothesWasher/ModifiedEnergyFactor"].nil? and orig_details.elements["Appliances/ClothesWasher/IntegratedModifiedEnergyFactor"].nil?
+    orig_appliances = orig_details.elements["Appliances"]
+    orig_washer = orig_appliances.elements["ClothesWasher"]
+    
+    if orig_washer.elements["ModifiedEnergyFactor"].nil? and orig_washer.elements["IntegratedModifiedEnergyFactor"].nil?
       self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
       return
     end
 
-    orig_appliances = orig_details.elements["Appliances"]
-    XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesWasher")
+    new_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
+    XMLHelper.copy_element(new_washer, orig_washer, "SystemIdentifier")
+    if not orig_washer.elements["ModifiedEnergyFactor"].nil?
+      XMLHelper.copy_element(new_washer, orig_washer, "ModifiedEnergyFactor")
+    else
+      XMLHelper.copy_element(new_washer, orig_washer, "IntegratedModifiedEnergyFactor")
+    end
+    XMLHelper.copy_element(new_washer, orig_washer, "RatedAnnualkWh")
+    XMLHelper.copy_element(new_washer, orig_washer, "LabelElectricRate")
+    XMLHelper.copy_element(new_washer, orig_washer, "LabelGasRate")
+    XMLHelper.copy_element(new_washer, orig_washer, "LabelAnnualGasCost")
+    XMLHelper.copy_element(new_washer, orig_washer, "Capacity")
 
   end
   
@@ -1894,34 +1926,39 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
     
     orig_appliances = orig_details.elements["Appliances"]
+    orig_dryer = orig_appliances.elements["ClothesDryer"]
     
-    cd_fuel = XMLHelper.get_value(orig_appliances, "ClothesDryer/FuelType")
+    cd_fuel = XMLHelper.get_value(orig_dryer, "FuelType")
     cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(to_beopt_fuel(cd_fuel))
     cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
     
-    new_dryer = XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesDryer")
-    if new_dryer.elements["EnergyFactor"].nil? and new_dryer.elements["CombinedEnergyFactor"].nil?
-      XMLHelper.add_element(new_dryer, "EnergyFactor", cd_ef)
-    elsif not new_dryer.elements["EnergyFactor"].nil?
-      new_dryer.elements["EnergyFactor"].text = cd_ef
-    elsif not new_dryer.elements["CombinedEnergyFactor"].nil?
-      XMLHelper.add_element(new_dryer, "EnergyFactor", cd_ef)
-      XMLHelper.delete_element(new_dryer, "CombinedEnergyFactor")
-    end
-    XMLHelper.delete_element(new_dryer, "ControlType")
+    new_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
+    XMLHelper.copy_element(new_dryer, orig_dryer, "SystemIdentifier")
+    XMLHelper.copy_element(new_dryer, orig_dryer, "FuelType")
+    XMLHelper.add_element(new_dryer, "EnergyFactor", cd_ef)
     XMLHelper.add_element(new_dryer, "ControlType", cd_control)
     
   end
   
   def self.set_appliances_clothes_dryer_rated(new_appliances, orig_details)
   
-    if orig_details.elements["Appliances/ClothesDryer/EnergyFactor"].nil? and orig_details.elements["Appliances/ClothesDryer/CombinedEnergyFactor"].nil?
+    orig_appliances = orig_details.elements["Appliances"]
+    orig_dryer = orig_appliances.elements["ClothesDryer"]
+    
+    if orig_dryer.elements["EnergyFactor"].nil? and orig_dryer.elements["CombinedEnergyFactor"].nil?
       self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
       return
     end
 
-    orig_appliances = orig_details.elements["Appliances"]
-    XMLHelper.copy_element(new_appliances, orig_appliances, "ClothesDryer")
+    new_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
+    XMLHelper.copy_element(new_dryer, orig_dryer, "SystemIdentifier")
+    XMLHelper.copy_element(new_dryer, orig_dryer, "FuelType")
+    if not orig_dryer.elements["EnergyFactor"].nil?
+      XMLHelper.copy_element(new_dryer, orig_dryer, "EnergyFactor")
+    else
+      XMLHelper.copy_element(new_dryer, orig_dryer, "CombinedEnergyFactor")
+    end
+    XMLHelper.copy_element(new_dryer, orig_dryer, "ControlType")
 
   end
   
@@ -1933,33 +1970,36 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_dishwasher_reference(new_appliances, orig_details)
   
     orig_appliances = orig_details.elements["Appliances"]
+    orig_dishwasher = orig_appliances.elements["Dishwasher"]
     
     dw_ef = HotWaterAndAppliances.get_dishwasher_reference_ef()
     dw_cap = HotWaterAndAppliances.get_dishwasher_reference_cap()
     
-    new_dishwasher = XMLHelper.copy_element(new_appliances, orig_appliances, "Dishwasher")
-    if new_dishwasher.elements["EnergyFactor"].nil? and new_dishwasher.elements["RatedAnnualkWh"].nil?
-      XMLHelper.add_element(new_dishwasher, "EnergyFactor", dw_ef)
-    elsif not new_dishwasher.elements["EnergyFactor"].nil?
-      new_dishwasher.elements["EnergyFactor"].text = dw_ef
-    elsif not new_dishwasher.elements["RatedAnnualkWh"].nil?
-      XMLHelper.add_element(new_dishwasher, "EnergyFactor", dw_ef)
-      XMLHelper.delete_element(new_dishwasher, "RatedAnnualkWh")
-    end
-    XMLHelper.delete_element(new_dishwasher, "PlaceSettingCapacity")
+    new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
+    XMLHelper.copy_element(new_dishwasher, orig_dishwasher, "SystemIdentifier")
+    XMLHelper.add_element(new_dishwasher, "EnergyFactor", dw_ef)
     XMLHelper.add_element(new_dishwasher, "PlaceSettingCapacity", Integer(dw_cap))
     
   end
   
   def self.set_appliances_dishwasher_rated(new_appliances, orig_details)
   
-    if orig_details.elements["Appliances/Dishwasher/EnergyFactor"].nil? and orig_details.elements["Appliances/Dishwasher/RatedAnnualkWh"].nil?
+    orig_appliances = orig_details.elements["Appliances"]
+    orig_dishwasher = orig_appliances.elements["Dishwasher"]
+  
+    if orig_dishwasher.elements["EnergyFactor"].nil? and orig_dishwasher.elements["RatedAnnualkWh"].nil?
       self.set_appliances_dishwasher_reference(new_appliances, orig_details)
       return
     end
 
-    orig_appliances = orig_details.elements["Appliances"]
-    XMLHelper.copy_element(new_appliances, orig_appliances, "Dishwasher")
+    new_dishwasher = XMLHelper.add_element(new_appliances, "Dishwasher")
+    XMLHelper.copy_element(new_dishwasher, orig_dishwasher, "SystemIdentifier")
+    if not orig_dishwasher.elements["EnergyFactor"].nil?
+      XMLHelper.copy_element(new_dishwasher, orig_dishwasher, "EnergyFactor")
+    else
+      XMLHelper.copy_element(new_dishwasher, orig_dishwasher, "RatedAnnualkWh")
+    end
+    XMLHelper.copy_element(new_dishwasher, orig_dishwasher, "PlaceSettingCapacity")
     
   end
   
@@ -1971,25 +2011,30 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_refrigerator_reference(new_appliances, orig_details)
 
     orig_appliances = orig_details.elements["Appliances"]
+    orig_fridge = orig_appliances.elements["Refrigerator"]
   
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
     refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
     
-    new_fridge = XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
-    XMLHelper.delete_element(new_fridge, "RatedAnnualkWh")
+    new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
+    XMLHelper.copy_element(new_fridge, orig_fridge, "SystemIdentifier")
     XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
     
   end
   
   def self.set_appliances_refrigerator_rated(new_appliances, orig_details)
 
-    if orig_details.elements["Appliances/Refrigerator/RatedAnnualkWh"].nil?
+    orig_appliances = orig_details.elements["Appliances"]
+    orig_fridge = orig_appliances.elements["Refrigerator"]
+    
+    if orig_fridge.elements["RatedAnnualkWh"].nil?
       self.set_appliances_refrigerator_reference(new_appliances, orig_details)
       return
     end
     
-    orig_appliances = orig_details.elements["Appliances"]
-    XMLHelper.copy_element(new_appliances, orig_appliances, "Refrigerator")
+    new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
+    XMLHelper.copy_element(new_fridge, orig_fridge, "SystemIdentifier")
+    XMLHelper.copy_element(new_fridge, orig_fridge, "RatedAnnualkWh")
     
   end
   
@@ -2001,30 +2046,42 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
     
     orig_appliances = orig_details.elements["Appliances"]
+    orig_range = orig_appliances.elements["CookingRange"]
+    orig_oven = orig_appliances.elements["Oven"]
     
     is_induction = HotWaterAndAppliances.get_range_oven_reference_is_induction()
     is_convection = HotWaterAndAppliances.get_range_oven_reference_is_convection()
   
-    new_cooking_range = XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
-    XMLHelper.delete_element(new_cooking_range, "IsInduction")
-    XMLHelper.add_element(new_cooking_range, "IsInduction", is_induction)
+    new_range = XMLHelper.add_element(new_appliances, "CookingRange")
+    XMLHelper.copy_element(new_range, orig_range, "SystemIdentifier")
+    XMLHelper.copy_element(new_range, orig_range, "FuelType")
+    XMLHelper.add_element(new_range, "IsInduction", is_induction)
     
-    new_oven = XMLHelper.copy_element(new_appliances, orig_appliances, "Oven")
-    XMLHelper.delete_element(new_oven, "IsConvection")
+    new_oven = XMLHelper.add_element(new_appliances, "Oven")
+    XMLHelper.copy_element(new_oven, orig_oven, "SystemIdentifier")
     XMLHelper.add_element(new_oven, "IsConvection", is_convection)
     
   end
   
   def self.set_appliances_cooking_range_oven_rated(new_appliances, orig_details)
 
-    if orig_details.elements["Appliances/CookingRange/IsInduction"].nil?
+    orig_appliances = orig_details.elements["Appliances"]
+    orig_range = orig_appliances.elements["CookingRange"]
+    orig_oven = orig_appliances.elements["Oven"]
+    
+    if orig_range.elements["IsInduction"].nil?
       self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
       return
     end
     
-    orig_appliances = orig_details.elements["Appliances"]
-    XMLHelper.copy_element(new_appliances, orig_appliances, "CookingRange")
-    XMLHelper.copy_element(new_appliances, orig_appliances, "Oven")
+    new_range = XMLHelper.add_element(new_appliances, "CookingRange")
+    XMLHelper.copy_element(new_range, orig_range, "SystemIdentifier")
+    XMLHelper.copy_element(new_range, orig_range, "FuelType")
+    XMLHelper.copy_element(new_range, orig_range, "IsInduction")
+    
+    new_oven = XMLHelper.add_element(new_appliances, "Oven")
+    XMLHelper.copy_element(new_oven, orig_oven, "SystemIdentifier")
+    XMLHelper.copy_element(new_oven, orig_oven, "IsConvection")
 
   end
   
@@ -2037,12 +2094,8 @@ class EnergyRatingIndex301Ruleset
   
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
 
-    new_lighting_fractions = XMLHelper.copy_element(new_lighting, orig_details, "LightingFractions")
-    if new_lighting_fractions.nil?
-      new_lighting_fractions = XMLHelper.add_element(new_lighting, "LightingFractions")
-    end
-    XMLHelper.delete_element(new_lighting_fractions, "extension")
-    extension = XMLHelper.add_element(new_lighting_fractions, "extension")
+    new_fractions = XMLHelper.add_element(new_lighting, "LightingFractions")
+    extension = XMLHelper.add_element(new_fractions, "extension")
     XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesInterior", fFI_int)
     XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesExterior", fFI_ext)
     XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesGarage", fFI_grg)
@@ -2054,20 +2107,28 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_lighting_rated(new_lighting, orig_details)
 
-    if orig_details.elements["Lighting/LightingFractions"].nil?
+    orig_lighting = orig_details.elements["Lighting"]
+    orig_fractions = orig_lighting.elements["LightingFractions"]
+    
+    if orig_fractions.nil?
       self.set_lighting_reference(new_lighting, orig_details)
       return
     end
     
-    orig_lighting = orig_details.elements["Lighting"]
-    new_lighting_fractions = XMLHelper.copy_element(new_lighting, orig_lighting, "LightingFractions")
+    new_fractions = XMLHelper.add_element(new_lighting, "LightingFractions")
+    extension = XMLHelper.add_element(new_fractions, "extension")
+    XMLHelper.copy_element(extension, orig_fractions, "extension/FractionQualifyingTierIFixturesInterior")
+    XMLHelper.copy_element(extension, orig_fractions, "extension/FractionQualifyingTierIFixturesExterior")
+    XMLHelper.copy_element(extension, orig_fractions, "extension/FractionQualifyingTierIFixturesGarage")
+    XMLHelper.copy_element(extension, orig_fractions, "extension/FractionQualifyingTierIIFixturesInterior")
+    XMLHelper.copy_element(extension, orig_fractions, "extension/FractionQualifyingTierIIFixturesExterior")
+    XMLHelper.copy_element(extension, orig_fractions, "extension/FractionQualifyingTierIIFixturesGarage")
+    
     # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
-    if not new_lighting_fractions.elements["extension/FractionQualifyingTierIFixturesInterior"].nil?
-      fFI_int = Float(XMLHelper.get_value(new_lighting_fractions, "extension/FractionQualifyingTierIFixturesInterior"))
-      fFII_int = Float(XMLHelper.get_value(new_lighting_fractions, "extension/FractionQualifyingTierIIFixturesInterior"))
-      if fFI_int + fFII_int < 0.1
-        new_lighting_fractions.elements["extension/FractionQualifyingTierIFixturesInterior"].text = 0.1 - fFII_int
-      end
+    fFI_int = Float(XMLHelper.get_value(extension, "FractionQualifyingTierIFixturesInterior"))
+    fFII_int = Float(XMLHelper.get_value(extension, "FractionQualifyingTierIIFixturesInterior"))
+    if fFI_int + fFII_int < 0.1
+      extension.elements["FractionQualifyingTierIFixturesInterior"].text = 0.1 - fFII_int
     end
     
   end
@@ -2076,12 +2137,8 @@ class EnergyRatingIndex301Ruleset
 
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
     
-    new_lighting_fractions = XMLHelper.copy_element(new_lighting, orig_details, "LightingFractions")
-    if new_lighting_fractions.nil?
-      new_lighting_fractions = XMLHelper.add_element(new_lighting, "LightingFractions")
-    end
-    XMLHelper.delete_element(new_lighting_fractions, "extension")
-    extension = XMLHelper.add_element(new_lighting_fractions, "extension")
+    new_fractions = XMLHelper.add_element(new_lighting, "LightingFractions")
+    extension = XMLHelper.add_element(new_fractions, "extension")
     XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesInterior", fFI_int)
     XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesExterior", fFI_ext)
     XMLHelper.add_element(extension, "FractionQualifyingTierIFixturesGarage", fFI_grg)
