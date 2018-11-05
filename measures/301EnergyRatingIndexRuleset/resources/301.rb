@@ -1849,6 +1849,8 @@ class EnergyRatingIndex301Ruleset
   
   def self.set_systems_photovoltaics_rated(new_systems, orig_details)
     
+    return if not XMLHelper.has_element(orig_details, "Systems/Photovoltaics")
+    
     orig_pv = orig_details.elements["Systems/Photovoltaics"]
   
     new_pv = XMLHelper.add_element(new_systems, "Photovoltaics")
