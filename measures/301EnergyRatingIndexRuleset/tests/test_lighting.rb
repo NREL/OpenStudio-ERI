@@ -49,24 +49,23 @@ class LightingTest < MiniTest::Test
   def test_ceiling_fans
     hpxml_name = "valid-misc-ceiling-fans.xml"
     
-    clg_sp_offset =  # F
-    monthly_temp_control =  # F
+    medium_cfm = 3000.0
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml_doc, 42.6*10.5*365*5/1000, 0.5, 63)
+    _check_ceiling_fans(hpxml_doc, medium_cfm/42.6, 5)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml_doc, 80.0*10.5*365*5/1000, 0.5, 63)
+    _check_ceiling_fans(hpxml_doc, medium_cfm/80.0, 5)
     
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml_doc, 42.6*10.5*365*4/1000, 0.5, 63)
+    _check_ceiling_fans(hpxml_doc, medium_cfm/42.6, 4)
     
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml_doc, 42.6*10.5*365*4/1000, 0.5, 63)
+    _check_ceiling_fans(hpxml_doc, medium_cfm/42.6, 4)
   end
   
   def _test_measure(hpxml_name, calc_type)
@@ -125,16 +124,17 @@ class LightingTest < MiniTest::Test
     assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesGarage"].text), fFII_grg, 0.01)
   end
   
-  def _check_ceiling_fans(hpxml_doc, kWh=nil, clg_sp_offset=nil, monthly_temp_control=nil)
+  def _check_ceiling_fans(hpxml_doc, cfm_per_w, quantity)
     cf = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting/CeilingFan"]
-    if not kWh.nil?
-      assert_in_epsilon(Float(cf.elements["extension/AnnualkWh"].text), kWh, 0.01)
+    if cfm_per_w.nil?
+      assert_nil(cf.elements["Airflow[FanSpeed='medium']/Efficiency"])
+    else
+      assert_equal(Float(cf.elements["Airflow[FanSpeed='medium']/Efficiency"].text), cfm_per_w)
     end
-    if not clg_sp_offset.nil?
-      assert_equal(Float(cf.elements["extension/CoolingSetpointOffset"].text), clg_sp_offset)
-    end
-    if not monthly_temp_control.nil?
-      assert_equal(Float(cf.elements["extension/MonthlyOutdoorTempControl"].text), monthly_temp_control)
+    if quantity.nil?
+      assert_nil(cf.elements["Quantity"])
+    else
+      assert_equal(Integer(cf.elements["Quantity"].text), quantity)
     end
   end
   

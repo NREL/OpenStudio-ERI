@@ -636,6 +636,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             'Airflow[FanSpeed="medium"]/Efficiency' => one,
+            'Quantity' => one,
         },
             
     }

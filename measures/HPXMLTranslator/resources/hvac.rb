@@ -3064,6 +3064,14 @@ class HVAC
 
     end
     
+    def self.get_default_ceiling_fan_power()
+      return 42.6 # W
+    end
+    
+    def self.get_default_ceiling_fan_quantity(nbeds)
+      return nbeds+1
+    end
+    
     def self.remove_ceiling_fans(runner, model, unit)
     
       obj_name = Constants.ObjectNameCeilingFan(unit.name.to_s)

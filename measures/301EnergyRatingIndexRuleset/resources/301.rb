@@ -1994,46 +1994,53 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_ceiling_fans_reference(new_lighting, orig_details)
     
-    # No ceiling fans?
-    return if orig_details.elements["Lighting/CeilingFan"].nil?
+    return if not XMLHelper.has_element(orig_details, "Lighting/CeilingFan")
     
-    annual_kwh = 42.6*10.5*365*(@nbeds+1)/1000
+    medium_cfm = 3000.0
+    fan_power_w = HVAC.get_default_ceiling_fan_power()
+    quantity = HVAC.get_default_ceiling_fan_quantity(@nbeds)
     
-    new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
-    sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
+    new_cf = XMLHelper.add_element(new_lighting, "CeilingFan")
+    sys_id = XMLHelper.add_element(new_cf, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "CeilingFans")
-    extension = XMLHelper.add_element(new_ceiling_fan, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", annual_kwh)
-    XMLHelper.add_element(extension, "CoolingSetpointOffset", 0.5) # F
-    XMLHelper.add_element(extension, "MonthlyOutdoorTempControl", 63) # F
+    new_airflow = XMLHelper.add_element(new_cf, "Airflow")
+    XMLHelper.add_element(new_airflow, "FanSpeed", "medium")
+    XMLHelper.add_element(new_airflow, "Efficiency", medium_cfm/fan_power_w)
+    XMLHelper.add_element(new_cf, "Quantity", Integer(quantity))
     
   end
   
   def self.set_ceiling_fans_rated(new_lighting, orig_details)
     
-    # No ceiling fans?
-    return if orig_details.elements["Lighting/CeilingFan"].nil?
+    return if not XMLHelper.has_element(orig_details, "Lighting/CeilingFan")
     
     medium_cfm = 3000.0
+    quantity = HVAC.get_default_ceiling_fan_quantity(@nbeds)
     
     # Calculate average ceiling fan wattage
     sum_w = 0.0
     num_cfs = 0
-    orig_details.elements.each("Lighting/CeilingFan") do |ceiling_fan|
-      num_cfs += 1
-      sum_w += (medium_cfm / Float(XMLHelper.get_value(ceiling_fan, "Airflow[FanSpeed='medium']/Efficiency")))
+    orig_details.elements.each("Lighting/CeilingFan") do |cf|
+      cf_quantity = Integer(XMLHelper.get_value(cf, "Quantity"))
+      num_cfs += cf_quantity
+      cfm_per_w = XMLHelper.get_value(cf, "Airflow[FanSpeed='medium']/Efficiency")
+      if cfm_per_w.nil?
+        fan_power_w = HVAC.get_default_ceiling_fan_power()
+        cfm_per_w = medium_cfm/fan_power_w
+      else
+        cfm_per_w = Float(cfm_per_w)
+      end
+      sum_w += (medium_cfm / cfm_per_w * Float(cf_quantity))
     end
     avg_w = sum_w / num_cfs
     
-    annual_kwh = avg_w*10.5*365*(@nbeds+1)/1000
-    
-    new_ceiling_fan = XMLHelper.add_element(new_lighting, "CeilingFan")
-    sys_id = XMLHelper.add_element(new_ceiling_fan, "SystemIdentifier")
+    new_cf = XMLHelper.add_element(new_lighting, "CeilingFan")
+    sys_id = XMLHelper.add_element(new_cf, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", "CeilingFans")
-    extension = XMLHelper.add_element(new_ceiling_fan, "extension")
-    XMLHelper.add_element(extension, "AnnualkWh", annual_kwh)
-    XMLHelper.add_element(extension, "CoolingSetpointOffset", 0.5) # F
-    XMLHelper.add_element(extension, "MonthlyOutdoorTempControl", 63) # F
+    new_airflow = XMLHelper.add_element(new_cf, "Airflow")
+    XMLHelper.add_element(new_airflow, "FanSpeed", "medium")
+    XMLHelper.add_element(new_airflow, "Efficiency", medium_cfm/avg_w)
+    XMLHelper.add_element(new_cf, "Quantity", Integer(quantity))
     
   end
   
