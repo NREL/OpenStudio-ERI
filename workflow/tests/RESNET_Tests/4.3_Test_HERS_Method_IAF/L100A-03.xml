@@ -327,7 +327,6 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven'/>
-          <FuelType>natural gas</FuelType>
         </Oven>
       </Appliances>
       <Lighting/>

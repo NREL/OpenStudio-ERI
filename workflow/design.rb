@@ -77,7 +77,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   end
 
   if not success
-    fail "ERROR: Simulation unsuccessful for #{design}."
+    fail "Simulation unsuccessful for #{design}."
   end
   
   # Write model to IDF

@@ -8,9 +8,9 @@ require 'pathname'
 require 'csv'
 require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/301validator"
-require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
-require "#{File.dirname(__FILE__)}/resources/xmlhelper"
+require "#{File.dirname(__FILE__)}/../HPXMLTranslator/resources/constants"
+require "#{File.dirname(__FILE__)}/../HPXMLTranslator/resources/weather"
+require "#{File.dirname(__FILE__)}/../HPXMLTranslator/resources/xmlhelper"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
@@ -27,7 +27,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
   # human readable description of modeling approach
   def modeler_description
-    return "Based on the provided HPXML building description and choice of calculation type (e.g., #{Constants.CalcTypeERIReferenceHome}, #{Constants.CalcTypeERIRatedHome}, etc.), creates an updated version of the HPXML file as specified by ANSI/RESNET 301-2014 \"Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using the HERS Index\"."
+    return "Based on the provided HPXML building description and choice of calculation type (e.g., #{Constants.CalcTypeERIReferenceHome}, #{Constants.CalcTypeERIRatedHome}, etc.), creates an updated version of the HPXML file as specified by ANSI/RESNET/ICC 301-2014 \"Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index\"."
   end
 
   # define the arguments that the user will input
@@ -36,14 +36,12 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
     #make a choice argument for design type
     calc_types = []
-    #calc_types << Constants.CalcTypeStandard
     calc_types << Constants.CalcTypeERIReferenceHome
     calc_types << Constants.CalcTypeERIRatedHome
     calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
     calc_types << Constants.CalcTypeERIIndexAdjustmentReferenceHome
     calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument("calc_type", calc_types, true)
     calc_type.setDisplayName("Calculation Type")
-    calc_type.setDescription("'#{Constants.CalcTypeStandard}' will use the DOE Building America Simulation Protocols. HERS options will use the ANSI/RESNET 301-2014 Standard.")
     calc_type.setDefaultValue(Constants.CalcTypeStandard)
     args << calc_type
 

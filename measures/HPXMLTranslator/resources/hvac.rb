@@ -2646,6 +2646,36 @@ class HVAC
       return true
     end
     
+    def self.get_default_heating_setpoint(control_type)
+      htg_sp = 68 # F
+      htg_setback_sp = nil
+      htg_setback_hrs_per_week = nil
+      htg_setback_start_hr = nil
+      if control_type == "programmable thermostat"
+        htg_setback_sp = 66 # F
+        htg_setback_hrs_per_week = 7*7 # 11 p.m. to 5:59 a.m., 7 days a week
+        htg_setback_start_hr = 23 # 11 p.m.
+      elsif control_type != "manual thermostat"
+        fail "Unexpected control type #{control_type}."
+      end
+      return htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr
+    end
+    
+    def self.get_default_cooling_setpoint(control_type)
+      clg_sp = 78 # F
+      clg_setup_sp = nil
+      clg_setup_hrs_per_week = nil
+      clg_setup_start_hr = nil
+      if control_type == "programmable thermostat"
+        clg_setup_sp = 80 # F
+        clg_setup_hrs_per_week = 6*7 # 9 a.m. to 2:59 p.m., 7 days a week
+        clg_setup_start_hr = 9 # 9 a.m.
+      elsif control_type != "manual thermostat"
+        fail "Unexpected control type #{control_type}."
+      end
+      return clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr
+    end
+    
     def self.apply_dehumidifier(model, unit, runner, energy_factor,
                                 water_removal_rate, air_flow_rate, humidity_setpoint)
     

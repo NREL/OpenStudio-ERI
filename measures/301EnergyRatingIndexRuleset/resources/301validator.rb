@@ -610,7 +610,6 @@ class EnergyRatingIndex301Validator
         
             ## [CRType=UserSpecified]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]' => {
-                '../Oven/FuelType' => one,
                 '../Oven/IsConvection' => one,
             },
         
@@ -618,13 +617,18 @@ class EnergyRatingIndex301Validator
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'LightingFractions/extension/FractionQualifyingTierIFixturesInterior' => zero_or_one, # Uses Reference Home if not provided
-            'LightingFractions/extension/FractionQualifyingTierIFixturesExterior' => zero_or_one, # Uses Reference Home if not provided
-            'LightingFractions/extension/FractionQualifyingTierIFixturesGarage' => zero_or_one, # Uses Reference Home if not provided
-            'LightingFractions/extension/FractionQualifyingTierIIFixturesInterior' => zero_or_one, # Uses Reference Home if not provided
-            'LightingFractions/extension/FractionQualifyingTierIIFixturesExterior' => zero_or_one, # Uses Reference Home if not provided
-            'LightingFractions/extension/FractionQualifyingTierIIFixturesGarage' => zero_or_one, # Uses Reference Home if not provided
+            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified]
         },
+        
+            ## [LtgType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
+                'extension/FractionQualifyingTierIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIFixturesGarage' => one,
+                'extension/FractionQualifyingTierIIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIIFixturesGarage' => one,
+            },
         
         
             

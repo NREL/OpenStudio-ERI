@@ -194,12 +194,12 @@ class MechVentTest < MiniTest::Test
 
   def _check_mech_vent(hpxml_doc, exists, fantype) #flowrate, hours, power, sre, tre
     mechvent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    if not exists
+    if exists
+      assert_equal(mechvent.elements["FanType"].text, fantype)
+      # TODO: Check more fields
+    else
       assert_nil(mechvent)
-      return
     end
-    assert_equal(mechvent.elements["FanType"].text, fantype)
-    # TODO: Check more fields
   end
   
 end

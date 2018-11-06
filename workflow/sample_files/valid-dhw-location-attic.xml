@@ -133,7 +133,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
@@ -141,7 +140,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>5</NominalRValue>
-                  <Thickness>1</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
@@ -305,7 +303,7 @@
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <HeatingCapacity>18767</HeatingCapacity>
-            <UniformEnergyFactor>0.93</UniformEnergyFactor>
+            <EnergyFactor>0.95</EnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
@@ -362,7 +360,6 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>electricity</FuelType>
           <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>
