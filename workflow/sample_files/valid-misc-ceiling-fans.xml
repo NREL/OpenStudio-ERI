@@ -386,6 +386,7 @@
           <extension>
             <CoolingSetpointOffset>0.5</CoolingSetpointOffset>
             <MonthlyOutdoorTempControl>63.0</MonthlyOutdoorTempControl>
+            <AnnualkWh>10</AnnualkWh>
           </extension>
         </CeilingFan>
         <CeilingFan>
@@ -397,6 +398,7 @@
           <extension>
             <CoolingSetpointOffset>0.5</CoolingSetpointOffset>
             <MonthlyOutdoorTempControl>63.0</MonthlyOutdoorTempControl>
+            <AnnualkWh>10</AnnualkWh>
           </extension>
         </CeilingFan>
       </Lighting>

@@ -2997,6 +2997,42 @@ class HVAC
       return true, sch
 
     end
+
+    def self.apply_eri_ceiling_fans(model, unit, runner, annual_kWh, weekday_sch, weekend_sch)
+
+      obj_name = Constants.ObjectNameCeilingFan(unit.name.to_s)
+
+      sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, [1]*12)
+      if not sch.validated?
+        return false
+      end
+
+      finished_floor_area = Geometry.get_finished_floor_area_from_spaces(unit.spaces, false, runner)
+
+      unit.spaces.each do |space|
+        next if Geometry.space_is_unfinished(space)
+
+        space_obj_name = "#{obj_name}|#{space.name.to_s}"
+
+        space_mel_ann = annual_kWh * UnitConversions.convert(space.floorArea,"m^2","ft^2") / finished_floor_area
+        space_design_level = sch.calcDesignLevelFromDailykWh(space_mel_ann / 365.0)
+
+        equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
+        equip_def.setName(space_obj_name)
+        equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
+        equip.setName(equip_def.name.to_s)
+        equip.setSpace(space)
+        equip_def.setDesignLevel(space_design_level)
+        equip_def.setFractionRadiant(0.558)
+        equip_def.setFractionLatent(0)
+        equip_def.setFractionLost(0.07)
+        equip.setEndUseSubcategory(Constants.EndUseCeilingFan)
+        equip.setSchedule(sch.schedule)
+      end
+      
+      return true
+
+    end
     
     def self.remove_ceiling_fans(runner, model, unit)
     
