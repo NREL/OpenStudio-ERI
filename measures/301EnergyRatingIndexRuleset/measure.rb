@@ -8,9 +8,9 @@ require 'pathname'
 require 'csv'
 require "#{File.dirname(__FILE__)}/resources/301"
 require "#{File.dirname(__FILE__)}/resources/301validator"
-require "#{File.dirname(__FILE__)}/resources/constants"
-require "#{File.dirname(__FILE__)}/resources/weather"
-require "#{File.dirname(__FILE__)}/resources/xmlhelper"
+require "#{File.dirname(__FILE__)}/../HPXMLTranslator/resources/constants"
+require "#{File.dirname(__FILE__)}/../HPXMLTranslator/resources/weather"
+require "#{File.dirname(__FILE__)}/../HPXMLTranslator/resources/xmlhelper"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure

@@ -610,7 +610,6 @@ class EnergyRatingIndex301Validator
         
             ## [CRType=UserSpecified]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]' => {
-                '../Oven/FuelType' => one,
                 '../Oven/IsConvection' => one,
             },
         
@@ -622,7 +621,7 @@ class EnergyRatingIndex301Validator
         },
         
             ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
                 'extension/FractionQualifyingTierIFixturesInterior' => one,
                 'extension/FractionQualifyingTierIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIFixturesGarage' => one,

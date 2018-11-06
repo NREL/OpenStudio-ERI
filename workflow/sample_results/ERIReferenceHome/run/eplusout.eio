@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.0.1-98d66c5b1c, YMD=2018.11.01 14:10
+Program Version,EnergyPlus, Version 9.0.1-98d66c5b1c, YMD=2018.11.05 15:15
 ! <Version>, Version ID
  Version, 9.0
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -69,7 +69,7 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  Zone Information, RES DS_1 RET AIR ZONE,0.0,0.00,0.00,0.00,0.50,74.50,0.50,1,1,1,0.00,1.00,74.00,75.00,0.00,1.00,1.00,1.00,TARP,DOE-2,1.00,0.00,0.00,0.00,6,0,0,Yes
  Zone Information, UNFINISHED ATTIC,0.0,0.00,0.00,0.00,-1.05E-019,4.74E-002,1.59,1,1,1,-9.88,9.88,-9.88,12.50,-1.73,7.10,2.18,642.30,TARP,DOE-2,390.19,0.00,0.00,0.00,3,0,0,Yes
 ! <Zone Internal Gains Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
- Zone Internal Gains Nominal, LIVING,325.16,4.0,81.290,1.230E-002,3.014,4.852,0.000,3.069E-003,0.000,0.000,7.869,No
+ Zone Internal Gains Nominal, LIVING,325.16,4.0,81.290,1.230E-002,3.014,4.860,0.000,3.069E-003,0.000,0.000,7.877,No
  Zone Internal Gains Nominal, RES DS_1 RET AIR ZONE,1.00,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
  Zone Internal Gains Nominal, UNFINISHED ATTIC,390.19,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
 ! <People Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Number of People {},People/Floor Area {person/m2},Floor Area per person {m2/person},Fraction Radiant,Fraction Convected,Sensible Fraction Calculation,Activity level,ASHRAE 55 Warnings,Carbon Dioxide Generation Rate,Nominal Minimum Number of People,Nominal Maximum Number of People
@@ -80,9 +80,9 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 BATH FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 HOUSE FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
  ElectricEquipment Internal Gains Nominal, RES INFIL_1 RANGE FAN,ALWAYS ON DISCRETE,LIVING,325.16,4.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,residential mech vent fan,0.000,0.000
- ElectricEquipment Internal Gains Nominal, RESIDENTIAL CLOTHES DRYER ELECTRIC,RESIDENTIAL CLOTHES DRYER ELECTRIC,LIVING,325.16,4.0,248.797,0.765,62.199,1.500E-002,8.097E-002,0.850,5.398E-002,residential clothes dryer electric,0.000,248.797
- ElectricEquipment Internal Gains Nominal, RESIDENTIAL CLOTHES WASHER,HOT WATER DRAW PROFILE,LIVING,325.16,4.0,16.027,4.929E-002,4.007,3.154E-002,0.164,0.696,0.109,residential clothes washer,1.816,16.027
- ElectricEquipment Internal Gains Nominal, RESIDENTIAL DISHWASHER,HOT WATER DRAW PROFILE,LIVING,325.16,4.0,41.507,0.128,10.377,0.300,0.180,0.399,0.120,residential dishwasher,4.704,41.507
+ ElectricEquipment Internal Gains Nominal, RESIDENTIAL CLOTHES DRYER ELECTRIC,RESIDENTIAL CLOTHES DRYER ELECTRIC,LIVING,325.16,4.0,251.022,0.772,62.755,1.486E-002,8.026E-002,0.851,5.350E-002,residential clothes dryer electric,0.000,251.022
+ ElectricEquipment Internal Gains Nominal, RESIDENTIAL CLOTHES WASHER,HOT WATER DRAW PROFILE,LIVING,325.16,4.0,16.509,5.077E-002,4.127,3.062E-002,0.159,0.704,0.106,residential clothes washer,1.871,16.509
+ ElectricEquipment Internal Gains Nominal, RESIDENTIAL DISHWASHER,HOT WATER DRAW PROFILE,LIVING,325.16,4.0,41.415,0.127,10.354,0.301,0.181,0.398,0.120,residential dishwasher,4.694,41.415
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL MISC PLUG LOADS|LIVING,RESIDENTIAL MISC PLUG LOADS SCHEDULE,LIVING,325.16,4.0,777.929,2.392,194.482,4.467E-002,0.513,0.101,0.342,residential misc plug loads,0.000,777.929
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL MISC TELEVISION,RESIDENTIAL MISC PLUG LOADS SCHEDULE,LIVING,325.16,4.0,168.287,0.518,42.072,0.000,0.600,0.000,0.400,residential misc television,0.000,168.287
  ElectricEquipment Internal Gains Nominal, RESIDENTIAL RANGE ELECTRIC,RESIDENTIAL RANGE ELECTRIC,LIVING,325.16,4.0,218.857,0.673,54.714,7.995E-002,0.432,0.200,0.288,residential range electric,0.000,218.857
@@ -122,7 +122,7 @@ AirflowNetwork Model:Control,NoMultizoneOrDistribution
  Component Sizing Information, Coil:Heating:Fuel, RESIDENTIAL FURNACE GAS HEATING COIL, User-Specified Nominal Capacity [W], 19193.92710
 ! <Water Heater Information>,Type,Name,Volume {m3},Maximum Capacity {W},Standard Rated Recovery Efficiency, Standard Rated Energy Factor
 Water Heater Information,WaterHeater:Mixed,RES WH,0.1362,5500.0,4.094,0.9477
- Component Sizing Information, WaterHeater:Mixed, RES WH, Use Side Design Flow Rate [m3/s], 6.46429E-006
+ Component Sizing Information, WaterHeater:Mixed, RES WH, Use Side Design Flow Rate [m3/s], 6.46744E-006
 ! <Environment>,Environment Name,Environment Type, Start Date, End Date, Start DayOfWeek, Duration {#days}, Source:Start DayOfWeek,  Use Daylight Saving, Use Holidays, Apply Weekend Holiday Rule,  Use Rain Values, Use Snow Values
 ! <Environment:Special Days>, Special Day Name, Special Day Type, Source, Start Date, Duration {#days}
 ! <Environment:Daylight Saving>, Daylight Saving Indicator, Source, Start Date, End Date
@@ -131,9 +131,9 @@ Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01/2007,12/31/2007,Monday,365,U
 Environment:Daylight Saving,No,RunPeriod Object
 Environment:WarmupDays,  6
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,2.4079674779E-002,0.1143572674,Pass,Pass,0.3046668413,0.3590313669,Pass,Pass
- Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,1.9409732588E-002,8.9741101343E-003,Pass,Pass,0.2893502559,0.3370623768,Pass,Pass
- Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,2.0963499163,2.0306761588,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,3.6146819671E-002,0.1208141195,Pass,Pass,0.4069870890,0.5598192309,Pass,Pass
+ Warmup Convergence Information,RES DS_1 RET AIR ZONE,RunPeriod: RUN PERIOD 1,1.6330646138E-002,1.1436517357E-002,Pass,Pass,0.4085331337,0.5646125957,Pass,Pass
+ Warmup Convergence Information,UNFINISHED ATTIC,RunPeriod: RUN PERIOD 1,2.1871497278,2.0907331416,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

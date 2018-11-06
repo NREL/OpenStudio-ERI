@@ -32,17 +32,17 @@ class EnergyPlusValidator
             '/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy' => one, # Required by HPXML schema
             '/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime' => one, # Required by HPXML schema
             '/HPXML/XMLTransactionHeaderInformation/Transaction' => one, # Required by HPXML schema
+            '/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE" or Version="2014AEG"]' => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
 
             '/HPXML/Building' => one,
             '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
             '/HPXML/Building/ProjectStatus/EventType' => one, # Required by HPXML schema
         
             '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable[Fuel="electricity" or Fuel="natural gas" or Fuel="fuel oil" or Fuel="propane" or Fuel="kerosene" or Fuel="diesel" or Fuel="anthracite coal" or Fuel="bituminous coal" or Fuel="coke" or Fuel="wood" or Fuel="wood pellets"]' => one_or_more,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent' => one,
-            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/Site/extension/ShelterCoefficient' => zero_or_one, # Uses ERI assumption if not provided
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents' => zero_or_one, # Uses ERI assumption if not provided
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
+            '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea' => one,
             '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume' => one,
@@ -80,9 +80,6 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
             '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
-            
-            '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="other"]' => one, # See [PlugLoads]
-            '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="TV other"]' => one, # See [Television]
         },
         
         
@@ -183,7 +180,7 @@ class EnergyPlusValidator
     
             ## [FoundationType=Ambient]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient]' => {
-                'FrameFloor' => one_or_more, # See [FoundationSlab]
+                'FrameFloor' => one_or_more, # See [FoundationFrameFloor]
             },
     
             ## [FoundationFrameFloor]
@@ -223,9 +220,9 @@ class EnergyPlusValidator
                 'extension/CarpetFraction' => one,
                 'extension/CarpetRValue' => one,
             },
-            
-            
-            
+          
+
+          
         # [RimJoist]
         '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => {
             'SystemIdentifier' => one, # Required by HPXML schema
@@ -235,9 +232,9 @@ class EnergyPlusValidator
             'Insulation/SystemIdentifier' => one, # Required by HPXML schema
             'Insulation/AssemblyEffectiveRValue' => one,
         },
-        
-        
-        
+            
+            
+            
         # [Wall]
         '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => {
             'SystemIdentifier' => one, # Required by HPXML schema
@@ -263,8 +260,8 @@ class EnergyPlusValidator
             'Overhangs' => zero_or_one, # See [WindowOverhang]
             'AttachedToWall' => one,
             'extension/Height' => one,
-            'extension/InteriorShadingFactorSummer' => one,
-            'extension/InteriorShadingFactorWinter' => one,
+            'extension/InteriorShadingFactorSummer' => zero_or_one, # Uses ERI assumption if not provided
+            'extension/InteriorShadingFactorWinter' => zero_or_one, # Uses ERI assumption if not provided
         },
         
             ## [WindowOverhang]
@@ -272,7 +269,6 @@ class EnergyPlusValidator
                 'Depth' => one,
                 'DistanceToTopOfWindow' => one,
             },
-
     
     
     
@@ -295,7 +291,6 @@ class EnergyPlusValidator
             'Azimuth' => one,
             'RValue' => one,
             'AttachedToWall' => one,
-            'extension/Height' => one,
         },
         
         
@@ -369,7 +364,6 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => {
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
             },
             
             ## [CoolingType=RoomAC]
@@ -394,8 +388,6 @@ class EnergyPlusValidator
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
-                'extension/PerformanceAdjustmentHSPF' => one,
             },
 
             ## [HeatPumpType=MSHP]
@@ -403,8 +395,6 @@ class EnergyPlusValidator
                 'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
                 'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
-                'extension/PerformanceAdjustmentSEER' => one,
-                'extension/PerformanceAdjustmentHSPF' => one,
             },
 
             ## [HeatPumpType=GSHP]
@@ -419,21 +409,9 @@ class EnergyPlusValidator
         # [HVACControl]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            '[ControlType="manual thermostat" or ControlType="programmable thermostat"]' => one, # See [HVACControlType=Programmable]
-            'SetpointTempHeatingSeason' => one,
-            'SetpointTempCoolingSeason' => one,
+            '[ControlType="manual thermostat" or ControlType="programmable thermostat"]' => one,
         },
 
-            ## [HVACControlType=Programmable]
-            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl[ControlType="programmable thermostat"]' => {
-                'SetbackTempHeatingSeason' => one,
-                'TotalSetbackHoursperWeekHeating' => one,
-                'SetupTempCoolingSeason' => one,
-                'TotalSetupHoursperWeekCooling' => one,
-                'extension/SetbackStartHour' => one, # e.g., 23 => 11pm
-                'extension/SetupStartHour' => one, # e.g., 9 => 9am
-            },
-        
 
         
         # [Dehumidifier]
@@ -442,24 +420,6 @@ class EnergyPlusValidator
             'WaterRemovalRrate' => one,
             'AirFlowRate' => one,
             'HumiditySetpoint' => one,
-        },
-
-        
-        
-        # [NaturalVentilation]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/NaturalVentilation' => {
-            'HeatingSeasonTemperatureOffset' => one,
-            'CoolingSeasonTemperatureOffset' => one,
-            'OverlapSeasonTemperatureOffset' => one,
-            'EnabledForHeatingSeason' => one,
-            'EnabledForCoolingSeason' => one,
-            'EnabledForOverlapSeason' => one,
-            'EnabledNumberOfWeekdays' => one,
-            'EnabledNumberOfWeekendDays' => one,
-            'FractionWindowsOpen' => one,
-            'FractionWindowAreaOpenable' => one,
-            'ControlMaximumHumidityRatio' => one,
-            'ControlMaximumRelativeHumidity' => one,
         },
 
         
@@ -518,13 +478,14 @@ class EnergyPlusValidator
         # [WaterHeatingSystem]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => {
             '../HotWaterDistribution' => one, # See [HotWaterDistribution]
-            '../WaterFixture[WaterFixtureType="shower head"]' => one, # See [WaterFixture]
+            '../WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => one_or_more, # See [WaterFixture]
             'SystemIdentifier' => one, # Required by HPXML schema
             '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => one, # See [WHType=Tank]
             '[Location="conditioned space" or Location="basement - unconditioned" or Location="attic - unconditioned" or Location="garage - unconditioned" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
             'FractionDHWLoadServed' => one,
-            'EnergyFactor' => one,
-            'extension/EnergyFactorMultiplier' => one,
+            '[EnergyFactor | UniformEnergyFactor]' => one,
+            'HotWaterTemperature' => zero_or_one, # Uses ERI assumption if not provided
+            'extension/EnergyFactorMultiplier' => zero_or_one, # Uses ERI assumption if not provided
         },
         
             ## [WHType=Tank]
@@ -556,19 +517,28 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
-            'extension/MixedWaterGPD' => one,
-            'extension/MixedWaterDailyFractions' => one,
-            'extension/WaterHeaterDailyInletTemperatures' => one,
-            'extension/EnergyConsumptionAdjustmentFactor' => one,
+            'PipeInsulation/PipeRValue' => one,
+            'DrainWaterHeatRecovery' => zero_or_one, # See [HotWaterDistribution DrainWaterHeatRecovery]
         },
         
             ## [HWDistType=Standard]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard' => {
+                'PipingLength' => zero_or_one, # Uses Reference Home if not provided
             },
             
             ## [HWDistType=Recirculation]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => {
-                'extension/PumpAnnualkWh' => one,
+                'ControlType' => one,
+                'RecirculationPipingLoopLength' => zero_or_one, # Uses Reference Home if not provided
+                'BranchPipingLoopLength' => one,
+                'PumpPower' => one,
+            },
+        
+            ## [HotWaterDistribution DrainWaterHeatRecovery]
+            '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => {
+                'FacilitiesConnected' => one,
+                'EqualFlow' => one,
+                'Efficiency' => one,
             },
         
         
@@ -576,9 +546,8 @@ class EnergyPlusValidator
         # [WaterFixture]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'extension/MixedWaterGPD' => one,
-            'extension/AnnualSensibleGainsBtu' => one,
-            'extension/AnnualLatentGainsBtu' => one,
+            'WaterFixtureType' => one, # Required by HPXML schema
+            'LowFlow' => one,
         },
         
         
@@ -600,11 +569,17 @@ class EnergyPlusValidator
         # [ClothesWasher]
         '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'extension/AnnualkWh' => one,
-            'extension/HotWaterGPD' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            '[ModifiedEnergyFactor | IntegratedModifiedEnergyFactor]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CWType=UserSpecified]
         },
+        
+            ## [CWType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[ModifiedEnergyFactor]' => {
+                'RatedAnnualkWh' => one,
+                'LabelElectricRate' => one,
+                'LabelGasRate' => one,
+                'LabelAnnualGasCost' => one,
+                'Capacity' => one,
+            },
         
         
         
@@ -612,29 +587,33 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
-            'extension/AnnualkWh' => one,
-            'extension/AnnualTherm' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            '[EnergyFactor | CombinedEnergyFactor]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [CDType=UserSpecified]
         },
+        
+            ## [CDType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EnergyFactor]' => {
+                '[ControlType="timer" or ControlType="moisture"]' => one,
+            },
         
         
         
         # [Dishwasher]
         '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'extension/AnnualkWh' => one,
-            'extension/HotWaterGPD' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            '[EnergyFactor | RatedAnnualkWh]' => zero_or_one, # Uses Reference Home if neither provided; otherwise see [DWType=UserSpecified]
         },
+        
+            ## [DWType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/Dishwasher[EnergyFactor | RatedAnnualkWh]' => {
+                'PlaceSettingCapacity' => one,
+            },
         
         
         
         # [Refrigerator]
         '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            'RatedAnnualkWh' => zero_or_one,
+            'RatedAnnualkWh' => zero_or_one, # Uses Reference Home if not provided
         },
         
         
@@ -643,36 +622,30 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
             'SystemIdentifier' => one, # Required by HPXML schema
             '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
-            'extension/AnnualkWh' => one,
-            'extension/AnnualTherm' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
+            'IsInduction' => zero_or_one, # Uses Reference Home if not provided; otherwise see [CRType=UserSpecified]
         },
+        
+            ## [CRType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]' => {
+                '../Oven/IsConvection' => one,
+            },
         
         
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'extension/AnnualInteriorkWh' => one,
-            'extension/AnnualExteriorkWh' => one,
-            'extension/AnnualGaragekWh' => one,
+            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified]
         },
         
-        
-        
-        # [PlugLoads]
-        '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="other"]' => {
-            'Load[Units="kWh/year"]/Value' => one,
-            'extension/FracSensible' => one,
-            'extension/FracLatent' => one,
-        },
-        
-        
-        
-        # [Television]
-        '/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="TV other"]' => {
-            'Load[Units="kWh/year"]/Value' => one,
-        },
+            ## [LtgType=UserSpecified]
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
+                'extension/FractionQualifyingTierIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIFixturesGarage' => one,
+                'extension/FractionQualifyingTierIIFixturesInterior' => one,
+                'extension/FractionQualifyingTierIIFixturesExterior' => one,
+                'extension/FractionQualifyingTierIIFixturesGarage' => one,
+            },
         
     }
     

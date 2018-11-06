@@ -1,23 +1,23 @@
-Electricity: Total (MBtu),43.04985360463087
-Electricity: Net (MBtu),43.04985360463087
-Natural Gas: Total (MBtu),55.73164667442305
+Electricity: Total (MBtu),43.3152423983186
+Electricity: Net (MBtu),43.3152423983186
+Natural Gas: Total (MBtu),53.19149679198336
 Other Fuels: Total (MBtu),0.0
 "",""
 Electricity: Heating (MBtu),0.0
-Electricity: Cooling (MBtu),2.161023034314363
-Electricity: Fans/Pumps (MBtu),2.9951021001900826
+Electricity: Cooling (MBtu),2.3884991431895592
+Electricity: Fans/Pumps (MBtu),3.0045802713932157
 Electricity: Hot Water (MBtu),11.468587155791138
 Electricity: Lighting (MBtu),8.852611903726384
 Electricity: Mech Vent (MBtu),0.0
 Electricity: Refrigerator (MBtu),2.36006462958016
-Electricity: Dishwasher (MBtu),0.5876466145942567
-Electricity: Clothes Washer (MBtu),0.22747610887519612
-Electricity: Clothes Dryer (MBtu),3.3173599210966103
+Electricity: Dishwasher (MBtu),0.5781684433911235
+Electricity: Clothes Washer (MBtu),0.2369542800783293
+Electricity: Clothes Dryer (MBtu),3.3457944347060096
 Electricity: Range/Oven (MBtu),1.5259855637044408
 Electricity: Ceiling Fan (MBtu),0
 Electricity: Plug Loads (MBtu),9.553996572758237
 Electricity: PV (MBtu),0.0
-Natural Gas: Heating (MBtu),55.73164667442305
+Natural Gas: Heating (MBtu),53.19149679198336
 Natural Gas: Hot Water (MBtu),0.0
 Natural Gas: Clothes Dryer (MBtu),0
 Natural Gas: Range/Oven (MBtu),0

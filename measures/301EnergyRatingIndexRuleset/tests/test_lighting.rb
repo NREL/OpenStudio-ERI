@@ -11,19 +11,19 @@ class LightingTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml_doc, 3255, 275, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml_doc, 1645, 115, 0)
+    _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
     
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml_doc, 1248, 96, 0)
+    _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
     
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml_doc, 2375, 220, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
   end
   
   def test_lighting_pre_addendum_g
@@ -31,19 +31,19 @@ class LightingTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml_doc, 3255, 275, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml_doc, 2410, 172, 0)
+    _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
     
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml_doc, 1374, 96, 0)
+    _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
     
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml_doc, 2375, 220, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
   end
   
   def _test_measure(hpxml_name, calc_type)
@@ -92,11 +92,14 @@ class LightingTest < MiniTest::Test
     return hpxml_doc
   end
 
-  def _check_lighting(hpxml_doc, interior_kwh, exterior_kwh, garage_kwh)
-    ltg = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting"]
-    assert_in_epsilon(Float(ltg.elements["extension/AnnualInteriorkWh"].text), interior_kwh, 0.01)
-    assert_in_epsilon(Float(ltg.elements["extension/AnnualExteriorkWh"].text), exterior_kwh, 0.01)
-    assert_in_epsilon(Float(ltg.elements["extension/AnnualGaragekWh"].text), garage_kwh, 0.01)
+  def _check_lighting(hpxml_doc, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+    ltg_frac = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting/LightingFractions"]
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesInterior"].text), fFI_int, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesExterior"].text), fFI_ext, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesGarage"].text), fFI_grg, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesInterior"].text), fFII_int, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesExterior"].text), fFII_ext, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesGarage"].text), fFII_grg, 0.01)
   end
   
 end
