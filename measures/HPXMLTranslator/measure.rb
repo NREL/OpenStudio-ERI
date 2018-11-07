@@ -1923,40 +1923,23 @@ class OSModel
     cw_imef = XMLHelper.get_value(cw, "IntegratedModifiedEnergyFactor")
     if cw_mef.nil? and cw_imef.nil?
       cw_mef = HotWaterAndAppliances.get_clothes_washer_reference_mef()
-    elsif not cw_mef.nil?
-      cw_mef = Float(cw_mef)
-    elsif not cw_imef.nil?
-      cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(Float(cw_imef))
-    end
-    cw_ler = XMLHelper.get_value(cw, "RatedAnnualkWh")
-    if cw_ler.nil?
       cw_ler = HotWaterAndAppliances.get_clothes_washer_reference_ler()
-    else
-      cw_ler = Float(cw_ler)
-    end
-    cw_elec_rate = XMLHelper.get_value(cw, "LabelElectricRate")
-    if cw_elec_rate.nil?
       cw_elec_rate = HotWaterAndAppliances.get_clothes_washer_reference_elec_rate()
-    else
-      cw_elec_rate = Float(cw_elec_rate)
-    end
-    cw_gas_rate = XMLHelper.get_value(cw, "LabelGasRate")
-    if cw_gas_rate.nil?
       cw_gas_rate = HotWaterAndAppliances.get_clothes_washer_reference_gas_rate()
-    else
-      cw_gas_rate = Float(cw_gas_rate)
-    end
-    cw_agc = XMLHelper.get_value(cw, "LabelAnnualGasCost")
-    if cw_agc.nil?
       cw_agc = HotWaterAndAppliances.get_clothes_washer_reference_agc()
-    else
-      cw_agc = Float(cw_agc)
-    end
-    cw_cap = XMLHelper.get_value(cw, "Capacity")
-    if cw_cap.nil?
       cw_cap = HotWaterAndAppliances.get_clothes_washer_reference_cap()
+    
     else
-      cw_cap = Float(cw_cap)
+      if not cw_mef.nil?
+        cw_mef = Float(cw_mef)
+      elsif not cw_imef.nil?
+        cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(Float(cw_imef))
+      end
+      cw_ler = Float(XMLHelper.get_value(cw, "RatedAnnualkWh"))
+      cw_elec_rate = Float(XMLHelper.get_value(cw, "LabelElectricRate"))
+      cw_gas_rate = Float(XMLHelper.get_value(cw, "LabelGasRate"))
+      cw_agc = Float(XMLHelper.get_value(cw, "LabelAnnualGasCost"))
+      cw_cap = Float(XMLHelper.get_value(cw, "Capacity"))
     end
     
     # Clothes Dryer
@@ -1966,14 +1949,14 @@ class OSModel
     cd_cef = XMLHelper.get_value(cd, "CombinedEnergyFactor")
     if cd_ef.nil? and cd_cef.nil?
       cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(cd_fuel)
-    elsif not cd_ef.nil?
-      cd_ef = Float(cd_ef)
-    elsif not cd_cef.nil?
-      cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(Float(cd_cef))
-    end
-    cd_control = XMLHelper.get_value(cd, "ControlType")
-    if cd_control.nil?
       cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
+    else  
+      if not cd_ef.nil?
+        cd_ef = Float(cd_ef)
+      elsif not cd_cef.nil?
+        cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(Float(cd_cef))
+      end
+      cd_control = XMLHelper.get_value(cd, "ControlType")
     end
     
     # Dishwasher
@@ -1982,16 +1965,14 @@ class OSModel
     dw_annual_kwh = XMLHelper.get_value(dw, "RatedAnnualkWh")
     if dw_ef.nil? and dw_annual_kwh.nil?
       dw_ef = HotWaterAndAppliances.get_dishwasher_reference_ef()
-    elsif not dw_ef.nil?
-      dw_ef = Float(dw_ef)
-    elsif not dw_annual_kwh.nil?
-      dw_ef = HotWaterAndAppliances.calc_dishwasher_ef_from_annual_kwh(Float(dw_annual_kwh))
-    end
-    dw_cap = XMLHelper.get_value(dw, "PlaceSettingCapacity")
-    if dw_cap.nil?
       dw_cap = HotWaterAndAppliances.get_dishwasher_reference_cap()
     else
-      dw_cap = Float(dw_cap)
+      if not dw_ef.nil?
+        dw_ef = Float(dw_ef)
+      elsif not dw_annual_kwh.nil?
+        dw_ef = HotWaterAndAppliances.calc_dishwasher_ef_from_annual_kwh(Float(dw_annual_kwh))
+      end
+      dw_cap = Float(XMLHelper.get_value(dw, "PlaceSettingCapacity"))
     end
   
     # Refrigerator
@@ -2010,14 +1991,10 @@ class OSModel
     cook_is_induction = XMLHelper.get_value(cook, "IsInduction")
     if cook_is_induction.nil?
       cook_is_induction = HotWaterAndAppliances.get_range_oven_reference_is_induction()
-    else
-      cook_is_induction = Boolean(cook_is_induction)
-    end
-    oven_is_convection = XMLHelper.get_value(oven, "IsConvection")
-    if oven_is_convection.nil?
       oven_is_convection = HotWaterAndAppliances.get_range_oven_reference_is_convection()
     else
-      oven_is_convection = Boolean(oven_is_convection)
+      cook_is_induction = Boolean(cook_is_induction)
+      oven_is_convection = Boolean(XMLHelper.get_value(oven, "IsConvection"))
     end
     
     # Fixtures
@@ -2210,12 +2187,10 @@ class OSModel
     if clg_type == "central air conditioning"
     
       # FIXME: Generalize
-      seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-      seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
-      seer = seer_nom * seer_adj
-      if seer_nom <= 15
+      seer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      if seer <= 15
         num_speeds = "1-Speed"
-      elsif seer_nom <= 21
+      elsif seer <= 21
         num_speeds = "2-Speed"
       else
         num_speeds = "Variable-Speed"
@@ -2225,7 +2200,7 @@ class OSModel
     
       if num_speeds == "1-Speed"
       
-        eers = [0.82 * seer_nom + 0.64]
+        eers = [0.82 * seer + 0.64]
         shrs = [0.73]
         fan_power_rated = 0.365
         fan_power_installed = 0.5
@@ -2239,7 +2214,7 @@ class OSModel
       
       elsif num_speeds == "2-Speed"
       
-        eers = [0.83 * seer_nom + 0.15, 0.56 * seer_nom + 3.57]
+        eers = [0.83 * seer + 0.15, 0.56 * seer + 3.57]
         shrs = [0.71, 0.73]
         capacity_ratios = [0.72, 1.0]
         fan_speed_ratios = [0.86, 1.0]
@@ -2256,7 +2231,7 @@ class OSModel
         
       elsif num_speeds == "Variable-Speed"
       
-        eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
+        eers = [0.80 * seer, 0.75 * seer, 0.65 * seer, 0.60 * seer]
         shrs = [0.98, 0.82, 0.745, 0.77]
         capacity_ratios = [0.36, 0.64, 1.0, 1.16]
         fan_speed_ratios = [0.51, 0.84, 1.0, 1.19]
@@ -2406,22 +2381,17 @@ class OSModel
     
       # FIXME: Generalize
       if not hp.elements["AnnualCoolingEfficiency"].nil?
-        seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
+        seer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       else
         # FIXME: Currently getting from AC
         clgsys = building.elements["BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
-        seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
+        seer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       end
-      seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-      hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
-      hspf = hspf_nom * hspf_adj
+      hspf = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       
-      if seer_nom <= 15
+      if seer <= 15
         num_speeds = "1-Speed"
-      elsif seer_nom <= 21
+      elsif seer <= 21
         num_speeds = "2-Speed"
       else
         num_speeds = "Variable-Speed"
@@ -2432,8 +2402,8 @@ class OSModel
       
       if num_speeds == "1-Speed"
       
-        eers = [0.80 * seer_nom + 1.0]
-        cops = [0.45 * seer_nom - 0.34]
+        eers = [0.80 * seer + 1.0]
+        cops = [0.45 * seer - 0.34]
         shrs = [0.73]
         fan_power_rated = 0.365
         fan_power_installed = 0.5
@@ -2451,8 +2421,8 @@ class OSModel
         
       elsif num_speeds == "2-Speed"
       
-        eers = [0.78 * seer_nom + 0.6, 0.68 * seer_nom + 1.0]
-        cops = [0.60 * seer_nom - 1.40, 0.50 * seer_nom - 0.94]
+        eers = [0.78 * seer + 0.6, 0.68 * seer + 1.0]
+        cops = [0.60 * seer - 1.40, 0.50 * seer - 0.94]
         shrs = [0.71, 0.724]
         capacity_ratios = [0.72, 1.0]
         fan_speed_ratios_cooling = [0.86, 1.0]
@@ -2475,8 +2445,8 @@ class OSModel
         
       elsif num_speeds == "Variable-Speed"
       
-        eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
-        cops = [0.48 * seer_nom, 0.45 * seer_nom, 0.39 * seer_nom, 0.39 * seer_nom]
+        eers = [0.80 * seer, 0.75 * seer, 0.65 * seer, 0.60 * seer]
+        cops = [0.48 * seer, 0.45 * seer, 0.39 * seer, 0.39 * seer]
         shrs = [0.84, 0.79, 0.76, 0.77]
         capacity_ratios = [0.49, 0.67, 1.0, 1.2]
         fan_speed_ratios_cooling = [0.7, 0.9, 1.0, 1.26]
@@ -2506,12 +2476,8 @@ class OSModel
     elsif hp_type == "mini-split"
       
       # FIXME: Generalize
-      seer_nom = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-      seer_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentSEER"))
-      seer = seer_nom * seer_adj
-      hspf_nom = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-      hspf_adj = Float(XMLHelper.get_value(hp, "extension/PerformanceAdjustmentHSPF"))
-      hspf = hspf_nom * hspf_adj
+      seer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      hspf = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
       shr = 0.73
       min_cooling_capacity = 0.4
       max_cooling_capacity = 1.2
@@ -2582,18 +2548,20 @@ class OSModel
 
   end
   
-    def self.add_setpoints(runner, model, building, weather) 
+  def self.add_setpoints(runner, model, building, weather) 
 
     control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
     control_type = XMLHelper.get_value(control, "ControlType")
     
     htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
     if htg_setback_sp.nil?
-      htg_weekday_setpoints = [htg_sp]*24
+      htg_weekday_setpoints = [[htg_sp]*24]*12
     else
-      htg_weekday_setpoints = [htg_sp]*24
-      for hr in htg_setback_start_hr..htg_setback_start_hr+Integer(htg_setback_hrs_per_week/7.0)-1
-        htg_weekday_setpoints[hr % 24] = htg_setback_sp
+      htg_weekday_setpoints = [[htg_sp]*24]*12
+      (0..11).to_a.each do |m|
+        for hr in htg_setback_start_hr..htg_setback_start_hr+Integer(htg_setback_hrs_per_week/7.0)-1
+          htg_weekday_setpoints[m][hr % 24] = htg_setback_sp
+        end
       end
     end
     htg_weekend_setpoints = htg_weekday_setpoints
@@ -2606,11 +2574,22 @@ class OSModel
     
     clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
     if clg_setup_sp.nil?
-      clg_weekday_setpoints = [clg_sp]*24
+      clg_weekday_setpoints = [[clg_sp]*24]*12
     else
-      clg_weekday_setpoints = [clg_sp]*24
-      for hr in clg_setup_start_hr..clg_setup_start_hr+Integer(clg_setup_hrs_per_week/7.0)-1
-        clg_weekday_setpoints[hr % 24] = clg_setup_sp
+      clg_weekday_setpoints = [[clg_sp]*24]*12
+      (0..11).to_a.each do |m|
+        for hr in clg_setup_start_hr..clg_setup_start_hr+Integer(clg_setup_hrs_per_week/7.0)-1
+          clg_weekday_setpoints[m][hr % 24] = clg_setup_sp
+        end
+      end
+    end
+    # Apply ceiling fan offset?
+    if not building.elements["BuildingDetails/Lighting/CeilingFan"].nil?
+      cooling_setpoint_offset = 0.5 # deg-F
+      monthly_avg_temp_control = 63.0 # deg-F
+      weather.data.MonthlyAvgDrybulbs.each_with_index do |val, m|
+        next unless val > monthly_avg_temp_control
+        clg_weekday_setpoints[m] = [clg_weekday_setpoints[m], Array.new(24, cooling_setpoint_offset)].transpose.map {|i| i.reduce(:+)}
       end
     end
     clg_weekend_setpoints = clg_weekday_setpoints
@@ -2644,22 +2623,31 @@ class OSModel
   
   def self.add_ceiling_fans(runner, model, building, unit)
 
-    # FIXME
     cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
-    coverage = nil
-    specified_num = nil
-    power = nil
-    control = nil
-    use_benchmark_energy = true
-    mult = 1.0
-    cooling_setpoint_offset = 0.0
-    weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
-    weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
-    monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
-    #success = HVAC.apply_ceiling_fans(model, unit, runner, coverage, specified_num, power,
-    #                                  control, use_benchmark_energy, cooling_setpoint_offset,
-    #                                  mult, weekday_sch, weekend_sch, monthly_sch, sch=nil)
-    #return false if not success
+    return true if cf.nil?
+    
+    medium_cfm = 3000.0
+    weekday_sch = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+    weekend_sch = weekday_sch
+    hrs_per_day = weekday_sch.inject{ |sum, n| sum + n }
+    
+    cfm_per_w = XMLHelper.get_value(cf, "Airflow[FanSpeed='medium']/Efficiency")
+    if cfm_per_w.nil?
+      fan_power_w = HVAC.get_default_ceiling_fan_power()
+      cfm_per_w = medium_cfm/fan_power_w
+    else
+      cfm_per_w = Float(cfm_per_w)
+    end
+    quantity = XMLHelper.get_value(cf, "Quantity")
+    if quantity.nil?
+      quantity = HVAC.get_default_ceiling_fan_quantity(@nbeds)
+    else
+      quantity = Float(quantity)
+    end
+    annual_kwh = UnitConversions.convert(quantity * medium_cfm/cfm_per_w * hrs_per_day * 365.0, "Wh", "kWh")
+    
+    success = HVAC.apply_eri_ceiling_fans(model, unit, runner, annual_kwh, weekday_sch, weekend_sch)
+    return false if not success
 
     return true
   end

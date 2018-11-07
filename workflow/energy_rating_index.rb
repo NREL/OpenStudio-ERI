@@ -176,7 +176,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:fuelRangeOven] = design_output[:ngRangeOven] + design_output[:otherRangeOven]
   
   # Other - Ceiling Fans
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCeilingFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.EndUseCeilingFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecCeilingFan] = get_sql_query_result(sqlFile, query)
   
   # Other - Mechanical Ventilation

@@ -80,6 +80,7 @@ class EnergyPlusValidator
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
             '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => zero_or_one, # See [CeilingFan]
         },
         
         
@@ -518,7 +519,7 @@ class EnergyPlusValidator
             'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
             'PipeInsulation/PipeRValue' => one,
-            'DrainWaterHeatRecovery' => zero_or_one, # See [HotWaterDistribution DrainWaterHeatRecovery]
+            'DrainWaterHeatRecovery' => zero_or_one, # See [DrainWaterHeatRecovery]
         },
         
             ## [HWDistType=Standard]
@@ -534,7 +535,7 @@ class EnergyPlusValidator
                 'PumpPower' => one,
             },
         
-            ## [HotWaterDistribution DrainWaterHeatRecovery]
+            ## [DrainWaterHeatRecovery]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => {
                 'FacilitiesConnected' => one,
                 'EqualFlow' => one,
@@ -646,7 +647,16 @@ class EnergyPlusValidator
                 'extension/FractionQualifyingTierIIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIIFixturesGarage' => one,
             },
+
+
         
+        # [CeilingFan]
+        '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            'Airflow[FanSpeed="medium"]/Efficiency' => zero_or_one, # Uses Reference Home if not provided
+            'Quantity' => zero_or_one,  # Uses Reference Home if not provided
+        },
+
     }
     
     # TODO: Make common across all validators

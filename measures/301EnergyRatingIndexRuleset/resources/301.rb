@@ -94,7 +94,7 @@ class EnergyRatingIndex301Ruleset
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_reference(new_lighting, orig_details)
-    set_lighting_ceiling_fans_reference(new_lighting)
+    set_ceiling_fans_reference(new_lighting, orig_details)
     
   end
   
@@ -143,7 +143,7 @@ class EnergyRatingIndex301Ruleset
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_rated(new_lighting, orig_details)
-    set_lighting_ceiling_fans_rated(new_lighting)
+    set_ceiling_fans_rated(new_lighting, orig_details)
     
   end
   
@@ -192,7 +192,7 @@ class EnergyRatingIndex301Ruleset
     # Lighting
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_iad(new_lighting, orig_details)
-    set_lighting_ceiling_fans_iad(new_lighting)
+    set_ceiling_fans_iad(new_lighting, orig_details)
     
   end
   
@@ -1121,8 +1121,6 @@ class EnergyRatingIndex301Ruleset
       cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", seer)
-      extension = XMLHelper.add_element(cool_sys, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       
     end
     
@@ -1150,11 +1148,6 @@ class EnergyRatingIndex301Ruleset
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
-      extension = XMLHelper.add_element(heat_pump, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
-      if prevent_hp_and_ac
-        XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      end
       
     end
     
@@ -1241,12 +1234,6 @@ class EnergyRatingIndex301Ruleset
       
       # Retain cooling system
       cooling_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
-      extension = cooling_system.elements["extension"]
-      if extension.nil?
-        extension = XMLHelper.add_element(cooling_system, "extension")
-      end
-      XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       
     elsif cool_type == "AirConditioner"
       
@@ -1266,8 +1253,6 @@ class EnergyRatingIndex301Ruleset
       cool_eff = XMLHelper.add_element(cooling_system, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", seer)
-      extension = XMLHelper.add_element(cooling_system, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
       
     end
     
@@ -1276,16 +1261,6 @@ class EnergyRatingIndex301Ruleset
     
       # Retain heating system
       heat_pump_system = XMLHelper.copy_element(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
-      extension = heat_pump_system.elements["extension"]
-      if extension.nil?
-        extension = XMLHelper.add_element(heat_pump_system, "extension")
-      end
-      if not heat_pump_system.elements["AnnualCoolingEfficiency"].nil?
-        XMLHelper.delete_element(extension, "PerformanceAdjustmentSEER")
-        XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      end
-      XMLHelper.delete_element(extension, "PerformanceAdjustmentHSPF")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       
     elsif heat_type == "HeatPump"
     
@@ -1309,9 +1284,6 @@ class EnergyRatingIndex301Ruleset
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
-      extension = XMLHelper.add_element(heat_pump, "extension")
-      XMLHelper.add_element(extension, "PerformanceAdjustmentSEER", 1.0/0.941) # TODO: Do we really want to apply this?
-      XMLHelper.add_element(extension, "PerformanceAdjustmentHSPF", 1.0/0.582) # TODO: Do we really want to apply this?
       
     end
     
@@ -2020,16 +1992,61 @@ class EnergyRatingIndex301Ruleset
     
   end
 
-  def self.set_lighting_ceiling_fans_reference(new_lighting)
-    # FIXME
+  def self.set_ceiling_fans_reference(new_lighting, orig_details)
+    
+    return if not XMLHelper.has_element(orig_details, "Lighting/CeilingFan")
+    
+    medium_cfm = 3000.0
+    fan_power_w = HVAC.get_default_ceiling_fan_power()
+    quantity = HVAC.get_default_ceiling_fan_quantity(@nbeds)
+    
+    new_cf = XMLHelper.add_element(new_lighting, "CeilingFan")
+    sys_id = XMLHelper.add_element(new_cf, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "CeilingFans")
+    new_airflow = XMLHelper.add_element(new_cf, "Airflow")
+    XMLHelper.add_element(new_airflow, "FanSpeed", "medium")
+    XMLHelper.add_element(new_airflow, "Efficiency", medium_cfm/fan_power_w)
+    XMLHelper.add_element(new_cf, "Quantity", Integer(quantity))
+    
   end
   
-  def self.set_lighting_ceiling_fans_rated(new_lighting)
-    # FIXME
+  def self.set_ceiling_fans_rated(new_lighting, orig_details)
+    
+    return if not XMLHelper.has_element(orig_details, "Lighting/CeilingFan")
+    
+    medium_cfm = 3000.0
+    quantity = HVAC.get_default_ceiling_fan_quantity(@nbeds)
+    
+    # Calculate average ceiling fan wattage
+    sum_w = 0.0
+    num_cfs = 0
+    orig_details.elements.each("Lighting/CeilingFan") do |cf|
+      cf_quantity = Integer(XMLHelper.get_value(cf, "Quantity"))
+      num_cfs += cf_quantity
+      cfm_per_w = XMLHelper.get_value(cf, "Airflow[FanSpeed='medium']/Efficiency")
+      if cfm_per_w.nil?
+        fan_power_w = HVAC.get_default_ceiling_fan_power()
+        cfm_per_w = medium_cfm/fan_power_w
+      else
+        cfm_per_w = Float(cfm_per_w)
+      end
+      sum_w += (medium_cfm / cfm_per_w * Float(cf_quantity))
+    end
+    avg_w = sum_w / num_cfs
+    
+    new_cf = XMLHelper.add_element(new_lighting, "CeilingFan")
+    sys_id = XMLHelper.add_element(new_cf, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "CeilingFans")
+    new_airflow = XMLHelper.add_element(new_cf, "Airflow")
+    XMLHelper.add_element(new_airflow, "FanSpeed", "medium")
+    XMLHelper.add_element(new_airflow, "Efficiency", medium_cfm/avg_w)
+    XMLHelper.add_element(new_cf, "Quantity", Integer(quantity))
+    
   end
   
-  def self.set_lighting_ceiling_fans_iad(new_lighting)
-    # FIXME
+  def self.set_ceiling_fans_iad(new_lighting, orig_details)
+    # Not described in Addendum E; use Reference Home?
+    set_ceiling_fans_reference(new_lighting, orig_details)
   end
 
   private
