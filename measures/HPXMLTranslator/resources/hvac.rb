@@ -3032,8 +3032,8 @@ class HVAC
 
       obj_name = Constants.ObjectNameCeilingFan(unit.name.to_s)
 
-      sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, [1]*12)
-      if not sch.validated?
+      ceiling_fan_sch = MonthWeekdayWeekendSchedule.new(model, runner, obj_name + " schedule", weekday_sch, weekend_sch, [1]*12)
+      if not ceiling_fan_sch.validated?
         return false
       end
 
@@ -3045,7 +3045,7 @@ class HVAC
         space_obj_name = "#{obj_name}|#{space.name.to_s}"
 
         space_mel_ann = annual_kWh * UnitConversions.convert(space.floorArea,"m^2","ft^2") / finished_floor_area
-        space_design_level = sch.calcDesignLevelFromDailykWh(space_mel_ann / 365.0)
+        space_design_level = ceiling_fan_sch.calcDesignLevelFromDailykWh(space_mel_ann / 365.0)
 
         equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         equip_def.setName(space_obj_name)
@@ -3055,9 +3055,9 @@ class HVAC
         equip_def.setDesignLevel(space_design_level)
         equip_def.setFractionRadiant(0.558)
         equip_def.setFractionLatent(0)
-        equip_def.setFractionLost(0.07)
+        equip_def.setFractionLost(0)
         equip.setEndUseSubcategory(Constants.EndUseCeilingFan)
-        equip.setSchedule(sch.schedule)
+        equip.setSchedule(ceiling_fan_sch.schedule)
       end
       
       return true
