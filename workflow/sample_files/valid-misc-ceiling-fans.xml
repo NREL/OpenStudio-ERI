@@ -378,15 +378,15 @@
           <SystemIdentifier id='CeilingFan_ID1'/>
           <Airflow>
             <FanSpeed>medium</FanSpeed>
-            <Efficiency>30.0</Efficiency>
+            <Efficiency>100.0</Efficiency>
           </Airflow>
-          <Quantity>1</Quantity>
+          <Quantity>2</Quantity>
         </CeilingFan>
         <CeilingFan>
           <SystemIdentifier id='CeilingFan_ID2'/>
           <Airflow>
             <FanSpeed>medium</FanSpeed>
-            <Efficiency>50.0</Efficiency>
+            <Efficiency>120.0</Efficiency>
           </Airflow>
           <Quantity>1</Quantity>
         </CeilingFan>

@@ -53,19 +53,23 @@ class LightingTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml_doc, medium_cfm/42.6, 5)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 5)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml_doc, medium_cfm/80.0, 5)
+    avg_fan_w = ((3000.0/100.0 * 2) + (3000.0/120.0 * 1))/3
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 5)
     
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml_doc, medium_cfm/42.6, 4)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 4)
     
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml_doc, medium_cfm/42.6, 4)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 4)
   end
   
   def _test_measure(hpxml_name, calc_type)
