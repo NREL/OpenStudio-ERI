@@ -1143,10 +1143,43 @@ class OSModel
 
   def self.add_finished_floor_area(runner, model, building, spaces)
   
-    # Add finished floor area (e.g., floors between finished spaces) to ensure model has
-    # the correct ffa as specified.
-  
     ffa = Float(building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text).round(1)
+    
+    # First check if we need to add a finished basement ceiling
+    
+    model.getThermalZones.each do |zone|
+      next if not Geometry.is_finished_basement(zone)
+      floor_area = Geometry.get_finished_floor_area_from_spaces(zone.spaces).round(1)
+      ceiling_area = 0.0
+      zone.spaces.each do |space|
+        space.surfaces.each do |surface|
+          next if surface.surfaceType.downcase.to_s != "roofceiling"
+          ceiling_area += UnitConversions.convert(surface.grossArea * mult,"m^2","ft^2")
+        end
+      end
+      addtl_ffa = floor_area - ceiling_area
+      if addtl_ffa > 0
+        runner.registerWarning("Adding finished basement adiabatic ceiling with #{addtl_ffa.to_s} ft^2.")
+          
+        finishedfloor_width = Math::sqrt(addtl_ffa)
+        finishedfloor_length = addtl_ffa / finishedfloor_width
+        z_origin = 0
+        
+        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(-UnitConversions.convert(finishedfloor_width,"ft","m"), 
+                                                                     -UnitConversions.convert(finishedfloor_length,"ft","m"), 
+                                                                     UnitConversions.convert(z_origin,"ft","m")), model)
+        surface.setName("inferred finished basement ceiling")
+        surface.setSurfaceType("RoofCeiling")
+        surface.setSpace(zone.spaces[0])
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
+        
+        # Apply Construction
+        success = apply_adiabatic_construction(runner, model, [surface], "floor")
+        return false if not success
+      end
+    end
+  
+    # Next check if we need to add floors between finished spaces (e.g., 2-story buildings).
     
     # Calculate ffa already added to model
     model_ffa = Geometry.get_finished_floor_area_from_spaces(model.getSpaces).round(1)
@@ -1159,9 +1192,8 @@ class OSModel
     addtl_ffa = ffa - model_ffa
     return true unless addtl_ffa > 0
     
-    runner.registerWarning("Adding adiabatic conditioned floors with #{addtl_ffa.to_s} ft^2 to preserve building total conditioned floor area.")
+    runner.registerWarning("Adding adiabatic conditioned floor with #{addtl_ffa.to_s} ft^2 to preserve building total conditioned floor area.")
       
-    
     finishedfloor_width = Math::sqrt(addtl_ffa)
     finishedfloor_length = addtl_ffa / finishedfloor_width
     z_origin = 0

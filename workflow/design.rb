@@ -64,15 +64,20 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   update_args_hash(measures, measure_subdir, args)
 
   # Apply measures
-  success = apply_measures(measures_dir, measures, runner, model, nil, nil, false)
+  success = apply_measures(measures_dir, measures, runner, model, nil, nil, true)
   
   # Report warnings/errors
   File.open(File.join(designdir,'run.log'), 'w') do |f|
-    runner.result.stepWarnings.each do |w|
-      f << "Warning: #{w}\n"
+    if debug
+      runner.result.stepInfo.each do |s|
+        f << "Info: #{s}\n"
+      end
     end
-    runner.result.stepErrors.each do |e|
-      f << "Error: #{e}\n"
+    runner.result.stepWarnings.each do |s|
+      f << "Warning: #{s}\n"
+    end
+    runner.result.stepErrors.each do |s|
+      f << "Error: #{s}\n"
     end
   end
 
