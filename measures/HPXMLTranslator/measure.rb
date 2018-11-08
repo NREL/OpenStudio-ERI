@@ -1154,7 +1154,7 @@ class OSModel
       zone.spaces.each do |space|
         space.surfaces.each do |surface|
           next if surface.surfaceType.downcase.to_s != "roofceiling"
-          ceiling_area += UnitConversions.convert(surface.grossArea * mult,"m^2","ft^2")
+          ceiling_area += UnitConversions.convert(surface.grossArea,"m^2","ft^2")
         end
       end
       addtl_ffa = floor_area - ceiling_area
