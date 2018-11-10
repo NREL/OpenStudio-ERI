@@ -124,17 +124,6 @@
                 <Conditioned>true</Conditioned>
               </Basement>
             </FoundationType>
-            <FrameFloor>
-              <SystemIdentifier id='Floor_ID1'/>
-              <Area>1539</Area>
-              <Insulation>
-                <SystemIdentifier id='Floor_Ins_ID1'/>
-                <AssemblyEffectiveRValue>3.1</AssemblyEffectiveRValue>
-              </Insulation>
-              <extension>
-                <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-              </extension>
-            </FrameFloor>
             <FoundationWall>
               <SystemIdentifier id='fndwall-1'/>
               <Height>8</Height>
@@ -162,7 +151,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
@@ -170,7 +158,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
@@ -358,7 +345,6 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>natural gas</FuelType>
         </Oven>
       </Appliances>
       <Lighting/>

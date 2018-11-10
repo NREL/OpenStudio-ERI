@@ -6,11 +6,12 @@ require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname'
 require 'csv'
-require "#{File.dirname(__FILE__)}/resources/ep_validator"
+require "#{File.dirname(__FILE__)}/resources/EPvalidator"
 require "#{File.dirname(__FILE__)}/resources/airflow"
 require "#{File.dirname(__FILE__)}/resources/constants"
 require "#{File.dirname(__FILE__)}/resources/constructions"
 require "#{File.dirname(__FILE__)}/resources/geometry"
+require "#{File.dirname(__FILE__)}/resources/hotwater_appliances"
 require "#{File.dirname(__FILE__)}/resources/hvac"
 require "#{File.dirname(__FILE__)}/resources/hvac_sizing"
 require "#{File.dirname(__FILE__)}/resources/lighting"
@@ -37,7 +38,7 @@ class HPXMLTranslator < OpenStudio::Measure::ModelMeasure
 
   # human readable description of modeling approach
   def modeler_description
-    return "TODO"
+    return ""
   end
 
   # define the arguments that the user will input
@@ -309,7 +310,15 @@ class OSModel
     success = add_simulation_params(runner, model)
     return false if not success
 
+    @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+    fail "Could not find ERI Version" if @eri_version.nil?
+    
     building = hpxml_doc.elements["/HPXML/Building"]
+    @cfa = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    @ncfl = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    @nbeds = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    @garage_present = Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+    @has_uncond_bsmnt = (not building.elements["BuildingDetails/Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
   
     # Geometry/Envelope
     
@@ -323,9 +332,7 @@ class OSModel
     
     # Hot Water
     
-    success = add_water_heater(runner, model, building, unit, weather, spaces)
-    return false if not success
-    success = add_hot_water_and_appliances(runner, model, building, unit, weather)
+    success = add_hot_water_and_appliances(runner, model, building, unit, weather, spaces)
     return false if not success
 
     # HVAC
@@ -412,19 +419,8 @@ class OSModel
   
   def self.add_geometry_envelope(runner, model, building, weather)
   
-    # FIXME - Check cooling_season
     heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather, runner)
-    if heating_season.nil? or cooling_season.nil?
-      return false
-    end
-    
-    # FIXME
-    avg_ceil_hgt = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/AverageCeilingHeight"]
-    if avg_ceil_hgt.nil?
-      avg_ceil_hgt = 8.0
-    else
-      avg_ceil_hgt = Float(avg_ceil_hgt.text)
-    end
+    return false if heating_season.nil? or cooling_season.nil?
     
     spaces = create_all_spaces_and_zones(model, building)
     return false if spaces.empty?
@@ -446,13 +442,13 @@ class OSModel
     success = add_foundations(runner, model, building, spaces, fenestration_areas, unit) # TODO: Don't need to pass unit once slab hvac sizing is updated
     return false if not success
     
-    success = add_walls(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+    success = add_walls(runner, model, building, spaces, fenestration_areas)
     return false if not success
     
     success = add_rim_joists(runner, model, building, spaces)
     return false if not success
     
-    success = add_attics(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+    success = add_attics(runner, model, building, spaces, fenestration_areas)
     return false if not success
     
     success = add_finished_floor_area(runner, model, building, spaces)
@@ -542,7 +538,7 @@ class OSModel
   
   def self.explode_surfaces(runner, model)
     # Re-position surfaces so as to not shade each other. 
-    # TODO: Might be able to use the new self-shading options in E+ 8.9 ShadowCalculation object
+    # FUTURE: Might be able to use the new self-shading options in E+ 8.9 ShadowCalculation object?
   
     # Explode the walls
     wall_offset = 10.0
@@ -778,28 +774,14 @@ class OSModel
     # Store number of units
     model.getBuilding.setStandardsNumberOfLivingUnits(1)    
     
-    # Store number of stories TODO: Review this
-    num_floors = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/NumberofStoriesAboveGrade"]
-    if num_floors.nil?
-      num_floors = 1
-    else
-      num_floors = num_floors.text.to_i
-    end    
-    
-    if (REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cathedral ceiling'])") + REXML::XPath.first(building, "count(BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType='cape cod'])")) > 0
-      num_floors += 1
-    end
-    model.getBuilding.setStandardsNumberOfAboveGroundStories(num_floors)
-    model.getSpaces.each do |space|
-      if space.name.to_s == Constants.SpaceTypeFinishedBasement
-        num_floors += 1  
-        break
-      end
-    end
-    model.getBuilding.setStandardsNumberOfStories(num_floors)
+    # Store number of stories
+    num_stories = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    model.getBuilding.setStandardsNumberOfStories(num_stories)
+    num_stories_above_grade = Integer(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
+    model.getBuilding.setStandardsNumberOfAboveGroundStories(num_stories_above_grade)
     
     # Store info for HVAC Sizing measure
-    if Boolean(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+    if @garage_present
       unit.additionalProperties.setFeature(Constants.SizingInfoGarageFracUnderFinishedSpace, 0.5) # FIXME: assumption
     end
     
@@ -910,13 +892,15 @@ class OSModel
     return false if not success
     
     # Occupants
-    num_occ = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents"))
-    occ_gain = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/HeatGainBtuPerPersonPerHr"))
-    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracSensible"))
-    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/FracLatent"))
-    hrs_per_day = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/extension/PersonHrsPerDay")) # TODO
-    weekday_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
-    weekend_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000"
+    num_occ = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents")
+    if num_occ.nil?
+      num_occ = Geometry.get_occupancy_default_num(num_bedrooms)
+    else
+      num_occ = Float(num_occ)
+    end
+    occ_gain, hrs_per_day, sens_frac, lat_frac = Geometry.get_occupancy_default_values()
+    weekday_sch = "1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 1.00000, 0.88310, 0.40861, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.24189, 0.29498, 0.55310, 0.89693, 0.89693, 0.89693, 1.00000, 1.00000, 1.00000" # TODO: Normalize schedule based on hrs_per_day
+    weekend_sch = weekday_sch
     monthly_sch = "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
     success = Geometry.process_occupants(model, runner, num_occ.to_s, occ_gain, sens_frac, lat_frac, weekday_sch, weekend_sch, monthly_sch)
     return false if not success
@@ -1184,10 +1168,43 @@ class OSModel
 
   def self.add_finished_floor_area(runner, model, building, spaces)
   
-    # Add finished floor area (e.g., floors between finished spaces) to ensure model has
-    # the correct ffa as specified.
-  
     ffa = Float(building.elements["BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text).round(1)
+    
+    # First check if we need to add a finished basement ceiling
+    
+    model.getThermalZones.each do |zone|
+      next if not Geometry.is_finished_basement(zone)
+      floor_area = Geometry.get_finished_floor_area_from_spaces(zone.spaces).round(1)
+      ceiling_area = 0.0
+      zone.spaces.each do |space|
+        space.surfaces.each do |surface|
+          next if surface.surfaceType.downcase.to_s != "roofceiling"
+          ceiling_area += UnitConversions.convert(surface.grossArea,"m^2","ft^2")
+        end
+      end
+      addtl_ffa = floor_area - ceiling_area
+      if addtl_ffa > 0
+        runner.registerWarning("Adding finished basement adiabatic ceiling with #{addtl_ffa.to_s} ft^2.")
+          
+        finishedfloor_width = Math::sqrt(addtl_ffa)
+        finishedfloor_length = addtl_ffa / finishedfloor_width
+        z_origin = 0
+        
+        surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(-UnitConversions.convert(finishedfloor_width,"ft","m"), 
+                                                                     -UnitConversions.convert(finishedfloor_length,"ft","m"), 
+                                                                     UnitConversions.convert(z_origin,"ft","m")), model)
+        surface.setName("inferred finished basement ceiling")
+        surface.setSurfaceType("RoofCeiling")
+        surface.setSpace(zone.spaces[0])
+        surface.createAdjacentSurface(spaces[Constants.SpaceTypeLiving])
+        
+        # Apply Construction
+        success = apply_adiabatic_construction(runner, model, [surface], "floor")
+        return false if not success
+      end
+    end
+  
+    # Next check if we need to add floors between finished spaces (e.g., 2-story buildings).
     
     # Calculate ffa already added to model
     model_ffa = Geometry.get_finished_floor_area_from_spaces(model.getSpaces).round(1)
@@ -1200,9 +1217,8 @@ class OSModel
     addtl_ffa = ffa - model_ffa
     return true unless addtl_ffa > 0
     
-    runner.registerWarning("Adding adiabatic conditioned floors with #{addtl_ffa.to_s} ft^2 to preserve building total conditioned floor area.")
+    runner.registerWarning("Adding adiabatic conditioned floor with #{addtl_ffa.to_s} ft^2 to preserve building total conditioned floor area.")
       
-    
     finishedfloor_width = Math::sqrt(addtl_ffa)
     finishedfloor_length = addtl_ffa / finishedfloor_width
     z_origin = 0
@@ -1243,7 +1259,7 @@ class OSModel
     return true
   end
   
-  def self.add_walls(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+  def self.add_walls(runner, model, building, spaces, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
     
@@ -1257,7 +1273,7 @@ class OSModel
       if wall_net_area <= 0
         fail "Calculated a negative net surface area for Wall '#{wall_id}'."
       end
-      wall_height = avg_ceil_hgt
+      wall_height = 8.0
       wall_length = wall_net_area / wall_height
       z_origin = 0
 
@@ -1431,7 +1447,7 @@ class OSModel
     
   end
   
-  def self.add_attics(runner, model, building, avg_ceil_hgt, spaces, fenestration_areas)
+  def self.add_attics(runner, model, building, spaces, fenestration_areas)
 
     building.elements.each("BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic") do |attic|
     
@@ -1592,7 +1608,7 @@ class OSModel
         if wall_net_area <= 0
           fail "Calculated a negative net surface area for Wall '#{wall_id}'."
         end
-        wall_height = avg_ceil_hgt
+        wall_height = 8.0
         wall_length = wall_net_area / wall_height
         z_origin = 0
 
@@ -1744,9 +1760,19 @@ class OSModel
       # Apply construction
       ufactor = Float(XMLHelper.get_value(window, "UFactor"))
       shgc = Float(XMLHelper.get_value(window, "SHGC"))
-      cool_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer"))
-      heat_shade_mult = Float(XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter"))
-      
+      default_shade_summer, default_shade_winter = SubsurfaceConstructions.get_default_interior_shading_factors()
+      cool_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorSummer")
+      if cool_shade_mult.nil?
+        cool_shade_mult = default_shade_summer
+      else
+        cool_shade_mult = Float(cool_shade_mult)
+      end
+      heat_shade_mult = XMLHelper.get_value(window, "extension/InteriorShadingFactorWinter")
+      if heat_shade_mult.nil?
+        heat_shade_mult = default_shade_winter
+      else
+        heat_shade_mult = Float(heat_shade_mult)
+      end
       success = SubsurfaceConstructions.apply_window(runner, model, [sub_surface],
                                                      "WindowConstruction",
                                                      weather, cooling_season, ufactor, shgc,
@@ -1806,9 +1832,8 @@ class OSModel
       # Apply construction
       ufactor = Float(XMLHelper.get_value(skylight, "UFactor"))
       shgc = Float(XMLHelper.get_value(skylight, "SHGC"))
-      cool_shade_mult = 1.0 # FIXME Float(XMLHelper.get_value(skylight, "extension/InteriorShadingFactorSummer"))
-      heat_shade_mult = 1.0 # FIXME Float(XMLHelper.get_value(skylight, "extension/InteriorShadingFactorWinter"))
-      
+      cool_shade_mult = 1.0
+      heat_shade_mult = 1.0
       success = SubsurfaceConstructions.apply_skylight(runner, model, [sub_surface],
                                                        "SkylightConstruction",
                                                        weather, cooling_season, ufactor, shgc,
@@ -1831,7 +1856,7 @@ class OSModel
       door_id = door.elements["SystemIdentifier"].attributes["id"]
 
       door_area = Float(door.elements["Area"].text)
-      door_height = Float(door.elements["extension/Height"].text)
+      door_height = 6.67 # ft
       door_width = door_area / door_height
       door_azimuth = Float(door.elements["Azimuth"].text)
       z_origin = 0
@@ -1943,11 +1968,154 @@ class OSModel
     return true
   end
   
-  def self.add_water_heater(runner, model, building, unit, weather, spaces)
+  def self.add_hot_water_and_appliances(runner, model, building, unit, weather, spaces)
   
-    dhw = building.elements["BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
+    wh = building.elements["BuildingDetails/Systems/WaterHeating"]
+    dhw = wh.elements["WaterHeatingSystem"]
+    appl = building.elements["BuildingDetails/Appliances"]
+    
+    # Clothes Washer
+    cw = appl.elements["ClothesWasher"]
+    cw_mef = XMLHelper.get_value(cw, "ModifiedEnergyFactor")
+    cw_imef = XMLHelper.get_value(cw, "IntegratedModifiedEnergyFactor")
+    if cw_mef.nil? and cw_imef.nil?
+      cw_mef = HotWaterAndAppliances.get_clothes_washer_reference_mef()
+      cw_ler = HotWaterAndAppliances.get_clothes_washer_reference_ler()
+      cw_elec_rate = HotWaterAndAppliances.get_clothes_washer_reference_elec_rate()
+      cw_gas_rate = HotWaterAndAppliances.get_clothes_washer_reference_gas_rate()
+      cw_agc = HotWaterAndAppliances.get_clothes_washer_reference_agc()
+      cw_cap = HotWaterAndAppliances.get_clothes_washer_reference_cap()
+    
+    else
+      if not cw_mef.nil?
+        cw_mef = Float(cw_mef)
+      elsif not cw_imef.nil?
+        cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(Float(cw_imef))
+      end
+      cw_ler = Float(XMLHelper.get_value(cw, "RatedAnnualkWh"))
+      cw_elec_rate = Float(XMLHelper.get_value(cw, "LabelElectricRate"))
+      cw_gas_rate = Float(XMLHelper.get_value(cw, "LabelGasRate"))
+      cw_agc = Float(XMLHelper.get_value(cw, "LabelAnnualGasCost"))
+      cw_cap = Float(XMLHelper.get_value(cw, "Capacity"))
+    end
+    
+    # Clothes Dryer
+    cd = appl.elements["ClothesDryer"]
+    cd_fuel = to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
+    cd_ef = XMLHelper.get_value(cd, "EnergyFactor")
+    cd_cef = XMLHelper.get_value(cd, "CombinedEnergyFactor")
+    if cd_ef.nil? and cd_cef.nil?
+      cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(cd_fuel)
+      cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
+    else  
+      if not cd_ef.nil?
+        cd_ef = Float(cd_ef)
+      elsif not cd_cef.nil?
+        cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(Float(cd_cef))
+      end
+      cd_control = XMLHelper.get_value(cd, "ControlType")
+    end
+    
+    # Dishwasher
+    dw = appl.elements["Dishwasher"]
+    dw_ef = XMLHelper.get_value(dw, "EnergyFactor")
+    dw_annual_kwh = XMLHelper.get_value(dw, "RatedAnnualkWh")
+    if dw_ef.nil? and dw_annual_kwh.nil?
+      dw_ef = HotWaterAndAppliances.get_dishwasher_reference_ef()
+      dw_cap = HotWaterAndAppliances.get_dishwasher_reference_cap()
+    else
+      if not dw_ef.nil?
+        dw_ef = Float(dw_ef)
+      elsif not dw_annual_kwh.nil?
+        dw_ef = HotWaterAndAppliances.calc_dishwasher_ef_from_annual_kwh(Float(dw_annual_kwh))
+      end
+      dw_cap = Float(XMLHelper.get_value(dw, "PlaceSettingCapacity"))
+    end
+  
+    # Refrigerator
+    fridge = appl.elements["Refrigerator"]
+    fridge_annual_kwh = XMLHelper.get_value(fridge, "RatedAnnualkWh")
+    if fridge_annual_kwh.nil?
+      fridge_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
+    else
+      fridge_annual_kwh = Float(fridge_annual_kwh)
+    end
+    
+    # Cooking Range/Oven
+    cook = appl.elements["CookingRange"]
+    oven = appl.elements["Oven"]
+    cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(cook, "FuelType"))
+    cook_is_induction = XMLHelper.get_value(cook, "IsInduction")
+    if cook_is_induction.nil?
+      cook_is_induction = HotWaterAndAppliances.get_range_oven_reference_is_induction()
+      oven_is_convection = HotWaterAndAppliances.get_range_oven_reference_is_convection()
+    else
+      cook_is_induction = Boolean(cook_is_induction)
+      oven_is_convection = Boolean(XMLHelper.get_value(oven, "IsConvection"))
+    end
+    
+    # Fixtures
+    low_flow_fixtures_list = []
+    wh.elements.each("WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |wf|
+      low_flow_fixtures_list << Boolean(XMLHelper.get_value(wf, "LowFlow"))
+    end
+    low_flow_fixtures_list.uniq!
+    if low_flow_fixtures_list.size == 1 and low_flow_fixtures_list[0]
+      has_low_flow_fixtures = true
+    else
+      has_low_flow_fixtures = false
+    end
+    
+    # Distribution
+    dist = wh.elements["HotWaterDistribution"]
+    if XMLHelper.has_element(dist, "SystemType/Standard")
+      dist_type = "standard"
+      std_pipe_length = XMLHelper.get_value(dist, "SystemType/Standard/PipingLength")
+      if std_pipe_length.nil?
+        std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl)
+      else
+        std_pipe_length = Float(std_pipe_length)
+      end
+      recirc_loop_length = nil
+      recirc_branch_length = nil
+      recirc_control_type = nil
+      recirc_pump_power = nil
+    elsif XMLHelper.has_element(dist, "SystemType/Recirculation")
+      dist_type = "recirculation"
+      recirc_loop_length = XMLHelper.get_value(dist, "SystemType/Recirculation/RecirculationPipingLoopLength")
+      if recirc_loop_length.nil?
+        std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl)
+        recirc_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)
+      else
+        recirc_loop_length = Float(recirc_loop_length)
+      end
+      recirc_branch_length = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/BranchPipingLoopLength"))
+      recirc_control_type = XMLHelper.get_value(dist, "SystemType/Recirculation/ControlType")
+      recirc_pump_power = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/PumpPower"))
+      std_pipe_length = nil
+    end
+    pipe_r = Float(XMLHelper.get_value(dist, "PipeInsulation/PipeRValue"))
+    
+    # Drain Water Heat Recovery
+    dwhr_present = false
+    dwhr_facilities_connected = nil
+    dwhr_is_equal_flow = nil
+    dwhr_efficiency = nil
+    if XMLHelper.has_element(dist, "DrainWaterHeatRecovery")
+      dwhr_present = true
+      dwhr_facilities_connected = XMLHelper.get_value(dist, "DrainWaterHeatRecovery/FacilitiesConnected")
+      dwhr_is_equal_flow = Boolean(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/EqualFlow"))
+      dwhr_efficiency = Float(XMLHelper.get_value(dist, "DrainWaterHeatRecovery/Efficiency"))
+    end
+
+    # Water Heater
     location = XMLHelper.get_value(dhw, "Location")
-    setpoint_temp = Float(XMLHelper.get_value(dhw, "HotWaterTemperature"))
+    setpoint_temp = XMLHelper.get_value(dhw, "HotWaterTemperature")
+    if setpoint_temp.nil?
+      setpoint_temp = Waterheater.get_default_hot_water_temperature(@eri_version)
+    else
+      setpoint_temp = Float(setpoint_temp)
+    end
     wh_type = XMLHelper.get_value(dhw, "WaterHeaterType")
     fuel = XMLHelper.get_value(dhw, "FuelType")
     
@@ -1968,12 +2136,26 @@ class OSModel
       fail "Water heater location was #{location} but building does not have this space type."
     end
     
-    ec_adj = Float(XMLHelper.get_value(building, "BuildingDetails/Systems/WaterHeating/HotWaterDistribution/extension/EnergyConsumptionAdjustmentFactor"))
+    ef = XMLHelper.get_value(dhw, "EnergyFactor")
+    if ef.nil?
+      uef = Float(XMLHelper.get_value(dhw, "UniformEnergyFactor"))
+      ef = Waterheater.calc_ef_from_uef(uef, to_beopt_wh_type(type), to_beopt_fuel(fuel_type))
+    else
+      ef = Float(ef)
+    end
+    ef_adj = XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier")
+    if ef_adj.nil?
+      ef_adj = Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type))
+    else
+      ef_adj = Float(ef_adj)
+    end
+    ec_adj = HotWaterAndAppliances.get_dist_energy_consumption_adjustment(@has_uncond_bsmnt, @cfa, @ncfl,
+                                                                          dist_type, recirc_control_type, 
+                                                                          pipe_r, std_pipe_length, recirc_loop_length)
     
     if wh_type == "storage water heater"
     
       tank_vol = Float(XMLHelper.get_value(dhw, "TankVolume"))
-      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
       if fuel != "electricity"
         re = Float(XMLHelper.get_value(dhw, "RecoveryEfficiency"))
       else
@@ -1983,14 +2165,12 @@ class OSModel
       oncycle_power = 0.0
       offcycle_power = 0.0
       success = Waterheater.apply_tank(model, unit, runner, space, to_beopt_fuel(fuel), 
-                                       capacity_kbtuh, tank_vol, ef, re, setpoint_temp, 
+                                       capacity_kbtuh, tank_vol, ef*ef_adj, re, setpoint_temp, 
                                        oncycle_power, offcycle_power, ec_adj)
       return false if not success
       
     elsif wh_type == "instantaneous water heater"
     
-      ef = Float(XMLHelper.get_value(dhw, "EnergyFactor"))
-      ef_adj = Float(XMLHelper.get_value(dhw, "extension/EnergyFactorMultiplier"))
       capacity_kbtuh = 100000000.0
       oncycle_power = 0.0
       offcycle_power = 0.0
@@ -2015,7 +2195,7 @@ class OSModel
       int_factor = 1.0 # FIXME
       temp_depress = 0.0 # FIXME
       ducting = "none"
-      # FIXME: Use ec_adj
+      # FIXME: Use ef, ef_adj, ec_adj
       success = Waterheater.apply_heatpump(model, unit, runner, space, weather,
                                            e_cap, tank_vol, setpoint_temp, min_temp, max_temp,
                                            cap, cop, shr, airflow_rate, fan_power,
@@ -2029,85 +2209,18 @@ class OSModel
       
     end
     
-    return true
-
-  end
-  
-  def self.add_hot_water_and_appliances(runner, model, building, unit, weather)
-  
-    wh = building.elements["BuildingDetails/Systems/WaterHeating"]
-    appl = building.elements["BuildingDetails/Appliances"]
-    
-    # Clothes Washer
-    cw = appl.elements["ClothesWasher"]
-    cw_annual_kwh = Float(XMLHelper.get_value(cw, "extension/AnnualkWh"))
-    cw_frac_sens = Float(XMLHelper.get_value(cw, "extension/FracSensible"))
-    cw_frac_lat = Float(XMLHelper.get_value(cw, "extension/FracLatent"))
-    cw_gpd = Float(XMLHelper.get_value(cw, "extension/HotWaterGPD"))
-    
-    # Clothes Dryer
-    cd = appl.elements["ClothesDryer"]
-    cd_annual_kwh = Float(XMLHelper.get_value(cd, "extension/AnnualkWh"))
-    cd_annual_therm = Float(XMLHelper.get_value(cd, "extension/AnnualTherm"))
-    cd_frac_sens = Float(XMLHelper.get_value(cd, "extension/FracSensible"))
-    cd_frac_lat = Float(XMLHelper.get_value(cd, "extension/FracLatent"))
-    cd_fuel_type = to_beopt_fuel(XMLHelper.get_value(cd, "FuelType"))
-    
-    # Dishwasher
-    dw = appl.elements["Dishwasher"]
-    dw_annual_kwh = Float(XMLHelper.get_value(dw, "extension/AnnualkWh"))
-    dw_frac_sens = Float(XMLHelper.get_value(dw, "extension/FracSensible"))
-    dw_frac_lat = Float(XMLHelper.get_value(dw, "extension/FracLatent"))
-    dw_gpd = Float(XMLHelper.get_value(dw, "extension/HotWaterGPD"))
-  
-    # Refrigerator
-    fridge = appl.elements["Refrigerator"]
-    fridge_annual_kwh = Float(XMLHelper.get_value(fridge, "RatedAnnualkWh"))
-    
-    # Cooking Range
-    cook = appl.elements["CookingRange"]
-    cook_annual_kwh = Float(XMLHelper.get_value(cook, "extension/AnnualkWh"))
-    cook_annual_therm = Float(XMLHelper.get_value(cook, "extension/AnnualTherm"))
-    cook_frac_sens = Float(XMLHelper.get_value(cook, "extension/FracSensible"))
-    cook_frac_lat = Float(XMLHelper.get_value(cook, "extension/FracLatent"))
-    cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(cook, "FuelType"))
-    
-    # Fixtures
-    fx = wh.elements["WaterFixture[WaterFixtureType='shower head']"]
-    fx_gpd = Float(XMLHelper.get_value(fx, "extension/MixedWaterGPD"))
-    fx_sens_btu = Float(XMLHelper.get_value(fx, "extension/AnnualSensibleGainsBtu"))
-    fx_lat_btu = Float(XMLHelper.get_value(fx, "extension/AnnualLatentGainsBtu"))
-    
-    # Distribution
-    dist = wh.elements["HotWaterDistribution"]
-    if XMLHelper.has_element(dist, "SystemType/Standard")
-      dist_type = "standard"
-      dist_pump_annual_kwh = 0.0
-    elsif XMLHelper.has_element(dist, "SystemType/Recirculation")
-      dist_type = "recirculation"
-      dist_pump_annual_kwh = Float(XMLHelper.get_value(dist, "SystemType/Recirculation/extension/PumpAnnualkWh"))
-    end
-    dist_gpd = Float(XMLHelper.get_value(dist, "extension/MixedWaterGPD"))
-    daily_mw_fractions = XMLHelper.get_value(dist, "extension/MixedWaterDailyFractions").split(",").map(&:to_f)
-    if daily_mw_fractions.size != 365
-      fail "HotWaterDistribution/extension/MixedWaterDailyFractions must have 365 comma-separated values."
-    end
-    daily_wh_inlet_temperatures = XMLHelper.get_value(dist, "extension/WaterHeaterDailyInletTemperatures").split(",").map(&:to_f)
-    if daily_wh_inlet_temperatures.size != 365
-      fail "HotWaterDistribution/extension/WaterHeaterDailyInletTemperatures must have 365 comma-separated values."
-    end
-    
-    success = Waterheater.apply_eri_hw_appl(model, unit, runner, weather,
-                                            cw_annual_kwh, cw_frac_sens, cw_frac_lat,
-                                            cw_gpd, cd_annual_kwh, cd_annual_therm,
-                                            cd_frac_sens, cd_frac_lat, cd_fuel_type,
-                                            dw_annual_kwh, dw_frac_sens, dw_frac_lat,
-                                            dw_gpd, fridge_annual_kwh, cook_annual_kwh,
-                                            cook_annual_therm, cook_frac_sens, 
-                                            cook_frac_lat, cook_fuel_type, fx_gpd,
-                                            fx_sens_btu, fx_lat_btu, dist_type, 
-                                            dist_gpd, dist_pump_annual_kwh, 
-                                            daily_wh_inlet_temperatures, daily_mw_fractions)
+    success = HotWaterAndAppliances.apply(model, unit, runner, weather, 
+                                          @cfa, @nbeds, @ncfl, @has_uncond_bsmnt,
+                                          cw_mef, cw_ler, cw_elec_rate, cw_gas_rate,
+                                          cw_agc, cw_cap, cd_fuel, cd_ef, cd_control,
+                                          dw_ef, dw_cap, fridge_annual_kwh, cook_fuel_type,
+                                          cook_is_induction, oven_is_convection,
+                                          has_low_flow_fixtures, dist_type, pipe_r,
+                                          std_pipe_length, recirc_loop_length, 
+                                          recirc_branch_length, recirc_control_type,
+                                          recirc_pump_power, dwhr_present, 
+                                          dwhr_facilities_connected, dwhr_is_equal_flow, 
+                                          dwhr_efficiency, setpoint_temp, @eri_version)
     return false if not success
     
     return true
@@ -2134,12 +2247,10 @@ class OSModel
       if clg_type == "central air conditioning"
       
         # FIXME: Generalize
-        seer_nom = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        seer_adj = Float(XMLHelper.get_value(clgsys, "extension/PerformanceAdjustmentSEER"))
-        seer = seer_nom * seer_adj
-        if seer_nom <= 15
+        seer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+        if seer <= 15
           num_speeds = "1-Speed"
-        elsif seer_nom <= 21
+        elsif seer <= 21
           num_speeds = "2-Speed"
         else
           num_speeds = "Variable-Speed"
@@ -2149,7 +2260,7 @@ class OSModel
         
         if num_speeds == "1-Speed"
         
-          eers = [0.82 * seer_nom + 0.64]
+          eers = [0.82 * seer + 0.64]
           shrs = [0.73]
           fan_power_rated = 0.365
           fan_power_installed = 0.5
@@ -2163,7 +2274,7 @@ class OSModel
         
         elsif num_speeds == "2-Speed"
         
-          eers = [0.83 * seer_nom + 0.15, 0.56 * seer_nom + 3.57]
+          eers = [0.83 * seer + 0.15, 0.56 * seer + 3.57]
           shrs = [0.71, 0.73]
           capacity_ratios = [0.72, 1.0]
           fan_speed_ratios = [0.86, 1.0]
@@ -2180,7 +2291,7 @@ class OSModel
           
         elsif num_speeds == "Variable-Speed"
         
-          eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
+          eers = [0.80 * seer, 0.75 * seer, 0.65 * seer, 0.60 * seer]
           shrs = [0.98, 0.82, 0.745, 0.77]
           capacity_ratios = [0.36, 0.64, 1.0, 1.16]
           fan_speed_ratios = [0.51, 0.84, 1.0, 1.19]
@@ -2339,16 +2450,12 @@ class OSModel
       
       if hp_type == "air-to-air"        
       
-        seer_nom = Float(XMLHelper.get_value(hpsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        seer_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentSEER"))
-        seer = seer_nom * seer_adj
-        hspf_nom = Float(XMLHelper.get_value(hpsys, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-        hspf_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentHSPF"))
-        hspf = hspf_nom * hspf_adj
+        seer = Float(XMLHelper.get_value(hpsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+        hspf = Float(XMLHelper.get_value(hpsys, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
         
-        if seer_nom <= 15
+        if seer <= 15
           num_speeds = "1-Speed"
-        elsif seer_nom <= 21
+        elsif seer <= 21
           num_speeds = "2-Speed"
         else
           num_speeds = "Variable-Speed"
@@ -2359,8 +2466,8 @@ class OSModel
         
         if num_speeds == "1-Speed"
         
-          eers = [0.80 * seer_nom + 1.0]
-          cops = [0.45 * seer_nom - 0.34]
+          eers = [0.80 * seer + 1.0]
+          cops = [0.45 * seer - 0.34]
           shrs = [0.73]
           fan_power_rated = 0.365
           fan_power_installed = 0.5
@@ -2379,8 +2486,8 @@ class OSModel
           
         elsif num_speeds == "2-Speed"
         
-          eers = [0.78 * seer_nom + 0.6, 0.68 * seer_nom + 1.0]
-          cops = [0.60 * seer_nom - 1.40, 0.50 * seer_nom - 0.94]
+          eers = [0.78 * seer + 0.6, 0.68 * seer + 1.0]
+          cops = [0.60 * seer - 1.40, 0.50 * seer - 0.94]
           shrs = [0.71, 0.724]
           capacity_ratios = [0.72, 1.0]
           fan_speed_ratios_cooling = [0.86, 1.0]
@@ -2404,8 +2511,8 @@ class OSModel
           
         elsif num_speeds == "Variable-Speed"
         
-          eers = [0.80 * seer_nom, 0.75 * seer_nom, 0.65 * seer_nom, 0.60 * seer_nom]
-          cops = [0.48 * seer_nom, 0.45 * seer_nom, 0.39 * seer_nom, 0.39 * seer_nom]
+          eers = [0.80 * seer, 0.75 * seer, 0.65 * seer, 0.60 * seer]
+          cops = [0.48 * seer, 0.45 * seer, 0.39 * seer, 0.39 * seer]
           shrs = [0.84, 0.79, 0.76, 0.77]
           capacity_ratios = [0.49, 0.67, 1.0, 1.2]
           fan_speed_ratios_cooling = [0.7, 0.9, 1.0, 1.26]
@@ -2436,12 +2543,8 @@ class OSModel
       elsif hp_type == "mini-split"
         
         # FIXME: Generalize
-        seer_nom = Float(XMLHelper.get_value(hpsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        seer_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentSEER"))
-        seer = seer_nom * seer_adj
-        hspf_nom = Float(XMLHelper.get_value(hpsys, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-        hspf_adj = Float(XMLHelper.get_value(hpsys, "extension/PerformanceAdjustmentHSPF"))
-        hspf = hspf_nom * hspf_adj
+        seer = Float(XMLHelper.get_value(hpsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+        hspf = Float(XMLHelper.get_value(hpsys, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
         shr = 0.73
         min_cooling_capacity = 0.4
         max_cooling_capacity = 1.2
@@ -2520,20 +2623,17 @@ class OSModel
   def self.add_setpoints(runner, model, building, weather) 
 
     control = building.elements["BuildingDetails/Systems/HVAC/HVACControl"]
-    controltype = XMLHelper.get_value(control, "ControlType")
+    control_type = XMLHelper.get_value(control, "ControlType")
     
-    # TODO: Setbacks and setups
-  
-    htg_sp = Float(XMLHelper.get_value(control, "SetpointTempHeatingSeason"))
-    if controltype == "manual thermostat"
-      htg_weekday_setpoints = [htg_sp]*24
-    elsif controltype == "programmable thermostat"
-      htg_weekday_setpoints = [htg_sp]*24
-      setback_temp = Float(XMLHelper.get_value(control, "SetbackTempHeatingSeason"))
-      setback_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetbackHoursperWeekHeating"))/7.0)
-      setback_start_hr = Integer(XMLHelper.get_value(control, "extension/SetbackStartHour"))
-      for hr in setback_start_hr..setback_start_hr+setback_hrs_per_day-1
-        htg_weekday_setpoints[hr % 24] = setback_temp
+    htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
+    if htg_setback_sp.nil?
+      htg_weekday_setpoints = [[htg_sp]*24]*12
+    else
+      htg_weekday_setpoints = [[htg_sp]*24]*12
+      (0..11).to_a.each do |m|
+        for hr in htg_setback_start_hr..htg_setback_start_hr+Integer(htg_setback_hrs_per_week/7.0)-1
+          htg_weekday_setpoints[m][hr % 24] = htg_setback_sp
+        end
       end
     end
     htg_weekend_setpoints = htg_weekday_setpoints
@@ -2544,16 +2644,24 @@ class OSModel
                                            htg_use_auto_season, htg_season_start_month, htg_season_end_month)
     return false if not success
     
-    clg_sp = Float(XMLHelper.get_value(control, "SetpointTempCoolingSeason"))
-    if controltype == "manual thermostat"
-      clg_weekday_setpoints = [clg_sp]*24
+    clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
+    if clg_setup_sp.nil?
+      clg_weekday_setpoints = [[clg_sp]*24]*12
     else
-      clg_weekday_setpoints = [clg_sp]*24
-      setup_temp = Float(XMLHelper.get_value(control, "SetupTempCoolingSeason"))
-      setup_hrs_per_day = Integer(Float(XMLHelper.get_value(control, "TotalSetupHoursperWeekCooling"))/7.0)
-      setup_start_hr = Integer(XMLHelper.get_value(control, "extension/SetupStartHour"))
-      for hr in setup_start_hr..setup_start_hr+setup_hrs_per_day-1
-        clg_weekday_setpoints[hr % 24] = setup_temp
+      clg_weekday_setpoints = [[clg_sp]*24]*12
+      (0..11).to_a.each do |m|
+        for hr in clg_setup_start_hr..clg_setup_start_hr+Integer(clg_setup_hrs_per_week/7.0)-1
+          clg_weekday_setpoints[m][hr % 24] = clg_setup_sp
+        end
+      end
+    end
+    # Apply ceiling fan offset?
+    if not building.elements["BuildingDetails/Lighting/CeilingFan"].nil?
+      cooling_setpoint_offset = 0.5 # deg-F
+      monthly_avg_temp_control = 63.0 # deg-F
+      weather.data.MonthlyAvgDrybulbs.each_with_index do |val, m|
+        next unless val > monthly_avg_temp_control
+        clg_weekday_setpoints[m] = [clg_weekday_setpoints[m], Array.new(24, cooling_setpoint_offset)].transpose.map {|i| i.reduce(:+)}
       end
     end
     clg_weekend_setpoints = clg_weekday_setpoints
@@ -2587,22 +2695,31 @@ class OSModel
   
   def self.add_ceiling_fans(runner, model, building, unit)
 
-    # FIXME
     cf = building.elements["BuildingDetails/Lighting/CeilingFan"]
-    coverage = nil
-    specified_num = nil
-    power = nil
-    control = nil
-    use_benchmark_energy = true
-    mult = 1.0
-    cooling_setpoint_offset = 0.0
-    weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
-    weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
-    monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
-    #success = HVAC.apply_ceiling_fans(model, unit, runner, coverage, specified_num, power,
-    #                                  control, use_benchmark_energy, cooling_setpoint_offset,
-    #                                  mult, weekday_sch, weekend_sch, monthly_sch, sch=nil)
-    #return false if not success
+    return true if cf.nil?
+    
+    medium_cfm = 3000.0
+    weekday_sch = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+    weekend_sch = weekday_sch
+    hrs_per_day = weekday_sch.inject{ |sum, n| sum + n }
+    
+    cfm_per_w = XMLHelper.get_value(cf, "Airflow[FanSpeed='medium']/Efficiency")
+    if cfm_per_w.nil?
+      fan_power_w = HVAC.get_default_ceiling_fan_power()
+      cfm_per_w = medium_cfm/fan_power_w
+    else
+      cfm_per_w = Float(cfm_per_w)
+    end
+    quantity = XMLHelper.get_value(cf, "Quantity")
+    if quantity.nil?
+      quantity = HVAC.get_default_ceiling_fan_quantity(@nbeds)
+    else
+      quantity = Float(quantity)
+    end
+    annual_kwh = UnitConversions.convert(quantity * medium_cfm/cfm_per_w * hrs_per_day * 365.0, "Wh", "kWh")
+    
+    success = HVAC.apply_eri_ceiling_fans(model, unit, runner, annual_kwh, weekday_sch, weekend_sch)
+    return false if not success
 
     return true
   end
@@ -2652,20 +2769,10 @@ class OSModel
     return hvac_loops
   end
   
-  def self.to_beopt_fuel(fuel)
-    conv = {"natural gas"=>Constants.FuelTypeGas, 
-            "fuel oil"=>Constants.FuelTypeOil, 
-            "propane"=>Constants.FuelTypePropane, 
-            "electricity"=>Constants.FuelTypeElectric}
-    return conv[fuel]
-  end
-  
   def self.add_mels(runner, model, building, unit, living_space)
   
     # Misc
-    annual_kwh = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other']/Load[Units='kWh/year']/Value"))
-    sens_frac = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other']/extension/FracSensible"))
-    lat_frac = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='other']/extension/FracLatent"))
+    annual_kwh, sens_frac, lat_frac = MiscLoads.get_residual_mels_values(@cfa)
     weekday_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
     weekend_sch = "0.04, 0.037, 0.037, 0.036, 0.033, 0.036, 0.043, 0.047, 0.034, 0.023, 0.024, 0.025, 0.024, 0.028, 0.031, 0.032, 0.039, 0.053, 0.063, 0.067, 0.071, 0.069, 0.059, 0.05"
     monthly_sch = "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248"
@@ -2675,7 +2782,7 @@ class OSModel
     return false if not success
     
     # Television
-    annual_kwh = Float(XMLHelper.get_value(building, "BuildingDetails/MiscLoads/PlugLoad[PlugLoadType='TV other']/Load[Units='kWh/year']/Value"))
+    annual_kwh, sens_frac, lat_frac = MiscLoads.get_televisions_values(@cfa, @nbeds)
     success = MiscLoads.apply_tv(model, unit, runner, annual_kwh, sch, living_space)
     return false if not success
     
@@ -2685,19 +2792,26 @@ class OSModel
   
   def self.add_lighting(runner, model, building, unit, weather)
   
-    lighting = building.elements["BuildingDetails/Lighting"]
+    lighting_fractions = building.elements["BuildingDetails/Lighting/LightingFractions"]
+    if lighting_fractions.nil?
+      fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
+    else
+      fFI_int = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesInterior"))
+      fFI_ext = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesExterior"))
+      fFI_grg = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesGarage"))
+      fFII_int = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesInterior"))
+      fFII_ext = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesExterior"))
+      fFII_grg = Float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesGarage"))
+    end
+    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(@eri_version, @cfa, @garage_present, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
   
-    annual_kwh_interior = Float(XMLHelper.get_value(lighting, "extension/AnnualInteriorkWh"))
-    success, sch = Lighting.apply_interior(model, unit, runner, weather, 
-                                                    nil, annual_kwh_interior)
+    success, sch = Lighting.apply_interior(model, unit, runner, weather, nil, int_kwh)
     return false if not success
     
-    annual_kwh_garage = Float(XMLHelper.get_value(lighting, "extension/AnnualGaragekWh"))
-    success = Lighting.apply_garage(model, runner, sch, annual_kwh_garage)
+    success = Lighting.apply_garage(model, runner, sch, grg_kwh)
     return false if not success
 
-    annual_kwh_exterior = Float(XMLHelper.get_value(lighting, "extension/AnnualExteriorkWh"))
-    success = Lighting.apply_exterior(model, runner, sch, annual_kwh_exterior)
+    success = Lighting.apply_exterior(model, runner, sch, ext_kwh)
     return false if not success
     
     return true
@@ -2743,7 +2857,12 @@ class OSModel
     unfinished_basement_ach = 0.1 # TODO: Need to handle above-grade basement
     crawl_ach = crawl_sla # FIXME: sla vs ach
     pier_beam_ach = 100
-    shelter_coef = Constants.Auto
+    shelter_coef = XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/Site/extension/ShelterCoefficient")
+    if shelter_coef.nil?
+      shelter_coef = Airflow.get_default_shelter_coefficient()
+    else
+      shelter_coef = Float(shelter_coef)
+    end
     has_flue_chimney = false
     is_existing_home = false
     terrain = Constants.TerrainSuburban
@@ -2796,35 +2915,18 @@ class OSModel
                                           bathroom_exhaust_hour)
 
     # Natural Ventilation
-    natural_ventilation = building.elements["BuildingDetails/Systems/HVAC/extension/NaturalVentilation"]
-    if natural_ventilation.nil?
-      # Assume Building America HSP defaults
-      nat_vent_htg_offset = 1.0
-      nat_vent_clg_offset = 1.0
-      nat_vent_ovlp_offset = 1.0
-      nat_vent_htg_season = true
-      nat_vent_clg_season = true
-      nat_vent_ovlp_season = true
-      nat_vent_num_weekdays = 5
-      nat_vent_num_weekends = 2
-      nat_vent_frac_windows_open = 0.33
-      nat_vent_frac_window_area_openable = 0.2
-      nat_vent_max_oa_hr = 0.0115
-      nat_vent_max_oa_rh = 0.7
-    else
-      nat_vent_htg_offset = XMLHelper.get_value(natural_ventilation, "HeatingSeasonTemperatureOffset")
-      nat_vent_clg_offset = XMLHelper.get_value(natural_ventilation, "CoolingSeasonTemperatureOffset")
-      nat_vent_ovlp_offset = XMLHelper.get_value(natural_ventilation, "OverlapSeasonTemperatureOffset")
-      nat_vent_htg_season = XMLHelper.get_value(natural_ventilation, "EnabledForHeatingSeason")
-      nat_vent_clg_season = XMLHelper.get_value(natural_ventilation, "EnabledForCoolingSeason")
-      nat_vent_ovlp_season = XMLHelper.get_value(natural_ventilation, "EnabledForOverlapSeason")
-      nat_vent_num_weekdays = XMLHelper.get_value(natural_ventilation, "EnabledNumberOfWeekdays")
-      nat_vent_num_weekends = XMLHelper.get_value(natural_ventilation, "EnabledNumberOfWeekendDays")
-      nat_vent_frac_windows_open = XMLHelper.get_value(natural_ventilation, "FractionWindowsOpen")
-      nat_vent_frac_window_area_openable = XMLHelper.get_value(natural_ventilation, "FractionWindowAreaOpenable")
-      nat_vent_max_oa_hr = XMLHelper.get_value(natural_ventilation, "ControlMaximumHumidityRatio")
-      nat_vent_max_oa_rh = XMLHelper.get_value(natural_ventilation, "ControlMaximumRelativeHumidity")
-    end
+    nat_vent_htg_offset = 1.0
+    nat_vent_clg_offset = 1.0
+    nat_vent_ovlp_offset = 1.0
+    nat_vent_htg_season = true
+    nat_vent_clg_season = true
+    nat_vent_ovlp_season = true
+    nat_vent_num_weekdays = 5
+    nat_vent_num_weekends = 2
+    nat_vent_frac_windows_open = 0.33
+    nat_vent_frac_window_area_openable = 0.2
+    nat_vent_max_oa_hr = 0.0115
+    nat_vent_max_oa_rh = 0.7
     nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season,
                                       nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays, 
                                       nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable, 
@@ -3113,6 +3215,19 @@ class WoodStudConstructionSet
   end
   attr_accessor(:wood_stud_material, :framing_factor, :rigid_r, :osb_thick_in, :drywall_thick_in, :exterior_material)
 
+end
+
+def to_beopt_fuel(fuel)
+  return {"natural gas"=>Constants.FuelTypeGas, 
+          "fuel oil"=>Constants.FuelTypeOil, 
+          "propane"=>Constants.FuelTypePropane, 
+          "electricity"=>Constants.FuelTypeElectric}[fuel]
+end
+
+def to_beopt_wh_type(type)
+  return {'storage water heater'=>Constants.WaterHeaterTypeTank,
+          'instantaneous water heater'=>Constants.WaterHeaterTypeTankless,
+          'heat pump water heater'=>Constants.WaterHeaterTypeHeatPump}[type]
 end
 
 # register the measure to be used by the application

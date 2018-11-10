@@ -6,8 +6,10 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/xmlhelper"
+require_relative "../measures/HPXMLTranslator/measure"
+require_relative "../measures/HPXMLTranslator/resources/constants"
+require_relative "../measures/HPXMLTranslator/resources/xmlhelper"
+require_relative "../measures/HPXMLTranslator/resources/waterheater"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
@@ -77,13 +79,13 @@ def get_sql_result(sqlValue, design)
   if sqlValue.is_initialized
     return sqlValue.get * 0.9478171203133172 # GJ => MBtu
   end
-  fail "ERROR: Simulation unsuccessful for #{design}."
+  fail "Simulation unsuccessful for #{design}."
 end
 
 def read_output(design, designdir, output_hpxml_path)
   sql_path = File.join(designdir, "run", "eplusout.sql")
   if not File.exists?(sql_path)
-    fail "ERROR: Simulation unsuccessful for #{design}."
+    fail "Simulation unsuccessful for #{design}."
   end
   
   sqlFile = OpenStudio::SqlFile.new(sql_path, false)
@@ -179,7 +181,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:fuelRangeOven] = design_output[:ngRangeOven] + design_output[:otherRangeOven]
   
   # Other - Ceiling Fans
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCeilingFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.EndUseCeilingFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecCeilingFan] = get_sql_query_result(sqlFile, query)
   
   # Other - Mechanical Ventilation
@@ -196,7 +198,7 @@ def read_output(design, designdir, output_hpxml_path)
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeating] = get_sql_query_result(sqlFile, query)
   if design_output[:elecHeating] + design_output[:fuelHeating] > 0 and design_output[:loadHeating] == 0
-    fail "ERROR: No heating load for corresponding heating energy."
+    fail "No heating load for corresponding heating energy."
   end
   
   # Other - Space Cooling Load
@@ -204,7 +206,7 @@ def read_output(design, designdir, output_hpxml_path)
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCooling] = get_sql_query_result(sqlFile, query)
   if design_output[:elecCooling] > 0 and design_output[:loadCooling] == 0
-    fail "ERROR: No cooling load for corresponding cooling energy."
+    fail "No cooling load for corresponding cooling energy."
   end
   
   # Other - Water Heating Load
@@ -212,7 +214,7 @@ def read_output(design, designdir, output_hpxml_path)
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHotWater] = get_sql_query_result(sqlFile, query)
   if design_output[:elecHotWater] + design_output[:fuelHotWater] > 0 and design_output[:loadHotWater] == 0
-    fail "ERROR: No cooling load for corresponding cooling energy."
+    fail "No water heating load for corresponding cooling energy."
   end
   
   # Error Checking
@@ -220,7 +222,7 @@ def read_output(design, designdir, output_hpxml_path)
   
   sum_fuels = (design_output[:elecTotal] + design_output[:fuelTotal])
   if (design_output[:allTotal] - sum_fuels).abs > tolerance
-    fail "ERROR: Fuels do not sum to total (#{sum_fuels.round(1)} vs #{design_output[:allTotal].round(1)})."
+    fail "Fuels do not sum to total (#{sum_fuels.round(1)} vs #{design_output[:allTotal].round(1)})."
   end
   
   sum_elec_categories = (design_output[:elecHeating] + design_output[:elecCooling] + 
@@ -229,13 +231,13 @@ def read_output(design, designdir, output_hpxml_path)
                          design_output[:elecPumps] + design_output[:elecHotWater] + 
                          design_output[:elecRecircPump])
   if (design_output[:elecTotal] - sum_elec_categories).abs > tolerance
-    fail "ERROR: Electric category end uses do not sum to total.\n#{design_output.to_s}"
+    fail "Electric category end uses do not sum to total.\n#{design_output.to_s}"
   end
   
   sum_fuel_categories = (design_output[:fuelHeating] + design_output[:fuelAppliances] + 
                          design_output[:fuelHotWater])
   if (design_output[:fuelTotal] - sum_fuel_categories).abs > tolerance
-    fail "ERROR: Fuel category end uses do not sum to total.\n#{design_output.to_s}"
+    fail "Fuel category end uses do not sum to total.\n#{design_output.to_s}"
   end
   
   sum_elec_appliances = (design_output[:elecFridge] + design_output[:elecDishwasher] +
@@ -244,12 +246,12 @@ def read_output(design, designdir, output_hpxml_path)
                      design_output[:elecRangeOven] + design_output[:elecCeilingFan] + 
                      design_output[:elecMechVent])
   if (design_output[:elecAppliances] - sum_elec_appliances).abs > tolerance
-    fail "ERROR: Electric appliances do not sum to total.\n#{design_output.to_s}"
+    fail "Electric appliances do not sum to total.\n#{design_output.to_s}"
   end
   
   sum_fuel_appliances = (design_output[:fuelClothesDryer] + design_output[:fuelRangeOven])
   if (design_output[:fuelAppliances] - sum_fuel_appliances).abs > tolerance
-    fail "ERROR: Fuel appliances do not sum to total.\n#{design_output.to_s}"
+    fail "Fuel appliances do not sum to total.\n#{design_output.to_s}"
   end
   
   return design_output
@@ -291,9 +293,9 @@ def get_heating_fuel(hpxml_doc)
   heat_fuels.uniq!
   
   if heat_fuels.size == 0
-    fail "ERROR: No heating system fuel type found."
+    fail "No heating system fuel type found."
   elsif heat_fuels.size > 1
-    fail "ERROR: Multiple heating system fuel types found."
+    fail "Multiple heating system fuel types found."
   end
 
   return heat_fuels[0]
@@ -309,9 +311,9 @@ def get_dhw_fuel(hpxml_doc)
   dhw_fuels.uniq!
   
   if dhw_fuels.size == 0
-    fail "ERROR: No water heating system fuel type found."
+    fail "No water heating system fuel type found."
   elsif dhw_fuels.size > 1
-    fail "ERROR: Multiple water heating system fuel types found."
+    fail "Multiple water heating system fuel types found."
   end
   
   return dhw_fuels[0]
@@ -331,13 +333,13 @@ def get_dse_heat_cool(hpxml_doc)
   dse_cools.uniq!
   
   if dse_heats.size == 0
-    fail "ERROR: No heating distribution system efficiency value found."
+    fail "No heating distribution system efficiency value found."
   elsif dse_cools.size == 0
-    fail "ERROR: No cooling distribution system efficiency value found."
+    fail "No cooling distribution system efficiency value found."
   elsif dse_heats.size > 1
-    fail "ERROR: Multiple heating distribution system efficiency values found."
+    fail "Multiple heating distribution system efficiency values found."
   elsif dse_cools.size > 1
-    fail "ERROR: Multiple cooling distribution system efficiency values found."
+    fail "Multiple cooling distribution system efficiency values found."
   end
   
   return dse_heats[0], dse_cools[0]
@@ -350,7 +352,7 @@ def get_eec_value_numerator(unit)
   elsif ['AFUE','COP','Percent','EF'].include? unit
     return 1.0
   end
-  fail "ERROR: Unexpected unit #{unit}."
+  fail "Unexpected unit #{unit}."
 end
 
 def get_eec_heat(hpxml_doc)
@@ -376,9 +378,9 @@ def get_eec_heat(hpxml_doc)
   eec_heats.uniq!
   
   if eec_heats.size == 0
-    fail "ERROR: No heating system efficiency value found."
+    fail "No heating system efficiency value found."
   elsif eec_heats.size > 1
-    fail "ERROR: Multiple heating system efficiency values found."
+    fail "Multiple heating system efficiency values found."
   end
 
   return eec_heats[0]
@@ -407,9 +409,9 @@ def get_eec_cool(hpxml_doc)
   eec_cools.uniq!
   
   if eec_cools.size == 0
-    fail "ERROR: No cooling system efficiency value found."
+    fail "No cooling system efficiency value found."
   elsif eec_cools.size > 1
-    fail "ERROR: Multiple cooling system efficiency values found."
+    fail "Multiple cooling system efficiency values found."
   end
 
   return eec_cools[0]
@@ -420,7 +422,8 @@ def get_eec_dhw(hpxml_doc)
   
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
-    value_adj = XMLHelper.get_value(dhw_system, "extension/EnergyFactorMultiplier")
+    wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
+    value_adj = Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type))
     if not value.nil? and not value_adj.nil?
       eec_dhws << get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end
@@ -429,9 +432,9 @@ def get_eec_dhw(hpxml_doc)
   eec_dhws.uniq!
   
   if eec_dhws.size == 0
-    fail "ERROR: No water heating system efficiency value found."
+    fail "No water heating system efficiency value found."
   elsif eec_dhws.size > 1
-    fail "ERROR: Multiple water heating system efficiency values found."
+    fail "Multiple water heating system efficiency values found."
   end
   
   return eec_dhws[0]
@@ -476,10 +479,10 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     results[:coeff_dhw_b] = 1.0130
   end
   if results[:coeff_heat_a].nil? or results[:coeff_heat_b].nil?
-    fail "ERROR: Could not identify EEC coefficients for heating system."
+    fail "Could not identify EEC coefficients for heating system."
   end
   if results[:coeff_dhw_a].nil? or results[:coeff_dhw_b].nil?
-    fail "ERROR: Could not identify EEC coefficients for water heating system."
+    fail "Could not identify EEC coefficients for water heating system."
   end
   
   # EEC_x = Equipment Efficiency Coefficient for the Rated Home's equipment, such that EEC_x equals the 
@@ -588,7 +591,7 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     
     # 4.3.3 The saving represented by the IAD shall be calculated using equation 4.3.3-1.
     # IADSAVE = (100 - ERIIAD) / 100
-    results[:iad_save] = (100.0 - results_iad[:hers_index]) / 100.0
+    results[:iad_save] = (100.0 - results_iad[:eri]) / 100.0
     
     # 4.3.4 The IAF for the Rated Home (IAFPD) shall be calculated in accordance with equation 4.3.4-1.
     # IAFRH = IAFCFA * IAFNbr * IAFNS (Eq. 4.3.4-1)
@@ -605,13 +608,13 @@ def calculate_eri(rated_output, ref_output, results_iad=nil)
     # ERI = PEfrac * (TnML / (TRL * IAFRH)) * 100 (Eq 4.1-2)
     # where:
     #   IAFRH = Index Adjustment Factor of Rated Home
-    results[:hers_index] = results[:pefrac] * results[:tnml] / (results[:trl] * results[:iaf_rh]) * 100.0
+    results[:eri] = results[:pefrac] * results[:tnml] / (results[:trl] * results[:iaf_rh]) * 100.0
     
   else
   
-    # The HERS Index shall be determined in accordance with Equation 4.1-2:
-    # HERS Index = PEfrac * (TnML / TRL) * 100
-    results[:hers_index] = results[:pefrac] * results[:tnml] / results[:trl] * 100.0
+    # ERI shall be determined in accordance with Equation 4.1-2:
+    # ERI = PEfrac * (TnML / TRL) * 100
+    results[:eri] = results[:pefrac] * results[:tnml] / results[:trl] * 100.0
     
   end
 
@@ -661,7 +664,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   # Results file
   results_csv = File.join(resultsdir, "ERI_Results.csv")
   results_out = {}
-  results_out["HERS Index"] = results[:hers_index].round(2)
+  results_out["ERI"] = results[:eri].round(2)
   results_out["REUL Heating (MBtu)"] = results[:reul_heat].round(2)
   results_out["REUL Cooling (MBtu)"] = results[:reul_cool].round(2)
   results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].round(2)
@@ -716,7 +719,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   if using_iaf
     worksheet_out["Total Loads TRL*IAF"] = (results[:trl] * results[:iaf_rh]).round(4)
   end
-  worksheet_out["HERS Index"] = results[:hers_index].round(2)
+  worksheet_out["ERI"] = results[:eri].round(2)
   worksheet_out[""] = "" # line break
   worksheet_out["Ref Home CFA"] = ref_output[:hpxml_cfa]
   worksheet_out["Ref Home Nbr"] = ref_output[:hpxml_nbr]
@@ -834,20 +837,20 @@ if options[:epws]
 end
 
 if not options[:hpxml]
-  fail "ERROR: HPXML argument is required. Call #{File.basename(__FILE__)} -h for usage."
+  fail "HPXML argument is required. Call #{File.basename(__FILE__)} -h for usage."
 end
 
 unless (Pathname.new options[:hpxml]).absolute?
   options[:hpxml] = File.expand_path(options[:hpxml])
 end 
 unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xml"
-  fail "ERROR: '#{options[:hpxml]}' does not exist or is not an .xml file."
+  fail "'#{options[:hpxml]}' does not exist or is not an .xml file."
 end
 
 # Check for correct versions of OS
 os_version = "2.7.0"
 if OpenStudio.openStudioVersion != os_version
-  fail "ERROR: OpenStudio version #{os_version} is required."
+  fail "OpenStudio version #{os_version} is required."
 end
 
 # Create results dir

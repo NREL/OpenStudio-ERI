@@ -11,30 +11,30 @@ class ApplianceTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_clothes_washer(hpxml_doc, 78.0, 4.484, 0.2729, 0.0315)
-    _check_clothes_dryer(hpxml_doc, "electricity", 1120.0, 0, 0.1350, 0.0150)
-    _check_dishwasher(hpxml_doc, 202.0, 5.097, 0.3003, 0.3003)
+    _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+    _check_dishwasher(hpxml_doc, 0.46, nil, 12)
     _check_refrigerator(hpxml_doc, 709.0)
-    _check_cooking_range(hpxml_doc, "electricity", 487.0, 0, 0.7196, 0.0800)
+    _check_cooking_range(hpxml_doc, "electricity", false, false)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_washer(hpxml_doc, 64.7, 1.919, 0.3*0.9, 0.3*0.1)
-    _check_clothes_dryer(hpxml_doc, "electricity", 1043.5, 0, 0.15*0.9, 0.15*0.1)
-    _check_dishwasher(hpxml_doc, 115.1, 0.143, 0.6*0.5, 0.6*0.5)
+    _check_clothes_washer(hpxml_doc, 1.2, nil, 387, 0.127, 1.003, 24, 3.5)
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+    _check_dishwasher(hpxml_doc, nil, 100, 12)
     _check_refrigerator(hpxml_doc, 609.0)
-    _check_cooking_range(hpxml_doc, "electricity", 421.0, 0, 0.8*0.9, 0.8*0.1)
+    _check_cooking_range(hpxml_doc, "electricity", true, true)
     
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "electricity", 971.0, 0, 0.1350, 0.0150)
-      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 691.0)
-      _check_cooking_range(hpxml_doc, "electricity", 448.0, 0, 0.7197,	0.0800)
+      _check_cooking_range(hpxml_doc, "electricity", false, false)
     end
   end
   
@@ -43,30 +43,30 @@ class ApplianceTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_clothes_washer(hpxml_doc, 78.0, 4.484, 0.2729, 0.0315)
-    _check_clothes_dryer(hpxml_doc, "electricity", 1120.0, 0, 0.1350, 0.0150)
-    _check_dishwasher(hpxml_doc, 202.0, 5.097, 0.3003, 0.3003)
+    _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+    _check_dishwasher(hpxml_doc, 0.46, nil, 12)
     _check_refrigerator(hpxml_doc, 709.0)
-    _check_cooking_range(hpxml_doc, "electricity", 487.0, 0, 0.7196, 0.0800)
+    _check_cooking_range(hpxml_doc, "electricity", false, false)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_washer(hpxml_doc, 64.7, 1.919, 0.3*0.9, 0.3*0.1)
-    _check_clothes_dryer(hpxml_doc, "electricity", 1043.5, 0, 0.15*0.9, 0.15*0.1)
-    _check_dishwasher(hpxml_doc, 115.1, 0.143, 0.6*0.5, 0.6*0.5)
+    _check_clothes_washer(hpxml_doc, 1.2, nil, 387, 0.127, 1.003, 24, 3.5)
+    _check_clothes_dryer(hpxml_doc, "electricity", nil, 2.62, "moisture")
+    _check_dishwasher(hpxml_doc, nil, 100, 12)
     _check_refrigerator(hpxml_doc, 609.0)
-    _check_cooking_range(hpxml_doc, "electricity", 421.0, 0, 0.8*0.9, 0.8*0.1)
+    _check_cooking_range(hpxml_doc, "electricity", true, true)
     
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "electricity", 971.0, 0, 0.1350, 0.0150)
-      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 691.0)
-      _check_cooking_range(hpxml_doc, "electricity", 448.0, 0, 0.7197,	0.0800)
+      _check_cooking_range(hpxml_doc, "electricity", false, false)
     end
   end
   
@@ -75,30 +75,62 @@ class ApplianceTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_clothes_washer(hpxml_doc, 78.0, 4.484, 0.2729, 0.0315)
-    _check_clothes_dryer(hpxml_doc, "electricity", 1120.0, 0, 0.1350, 0.0150)
-    _check_dishwasher(hpxml_doc, 202.0, 5.097, 0.3003, 0.3003)
+    _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+    _check_dishwasher(hpxml_doc, 0.46, nil, 12)
     _check_refrigerator(hpxml_doc, 709.0)
-    _check_cooking_range(hpxml_doc, "electricity", 487.0, 0, 0.7196, 0.0800)
+    _check_cooking_range(hpxml_doc, "electricity", false, false)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_washer(hpxml_doc, 64.7, 1.919, 0.3*0.9, 0.3*0.1)
-    _check_clothes_dryer(hpxml_doc, "electricity", 1043.5, 0, 0.15*0.9, 0.15*0.1)
-    _check_dishwasher(hpxml_doc, 115.1, 0.143, 0.6*0.5, 0.6*0.5)
+    _check_clothes_washer(hpxml_doc, nil, 0.73, 387, 0.127, 1.003, 24, 3.5)
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+    _check_dishwasher(hpxml_doc, nil, 100, 12)
     _check_refrigerator(hpxml_doc, 609.0)
-    _check_cooking_range(hpxml_doc, "electricity", 421.0, 0, 0.8*0.9, 0.8*0.1)
+    _check_cooking_range(hpxml_doc, "electricity", true, true)
     
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "electricity", 971.0, 0, 0.1350, 0.0150)
-      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 691.0)
-      _check_cooking_range(hpxml_doc, "electricity", 448.0, 0, 0.7197,	0.0800)
+      _check_cooking_range(hpxml_doc, "electricity", false, false)
+    end
+  end
+  
+  def test_appliances_diwasher_ef
+    hpxml_name = "valid-appliances-dishwasher-ef.xml"
+    
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+    _check_dishwasher(hpxml_doc, 0.46, nil, 12)
+    _check_refrigerator(hpxml_doc, 709.0)
+    _check_cooking_range(hpxml_doc, "electricity", false, false)
+    
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_clothes_washer(hpxml_doc, 1.2, nil, 387, 0.127, 1.003, 24, 3.5)
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+    _check_dishwasher(hpxml_doc, 0.5, nil, 8)
+    _check_refrigerator(hpxml_doc, 609.0)
+    _check_cooking_range(hpxml_doc, "electricity", true, true)
+    
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
+      _check_refrigerator(hpxml_doc, 691.0)
+      _check_cooking_range(hpxml_doc, "electricity", false, false)
     end
   end
   
@@ -107,30 +139,30 @@ class ApplianceTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_clothes_washer(hpxml_doc, 78.0, 4.484, 0.2729, 0.0315)
-    _check_clothes_dryer(hpxml_doc, "natural gas", 87.8, 40.0, 0.1336, 0.0166)
-    _check_dishwasher(hpxml_doc, 202.0, 5.097, 0.3003, 0.3003)
+    _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+    _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "timer")
+    _check_dishwasher(hpxml_doc, 0.46, nil, 12)
     _check_refrigerator(hpxml_doc, 709.0)
-    _check_cooking_range(hpxml_doc, "natural gas", 33.4, 33.4, 0.6381, 0.1620)
+    _check_cooking_range(hpxml_doc, "natural gas", false, false)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_washer(hpxml_doc, 64.7, 1.919, 0.3*0.9, 0.3*0.1)
-    _check_clothes_dryer(hpxml_doc, "natural gas", 73.0, 33.1, 0.15*0.9, 0.15*0.1)
-    _check_dishwasher(hpxml_doc, 115.1, 0.143, 0.6*0.5, 0.6*0.5)
+    _check_clothes_washer(hpxml_doc, 1.2, nil, 387, 0.127, 1.003, 24, 3.5)
+    _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "moisture")
+    _check_dishwasher(hpxml_doc, nil, 100, 12)
     _check_refrigerator(hpxml_doc, 609.0)
-    _check_cooking_range(hpxml_doc, "natural gas", 33.4, 31.7, 0.8*0.8, 0.8*0.2)
+    _check_cooking_range(hpxml_doc, "natural gas", false, true)
     
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "natural gas", 76.1, 34.7, 0.1336,	0.0165)
-      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 691.0)
-      _check_cooking_range(hpxml_doc, "natural gas", 30.7, 30.7, 0.6381,	0.1620)
+      _check_cooking_range(hpxml_doc, "natural gas", false, false)
     end
   end
   
@@ -142,11 +174,11 @@ class ApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIRatedHome] 
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 78.0, 4.484, 0.2729, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "electricity", 1120.0, 0, 0.1350, 0.0150)
-      _check_dishwasher(hpxml_doc, 202.0, 5.097, 0.3003, 0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 709.0)
-      _check_cooking_range(hpxml_doc, "electricity", 487.0, 0, 0.7196, 0.0800)
+      _check_cooking_range(hpxml_doc, "electricity", false, false)
     end
     
     # IAD, IAD Reference
@@ -154,11 +186,11 @@ class ApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "electricity", 971.0, 0, 0.1350, 0.0150)
-      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 691.0)
-      _check_cooking_range(hpxml_doc, "electricity", 448.0, 0, 0.7197,	0.0800)
+      _check_cooking_range(hpxml_doc, "electricity", false, false)
     end
   end
   
@@ -170,11 +202,11 @@ class ApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIRatedHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 78.0, 4.484, 0.2729, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "natural gas", 87.8, 40.0, 0.1336, 0.0166)
-      _check_dishwasher(hpxml_doc, 202.0, 5.097, 0.3003, 0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 709.0)
-      _check_cooking_range(hpxml_doc, "natural gas", 33.4, 33.4, 0.6381, 0.1620)
+      _check_cooking_range(hpxml_doc, "natural gas", false, false)
     end
 
     # IAD, IAD Reference
@@ -182,11 +214,11 @@ class ApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 68.0, 3.889, 0.2722, 0.0315)
-      _check_clothes_dryer(hpxml_doc, "natural gas", 76.1, 34.7, 0.1336,	0.0165)
-      _check_dishwasher(hpxml_doc, 171.0, 4.317, 0.3003,	0.3003)
+      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874)
+      _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "timer")
+      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
       _check_refrigerator(hpxml_doc, 691.0)
-      _check_cooking_range(hpxml_doc, "natural gas", 30.7, 30.7, 0.6381,	0.1620)
+      _check_cooking_range(hpxml_doc, "natural gas", false, false)
     end
   end
 
@@ -236,29 +268,86 @@ class ApplianceTest < MiniTest::Test
     return hpxml_doc
   end
 
-  def _check_clothes_washer(hpxml_doc, annual_kwh, hw_gpd, frac_sens, frac_lat)
+  def _check_clothes_washer(hpxml_doc, mef, imef, annual_kwh, elec_rate, gas_rate, agc, cap)
     appl = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/ClothesWasher"]
-    assert_in_epsilon(Float(appl.elements["extension/AnnualkWh"].text), annual_kwh, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/HotWaterGPD"].text), hw_gpd, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracSensible"].text), frac_sens, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracLatent"].text), frac_lat, 0.01)
+    if mef.nil?
+      assert_nil(appl.elements["ModifiedEnergyFactor"])
+    else
+      assert_in_epsilon(Float(appl.elements["ModifiedEnergyFactor"].text), mef, 0.01)
+    end
+    if imef.nil?
+      assert_nil(appl.elements["IntegratedModifiedEnergyFactor"])
+    else
+      assert_in_epsilon(Float(appl.elements["IntegratedModifiedEnergyFactor"].text), imef, 0.01)
+    end
+    if annual_kwh.nil?
+      assert_nil(appl.elements["RatedAnnualkWh"])
+    else
+      assert_in_epsilon(Float(appl.elements["RatedAnnualkWh"].text), annual_kwh, 0.01)
+    end
+    if elec_rate.nil?
+      assert_nil(appl.elements["LabelElectricRate"])
+    else
+      assert_in_epsilon(Float(appl.elements["LabelElectricRate"].text), elec_rate, 0.01)
+    end
+    if gas_rate.nil?
+      assert_nil(appl.elements["LabelGasRate"])
+    else
+      assert_in_epsilon(Float(appl.elements["LabelGasRate"].text), gas_rate, 0.01)
+    end
+    if agc.nil?
+      assert_nil(appl.elements["LabelAnnualGasCost"])
+    else
+      assert_in_epsilon(Float(appl.elements["LabelAnnualGasCost"].text), agc, 0.01)
+    end
+    if cap.nil?
+      assert_nil(appl.elements["Capacity"])
+    else
+      assert_in_epsilon(Float(appl.elements["Capacity"].text), cap, 0.01)
+    end
   end
   
-  def _check_clothes_dryer(hpxml_doc, fuel_type, annual_kwh, annual_therm, frac_sens, frac_lat)
+  def _check_clothes_dryer(hpxml_doc, fuel_type, ef, cef, control)
     appl = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/ClothesDryer"]
-    assert_equal(appl.elements["FuelType"].text, fuel_type)
-    assert_in_epsilon(Float(appl.elements["extension/AnnualkWh"].text), annual_kwh, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/AnnualTherm"].text), annual_therm, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracSensible"].text), frac_sens, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracLatent"].text), frac_lat, 0.01)
+    if fuel_type.nil?
+      assert_nil(appl.elements["FuelType"])
+    else
+      assert_equal(appl.elements["FuelType"].text, fuel_type)
+    end
+    if ef.nil?
+      assert_nil(appl.elements["EnergyFactor"])
+    else
+      assert_in_epsilon(Float(appl.elements["EnergyFactor"].text), ef, 0.01)
+    end
+    if cef.nil?
+      assert_nil(appl.elements["CombinedEnergyFactor"])
+    else
+      assert_in_epsilon(Float(appl.elements["CombinedEnergyFactor"].text), cef, 0.01)
+    end
+    if control.nil?
+      assert_nil(appl.elements["ControlType"])
+    else
+      assert_equal(appl.elements["ControlType"].text, control)
+    end
   end
   
-  def _check_dishwasher(hpxml_doc, annual_kwh, hw_gpd, frac_sens, frac_lat)
+  def _check_dishwasher(hpxml_doc, ef, annual_kwh, cap)
     appl = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/Dishwasher"]
-    assert_in_epsilon(Float(appl.elements["extension/AnnualkWh"].text), annual_kwh, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/HotWaterGPD"].text), hw_gpd, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracSensible"].text), frac_sens, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracLatent"].text), frac_lat, 0.01)
+    if ef.nil?
+      assert_nil(appl.elements["EnergyFactor"])
+    else
+      assert_in_epsilon(Float(appl.elements["EnergyFactor"].text), ef, 0.01)
+    end
+    if annual_kwh.nil?
+      assert_nil(appl.elements["RatedAnnualkWh"])
+    else
+      assert_in_epsilon(Float(appl.elements["RatedAnnualkWh"].text), annual_kwh, 0.01)
+    end
+    if cap.nil?
+      assert_nil(appl.elements["PlaceSettingCapacity"])
+    else
+      assert_in_epsilon(Float(appl.elements["PlaceSettingCapacity"].text), cap, 0.01)
+    end
   end
   
   def _check_refrigerator(hpxml_doc, annual_kwh)
@@ -266,13 +355,20 @@ class ApplianceTest < MiniTest::Test
     assert_in_epsilon(Float(appl.elements["RatedAnnualkWh"].text), annual_kwh, 0.01)
   end
   
-  def _check_cooking_range(hpxml_doc, fuel_type, annual_kwh, annual_therm, frac_sens, frac_lat)
-    appl = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/CookingRange"]
-    assert_equal(appl.elements["FuelType"].text, fuel_type)
-    assert_in_epsilon(Float(appl.elements["extension/AnnualkWh"].text), annual_kwh, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/AnnualTherm"].text), annual_therm, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracSensible"].text), frac_sens, 0.01)
-    assert_in_epsilon(Float(appl.elements["extension/FracLatent"].text), frac_lat, 0.01)
+  def _check_cooking_range(hpxml_doc, fuel_type, cook_is_induction, oven_is_convection)
+    cook = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/CookingRange"]
+    assert_equal(cook.elements["FuelType"].text, fuel_type)
+    if cook_is_induction.nil?
+      assert_nil(cook.elements["IsInduction"])
+    else
+      assert_equal(Boolean(cook.elements["IsInduction"].text), cook_is_induction)
+    end
+    oven = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Appliances/Oven"]
+    if oven_is_convection.nil?
+      assert_nil(oven.elements["IsConvection"])
+    else
+      assert_equal(Boolean(oven.elements["IsConvection"].text), oven_is_convection)
+    end
   end
   
 end

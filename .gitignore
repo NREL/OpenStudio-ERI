@@ -4,9 +4,9 @@ coverage
 /.bundle
 /log
 /run
-/workflow/HERSRatedHome
-/workflow/HERSReferenceHome
-/workflow/HERSIndexAdjustmentDesign
-/workflow/HERSIndexAdjustmentReferenceHome
+/workflow/ERIRatedHome
+/workflow/ERIReferenceHome
+/workflow/ERIIndexAdjustmentDesign
+/workflow/ERIIndexAdjustmentReferenceHome
 /workflow/results
 /workflow/tests/RESNET_Tests/4.2_Test_HERS_Reference_Home

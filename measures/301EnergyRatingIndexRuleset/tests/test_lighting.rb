@@ -11,19 +11,19 @@ class LightingTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml_doc, 3255, 275, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml_doc, 1645, 115, 0)
+    _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
     
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml_doc, 1248, 96, 0)
+    _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
     
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml_doc, 2375, 220, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
   end
   
   def test_lighting_pre_addendum_g
@@ -31,19 +31,45 @@ class LightingTest < MiniTest::Test
     
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml_doc, 3255, 275, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml_doc, 2410, 172, 0)
+    _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
     
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml_doc, 1374, 96, 0)
+    _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
     
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml_doc, 2375, 220, 0)
+    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+  end
+  
+  def test_ceiling_fans
+    hpxml_name = "valid-misc-ceiling-fans.xml"
+    
+    medium_cfm = 3000.0
+    
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 5)
+    
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    avg_fan_w = ((3000.0/100.0 * 2) + (3000.0/120.0 * 1))/3
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 5)
+    
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 4)
+    
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 4)
   end
   
   def _test_measure(hpxml_name, calc_type)
@@ -92,11 +118,28 @@ class LightingTest < MiniTest::Test
     return hpxml_doc
   end
 
-  def _check_lighting(hpxml_doc, interior_kwh, exterior_kwh, garage_kwh)
-    ltg = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting"]
-    assert_in_epsilon(Float(ltg.elements["extension/AnnualInteriorkWh"].text), interior_kwh, 0.01)
-    assert_in_epsilon(Float(ltg.elements["extension/AnnualExteriorkWh"].text), exterior_kwh, 0.01)
-    assert_in_epsilon(Float(ltg.elements["extension/AnnualGaragekWh"].text), garage_kwh, 0.01)
+  def _check_lighting(hpxml_doc, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+    ltg_frac = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting/LightingFractions"]
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesInterior"].text), fFI_int, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesExterior"].text), fFI_ext, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesGarage"].text), fFI_grg, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesInterior"].text), fFII_int, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesExterior"].text), fFII_ext, 0.01)
+    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesGarage"].text), fFII_grg, 0.01)
+  end
+  
+  def _check_ceiling_fans(hpxml_doc, cfm_per_w, quantity)
+    cf = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting/CeilingFan"]
+    if cfm_per_w.nil?
+      assert_nil(cf.elements["Airflow[FanSpeed='medium']/Efficiency"])
+    else
+      assert_equal(Float(cf.elements["Airflow[FanSpeed='medium']/Efficiency"].text), cfm_per_w)
+    end
+    if quantity.nil?
+      assert_nil(cf.elements["Quantity"])
+    else
+      assert_equal(Integer(cf.elements["Quantity"].text), quantity)
+    end
   end
   
 end

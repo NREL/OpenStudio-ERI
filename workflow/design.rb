@@ -64,20 +64,25 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   update_args_hash(measures, measure_subdir, args)
 
   # Apply measures
-  success = apply_measures(measures_dir, measures, runner, model, nil, nil, false)
+  success = apply_measures(measures_dir, measures, runner, model, nil, nil, true)
   
   # Report warnings/errors
   File.open(File.join(designdir,'run.log'), 'w') do |f|
-    runner.result.stepWarnings.each do |w|
-      f << "Warning: #{w}\n"
+    if debug
+      runner.result.stepInfo.each do |s|
+        f << "Info: #{s}\n"
+      end
     end
-    runner.result.stepErrors.each do |e|
-      f << "Error: #{e}\n"
+    runner.result.stepWarnings.each do |s|
+      f << "Warning: #{s}\n"
+    end
+    runner.result.stepErrors.each do |s|
+      f << "Error: #{s}\n"
     end
   end
 
   if not success
-    fail "ERROR: Simulation unsuccessful for #{design}."
+    fail "Simulation unsuccessful for #{design}."
   end
   
   # Write model to IDF
@@ -89,12 +94,8 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
 end
 
 def run_energyplus(design, rundir)
-  ep_path = OpenStudio.getEnergyPlusDirectory.to_s
-  if ep_path.empty? # Bug in OS, should remove at some point in the future
-    # Probably run on linux w/o absolute path
-    ep_path = "/usr/local/openstudio-#{OpenStudio.openStudioVersion}/EnergyPlus"
-  end
-  ep_path = File.join(ep_path, "energyplus")
+  # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
+  ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s,'..','..','EnergyPlus','energyplus'))
   command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
   system(command, :err => File::NULL)
 end

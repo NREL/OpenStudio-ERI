@@ -78,7 +78,7 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
-            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting] and [CeilingFan]
         },
         
         
@@ -179,7 +179,7 @@ class EnergyRatingIndex301Validator
     
             ## [FoundationType=Ambient]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient]' => {
-                'FrameFloor' => one_or_more, # See [FoundationSlab]
+                'FrameFloor' => one_or_more, # See [FoundationFrameFloor]
             },
     
             ## [FoundationFrameFloor]
@@ -502,7 +502,7 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
             'PipeInsulation/PipeRValue' => one,
-            'DrainWaterHeatRecovery' => zero_or_one, # See [HotWaterDistribution DrainWaterHeatRecovery]
+            'DrainWaterHeatRecovery' => zero_or_one, # See [DrainWaterHeatRecovery]
         },
         
             ## [HWDistType=Standard]
@@ -518,7 +518,7 @@ class EnergyRatingIndex301Validator
                 'PumpPower' => one,
             },
         
-            ## [HotWaterDistribution DrainWaterHeatRecovery]
+            ## [DrainWaterHeatRecovery]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => {
                 'FacilitiesConnected' => one,
                 'EqualFlow' => one,
@@ -611,7 +611,6 @@ class EnergyRatingIndex301Validator
         
             ## [CRType=UserSpecified]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]' => {
-                '../Oven/FuelType' => one,
                 '../Oven/IsConvection' => one,
             },
         
@@ -619,18 +618,11 @@ class EnergyRatingIndex301Validator
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified] or [LtgType=UserSpecifiedAppendixG]
+            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified]
         },
         
             ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE"]]' => {
-                'extension/FractionQualifyingFixturesInterior' => one,
-                'extension/FractionQualifyingFixturesExterior' => one,
-                'extension/FractionQualifyingFixturesGarage' => one,
-            },
-            
-            ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014AEG"]]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
                 'extension/FractionQualifyingTierIFixturesInterior' => one,
                 'extension/FractionQualifyingTierIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIFixturesGarage' => one,
@@ -638,6 +630,15 @@ class EnergyRatingIndex301Validator
                 'extension/FractionQualifyingTierIIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIIFixturesGarage' => one,
             },
+        
+        
+            
+        # [CeilingFan]
+        '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            'Airflow[FanSpeed="medium"]/Efficiency' => one,
+            'Quantity' => one,
+        },
             
     }
     

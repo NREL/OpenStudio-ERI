@@ -19,7 +19,7 @@ class HVACtest < MiniTest::Test
       _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -41,7 +41,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -62,7 +62,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -75,7 +75,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, true, "Boiler", "electricity", nil, 1.0)
     _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_boiler_gas
@@ -90,7 +90,7 @@ class HVACtest < MiniTest::Test
       _check_heating_system(hpxml_doc, true, "Boiler", "natural gas", 0.80, 1.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -103,7 +103,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, true, "Boiler", "natural gas", nil, 1.0)
     _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_furnace_elec
@@ -118,7 +118,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -131,7 +131,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, true, "Furnace", "electricity", nil, 1.0)
     _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_furnace_gas
@@ -146,7 +146,7 @@ class HVACtest < MiniTest::Test
       _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -159,7 +159,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", nil, 1.0)
     _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_stove_oil
@@ -174,7 +174,7 @@ class HVACtest < MiniTest::Test
       _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -187,7 +187,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, true, "Stove", "fuel oil", nil, 1.0)
     _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_wall_furnace_propane
@@ -202,7 +202,7 @@ class HVACtest < MiniTest::Test
       _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -215,7 +215,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, true, "WallFurnace", "propane", nil, 1.0)
     _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_elec_resistance
@@ -230,7 +230,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -243,7 +243,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, true, "ElectricResistance", "electricity", nil, 1.0)
     _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_air_source_heat_pump
@@ -258,7 +258,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -271,7 +271,7 @@ class HVACtest < MiniTest::Test
     _check_heat_pump(hpxml_doc, true, "air-to-air", nil, nil, 1.0, 1.0)
     _check_cooling_system(hpxml_doc, false, nil, nil, nil)
     _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_mini_split_heat_pump
@@ -286,7 +286,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -299,7 +299,7 @@ class HVACtest < MiniTest::Test
     _check_heat_pump(hpxml_doc, true, "mini-split", nil, nil, 1.0, 1.0)
     _check_cooling_system(hpxml_doc, false, nil, nil, nil)
     _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_ground_source_heat_pump
@@ -314,7 +314,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -327,7 +327,7 @@ class HVACtest < MiniTest::Test
     _check_heat_pump(hpxml_doc, true, "ground-to-air", nil, nil, 1.0, 1.0)
     _check_cooling_system(hpxml_doc, false, nil, nil, nil)
     _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_central_air_conditioner
@@ -342,7 +342,7 @@ class HVACtest < MiniTest::Test
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
       _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -355,7 +355,7 @@ class HVACtest < MiniTest::Test
     _check_cooling_system(hpxml_doc, true, "central air conditioning", nil, 1.0)
     _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_room_air_conditioner
@@ -370,7 +370,7 @@ class HVACtest < MiniTest::Test
       _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
       _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
       _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
       if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
         _check_dse(hpxml_doc, 1.0)
       else
@@ -383,7 +383,7 @@ class HVACtest < MiniTest::Test
     _check_cooling_system(hpxml_doc, true, "room air conditioner", nil, 1.0)
     _check_heating_system(hpxml_doc, true, "Furnace", "natural gas", 0.78, 1.0)
     _check_heat_pump(hpxml_doc, false, nil, nil, nil, nil, nil)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
   
   def test_programmable_thermostat
@@ -395,12 +395,12 @@ class HVACtest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
     end
     
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_thermostat(hpxml_doc, "programmable thermostat", 68, 78, 68-2, 7*7, 78+2, 6*7)
+    _check_thermostat(hpxml_doc, "programmable thermostat")
   end
   
   private
@@ -492,31 +492,9 @@ class HVACtest < MiniTest::Test
     end
   end
 
-  def _check_thermostat(hpxml_doc, tstattype, htg_setpoint, clg_setpoint, setback_temp, setback_hrs, setup_temp, setup_hrs)
+  def _check_thermostat(hpxml_doc, tstattype)
     tstat = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl"]
     assert_equal(tstat.elements["ControlType"].text, tstattype)
-    assert_equal(Float(tstat.elements["SetpointTempHeatingSeason"].text), htg_setpoint)
-    assert_equal(Float(tstat.elements["SetpointTempCoolingSeason"].text), clg_setpoint)
-    if setback_temp.nil?
-      assert_nil(tstat.elements["SetbackTempHeatingSeason"])
-    else
-      assert_equal(Float(tstat.elements["SetbackTempHeatingSeason"].text), setback_temp)
-    end
-    if setback_hrs.nil?
-      assert_nil(tstat.elements["TotalSetbackHoursperWeekHeating"])
-    else
-      assert_equal(Float(tstat.elements["TotalSetbackHoursperWeekHeating"].text), setback_hrs)
-    end
-    if setup_temp.nil?
-      assert_nil(tstat.elements["SetupTempCoolingSeason"])
-    else
-      assert_equal(Float(tstat.elements["SetupTempCoolingSeason"].text), setup_temp)
-    end
-    if setup_hrs.nil?
-      assert_nil(tstat.elements["TotalSetupHoursperWeekCooling"])
-    else
-      assert_equal(Float(tstat.elements["TotalSetupHoursperWeekCooling"].text), setup_hrs)
-    end
   end
   
   def _check_dse(hpxml_doc, dse)

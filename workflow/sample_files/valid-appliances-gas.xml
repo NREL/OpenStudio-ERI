@@ -133,7 +133,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
@@ -141,7 +140,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>5</NominalRValue>
-                  <Thickness>1</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
@@ -343,8 +341,8 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer_ID1'/>
           <FuelType>natural gas</FuelType>
-          <EnergyFactor>3.01</EnergyFactor>
-          <ControlType>timer</ControlType>
+          <EnergyFactor>2.67</EnergyFactor>
+          <ControlType>moisture</ControlType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher_ID1'/>
@@ -358,11 +356,10 @@
         <CookingRange>
           <SystemIdentifier id='Range_ID1'/>
           <FuelType>natural gas</FuelType>
-          <IsInduction>true</IsInduction>
+          <IsInduction>false</IsInduction>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>natural gas</FuelType>
           <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>
