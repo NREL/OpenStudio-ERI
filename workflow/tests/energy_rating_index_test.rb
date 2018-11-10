@@ -2,10 +2,12 @@ require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
+require_relative '../../measures/HPXMLTranslator/measure'
 require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
 require_relative '../../measures/HPXMLTranslator/resources/schedules'
 require_relative '../../measures/HPXMLTranslator/resources/constants'
 require_relative '../../measures/HPXMLTranslator/resources/unit_conversions'
+require_relative '../../measures/HPXMLTranslator/resources/hotwater_appliances'
 
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
@@ -51,7 +53,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     test_num = 0
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_Test_HERS_Reference_Home")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next if xml.end_with? "HERSReferenceHome.xml"
+      next if xml.end_with? "ERIReferenceHome.xml"
       test_num += 1
       
       # Run test
@@ -87,7 +89,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def test_resnet_hers_method_proposed
-    # Proposed New HERS Method Test Suite
+    # Proposed New Method Test Suite
     # Approved by RESNET Board of Directors June 16, 2016
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_Proposed")
@@ -205,6 +207,14 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     # TODO
   end
   
+  def test_naseo_technical_exercises
+    parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    xmldir = "#{parent_dir}/tests/NASEO_Technical_Exercises"
+    Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
+      run_and_check(xml, parent_dir, false)
+    end
+  end
+  
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
@@ -231,15 +241,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       assert(!File.exists?(results_csv))
     else
       # Check all output files exist
-      ref_hpxml = File.join(parent_dir, "results", "HERSReferenceHome.xml")
-      rated_hpxml = File.join(parent_dir, "results", "HERSRatedHome.xml")
+      ref_hpxml = File.join(parent_dir, "results", "ERIReferenceHome.xml")
+      rated_hpxml = File.join(parent_dir, "results", "ERIRatedHome.xml")
       worksheet_csv = File.join(parent_dir, "results", "ERI_Worksheet.csv")
       assert(File.exists?(ref_hpxml))
       assert(File.exists?(rated_hpxml))
       assert(File.exists?(results_csv))
       assert(File.exists?(worksheet_csv))
       if using_iaf
-        iad_hpxml = File.join(parent_dir, "results", "HERSIndexAdjustmentDesign.xml")
+        iad_hpxml = File.join(parent_dir, "results", "ERIIndexAdjustmentDesign.xml")
         assert(File.exists?(iad_hpxml))
       end
       
@@ -408,9 +418,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
     assert_equal("manual", tstat)
     assert_equal(68, htg_sp)
-    assert_equal(0, htg_setback)
+    assert_nil(htg_setback)
     assert_equal(78, clg_sp)
-    assert_equal(0, clg_setup)
+    assert_nil(clg_setup)
     
     # Mechanical ventilation
     mv_kwh = _get_mech_vent(hpxml_doc)
@@ -574,54 +584,98 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def _get_internal_gains(hpxml_doc)
   
     s = ""
+    nbeds = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+    garage_present = Boolean(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
   
-    # Plug loads
     xml_pl_sens = 0.0
     xml_pl_lat = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad") do |pl|
-      frac_sens = Float(XMLHelper.get_value(pl, "extension/FracSensible"))
-      frac_lat = Float(XMLHelper.get_value(pl, "extension/FracLatent"))
-      btu = UnitConversions.convert(Float(XMLHelper.get_value(pl, "Load[Units='kWh/year']/Value")), "kWh", "Btu")
-      xml_pl_sens += (frac_sens * btu)
-      xml_pl_lat += (frac_lat * btu)
-    end
+  
+    # Plug loads: Televisions
+    annual_kwh, frac_sens, frac_lat = MiscLoads.get_televisions_values(cfa, nbeds)
+    btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    xml_pl_sens += (frac_sens * btu)
+    xml_pl_lat += (frac_lat * btu)
     s += "#{xml_pl_sens} #{xml_pl_lat}\n"
     
-    # Range, ClothesWasher, ClothesDryer, Dishwasher, Refrigerator
+    # Plug loads: Residual
+    annual_kwh, frac_sens, frac_lat = MiscLoads.get_residual_mels_values(cfa)
+    btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    xml_pl_sens += (frac_sens * btu)
+    xml_pl_lat += (frac_lat * btu)
+    s += "#{xml_pl_sens} #{xml_pl_lat}\n"
+    
     xml_appl_sens = 0.0
     xml_appl_lat = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange | /HPXML/Building/BuildingDetails/Appliances/ClothesWasher | /HPXML/Building/BuildingDetails/Appliances/ClothesDryer | /HPXML/Building/BuildingDetails/Appliances/Dishwasher | /HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
-      frac_sens = Float(XMLHelper.get_value(appl, "extension/FracSensible"))
-      frac_lat = Float(XMLHelper.get_value(appl, "extension/FracLatent"))
-      if appl.elements["RatedAnnualkWh"]
-        btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu")
-      else
-        btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualkWh")), "kWh", "Btu")
-        if appl.elements["extension/AnnualTherm"]
-          btu += UnitConversions.convert(Float(XMLHelper.get_value(appl, "extension/AnnualTherm")), "therm", "Btu")
-        end
-      end
-      xml_appl_sens += (frac_sens * btu)
-      xml_appl_lat += (frac_lat * btu)
+    
+    # Appliances: CookingRange
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange") do |appl|
+      cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
+      oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
+      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
+      btu = UnitConversions.convert(cook_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cook_annual_therm, "therm", "Btu")
+      xml_appl_sens += (cook_frac_sens * btu)
+      xml_appl_lat += (cook_frac_lat * btu)
     end
+    
+    # Appliances: Refrigerator
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
+      btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu")
+      xml_appl_sens += btu
+    end
+    
+    # Appliances: Dishwasher
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/Dishwasher") do |appl|
+      dw_ef = Float(XMLHelper.get_value(appl, "EnergyFactor"))
+      dw_cap = Float(XMLHelper.get_value(appl, "PlaceSettingCapacity"))
+      dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dw_ef, dw_cap)
+      btu = UnitConversions.convert(dw_annual_kwh, "kWh", "Btu")
+      xml_appl_sens += (dw_frac_sens * btu)
+      xml_appl_lat += (dw_frac_lat * btu)
+    end
+    
+    # Appliances: ClothesWasher
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher") do |appl|
+      cw_ler = Float(XMLHelper.get_value(appl, "RatedAnnualkWh"))
+      cw_elec_rate = Float(XMLHelper.get_value(appl, "LabelElectricRate"))
+      cw_gas_rate = Float(XMLHelper.get_value(appl, "LabelGasRate"))
+      cw_agc = Float(XMLHelper.get_value(appl, "LabelAnnualGasCost"))
+      cw_cap = Float(XMLHelper.get_value(appl, "Capacity"))
+      cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, cw_ler, cw_elec_rate, cw_gas_rate, cw_agc, cw_cap)
+      btu = UnitConversions.convert(cw_annual_kwh, "kWh", "Btu")
+      xml_appl_sens += (cw_frac_sens * btu)
+      xml_appl_lat += (cw_frac_lat * btu)
+    end
+    
+    # Appliances: ClothesDryer
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
+      cd_fuel = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cd_ef = Float(XMLHelper.get_value(appl, "EnergyFactor"))
+      cd_control = XMLHelper.get_value(appl, "ControlType")
+      cw_ler = Float(XMLHelper.get_value(appl, "../ClothesWasher/RatedAnnualkWh"))
+      cw_cap = Float(XMLHelper.get_value(appl, "../ClothesWasher/Capacity"))
+      cw_mef = Float(XMLHelper.get_value(appl, "../ClothesWasher/ModifiedEnergyFactor"))
+      cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nbeds, cd_fuel, cd_ef, cd_control, cw_ler, cw_cap, cw_mef)
+      btu = UnitConversions.convert(cd_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cd_annual_therm, "therm", "Btu")
+      xml_appl_sens += (cd_frac_sens * btu)
+      xml_appl_lat += (cd_frac_lat * btu)
+    end
+    
     s += "#{xml_appl_sens} #{xml_appl_lat}\n"
     
     # Water Use
-    xml_water_sens = 0.0
-    xml_water_lat = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture") do |wf|
-      xml_water_sens += Float(XMLHelper.get_value(wf, "extension/AnnualSensibleGainsBtu"))
-      xml_water_lat += Float(XMLHelper.get_value(wf, "extension/AnnualLatentGainsBtu"))
-    end
+    xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_fixtures_gains_sens_lat(nbeds)
     s += "#{xml_water_sens} #{xml_water_lat}\n"
     
     # Occupants
     xml_occ_sens = 0.0
     xml_occ_lat = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy") do |occ|
-      frac_sens = Float(XMLHelper.get_value(occ, "extension/FracSensible"))
-      frac_lat = Float(XMLHelper.get_value(occ, "extension/FracLatent"))
-      btu = Float(XMLHelper.get_value(occ, "NumberofResidents")) * Float(XMLHelper.get_value(occ, "extension/HeatGainBtuPerPersonPerHr")) * Float(XMLHelper.get_value(occ, "extension/PersonHrsPerDay")) * 365.0
+      num_occ = Float(XMLHelper.get_value(occ, "NumberofResidents"))
+      heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
+      btu = num_occ * heat_gain * hrs_per_day * 365.0
       xml_occ_sens += (frac_sens * btu)
       xml_occ_lat += (frac_lat * btu)
     end
@@ -629,9 +683,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     # Lighting
     xml_ltg_sens = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting") do |ltg|
-      ltg_kwh = Float(XMLHelper.get_value(ltg, "extension/AnnualInteriorkWh")) + Float(XMLHelper.get_value(ltg, "extension/AnnualGaragekWh"))
-      xml_ltg_sens += UnitConversions.convert(ltg_kwh, "kWh", "Btu")
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting/LightingFractions") do |ltg|
+      fFI_int = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesInterior"))
+      fFI_ext = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesExterior"))
+      fFI_grg = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesGarage"))
+      fFII_int = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesInterior"))
+      fFII_ext = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesExterior"))
+      fFII_grg = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesGarage"))
+      int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, garage_present, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+      xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, "kWh", "Btu")
     end
     s += "#{xml_ltg_sens}\n"
     
@@ -678,25 +738,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def _get_tstat(hpxml_doc)
-    tstat = ""
-    htg_sp = 0.0
-    htg_setback = 0.0
-    clg_sp = 0.0
-    clg_setup = 0.0
-    num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl") do |ctrl|
-      tstat = XMLHelper.get_value(ctrl, "ControlType").gsub(" thermostat", "")
-      htg_sp += Float(XMLHelper.get_value(ctrl, "SetpointTempHeatingSeason"))
-      if ctrl.elements["SetbackTempHeatingSeason"]
-        htg_setback += Float(XMLHelper.get_value(ctrl, "SetbackTempHeatingSeason"))
-      end
-      clg_sp += Float(XMLHelper.get_value(ctrl, "SetpointTempCoolingSeason"))
-      if ctrl.elements["SetupTempCoolingSeason"]
-        clg_setup += Float(XMLHelper.get_value(ctrl, "SetupTempCoolingSeason"))
-      end
-      num += 1
-    end
-    return tstat, htg_sp/num, htg_setback/num, clg_sp/num, clg_setup/num
+    control = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl"]
+    control_type = XMLHelper.get_value(control, "ControlType")
+    tstat = control_type.gsub(" thermostat", "")
+    htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
+    clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
+    return tstat, htg_sp, htg_setback_sp, clg_sp, clg_setup_sp
   end
   
   def _get_mech_vent(hpxml_doc)
@@ -710,28 +757,23 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def _get_dhw(hpxml_doc)
-    ref_pipe_l = 0.0
-    ref_loop_l = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution") do |hwdist|
-      if hwdist.elements["SystemType/Standard/PipingLength"]
-        ref_pipe_l += Float(XMLHelper.get_value(hwdist, "SystemType/Standard/PipingLength"))
-      end
-      if hwdist.elements["extension/RefLoopL"]
-        ref_loop_l += Float(XMLHelper.get_value(hwdist, "extension/RefLoopL"))
-      end
-    end
+    has_uncond_bsmnt = (not hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
+    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    ncfl = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+    ref_loop_l = HotWaterAndAppliances.get_default_recirc_loop_length(ref_pipe_l)
     return ref_pipe_l, ref_loop_l
   end
   
   def _check_e_ratio(results_csv)
     require 'csv'
-    hers_index = nil
+    eri = nil
     CSV.foreach(results_csv) do |row|
-      next if row[0] != "HERS Index"
-      hers_index = Float(row[1])
+      next if row[0] != "ERI"
+      eri = Float(row[1])
       break
     end
-    assert_in_epsilon(100, hers_index, 0.005)
+    assert_in_epsilon(100, eri, 0.005)
   end
   
   def _check_method_results(results_csv, test_num, has_tankless_water_heater, using_iaf)
@@ -753,7 +795,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     nbr = {1=>3,    2=>3,    3=>2,    4=>4,    5=>3}
     nst = {1=>1,    2=>1,    3=>1,    4=>1,    5=>1}
       
-    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
+    _check_method_results_eri(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
     
   end
   
@@ -782,11 +824,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       ec_x_la =       {6=>21.86,  7=>21.86,  8=>21.86,  9=>20.70,  10=>23.02,  11=>23.92,  12=>21.86,  13=>21.86,  14=>21.86,  15=>21.86,  16=>21.86,  17=>21.86,  18=>21.86,  19=>21.86,  20=>21.86,  21=>21.86,  22=>21.86}
     end
     
-    _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
+    _check_method_results_eri(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
     
   end
   
-  def _check_method_results_hers_score(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
+  def _check_method_results_eri(test_num, values, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, using_iaf, cfa, nbr, nst)
                                        
     if heating_fuel[test_num] == 'gas'
       heating_a = 1.0943
@@ -844,12 +886,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     
     if using_iaf
       trl_iaf = trl * iaf_rh
-      hers_score = 100 * tnml / trl_iaf
+      eri = 100 * tnml / trl_iaf
     else
-      hers_score = 100 * tnml / trl
+      eri = 100 * tnml / trl
     end
     
-    assert_operator((values['HERS Index'] - hers_score).abs / values['HERS Index'], :<, 0.005)
+    assert_operator((values['ERI'] - eri).abs / values['ERI'], :<, 0.005)
   end
   
   def _get_hot_water(results_csv)
@@ -944,7 +986,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
   def _check_hot_water_pre_addendum_a(test_num, curr_val, base_val=nil, mn_val=nil)
     
-    # Acceptance criteria from HERS Hot Water Performance Tests Excel spreadsheet
+    # Acceptance criteria from Hot Water Performance Tests Excel spreadsheet
     min_max_abs = nil
     min_max_fl_delta_abs = nil
     min_max_base_delta_percent = nil

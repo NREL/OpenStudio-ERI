@@ -133,7 +133,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
@@ -141,7 +140,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>5</NominalRValue>
-                  <Thickness>1</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
@@ -362,16 +360,18 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>electricity</FuelType>
           <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>
       <Lighting>
         <LightingFractions>
           <extension>
-            <FractionQualifyingFixturesInterior>0.5</FractionQualifyingFixturesInterior>
-            <FractionQualifyingFixturesExterior>0.5</FractionQualifyingFixturesExterior>
-            <FractionQualifyingFixturesGarage>0.5</FractionQualifyingFixturesGarage>
+            <FractionQualifyingTierIFixturesInterior>0.5</FractionQualifyingTierIFixturesInterior>
+            <FractionQualifyingTierIFixturesExterior>0.5</FractionQualifyingTierIFixturesExterior>
+            <FractionQualifyingTierIFixturesGarage>0.5</FractionQualifyingTierIFixturesGarage>
+            <FractionQualifyingTierIIFixturesInterior>0.25</FractionQualifyingTierIIFixturesInterior>
+            <FractionQualifyingTierIIFixturesExterior>0.25</FractionQualifyingTierIIFixturesExterior>
+            <FractionQualifyingTierIIFixturesGarage>0.25</FractionQualifyingTierIIFixturesGarage>
           </extension>
         </LightingFractions>
       </Lighting>

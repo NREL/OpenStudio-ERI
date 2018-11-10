@@ -11,7 +11,7 @@ The ERI is defined by [ANSI/RESNET/ICC 301-2014 "Standard for the Calculation an
 
 ## Setup
 
-1. Download [OpenStudio 2.6.0](https://github.com/NREL/OpenStudio/releases/tag/v2.6.0). At a minimum, install the Command Line Interface and EnergyPlus components.
+1. Download [OpenStudio 2.7.0](https://github.com/NREL/OpenStudio/releases/tag/v2.7.0). At a minimum, install the Command Line Interface and EnergyPlus components.
 2. Clone or download this repository's source code. 
 3. To obtain all available weather files, navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory and run:  
 ```openstudio --no-ssl energy_rating_index.rb --download-weather``` 
@@ -23,7 +23,7 @@ The ERI is defined by [ANSI/RESNET/ICC 301-2014 "Standard for the Calculation an
 ```openstudio --no-ssl energy_rating_index.rb -s -x sample_files/valid.xml```  
 Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) simulations will be executed in parallel on the local machine.
 3. This will generate output as shown below:
-![CLI output](https://user-images.githubusercontent.com/5861765/44598523-84351280-a790-11e8-91ef-56542a74028a.png)
+![CLI output](https://user-images.githubusercontent.com/5861765/46991458-4e8f1480-d0c3-11e8-8234-22ed4bb4f383.png)
 
 Run `openstudio energy_rating_index.rb -h` to see all available commands/arguments.
 
@@ -39,7 +39,7 @@ There are additional ways that software developers using this workflow can reduc
 ## Outputs
 
 Upon completion, multiple outputs are currently available:
-* ERI_Results.csv and ERI_Worksheet.csv files (that mirror the [HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
+* ERI_Results.csv and ERI_Worksheet.csv files (that mirror the [RESNET HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
 * Reference/Rated/IndexAdjustment Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
 * Summary annual energy consumption by fuel type and/or end use
 * EnergyPlus input/output files
@@ -56,7 +56,7 @@ Continuous integration tests are automatically run for any change to this reposi
 
 Tests can be run locally as follows. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
 ```openstudio tests/energy_rating_index_test.rb``` (all tests)  
-```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (HERS Method tests only)
+```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
 
 At the completion of the test, there will be output that denotes the number of failures/errors like so:  
 ```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  

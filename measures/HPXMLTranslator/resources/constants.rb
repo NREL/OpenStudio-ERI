@@ -150,16 +150,16 @@ class Constants
     return 'Residential'
   end
   def self.CalcTypeERIRatedHome
-    return 'HERS Rated Home'
+    return 'ERI Rated Home'
   end
   def self.CalcTypeERIReferenceHome
-    return 'HERS Reference Home'
+    return 'ERI Reference Home'
   end
   def self.CalcTypeERIIndexAdjustmentDesign
-    return 'HERS Index Adjustment Design'
+    return 'ERI Index Adjustment Design'
   end
   def self.CalcTypeERIIndexAdjustmentReferenceHome
-    return 'HERS Index Adjustment Reference Home'
+    return 'ERI Index Adjustment Reference Home'
   end
   def self.CalcTypeStandard
     return 'Standard'
@@ -199,6 +199,9 @@ class Constants
   end
   def self.DuctedInfoMiniSplitHeatPump
     return __method__.to_s
+  end
+  def self.EndUseCeilingFan
+    return 'residential ceiling fan'
   end
   def self.EndUseHVACFan
     return 'residential hvac fan'
@@ -284,6 +287,21 @@ class Constants
   end
   def self.MaterialPEX
     return 'pex'
+  end
+  def self.PVArrayTypeFixedOpenRack
+    return 'FixedOpenRack'
+  end
+  def self.PVArrayTypeFixedRoofMount
+    return 'FixedRoofMounted'
+  end
+  def self.PVArrayTypeFixed1Axis
+    return 'OneAxis'
+  end
+  def self.PVArrayTypeFixed1AxisBacktracked
+    return 'OneAxisBacktracking'
+  end
+  def self.PVArrayTypeFixed2Axis
+    return 'TwoAxis'
   end
   def self.PVModuleTypeStandard
     return 'Standard'
@@ -788,31 +806,31 @@ class Constants
   def self.SizingInfoCMUWallFurringInsRvalue
     return __method__.to_s
   end
-  def self.SizingInfoDuctsLocationZone
+  def self.SizingInfoDuctsLocationZones
     return __method__.to_s
   end
-  def self.SizingInfoDuctsReturnLeakageFrac
+  def self.SizingInfoDuctsReturnLeakageFracs
     return __method__.to_s
   end
-  def self.SizingInfoDuctsReturnLeakageCFM25
+  def self.SizingInfoDuctsReturnLeakageCFM25s
     return __method__.to_s
   end
-  def self.SizingInfoDuctsReturnRvalue
+  def self.SizingInfoDuctsReturnAreas
     return __method__.to_s
   end
-  def self.SizingInfoDuctsReturnArea
+  def self.SizingInfoDuctsReturnRvalues
     return __method__.to_s
   end
-  def self.SizingInfoDuctsSupplyLeakageFrac
+  def self.SizingInfoDuctsSupplyLeakageFracs
     return __method__.to_s
   end
-  def self.SizingInfoDuctsSupplyLeakageCFM25
+  def self.SizingInfoDuctsSupplyLeakageCFM25s
     return __method__.to_s
   end
-  def self.SizingInfoDuctsSupplyRvalue
+  def self.SizingInfoDuctsSupplyAreas
     return __method__.to_s
   end
-  def self.SizingInfoDuctsSupplyArea
+  def self.SizingInfoDuctsSupplyRvalues
     return __method__.to_s
   end
   def self.SizingInfoGSHPBoreConfig

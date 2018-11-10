@@ -756,7 +756,6 @@ class Geometry
   def self.get_walls_connected_to_floor(wall_surfaces, floor_surface)
       adjacent_wall_surfaces = []
       
-      # Note: Algorithm assumes that walls span an entire edge of the floor.
       wall_surfaces.each do |wall_surface|
           next if wall_surface.space.get != floor_surface.space.get
           wall_vertices = wall_surface.vertices
@@ -765,17 +764,17 @@ class Geometry
               floor_vertices = floor_surface.vertices
               floor_vertices.each_with_index do |fv1, fidx|
                   fv2 = floor_vertices[fidx-1]
-                  # Identical edge?
-                  if self.equal_vertices([wv1.x, wv1.y, 0], [fv1.x, fv1.y, 0]) and self.equal_vertices([wv2.x, wv2.y, 0], [fv2.x, fv2.y, 0])
-                      adjacent_wall_surfaces << wall_surface
-                  elsif self.equal_vertices([wv1.x, wv1.y, 0], [fv2.x, fv2.y, 0]) and self.equal_vertices([wv2.x, wv2.y, 0], [fv1.x, fv1.y, 0])
-                      adjacent_wall_surfaces << wall_surface
+                  # Wall within floor edge?
+                  if self.is_point_between([wv1.x, wv1.y, wv1.z], [fv1.x, fv1.y, fv1.z], [fv2.x, fv2.y, fv2.z]) and self.is_point_between([wv2.x, wv2.y, wv2.z], [fv1.x, fv1.y, fv1.z], [fv2.x, fv2.y, fv2.z])
+                      if not adjacent_wall_surfaces.include? wall_surface
+                          adjacent_wall_surfaces << wall_surface
+                      end
                   end
               end
           end
       end
       
-      return adjacent_wall_surfaces.uniq!
+      return adjacent_wall_surfaces
   end
 
   def self.is_living(space_or_zone)
@@ -1525,7 +1524,23 @@ class Geometry
     return true
 
   end
-
+  
+  def self.get_occupancy_default_num(nbeds)
+    return Float(nbeds)
+  end
+  
+  def self.get_occupancy_default_values()
+    # Table 4.2.2(3). Internal Gains for Reference Homes
+    hrs_per_day = 16.5 # hrs/day
+    sens_gains = 3716.0 # Btu/person/day
+    lat_gains = 2884.0 # Btu/person/day
+    tot_gains = sens_gains + lat_gains
+    heat_gain = tot_gains/hrs_per_day # Btu/person/hr
+    sens = sens_gains/tot_gains
+    lat = lat_gains/tot_gains
+    return heat_gain, hrs_per_day, sens, lat
+  end
+  
   def self.process_eaves(model, runner, eaves_depth, roof_structure)
 
     # Error checking

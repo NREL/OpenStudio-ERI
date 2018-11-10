@@ -139,7 +139,7 @@
             <FoundationWall>
               <SystemIdentifier id='fndwall-1'/>
               <Height>2</Height>
-              <Area>3078</Area>
+              <Area>336</Area>
               <Thickness>6</Thickness>
               <DepthBelowGrade>0</DepthBelowGrade>
               <Insulation>
@@ -163,7 +163,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
@@ -171,7 +170,6 @@
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0</NominalRValue>
-                  <Thickness>0</Thickness>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
@@ -389,7 +387,6 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
-          <FuelType>electricity</FuelType>
         </Oven>
       </Appliances>
       <Lighting/>

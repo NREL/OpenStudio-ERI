@@ -77,7 +77,7 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
-            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting] and [CeilingFan]
         },
         
         
@@ -178,7 +178,7 @@ class EnergyRatingIndex301Validator
     
             ## [FoundationType=Ambient]
             '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient]' => {
-                'FrameFloor' => one_or_more, # See [FoundationSlab]
+                'FrameFloor' => one_or_more, # See [FoundationFrameFloor]
             },
     
             ## [FoundationFrameFloor]
@@ -363,7 +363,6 @@ class EnergyRatingIndex301Validator
             
             ## [CoolingType=RoomAC]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioning"]' => {
-                'DistributionSystem' => zero_or_one, # See [HVACDistribution]
                 'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
             },
             
@@ -413,28 +412,23 @@ class EnergyRatingIndex301Validator
         # [HVACDistribution]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution' => {
             'SystemIdentifier' => one, # Required by HPXML schema
-            '[DistributionSystemType/AirDistribution | DistributionSystemType/HydronicDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=Hydronic] or [HVACDistType=DSE]
+            '[DistributionSystemType/AirDistribution | DistributionSystemType/HydronicDistribution | DistributionSystemType[Other="DSE"]]' => one, # See [HVACDistType=Air] or [HVACDistType=DSE]
         },
             
             ## [HVACDistType=Air]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
                 'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
                 'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value' => one,
-                'Ducts[DuctType="supply"]' => one_or_more, # See [HVACDucts]
-                'Ducts[DuctType="return"]' => one_or_more, # See [HVACDucts]
+                'Ducts[DuctType="supply"]' => one_or_more, # See [HVACDuct]
+                'Ducts[DuctType="return"]' => one_or_more, # See [HVACDuct]
             },
         
-            ## [HVACDistType=Hydronic]
-            '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicDistribution' => {
-                # TODO
-            },
-            
             ## [HVACDistType=DSE]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution[DistributionSystemType[Other="DSE"]]' => {
                 '[AnnualHeatingDistributionSystemEfficiency | AnnualCoolingDistributionSystemEfficiency]' => one_or_more,
             },
             
-            ## [HVACDucts]
+            ## [HVACDuct]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
                 'DuctInsulationRValue' => one,
                 'DuctLocation' => one, # TODO: Restrict values
@@ -507,7 +501,7 @@ class EnergyRatingIndex301Validator
             'SystemIdentifier' => one, # Required by HPXML schema
             '[SystemType/Standard | SystemType/Recirculation]' => one, # See [HWDistType=Standard] or [HWDistType=Recirculation]
             'PipeInsulation/PipeRValue' => one,
-            'DrainWaterHeatRecovery' => zero_or_one, # See [HotWaterDistribution DrainWaterHeatRecovery]
+            'DrainWaterHeatRecovery' => zero_or_one, # See [DrainWaterHeatRecovery]
         },
         
             ## [HWDistType=Standard]
@@ -523,7 +517,7 @@ class EnergyRatingIndex301Validator
                 'PumpPower' => one,
             },
         
-            ## [HotWaterDistribution DrainWaterHeatRecovery]
+            ## [DrainWaterHeatRecovery]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/DrainWaterHeatRecovery' => {
                 'FacilitiesConnected' => one,
                 'EqualFlow' => one,
@@ -544,10 +538,13 @@ class EnergyRatingIndex301Validator
         # [PVSystem]
         '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => {
             'SystemIdentifier' => one, # Required by HPXML schema
+            '[ModuleType="standard" or ModuleType="premium" or ModuleType="thin film"]' => one,
+            '[ArrayType="fixed roof mount" or ArrayType="fixed open rack" or ArrayType="1-axis" or ArrayType="1-axis backtracked" or ArrayType="2-axis"]' => one,
             'ArrayAzimuth' => one,
             'ArrayTilt' => one,
-            'InverterEfficiency' => one,
             'MaxPowerOutput' => one,
+            'InverterEfficiency' => one, # PVWatts default is 0.96
+            'SystemLossesFraction' => one, # PVWatts default is 0.14
         },
         
         
@@ -613,7 +610,6 @@ class EnergyRatingIndex301Validator
         
             ## [CRType=UserSpecified]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]' => {
-                '../Oven/FuelType' => one,
                 '../Oven/IsConvection' => one,
             },
         
@@ -621,18 +617,11 @@ class EnergyRatingIndex301Validator
         
         # [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting' => {
-            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified] or [LtgType=UserSpecifiedAppendixG]
+            'LightingFractions' => zero_or_one, # Uses Reference Home if not provided; otherwise see [LtgType=UserSpecified]
         },
         
             ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014" or Version="2014A" or Version="2014AE"]]' => {
-                'extension/FractionQualifyingFixturesInterior' => one,
-                'extension/FractionQualifyingFixturesExterior' => one,
-                'extension/FractionQualifyingFixturesGarage' => one,
-            },
-            
-            ## [LtgType=UserSpecified]
-            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions[/HPXML/SoftwareInfo/extension/ERICalculation[Version="2014AEG"]]' => {
+            '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
                 'extension/FractionQualifyingTierIFixturesInterior' => one,
                 'extension/FractionQualifyingTierIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIFixturesGarage' => one,
@@ -640,6 +629,15 @@ class EnergyRatingIndex301Validator
                 'extension/FractionQualifyingTierIIFixturesExterior' => one,
                 'extension/FractionQualifyingTierIIFixturesGarage' => one,
             },
+        
+        
+            
+        # [CeilingFan]
+        '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => {
+            'SystemIdentifier' => one, # Required by HPXML schema
+            'Airflow[FanSpeed="medium"]/Efficiency' => one,
+            'Quantity' => one,
+        },
             
     }
     
