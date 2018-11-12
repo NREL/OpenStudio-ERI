@@ -97,7 +97,7 @@
                 <Wall>
                   <SystemIdentifier id='attic-wall-1'/>
                   <WallType>
-                    <WoodStud></WoodStud>
+                    <WoodStud/>
                   </WallType>
                   <Area>32</Area>
                   <SolarAbsorptance>0.75</SolarAbsorptance>
@@ -165,7 +165,7 @@
           <Wall>
             <SystemIdentifier id='agwall-1'/>
             <WallType>
-              <WoodStud></WoodStud>
+              <WoodStud/>
             </WallType>
             <Area>3796</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
@@ -229,7 +229,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
@@ -243,7 +243,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='SpaceCool_ID1'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>48000</CoolingCapacity>
