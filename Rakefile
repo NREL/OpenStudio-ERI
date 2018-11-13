@@ -13,7 +13,7 @@ namespace :test do
   desc 'Run all tests'
   Rake::TestTask.new('all') do |t|
     t.libs << 'test'
-    t.test_files = Dir['measures/*/tests/*.rb'] + Dir['workflow/tests/*.rb']
+    t.test_files = Dir['measures/*/tests/*.rb'] + Dir['workflow/tests/*.rb'] - Dir['measures/HPXMLtoOpenStudio/tests/*.rb'] # HPXMLtoOpenStudio is tested upstream
     t.warning = false
     t.verbose = true
   end
