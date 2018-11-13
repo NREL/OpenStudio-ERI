@@ -2,10 +2,6 @@ class EnergyRatingIndex301Validator
 
   def self.run_validator(hpxml_doc)
   
-    one = [1]
-    zero_or_one = [0,1]
-    one_or_more = []
-  
     # A hash of hashes that defines the XML elements used by the ERI HPXML Use Case.
     #
     # Example:
@@ -23,6 +19,11 @@ class EnergyRatingIndex301Validator
     #     }
     # }
     #
+    
+    one = [1]
+    zero_or_one = [0,1]
+    zero_or_more = nil
+    one_or_more = []
     
     requirements = {
     
@@ -61,12 +62,12 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Enclosure/Doors' => zero_or_one, # See [Door]
             
             '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
-            
+
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_one, # See [HeatingSystem]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_one, # See [CoolingSystem]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_one, # See [HeatPump]
             '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl' => zero_or_one, # See [HVACControl]
-            
+
             '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
             '/HPXML/Building/BuildingDetails/Systems/WaterHeating' => zero_or_one, # See [WaterHeatingSystem]
             '/HPXML/Building/BuildingDetails/Systems/Photovoltaics' => zero_or_one, # See [PVSystem]
@@ -77,7 +78,8 @@ class EnergyRatingIndex301Validator
             '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
             '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
             
-            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting] and [CeilingFan]
+            '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
+            '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => zero_or_more, # See [CeilingFan]
         },
         
         
@@ -647,6 +649,7 @@ class EnergyRatingIndex301Validator
     requirements.each do |parent, requirement|
       if parent.nil? # Unconditional
         requirement.each do |child, expected_sizes|
+          next if expected_sizes.nil?
           xpath = combine_into_xpath(parent, child)
           actual_size = REXML::XPath.first(hpxml_doc, "count(#{xpath})")
           check_number_of_elements(actual_size, expected_sizes, xpath, errors)
@@ -655,6 +658,7 @@ class EnergyRatingIndex301Validator
         next if hpxml_doc.elements[parent].nil? # Skip if parent element doesn't exist
         hpxml_doc.elements.each(parent) do |parent_element|
           requirement.each do |child, expected_sizes|
+            next if expected_sizes.nil?
             xpath = combine_into_xpath(parent, child)
             actual_size = REXML::XPath.first(parent_element, "count(#{child})")
             check_number_of_elements(actual_size, expected_sizes, xpath, errors)
