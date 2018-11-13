@@ -1,7 +1,7 @@
 # Used by energy_rating_index.rb.
 # Separate ruby script to allow being called using system() on Windows.
 
-require_relative "../measures/HPXMLTranslator/resources/meta_measure"
+require_relative "../measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 def get_designdir(basedir, design)
   return File.join(basedir, design.gsub(' ',''))
@@ -51,7 +51,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   update_args_hash(measures, measure_subdir, args)
   
   # Add HPXML translator measure to workflow
-  measure_subdir = "HPXMLTranslator"
+  measure_subdir = "HPXMLtoOpenStudio"
   args = {}
   args['hpxml_path'] = output_hpxml_path
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
