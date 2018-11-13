@@ -1,13 +1,13 @@
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/measure"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/airflow"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constants"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/constructions"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/geometry"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/hotwater_appliances"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/lighting"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/unit_conversions"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/waterheater"
-require "#{File.dirname(__FILE__)}/../../HPXMLTranslator/resources/xmlhelper"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/measure"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/airflow"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/constants"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/constructions"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/geometry"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/hotwater_appliances"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/lighting"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/unit_conversions"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/waterheater"
+require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/xmlhelper"
 
 class EnergyRatingIndex301Ruleset
 
@@ -868,8 +868,6 @@ class EnergyRatingIndex301Ruleset
         attwall = XMLHelper.add_element(new_window, "AttachedToWall")
         attwall.attributes["idref"] = wall_id
         set_window_interior_shading_reference(new_window)
-        extension = new_window.elements["extension"]
-        XMLHelper.add_element(extension, "Height", 5.0)
       end
     end
 
@@ -906,8 +904,6 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_window, orig_window, "Overhangs")
       XMLHelper.copy_element(new_window, orig_window, "AttachedToWall")
       set_window_interior_shading_reference(new_window)
-      extension = new_window.elements["extension"]
-      XMLHelper.add_element(extension, "Height", 5.0)
     end
     
   end
@@ -2064,54 +2060,6 @@ class EnergyRatingIndex301Ruleset
       return q_tot - 2.0/3.0 * q_tot
     end
     return q_tot - q_inf
-  end
-
-  def self.is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
-    interior_conditioned = is_adjacent_to_conditioned(interior_adjacent_to)
-    exterior_conditioned = is_adjacent_to_conditioned(exterior_adjacent_to)
-    return (interior_conditioned != exterior_conditioned)
-  end
-
-  def self.is_adjacent_to_conditioned(adjacent_to)
-    if adjacent_to == "living space"
-      return true
-    elsif adjacent_to == "garage"
-      return false
-    elsif adjacent_to == "vented attic"
-      return false
-    elsif adjacent_to == "unvented attic"
-      return false
-    elsif adjacent_to == "cape cod"
-      return true
-    elsif adjacent_to == "cathedral ceiling"
-      return true
-    elsif adjacent_to == "unconditioned basement"
-      return false
-    elsif adjacent_to == "conditioned basement"
-      return true
-    elsif adjacent_to == "crawlspace"
-      return false
-    elsif adjacent_to == "ambient"
-      return false
-    elsif adjacent_to == "ground"
-      return false
-    end
-    fail "Unexpected adjacent_to (#{adjacent_to})."
-  end
-
-  def self.get_foundation_interior_adjacent_to(fnd_type)
-    if fnd_type.elements["Basement[Conditioned='true']"]
-      interior_adjacent_to = "conditioned basement"
-    elsif fnd_type.elements["Basement[Conditioned='false']"]
-      interior_adjacent_to = "unconditioned basement"
-    elsif fnd_type.elements["Crawlspace"]
-      interior_adjacent_to = "crawlspace"
-    elsif fnd_type.elements["SlabOnGrade"]
-      interior_adjacent_to = "living space"
-    elsif fnd_type.elements["Ambient"]  
-      interior_adjacent_to = "ambient"
-    end
-    return interior_adjacent_to
   end
 
   def self.get_exterior_wall_area_fracs(orig_details)

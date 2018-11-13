@@ -2,12 +2,12 @@ require 'openstudio'
 require 'openstudio/measure/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
-require_relative '../../measures/HPXMLTranslator/measure'
-require_relative '../../measures/HPXMLTranslator/resources/xmlhelper'
-require_relative '../../measures/HPXMLTranslator/resources/schedules'
-require_relative '../../measures/HPXMLTranslator/resources/constants'
-require_relative '../../measures/HPXMLTranslator/resources/unit_conversions'
-require_relative '../../measures/HPXMLTranslator/resources/hotwater_appliances'
+require_relative '../../measures/HPXMLtoOpenStudio/measure'
+require_relative '../../measures/HPXMLtoOpenStudio/resources/xmlhelper'
+require_relative '../../measures/HPXMLtoOpenStudio/resources/schedules'
+require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
+require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
+require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 
 class EnergyRatingIndexTest < Minitest::Test
 

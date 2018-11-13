@@ -6,10 +6,10 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
-require_relative "../measures/HPXMLTranslator/measure"
-require_relative "../measures/HPXMLTranslator/resources/constants"
-require_relative "../measures/HPXMLTranslator/resources/xmlhelper"
-require_relative "../measures/HPXMLTranslator/resources/waterheater"
+require_relative "../measures/HPXMLtoOpenStudio/measure"
+require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
+require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
+require_relative "../measures/HPXMLtoOpenStudio/resources/waterheater"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
