@@ -11,7 +11,7 @@ The ERI is defined by [ANSI/RESNET/ICC 301-2014 "Standard for the Calculation an
 
 ## Setup
 
-1. Download [OpenStudio 2.7.0](https://github.com/NREL/OpenStudio/releases/tag/v2.7.0). At a minimum, install the Command Line Interface and EnergyPlus components.
+1. Download [OpenStudio 2.7.1](https://github.com/NREL/OpenStudio/releases/tag/v2.7.1). At a minimum, install the Command Line Interface and EnergyPlus components.
 2. Clone or download this repository's source code. 
 3. To obtain all available weather files, navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory and run:  
 ```openstudio --no-ssl energy_rating_index.rb --download-weather``` 
