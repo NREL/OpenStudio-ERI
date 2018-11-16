@@ -1,9 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301</name>
-  <uid>b1543b30-9465-45ff-ba04-1d1f85e763bc</uid>
-  <version_id>81743341-0179-4047-878f-0a70c5b8a3ff</version_id>
-  <version_modified>20181101T200912Z</version_modified>
+  <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
+  <version_id>8a9132d4-7702-424e-97b7-f467702d5752</version_id>
+  <version_modified>20181116T175945Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -116,34 +116,40 @@
   </attributes>
   <files>
     <file>
-      <filename>xmlhelper.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>805D6B21</checksum>
-    </file>
-    <file>
-      <filename>materials.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>82D32FEE</checksum>
-    </file>
-    <file>
-      <filename>psychrometrics.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>208441EA</checksum>
-    </file>
-    <file>
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>32780B31</checksum>
+      <checksum>C68A8B3B</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>730EFD36</checksum>
+      <checksum>6EFA3187</checksum>
+    </file>
+    <file>
+      <filename>test_appliances.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>308567F1</checksum>
+    </file>
+    <file>
+      <filename>test_lighting.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>ABC9AEA9</checksum>
+    </file>
+    <file>
+      <filename>test_mechanical_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C429C6B1</checksum>
+    </file>
+    <file>
+      <filename>test_water_heating.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2107B366</checksum>
     </file>
     <file>
       <version>
@@ -154,67 +160,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>7EAB7A62</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>24BF70D4</checksum>
-    </file>
-    <file>
-      <filename>location.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>415A8CBA</checksum>
-    </file>
-    <file>
-      <filename>unit_conversions.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>7161039B</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B8804B95</checksum>
-    </file>
-    <file>
-      <filename>weather.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>454E14D4</checksum>
-    </file>
-    <file>
-      <filename>test_appliances.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>45F03949</checksum>
-    </file>
-    <file>
-      <filename>test_lighting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>13B18C23</checksum>
-    </file>
-    <file>
-      <filename>test_mechanical_ventilation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>81844424</checksum>
-    </file>
-    <file>
-      <filename>test_plug_loads.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>4FC4E722</checksum>
-    </file>
-    <file>
-      <filename>test_water_heating.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>ACB8DCB7</checksum>
+      <checksum>C3B99194</checksum>
     </file>
   </files>
 </measure>

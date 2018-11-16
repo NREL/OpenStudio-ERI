@@ -5,73 +5,72 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class LightingTest < MiniTest::Test
-
   def test_lighting
     hpxml_name = "valid.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
-    
+
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
   end
-  
+
   def test_lighting_pre_addendum_g
     hpxml_name = "valid-addenda-exclude-g.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
-    
+
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
   end
-  
+
   def test_ceiling_fans
     hpxml_name = "valid-misc-ceiling-fans.xml"
-    
+
     medium_cfm = 3000.0
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 5)
-    
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 5)
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    avg_fan_w = ((3000.0/100.0 * 2) + (3000.0/120.0 * 1))/3
-    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 5)
-    
+    avg_fan_w = ((3000.0 / 100.0 * 2) + (3000.0 / 120.0 * 1)) / 3
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 5)
+
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 4)
-    
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm/avg_fan_w, 4)
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
   end
-  
+
   def _test_measure(hpxml_name, calc_type)
     root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
@@ -79,10 +78,10 @@ class LightingTest < MiniTest::Test
     args_hash['weather_dir'] = File.join(root_path, "weather")
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
-    
+
     # create an instance of the measure
     measure = EnergyRatingIndex301.new
-    
+
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
@@ -104,14 +103,14 @@ class LightingTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
-    
+
     # show the output
     # show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
     assert(File.exists? args_hash['hpxml_output_path'])
-    
+
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
     File.delete(args_hash['hpxml_output_path'])
 
@@ -127,7 +126,7 @@ class LightingTest < MiniTest::Test
     assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesExterior"].text), fFII_ext, 0.01)
     assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesGarage"].text), fFII_grg, 0.01)
   end
-  
+
   def _check_ceiling_fans(hpxml_doc, cfm_per_w, quantity)
     cf = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting/CeilingFan"]
     if cfm_per_w.nil?
@@ -141,5 +140,4 @@ class LightingTest < MiniTest::Test
       assert_equal(Integer(cf.elements["Quantity"].text), quantity)
     end
   end
-  
 end
