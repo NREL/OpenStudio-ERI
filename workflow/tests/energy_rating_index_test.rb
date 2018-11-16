@@ -251,13 +251,17 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       if using_iaf
         iad_hpxml = File.join(parent_dir, "results", "ERIIndexAdjustmentDesign.xml")
         assert(File.exists?(iad_hpxml))
+        iadref_hpxml = File.join(parent_dir, "results", "ERIIndexAdjustmentReferenceHome.xml")
+        assert(File.exists?(iadref_hpxml))
       end
       
-      # Check Reference/Rated HPXMLs are valid
+      # Check HPXMLs are valid
+      _test_schema_validation(parent_dir, xml)
       _test_schema_validation(parent_dir, ref_hpxml)
       _test_schema_validation(parent_dir, rated_hpxml)
       if using_iaf
         _test_schema_validation(parent_dir, iad_hpxml)
+        _test_schema_validation(parent_dir, iadref_hpxml)
       end
     end
   
@@ -266,7 +270,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   
   def _test_schema_validation(parent_dir, xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(parent_dir, "..", "hpxml_schemas"))
+    schemas_dir = File.absolute_path(File.join(parent_dir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
     hpxml_doc = REXML::Document.new(File.read(xml))
     errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), nil)
     if errors.size > 0
