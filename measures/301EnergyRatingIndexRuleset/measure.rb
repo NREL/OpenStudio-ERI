@@ -14,7 +14,6 @@ require "#{File.dirname(__FILE__)}/../HPXMLtoOpenStudio/resources/xmlhelper"
 
 # start the measure
 class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
-
   # human readable name
   def name
     return "Apply Energy Rating Index Ruleset"
@@ -34,7 +33,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
   def arguments(model)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    #make a choice argument for design type
+    # make a choice argument for design type
     calc_types = []
     calc_types << Constants.CalcTypeERIReferenceHome
     calc_types << Constants.CalcTypeERIRatedHome
@@ -54,23 +53,23 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     arg.setDisplayName("Weather Directory")
     arg.setDescription("Absolute path of the weather directory.")
     args << arg
-    
+
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", false)
     arg.setDisplayName("HPXML Schemas Directory")
     arg.setDescription("Absolute path of the hpxml schemas directory.")
     args << arg
-    
+
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_path", false)
     arg.setDisplayName("HPXML Output File Path")
     arg.setDescription("Absolute (or relative) path of the output HPXML file.")
     args << arg
-    
+
     arg = OpenStudio::Measure::OSArgument.makeBoolArgument("skip_validation", true)
     arg.setDisplayName("Skip HPXML validation")
     arg.setDescription("If true, only checks for and reports HPXML validation issues if an error occurs during processing. Used for faster runtime.")
     arg.setDefaultValue(false)
     args << arg
-    
+
     return args
   end
 
@@ -93,35 +92,35 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 
     unless (Pathname.new hpxml_path).absolute?
       hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
-    end 
+    end
     unless File.exists?(hpxml_path) and hpxml_path.downcase.end_with? ".xml"
       runner.registerError("'#{hpxml_path}' does not exist or is not an .xml file.")
       return false
     end
-    
+
     hpxml_doc = REXML::Document.new(File.read(hpxml_path))
-    
+
     # Check for invalid HPXML file up front?
     if not skip_validation
       if not validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
         return false
       end
     end
-    
+
     begin
-    
       # Weather file
       weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
       epw_path = nil
       cache_path = nil
-      CSV.foreach(File.join(weather_dir, "data.csv"), headers:true) do |row|
+      CSV.foreach(File.join(weather_dir, "data.csv"), headers: true) do |row|
         next if row["wmo"] != weather_wmo
+
         epw_path = File.join(weather_dir, row["filename"])
         if not File.exists?(epw_path)
           runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
           return false
         end
-        cache_path = epw_path.gsub('.epw','.cache')
+        cache_path = epw_path.gsub('.epw', '.cache')
         if not File.exists?(cache_path)
           runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
           return false
@@ -132,41 +131,37 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
         runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
         return false
       end
-      
+
       # Obtain weather object
       weather = Marshal.load(File.binread(cache_path))
-      
+
       # Apply 301 ruleset on HPXML object
       EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
-      
     rescue Exception => e
-    
       if skip_validation
         # Something went wrong, check for invalid HPXML file now. This was previously
         # skipped to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47).
         original_hpxml_doc = REXML::Document.new(File.read(hpxml_path))
         validate_hpxml(runner, hpxml_path, original_hpxml_doc, schemas_dir)
       end
-      
+
       # Report exception
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
       return false
-      
     end
-    
+
     # Write new HPXML file
     if hpxml_output_path.is_initialized
       XMLHelper.write_file(hpxml_doc, hpxml_output_path.get)
       runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
     end
-    
-    return true
 
+    return true
   end
-  
+
   def validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
     is_valid = true
-  
+
     if schemas_dir.is_initialized
       schemas_dir = schemas_dir.get
       unless (Pathname.new schemas_dir).absolute?
@@ -179,7 +174,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     else
       schemas_dir = nil
     end
-    
+
     # Validate input HPXML against schema
     if not schemas_dir.nil?
       XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
@@ -190,7 +185,7 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
     else
       runner.registerWarning("#{hpxml_path}: No schema dir provided, no HPXML validation performed.")
     end
-    
+
     # Validate input HPXML against ERI Use Case
     errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
     errors.each do |error|
@@ -198,10 +193,9 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
       is_valid = false
     end
     runner.registerInfo("#{hpxml_path}: Validated against HPXML ERI Use Case.")
-    
+
     return is_valid
   end
-  
 end
 
 # register the measure to be used by the application

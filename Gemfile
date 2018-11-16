@@ -3,10 +3,6 @@ source 'http://rubygems.org'
 gem 'rake', '~> 11.2.2'
 gem 'nokogiri', '~> 1.6', '<= 1.6.8.1'
 
-# uncomment if you need to update the bcl measures
-gem "bcl", "~> 0.5.7"
-# gem 'bcl', git: 'https://github.com/NREL/bcl-gem', branch: 'develop'
-
 # Specify the JSON dependency so that rubocop and other gem do not try to install it
 gem 'json', '~> 1.8'
 
@@ -25,10 +21,6 @@ group :test do
   gem 'minitest-reporters'
   gem 'minitest-ci', :git => 'https://github.com/circleci/minitest-ci.git' # For CircleCI Automatic test metadata collection
 end
-
-gem 'docker-api', require: 'docker'
-
-gem 'ffi', '~> 1.9.18'
 
 gem 'rest-client', '~> 2.0.1'
 

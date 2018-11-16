@@ -5,24 +5,23 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class WaterHeatingTest < MiniTest::Test
-
   def test_water_heating
     hpxml_name = "valid.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -34,24 +33,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_dwhr
     hpxml_name = "valid-dhw-dwhr.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, true, "all", true, 0.55)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -63,24 +62,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_location_attic
     hpxml_name = "valid-dhw-location-attic.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "attic - unconditioned", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "attic - unconditioned", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -92,24 +91,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_low_flow_fixtures
     hpxml_name = "valid-dhw-low-flow-fixtures.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, true)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -121,24 +120,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_recirc_demand
     hpxml_name = "valid-dhw-recirc-demand.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Recirculation", 3.0, nil, "presence sensor demand control", 30, 30, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -150,24 +149,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_recirc_nocontrol
     hpxml_name = "valid-dhw-recirc-nocontrol.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "no control", 30, 30, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -179,24 +178,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_recirc_timer
     hpxml_name = "valid-dhw-recirc-timer.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "timer", 30, 30, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -208,24 +207,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_recirc_temperature
     hpxml_name = "valid-dhw-recirc-temperature.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "temperature", 30, 30, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -237,24 +236,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_recirc_manual
     hpxml_name = "valid-dhw-recirc-manual.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Recirculation", 3.0, nil, "manual demand control", 30, 30, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -266,24 +265,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_tank_gas
     hpxml_name = "valid-dhw-tank-gas.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "natural gas", "conditioned space", 50, 0.575)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "natural gas", "conditioned space", 50, 0.59)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -295,24 +294,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_tank_heat_pump
     hpxml_name = "valid-dhw-tank-heat-pump.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 80, 0.8644)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "heat pump water heater", "electricity", "conditioned space", 80, 2.3)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -324,24 +323,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_tankless_electric
     hpxml_name = "valid-dhw-tankless-electric.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "instantaneous water heater", "electricity", "conditioned space", nil, 0.99)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -353,24 +352,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_tankless_gas
     hpxml_name = "valid-dhw-tankless-gas.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "natural gas", "conditioned space", 40, 0.594)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "instantaneous water heater", "natural gas", "conditioned space", nil, 0.82)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -382,10 +381,10 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_none
     hpxml_name = "valid-dhw-none.xml"
-    
+
     # Reference Home, Rated Home
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIRatedHome]
@@ -396,7 +395,7 @@ class WaterHeatingTest < MiniTest::Test
       _check_water_fixtures(hpxml_doc, false, false)
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -408,24 +407,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_uef
     hpxml_name = "valid-dhw-uef.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -437,24 +436,24 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_pre_addendum_a
     hpxml_name = "valid-addenda-exclude-g-e-a.xml"
-    
+
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.9172)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 103.67, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, "storage water heater", "electricity", "conditioned space", 40, 0.95)
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
-    
+
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -466,7 +465,7 @@ class WaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
     end
   end
-  
+
   def _test_measure(hpxml_name, calc_type)
     root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
@@ -474,10 +473,10 @@ class WaterHeatingTest < MiniTest::Test
     args_hash['weather_dir'] = File.join(root_path, "weather")
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
-    
+
     # create an instance of the measure
     measure = EnergyRatingIndex301.new
-    
+
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
@@ -499,14 +498,14 @@ class WaterHeatingTest < MiniTest::Test
     # run the measure
     measure.run(model, runner, argument_map)
     result = runner.result
-    
+
     # show the output
     # show_output(result)
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
     assert(File.exists? args_hash['hpxml_output_path'])
-    
+
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
     File.delete(args_hash['hpxml_output_path'])
 
@@ -525,7 +524,7 @@ class WaterHeatingTest < MiniTest::Test
     end
     assert_in_epsilon(Float(wh.elements["EnergyFactor"].text), ef, 0.01)
   end
-  
+
   def _check_hot_water_distribution(hpxml_doc, disttype, pipe_r, pipe_l, recirc_control, recirc_loop_l, recirc_branch_l, recirc_pump_power)
     dist = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution"]
     refute_nil(dist.elements["SystemType/#{disttype}"])
@@ -556,13 +555,13 @@ class WaterHeatingTest < MiniTest::Test
       assert_in_epsilon(Float(dist.elements["SystemType/Recirculation/PumpPower"].text), recirc_pump_power, 0.01)
     end
   end
-  
+
   def _check_water_fixtures(hpxml_doc, low_flow_shower, low_flow_faucet)
     wh = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/WaterHeating"]
     assert_equal(Boolean(wh.elements["WaterFixture[WaterFixtureType='shower head']/LowFlow"].text), low_flow_shower)
     assert_equal(Boolean(wh.elements["WaterFixture[WaterFixtureType='faucet']/LowFlow"].text), low_flow_faucet)
   end
-  
+
   def _check_drain_water_heat_recovery(hpxml_doc, present, facilities_connected, equal_flow, efficiency)
     dist = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution"]
     assert_equal(!dist.elements["DrainWaterHeatRecovery"].nil?, present)
@@ -582,5 +581,4 @@ class WaterHeatingTest < MiniTest::Test
       assert_equal(Float(dist.elements["DrainWaterHeatRecovery/Efficiency"].text), efficiency)
     end
   end
-  
 end
