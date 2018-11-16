@@ -2,14 +2,14 @@ require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname' 
 require 'optparse'
-require "#{File.dirname(__FILE__)}/resources/301validator"
-require "#{File.dirname(__FILE__)}/resources/XMLHelper"
+require_relative "resources/301validator"
+require_relative "../HPXMLtoOpenStudio/resources/XMLHelper"
 
 if ARGV.length != 1
     puts "Usage: ruby validate.rb file"
 end
 
-schemas_dir = (Pathname.new "../../hpxml_schemas").expand_path()
+schemas_dir = (Pathname.new "../HPXMLtoOpenStudio/hpxml_schemas").expand_path()
 hpxml_file_path = (Pathname.new ARGV[0]).expand_path()
 
 unless File.exists?(hpxml_file_path)
