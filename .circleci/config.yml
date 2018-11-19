@@ -9,6 +9,3 @@ jobs:
       - run: rake test:all
       - store_test_results:
           path: test/reports/
-notify:
-  webhooks:
-    - url: https://coveralls.io/webhook?repo_token=CzCP5gY6h1Jk3XHYbo5XIcUicbYfB6Vib

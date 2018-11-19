@@ -7,7 +7,7 @@ The ERI is defined by [ANSI/RESNET/ICC 301-2014 "Standard for the Calculation an
 
 **Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master)
 
-**Code Coverage:** [![Coverage Status](https://coveralls.io/repos/github/NREL/OpenStudio-ERI/badge.svg?branch=master)](https://coveralls.io/github/NREL/OpenStudio-ERI?branch=master)
+**Code Coverage:** [![codecov](https://codecov.io/gh/NREL/OpenStudio-ERI/branch/master/graph/badge.svg?token=HpCKohTsLI)](https://codecov.io/gh/NREL/OpenStudio-ERI)
 
 ## Setup
 
