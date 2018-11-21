@@ -326,7 +326,7 @@ class EnergyRatingIndex301Validator
         'ElectricAuxiliaryEnergy' => zero_or_one, # If not provided, uses 301 defaults for furnace/boiler and zero for other heating systems
       },
 
-      ## [CoolingSystem]
+      # [CoolingSystem]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
@@ -347,7 +347,7 @@ class EnergyRatingIndex301Validator
         'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
       },
 
-      ## [HeatPump]
+      # [HeatPump]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
