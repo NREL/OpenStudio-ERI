@@ -13,7 +13,7 @@ require "#{File.dirname(__FILE__)}/../HPXMLtoOpenStudio/resources/weather"
 require "#{File.dirname(__FILE__)}/../HPXMLtoOpenStudio/resources/xmlhelper"
 
 # start the measure
-class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
+class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
   # human readable name
   def name
     return "Apply Energy Rating Index Ruleset"
@@ -199,4 +199,4 @@ class EnergyRatingIndex301 < OpenStudio::Measure::ModelMeasure
 end
 
 # register the measure to be used by the application
-EnergyRatingIndex301.new.registerWithApplication
+EnergyRatingIndex301Measure.new.registerWithApplication

@@ -476,7 +476,7 @@ class WaterHeatingTest < MiniTest::Test
     args_hash['calc_type'] = calc_type
 
     # create an instance of the measure
-    measure = EnergyRatingIndex301.new
+    measure = EnergyRatingIndex301Measure.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)

@@ -21,7 +21,7 @@ class EnergyRatingIndex301Ruleset
       header.elements["XMLType"].text += ", #{calc_type}"
     end
 
-    # Class variables
+    # Global variables
     @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
     @weather = weather
     @ndu = 1 # Dwelling units
@@ -397,8 +397,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_attics_roofs_reference(new_enclosure, orig_details)
     new_attic_roof = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/AtticAndRoof")
 
-    ceiling_ufactor = get_reference_component_characteristics("ceiling")
-    wall_ufactor = get_reference_component_characteristics("frame_wall")
+    ceiling_ufactor = FloorConstructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+    wall_ufactor = WallConstructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
     new_attic_roof.elements.each("Attics/Attic") do |new_attic|
       attic_type = XMLHelper.get_value(new_attic, "AtticType")
@@ -450,7 +450,7 @@ class EnergyRatingIndex301Ruleset
           extension = XMLHelper.add_element(new_attic, "extension")
         end
         XMLHelper.delete_element(extension, "AtticSpecificLeakageArea")
-        XMLHelper.add_element(extension, "AtticSpecificLeakageArea", 1.0 / 300.0)
+        XMLHelper.add_element(extension, "AtticSpecificLeakageArea", Airflow.get_default_vented_attic_sla())
       end
     end
   end
@@ -490,9 +490,10 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_foundations_reference(new_enclosure, orig_details)
     new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
 
-    floor_ufactor = get_reference_component_characteristics("floor")
-    wall_ufactor = get_reference_component_characteristics("basement_wall")
-    slab_rvalue, slab_depth = get_reference_component_characteristics("slab_on_grade")
+    floor_ufactor = FloorConstructions.get_default_floor_ufactor(@iecc_zone_2006)
+    wall_ufactor = FoundationConstructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
+    slab_perim_rvalue, slab_perim_depth = FoundationConstructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
+    slab_under_rvalue, slab_under_width = FoundationConstructions.get_default_slab_under_rvalue_width()
 
     new_foundations.elements.each("Foundation") do |new_foundation|
       if XMLHelper.has_element(new_foundation, "FoundationType/Crawlspace[Vented='false']")
@@ -529,18 +530,18 @@ class EnergyRatingIndex301Ruleset
       new_foundation.elements.each("Slab") do |new_slab|
         # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, "ground")?
         if interior_adjacent_to == "living space" and is_external_thermal_boundary(interior_adjacent_to, "ground")
-          new_slab.elements["PerimeterInsulationDepth"].text = slab_depth
-          new_slab.elements["UnderSlabInsulationWidth"].text = 0
+          new_slab.elements["PerimeterInsulationDepth"].text = slab_perim_depth
+          new_slab.elements["UnderSlabInsulationWidth"].text = slab_under_width
           perim_ins = new_slab.elements["PerimeterInsulation"]
           XMLHelper.delete_element(perim_ins, "Layer")
           perim_layer = XMLHelper.add_element(perim_ins, "Layer")
           XMLHelper.add_element(perim_layer, "InstallationType", "continuous")
-          XMLHelper.add_element(perim_layer, "NominalRValue", slab_rvalue)
+          XMLHelper.add_element(perim_layer, "NominalRValue", slab_perim_rvalue)
           under_ins = new_slab.elements["UnderSlabInsulation"]
           XMLHelper.delete_element(under_ins, "Layer")
           under_layer = XMLHelper.add_element(under_ins, "Layer")
           XMLHelper.add_element(under_layer, "InstallationType", "continuous")
-          XMLHelper.add_element(under_layer, "NominalRValue", 0)
+          XMLHelper.add_element(under_layer, "NominalRValue", slab_under_rvalue)
         end
         new_slab.elements["extension/CarpetFraction"].text = 0.8
         new_slab.elements["extension/CarpetRValue"].text = 2.0
@@ -553,7 +554,7 @@ class EnergyRatingIndex301Ruleset
           extension = XMLHelper.add_element(new_foundation, "extension")
         end
         XMLHelper.delete_element(extension, "CrawlspaceSpecificLeakageArea")
-        XMLHelper.add_element(extension, "CrawlspaceSpecificLeakageArea", 1.0 / 150.0)
+        XMLHelper.add_element(extension, "CrawlspaceSpecificLeakageArea", Airflow.get_default_vented_crawl_sla())
       end
     end
   end
@@ -561,7 +562,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_foundations_rated(new_enclosure, orig_details)
     new_foundations = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Foundations")
 
-    min_crawl_vent = 1.0 / 150.0 # Reference Home vent
+    min_crawl_vent = Airflow.get_default_vented_crawl_sla() # Reference Home vent
 
     new_foundations.elements.each("Foundation") do |new_foundation|
       # Table 4.2.2(1) - Crawlspaces
@@ -577,7 +578,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_foundations_iad(new_enclosure, orig_details)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Foundation
-    floor_ufactor = get_reference_component_characteristics("floor")
+    floor_ufactor = FloorConstructions.get_default_floor_ufactor(@iecc_zone_2006)
 
     new_foundation = XMLHelper.add_element(new_enclosure, "Foundations/Foundation")
     sys_id = XMLHelper.add_element(new_foundation, "SystemIdentifier")
@@ -637,7 +638,7 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(extension, "CarpetFraction", 0)
     XMLHelper.add_element(extension, "CarpetRValue", 0)
 
-    XMLHelper.add_element(new_foundation, "extension/CrawlspaceSpecificLeakageArea", 1.0 / 150.0)
+    XMLHelper.add_element(new_foundation, "extension/CrawlspaceSpecificLeakageArea", Airflow.get_default_vented_crawl_sla())
   end
 
   def self.set_enclosure_rim_joists_reference(new_enclosure, orig_details)
@@ -645,7 +646,7 @@ class EnergyRatingIndex301Ruleset
     return if new_rim_joists.nil?
 
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = get_reference_component_characteristics("frame_wall")
+    ufactor = WallConstructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
     new_rim_joists.elements.each("RimJoist") do |new_rim_joist|
       interior_adjacent_to = XMLHelper.get_value(new_rim_joist, "InteriorAdjacentTo")
@@ -707,7 +708,7 @@ class EnergyRatingIndex301Ruleset
     new_walls = XMLHelper.copy_element(new_enclosure, orig_details, "Enclosure/Walls")
 
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = get_reference_component_characteristics("frame_wall")
+    ufactor = WallConstructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
     new_walls.elements.each("Wall") do |new_wall|
       interior_adjacent_to = XMLHelper.get_value(new_wall, "extension/InteriorAdjacentTo")
@@ -769,7 +770,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_reference(new_enclosure, orig_details)
     # Table 4.2.2(1) - Glazing
-    ufactor, shgc = get_reference_component_characteristics("window")
+    ufactor, shgc = SubsurfaceConstructions.get_default_ufactor_shgc(@iecc_zone_2006)
 
     ag_wall_area = 0.0
     bg_wall_area = 0.0
@@ -907,8 +908,8 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(new_enclosure, orig_details)
     # Table 4.2.2(1) - Doors
-    ufactor, shgc = get_reference_component_characteristics("door")
-    door_area = 40.0
+    ufactor, shgc = SubsurfaceConstructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    door_area = SubsurfaceConstructions.get_default_door_area()
 
     wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
 
@@ -1743,7 +1744,7 @@ class EnergyRatingIndex301Ruleset
     orig_appliances = orig_details.elements["Appliances"]
     orig_fridge = orig_appliances.elements["Refrigerator"]
 
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric HERS Reference Homes
+    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric ERI Reference Homes
     refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
 
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
@@ -1919,82 +1920,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   private
-
-  def self.get_reference_component_characteristics(component_type)
-    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
-    if component_type == "window" or component_type == "door"
-      # Fenestration and Opaque Door U-Factor
-      # Glazed Fenestration Assembly SHGC
-      if ["1A", "1B", "1C"].include? @iecc_zone_2006
-        return 1.2, 0.40
-      elsif ["2A", "2B", "2C"].include? @iecc_zone_2006
-        return 0.75, 0.40
-      elsif ["3A", "3B", "3C"].include? @iecc_zone_2006
-        return 0.65, 0.40
-      elsif ["4A", "4B"].include? @iecc_zone_2006
-        return 0.40, 0.40
-      elsif ["4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2006
-        return 0.35, 0.40
-      else
-        return nil
-      end
-    elsif component_type == "frame_wall"
-      # Frame Wall U-Factor
-      if ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B"].include? @iecc_zone_2006
-        return 0.082
-      elsif ["4C", "5A", "5B", "5C", "6A", "6B", "6C"].include? @iecc_zone_2006
-        return 0.060
-      elsif ["7", "8"].include? @iecc_zone_2006
-        return 0.057
-      else
-        return nil
-      end
-    elsif component_type == "basement_wall"
-      # Basement Wall U-Factor
-      if ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C"].include? @iecc_zone_2006
-        return 0.360
-      elsif ["4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2006
-        return 0.059
-      else
-        return nil
-      end
-    elsif component_type == "floor"
-      # Floor Over Unconditioned Space U-Factor
-      if ["1A", "1B", "1C", "2A", "2B", "2C"].include? @iecc_zone_2006
-        return 0.064
-      elsif ["3A", "3B", "3C", "4A", "4B"].include? @iecc_zone_2006
-        return 0.047
-      elsif ["4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2006
-        return 0.033
-      else
-        return nil
-      end
-    elsif component_type == "ceiling"
-      # Ceiling U-Factor
-      if ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C"].include? @iecc_zone_2006
-        return 0.035
-      elsif ["4A", "4B", "4C", "5A", "5B", "5C"].include? @iecc_zone_2006
-        return 0.030
-      elsif ["6A", "6B", "6C", "7", "8"].include? @iecc_zone_2006
-        return 0.026
-      else
-        return nil
-      end
-    elsif component_type == "slab_on_grade"
-      # Slab-on-Grade R-Value & Depth (ft)
-      if ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C"].include? @iecc_zone_2006
-        return 0.0, 0.0
-      elsif ["4A", "4B", "4C", "5A", "5B", "5C"].include? @iecc_zone_2006
-        return 10.0, 2.0
-      elsif ["6A", "6B", "6C", "7", "8"].include? @iecc_zone_2006
-        return 10.0, 4.0
-      else
-        return nil
-      end
-    else
-      return nil
-    end
-  end
 
   def self.get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
     # # Table 4.2.2(1) - Service water heating systems

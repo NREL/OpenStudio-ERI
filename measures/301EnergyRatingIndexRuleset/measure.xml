@@ -5,7 +5,7 @@
   <version_id>8a9132d4-7702-424e-97b7-f467702d5752</version_id>
   <version_modified>20181116T175945Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
-  <class_name>EnergyRatingIndex301</class_name>
+  <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
   <description>Generates a HPXML building description for, e.g., the Reference Home or Rated Home, as defined by the ANSI/RESNET 301-2014 ruleset. Used as part of the calculation of an Energy Rating Index.</description>
   <modeler_description>Based on the provided HPXML building description and choice of calculation type (e.g., ERI Reference Home, ERI Rated Home, etc.), creates an updated version of the HPXML file as specified by ANSI/RESNET/ICC 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index".</modeler_description>
