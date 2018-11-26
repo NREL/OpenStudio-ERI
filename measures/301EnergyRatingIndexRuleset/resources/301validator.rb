@@ -57,7 +57,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Enclosure/Skylights' => zero_or_one, # See [Skylight]
         '/HPXML/Building/BuildingDetails/Enclosure/Doors' => zero_or_one, # See [Door]
 
-        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement' => one, # see [AirInfiltration]
+        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
 
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_one, # See [HeatingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_one, # See [CoolingSystem]
@@ -288,7 +288,6 @@ class EnergyRatingIndex301Validator
       # [AirInfiltration]
       'BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        '[[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH
       },
 
       # [HeatingSystem]
