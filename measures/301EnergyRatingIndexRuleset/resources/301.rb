@@ -1,13 +1,13 @@
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/measure"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/airflow"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/constants"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/constructions"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/geometry"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/hotwater_appliances"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/lighting"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/unit_conversions"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/waterheater"
-require "#{File.dirname(__FILE__)}/../../HPXMLtoOpenStudio/resources/xmlhelper"
+require_relative "../../HPXMLtoOpenStudio/measure"
+require_relative "../../HPXMLtoOpenStudio/resources/airflow"
+require_relative "../../HPXMLtoOpenStudio/resources/constants"
+require_relative "../../HPXMLtoOpenStudio/resources/constructions"
+require_relative "../../HPXMLtoOpenStudio/resources/geometry"
+require_relative "../../HPXMLtoOpenStudio/resources/hotwater_appliances"
+require_relative "../../HPXMLtoOpenStudio/resources/lighting"
+require_relative "../../HPXMLtoOpenStudio/resources/unit_conversions"
+require_relative "../../HPXMLtoOpenStudio/resources/waterheater"
+require_relative "../../HPXMLtoOpenStudio/resources/xmlhelper"
 
 class EnergyRatingIndex301Ruleset
   def self.apply_ruleset(hpxml_doc, calc_type, weather)

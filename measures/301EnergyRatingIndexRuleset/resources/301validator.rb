@@ -137,7 +137,7 @@ class EnergyRatingIndex301Validator
       ## [AtticWall]
       '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic/Walls/Wall' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'WallType/WoodStud' => one,
+        'WallType[WoodStud | DoubleWoodStud | ConcreteMasonryUnit | StructurallyInsulatedPanel | InsulatedConcreteForms | SteelFrame | SolidConcrete | StructuralBrick | StrawBale | Stone | LogWall]' => one,
         'Area' => one,
         'SolarAbsorptance' => one,
         'Emittance' => one,
@@ -238,7 +238,7 @@ class EnergyRatingIndex301Validator
       # [Wall]
       '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'WallType/WoodStud' => one,
+        'WallType[WoodStud | DoubleWoodStud | ConcreteMasonryUnit | StructurallyInsulatedPanel | InsulatedConcreteForms | SteelFrame | SolidConcrete | StructuralBrick | StrawBale | Stone | LogWall]' => one,
         'Area' => one,
         'SolarAbsorptance' => one,
         'Emittance' => one,
