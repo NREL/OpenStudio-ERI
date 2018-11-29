@@ -6,11 +6,11 @@ require 'rexml/document'
 require 'rexml/xpath'
 require 'pathname'
 require 'csv'
-require "#{File.dirname(__FILE__)}/resources/301"
-require "#{File.dirname(__FILE__)}/resources/301validator"
-require "#{File.dirname(__FILE__)}/../HPXMLtoOpenStudio/resources/constants"
-require "#{File.dirname(__FILE__)}/../HPXMLtoOpenStudio/resources/weather"
-require "#{File.dirname(__FILE__)}/../HPXMLtoOpenStudio/resources/xmlhelper"
+require_relative "resources/301"
+require_relative "resources/301validator"
+require_relative "../HPXMLtoOpenStudio/resources/constants"
+require_relative "../HPXMLtoOpenStudio/resources/weather"
+require_relative "../HPXMLtoOpenStudio/resources/xmlhelper"
 
 # start the measure
 class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
