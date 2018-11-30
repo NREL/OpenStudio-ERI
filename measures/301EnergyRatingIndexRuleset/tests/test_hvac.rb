@@ -1,3 +1,4 @@
+require_relative '../../../workflow/tests/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
@@ -402,8 +403,6 @@ class HVACtest < MiniTest::Test
     _check_thermostat(hpxml_doc, "programmable thermostat")
   end
 
-  private
-
   def _test_measure(hpxml_name, calc_type)
     root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
@@ -413,7 +412,7 @@ class HVACtest < MiniTest::Test
     args_hash['calc_type'] = calc_type
 
     # create an instance of the measure
-    measure = EnergyRatingIndex301.new
+    measure = EnergyRatingIndex301Measure.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
