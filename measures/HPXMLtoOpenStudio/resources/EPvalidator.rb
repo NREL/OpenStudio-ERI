@@ -95,7 +95,7 @@ class EnergyPlusValidator
 
       # [Attic]
       '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => {
-        '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]' => one, # See [AtticType=Unvented] or [AtticType=Vented]
+        '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]' => one, # See [AtticType=Unvented] or [AtticType=Vented] or [AtticType=Cape]
         'Roofs' => one, # See [AtticRoof]
         'Walls' => zero_or_one, # See [AtticWall]
       },
@@ -108,7 +108,12 @@ class EnergyPlusValidator
       ## [AtticType=Vented]
       '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic"]' => {
         'Floors' => one, # See [AtticFloor]
-        'extension/AtticSpecificLeakageArea' => zero_or_one, # Uses ERI Reference Home if not provided
+        'extension/AtticSpecificLeakageArea' => one,
+      },
+
+      ## [AtticType=Cape]
+      '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="cape cod"]' => {
+        'Floors' => one, # See [AtticFloor]
       },
 
       ## [AtticRoof]
@@ -128,7 +133,7 @@ class EnergyPlusValidator
         'SystemIdentifier' => one, # Required by HPXML schema
         'Area' => one,
         'Insulation/SystemIdentifier' => one, # Required by HPXML schema
-        'Insulation/AssemblyEffectiveRValue' => zero_or_one, # Uses ERI Reference Home if not provided
+        'Insulation/AssemblyEffectiveRValue' => one,
         'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="ambient"]' => one,
       },
 
