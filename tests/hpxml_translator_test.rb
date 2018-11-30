@@ -26,7 +26,7 @@ class HPXMLTranslatorTest < MiniTest::Test
       _test_simulation(args_hash, this_dir)
     end
   end
-  
+
   def test_multiple_hvac
     # Run HPXML files with 3 of the same HVAC system and compare results to files
     # with one of that HVAC system.
@@ -44,30 +44,30 @@ class HPXMLTranslatorTest < MiniTest::Test
       _test_measure(args_hash)
       _test_simulation(args_hash, this_dir)
       results_x3 = _get_results(this_dir)
-      
+
       # Run complementary file with single HVAC
-      xml_x1 = xml.gsub("-x3","")
+      xml_x1 = xml.gsub("-x3", "")
       puts "Testing #{xml_x1}..."
       args_hash['hpxml_path'] = File.absolute_path(File.join(File.dirname(xml_x1), "..", File.basename(xml_x1)))
       _test_schema_validation(this_dir, xml)
       _test_measure(args_hash)
       _test_simulation(args_hash, this_dir)
       results_x1 = _get_results(this_dir)
-      
+
       # Compare results
       puts "\nResults for #{xml}:"
       results_x1.keys.each do |k|
         result_x1 = results_x1[k].to_f
         result_x3 = results_x3[k].to_f
         next if result_x1 == 0.0 and result_x3 == 0.0
+
         puts "x1, x3: #{result_x1.round(2)}, #{result_x3.round(2)} #{k}"
         assert_in_delta(result_x1, result_x3, 0.1)
       end
       puts "\n"
-
     end
   end
-  
+
   def _get_results(this_dir)
     sql_path = File.join(this_dir, "run", "eplusout.sql")
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
