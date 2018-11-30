@@ -1,9 +1,5 @@
 class EnergyPlusValidator
   def self.run_validator(hpxml_doc)
-    one = [1]
-    zero_or_one = [0, 1]
-    one_or_more = []
-
     # A hash of hashes that defines the XML elements used by the EnergyPlus HPXML Use Case.
     #
     # Example:
@@ -21,6 +17,11 @@ class EnergyPlusValidator
     #     }
     # }
     #
+
+    one = [1]
+    zero_or_one = [0, 1]
+    zero_or_more = nil
+    one_or_more = []
 
     requirements = {
 
@@ -59,9 +60,9 @@ class EnergyPlusValidator
 
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage' => one, # ACH50; see [AirInfiltration]
 
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_one, # See [HeatingSystem]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_one, # See [CoolingSystem]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_one, # See [HeatPump]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_more, # See [HeatingSystem]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_more, # See [CoolingSystem]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_more, # See [HeatPump]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl' => zero_or_one, # See [HVACControl]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/Dehumidifier' => zero_or_one, # See [Dehumidifier]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/NaturalVentilation' => zero_or_one, # See [NaturalVentilation]
@@ -439,7 +440,7 @@ class EnergyPlusValidator
       # [MechanicalVentilation]
       '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        '[FanType="energy recovery ventilator" or FanType="heat recovery ventilator" or FanType="exhaust only" or FanType="supply only" or FanType="balanced" or FanType="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV]
+        '[FanType="energy recovery ventilator" or FanType="heat recovery ventilator" or FanType="exhaust only" or FanType="supply only" or FanType="balanced" or FanType="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS]
         'RatedFlowRate' => one,
         'HoursInOperation' => one,
         'UsedForWholeBuildingVentilation' => one,
@@ -455,6 +456,11 @@ class EnergyPlusValidator
       '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="energy recovery ventilator"]' => {
         'TotalRecoveryEfficiency' => one,
         'SensibleRecoveryEfficiency' => one,
+      },
+
+      ## [MechVentType=CFIS]
+      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="central fan integrated supply"]' => {
+        'AttachedToHVACDistributionSystem' => one,
       },
 
       # [WaterHeatingSystem]
@@ -626,6 +632,8 @@ class EnergyPlusValidator
     requirements.each do |parent, requirement|
       if parent.nil? # Unconditional
         requirement.each do |child, expected_sizes|
+          next if expected_sizes.nil?
+
           xpath = combine_into_xpath(parent, child)
           actual_size = REXML::XPath.first(hpxml_doc, "count(#{xpath})")
           check_number_of_elements(actual_size, expected_sizes, xpath, errors)
@@ -635,6 +643,8 @@ class EnergyPlusValidator
 
         hpxml_doc.elements.each(parent) do |parent_element|
           requirement.each do |child, expected_sizes|
+            next if expected_sizes.nil?
+
             xpath = combine_into_xpath(parent, child)
             actual_size = REXML::XPath.first(parent_element, "count(#{child})")
             check_number_of_elements(actual_size, expected_sizes, xpath, errors)
