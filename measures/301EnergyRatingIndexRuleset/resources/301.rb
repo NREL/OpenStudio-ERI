@@ -1110,11 +1110,11 @@ class EnergyRatingIndex301Ruleset
     # Init
     fan_type = nil
 
-    orig_whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    orig_vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
-    if not orig_whole_house_fan.nil?
+    if not orig_vent_fan.nil?
 
-      fan_type = XMLHelper.get_value(orig_whole_house_fan, "FanType")
+      fan_type = XMLHelper.get_value(orig_vent_fan, "FanType")
 
       q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
 
@@ -1157,6 +1157,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24) # TODO: CFIS
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.add_element(new_vent_fan, "FanPower", fan_power_w)
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "AttachedToHVACDistributionSystem")
 
     end
   end
@@ -1179,6 +1180,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "TotalRecoveryEfficiency")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "SensibleRecoveryEfficiency")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "FanPower")
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "AttachedToHVACDistributionSystem")
 
     end
   end
