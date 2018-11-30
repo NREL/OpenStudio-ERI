@@ -13,7 +13,13 @@ require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_valid_simulations
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+
     xmldir = "#{parent_dir}/sample_files"
+    Dir["#{xmldir}/valid*.xml"].sort.each do |xml|
+      run_and_check(xml, parent_dir, false)
+    end
+
+    xmldir = "#{parent_dir}/sample_files/multiple_hvac"
     Dir["#{xmldir}/valid*.xml"].sort.each do |xml|
       run_and_check(xml, parent_dir, false)
     end

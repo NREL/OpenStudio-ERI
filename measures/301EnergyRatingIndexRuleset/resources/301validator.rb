@@ -59,9 +59,9 @@ class EnergyRatingIndex301Validator
 
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
 
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_one, # See [HeatingSystem]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_one, # See [CoolingSystem]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_one, # See [HeatPump]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_more, # See [HeatingSystem]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_more, # See [CoolingSystem]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_more, # See [HeatPump]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl' => zero_or_one, # See [HVACControl]
 
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
@@ -92,7 +92,7 @@ class EnergyRatingIndex301Validator
 
       # [Attic]
       '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic' => {
-        '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]' => one, # See [AtticType=Unvented] or [AtticType=Vented] or [AtticType=Cape]
+        '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]' => one, # See [AtticType=Unvented] or [AtticType=Vented]
         'Roofs' => one, # See [AtticRoof]
         'Walls' => zero_or_one, # See [AtticWall]
       },
@@ -106,11 +106,6 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic"]' => {
         'Floors' => one, # See [AtticFloor]
         'extension/AtticSpecificLeakageArea' => one,
-      },
-
-      ## [AtticType=Cape]
-      '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="cape cod"]' => {
-        'Floors' => one, # See [AtticFloor]
       },
 
       ## [AtticRoof]
@@ -279,10 +274,10 @@ class EnergyRatingIndex301Validator
       # [Door]
       '/HPXML/Building/BuildingDetails/Enclosure/Doors/Door' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        'AttachedToWall' => one,
         'Area' => one,
         'Azimuth' => one,
         'RValue' => one,
-        'AttachedToWall' => one,
       },
 
       # [AirInfiltration]
@@ -416,14 +411,14 @@ class EnergyRatingIndex301Validator
       ## [HVACDuct]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
         'DuctInsulationRValue' => one,
-        'DuctLocation' => one, # TODO: Restrict values
+        '[DuctLocation="conditioned space" or DuctLocation="unconditioned basement" or DuctLocation="unvented crawlspace" or DuctLocation="vented crawlspace" or DuctLocation="unconditioned attic"]' => one,
         'DuctSurfaceArea' => one,
       },
 
       # [MechanicalVentilation]
       '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        '[FanType="energy recovery ventilator" or FanType="heat recovery ventilator" or FanType="exhaust only" or FanType="supply only" or FanType="balanced" or FanType="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV]
+        '[FanType="energy recovery ventilator" or FanType="heat recovery ventilator" or FanType="exhaust only" or FanType="supply only" or FanType="balanced" or FanType="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS]
         'RatedFlowRate' => one,
         'HoursInOperation' => one,
         'UsedForWholeBuildingVentilation' => one,
@@ -439,6 +434,11 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="energy recovery ventilator"]' => {
         'TotalRecoveryEfficiency' => one,
         'SensibleRecoveryEfficiency' => one,
+      },
+
+      ## [MechVentType=CFIS]
+      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="central fan integrated supply"]' => {
+        'AttachedToHVACDistributionSystem' => one,
       },
 
       # [WaterHeatingSystem]
