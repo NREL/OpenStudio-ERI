@@ -309,14 +309,15 @@ class OSModel
 
     # HVAC
 
-    hvac_loops = {} # mapping between HPXML HVAC systems and model air/plant loops
-    success = add_cooling_system(runner, model, building, unit, hvac_loops)
+    loop_hvacs = {} # mapping between HPXML HVAC systems and model air/plant loops
+    zone_hvacs = {} # mapping between HPXML HVAC systems and model zonal HVACs
+    success = add_cooling_system(runner, model, building, unit, loop_hvacs, zone_hvacs)
     return false if not success
 
-    success = add_heating_system(runner, model, building, unit, hvac_loops)
+    success = add_heating_system(runner, model, building, unit, loop_hvacs, zone_hvacs)
     return false if not success
 
-    success = add_heat_pump(runner, model, building, unit, weather, hvac_loops)
+    success = add_heat_pump(runner, model, building, unit, weather, loop_hvacs, zone_hvacs)
     return false if not success
 
     success = add_setpoints(runner, model, building, weather)
@@ -354,13 +355,13 @@ class OSModel
 
     # Other
 
-    success = add_airflow(runner, model, building, unit, hvac_loops)
+    success = add_airflow(runner, model, building, unit, loop_hvacs)
     return false if not success
 
     success = add_hvac_sizing(runner, model, unit, weather)
     return false if not success
 
-    success = add_fuel_heating_eae(runner, model, building, hvac_loops)
+    success = add_fuel_heating_eae(runner, model, building, loop_hvacs, zone_hvacs)
     return false if not success
 
     success = add_photovoltaics(runner, model, building)
@@ -2146,7 +2147,7 @@ class OSModel
     return true
   end
 
-  def self.add_cooling_system(runner, model, building, unit, hvac_loops)
+  def self.add_cooling_system(runner, model, building, unit, loop_hvacs, zone_hvacs)
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
       clg_type = XMLHelper.get_value(clgsys, "CoolingSystemType")
 
@@ -2157,10 +2158,11 @@ class OSModel
 
       load_frac = Float(XMLHelper.get_value(clgsys, "FractionCoolLoadServed"))
 
-      dse_heat, dse_cool = get_dse(building, clgsys)
+      dse_heat, dse_cool, has_dse = get_dse(building, clgsys)
 
       orig_air_loops = model.getAirLoopHVACs
       orig_plant_loops = model.getPlantLoops
+      orig_zone_hvacs = get_zone_hvacs(model)
 
       if clg_type == "central air conditioning"
 
@@ -2242,13 +2244,13 @@ class OSModel
 
       end
 
-      hvac_loops = update_hvac_loops(hvac_loops, model, clgsys, orig_air_loops, orig_plant_loops)
+      update_loop_hvacs(loop_hvacs, zone_hvacs, model, clgsys, orig_air_loops, orig_plant_loops, orig_zone_hvacs)
     end
 
     return true
   end
 
-  def self.add_heating_system(runner, model, building, unit, hvac_loops)
+  def self.add_heating_system(runner, model, building, unit, loop_hvacs, zone_hvacs)
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htgsys|
       fuel = to_beopt_fuel(XMLHelper.get_value(htgsys, "HeatingSystemFuel"))
 
@@ -2260,10 +2262,11 @@ class OSModel
 
       load_frac = Float(XMLHelper.get_value(htgsys, "FractionHeatLoadServed"))
 
-      dse_heat, dse_cool = get_dse(building, htgsys)
+      dse_heat, dse_cool, has_dse = get_dse(building, htgsys)
 
       orig_air_loops = model.getAirLoopHVACs
       orig_plant_loops = model.getPlantLoops
+      orig_zone_hvacs = get_zone_hvacs(model)
 
       if htg_type == "Furnace"
 
@@ -2296,11 +2299,9 @@ class OSModel
         oat_hwst_high = nil
         oat_hwst_low = nil
         design_temp = 180.0
-        is_modulating = true # FIXME: Temporary to get good results for x3 vs x1
         success = HVAC.apply_boiler(model, unit, runner, fuel, system_type, afue,
                                     oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                                    heat_capacity_btuh, design_temp, is_modulating, dse_heat,
-                                    load_frac)
+                                    heat_capacity_btuh, design_temp, dse_heat, load_frac)
         return false if not success
 
       elsif htg_type == "ElectricResistance"
@@ -2324,13 +2325,13 @@ class OSModel
 
       end
 
-      hvac_loops = update_hvac_loops(hvac_loops, model, htgsys, orig_air_loops, orig_plant_loops)
+      update_loop_hvacs(loop_hvacs, zone_hvacs, model, htgsys, orig_air_loops, orig_plant_loops, orig_zone_hvacs)
     end
 
     return true
   end
 
-  def self.add_heat_pump(runner, model, building, unit, weather, hvac_loops)
+  def self.add_heat_pump(runner, model, building, unit, weather, loop_hvacs, zone_hvacs)
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
       hp_type = XMLHelper.get_value(hp, "HeatPumpType")
 
@@ -2351,7 +2352,7 @@ class OSModel
         backup_heat_capacity_btuh = Float(backup_heat_capacity_btuh)
       end
 
-      dse_heat, dse_cool = get_dse(building, hp)
+      dse_heat, dse_cool, has_dse = get_dse(building, hp)
       if dse_heat != dse_cool
         # TODO: Can we remove this since we use separate airloops for
         # heating and cooling?
@@ -2360,6 +2361,7 @@ class OSModel
 
       orig_air_loops = model.getAirLoopHVACs
       orig_plant_loops = model.getPlantLoops
+      orig_zone_hvacs = get_zone_hvacs(model)
 
       if hp_type == "air-to-air"
 
@@ -2472,7 +2474,7 @@ class OSModel
         cap_retention_temp = -5.0
         pan_heater_power = 0.0
         fan_power = 0.07
-        is_ducted = false
+        is_ducted = (XMLHelper.has_element(hp, "DistributionSystem") and not has_dse)
         supplemental_efficiency = 1.0
         success = HVAC.apply_mshp(model, unit, runner, seer, hspf, shr,
                                   min_cooling_capacity, max_cooling_capacity,
@@ -2525,7 +2527,7 @@ class OSModel
 
       end
 
-      hvac_loops = update_hvac_loops(hvac_loops, model, hp, orig_air_loops, orig_plant_loops)
+      update_loop_hvacs(loop_hvacs, zone_hvacs, model, hp, orig_air_loops, orig_plant_loops, orig_zone_hvacs)
     end
 
     return true
@@ -2635,7 +2637,7 @@ class OSModel
 
   def self.get_dse(building, system)
     if system.elements["DistributionSystem"].nil? # No distribution system
-      return 1.0, 1.0
+      return 1.0, 1.0, false
     end
 
     # Get attached distribution system
@@ -2648,37 +2650,58 @@ class OSModel
       ducts = dist
     end
     if ducts.nil? # No attached DSEs for system
-      return 1.0, 1.0
+      return 1.0, 1.0, false
     end
 
     dse_cool = Float(XMLHelper.get_value(ducts, "AnnualCoolingDistributionSystemEfficiency"))
     dse_heat = Float(XMLHelper.get_value(ducts, "AnnualHeatingDistributionSystemEfficiency"))
-    return dse_heat, dse_cool
+    return dse_heat, dse_cool, true
   end
 
-  def self.update_hvac_loops(hvac_loops, model, sys, orig_air_loops, orig_plant_loops)
+  def self.get_zone_hvacs(model)
+    zone_hvacs = []
+    model.getThermalZones.each do |zone|
+      zone.equipment.each do |zone_hvac|
+        zone_hvacs << zone_hvac
+      end
+    end
+    return zone_hvacs
+  end
+
+  def self.update_loop_hvacs(loop_hvacs, zone_hvacs, model, sys, orig_air_loops, orig_plant_loops, orig_zone_hvacs)
     sys_id = sys.elements["SystemIdentifier"].attributes["id"]
-    hvac_loops[sys_id] = []
+    loop_hvacs[sys_id] = []
+    zone_hvacs[sys_id] = []
 
     model.getAirLoopHVACs.each do |air_loop|
       next if orig_air_loops.include? air_loop # Only include newly added air loops
 
-      hvac_loops[sys_id] << air_loop
+      loop_hvacs[sys_id] << air_loop
     end
 
     model.getPlantLoops.each do |plant_loop|
       next if orig_plant_loops.include? plant_loop # Only include newly added plant loops
 
-      hvac_loops[sys_id] << plant_loop
+      loop_hvacs[sys_id] << plant_loop
     end
 
-    hvac_loops.each do |sys_id, loops|
-      if loops.empty?
-        hvac_loops.delete(sys_id)
-      end
+    get_zone_hvacs(model).each do |zone_hvac|
+      next if orig_zone_hvacs.include? zone_hvac
+
+      zone_hvacs[sys_id] << zone_hvac
     end
 
-    return hvac_loops
+    loop_hvacs.each do |sys_id, loops|
+      next if not loops.empty?
+
+      loop_hvacs.delete(sys_id)
+    end
+
+    zone_hvacs.each do |sys_id, hvacs|
+      next if not hvacs.empty?
+
+      zone_hvacs.delete(sys_id)
+    end
   end
 
   def self.add_mels(runner, model, building, unit, living_space)
@@ -2726,7 +2749,7 @@ class OSModel
     return true
   end
 
-  def self.add_airflow(runner, model, building, unit, hvac_loops)
+  def self.add_airflow(runner, model, building, unit, loop_hvacs)
     # Infiltration
     infiltration = building.elements["BuildingDetails/Enclosure/AirInfiltration"]
     infil_ach50 = Float(XMLHelper.get_value(infiltration, "AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
@@ -2799,12 +2822,15 @@ class OSModel
       mech_vent_cfm = 0.0
     else
       # FIXME: HoursInOperation isn't hooked up
+      # FIXME: AttachedToHVACDistributionSystem isn't hooked up
       fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
       if fan_type == "supply only"
         mech_vent_type = Constants.VentTypeSupply
       elsif fan_type == "exhaust only"
         mech_vent_type = Constants.VentTypeExhaust
-      else
+      elsif fan_type == "central fan integrated supply"
+        mech_vent_type = Constants.VentTypeCFIS
+      elsif ["balanced", "energy recovery ventilator", "heat recovery ventilator"].include? fan_type
         mech_vent_type = Constants.VentTypeBalanced
       end
       mech_vent_total_efficiency = 0.0
@@ -2894,7 +2920,7 @@ class OSModel
         next if sys.elements["DistributionSystem"].nil? or duct_id != sys.elements["DistributionSystem"].attributes["idref"]
 
         sys_id = sys.elements["SystemIdentifier"].attributes["id"]
-        hvac_loops[sys_id].each do |loop|
+        loop_hvacs[sys_id].each do |loop|
           next if not loop.is_a? OpenStudio::Model::AirLoopHVAC
 
           systems_for_this_duct << loop
@@ -2907,7 +2933,7 @@ class OSModel
     # Set no ducts for HVAC without duct systems
     systems_for_no_duct = []
     no_ducts = Ducts.new(0.0, nil, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, Constants.Auto, Constants.Auto, "none")
-    hvac_loops.each do |sys_id, loops|
+    loop_hvacs.each do |sys_id, loops|
       loops.each do |loop|
         next if not loop.is_a? OpenStudio::Model::AirLoopHVAC
 
@@ -2924,7 +2950,9 @@ class OSModel
         systems_for_no_duct << loop
       end
     end
-    duct_systems[no_ducts] = systems_for_no_duct
+    if not systems_for_no_duct.empty?
+      duct_systems[no_ducts] = systems_for_no_duct
+    end
 
     # FIXME: Throw error if, e.g., multiple heating systems connected to same distribution system?
 
@@ -2941,7 +2969,7 @@ class OSModel
     return true
   end
 
-  def self.add_fuel_heating_eae(runner, model, building, hvac_loops)
+  def self.add_fuel_heating_eae(runner, model, building, loop_hvacs, zone_hvacs)
     # Needs to come after HVAC sizing (needs heating capacity and airflow rate)
 
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htgsys|
@@ -2958,35 +2986,36 @@ class OSModel
 
       load_frac = Float(XMLHelper.get_value(htgsys, "FractionHeatLoadServed"))
 
-      dse_heat, dse_cool = get_dse(building, htgsys)
+      dse_heat, dse_cool, has_dse = get_dse(building, htgsys)
 
       sys_id = htgsys.elements["SystemIdentifier"].attributes["id"]
 
-      if hvac_loops.keys.include? sys_id
+      loop_hvac = nil
+      zone_hvac = nil
+      loop_hvac_cool = nil
+      if loop_hvacs.keys.include? sys_id
+        loop_hvac = loop_hvacs[sys_id][0]
         has_furnace = (htg_type == "Furnace")
         has_boiler = (htg_type == "Boiler")
 
-        # If gas furnace, get total heating capacity for EAE calculation
-        htg_capacity = nil
         if has_furnace
-          htg_capacity = 0.0
-          hvac_loops.values.each do |hvac_loop|
-            hvac_loop[0].supplyComponents.each do |supply_component|
-              next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+          # Check for cooling system on the same supply fan
+          htgdist = htgsys.elements["DistributionSystem"]
+          building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
+            clgdist = clgsys.elements["DistributionSystem"]
+            next if htgdist.nil? or clgdist.nil?
+            next if clgdist.attributes["idref"] != htgdist.attributes["idref"]
 
-              unitary_system = supply_component.to_AirLoopHVACUnitarySystem.get
-              next unless unitary_system.heatingCoil.is_initialized
-
-              htg_coil = unitary_system.heatingCoil.get.to_CoilHeatingGas.get
-              htg_capacity += UnitConversions.convert(htg_coil.nominalCapacity.get, "W", "kBtu/hr")
-            end
+            loop_hvac_cool = loop_hvacs[clgsys.elements["SystemIdentifier"].attributes["id"]][0]
           end
         end
-
-        success = HVAC.apply_eae_to_heating_fan(runner, hvac_loops[sys_id][0], fuel_eae, fuel, dse_heat,
-                                                has_furnace, has_boiler, load_frac, htg_capacity)
-        return false if not success
+      elsif zone_hvacs.keys.include? sys_id
+        zone_hvac = zone_hvacs[sys_id][0]
       end
+
+      success = HVAC.apply_eae_to_heating_fan(runner, loop_hvac, zone_hvac, fuel_eae, fuel, dse_heat,
+                                              has_furnace, has_boiler, load_frac, loop_hvac_cool)
+      return false if not success
     end
 
     return true

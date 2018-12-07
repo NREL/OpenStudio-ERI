@@ -18,6 +18,7 @@ class EnergyPlusValidator
     # }
     #
 
+    zero = [0]
     one = [1]
     zero_or_one = [0, 1]
     zero_or_more = nil
@@ -108,7 +109,7 @@ class EnergyPlusValidator
       ## [AtticType=Vented]
       '/HPXML/Building/BuildingDetails/Enclosure/AtticAndRoof/Attics/Attic[AtticType="vented attic"]' => {
         'Floors' => one, # See [AtticFloor]
-        'extension/AtticSpecificLeakageArea' => one,
+        'extension/AtticSpecificLeakageArea' => zero_or_one, # Uses ERI Reference Home if not provided
       },
 
       ## [AtticType=Cape]
@@ -133,7 +134,7 @@ class EnergyPlusValidator
         'SystemIdentifier' => one, # Required by HPXML schema
         'Area' => one,
         'Insulation/SystemIdentifier' => one, # Required by HPXML schema
-        'Insulation/AssemblyEffectiveRValue' => one,
+        'Insulation/AssemblyEffectiveRValue' => zero_or_one, # Uses ERI Reference Home if not provided
         'extension[ExteriorAdjacentTo="living space" or ExteriorAdjacentTo="garage" or ExteriorAdjacentTo="ambient"]' => one,
       },
 
@@ -315,32 +316,35 @@ class EnergyPlusValidator
 
       ## [HeatingType=Resistance]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/ElectricResistance]' => {
+        'DistributionSystem' => zero,
         '[HeatingSystemFuel="electricity"]' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
       ## [HeatingType=Furnace]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=WallFurnace]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/WallFurnace]' => {
+        'DistributionSystem' => zero,
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=Boiler]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=Stove]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Stove]' => {
+        'DistributionSystem' => zero,
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
@@ -362,12 +366,13 @@ class EnergyPlusValidator
 
       ## [CoolingType=CentralAC]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
       },
 
       ## [CoolingType=RoomAC]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioning"]' => {
+        'DistributionSystem' => zero,
         'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
       },
 
@@ -383,7 +388,7 @@ class EnergyPlusValidator
 
       ## [HeatPumpType=ASHP]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
       },
@@ -397,7 +402,7 @@ class EnergyPlusValidator
 
       ## [HeatPumpType=GSHP]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="COP"]/Value' => one,
       },
