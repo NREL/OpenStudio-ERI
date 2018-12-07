@@ -274,8 +274,36 @@ class HVACtest < MiniTest::Test
     _check_thermostat(hpxml_doc, "manual thermostat")
   end
 
-  def test_mini_split_heat_pump
-    hpxml_name = "valid-hvac-mini-split-heat-pump.xml"
+  def test_mini_split_heat_pump_ducted
+    hpxml_name = "valid-hvac-mini-split-heat-pump-ducted.xml"
+
+    # Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_heat_pump(hpxml_doc, true, "air-to-air", 7.7, nil, 1.0, 0.0)
+      _check_cooling_system(hpxml_doc, true, "central air conditioning", 13, 1.0)
+      _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
+      _check_thermostat(hpxml_doc, "manual thermostat")
+      if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+        _check_dse(hpxml_doc, 1.0)
+      else
+        _check_dse(hpxml_doc, 0.8)
+      end
+    end
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml_doc, true, "mini-split", nil, nil, 1.0, 1.0)
+    _check_cooling_system(hpxml_doc, false, nil, nil, nil)
+    _check_heating_system(hpxml_doc, false, nil, nil, nil, nil)
+    _check_thermostat(hpxml_doc, "manual thermostat")
+  end
+
+  def test_mini_split_heat_pump_ductless
+    hpxml_name = "valid-hvac-mini-split-heat-pump-ductless.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
