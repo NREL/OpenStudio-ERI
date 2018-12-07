@@ -2097,28 +2097,13 @@ class HVAC
 
   def self.apply_boiler(model, unit, runner, fuel_type, system_type, afue,
                         oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                        capacity, design_temp, is_modulating, dse,
-                        frac_heat_load_served = 1.0)
-
-    boilerIsCondensing = false
-    if system_type == Constants.BoilerTypeCondensing
-      boilerIsCondensing = true
-    end
-
-    if fuel_type != Constants.FuelTypeElectric and boilerIsCondensing and not is_modulating
-      runner.registerWarning("A non modulating, condensing fuel boiler has been selected. These types of units are very uncommon, double check inputs.")
-    end
+                        capacity, design_temp, dse, frac_heat_load_served = 1.0)
 
     # _processHydronicSystem
 
     if system_type == Constants.BoilerTypeSteam
       runner.registerError("Cannot currently model steam boilers.")
       return false
-    end
-
-    if system_type == Constants.BoilerTypeCondensing
-      # Efficiency curves are normalized using 80F return water temperature, at 0.254PLR
-      condensingBlr_TE_FT_coefficients = [1.058343061, 0.052650153, 0.0087272, 0.001742217, 0.00000333715, 0.000513723]
     end
 
     if oat_reset_enabled
@@ -2137,7 +2122,7 @@ class HVAC
 
     # _processCurvesBoiler
 
-    boiler_eff_curve = get_boiler_curve(model, boilerIsCondensing)
+    boiler_eff_curve = get_boiler_curve(model, system_type == Constants.BoilerTypeCondensing)
 
     obj_name = Constants.ObjectNameBoiler(fuel_type, unit.name.to_s)
 
@@ -2180,37 +2165,21 @@ class HVAC
       plr_Rated = 1.0
       plr_Design = 1.0
       boiler_DesignHWRT = UnitConversions.convert(design_temp - 20.0 - 32.0, "R", "K")
-      condBlr_TE_Coeff = condensingBlr_TE_FT_coefficients # The coefficients are normalized at 80F HWRT
+      # Efficiency curves are normalized using 80F return water temperature, at 0.254PLR
+      condBlr_TE_Coeff = [1.058343061, 0.052650153, 0.0087272, 0.001742217, 0.00000333715, 0.000513723]
       boilerEff_Norm = afue / (condBlr_TE_Coeff[0] - condBlr_TE_Coeff[1] * plr_Rated - condBlr_TE_Coeff[2] * plr_Rated**2 - condBlr_TE_Coeff[3] * boiler_RatedHWRT + condBlr_TE_Coeff[4] * boiler_RatedHWRT**2 + condBlr_TE_Coeff[5] * boiler_RatedHWRT * plr_Rated)
       boilerEff_Design = boilerEff_Norm * (condBlr_TE_Coeff[0] - condBlr_TE_Coeff[1] * plr_Design - condBlr_TE_Coeff[2] * plr_Design**2 - condBlr_TE_Coeff[3] * boiler_DesignHWRT + condBlr_TE_Coeff[4] * boiler_DesignHWRT**2 + condBlr_TE_Coeff[5] * boiler_DesignHWRT * plr_Design)
       boiler.setNominalThermalEfficiency(dse * boilerEff_Design)
       boiler.setEfficiencyCurveTemperatureEvaluationVariable("EnteringBoiler")
-      boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
-      boiler.setDesignWaterOutletTemperature(UnitConversions.convert(design_temp - 32.0, "R", "K"))
-      if is_modulating
-        boiler.setMinimumPartLoadRatio(0.0)
-        boiler.setMaximumPartLoadRatio(1.0)
-        boiler.setBoilerFlowMode("LeavingSetpointModulated")
-      else
-        boiler.setMinimumPartLoadRatio(0.99)
-        boiler.setMaximumPartLoadRatio(1.0)
-        boiler.setBoilerFlowMode("ConstantFlow")
-      end
     else
       boiler.setNominalThermalEfficiency(dse * afue)
       boiler.setEfficiencyCurveTemperatureEvaluationVariable("LeavingBoiler")
-      boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
-      boiler.setDesignWaterOutletTemperature(UnitConversions.convert(design_temp - 32.0, "R", "K"))
-      if is_modulating
-        boiler.setMinimumPartLoadRatio(0.0)
-        boiler.setMaximumPartLoadRatio(1.0)
-        boiler.setBoilerFlowMode("LeavingSetpointModulated")
-      else
-        boiler.setMinimumPartLoadRatio(0.99)
-        boiler.setMaximumPartLoadRatio(1.0)
-        boiler.setBoilerFlowMode("ConstantFlow")
-      end
     end
+    boiler.setNormalizedBoilerEfficiencyCurve(boiler_eff_curve)
+    boiler.setDesignWaterOutletTemperature(UnitConversions.convert(design_temp - 32.0, "R", "K"))
+    boiler.setMinimumPartLoadRatio(0.0)
+    boiler.setMaximumPartLoadRatio(1.0)
+    boiler.setBoilerFlowMode("LeavingSetpointModulated")
     boiler.setOptimumPartLoadRatio(1.0)
     boiler.setWaterOutletUpperTemperatureLimit(99.9)
     boiler.setParasiticElectricLoad(boiler_aux)
@@ -3302,24 +3271,19 @@ class HVAC
     end
   end
 
-  def self.apply_eae_to_heating_fan(runner, hvac_loop, eae, fuel, dse, has_furnace, has_boiler, load_frac, htg_capacity)
+  def self.apply_eae_to_heating_fan(runner, loop_hvac, zone_hvac, eae, fuel, dse, has_furnace, has_boiler, load_frac, loop_hvac_cool)
     # Applies Electric Auxiliary Energy (EAE) for fuel heating equipment to fan power.
 
     if has_boiler
 
       if eae.nil?
-        # From ANSI/RESNET/ICC 301 Standard
-        if fuel == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
-          eae = 170.0 * load_frac
-        elsif fuel == Constants.FuelTypeOil
-          eae = 330.0 * load_frac
-        end
+        eae = get_default_eae(has_boiler, has_furnace, fuel, load_frac, nil)
       end
 
       # TODO: We shouldn't have to apply load_frac here, but it gives better results
       elec_power = (eae / 2.08) * load_frac # W
 
-      hvac_loop.components.each do |plc|
+      loop_hvac.components.each do |plc|
         if plc.to_BoilerHotWater.is_initialized
           boiler = plc.to_BoilerHotWater.get
           boiler.setParasiticElectricLoad(0.0)
@@ -3336,47 +3300,80 @@ class HVAC
 
     else # Furnace/WallFurnace/Stove
 
-      unitary_system = nil
-      hvac_loop.supplyComponents.each do |supply_component|
-        next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+      htg_unitary_system = nil
+      clg_unitary_system = nil
+      if has_furnace
+        loop_hvac.supplyComponents.each do |supply_component|
+          next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
 
-        unitary_system = supply_component.to_AirLoopHVACUnitarySystem.get
+          htg_unitary_system = supply_component.to_AirLoopHVACUnitarySystem.get
+        end
+
+        # Cooling system with the same supply fan
+        if not loop_hvac_cool.nil?
+          loop_hvac_cool.supplyComponents.each do |supply_component|
+            next unless supply_component.to_AirLoopHVACUnitarySystem.is_initialized
+
+            clg_unitary_system = supply_component.to_AirLoopHVACUnitarySystem.get
+          end
+        end
+      else
+        htg_unitary_system = zone_hvac.to_AirLoopHVACUnitarySystem.get
       end
 
       if eae.nil?
-        if has_furnace
-          # From ANSI/RESNET/ICC 301 Standard
-          if fuel == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
-            eae = (149.0 + 10.3 * htg_capacity) * load_frac # kWh/yr
-          elsif fuel == Constants.FuelTypeOil
-            eae = (439.0 + 5.5 * htg_capacity) * load_frac # kWh/yr
-          end
-        else
-          eae = 0.0
-        end
+        htg_coil = htg_unitary_system.heatingCoil.get.to_CoilHeatingGas.get
+        htg_capacity = UnitConversions.convert(htg_coil.nominalCapacity.get, "W", "kBtu/hr")
+        eae = get_default_eae(has_boiler, has_furnace, fuel, load_frac, htg_capacity)
       end
       elec_power = eae / 2.08 # W
 
-      htg_coil = unitary_system.heatingCoil.get.to_CoilHeatingGas.get
+      htg_coil = htg_unitary_system.heatingCoil.get.to_CoilHeatingGas.get
       htg_coil.setParasiticElectricLoad(0.0)
 
-      fan = unitary_system.supplyFan.get.to_FanOnOff.get
-      if elec_power > 0
-        fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-        htg_cfm = UnitConversions.convert(unitary_system.supplyAirFlowRateDuringHeatingOperation.get, "m^3/s", "cfm")
-        fan_w_cfm = elec_power / htg_cfm # W/cfm
-        fan.setFanEfficiency(fan_eff)
-        fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_w_cfm / dse))
-      else
-        fan.setFanEfficiency(1)
-        fan.setPressureRise(0)
+      htg_cfm = UnitConversions.convert(htg_unitary_system.supplyAirFlowRateDuringHeatingOperation.get, "m^3/s", "cfm")
+
+      [htg_unitary_system, clg_unitary_system].each do |unitary_system|
+        next if unitary_system.nil?
+
+        fan = unitary_system.supplyFan.get.to_FanOnOff.get
+        if elec_power > 0
+          fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
+          fan_w_cfm = elec_power / htg_cfm # W/cfm
+          fan.setFanEfficiency(fan_eff)
+          fan.setPressureRise(calculate_fan_pressure_rise(fan_eff, fan_w_cfm / dse))
+        else
+          fan.setFanEfficiency(1)
+          fan.setPressureRise(0)
+        end
+        fan.setMotorEfficiency(1.0)
+        fan.setMotorInAirstreamFraction(1.0)
       end
-      fan.setMotorEfficiency(1.0)
-      fan.setMotorInAirstreamFraction(1.0)
 
     end
 
     return true
+  end
+
+  def self.get_default_eae(has_boiler, has_furnace, fuel, load_frac, furnace_capacity_kbtuh)
+    # From ANSI/RESNET/ICC 301 Standard
+    eae = nil
+    if has_boiler
+      if fuel == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
+        eae = 170.0 * load_frac # kWh/yr
+      elsif fuel == Constants.FuelTypeOil
+        eae = 330.0 * load_frac # kWh/yr
+      end
+    elsif has_furnace
+      if fuel == Constants.FuelTypeGas or fuel == Constants.FuelTypePropane
+        eae = (149.0 + 10.3 * furnace_capacity_kbtuh) * load_frac # kWh/yr
+      elsif fuel == Constants.FuelTypeOil
+        eae = (439.0 + 5.5 * furnace_capacity_kbtuh) * load_frac # kWh/yr
+      end
+    else
+      eae = 0.0 # FIXME: Is this right?
+    end
+    return eae
   end
 
   private
