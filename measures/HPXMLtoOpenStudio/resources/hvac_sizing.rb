@@ -2022,7 +2022,9 @@ class HVACSizing
 
     # Override Manual J sizes if Fixed sizes are being used
     if not hvac.FixedCoolingCapacity.nil?
+      prev_capacity = unit_final.Cool_Capacity
       unit_final.Cool_Capacity = UnitConversions.convert(hvac.FixedCoolingCapacity, "ton", "Btu/hr")
+      unit_final.Cool_Airflow = unit_final.Cool_Airflow * unit_final.Cool_Capacity / prev_capacity
     end
     if not hvac.FixedSuppHeatingCapacity.nil?
       unit_final.Heat_Load = UnitConversions.convert(hvac.FixedSuppHeatingCapacity, "ton", "Btu/hr")
@@ -4170,8 +4172,8 @@ class HVACSizing
       system, clg_coil, htg_coil, air_loop = HVAC.get_unitary_system_air_loop(model, runner, thermal_zone)
       next if system.nil?
 
-      clg_airflow = UnitConversions.convert([unit_final.Cool_Airflow, 0.00001].max, "cfm", "m^3/s") # A value of 0 does not change from autosize
-      htg_airflow = UnitConversions.convert([unit_final.Heat_Airflow, 0.00001].max, "cfm", "m^3/s") # A value of 0 does not change from autosize
+      clg_airflow = UnitConversions.convert(unit_final.Cool_Airflow, "cfm", "m^3/s")
+      htg_airflow = UnitConversions.convert(unit_final.Heat_Airflow, "cfm", "m^3/s")
 
       if not clg_coil.nil? and not htg_coil.nil?
         fan_airflow = [unit_final.Heat_Airflow, unit_final.Cool_Airflow].max
@@ -4186,13 +4188,13 @@ class HVACSizing
       if not clg_coil.nil?
         system.setSupplyAirFlowRateDuringCoolingOperation(clg_airflow)
       else
-        system.setSupplyAirFlowRateDuringCoolingOperation(0.00001) # A value of 0 does not change from autosize
+        system.setSupplyAirFlowRateDuringCoolingOperation(0.0)
       end
       system.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
       if not htg_coil.nil?
         system.setSupplyAirFlowRateDuringHeatingOperation(htg_airflow)
       else
-        system.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
+        system.setSupplyAirFlowRateDuringHeatingOperation(0.0)
       end
 
       # Fan
@@ -4265,15 +4267,15 @@ class HVACSizing
       # Unitary System
       system.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
       if not clg_coil.nil?
-        system.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert([unit_final.Cool_Airflow * unit_final.Zone_Ratios[thermal_zone], 0.00001].max, "cfm", "m^3/s")) # A value of 0 does not change from autosize
+        system.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert(unit_final.Cool_Airflow * unit_final.Zone_Ratios[thermal_zone], "cfm", "m^3/s"))
       else
-        system.setSupplyAirFlowRateDuringCoolingOperation(0.00001) # A value of 0 does not change from autosize
+        system.setSupplyAirFlowRateDuringCoolingOperation(0.0)
       end
       system.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
       if not htg_coil.nil?
-        system.setSupplyAirFlowRateDuringHeatingOperation(UnitConversions.convert([unit_final.Heat_Airflow * unit_final.Zone_Ratios[thermal_zone], 0.00001].max, "cfm", "m^3/s")) # A value of 0 does not change from autosize
+        system.setSupplyAirFlowRateDuringHeatingOperation(UnitConversions.convert(unit_final.Heat_Airflow * unit_final.Zone_Ratios[thermal_zone], "cfm", "m^3/s"))
       else
-        system.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
+        system.setSupplyAirFlowRateDuringHeatingOperation(0.0)
       end
 
       # Fan
@@ -4291,7 +4293,7 @@ class HVACSizing
 
       # PTAC
       ptac.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert(unit_final.Cool_Airflow, "cfm", "m^3/s"))
-      ptac.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
+      ptac.setSupplyAirFlowRateDuringHeatingOperation(0.00001)
       ptac.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
       ptac.setOutdoorAirFlowRateDuringCoolingOperation(0.0)
       ptac.setOutdoorAirFlowRateDuringHeatingOperation(0.0)
