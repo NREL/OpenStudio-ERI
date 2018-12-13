@@ -3214,8 +3214,12 @@ class HVACSizing
 
         elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
           hvac.NumSpeedsHeating = htg_coil.stages.size
-          hvac.CapacityRatioHeating = hvac.CapacityRatioCooling
           hvac.MinOutdoorTemp = UnitConversions.convert(htg_coil.minimumOutdoorDryBulbTemperatureforCompressorOperation, "C", "F")
+
+          capacityRatioHeating = get_feature(runner, htg_equip, Constants.SizingInfoHVACCapacityRatioHeating, 'string')
+          return nil if capacityRatioHeating.nil?
+
+          hvac.CapacityRatioHeating = capacityRatioHeating.split(",").map(&:to_f)
 
           curves = []
           htg_coil.stages.each_with_index do |stage, speed|
@@ -4127,15 +4131,15 @@ class HVACSizing
         # Unitary System
         system.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
         if not clg_coil.nil?
-          system.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert([unit_final.Cool_Airflow, 0.00001].max, "cfm", "m^3/s")) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert(unit_final.Cool_Airflow, "cfm", "m^3/s"))
         else
-          system.setSupplyAirFlowRateDuringCoolingOperation(0.00001) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringCoolingOperation(0.0)
         end
         system.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
         if not htg_coil.nil?
-          system.setSupplyAirFlowRateDuringHeatingOperation(UnitConversions.convert([unit_final.Heat_Airflow, 0.00001].max, "cfm", "m^3/s")) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringHeatingOperation(UnitConversions.convert(unit_final.Heat_Airflow, "cfm", "m^3/s"))
         else
-          system.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringHeatingOperation(0.0)
         end
 
         # Fan
@@ -4211,15 +4215,15 @@ class HVACSizing
         # Unitary System
         system.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
         if not clg_coil.nil?
-          system.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert([unit_final.Cool_Airflow * unit_final.Zone_Ratios[thermal_zone], 0.00001].max, "cfm", "m^3/s")) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert(unit_final.Cool_Airflow * unit_final.Zone_Ratios[thermal_zone], "cfm", "m^3/s"))
         else
-          system.setSupplyAirFlowRateDuringCoolingOperation(0.00001) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringCoolingOperation(0.0)
         end
         system.setSupplyAirFlowRateMethodDuringHeatingOperation("SupplyAirFlowRate")
         if not htg_coil.nil?
-          system.setSupplyAirFlowRateDuringHeatingOperation(UnitConversions.convert([unit_final.Heat_Airflow * unit_final.Zone_Ratios[thermal_zone], 0.00001].max, "cfm", "m^3/s")) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringHeatingOperation(UnitConversions.convert(unit_final.Heat_Airflow * unit_final.Zone_Ratios[thermal_zone], "cfm", "m^3/s"))
         else
-          system.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
+          system.setSupplyAirFlowRateDuringHeatingOperation(0.0)
         end
 
         # Fan
@@ -4237,7 +4241,7 @@ class HVACSizing
       ptacs.each do |ptac|
         # PTAC
         ptac.setSupplyAirFlowRateDuringCoolingOperation(UnitConversions.convert(unit_final.Cool_Airflow, "cfm", "m^3/s"))
-        ptac.setSupplyAirFlowRateDuringHeatingOperation(0.00001) # A value of 0 does not change from autosize
+        ptac.setSupplyAirFlowRateDuringHeatingOperation(0.00001)
         ptac.setSupplyAirFlowRateWhenNoCoolingorHeatingisNeeded(0.0)
         ptac.setOutdoorAirFlowRateDuringCoolingOperation(0.0)
         ptac.setOutdoorAirFlowRateDuringHeatingOperation(0.0)
