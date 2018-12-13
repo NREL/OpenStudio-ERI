@@ -2168,13 +2168,7 @@ class OSModel
 
         # FIXME: Generalize
         seer = Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))
-        if seer <= 15
-          num_speeds = "1-Speed"
-        elsif seer <= 21
-          num_speeds = "2-Speed"
-        else
-          num_speeds = "Variable-Speed"
-        end
+        num_speeds = get_ac_num_speeds(seer)
         crankcase_kw = 0.0
         crankcase_temp = 55.0
 
@@ -2239,7 +2233,7 @@ class OSModel
         airflow_rate = 350.0
 
         success = HVAC.apply_room_ac(model, unit, runner, eer, shr,
-                                     airflow_rate, cool_capacity_btuh)
+                                     airflow_rate, cool_capacity_btuh, load_frac)
         return false if not success
 
       end
@@ -2271,11 +2265,11 @@ class OSModel
       if htg_type == "Furnace"
 
         afue = Float(XMLHelper.get_value(htgsys, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
-
         fan_power = 0.5 # For fuel furnaces, will be overridden by EAE later
+        attached_to_multispeed_ac = get_attached_to_multispeed_ac(htgsys, building)
         success = HVAC.apply_furnace(model, unit, runner, fuel, afue,
                                      heat_capacity_btuh, fan_power, dse_heat,
-                                     load_frac)
+                                     load_frac, attached_to_multispeed_ac)
         return false if not success
 
       elsif htg_type == "WallFurnace"
@@ -2367,14 +2361,7 @@ class OSModel
 
         seer = Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
         hspf = Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
-
-        if seer <= 15
-          num_speeds = "1-Speed"
-        elsif seer <= 21
-          num_speeds = "2-Speed"
-        else
-          num_speeds = "Variable-Speed"
-        end
+        num_speeds = get_ashp_num_speeds(seer)
 
         crankcase_kw = 0.02
         crankcase_temp = 55.0
@@ -2826,12 +2813,16 @@ class OSModel
       fan_type = XMLHelper.get_value(whole_house_fan, "FanType")
       if fan_type == "supply only"
         mech_vent_type = Constants.VentTypeSupply
+        num_fans = 1.0
       elsif fan_type == "exhaust only"
         mech_vent_type = Constants.VentTypeExhaust
+        num_fans = 1.0
       elsif fan_type == "central fan integrated supply"
         mech_vent_type = Constants.VentTypeCFIS
+        num_fans = 1.0
       elsif ["balanced", "energy recovery ventilator", "heat recovery ventilator"].include? fan_type
         mech_vent_type = Constants.VentTypeBalanced
+        num_fans = 2.0
       end
       mech_vent_total_efficiency = 0.0
       mech_vent_sensible_efficiency = 0.0
@@ -2843,7 +2834,7 @@ class OSModel
       end
       mech_vent_cfm = Float(XMLHelper.get_value(whole_house_fan, "RatedFlowRate"))
       mech_vent_w = Float(XMLHelper.get_value(whole_house_fan, "FanPower"))
-      mech_vent_fan_power = mech_vent_w / mech_vent_cfm
+      mech_vent_fan_power = mech_vent_w / mech_vent_cfm / num_fans
     end
     mech_vent_ashrae_std = '2013'
     mech_vent_infil_credit = true
@@ -3496,6 +3487,39 @@ class OSModel
       interior_adjacent_to = "ambient"
     end
     return interior_adjacent_to
+  end
+
+  def self.get_ac_num_speeds(seer)
+    if seer <= 15
+      return "1-Speed"
+    elsif seer <= 21
+      return "2-Speed"
+    else
+      return "Variable-Speed"
+    end
+  end
+
+  def self.get_ashp_num_speeds(seer)
+    if seer <= 15
+      num_speeds = "1-Speed"
+    elsif seer <= 21
+      num_speeds = "2-Speed"
+    else
+      num_speeds = "Variable-Speed"
+    end
+  end
+
+  def self.get_attached_to_multispeed_ac(htgsys, building)
+    attached_to_multispeed_ac = false
+    building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clgsys|
+      next unless XMLHelper.get_value(clgsys, "CoolingSystemType") == "central air conditioning"
+      next unless htgsys.elements["DistributionSystem"].attributes["idref"] == clgsys.elements["DistributionSystem"].attributes["idref"]
+      next unless get_ac_num_speeds(Float(XMLHelper.get_value(clgsys, "AnnualCoolingEfficiency[Units='SEER']/Value"))) != "1-Speed"
+
+      attached_to_multispeed_ac = true
+    end
+
+    return attached_to_multispeed_ac
   end
 end
 

@@ -10,7 +10,7 @@ class HVAC
                                    fan_power_rated, fan_power_installed,
                                    crankcase_capacity, crankcase_temp,
                                    eer_capacity_derates, capacity, dse,
-                                   frac_cool_load_served = 1.0)
+                                   frac_cool_load_served)
 
     num_speeds = 1
 
@@ -80,7 +80,7 @@ class HVAC
       air_loop_unitary.setName(obj_name + " unitary system")
       air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
       air_loop_unitary.setCoolingCoil(clg_coil)
-      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0000001) # this is when there is no heating present
+      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0)
       air_loop_unitary.setSupplyFan(fan)
       air_loop_unitary.setFanPlacement("BlowThrough")
       air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
@@ -145,7 +145,7 @@ class HVAC
                                    fan_power_rated, fan_power_installed,
                                    crankcase_capacity, crankcase_temp,
                                    eer_capacity_derates, capacity, dse,
-                                   frac_cool_load_served = 1.0)
+                                   frac_cool_load_served)
 
     num_speeds = 2
 
@@ -214,7 +214,7 @@ class HVAC
       air_loop_unitary.setName(obj_name + " unitary system")
       air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
       air_loop_unitary.setCoolingCoil(clg_coil)
-      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0000001) # this is when there is no heating present
+      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0)
       air_loop_unitary.setSupplyFan(fan)
       air_loop_unitary.setFanPlacement("BlowThrough")
       air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
@@ -288,7 +288,7 @@ class HVAC
                                    fan_power_rated, fan_power_installed,
                                    crankcase_capacity, crankcase_temp,
                                    eer_capacity_derates, capacity, dse,
-                                   frac_cool_load_served = 1.0)
+                                   frac_cool_load_served)
 
     num_speeds = 4
 
@@ -359,7 +359,7 @@ class HVAC
       air_loop_unitary.setName(obj_name + " unitary system")
       air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
       air_loop_unitary.setCoolingCoil(clg_coil)
-      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0000001) # this is when there is no heating present
+      air_loop_unitary.setSupplyAirFlowRateDuringHeatingOperation(0.0)
       air_loop_unitary.setSupplyFan(fan)
       air_loop_unitary.setFanPlacement("BlowThrough")
       air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
@@ -434,7 +434,7 @@ class HVAC
                                      eer_capacity_derates, cop_capacity_derates,
                                      heat_pump_capacity, supplemental_efficiency,
                                      supplemental_capacity, dse,
-                                     frac_heat_load_served = 1.0, frac_cool_load_served = 1.0)
+                                     frac_heat_load_served, frac_cool_load_served)
 
     if heat_pump_capacity == Constants.SizingAutoMaxLoad
       runner.registerWarning("Using #{Constants.SizingAutoMaxLoad} is not recommended for single-speed heat pumps. When sized larger than the cooling load, this can lead to humidity concerns due to reduced dehumidification performance by the heat pump.")
@@ -689,7 +689,7 @@ class HVAC
                                      eer_capacity_derates, cop_capacity_derates,
                                      heat_pump_capacity, supplemental_efficiency,
                                      supplemental_capacity, dse,
-                                     frac_heat_load_served = 1.0, frac_cool_load_served = 1.0)
+                                     frac_heat_load_served, frac_cool_load_served)
 
     num_speeds = 2
 
@@ -942,6 +942,7 @@ class HVAC
 
       # Store info for HVAC Sizing measure
       clg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_ratios.join(","))
+      htg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityRatioHeating, capacity_ratios.join(","))
       clg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
       htg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, cop_capacity_derates.join(","))
       htg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (heat_pump_capacity == Constants.SizingAutoMaxLoad))
@@ -962,7 +963,7 @@ class HVAC
                                      eer_capacity_derates, cop_capacity_derates,
                                      heat_pump_capacity, supplemental_efficiency,
                                      supplemental_capacity, dse,
-                                     frac_heat_load_served = 1.0, frac_cool_load_served = 1.0)
+                                     frac_heat_load_served, frac_cool_load_served)
 
     num_speeds = 4
 
@@ -1220,6 +1221,7 @@ class HVAC
 
       # Store info for HVAC Sizing measure
       clg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityRatioCooling, capacity_ratios.join(","))
+      htg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityRatioHeating, capacity_ratios.join(","))
       clg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityDerateFactorEER, eer_capacity_derates.join(","))
       htg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHVACCapacityDerateFactorCOP, cop_capacity_derates.join(","))
       htg_air_loop_unitary.additionalProperties.setFeature(Constants.SizingInfoHPSizedForMaxLoad, (heat_pump_capacity == Constants.SizingAutoMaxLoad))
@@ -1240,7 +1242,7 @@ class HVAC
                       heating_capacity_offset, cap_retention_frac, cap_retention_temp,
                       pan_heater_power, fan_power, is_ducted,
                       heat_pump_capacity, supplemental_efficiency, supplemental_capacity,
-                      dse, frac_heat_load_served = 1.0, frac_cool_load_served = 1.0)
+                      dse, frac_heat_load_served, frac_cool_load_served)
 
     num_speeds = 10
 
@@ -1422,9 +1424,9 @@ class HVAC
 
       if pan_heater_power > 0
 
-        vrf_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "VRF Heat Pump Heating Electric Energy")
-        vrf_sensor.setName("#{obj_name} vrf energy sensor".gsub("|", "_"))
-        vrf_sensor.setKeyName(obj_name + " #{control_zone.name} ac vrf")
+        mshp_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, "Heating Coil Electric Energy")
+        mshp_sensor.setName("#{obj_name} vrf energy sensor".gsub("|", "_"))
+        mshp_sensor.setKeyName(obj_name + " htg coil")
 
         equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
         equip_def.setName(obj_name + " pan heater equip")
@@ -1435,6 +1437,7 @@ class HVAC
         equip_def.setFractionLatent(0)
         equip_def.setFractionLost(1)
         equip.setSchedule(model.alwaysOnDiscreteSchedule)
+        equip.setEndUseSubcategory(obj_name + " pan heater")
 
         pan_heater_actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(equip, "ElectricEquipment", "Electric Power Level")
         pan_heater_actuator.setName("#{obj_name} pan heater actuator".gsub("|", "_"))
@@ -1460,10 +1463,10 @@ class HVAC
         end
         pan_heater_power = pan_heater_power * num_outdoor_units # W
         program.addLine("Set #{pan_heater_actuator.name} = 0")
-        program.addLine("If #{vrf_sensor.name} > 0")
-        program.addLine("If #{tout_sensor.name} <= #{UnitConversions.convert(32.0, "F", "C").round(3)}")
-        program.addLine("Set #{pan_heater_actuator.name} = #{pan_heater_power}")
-        program.addLine("EndIf")
+        program.addLine("If #{mshp_sensor.name} > 0")
+        program.addLine("  If #{tout_sensor.name} <= #{UnitConversions.convert(32.0, "F", "C").round(3)}")
+        program.addLine("    Set #{pan_heater_actuator.name} = #{pan_heater_power}")
+        program.addLine("  EndIf")
         program.addLine("EndIf")
 
         program_calling_manager = OpenStudio::Model::EnergyManagementSystemProgramCallingManager.new(model)
@@ -1609,7 +1612,7 @@ class HVAC
                       u_tube_leg_spacing, u_tube_spacing_type,
                       fan_power, heat_pump_capacity, supplemental_efficiency,
                       supplemental_capacity, dse,
-                      frac_heat_load_served = 1.0, frac_cool_load_served = 1.0)
+                      frac_heat_load_served, frac_cool_load_served)
 
     if frac_glycol == 0
       fluid_type = Constants.FluidWater
@@ -1913,7 +1916,7 @@ class HVAC
   end
 
   def self.apply_room_ac(model, unit, runner, eer, shr,
-                         airflow_rate, capacity, frac_cool_load_served = 1.0)
+                         airflow_rate, capacity, frac_cool_load_served)
 
     # Performance curves
     # From Frigidaire 10.7 EER unit in Winkler et. al. Lab Testing of Window ACs (2013)
@@ -1987,7 +1990,7 @@ class HVAC
 
   def self.apply_furnace(model, unit, runner, fuel_type, afue,
                          capacity, fan_power_installed, dse,
-                         frac_heat_load_served = 1.0)
+                         frac_heat_load_served, attached_to_multispeed_ac)
 
     # Parasitic Electricity (Source: DOE. (2007). Technical Support Document: Energy Efficiency Program for Consumer Products: "Energy Conservation Standards for Residential Furnaces and Boilers". www.eere.energy.gov/buildings/appliance_standards/residential/furnaces_boilers.html)
     furnaceParasiticElecDict = { Constants.FuelTypeGas => 76.0, # W during operation
@@ -2023,7 +2026,14 @@ class HVAC
 
       # _processSystemFan
 
-      fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+      if attached_to_multispeed_ac
+        fan_power_curve = create_curve_exponent(model, [0, 1, 3], obj_name + " fan power curve", -100, 100)
+        fan_eff_curve = create_curve_cubic(model, [0, 1, 0, 0], obj_name + " fan eff curve", 0, 1, 0.01, 1)
+
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule, fan_power_curve, fan_eff_curve)
+      else
+        fan = OpenStudio::Model::FanOnOff.new(model, model.alwaysOnDiscreteSchedule)
+      end
       fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
       fan.setName(obj_name + " htg supply fan")
       fan.setEndUseSubcategory(Constants.EndUseHVACHeatingFan)
@@ -2038,7 +2048,7 @@ class HVAC
       air_loop_unitary.setName(obj_name + " unitary system")
       air_loop_unitary.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
       air_loop_unitary.setHeatingCoil(htg_coil)
-      air_loop_unitary.setSupplyAirFlowRateDuringCoolingOperation(0.0000001) # this is when there is no cooling present
+      air_loop_unitary.setSupplyAirFlowRateDuringCoolingOperation(0.0)
       air_loop_unitary.setSupplyFan(fan)
       air_loop_unitary.setFanPlacement("BlowThrough")
       air_loop_unitary.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
@@ -2097,7 +2107,7 @@ class HVAC
 
   def self.apply_boiler(model, unit, runner, fuel_type, system_type, afue,
                         oat_reset_enabled, oat_high, oat_low, oat_hwst_high, oat_hwst_low,
-                        capacity, design_temp, dse, frac_heat_load_served = 1.0)
+                        capacity, design_temp, dse, frac_heat_load_served)
 
     # _processHydronicSystem
 
@@ -2247,7 +2257,7 @@ class HVAC
     return true
   end
 
-  def self.apply_electric_baseboard(model, unit, runner, efficiency, capacity, frac_heat_load_served = 1.0)
+  def self.apply_electric_baseboard(model, unit, runner, efficiency, capacity, frac_heat_load_served)
     obj_name = Constants.ObjectNameElectricBaseboard(unit.name.to_s)
 
     thermal_zones = Geometry.get_thermal_zones_from_spaces(unit.spaces)
@@ -2277,7 +2287,7 @@ class HVAC
 
   def self.apply_unit_heater(model, unit, runner, fuel_type,
                              efficiency, capacity, fan_power,
-                             airflow_rate, frac_heat_load_served = 1.0)
+                             airflow_rate, frac_heat_load_served)
 
     if fan_power > 0 and airflow_rate == 0
       runner.registerError("If Fan Power > 0, then Airflow Rate cannot be zero.")
@@ -2324,7 +2334,7 @@ class HVAC
         unitary_system.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
         unitary_system.setHeatingCoil(htg_coil)
         unitary_system.setSupplyAirFlowRateMethodDuringCoolingOperation("SupplyAirFlowRate")
-        unitary_system.setSupplyAirFlowRateDuringCoolingOperation(0.00001)
+        unitary_system.setSupplyAirFlowRateDuringCoolingOperation(0.0)
         unitary_system.setSupplyFan(fan)
         unitary_system.setFanPlacement("BlowThrough")
         unitary_system.setSupplyAirFanOperatingModeSchedule(model.alwaysOffDiscreteSchedule)
@@ -4614,7 +4624,7 @@ class HVAC
     cfms_cooling = [0.0] * num_speeds
     shrs_rated = [0.0] * num_speeds
 
-    cap_nom_per = cap_max_per
+    cap_nom_per = 1.0
     cfm_ton_nom = ((cfm_ton_max - cfm_ton_min) / (cap_max_per - cap_min_per)) * (cap_nom_per - cap_min_per) + cfm_ton_min
 
     ao = Psychrometrics.CoilAoFactor(dB_rated, wB_rated, Constants.Patm, UnitConversions.convert(1, "ton", "kBtu/hr"), cfm_ton_nom, shr)
