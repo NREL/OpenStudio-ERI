@@ -1302,6 +1302,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_vent_fan, "HoursInOperation", 24) # TODO: CFIS
       XMLHelper.add_element(new_vent_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.add_element(new_vent_fan, "FanPower", fan_power_w)
+      XMLHelper.copy_element(new_vent_fan, orig_whole_house_fan, "AttachedToHVACDistributionSystem")
 
     end
   end
@@ -1324,6 +1325,7 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "TotalRecoveryEfficiency")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "SensibleRecoveryEfficiency")
       XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "FanPower")
+      XMLHelper.copy_element(new_vent_fan, orig_vent_fan, "AttachedToHVACDistributionSystem")
 
     end
   end

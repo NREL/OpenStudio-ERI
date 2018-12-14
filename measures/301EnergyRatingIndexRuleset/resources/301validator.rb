@@ -18,6 +18,7 @@ class EnergyRatingIndex301Validator
     # }
     #
 
+    zero = [0]
     one = [1]
     zero_or_one = [0, 1]
     zero_or_more = nil
@@ -301,32 +302,35 @@ class EnergyRatingIndex301Validator
 
       ## [HeatingType=Resistance]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/ElectricResistance]' => {
+        'DistributionSystem' => zero,
         '[HeatingSystemFuel="electricity"]' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
       ## [HeatingType=Furnace]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=WallFurnace]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/WallFurnace]' => {
+        'DistributionSystem' => zero,
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=Boiler]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=Stove]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Stove]' => {
+        'DistributionSystem' => zero,
         '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
@@ -336,7 +340,7 @@ class EnergyRatingIndex301Validator
         'ElectricAuxiliaryEnergy' => zero_or_one, # If not provided, uses 301 defaults for furnace/boiler and zero for other heating systems
       },
 
-      # [CoolingSystem]
+      ## [CoolingSystem]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
@@ -348,16 +352,17 @@ class EnergyRatingIndex301Validator
 
       ## [CoolingType=CentralAC]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="central air conditioning"]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
       },
 
       ## [CoolingType=RoomAC]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioning"]' => {
+        'DistributionSystem' => zero,
         'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
       },
 
-      # [HeatPump]
+      ## [HeatPump]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
@@ -369,7 +374,7 @@ class EnergyRatingIndex301Validator
 
       ## [HeatPumpType=ASHP]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
       },
@@ -383,7 +388,7 @@ class EnergyRatingIndex301Validator
 
       ## [HeatPumpType=GSHP]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => {
-        'DistributionSystem' => zero_or_one, # See [HVACDistribution]
+        'DistributionSystem' => one, # See [HVACDistribution]
         'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="COP"]/Value' => one,
       },
@@ -416,14 +421,14 @@ class EnergyRatingIndex301Validator
       ## [HVACDuct]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
         'DuctInsulationRValue' => one,
-        'DuctLocation' => one, # TODO: Restrict values
+        '[DuctLocation="conditioned space" or DuctLocation="unconditioned basement" or DuctLocation="unvented crawlspace" or DuctLocation="vented crawlspace" or DuctLocation="unconditioned attic"]' => one,
         'DuctSurfaceArea' => one,
       },
 
       # [MechanicalVentilation]
       '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        '[FanType="energy recovery ventilator" or FanType="heat recovery ventilator" or FanType="exhaust only" or FanType="supply only" or FanType="balanced" or FanType="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV]
+        '[FanType="energy recovery ventilator" or FanType="heat recovery ventilator" or FanType="exhaust only" or FanType="supply only" or FanType="balanced" or FanType="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS]
         'RatedFlowRate' => one,
         'HoursInOperation' => one,
         'UsedForWholeBuildingVentilation' => one,
@@ -439,6 +444,11 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="energy recovery ventilator"]' => {
         'TotalRecoveryEfficiency' => one,
         'SensibleRecoveryEfficiency' => one,
+      },
+
+      ## [MechVentType=CFIS]
+      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="central fan integrated supply"]' => {
+        'AttachedToHVACDistributionSystem' => one,
       },
 
       # [WaterHeatingSystem]
