@@ -1127,6 +1127,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # HeatingSystems
+    added_reference_heating = false
     if not heating_system.nil?
 
       # Retain heating system
@@ -1139,10 +1140,8 @@ class EnergyRatingIndex301Ruleset
       heating_system = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
       sys_id = XMLHelper.add_element(heating_system, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
-      if not dist_id.nil?
-        dist = XMLHelper.add_element(heating_system, "DistributionSystem")
-        XMLHelper.add_attribute(dist, "idref", dist_id)
-      end
+      dist = XMLHelper.add_element(heating_system, "DistributionSystem")
+      XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
       sys_type = XMLHelper.add_element(heating_system, "HeatingSystemType")
       furnace = XMLHelper.add_element(sys_type, "Furnace")
       XMLHelper.add_element(heating_system, "HeatingSystemFuel", "natural gas")
@@ -1151,10 +1150,12 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(heat_eff, "Units", "AFUE")
       XMLHelper.add_element(heat_eff, "Value", afue)
       XMLHelper.add_element(heating_system, "FractionHeatLoadServed", 1.0)
+      added_reference_heating = true
 
     end
 
     # CoolingSystems
+    added_reference_cooling = false
     if not cooling_system.nil?
 
       # Retain cooling system
@@ -1167,10 +1168,8 @@ class EnergyRatingIndex301Ruleset
       cooling_system = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
       sys_id = XMLHelper.add_element(cooling_system, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
-      if not dist_id.nil?
-        dist = XMLHelper.add_element(cooling_system, "DistributionSystem")
-        XMLHelper.add_attribute(dist, "idref", dist_id)
-      end
+      dist = XMLHelper.add_element(cooling_system, "DistributionSystem")
+      XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
       XMLHelper.add_element(cooling_system, "CoolingSystemType", "central air conditioning")
       XMLHelper.add_element(cooling_system, "CoolingSystemFuel", "electricity")
       XMLHelper.add_element(cooling_system, "CoolingCapacity", -1) # Use Manual J auto-sizing
@@ -1178,6 +1177,7 @@ class EnergyRatingIndex301Ruleset
       cool_eff = XMLHelper.add_element(cooling_system, "AnnualCoolingEfficiency")
       XMLHelper.add_element(cool_eff, "Units", "SEER")
       XMLHelper.add_element(cool_eff, "Value", seer)
+      added_reference_cooling = true
 
     end
 
@@ -1193,10 +1193,8 @@ class EnergyRatingIndex301Ruleset
       hspf = 7.7
       heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
       sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
-      if not dist_id.nil?
-        dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
-        XMLHelper.add_attribute(dist, "idref", dist_id)
-      end
+      dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
+      XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
       XMLHelper.add_attribute(sys_id, "id", "HeatPump")
       XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
       XMLHelper.add_element(heat_pump, "HeatingCapacity", -1) # Use Manual J auto-sizing
@@ -1209,6 +1207,7 @@ class EnergyRatingIndex301Ruleset
       heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
       XMLHelper.add_element(heat_eff, "Units", "HSPF")
       XMLHelper.add_element(heat_eff, "Value", hspf)
+      added_reference_heating = true
 
     end
 
@@ -1226,9 +1225,15 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Table 4.2.2(1) - Thermal distribution systems
-    # FIXME: There can be no distribution system when HVAC prescribed via above
-    #        e.g., no cooling system => AC w/o ducts. Is this right?
     XMLHelper.copy_element(new_hvac, orig_details, "Systems/HVAC/HVACDistribution")
+    if added_reference_heating or added_reference_cooling
+      new_hvac_dist = XMLHelper.add_element(new_hvac, "HVACDistribution")
+      sys_id = XMLHelper.add_element(new_hvac_dist, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "HVACDistribution_DSE_80")
+      XMLHelper.add_element(new_hvac_dist, "DistributionSystemType/Other", "DSE")
+      XMLHelper.add_element(new_hvac_dist, "AnnualHeatingDistributionSystemEfficiency", 0.8)
+      XMLHelper.add_element(new_hvac_dist, "AnnualCoolingDistributionSystemEfficiency", 0.8)
+    end
   end
 
   def self.set_systems_hvac_iad(new_systems, orig_details)
