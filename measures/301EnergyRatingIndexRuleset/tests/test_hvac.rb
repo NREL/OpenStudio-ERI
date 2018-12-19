@@ -247,7 +247,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_air_source_heat_pump
-    hpxml_name = "valid-hvac-air-to-air-heat-pump.xml"
+    hpxml_name = "valid-hvac-air-to-air-heat-pump-1-speed.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -359,7 +359,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_central_air_conditioner
-    hpxml_name = "valid-hvac-central-ac-only.xml"
+    hpxml_name = "valid-hvac-central-ac-only-1-speed.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
