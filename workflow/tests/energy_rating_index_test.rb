@@ -16,12 +16,12 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     xmldir = "#{parent_dir}/sample_files"
     Dir["#{xmldir}/valid*.xml"].sort.each do |xml|
-      run_and_check(xml, parent_dir, false, false)
+      run_and_check(xml, parent_dir)
     end
 
     xmldir = "#{parent_dir}/sample_files/multiple_hvac"
     Dir["#{xmldir}/valid*.xml"].sort.each do |xml|
-      run_and_check(xml, parent_dir, false, false)
+      run_and_check(xml, parent_dir)
     end
   end
 
@@ -68,13 +68,13 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       test_num = File.basename(xml)[0, 2].to_i
 
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       _check_reference_home_components(ref_hpxml, test_num)
 
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
       ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
-      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir, false, false)
+      ref_hpxml2, rated_hpxml2, results_csv2 = run_and_check(ref_hpxml, parent_dir)
       _check_e_ratio(results_csv2)
     end
   end
@@ -84,7 +84,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       _check_method_results(results_csv, test_num, test_num == 2, false)
     end
   end
@@ -94,7 +94,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_IAF")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, true, false)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, true)
       _check_method_results(results_csv, test_num, test_num == 2, true)
     end
   end
@@ -112,7 +112,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         test_num = File.basename(xml).gsub('L100-AL-', '').gsub('.xml', '').to_i
         test_loc = 'AL'
       end
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       _check_method_proposed_results(results_csv, test_num, test_loc, test_num == 8)
     end
   end
@@ -136,7 +136,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       test_num += 1
 
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       all_results[test_num] = _get_hot_water(results_csv)
       assert_operator(all_results[test_num], :>, 0)
     end
@@ -178,7 +178,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       test_num += 1
 
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir, false, false)
+      ref_hpxml, rated_hpxml, results_csv = run_and_check(xml, parent_dir)
       all_results[test_num] = _get_hot_water(results_csv)
       assert_operator(all_results[test_num], :>, 0)
     end
@@ -220,7 +220,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     parent_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{parent_dir}/tests/NASEO_Technical_Exercises"
     Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
-      run_and_check(xml, parent_dir, false, false)
+      run_and_check(xml, parent_dir)
     end
   end
 
@@ -236,7 +236,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
   private
 
-  def run_and_check(xml, parent_dir, using_iaf, expect_error, expect_error_msgs)
+  def run_and_check(xml, parent_dir, using_iaf = false, expect_error = false, expect_error_msgs = nil)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 

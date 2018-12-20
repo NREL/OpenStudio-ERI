@@ -1058,7 +1058,6 @@ class EnergyRatingIndex301Ruleset
     if cooling_system.nil? and heat_pump_system.nil?
       add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
       added_reference_cooling = true
-
     end
 
     # HeatPump
