@@ -635,17 +635,17 @@ class EnergyRatingIndex301Validator
     end
 
     # Check sum of FractionCoolLoadServeds == 1
-    frac_cool_load_served = hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed/text())']
-    frac_cool_load_served += hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump/FractionCoolLoadServed/text())']
-    if frac_cool_load_served < 0.99 or frac_cool_load_served > 1.01
-      errors << "Expected FractionCoolLoadServed to sum to 1, but calculated sum is #{frac_cool_load_served}."
+    frac_cool_load = hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem/FractionCoolLoadServed/text())']
+    frac_cool_load += hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump/FractionCoolLoadServed/text())']
+    if frac_cool_load > 0 and (frac_cool_load < 0.99 or frac_cool_load > 1.01)
+      errors << "Expected FractionCoolLoadServed to sum to 1, but calculated sum is #{frac_cool_load}."
     end
 
     # Check sum of FractionHeatLoadServeds == 1
-    frac_heat_load_served = hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed/text())']
-    frac_heat_load_served += hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump/FractionHeatLoadServed/text())']
-    if frac_heat_load_served < 0.99 or frac_heat_load_served > 1.01
-      errors << "Expected FractionHeatLoadServed to sum to 1, but calculated sum is #{frac_heat_load_served}."
+    frac_heat_load = hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem/FractionHeatLoadServed/text())']
+    frac_heat_load += hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump/FractionHeatLoadServed/text())']
+    if frac_heat_load > 0 and (frac_heat_load < 0.99 or frac_heat_load > 1.01)
+      errors << "Expected FractionHeatLoadServed to sum to 1, but calculated sum is #{frac_heat_load}."
     end
 
     return errors
