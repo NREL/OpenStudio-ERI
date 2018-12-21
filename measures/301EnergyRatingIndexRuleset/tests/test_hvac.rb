@@ -481,6 +481,7 @@ class HVACtest < MiniTest::Test
     sys = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem"]
     assert_equal(!sys.nil?, exists)
     if exists
+      assert_equal(1, hpxml_doc.elements["count(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem)"])
       refute_nil(sys.elements["HeatingSystemType/#{systype}"])
       assert_equal(sys.elements["HeatingSystemFuel"].text, fueltype)
       if not afue.nil?
@@ -494,6 +495,7 @@ class HVACtest < MiniTest::Test
     sys = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump"]
     assert_equal(!sys.nil?, exists)
     if exists
+      assert_equal(1, hpxml_doc.elements["count(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump)"])
       assert_equal(sys.elements["HeatPumpType"].text, systype)
       if not hspf.nil?
         assert_equal(Float(sys.elements["AnnualHeatingEfficiency[Units='HSPF']/Value"].text), hspf)
@@ -510,6 +512,7 @@ class HVACtest < MiniTest::Test
     sys = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem"]
     assert_equal(!sys.nil?, exists)
     if exists
+      assert_equal(1, hpxml_doc.elements["count(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem)"])
       assert_equal(sys.elements["CoolingSystemType"].text, systype)
       if not seer.nil?
         assert_equal(Float(sys.elements["AnnualCoolingEfficiency[Units='SEER']/Value"].text), seer)

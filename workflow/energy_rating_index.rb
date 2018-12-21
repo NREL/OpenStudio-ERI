@@ -101,14 +101,15 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  if design == Constants.CalcTypeERIReferenceHome or design == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-    design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc)
-    design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc)
+  if [Constants.CalcTypeERIReferenceHome,
+      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+    design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design)
+    design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, design)
   end
-  design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc)
+  design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, design)
   design_output[:hpxml_dwh_fuels] = get_dhw_fuels(hpxml_doc)
-  design_output[:hpxml_eec_heats] = get_eec_heats(hpxml_doc)
-  design_output[:hpxml_eec_cools] = get_eec_cools(hpxml_doc)
+  design_output[:hpxml_eec_heats] = get_eec_heats(hpxml_doc, design)
+  design_output[:hpxml_eec_cools] = get_eec_cools(hpxml_doc, design)
   design_output[:hpxml_eec_dhws] = get_eec_dhws(hpxml_doc)
   design_output[:hpxml_heat_sys_ids] = design_output[:hpxml_eec_heats].keys
   design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
@@ -287,15 +288,25 @@ def get_nst(hpxml_doc)
   return Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
 end
 
-def get_heat_fuels(hpxml_doc)
+def get_system_or_seed_id(sys, design)
+  if [Constants.CalcTypeERIReferenceHome,
+      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+    if XMLHelper.has_element(sys, "extension/SeedId")
+      return XMLHelper.get_value(sys, "extension/SeedId")
+    end
+  end
+  return sys.elements["SystemIdentifier"].attributes["id"]
+end
+
+def get_heat_fuels(hpxml_doc, design)
   heat_fuels = {}
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg_system|
-    sys_id = htg_system.elements["SystemIdentifier"].attributes["id"]
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+    sys_id = get_system_or_seed_id(htg_system, design)
     heat_fuels[sys_id] = XMLHelper.get_value(htg_system, "HeatingSystemFuel")
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
-    sys_id = heat_pump.elements["SystemIdentifier"].attributes["id"]
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    sys_id = get_system_or_seed_id(heat_pump, design)
     heat_fuels[sys_id] = "electricity"
   end
 
@@ -309,7 +320,7 @@ end
 def get_dhw_fuels(hpxml_doc)
   dhw_fuels = {}
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
     dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
   end
@@ -321,23 +332,23 @@ def get_dhw_fuels(hpxml_doc)
   return dhw_fuels
 end
 
-def get_dse_heats(hpxml_doc)
+def get_dse_heats(hpxml_doc, design)
   dse_heats = {}
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
     dist_id = hvac_dist.elements["SystemIdentifier"].attributes["id"]
     dse_heat = Float(XMLHelper.get_value(hvac_dist, "AnnualHeatingDistributionSystemEfficiency"))
     # Get all HVAC systems attached to it
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg_system|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
       next unless dist_id == htg_system.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = htg_system.elements["SystemIdentifier"].attributes["id"]
+      sys_id = get_system_or_seed_id(htg_system, design)
       dse_heats[sys_id] = dse_heat
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
       next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = heat_pump.elements["SystemIdentifier"].attributes["id"]
+      sys_id = get_system_or_seed_id(heat_pump, design)
       dse_heats[sys_id] = dse_heat
     end
   end
@@ -349,23 +360,23 @@ def get_dse_heats(hpxml_doc)
   return dse_heats
 end
 
-def get_dse_cools(hpxml_doc)
+def get_dse_cools(hpxml_doc, design)
   dse_cools = {}
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
     dist_id = hvac_dist.elements["SystemIdentifier"].attributes["id"]
     dse_cool = Float(XMLHelper.get_value(hvac_dist, "AnnualCoolingDistributionSystemEfficiency"))
     # Get all HVAC systems attached to it
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clg_system|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
       next unless dist_id == clg_system.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = clg_system.elements["SystemIdentifier"].attributes["id"]
+      sys_id = get_system_or_seed_id(clg_system, design)
       dse_cools[sys_id] = dse_cool
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
       next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = heat_pump.elements["SystemIdentifier"].attributes["id"]
+      sys_id = get_system_or_seed_id(heat_pump, design)
       dse_cools[sys_id] = dse_cool
     end
   end
@@ -387,13 +398,13 @@ def get_eec_value_numerator(unit)
   fail "Unexpected unit #{unit}."
 end
 
-def get_eec_heats(hpxml_doc)
+def get_eec_heats(hpxml_doc, design)
   eec_heats = {}
 
   units = ['HSPF', 'COP', 'AFUE', 'Percent']
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg_system|
-    sys_id = htg_system.elements["SystemIdentifier"].attributes["id"]
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+    sys_id = get_system_or_seed_id(htg_system, design)
     units.each do |unit|
       value = XMLHelper.get_value(htg_system, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -401,8 +412,8 @@ def get_eec_heats(hpxml_doc)
       eec_heats[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
-    sys_id = heat_pump.elements["SystemIdentifier"].attributes["id"]
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    sys_id = get_system_or_seed_id(heat_pump, design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -418,13 +429,13 @@ def get_eec_heats(hpxml_doc)
   return eec_heats
 end
 
-def get_eec_cools(hpxml_doc)
+def get_eec_cools(hpxml_doc, design)
   eec_cools = {}
 
   units = ['SEER', 'COP', 'EER']
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clg_system|
-    sys_id = clg_system.elements["SystemIdentifier"].attributes["id"]
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+    sys_id = get_system_or_seed_id(clg_system, design)
     units.each do |unit|
       value = XMLHelper.get_value(clg_system, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -432,8 +443,8 @@ def get_eec_cools(hpxml_doc)
       eec_cools[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
-    sys_id = heat_pump.elements["SystemIdentifier"].attributes["id"]
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+    sys_id = get_system_or_seed_id(heat_pump, design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -452,7 +463,7 @@ end
 def get_eec_dhws(hpxml_doc)
   eec_dhws = {}
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
     wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
@@ -479,7 +490,6 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_heat] = 0
   rated_output[:hpxml_heat_sys_ids].each do |sys_id|
     results[:reul_heat] = ref_output[:loadHeating] * ref_output[:hpxml_dse_heats][sys_id] # Loads include DSE, so we must remove the effect
-    results[:xeul_heat] = 0 # FUTURE
 
     results[:coeff_heat_a] = nil
     results[:coeff_heat_b] = nil
@@ -519,7 +529,6 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_cool] = 0
   rated_output[:hpxml_cool_sys_ids].each do |sys_id|
     results[:reul_cool] = ref_output[:loadCooling] * ref_output[:hpxml_dse_cools][sys_id] # Loads include DSE, so we must remove the effect
-    results[:xeul_cool] = 0 # FUTURE
 
     results[:coeff_cool_a] = 3.8090
     results[:coeff_cool_b] = 0.0
@@ -549,7 +558,6 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_dhw] = 0
   rated_output[:hpxml_dhw_sys_ids].each do |sys_id|
     results[:reul_dhw] = ref_output[:loadHotWater]
-    results[:xeul_dhw] = 0 # FUTURE?
 
     results[:coeff_dhw_a] = nil
     results[:coeff_dhw_b] = nil
@@ -676,9 +684,6 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   results_out["EC_r Heating (MBtu)"] = results[:ec_r_heat].round(2)
   results_out["EC_r Cooling (MBtu)"] = results[:ec_r_cool].round(2)
   results_out["EC_r Hot Water (MBtu)"] = results[:ec_r_dhw].round(2)
-  # results_out["XEUL Heating (MBtu)"] = results[:xeul_heat].round(2)
-  # results_out["XEUL Cooling (MBtu)"] = results[:xeul_cool].round(2)
-  # results_out["XEUL Hot Water (MBtu)"] = results[:xeul_dhw].round(2)
   results_out["EC_x Heating (MBtu)"] = results[:ec_x_heat].round(2)
   results_out["EC_x Cooling (MBtu)"] = results[:ec_x_cool].round(2)
   results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].round(2)
