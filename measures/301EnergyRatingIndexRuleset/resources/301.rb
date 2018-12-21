@@ -1219,6 +1219,7 @@ class EnergyRatingIndex301Ruleset
     wh_type = nil
     wh_tank_vol = nil
     wh_fuel_type = nil
+    wh_sys_id = "WaterHeatingSystem"
     if not orig_wh_sys.nil?
       wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
       if orig_wh_sys.elements["TankVolume"]
@@ -1226,6 +1227,7 @@ class EnergyRatingIndex301Ruleset
       end
       wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
       wh_location = XMLHelper.get_value(orig_wh_sys, "Location")
+      wh_sys_id = orig_wh_sys.elements["SystemIdentifier"].attributes["id"]
     end
 
     if orig_wh_sys.nil?
@@ -1246,7 +1248,7 @@ class EnergyRatingIndex301Ruleset
     # New water heater
     new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
     sys_id = XMLHelper.add_element(new_wh_sys, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", orig_wh_sys.elements["SystemIdentifier"].attributes["id"])
+    XMLHelper.add_attribute(sys_id, "id", wh_sys_id)
     XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
     XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
     XMLHelper.add_element(new_wh_sys, "Location", wh_location)
