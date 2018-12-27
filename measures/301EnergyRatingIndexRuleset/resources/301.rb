@@ -32,6 +32,7 @@ class EnergyRatingIndex301Ruleset
     @cvolume = Float(XMLHelper.get_value(building, "BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
     @iecc_zone_2006 = XMLHelper.get_value(building, "BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2006']/ClimateZone")
     @iecc_zone_2012 = XMLHelper.get_value(building, "BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2012']/ClimateZone")
+    @calc_type = calc_type
 
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
@@ -955,64 +956,59 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
-    heating_systems = {} # Build up reference heating systems
-    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
-      has_boiler = XMLHelper.has_element(heating_system, "HeatingSystemType/Boiler")
-      fuel_type = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
-      load_frac = Float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed"))
-      if fuel_type == 'electricity'
-        htg_type = 'HeatPump'
-      elsif has_boiler
-        htg_type = 'GasBoiler'
-      else
-        htg_type = 'GasFurnace'
-      end
-      if heating_systems[htg_type].nil?
-        heating_systems[htg_type] = load_frac # First reference
-      else
-        heating_systems[htg_type] += load_frac # Previously assigned, aggregate load_frac
-      end
-    end
-
-    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |heat_pump_system|
-      load_frac = Float(XMLHelper.get_value(heat_pump_system, "FractionHeatLoadServed"))
-      htg_type = 'HeatPump'
-      if heating_systems[htg_type].nil?
-        heating_systems[htg_type] = load_frac # First reference
-      else
-        heating_systems[htg_type] += load_frac # Previously assigned, aggregate load_frac
-      end
-    end
-    if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"].nil?
-      load_frac = 1.0
-      if has_fuel_access(orig_details)
-        htg_type = 'GasFurnace'
-      else
-        htg_type = 'HeatPump'
-      end
-      if heating_systems[htg_type].nil?
-        heating_systems[htg_type] = load_frac # First reference
-      else
-        heating_systems[htg_type] += load_frac # Previously assigned, aggregate load_frac
-      end
-    end
+    has_fuel = has_fuel_access(orig_details)
 
     # Heating
-    heating_systems.each do |htg_type, load_frac|
-      if htg_type == 'GasBoiler'
-        add_reference_heating_gas_boiler(new_hvac_plant, load_frac)
-      elsif htg_type == 'GasFurnace'
-        add_reference_heating_gas_furnace(new_hvac_plant, load_frac)
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+      fuel_type = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
+      next unless fuel_type != 'electricity'
+
+      load_frac = Float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed"))
+      sys_id = heating_system.elements["SystemIdentifier"].attributes["id"]
+      if XMLHelper.has_element(heating_system, "HeatingSystemType/Boiler")
+        add_reference_heating_gas_boiler(new_hvac_plant, load_frac, sys_id)
+      else
+        add_reference_heating_gas_furnace(new_hvac_plant, load_frac, sys_id)
+      end
+    end
+    if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
+      if has_fuel
+        add_reference_heating_gas_furnace(new_hvac_plant)
       end
     end
 
     # Cooling
-    add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
+    orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |cooling_system|
+      load_frac = Float(XMLHelper.get_value(cooling_system, "FractionCoolLoadServed"))
+      sys_id = cooling_system.elements["SystemIdentifier"].attributes["id"]
+      add_reference_cooling_air_conditioner(new_hvac_plant, load_frac, sys_id)
+    end
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+      load_frac = Float(XMLHelper.get_value(heat_pump, "FractionCoolLoadServed"))
+      sys_id = heat_pump.elements["SystemIdentifier"].attributes["id"]
+      add_reference_cooling_air_conditioner(new_hvac_plant, load_frac, sys_id)
+    end
+    if orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]"].nil?
+      add_reference_cooling_air_conditioner(new_hvac_plant)
+    end
 
     # HeatPump
-    heating_systems.each do |htg_type, load_frac|
-      if htg_type == 'HeatPump'
-        add_reference_heating_heat_pump(new_hvac_plant, load_frac)
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+      fuel_type = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
+      next unless fuel_type == 'electricity'
+
+      load_frac = Float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed"))
+      sys_id = heating_system.elements["SystemIdentifier"].attributes["id"]
+      add_reference_heating_heat_pump(new_hvac_plant, load_frac, sys_id)
+    end
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+      load_frac = Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed"))
+      sys_id = heat_pump.elements["SystemIdentifier"].attributes["id"]
+      add_reference_heating_heat_pump(new_hvac_plant, load_frac, sys_id)
+    end
+    if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
+      if not has_fuel
+        add_reference_heating_heat_pump(new_hvac_plant)
       end
     end
 
@@ -1033,7 +1029,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Cooling systems
 
     heating_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"]
-    heat_pump_system = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
+    heat_pump = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
     cooling_system = orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"]
 
     new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
@@ -1044,8 +1040,8 @@ class EnergyRatingIndex301Ruleset
       # Retain heating system(s)
       XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatingSystem")
     end
-    if heating_system.nil? and heat_pump_system.nil? and has_fuel_access(orig_details)
-      add_reference_heating_gas_furnace(new_hvac_plant, 1.0)
+    if heating_system.nil? and heat_pump.nil? and has_fuel_access(orig_details)
+      add_reference_heating_gas_furnace(new_hvac_plant)
       added_reference_heating = true
     end
 
@@ -1055,19 +1051,18 @@ class EnergyRatingIndex301Ruleset
       # Retain cooling system(s)
       XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/CoolingSystem")
     end
-    if cooling_system.nil? and heat_pump_system.nil?
-      add_reference_cooling_air_conditioner(new_hvac_plant, 1.0)
+    if cooling_system.nil? and heat_pump.nil?
+      add_reference_cooling_air_conditioner(new_hvac_plant)
       added_reference_cooling = true
-
     end
 
     # HeatPump
-    if not heat_pump_system.nil?
+    if not heat_pump.nil?
       # Retain heat pump(s)
       XMLHelper.copy_elements(new_hvac_plant, orig_details, "Systems/HVAC/HVACPlant/HeatPump")
     end
-    if heating_system.nil? and heat_pump_system.nil? and not has_fuel_access(orig_details)
-      add_reference_heating_heat_pump(new_hvac_plant, 1.0)
+    if heating_system.nil? and heat_pump.nil? and not has_fuel_access(orig_details)
+      add_reference_heating_heat_pump(new_hvac_plant)
       added_reference_heating = true
     end
 
@@ -1232,6 +1227,7 @@ class EnergyRatingIndex301Ruleset
     wh_type = nil
     wh_tank_vol = nil
     wh_fuel_type = nil
+    wh_sys_id = "WaterHeatingSystem"
     if not orig_wh_sys.nil?
       wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
       if orig_wh_sys.elements["TankVolume"]
@@ -1239,6 +1235,7 @@ class EnergyRatingIndex301Ruleset
       end
       wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
       wh_location = XMLHelper.get_value(orig_wh_sys, "Location")
+      wh_sys_id = orig_wh_sys.elements["SystemIdentifier"].attributes["id"]
     end
 
     if orig_wh_sys.nil?
@@ -1259,7 +1256,7 @@ class EnergyRatingIndex301Ruleset
     # New water heater
     new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
     sys_id = XMLHelper.add_element(new_wh_sys, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "WaterHeatingSystem")
+    XMLHelper.add_attribute(sys_id, "id", wh_sys_id)
     XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
     XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
     XMLHelper.add_element(new_wh_sys, "Location", wh_location)
@@ -1823,11 +1820,12 @@ class EnergyRatingIndex301Ruleset
     return q_tot - q_inf
   end
 
-  def self.add_reference_heating_gas_furnace(new_hvac_plant, load_frac)
+  def self.add_reference_heating_gas_furnace(new_hvac_plant, load_frac = 1.0, seed_id = nil)
     # 78% AFUE gas furnace
+    cnt = new_hvac_plant.elements["count(HeatingSystem)"]
     heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
     sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
+    XMLHelper.add_attribute(sys_id, "id", "HeatingSystem#{cnt + 1}")
     dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
     XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
     sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
@@ -1838,13 +1836,20 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(heat_eff, "Units", "AFUE")
     XMLHelper.add_element(heat_eff, "Value", 0.78)
     XMLHelper.add_element(heat_sys, "FractionHeatLoadServed", load_frac)
+    if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
+                             Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
+      # Map reference home system back to rated home system
+      extension = XMLHelper.add_element(heat_sys, "extension")
+      XMLHelper.add_element(extension, "SeedId", seed_id)
+    end
   end
 
-  def self.add_reference_heating_gas_boiler(new_hvac_plant, load_frac)
+  def self.add_reference_heating_gas_boiler(new_hvac_plant, load_frac = 1.0, seed_id = nil)
     # 80% AFUE gas boiler
+    cnt = new_hvac_plant.elements["count(HeatingSystem)"]
     heat_sys = XMLHelper.add_element(new_hvac_plant, "HeatingSystem")
     sys_id = XMLHelper.add_element(heat_sys, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "HeatingSystem")
+    XMLHelper.add_attribute(sys_id, "id", "HeatingSystem#{cnt + 1}")
     dist = XMLHelper.add_element(heat_sys, "DistributionSystem")
     XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
     sys_type = XMLHelper.add_element(heat_sys, "HeatingSystemType")
@@ -1856,13 +1861,20 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(heat_eff, "Units", "AFUE")
     XMLHelper.add_element(heat_eff, "Value", 0.80)
     XMLHelper.add_element(heat_sys, "FractionHeatLoadServed", load_frac)
+    if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
+                             Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
+      # Map reference home system back to rated home system
+      extension = XMLHelper.add_element(heat_sys, "extension")
+      XMLHelper.add_element(extension, "SeedId", seed_id)
+    end
   end
 
-  def self.add_reference_heating_heat_pump(new_hvac_plant, load_frac)
+  def self.add_reference_heating_heat_pump(new_hvac_plant, load_frac = 1.0, seed_id = nil)
     # 7.7 HSPF air source heat pump
+    cnt = new_hvac_plant.elements["count(HeatPump)"]
     heat_pump = XMLHelper.add_element(new_hvac_plant, "HeatPump")
     sys_id = XMLHelper.add_element(heat_pump, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "HeatPump")
+    XMLHelper.add_attribute(sys_id, "id", "HeatPump#{cnt + 1}")
     dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
     XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
     XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
@@ -1875,13 +1887,20 @@ class EnergyRatingIndex301Ruleset
     heat_eff = XMLHelper.add_element(heat_pump, "AnnualHeatingEfficiency")
     XMLHelper.add_element(heat_eff, "Units", "HSPF")
     XMLHelper.add_element(heat_eff, "Value", 7.7)
+    if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
+                             Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
+      # Map reference home system back to rated home system
+      extension = XMLHelper.add_element(heat_pump, "extension")
+      XMLHelper.add_element(extension, "SeedId", seed_id)
+    end
   end
 
-  def self.add_reference_cooling_air_conditioner(new_hvac_plant, load_frac)
+  def self.add_reference_cooling_air_conditioner(new_hvac_plant, load_frac = 1.0, seed_id = nil)
     # 13 SEER electric air conditioner
+    cnt = new_hvac_plant.elements["count(CoolingSystem)"]
     cool_sys = XMLHelper.add_element(new_hvac_plant, "CoolingSystem")
     sys_id = XMLHelper.add_element(cool_sys, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "CoolingSystem")
+    XMLHelper.add_attribute(sys_id, "id", "CoolingSystem#{cnt + 1}")
     dist = XMLHelper.add_element(cool_sys, "DistributionSystem")
     XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
     XMLHelper.add_element(cool_sys, "CoolingSystemType", "central air conditioning")
@@ -1891,6 +1910,12 @@ class EnergyRatingIndex301Ruleset
     cool_eff = XMLHelper.add_element(cool_sys, "AnnualCoolingEfficiency")
     XMLHelper.add_element(cool_eff, "Units", "SEER")
     XMLHelper.add_element(cool_eff, "Value", 13.0)
+    if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
+                             Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
+      # Map reference home system back to rated home system
+      extension = XMLHelper.add_element(cool_sys, "extension")
+      XMLHelper.add_element(extension, "SeedId", seed_id)
+    end
   end
 
   def self.add_reference_distribution_system(new_hvac)

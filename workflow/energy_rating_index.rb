@@ -107,155 +107,194 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  if design == Constants.CalcTypeERIReferenceHome or design == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-    design_output[:hpxml_dse_heat], design_output[:hpxml_dse_cool] = get_dse_heat_cool(hpxml_doc)
+  if [Constants.CalcTypeERIReferenceHome,
+      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+    design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design)
+    design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, design)
   end
-  design_output[:hpxml_heat_fuel] = get_heating_fuel(hpxml_doc)
-  design_output[:hpxml_dwh_fuel] = get_dhw_fuel(hpxml_doc)
-  design_output[:hpxml_eec_heat] = get_eec_heat(hpxml_doc)
-  design_output[:hpxml_eec_cool] = get_eec_cool(hpxml_doc)
-  design_output[:hpxml_eec_dhw] = get_eec_dhw(hpxml_doc)
+  design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, design)
+  design_output[:hpxml_dwh_fuels] = get_dhw_fuels(hpxml_doc)
+  design_output[:hpxml_eec_heats] = get_eec_heats(hpxml_doc, design)
+  design_output[:hpxml_eec_cools] = get_eec_cools(hpxml_doc, design)
+  design_output[:hpxml_eec_dhws] = get_eec_dhws(hpxml_doc)
+  design_output[:hpxml_heat_sys_ids] = design_output[:hpxml_eec_heats].keys
+  design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
+  design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
 
   # Total site energy
   design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design)
 
   # Electricity categories
   design_output[:elecTotal] = get_sql_result(sqlFile.electricityTotalEndUses, design)
-  design_output[:elecHeating] = get_sql_result(sqlFile.electricityHeating, design)
-  design_output[:elecCooling] = get_sql_result(sqlFile.electricityCooling, design)
   design_output[:elecIntLighting] = get_sql_result(sqlFile.electricityInteriorLighting, design)
   design_output[:elecExtLighting] = get_sql_result(sqlFile.electricityExteriorLighting, design)
   design_output[:elecAppliances] = get_sql_result(sqlFile.electricityInteriorEquipment, design)
-  design_output[:elecFans] = get_sql_result(sqlFile.electricityFans, design)
-  design_output[:elecPumps] = get_sql_result(sqlFile.electricityPumps, design)
-  design_output[:elecHotWater] = get_sql_result(sqlFile.electricityWaterSystems, design)
 
   # Fuel categories
-  design_output[:ngTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design)
-  design_output[:ngHeating] = get_sql_result(sqlFile.naturalGasHeating, design)
-  design_output[:ngAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design)
-  design_output[:ngHotWater] = get_sql_result(sqlFile.naturalGasWaterSystems, design)
-  design_output[:otherTotal] = get_sql_result(sqlFile.otherFuelTotalEndUses, design)
-  design_output[:otherHeating] = get_sql_result(sqlFile.otherFuelHeating, design)
-  design_output[:otherAppliances] = get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
-  design_output[:otherHotWater] = get_sql_result(sqlFile.otherFuelWaterSystems, design)
-  design_output[:fuelTotal] = design_output[:ngTotal] + design_output[:otherTotal]
-  design_output[:fuelHeating] = design_output[:ngHeating] + design_output[:otherHeating]
-  design_output[:fuelAppliances] = design_output[:ngAppliances] + design_output[:otherAppliances]
-  design_output[:fuelHotWater] = design_output[:ngHotWater] + design_output[:otherHotWater]
+  design_output[:fuelTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design) + get_sql_result(sqlFile.otherFuelTotalEndUses, design)
+  design_output[:fuelAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design) + get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
 
-  # Other - PV
+  # Space Heating (by System)
+  map_tsv_data = CSV.read(File.join(designdir, "run", "map_hvac_heating.tsv"), headers: false, col_sep: "\t")
+  design_output[:elecHeatingBySystem] = {}
+  design_output[:fuelHeatingBySystem] = {}
+  design_output[:loadHeatingBySystem] = {}
+  design_output[:hpxml_heat_sys_ids].each do |sys_id|
+    ep_output_names = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+    keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
+    # Electricity Use
+    vars = "'" + get_all_var_keys(Constants.OutputVarsSpaceHeatingElectricity).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:elecHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Fuel Use
+    vars = "'" + get_all_var_keys(Constants.OutputVarsSpaceHeatingFuel).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:fuelHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Load
+    vars = "'" + get_all_var_keys(Constants.OutputVarsSpaceHeatingLoad).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    totalHeatingBySystem = design_output[:elecHeatingBySystem][sys_id] + design_output[:fuelHeatingBySystem][sys_id]
+  end
+
+  # Space Cooling (by System)
+  map_tsv_data = CSV.read(File.join(designdir, "run", "map_hvac_cooling.tsv"), headers: false, col_sep: "\t")
+  design_output[:elecCoolingBySystem] = {}
+  design_output[:loadCoolingBySystem] = {}
+  design_output[:hpxml_cool_sys_ids].each do |sys_id|
+    ep_output_names = get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design)
+    keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
+    # Electricity Use
+    vars = "'" + get_all_var_keys(Constants.OutputVarsSpaceCoolingElectricity).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:elecCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Load
+    vars = "'" + get_all_var_keys(Constants.OutputVarsSpaceCoolingLoad).join("','") + "'"
+    if vars.include? "Fan Electric Energy"
+      # Need to subtract out fan energy
+      vars.gsub!(",Fan Electric Energy", "")
+      fan_var = "'Fan Electric Energy'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{fan_var}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:loadCoolingBySystem][sys_id] = -1 * get_sql_query_result(sqlFile, query)
+    else
+      design_output[:loadCoolingBySystem][sys_id] = 0
+    end
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadCoolingBySystem][sys_id] += get_sql_query_result(sqlFile, query)
+    totalCoolingBySystem = design_output[:elecCoolingBySystem][sys_id]
+  end
+
+  # Water Heating (by System)
+  # FIXME: Update code when multiple water heating systems are allowed
+  # map_tsv_data = CSV.read(File.join(designdir, "run", "map_water_heating.tsv"), headers: false, col_sep: "\t")
+  design_output[:elecHotWaterBySystem] = {}
+  design_output[:fuelHotWaterBySystem] = {}
+  design_output[:loadHotWaterBySystem] = {}
+  design_output[:hpxml_dhw_sys_ids].each do |sys_id|
+    # Electricity Use
+    design_output[:elecHotWaterBySystem][sys_id] = get_sql_result(sqlFile.electricityWaterSystems, design)
+    # Recirculation pump
+    query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameHotWaterRecircPump}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+    design_output[:elecHotWaterBySystem][sys_id] += get_sql_query_result(sqlFile, query)
+    design_output[:elecAppliances] -= get_sql_query_result(sqlFile, query)
+    # Fuel use
+    design_output[:fuelHotWaterBySystem][sys_id] = get_sql_result(sqlFile.naturalGasWaterSystems, design) + get_sql_result(sqlFile.otherFuelWaterSystems, design)
+    # Load
+    vars = "'" + get_all_var_keys(Constants.OutputVarsWaterHeatingLoad).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    totalHotWaterBySystem = design_output[:elecHotWaterBySystem][sys_id] + design_output[:fuelHotWaterBySystem][sys_id]
+  end
+
+  # PV
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
   design_output[:elecPV] = get_sql_query_result(sqlFile, query)
 
-  # Other - Fridge
+  # Fridge
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameRefrigerator}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecFridge] = get_sql_query_result(sqlFile, query)
 
-  # Other - Dishwasher
+  # Dishwasher
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameDishwasher}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecDishwasher] = get_sql_query_result(sqlFile, query)
 
-  # Other - Clothes Washer
+  # Clothes Washer
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameClothesWasher}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecClothesWasher] = get_sql_query_result(sqlFile, query)
 
-  # Other - Clothes Dryer
+  # Clothes Dryer
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecClothesDryer] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
-  design_output[:ngClothesDryer] = get_sql_query_result(sqlFile, query)
+  design_output[:fuelClothesDryer] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Annual Value' AND Units='GJ'"
-  design_output[:otherClothesDryer] = get_sql_query_result(sqlFile, query)
-  design_output[:fuelClothesDryer] = design_output[:ngClothesDryer] + design_output[:otherClothesDryer]
+  design_output[:fuelClothesDryer] += get_sql_query_result(sqlFile, query)
 
-  # Other - MELS
+  # MELS
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMiscPlugLoads}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecMELs] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMiscTelevision}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecTV] = get_sql_query_result(sqlFile, query)
 
-  # Other - Range/Oven
+  # Range/Oven
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecRangeOven] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
-  design_output[:ngRangeOven] = get_sql_query_result(sqlFile, query)
+  design_output[:fuelRangeOven] = get_sql_query_result(sqlFile, query)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Annual Value' AND Units='GJ'"
-  design_output[:otherRangeOven] = get_sql_query_result(sqlFile, query)
-  design_output[:fuelRangeOven] = design_output[:ngRangeOven] + design_output[:otherRangeOven]
+  design_output[:fuelRangeOven] += get_sql_query_result(sqlFile, query)
 
-  # Other - Ceiling Fans
+  # Ceiling Fans
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCeilingFan}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecCeilingFan] = get_sql_query_result(sqlFile, query)
 
-  # Other - Mechanical Ventilation
+  # Mechanical Ventilation
   query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMechanicalVentilation}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
 
-  # Other - Recirculation pump
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameHotWaterRecircPump}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
-  design_output[:elecRecircPump] = get_sql_query_result(sqlFile, query)
-  design_output[:elecAppliances] -= design_output[:elecRecircPump]
-
-  # Other - Space Heating Load
-  vars = "'" + get_all_var_keys(Constants.LoadVarsSpaceHeating).join("','") + "'"
-  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:loadHeating] = get_sql_query_result(sqlFile, query)
-  if design_output[:elecHeating] + design_output[:fuelHeating] > 0 and design_output[:loadHeating] == 0
-    fail "No heating load for corresponding heating energy."
-  end
-
-  # Other - Space Cooling Load
-  vars = "'" + get_all_var_keys(Constants.LoadVarsSpaceCooling).join("','") + "'"
-  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:loadCooling] = get_sql_query_result(sqlFile, query)
-  if design_output[:elecCooling] > 0 and design_output[:loadCooling] == 0
-    fail "No cooling load for corresponding cooling energy."
-  end
-
-  # Other - Water Heating Load
-  vars = "'" + get_all_var_keys(Constants.LoadVarsWaterHeating).join("','") + "'"
-  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:loadHotWater] = get_sql_query_result(sqlFile, query)
-  if design_output[:elecHotWater] + design_output[:fuelHotWater] > 0 and design_output[:loadHotWater] == 0
-    fail "No water heating load for corresponding cooling energy."
-  end
+  return design_output if design != "ERI Rated Home" # FIXME TEMPORARY !!!!!!!!!!!!!!!
 
   # Error Checking
   tolerance = 0.1 # MMBtu
 
   sum_fuels = (design_output[:elecTotal] + design_output[:fuelTotal])
   if (design_output[:allTotal] - sum_fuels).abs > tolerance
-    fail "Fuels do not sum to total (#{sum_fuels.round(1)} vs #{design_output[:allTotal].round(1)})."
+    fail "[#{design}] Fuels (#{sum_fuels.round(1)} do not sum to total (#{design_output[:allTotal].round(1)}))."
   end
 
-  sum_elec_categories = (design_output[:elecHeating] + design_output[:elecCooling] +
-                         design_output[:elecIntLighting] + design_output[:elecExtLighting] +
-                         design_output[:elecAppliances] + design_output[:elecFans] +
-                         design_output[:elecPumps] + design_output[:elecHotWater] +
-                         design_output[:elecRecircPump])
+  sum_elec_categories = (design_output[:elecHeatingBySystem].values.inject(0, :+) +
+                         design_output[:elecCoolingBySystem].values.inject(0, :+) +
+                         design_output[:elecHotWaterBySystem].values.inject(0, :+) +
+                         design_output[:elecIntLighting] +
+                         design_output[:elecExtLighting] +
+                         design_output[:elecAppliances])
   if (design_output[:elecTotal] - sum_elec_categories).abs > tolerance
-    fail "Electric category end uses do not sum to total.\n#{design_output.to_s}"
+    fail "[#{design}] Electric category end uses (#{sum_elec_categories}) do not sum to total (#{design_output[:elecTotal]}).\n#{design_output.to_s}"
   end
 
-  sum_fuel_categories = (design_output[:fuelHeating] + design_output[:fuelAppliances] +
-                         design_output[:fuelHotWater])
+  sum_fuel_categories = (design_output[:fuelHeatingBySystem].values.inject(0, :+) +
+                         design_output[:fuelHotWaterBySystem].values.inject(0, :+) +
+                         design_output[:fuelAppliances])
   if (design_output[:fuelTotal] - sum_fuel_categories).abs > tolerance
-    fail "Fuel category end uses do not sum to total.\n#{design_output.to_s}"
+    fail "[#{design}] Fuel category end uses (#{sum_fuel_categories}) do not sum to total (#{design_output[:fuelTotal]}).\n#{design_output.to_s}"
   end
 
-  sum_elec_appliances = (design_output[:elecFridge] + design_output[:elecDishwasher] +
-                     design_output[:elecClothesWasher] + design_output[:elecClothesDryer] +
-                     design_output[:elecMELs] + design_output[:elecTV] +
-                     design_output[:elecRangeOven] + design_output[:elecCeilingFan] +
-                     design_output[:elecMechVent])
+  sum_elec_appliances = (design_output[:elecFridge] +
+                         design_output[:elecDishwasher] +
+                         design_output[:elecClothesWasher] +
+                         design_output[:elecClothesDryer] +
+                         design_output[:elecMELs] +
+                         design_output[:elecTV] +
+                         design_output[:elecRangeOven] +
+                         design_output[:elecCeilingFan] +
+                         design_output[:elecMechVent])
   if (design_output[:elecAppliances] - sum_elec_appliances).abs > tolerance
-    fail "Electric appliances do not sum to total.\n#{design_output.to_s}"
+    fail "[#{design}] Electric appliances (#{sum_elec_appliances}) do not sum to total (#{design_output[:elecAppliances]}).\n#{design_output.to_s}"
   end
 
   sum_fuel_appliances = (design_output[:fuelClothesDryer] + design_output[:fuelRangeOven])
   if (design_output[:fuelAppliances] - sum_fuel_appliances).abs > tolerance
-    fail "Fuel appliances do not sum to total.\n#{design_output.to_s}"
+    fail "[#{design}] Fuel appliances (#{sum_fuel_appliances}) do not sum to total (#{design_output[:fuelAppliances]}).\n#{design_output.to_s}"
   end
 
   return design_output
@@ -283,68 +322,104 @@ def get_nst(hpxml_doc)
   return Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
 end
 
-def get_heating_fuel(hpxml_doc)
-  heat_fuels = []
-
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg_system|
-    heat_fuels << XMLHelper.get_value(htg_system, "HeatingSystemFuel")
+def get_system_or_seed_id(sys, design)
+  if [Constants.CalcTypeERIReferenceHome,
+      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+    if XMLHelper.has_element(sys, "extension/SeedId")
+      return XMLHelper.get_value(sys, "extension/SeedId")
+    end
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
-    heat_fuels << "electricity"
-  end
-
-  heat_fuels.uniq!
-
-  if heat_fuels.size == 0
-    fail "No heating system fuel type found."
-  elsif heat_fuels.size > 1
-    fail "Multiple heating system fuel types found."
-  end
-
-  return heat_fuels[0]
+  return sys.elements["SystemIdentifier"].attributes["id"]
 end
 
-def get_dhw_fuel(hpxml_doc)
-  dhw_fuels = []
+def get_heat_fuels(hpxml_doc, design)
+  heat_fuels = {}
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
-    dhw_fuels << XMLHelper.get_value(dhw_system, "FuelType")
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+    sys_id = get_system_or_seed_id(htg_system, design)
+    heat_fuels[sys_id] = XMLHelper.get_value(htg_system, "HeatingSystemFuel")
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    sys_id = get_system_or_seed_id(heat_pump, design)
+    heat_fuels[sys_id] = "electricity"
   end
 
-  dhw_fuels.uniq!
-
-  if dhw_fuels.size == 0
-    fail "No water heating system fuel type found."
-  elsif dhw_fuels.size > 1
-    fail "Multiple water heating system fuel types found."
+  if heat_fuels.empty?
+    fail "No heating systems found."
   end
 
-  return dhw_fuels[0]
+  return heat_fuels
 end
 
-def get_dse_heat_cool(hpxml_doc)
-  dse_heats = []
-  dse_cools = []
+def get_dhw_fuels(hpxml_doc)
+  dhw_fuels = {}
+
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+    sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
+    dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
+  end
+
+  if dhw_fuels.empty?
+    fail "No water heating systems found."
+  end
+
+  return dhw_fuels
+end
+
+def get_dse_heats(hpxml_doc, design)
+  dse_heats = {}
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
-    dse_heats << Float(XMLHelper.get_value(hvac_dist, "AnnualHeatingDistributionSystemEfficiency"))
-    dse_cools << Float(XMLHelper.get_value(hvac_dist, "AnnualCoolingDistributionSystemEfficiency"))
+    dist_id = hvac_dist.elements["SystemIdentifier"].attributes["id"]
+    dse_heat = Float(XMLHelper.get_value(hvac_dist, "AnnualHeatingDistributionSystemEfficiency"))
+    # Get all HVAC systems attached to it
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+      next unless dist_id == htg_system.elements["DistributionSystem"].attributes["idref"]
+
+      sys_id = get_system_or_seed_id(htg_system, design)
+      dse_heats[sys_id] = dse_heat
+    end
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+      next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
+
+      sys_id = get_system_or_seed_id(heat_pump, design)
+      dse_heats[sys_id] = dse_heat
+    end
   end
 
-  dse_heats.uniq!
-  dse_cools.uniq!
-
-  if dse_heats.size == 0
-    fail "No heating distribution system efficiency value found."
-  elsif dse_cools.size == 0
-    fail "No cooling distribution system efficiency value found."
-  elsif dse_heats.size > 1
-    fail "Multiple heating distribution system efficiency values found."
-  elsif dse_cools.size > 1
-    fail "Multiple cooling distribution system efficiency values found."
+  if dse_heats.empty?
+    fail "No heating distribution systems found."
   end
 
-  return dse_heats[0], dse_cools[0]
+  return dse_heats
+end
+
+def get_dse_cools(hpxml_doc, design)
+  dse_cools = {}
+
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
+    dist_id = hvac_dist.elements["SystemIdentifier"].attributes["id"]
+    dse_cool = Float(XMLHelper.get_value(hvac_dist, "AnnualCoolingDistributionSystemEfficiency"))
+    # Get all HVAC systems attached to it
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+      next unless dist_id == clg_system.elements["DistributionSystem"].attributes["idref"]
+
+      sys_id = get_system_or_seed_id(clg_system, design)
+      dse_cools[sys_id] = dse_cool
+    end
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+      next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
+
+      sys_id = get_system_or_seed_id(heat_pump, design)
+      dse_cools[sys_id] = dse_cool
+    end
+  end
+
+  if dse_cools.empty?
+    fail "No cooling distribution systems found."
+  end
+
+  return dse_cools
 end
 
 def get_eec_value_numerator(unit)
@@ -357,268 +432,344 @@ def get_eec_value_numerator(unit)
   fail "Unexpected unit #{unit}."
 end
 
-def get_eec_heat(hpxml_doc)
-  eec_heats = []
+def get_eec_heats(hpxml_doc, design)
+  eec_heats = {}
 
   units = ['HSPF', 'COP', 'AFUE', 'Percent']
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg_system|
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+    sys_id = get_system_or_seed_id(htg_system, design)
     units.each do |unit|
       value = XMLHelper.get_value(htg_system, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
 
-      eec_heats << get_eec_value_numerator(unit) / Float(value)
+      eec_heats[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    sys_id = get_system_or_seed_id(heat_pump, design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
 
-      eec_heats << get_eec_value_numerator(unit) / Float(value)
+      eec_heats[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
   end
 
-  eec_heats.uniq!
-
-  if eec_heats.size == 0
-    fail "No heating system efficiency value found."
-  elsif eec_heats.size > 1
-    fail "Multiple heating system efficiency values found."
+  if eec_heats.empty?
+    fail "No heating systems found."
   end
 
-  return eec_heats[0]
+  return eec_heats
 end
 
-def get_eec_cool(hpxml_doc)
-  eec_cools = []
+def get_eec_cools(hpxml_doc, design)
+  eec_cools = {}
 
   units = ['SEER', 'COP', 'EER']
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clg_system|
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+    sys_id = get_system_or_seed_id(clg_system, design)
     units.each do |unit|
       value = XMLHelper.get_value(clg_system, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
 
-      eec_cools << get_eec_value_numerator(unit) / Float(value)
+      eec_cools[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+    sys_id = get_system_or_seed_id(heat_pump, design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
 
-      eec_cools << get_eec_value_numerator(unit) / Float(value)
+      eec_cools[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
   end
 
-  eec_cools.uniq!
-
-  if eec_cools.size == 0
-    fail "No cooling system efficiency value found."
-  elsif eec_cools.size > 1
-    fail "Multiple cooling system efficiency values found."
+  if eec_cools.empty?
+    fail "No cooling systems found."
   end
 
-  return eec_cools[0]
+  return eec_cools
 end
 
-def get_eec_dhw(hpxml_doc)
-  eec_dhws = []
+def get_eec_dhws(hpxml_doc)
+  eec_dhws = {}
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |dhw_system|
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+    sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
     wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
     value_adj = Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type))
     if not value.nil? and not value_adj.nil?
-      eec_dhws << get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
+      eec_dhws[sys_id] = get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end
   end
 
-  eec_dhws.uniq!
-
-  if eec_dhws.size == 0
-    fail "No water heating system efficiency value found."
-  elsif eec_dhws.size > 1
-    fail "Multiple water heating system efficiency values found."
+  if eec_dhws.empty?
+    fail "No water heating systems found."
   end
 
-  return eec_dhws[0]
+  return eec_dhws
+end
+
+def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem |
+                           /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |system|
+    next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
+
+    sys_id = system.elements["SystemIdentifier"].attributes["id"]
+  end
+
+  map_tsv_data.each do |tsv_line|
+    next unless tsv_line[0] == sys_id
+
+    return tsv_line[1..-1]
+  end
+
+  fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}."
+end
+
+def get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design)
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem |
+                           /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |system|
+    next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
+
+    sys_id = system.elements["SystemIdentifier"].attributes["id"]
+  end
+
+  map_tsv_data.each do |tsv_line|
+    next unless tsv_line[0] == sys_id
+
+    return tsv_line[1..-1]
+  end
+
+  fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}."
 end
 
 def calculate_eri(rated_output, ref_output, results_iad = nil)
   results = {}
 
-  # REUL = Reference Home End Use Loads (for heating, cooling or hot water) as computed using an Approved
-  # Software Rating Tool.
-  # Heating/Cooling loads include effect of DSE, so we remove the effect below.
-  results[:reul_heat] = ref_output[:loadHeating] * ref_output[:hpxml_dse_heat]
-  results[:reul_cool] = ref_output[:loadCooling] * ref_output[:hpxml_dse_cool]
-  results[:reul_dhw] = ref_output[:loadHotWater]
+  # ======= #
+  # Heating #
+  # ======= #
 
-  # XEUL = Rated Home End Use Loads (for heating, cooling or hot water) as computed using an Approved
-  # Software Rating Tool.
-  results[:xeul_heat] = 0 # TODO
-  results[:xeul_cool] = 0 # TODO
-  results[:xeul_dhw] = 0 # TODO
+  results[:reul_heat] = {}
+  results[:coeff_heat_a] = {}
+  results[:coeff_heat_b] = {}
+  results[:eec_x_heat] = {}
+  results[:eec_r_heat] = {}
+  results[:ec_x_heat] = {}
+  results[:ec_r_heat] = {}
+  results[:dse_r_heat] = {}
+  results[:nec_x_heat] = {}
+  results[:nmeul_heat] = {}
 
-  # Table 4.2.1(1) Coefficients a and b
-  results[:coeff_cool_a] = 3.8090
-  results[:coeff_cool_b] = 0.0
-  results[:coeff_heat_a] = nil
-  results[:coeff_heat_b] = nil
-  results[:coeff_dhw_a] = nil
-  results[:coeff_dhw_b] = nil
-  if rated_output[:hpxml_heat_fuel] == 'electricity'
-    results[:coeff_heat_a] = 2.2561
-    results[:coeff_heat_b] = 0.0
-  elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_heat_fuel]
-    results[:coeff_heat_a] = 1.0943
-    results[:coeff_heat_b] = 0.4030
-  end
-  if rated_output[:hpxml_dwh_fuel] == 'electricity'
-    results[:coeff_dhw_a] = 0.9200
-    results[:coeff_dhw_b] = 0.0
-  elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_dwh_fuel]
-    results[:coeff_dhw_a] = 1.1877
-    results[:coeff_dhw_b] = 1.0130
-  end
-  if results[:coeff_heat_a].nil? or results[:coeff_heat_b].nil?
-    fail "Could not identify EEC coefficients for heating system."
-  end
-  if results[:coeff_dhw_a].nil? or results[:coeff_dhw_b].nil?
-    fail "Could not identify EEC coefficients for water heating system."
-  end
+  rated_output[:hpxml_heat_sys_ids].each do |s|
+    reul_heat = ref_output[:loadHeatingBySystem][s] * ref_output[:hpxml_dse_heats][s] # Loads include DSE, so we must remove the effect
 
-  # EEC_x = Equipment Efficiency Coefficient for the Rated Home's equipment, such that EEC_x equals the
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer's
-  # Equipment Performance Rating (MEPR) such that EEC_x equals 1.0 / MEPR for AFUE, COP or EF ratings, or
-  # such that EEC_x equals 3.413 / MEPR for HSPF, EER or SEER ratings.
-  results[:eec_x_heat] = rated_output[:hpxml_eec_heat]
-  results[:eec_x_cool] = rated_output[:hpxml_eec_cool]
-  results[:eec_x_dhw] = rated_output[:hpxml_eec_dhw]
+    coeff_heat_a = nil
+    coeff_heat_b = nil
+    if rated_output[:hpxml_heat_fuels][s] == 'electricity'
+      coeff_heat_a = 2.2561
+      coeff_heat_b = 0.0
+    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_heat_fuels][s]
+      coeff_heat_a = 1.0943
+      coeff_heat_b = 0.4030
+    end
+    if coeff_heat_a.nil? or coeff_heat_b.nil?
+      fail "Could not identify EEC coefficients for heating system."
+    end
 
-  # EEC_r = Equipment Efficiency Coefficient for the Reference Home's equipment, such that EEC_r equals the
-  # energy consumption per unit load in like units as the load, and as derived from the Manufacturer's
-  # Equipment Performance Rating (MEPR) such that EEC_r equals 1.0 / MEPR for AFUE, COP or EF ratings, or
-  # such that EEC_r equals 3.413 / MEPR for HSPF, EER or SEER ratings
-  results[:eec_r_heat] = ref_output[:hpxml_eec_heat]
-  results[:eec_r_cool] = ref_output[:hpxml_eec_cool]
-  results[:eec_r_dhw] = ref_output[:hpxml_eec_dhw]
+    eec_x_heat = rated_output[:hpxml_eec_heats][s]
+    eec_r_heat = ref_output[:hpxml_eec_heats][s]
 
-  # EC_x = estimated Energy Consumption for the Rated Home's end uses (for heating, including Auxiliary
-  # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
-  results[:ec_x_heat] = rated_output[:elecHeating] + rated_output[:fuelHeating]
-  results[:ec_x_cool] = rated_output[:elecCooling]
-  results[:ec_x_dhw] = rated_output[:elecHotWater] + rated_output[:fuelHotWater] + rated_output[:elecRecircPump]
+    ec_x_heat = rated_output[:elecHeatingBySystem][s] + rated_output[:fuelHeatingBySystem][s]
+    ec_r_heat = ref_output[:elecHeatingBySystem][s] + ref_output[:fuelHeatingBySystem][s]
 
-  # EC_r = estimated Energy Consumption for the Reference Home's end uses (for heating, including Auxiliary
-  # Electric Consumption, cooling or hot water) as computed using an Approved Software Rating Tool.
-  results[:ec_r_heat] = ref_output[:elecHeating] + ref_output[:fuelHeating]
-  results[:ec_r_cool] = ref_output[:elecCooling]
-  results[:ec_r_dhw] = ref_output[:elecHotWater] + ref_output[:fuelHotWater]
+    dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
-  # DSE_r = REUL/EC_r * EEC_r
-  # For simplified system performance methods, DSE_r equals 0.80 for heating and cooling systems and 1.00
-  # for hot water systems [see Table 4.2.2(1)]. However, for detailed modeling of heating and cooling systems,
-  # DSE_r may be less than 0.80 as a result of part load performance degradation, coil air flow degradation,
-  # improper system charge and auxiliary resistance heating for heat pumps. Except as otherwise provided by
-  # these Standards, where detailed systems modeling is employed, it must be applied equally to both the
-  # Reference and the Rated Homes.
-  results[:dse_r_heat] = results[:reul_heat] / results[:ec_r_heat] * results[:eec_r_heat]
-  results[:dse_r_cool] = results[:reul_cool] / results[:ec_r_cool] * results[:eec_r_cool]
-  results[:dse_r_dhw] = results[:reul_dhw] / results[:ec_r_dhw] * results[:eec_r_dhw]
+    nec_x_heat = 0
+    if eec_x_heat * reul_heat > 0
+      nec_x_heat = (coeff_heat_a * eec_x_heat - coeff_heat_b) * (ec_x_heat * ec_r_heat * dse_r_heat) / (eec_x_heat * reul_heat)
+    end
 
-  # nEC_x = (a* EEC_x - b)*(EC_x * EC_r * DSE_r) / (EEC_x * REUL) (Eq 4.1-1a)
-  results[:nec_x_heat] = 0
-  results[:nec_x_cool] = 0
-  results[:nec_x_dhw] = 0
-  if results[:eec_x_heat] * results[:reul_heat] > 0
-    results[:nec_x_heat] = (results[:coeff_heat_a] * results[:eec_x_heat] - results[:coeff_heat_b]) * (results[:ec_x_heat] * results[:ec_r_heat] * results[:dse_r_heat]) / (results[:eec_x_heat] * results[:reul_heat])
-  end
-  if results[:eec_x_cool] * results[:reul_cool] > 0
-    results[:nec_x_cool] = (results[:coeff_cool_a] * results[:eec_x_cool] - results[:coeff_cool_b]) * (results[:ec_x_cool] * results[:ec_r_cool] * results[:dse_r_cool]) / (results[:eec_x_cool] * results[:reul_cool])
-  end
-  if results[:eec_x_dhw] * results[:reul_dhw] > 0
-    results[:nec_x_dhw] = (results[:coeff_dhw_a] * results[:eec_x_dhw] - results[:coeff_dhw_b]) * (results[:ec_x_dhw] * results[:ec_r_dhw] * results[:dse_r_dhw]) / (results[:eec_x_dhw] * results[:reul_dhw])
+    nmeul_heat = 0
+    if ec_r_heat > 0
+      nmeul_heat = reul_heat * (nec_x_heat / ec_r_heat)
+    end
+
+    results[:reul_heat][s] = reul_heat
+    results[:coeff_heat_a][s] = coeff_heat_a
+    results[:coeff_heat_b][s] = coeff_heat_b
+    results[:eec_x_heat][s] = eec_x_heat
+    results[:eec_r_heat][s] = eec_r_heat
+    results[:ec_x_heat][s] = ec_x_heat
+    results[:ec_r_heat][s] = ec_r_heat
+    results[:dse_r_heat][s] = dse_r_heat
+    results[:nec_x_heat][s] = nec_x_heat
+    results[:nmeul_heat][s] = nmeul_heat
   end
 
-  # The normalized Modified End Use Loads (nMEUL) for space heating and cooling and domestic hot water use
-  # shall each be determined in accordance with Equation 4.1-1:
-  # nMEUL = REUL * (nEC_x / EC_r) (Eq 4.1-1)
-  results[:nmeul_heat] = 0
-  results[:nmeul_cool] = 0
-  results[:nmeul_dhw] = 0
-  if results[:ec_r_heat] > 0
-    results[:nmeul_heat] = results[:reul_heat] * (results[:nec_x_heat] / results[:ec_r_heat])
-  end
-  if results[:ec_r_cool] > 0
-    results[:nmeul_cool] = results[:reul_cool] * (results[:nec_x_cool] / results[:ec_r_cool])
-  end
-  if results[:ec_r_dhw] > 0
-    results[:nmeul_dhw] = results[:reul_dhw] * (results[:nec_x_dhw] / results[:ec_r_dhw])
+  # ======= #
+  # Cooling #
+  # ======= #
+
+  results[:reul_cool] = {}
+  results[:coeff_cool_a] = {}
+  results[:coeff_cool_b] = {}
+  results[:eec_x_cool] = {}
+  results[:eec_r_cool] = {}
+  results[:ec_x_cool] = {}
+  results[:ec_r_cool] = {}
+  results[:dse_r_cool] = {}
+  results[:nec_x_cool] = {}
+  results[:nmeul_cool] = {}
+
+  rated_output[:hpxml_cool_sys_ids].each do |s|
+    reul_cool = ref_output[:loadCoolingBySystem][s] * ref_output[:hpxml_dse_cools][s] # Loads include DSE, so we must remove the effect
+
+    coeff_cool_a = 3.8090
+    coeff_cool_b = 0.0
+
+    eec_x_cool = rated_output[:hpxml_eec_cools][s]
+    eec_r_cool = ref_output[:hpxml_eec_cools][s]
+
+    ec_x_cool = rated_output[:elecCoolingBySystem][s]
+    ec_r_cool = ref_output[:elecCoolingBySystem][s]
+
+    dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
+
+    nec_x_cool = 0
+    if eec_x_cool * reul_cool > 0
+      nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
+    end
+
+    nmeul_cool = 0
+    if ec_r_cool > 0
+      nmeul_cool = reul_cool * (nec_x_cool / ec_r_cool)
+    end
+
+    results[:reul_cool][s] = reul_cool
+    results[:coeff_cool_a][s] = coeff_cool_a
+    results[:coeff_cool_b][s] = coeff_cool_b
+    results[:eec_x_cool][s] = eec_x_cool
+    results[:eec_r_cool][s] = eec_r_cool
+    results[:ec_x_cool][s] = ec_x_cool
+    results[:ec_r_cool][s] = ec_r_cool
+    results[:dse_r_cool][s] = dse_r_cool
+    results[:nec_x_cool][s] = nec_x_cool
+    results[:nmeul_cool][s] = nmeul_cool
   end
 
-  # TEU = Total energy use of the Rated Home including all rated and non-rated energy features where all
-  # fossil fuel site energy uses (Btufossil) are converted to equivalent electric energy use (kWheq) in
-  # accordance with Equation 4.1-3.
-  # kWheq = (Btufossil * 0.40) / 3412 (Eq 4.1-3)
+  # ======== #
+  # HotWater #
+  # ======== #
+
+  results[:reul_dhw] = {}
+  results[:coeff_dhw_a] = {}
+  results[:coeff_dhw_b] = {}
+  results[:eec_x_dhw] = {}
+  results[:eec_r_dhw] = {}
+  results[:ec_x_dhw] = {}
+  results[:ec_r_dhw] = {}
+  results[:dse_r_dhw] = {}
+  results[:nec_x_dhw] = {}
+  results[:nmeul_dhw] = {}
+
+  rated_output[:hpxml_dhw_sys_ids].each do |s|
+    reul_dhw = ref_output[:loadHotWaterBySystem][s]
+
+    coeff_dhw_a = nil
+    coeff_dhw_b = nil
+    if rated_output[:hpxml_dwh_fuels][s] == 'electricity'
+      coeff_dhw_a = 0.9200
+      coeff_dhw_b = 0.0
+    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_dwh_fuels][s]
+      coeff_dhw_a = 1.1877
+      coeff_dhw_b = 1.0130
+    end
+    if coeff_dhw_a.nil? or coeff_dhw_b.nil?
+      fail "Could not identify EEC coefficients for water heating system."
+    end
+
+    eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
+    eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
+
+    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:fuelHotWaterBySystem][s]
+    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:fuelHotWaterBySystem][s]
+
+    dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
+
+    nec_x_dhw = 0
+    if eec_x_dhw * reul_dhw > 0
+      nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * ec_r_dhw * dse_r_dhw) / (eec_x_dhw * reul_dhw)
+    end
+
+    nmeul_dhw = 0
+    if ec_r_dhw > 0
+      nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
+    end
+
+    results[:reul_dhw][s] = reul_dhw
+    results[:coeff_dhw_a][s] = coeff_dhw_a
+    results[:coeff_dhw_b][s] = coeff_dhw_b
+    results[:eec_x_dhw][s] = eec_x_dhw
+    results[:eec_r_dhw][s] = eec_r_dhw
+    results[:ec_x_dhw][s] = ec_x_dhw
+    results[:ec_r_dhw][s] = ec_r_dhw
+    results[:dse_r_dhw][s] = dse_r_dhw
+    results[:nec_x_dhw][s] = nec_x_dhw
+    results[:nmeul_dhw][s] = nmeul_dhw
+  end
+
+  # ===== #
+  # Other #
+  # ===== #
+
   results[:teu] = rated_output[:elecTotal] + 0.4 * rated_output[:fuelTotal]
-
-  # OPP = On-Site Power Production as defined by Section 5.1.1.4 of this Standard.
   results[:opp] = rated_output[:elecPV]
 
-  # PEfrac = (TEU - OPP) / TEU
   results[:pefrac] = 1.0
   if results[:teu] > 0
     results[:pefrac] = (results[:teu] - results[:opp]) / results[:teu]
   end
 
-  # EULLA = The Rated Home end use loads for lighting, appliances and MELs as defined by Section 4.2.2.5.2,
-  # converted to MBtu/y, where MBtu/y = (kWh/y)/293 or (therms/y)/10, as appropriate.
   results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
                       rated_output[:elecAppliances] + rated_output[:fuelAppliances])
 
-  # REULLA = The Reference Home end use loads for lighting, appliances and MELs as defined by Section 4.2.2.5.1,
-  # converted to MBtu/y, where MBtu/y = (kWh/y)/293 or (therms/y)/10, as appropriate.
   results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
                        ref_output[:elecAppliances] + ref_output[:fuelAppliances])
 
-  # TRL = REULHEAT + REULCOOL + REULHW + REULLA (MBtu/y).
-  results[:trl] = results[:reul_heat] + results[:reul_cool] + results[:reul_dhw] + results[:reul_la]
+  # === #
+  # ERI #
+  # === #
 
-  # TnML = nMEULHEAT + nMEULCOOL + nMEULHW + EULLA (MBtu/y).
-  results[:tnml] = results[:nmeul_heat] + results[:nmeul_cool] + results[:nmeul_dhw] + results[:eul_la]
+  results[:trl] = results[:reul_heat].values.inject(0, :+) +
+                  results[:reul_cool].values.inject(0, :+) +
+                  results[:reul_dhw].values.inject(0, :+) +
+                  results[:reul_la]
+  results[:tnml] = results[:nmeul_heat].values.inject(0, :+) +
+                   results[:nmeul_cool].values.inject(0, :+) +
+                   results[:nmeul_dhw].values.inject(0, :+) +
+                   results[:eul_la]
 
   if not results_iad.nil?
 
     # ANSI/RESNET/ICC 301-2014 Addendum E-2018 House Size Index Adjustment Factors (IAF)
 
-    # 4.3.3 The saving represented by the IAD shall be calculated using equation 4.3.3-1.
-    # IADSAVE = (100 - ERIIAD) / 100
     results[:iad_save] = (100.0 - results_iad[:eri]) / 100.0
 
-    # 4.3.4 The IAF for the Rated Home (IAFPD) shall be calculated in accordance with equation 4.3.4-1.
-    # IAFRH = IAFCFA * IAFNbr * IAFNS (Eq. 4.3.4-1)
-    # where:
-    #   IAFRH = combined Index Adjustment Factor for Rated Home
-    #   IAFCFA = (2400/CFA) ^ [0.304 * (IADSAVE)]
-    #   IAFNbr = 1+ [0.069 * (IADSAVE) * (Nbr-3)]
-    #   IAFNS = (2/NS) ^ [0.12 * (IADSAVE)]
     results[:iaf_cfa] = (2400.0 / rated_output[:hpxml_cfa])**(0.304 * results[:iad_save])
     results[:iaf_nbr] = 1.0 + (0.069 * results[:iad_save] * (rated_output[:hpxml_nbr] - 3.0))
     results[:iaf_ns] = (2.0 / rated_output[:hpxml_nst])**(0.12 * results[:iad_save])
     results[:iaf_rh] = results[:iaf_cfa] * results[:iaf_nbr] * results[:iaf_ns]
 
-    # ERI = PEfrac * (TnML / (TRL * IAFRH)) * 100 (Eq 4.1-2)
-    # where:
-    #   IAFRH = Index Adjustment Factor of Rated Home
     results[:eri] = results[:pefrac] * results[:tnml] / (results[:trl] * results[:iaf_rh]) * 100.0
 
   else
 
-    # ERI shall be determined in accordance with Equation 4.1-2:
-    # ERI = PEfrac * (TnML / TRL) * 100
     results[:eri] = results[:pefrac] * results[:tnml] / results[:trl] * 100.0
 
   end
@@ -632,13 +783,11 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out = {}
   results_out["Electricity: Total (MBtu)"] = design_output[:elecTotal]
   results_out["Electricity: Net (MBtu)"] = design_output[:elecTotal] - design_output[:elecPV]
-  results_out["Natural Gas: Total (MBtu)"] = design_output[:ngTotal]
-  results_out["Other Fuels: Total (MBtu)"] = design_output[:otherTotal]
+  results_out["Natural Gas: Total (MBtu)"] = design_output[:fuelTotal]
   results_out[""] = "" # line break
-  results_out["Electricity: Heating (MBtu)"] = design_output[:elecHeating]
-  results_out["Electricity: Cooling (MBtu)"] = design_output[:elecCooling]
-  results_out["Electricity: Fans/Pumps (MBtu)"] = design_output[:elecFans] + design_output[:elecPumps]
-  results_out["Electricity: Hot Water (MBtu)"] = design_output[:elecHotWater] + design_output[:elecRecircPump]
+  results_out["Electricity: Heating (MBtu)"] = design_output[:elecHeatingBySystem].values.inject(0, :+)
+  results_out["Electricity: Cooling (MBtu)"] = design_output[:elecCoolingBySystem].values.inject(0, :+)
+  results_out["Electricity: Hot Water (MBtu)"] = design_output[:elecHotWaterBySystem].values.inject(0, :+)
   results_out["Electricity: Lighting (MBtu)"] = design_output[:elecIntLighting] + design_output[:elecExtLighting]
   results_out["Electricity: Mech Vent (MBtu)"] = design_output[:elecMechVent]
   results_out["Electricity: Refrigerator (MBtu)"] = design_output[:elecFridge]
@@ -649,14 +798,10 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out["Electricity: Ceiling Fan (MBtu)"] = design_output[:elecCeilingFan]
   results_out["Electricity: Plug Loads (MBtu)"] = design_output[:elecMELs] + design_output[:elecTV]
   results_out["Electricity: PV (MBtu)"] = design_output[:elecPV]
-  results_out["Natural Gas: Heating (MBtu)"] = design_output[:ngHeating]
-  results_out["Natural Gas: Hot Water (MBtu)"] = design_output[:ngHotWater]
-  results_out["Natural Gas: Clothes Dryer (MBtu)"] = design_output[:ngClothesDryer]
-  results_out["Natural Gas: Range/Oven (MBtu)"] = design_output[:ngRangeOven]
-  results_out["Other Fuels: Heating (MBtu)"] = design_output[:otherHeating]
-  results_out["Other Fuels: Hot Water (MBtu)"] = design_output[:otherHotWater]
-  results_out["Other Fuels: Clothes Dryer (MBtu)"] = design_output[:otherClothesDryer]
-  results_out["Other Fuels: Range/Oven (MBtu)"] = design_output[:otherRangeOven]
+  results_out["Fuel: Heating (MBtu)"] = design_output[:fuelHeatingBySystem].values.inject(0, :+)
+  results_out["Fuel: Hot Water (MBtu)"] = design_output[:fuelHotWaterBySystem].values.inject(0, :+)
+  results_out["Fuel: Clothes Dryer (MBtu)"] = design_output[:fuelClothesDryer]
+  results_out["Fuel: Range/Oven (MBtu)"] = design_output[:fuelRangeOven]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 end
 
@@ -667,18 +812,15 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   results_csv = File.join(resultsdir, "ERI_Results.csv")
   results_out = {}
   results_out["ERI"] = results[:eri].round(2)
-  results_out["REUL Heating (MBtu)"] = results[:reul_heat].round(2)
-  results_out["REUL Cooling (MBtu)"] = results[:reul_cool].round(2)
-  results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].round(2)
-  results_out["EC_r Heating (MBtu)"] = results[:ec_r_heat].round(2)
-  results_out["EC_r Cooling (MBtu)"] = results[:ec_r_cool].round(2)
-  results_out["EC_r Hot Water (MBtu)"] = results[:ec_r_dhw].round(2)
-  # results_out["XEUL Heating (MBtu)"] = results[:xeul_heat].round(2)
-  # results_out["XEUL Cooling (MBtu)"] = results[:xeul_cool].round(2)
-  # results_out["XEUL Hot Water (MBtu)"] = results[:xeul_dhw].round(2)
-  results_out["EC_x Heating (MBtu)"] = results[:ec_x_heat].round(2)
-  results_out["EC_x Cooling (MBtu)"] = results[:ec_x_cool].round(2)
-  results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].round(2)
+  results_out["REUL Heating (MBtu)"] = results[:reul_heat].values.map { |x| x.round(2) }.join(",")
+  results_out["REUL Cooling (MBtu)"] = results[:reul_cool].values.map { |x| x.round(2) }.join(",")
+  results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_r Heating (MBtu)"] = results[:ec_r_heat].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_r Cooling (MBtu)"] = results[:ec_r_cool].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_r Hot Water (MBtu)"] = results[:ec_r_dhw].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_x Heating (MBtu)"] = results[:ec_x_heat].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_x Cooling (MBtu)"] = results[:ec_x_cool].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].values.map { |x| x.round(2) }.join(",")
   results_out["EC_x L&A (MBtu)"] = results[:eul_la].round(2)
   if using_iaf
     results_out["IAD_Save (%)"] = results[:iad_save]
@@ -689,27 +831,27 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   # Worksheet file
   worksheet_csv = File.join(resultsdir, "ERI_Worksheet.csv")
   worksheet_out = {}
-  worksheet_out["Coeff Heating a"] = results[:coeff_heat_a].round(4)
-  worksheet_out["Coeff Heating b"] = results[:coeff_heat_b].round(4)
-  worksheet_out["Coeff Cooling a"] = results[:coeff_cool_a].round(4)
-  worksheet_out["Coeff Cooling b"] = results[:coeff_cool_b].round(4)
-  worksheet_out["Coeff Hot Water a"] = results[:coeff_dhw_a].round(4)
-  worksheet_out["Coeff Hot Water b"] = results[:coeff_dhw_b].round(4)
-  worksheet_out["DSE_r Heating"] = results[:dse_r_heat].round(4)
-  worksheet_out["DSE_r Cooling"] = results[:dse_r_cool].round(4)
-  worksheet_out["DSE_r Hot Water"] = results[:dse_r_dhw].round(4)
-  worksheet_out["EEC_x Heating"] = results[:eec_x_heat].round(4)
-  worksheet_out["EEC_x Cooling"] = results[:eec_x_cool].round(4)
-  worksheet_out["EEC_x Hot Water"] = results[:eec_x_dhw].round(4)
-  worksheet_out["EEC_r Heating"] = results[:eec_r_heat].round(4)
-  worksheet_out["EEC_r Cooling"] = results[:eec_r_cool].round(4)
-  worksheet_out["EEC_r Hot Water"] = results[:eec_r_dhw].round(4)
-  worksheet_out["nEC_x Heating"] = results[:nec_x_heat].round(4)
-  worksheet_out["nEC_x Cooling"] = results[:nec_x_cool].round(4)
-  worksheet_out["nEC_x Hot Water"] = results[:nec_x_dhw].round(4)
-  worksheet_out["nMEUL Heating"] = results[:nmeul_heat].round(4)
-  worksheet_out["nMEUL Cooling"] = results[:nmeul_cool].round(4)
-  worksheet_out["nMEUL Hot Water"] = results[:nmeul_dhw].round(4)
+  worksheet_out["Coeff Heating a"] = results[:coeff_heat_a].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Heating b"] = results[:coeff_heat_b].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Cooling a"] = results[:coeff_cool_a].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Cooling b"] = results[:coeff_cool_b].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Hot Water a"] = results[:coeff_dhw_a].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Hot Water b"] = results[:coeff_dhw_b].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["DSE_r Heating"] = results[:dse_r_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["DSE_r Cooling"] = results[:dse_r_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["DSE_r Hot Water"] = results[:dse_r_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_x Heating"] = results[:eec_x_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_x Cooling"] = results[:eec_x_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_x Hot Water"] = results[:eec_x_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_r Heating"] = results[:eec_r_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_r Cooling"] = results[:eec_r_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_r Hot Water"] = results[:eec_r_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nEC_x Heating"] = results[:nec_x_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nEC_x Cooling"] = results[:nec_x_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nEC_x Hot Water"] = results[:nec_x_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nMEUL Heating"] = results[:nmeul_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nMEUL Cooling"] = results[:nmeul_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nMEUL Hot Water"] = results[:nmeul_dhw].values.map { |x| x.round(4) }.join(",")
   if using_iaf
     worksheet_out["IAF CFA"] = results[:iaf_cfa].round(4)
     worksheet_out["IAF NBR"] = results[:iaf_nbr].round(4)
