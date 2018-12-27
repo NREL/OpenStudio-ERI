@@ -6,7 +6,6 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class HVACtest < MiniTest::Test
-  
   def _dse(calc_type)
     if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
       dse = 1.0
@@ -14,7 +13,7 @@ class HVACtest < MiniTest::Test
       dse = 0.8
     end
   end
-  
+
   def test_none
     hpxml_name = "valid-hvac-none.xml"
 
@@ -363,7 +362,7 @@ class HVACtest < MiniTest::Test
 
   def test_furnace_gas_and_central_air_conditioner
     hpxml_name = "valid.xml"
-    
+
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -375,7 +374,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc)
       _check_thermostat(hpxml_doc, "manual thermostat")
     end
-    
+
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
@@ -384,10 +383,10 @@ class HVACtest < MiniTest::Test
     _check_heat_pump(hpxml_doc)
     _check_thermostat(hpxml_doc, "manual thermostat")
   end
-  
+
   def test_furnace_gas_room_air_conditioner
     hpxml_name = "valid-hvac-furnace-gas-room-ac.xml"
-    
+
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -399,7 +398,7 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml_doc)
       _check_thermostat(hpxml_doc, "manual thermostat")
     end
-    
+
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
@@ -408,49 +407,49 @@ class HVACtest < MiniTest::Test
     _check_heat_pump(hpxml_doc)
     _check_thermostat(hpxml_doc, "manual thermostat")
   end
-  
+
   def test_all_hvac
     hpxml_name = "valid-hvac-all.xml"
-    
+
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml_doc, ["central air conditioning", 13, 0.2, _dse(calc_type)],
-                                     ["central air conditioning", 13, 0.2, _dse(calc_type)],
-                                     ["central air conditioning", 13, 0.2, _dse(calc_type)],
-                                     ["central air conditioning", 13, 0.2, _dse(calc_type)],
-                                     ["central air conditioning", 13, 0.2, _dse(calc_type)])
-    _check_heating_system(hpxml_doc, ["Boiler", "natural gas", 0.8, 0.1, _dse(calc_type)],
-                                     ["Furnace", "natural gas", 0.78, 0.1, _dse(calc_type)],
-                                     ["Furnace", "natural gas", 0.78, 0.1, _dse(calc_type)],
-                                     ["Furnace", "natural gas", 0.78, 0.1, _dse(calc_type)])
-    _check_heat_pump(hpxml_doc, ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
-                                ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
-                                ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
-                                ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
-                                ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
-                                ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)])
+      _check_cooling_system(hpxml_doc, ["central air conditioning", 13, 0.2, _dse(calc_type)],
+                            ["central air conditioning", 13, 0.2, _dse(calc_type)],
+                            ["central air conditioning", 13, 0.2, _dse(calc_type)],
+                            ["central air conditioning", 13, 0.2, _dse(calc_type)],
+                            ["central air conditioning", 13, 0.2, _dse(calc_type)])
+      _check_heating_system(hpxml_doc, ["Boiler", "natural gas", 0.8, 0.1, _dse(calc_type)],
+                            ["Furnace", "natural gas", 0.78, 0.1, _dse(calc_type)],
+                            ["Furnace", "natural gas", 0.78, 0.1, _dse(calc_type)],
+                            ["Furnace", "natural gas", 0.78, 0.1, _dse(calc_type)])
+      _check_heat_pump(hpxml_doc, ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
+                       ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
+                       ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
+                       ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
+                       ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)],
+                       ["air-to-air", 7.7, nil, 0.1, 0.0, _dse(calc_type)])
       _check_thermostat(hpxml_doc, "manual thermostat")
     end
-    
+
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
     _check_cooling_system(hpxml_doc, ["central air conditioning", nil, 0.2, nil],
-                                     ["room air conditioner", nil, 0.2, nil])
+                          ["room air conditioner", nil, 0.2, nil])
     _check_heating_system(hpxml_doc, ["Boiler", "electricity", nil, 0.1, nil],
-                                     ["Boiler", "natural gas", nil, 0.1, nil],
-                                     ["ElectricResistance", "electricity", nil, 0.1, nil],
-                                     ["Furnace", "electricity", nil, 0.1, nil],
-                                     ["Furnace", "natural gas", nil, 0.1, nil],
-                                     ["Stove", "fuel oil", nil, 0.1, nil],
-                                     ["WallFurnace", "propane", nil, 0.1, nil])
+                          ["Boiler", "natural gas", nil, 0.1, nil],
+                          ["ElectricResistance", "electricity", nil, 0.1, nil],
+                          ["Furnace", "electricity", nil, 0.1, nil],
+                          ["Furnace", "natural gas", nil, 0.1, nil],
+                          ["Stove", "fuel oil", nil, 0.1, nil],
+                          ["WallFurnace", "propane", nil, 0.1, nil])
     _check_heat_pump(hpxml_doc, ["air-to-air", nil, nil, 0.1, 0.2, nil],
-                                ["ground-to-air", nil, nil, 0.1, 0.2, nil],
-                                ["mini-split", nil, nil, 0.1, 0.2, nil])
+                     ["ground-to-air", nil, nil, 0.1, 0.2, nil],
+                     ["mini-split", nil, nil, 0.1, 0.2, nil])
     _check_thermostat(hpxml_doc, "manual thermostat")
   end
 
@@ -572,7 +571,7 @@ class HVACtest < MiniTest::Test
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution[DistributionSystemType[Other='DSE']]") do |dist_dse|
       next if sys.elements["DistributionSystem"].nil?
       next unless dist_dse.elements["SystemIdentifier"].attributes["id"] == sys.elements["DistributionSystem"].attributes["idref"]
-        
+
       actual_dse_heat = Float(dist_dse.elements["AnnualHeatingDistributionSystemEfficiency"].text)
       actual_dse_cool = Float(dist_dse.elements["AnnualCoolingDistributionSystemEfficiency"].text)
     end

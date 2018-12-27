@@ -61,6 +61,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
     args['osm_output_path'] = File.join(rundir, "in.osm")
   end
   args['skip_validation'] = skip_validation
+  args['map_tsv_dir'] = rundir
   update_args_hash(measures, measure_subdir, args)
 
   # Apply measures

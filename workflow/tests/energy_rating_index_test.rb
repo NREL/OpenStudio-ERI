@@ -800,7 +800,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       eri = Float(row[1])
       break
     end
-    assert_in_epsilon(100, eri, 0.007) # FIXME: Should be 0.005 but tests fail due to change in mech vent energy
+    assert_in_epsilon(100, eri, 0.0075) # FIXME: Should be 0.005
   end
 
   def _check_method_results(results_csv, test_num, has_tankless_water_heater, using_iaf)
