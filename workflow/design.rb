@@ -45,7 +45,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   args['calc_type'] = design
   args['hpxml_path'] = hpxml
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
-  # args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
+  args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
   args['hpxml_output_path'] = output_hpxml_path
   args['skip_validation'] = skip_validation
   update_args_hash(measures, measure_subdir, args)
@@ -55,7 +55,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   args = {}
   args['hpxml_path'] = output_hpxml_path
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
-  # args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "hpxml_schemas"))
+  args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
   args['epw_output_path'] = File.join(rundir, "in.epw")
   if debug
     args['osm_output_path'] = File.join(rundir, "in.osm")

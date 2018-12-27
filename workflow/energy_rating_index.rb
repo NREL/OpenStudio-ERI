@@ -549,108 +549,173 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   # Heating #
   # ======= #
 
-  results[:nmeul_heat] = 0
-  rated_output[:hpxml_heat_sys_ids].each do |sys_id|
-    results[:reul_heat] = ref_output[:loadHeatingBySystem][sys_id] * ref_output[:hpxml_dse_heats][sys_id] # Loads include DSE, so we must remove the effect
+  results[:reul_heat] = {}
+  results[:coeff_heat_a] = {}
+  results[:coeff_heat_b] = {}
+  results[:eec_x_heat] = {}
+  results[:eec_r_heat] = {}
+  results[:ec_x_heat] = {}
+  results[:ec_r_heat] = {}
+  results[:dse_r_heat] = {}
+  results[:nec_x_heat] = {}
+  results[:nmeul_heat] = {}
 
-    results[:coeff_heat_a] = nil
-    results[:coeff_heat_b] = nil
-    if rated_output[:hpxml_heat_fuels][sys_id] == 'electricity'
-      results[:coeff_heat_a] = 2.2561
-      results[:coeff_heat_b] = 0.0
-    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_heat_fuels][sys_id]
-      results[:coeff_heat_a] = 1.0943
-      results[:coeff_heat_b] = 0.4030
+  rated_output[:hpxml_heat_sys_ids].each do |s|
+    reul_heat = ref_output[:loadHeatingBySystem][s] * ref_output[:hpxml_dse_heats][s] # Loads include DSE, so we must remove the effect
+
+    coeff_heat_a = nil
+    coeff_heat_b = nil
+    if rated_output[:hpxml_heat_fuels][s] == 'electricity'
+      coeff_heat_a = 2.2561
+      coeff_heat_b = 0.0
+    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_heat_fuels][s]
+      coeff_heat_a = 1.0943
+      coeff_heat_b = 0.4030
     end
-    if results[:coeff_heat_a].nil? or results[:coeff_heat_b].nil?
+    if coeff_heat_a.nil? or coeff_heat_b.nil?
       fail "Could not identify EEC coefficients for heating system."
     end
 
-    results[:eec_x_heat] = rated_output[:hpxml_eec_heats][sys_id]
-    results[:eec_r_heat] = ref_output[:hpxml_eec_heats][sys_id]
+    eec_x_heat = rated_output[:hpxml_eec_heats][s]
+    eec_r_heat = ref_output[:hpxml_eec_heats][s]
 
-    results[:ec_x_heat] = rated_output[:elecHeatingBySystem][sys_id] + rated_output[:fuelHeatingBySystem][sys_id]
-    results[:ec_r_heat] = ref_output[:elecHeatingBySystem][sys_id] + ref_output[:fuelHeatingBySystem][sys_id]
+    ec_x_heat = rated_output[:elecHeatingBySystem][s] + rated_output[:fuelHeatingBySystem][s]
+    ec_r_heat = ref_output[:elecHeatingBySystem][s] + ref_output[:fuelHeatingBySystem][s]
 
-    results[:dse_r_heat] = results[:reul_heat] / results[:ec_r_heat] * results[:eec_r_heat]
+    dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
-    results[:nec_x_heat] = 0
-    if results[:eec_x_heat] * results[:reul_heat] > 0
-      results[:nec_x_heat] = (results[:coeff_heat_a] * results[:eec_x_heat] - results[:coeff_heat_b]) * (results[:ec_x_heat] * results[:ec_r_heat] * results[:dse_r_heat]) / (results[:eec_x_heat] * results[:reul_heat])
+    nec_x_heat = 0
+    if eec_x_heat * reul_heat > 0
+      nec_x_heat = (coeff_heat_a * eec_x_heat - coeff_heat_b) * (ec_x_heat * ec_r_heat * dse_r_heat) / (eec_x_heat * reul_heat)
     end
 
-    if results[:ec_r_heat] > 0
-      results[:nmeul_heat] += results[:reul_heat] * (results[:nec_x_heat] / results[:ec_r_heat])
+    nmeul_heat = 0
+    if ec_r_heat > 0
+      nmeul_heat = reul_heat * (nec_x_heat / ec_r_heat)
     end
+
+    results[:reul_heat][s] = reul_heat
+    results[:coeff_heat_a][s] = coeff_heat_a
+    results[:coeff_heat_b][s] = coeff_heat_b
+    results[:eec_x_heat][s] = eec_x_heat
+    results[:eec_r_heat][s] = eec_r_heat
+    results[:ec_x_heat][s] = ec_x_heat
+    results[:ec_r_heat][s] = ec_r_heat
+    results[:dse_r_heat][s] = dse_r_heat
+    results[:nec_x_heat][s] = nec_x_heat
+    results[:nmeul_heat][s] = nmeul_heat
   end
 
   # ======= #
   # Cooling #
   # ======= #
 
-  results[:nmeul_cool] = 0
-  rated_output[:hpxml_cool_sys_ids].each do |sys_id|
-    results[:reul_cool] = ref_output[:loadCoolingBySystem][sys_id] * ref_output[:hpxml_dse_cools][sys_id] # Loads include DSE, so we must remove the effect
-    results[:xeul_cool] = rated_output[:loadCoolingBySystem][sys_id]
+  results[:reul_cool] = {}
+  results[:coeff_cool_a] = {}
+  results[:coeff_cool_b] = {}
+  results[:eec_x_cool] = {}
+  results[:eec_r_cool] = {}
+  results[:ec_x_cool] = {}
+  results[:ec_r_cool] = {}
+  results[:dse_r_cool] = {}
+  results[:nec_x_cool] = {}
+  results[:nmeul_cool] = {}
 
-    results[:coeff_cool_a] = 3.8090
-    results[:coeff_cool_b] = 0.0
+  rated_output[:hpxml_cool_sys_ids].each do |s|
+    reul_cool = ref_output[:loadCoolingBySystem][s] * ref_output[:hpxml_dse_cools][s] # Loads include DSE, so we must remove the effect
 
-    results[:eec_x_cool] = rated_output[:hpxml_eec_cools][sys_id]
-    results[:eec_r_cool] = ref_output[:hpxml_eec_cools][sys_id]
+    coeff_cool_a = 3.8090
+    coeff_cool_b = 0.0
 
-    results[:ec_x_cool] = rated_output[:elecCoolingBySystem][sys_id]
-    results[:ec_r_cool] = ref_output[:elecCoolingBySystem][sys_id]
+    eec_x_cool = rated_output[:hpxml_eec_cools][s]
+    eec_r_cool = ref_output[:hpxml_eec_cools][s]
 
-    results[:dse_r_cool] = results[:reul_cool] / results[:ec_r_cool] * results[:eec_r_cool]
+    ec_x_cool = rated_output[:elecCoolingBySystem][s]
+    ec_r_cool = ref_output[:elecCoolingBySystem][s]
 
-    results[:nec_x_cool] = 0
-    if results[:eec_x_cool] * results[:reul_cool] > 0
-      results[:nec_x_cool] = (results[:coeff_cool_a] * results[:eec_x_cool] - results[:coeff_cool_b]) * (results[:ec_x_cool] * results[:ec_r_cool] * results[:dse_r_cool]) / (results[:eec_x_cool] * results[:reul_cool])
+    dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
+
+    nec_x_cool = 0
+    if eec_x_cool * reul_cool > 0
+      nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
     end
 
-    if results[:ec_r_cool] > 0
-      results[:nmeul_cool] += results[:reul_cool] * (results[:nec_x_cool] / results[:ec_r_cool])
+    nmeul_cool = 0
+    if ec_r_cool > 0
+      nmeul_cool = reul_cool * (nec_x_cool / ec_r_cool)
     end
+
+    results[:reul_cool][s] = reul_cool
+    results[:coeff_cool_a][s] = coeff_cool_a
+    results[:coeff_cool_b][s] = coeff_cool_b
+    results[:eec_x_cool][s] = eec_x_cool
+    results[:eec_r_cool][s] = eec_r_cool
+    results[:ec_x_cool][s] = ec_x_cool
+    results[:ec_r_cool][s] = ec_r_cool
+    results[:dse_r_cool][s] = dse_r_cool
+    results[:nec_x_cool][s] = nec_x_cool
+    results[:nmeul_cool][s] = nmeul_cool
   end
 
   # ======== #
   # HotWater #
   # ======== #
 
-  results[:nmeul_dhw] = 0
-  rated_output[:hpxml_dhw_sys_ids].each do |sys_id|
-    results[:reul_dhw] = ref_output[:loadHotWaterBySystem][sys_id]
+  results[:reul_dhw] = {}
+  results[:coeff_dhw_a] = {}
+  results[:coeff_dhw_b] = {}
+  results[:eec_x_dhw] = {}
+  results[:eec_r_dhw] = {}
+  results[:ec_x_dhw] = {}
+  results[:ec_r_dhw] = {}
+  results[:dse_r_dhw] = {}
+  results[:nec_x_dhw] = {}
+  results[:nmeul_dhw] = {}
 
-    results[:coeff_dhw_a] = nil
-    results[:coeff_dhw_b] = nil
-    if rated_output[:hpxml_dwh_fuels][sys_id] == 'electricity'
-      results[:coeff_dhw_a] = 0.9200
-      results[:coeff_dhw_b] = 0.0
-    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_dwh_fuels][sys_id]
-      results[:coeff_dhw_a] = 1.1877
-      results[:coeff_dhw_b] = 1.0130
+  rated_output[:hpxml_dhw_sys_ids].each do |s|
+    reul_dhw = ref_output[:loadHotWaterBySystem][s]
+
+    coeff_dhw_a = nil
+    coeff_dhw_b = nil
+    if rated_output[:hpxml_dwh_fuels][s] == 'electricity'
+      coeff_dhw_a = 0.9200
+      coeff_dhw_b = 0.0
+    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_dwh_fuels][s]
+      coeff_dhw_a = 1.1877
+      coeff_dhw_b = 1.0130
     end
-    if results[:coeff_dhw_a].nil? or results[:coeff_dhw_b].nil?
+    if coeff_dhw_a.nil? or coeff_dhw_b.nil?
       fail "Could not identify EEC coefficients for water heating system."
     end
 
-    results[:eec_x_dhw] = rated_output[:hpxml_eec_dhws][sys_id]
-    results[:eec_r_dhw] = ref_output[:hpxml_eec_dhws][sys_id]
+    eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
+    eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
-    results[:ec_x_dhw] = rated_output[:elecHotWaterBySystem][sys_id] + rated_output[:fuelHotWaterBySystem][sys_id]
-    results[:ec_r_dhw] = ref_output[:elecHotWaterBySystem][sys_id] + ref_output[:fuelHotWaterBySystem][sys_id]
+    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:fuelHotWaterBySystem][s]
+    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:fuelHotWaterBySystem][s]
 
-    results[:dse_r_dhw] = results[:reul_dhw] / results[:ec_r_dhw] * results[:eec_r_dhw]
+    dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
 
-    results[:nec_x_dhw] = 0
-    if results[:eec_x_dhw] * results[:reul_dhw] > 0
-      results[:nec_x_dhw] = (results[:coeff_dhw_a] * results[:eec_x_dhw] - results[:coeff_dhw_b]) * (results[:ec_x_dhw] * results[:ec_r_dhw] * results[:dse_r_dhw]) / (results[:eec_x_dhw] * results[:reul_dhw])
+    nec_x_dhw = 0
+    if eec_x_dhw * reul_dhw > 0
+      nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * ec_r_dhw * dse_r_dhw) / (eec_x_dhw * reul_dhw)
     end
 
-    if results[:ec_r_dhw] > 0
-      results[:nmeul_dhw] += results[:reul_dhw] * (results[:nec_x_dhw] / results[:ec_r_dhw])
+    nmeul_dhw = 0
+    if ec_r_dhw > 0
+      nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
     end
+
+    results[:reul_dhw][s] = reul_dhw
+    results[:coeff_dhw_a][s] = coeff_dhw_a
+    results[:coeff_dhw_b][s] = coeff_dhw_b
+    results[:eec_x_dhw][s] = eec_x_dhw
+    results[:eec_r_dhw][s] = eec_r_dhw
+    results[:ec_x_dhw][s] = ec_x_dhw
+    results[:ec_r_dhw][s] = ec_r_dhw
+    results[:dse_r_dhw][s] = dse_r_dhw
+    results[:nec_x_dhw][s] = nec_x_dhw
+    results[:nmeul_dhw][s] = nmeul_dhw
   end
 
   # ===== #
@@ -675,8 +740,14 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   # ERI #
   # === #
 
-  results[:trl] = results[:reul_heat] + results[:reul_cool] + results[:reul_dhw] + results[:reul_la]
-  results[:tnml] = results[:nmeul_heat] + results[:nmeul_cool] + results[:nmeul_dhw] + results[:eul_la]
+  results[:trl] = results[:reul_heat].values.inject(0, :+) +
+                  results[:reul_cool].values.inject(0, :+) +
+                  results[:reul_dhw].values.inject(0, :+) +
+                  results[:reul_la]
+  results[:tnml] = results[:nmeul_heat].values.inject(0, :+) +
+                   results[:nmeul_cool].values.inject(0, :+) +
+                   results[:nmeul_dhw].values.inject(0, :+) +
+                   results[:eul_la]
 
   if not results_iad.nil?
 
@@ -735,15 +806,15 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   results_csv = File.join(resultsdir, "ERI_Results.csv")
   results_out = {}
   results_out["ERI"] = results[:eri].round(2)
-  results_out["REUL Heating (MBtu)"] = results[:reul_heat].round(2)
-  results_out["REUL Cooling (MBtu)"] = results[:reul_cool].round(2)
-  results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].round(2)
-  results_out["EC_r Heating (MBtu)"] = results[:ec_r_heat].round(2)
-  results_out["EC_r Cooling (MBtu)"] = results[:ec_r_cool].round(2)
-  results_out["EC_r Hot Water (MBtu)"] = results[:ec_r_dhw].round(2)
-  results_out["EC_x Heating (MBtu)"] = results[:ec_x_heat].round(2)
-  results_out["EC_x Cooling (MBtu)"] = results[:ec_x_cool].round(2)
-  results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].round(2)
+  results_out["REUL Heating (MBtu)"] = results[:reul_heat].values.map { |x| x.round(2) }.join(",")
+  results_out["REUL Cooling (MBtu)"] = results[:reul_cool].values.map { |x| x.round(2) }.join(",")
+  results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_r Heating (MBtu)"] = results[:ec_r_heat].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_r Cooling (MBtu)"] = results[:ec_r_cool].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_r Hot Water (MBtu)"] = results[:ec_r_dhw].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_x Heating (MBtu)"] = results[:ec_x_heat].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_x Cooling (MBtu)"] = results[:ec_x_cool].values.map { |x| x.round(2) }.join(",")
+  results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].values.map { |x| x.round(2) }.join(",")
   results_out["EC_x L&A (MBtu)"] = results[:eul_la].round(2)
   if using_iaf
     results_out["IAD_Save (%)"] = results[:iad_save]
@@ -754,27 +825,27 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   # Worksheet file
   worksheet_csv = File.join(resultsdir, "ERI_Worksheet.csv")
   worksheet_out = {}
-  worksheet_out["Coeff Heating a"] = results[:coeff_heat_a].round(4)
-  worksheet_out["Coeff Heating b"] = results[:coeff_heat_b].round(4)
-  worksheet_out["Coeff Cooling a"] = results[:coeff_cool_a].round(4)
-  worksheet_out["Coeff Cooling b"] = results[:coeff_cool_b].round(4)
-  worksheet_out["Coeff Hot Water a"] = results[:coeff_dhw_a].round(4)
-  worksheet_out["Coeff Hot Water b"] = results[:coeff_dhw_b].round(4)
-  worksheet_out["DSE_r Heating"] = results[:dse_r_heat].round(4)
-  worksheet_out["DSE_r Cooling"] = results[:dse_r_cool].round(4)
-  worksheet_out["DSE_r Hot Water"] = results[:dse_r_dhw].round(4)
-  worksheet_out["EEC_x Heating"] = results[:eec_x_heat].round(4)
-  worksheet_out["EEC_x Cooling"] = results[:eec_x_cool].round(4)
-  worksheet_out["EEC_x Hot Water"] = results[:eec_x_dhw].round(4)
-  worksheet_out["EEC_r Heating"] = results[:eec_r_heat].round(4)
-  worksheet_out["EEC_r Cooling"] = results[:eec_r_cool].round(4)
-  worksheet_out["EEC_r Hot Water"] = results[:eec_r_dhw].round(4)
-  worksheet_out["nEC_x Heating"] = results[:nec_x_heat].round(4)
-  worksheet_out["nEC_x Cooling"] = results[:nec_x_cool].round(4)
-  worksheet_out["nEC_x Hot Water"] = results[:nec_x_dhw].round(4)
-  worksheet_out["nMEUL Heating"] = results[:nmeul_heat].round(4)
-  worksheet_out["nMEUL Cooling"] = results[:nmeul_cool].round(4)
-  worksheet_out["nMEUL Hot Water"] = results[:nmeul_dhw].round(4)
+  worksheet_out["Coeff Heating a"] = results[:coeff_heat_a].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Heating b"] = results[:coeff_heat_b].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Cooling a"] = results[:coeff_cool_a].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Cooling b"] = results[:coeff_cool_b].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Hot Water a"] = results[:coeff_dhw_a].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["Coeff Hot Water b"] = results[:coeff_dhw_b].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["DSE_r Heating"] = results[:dse_r_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["DSE_r Cooling"] = results[:dse_r_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["DSE_r Hot Water"] = results[:dse_r_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_x Heating"] = results[:eec_x_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_x Cooling"] = results[:eec_x_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_x Hot Water"] = results[:eec_x_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_r Heating"] = results[:eec_r_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_r Cooling"] = results[:eec_r_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["EEC_r Hot Water"] = results[:eec_r_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nEC_x Heating"] = results[:nec_x_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nEC_x Cooling"] = results[:nec_x_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nEC_x Hot Water"] = results[:nec_x_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nMEUL Heating"] = results[:nmeul_heat].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nMEUL Cooling"] = results[:nmeul_cool].values.map { |x| x.round(4) }.join(",")
+  worksheet_out["nMEUL Hot Water"] = results[:nmeul_dhw].values.map { |x| x.round(4) }.join(",")
   if using_iaf
     worksheet_out["IAF CFA"] = results[:iaf_cfa].round(4)
     worksheet_out["IAF NBR"] = results[:iaf_nbr].round(4)
