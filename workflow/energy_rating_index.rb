@@ -33,9 +33,10 @@ def run_design_direct(basedir, design, resultsdir, hpxml, debug, skip_validation
   designdir = get_designdir(basedir, design)
   rm_path(designdir)
 
-  return nil if not run
+  if run
+    output_hpxml_path = run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
+  end
 
-  output_hpxml_path = run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
   return output_hpxml_path, designdir
 end
 
@@ -48,10 +49,10 @@ def run_design_spawn(basedir, design, resultsdir, hpxml, debug, skip_validation,
   designdir = get_designdir(basedir, design)
   rm_path(designdir)
 
-  return nil if not run
-
-  cli_path = OpenStudio.getOpenStudioCLI
-  system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation}")
+  if run
+    cli_path = OpenStudio.getOpenStudioCLI
+    system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation}")
+  end
 
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
   return output_hpxml_path, designdir
