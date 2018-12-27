@@ -61,8 +61,12 @@ def process_design_output(design, designdir, resultsdir, output_hpxml_path)
   return nil if output_hpxml_path.nil?
 
   print "[#{design}] Processing output...\n"
+
   design_output = read_output(design, designdir, output_hpxml_path)
+  return if design_output.nil?
+
   write_results_annual_output(resultsdir, design, design_output)
+
   print "[#{design}] Done.\n"
 
   return design_output
@@ -82,13 +86,14 @@ def get_sql_result(sqlValue, design)
     return sqlValue.get * 0.9478171203133172 # GJ => MBtu
   end
 
-  fail "Simulation unsuccessful for #{design}."
+  fail "Could not find sql result."
 end
 
 def read_output(design, designdir, output_hpxml_path)
   sql_path = File.join(designdir, "run", "eplusout.sql")
   if not File.exists?(sql_path)
-    fail "Simulation unsuccessful for #{design}."
+    puts "[#{design}] Processing output unsuccessful."
+    return nil
   end
 
   sqlFile = OpenStudio::SqlFile.new(sql_path, false)
@@ -876,7 +881,11 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
 
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
     output_hpxml_path, designdir = run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
+    next unless File.exists? File.join(designdir, "run", "in.idf")
+
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+    next if design_output.nil?
+
     writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
   end
 
@@ -885,7 +894,11 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
     writers[design].close
     next if not run_designs[design]
 
-    design_outputs[design] = Marshal.load(reader.read)
+    begin
+      design_outputs[design] = Marshal.load(reader.read)
+    rescue
+      # nop
+    end
   end
 
 else # e.g., Windows
@@ -895,9 +908,22 @@ else # e.g., Windows
 
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
     output_hpxml_path, designdir = run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
-    design_outputs[design] = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+    next unless File.exists? File.join(designdir, "run", "in.idf")
+
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+    next if design_output.nil?
+
+    design_outputs[design] = design_output
   end
 
+end
+
+# Exit now if any designs that should have been run have no output.
+run_designs.each do |design, run|
+  next unless run and design_outputs[design].nil?
+
+  puts "Errors encountered. Aborting..."
+  exit!
 end
 
 # Calculate and write results
@@ -914,5 +940,6 @@ results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome],
 
 write_results(results, resultsdir, design_outputs, using_iaf)
 
+puts "ERI: #{results[:eri].round(2)}"
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
 puts "Completed in #{(Time.now - start_time).round(1)} seconds."

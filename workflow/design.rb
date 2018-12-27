@@ -16,8 +16,10 @@ def run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
   print "[#{design}] Creating input...\n"
   output_hpxml_path, rundir = create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
 
-  print "[#{design}] Running simulation...\n"
-  run_energyplus(design, rundir)
+  if not rundir.nil?
+    print "[#{design}] Running simulation...\n"
+    run_energyplus(design, rundir)
+  end
 
   return output_hpxml_path
 end
@@ -82,7 +84,8 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   end
 
   if not success
-    fail "Simulation unsuccessful for #{design}."
+    print "[#{design}] Creating input unsuccessful.\n"
+    return output_hpxml_path, nil
   end
 
   # Write model to IDF
