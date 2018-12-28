@@ -104,7 +104,7 @@
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>2.16</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>

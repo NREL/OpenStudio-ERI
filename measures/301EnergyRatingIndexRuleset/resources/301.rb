@@ -92,6 +92,10 @@ class EnergyRatingIndex301Ruleset
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_reference(new_lighting, orig_details)
     set_ceiling_fans_reference(new_lighting, orig_details)
+    
+    # MiscLoads
+    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
+    set_misc_loads_reference(new_misc_loads)
   end
 
   def self.apply_rated_home_ruleset(building)
@@ -139,6 +143,10 @@ class EnergyRatingIndex301Ruleset
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_rated(new_lighting, orig_details)
     set_ceiling_fans_rated(new_lighting, orig_details)
+    
+    # MiscLoads
+    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
+    set_misc_loads_rated(new_misc_loads)
   end
 
   def self.apply_index_adjustment_design_ruleset(building)
@@ -186,6 +194,10 @@ class EnergyRatingIndex301Ruleset
     new_lighting = XMLHelper.add_element(new_details, "Lighting")
     set_lighting_iad(new_lighting, orig_details)
     set_ceiling_fans_iad(new_lighting, orig_details)
+    
+    # MiscLoads
+    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
+    set_misc_loads_iad(new_misc_loads)
   end
 
   def self.set_summary_reference(new_summary, orig_details)
@@ -1777,6 +1789,28 @@ class EnergyRatingIndex301Ruleset
   def self.set_ceiling_fans_iad(new_lighting, orig_details)
     # Not described in Addendum E; use Reference Home?
     set_ceiling_fans_reference(new_lighting, orig_details)
+  end
+  
+  def self.set_misc_loads_reference(new_misc_loads)
+    # Misc
+    misc = XMLHelper.add_element(new_misc_loads, "PlugLoad")
+    sys_id = XMLHelper.add_element(misc, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "MiscPlugLoad")
+    XMLHelper.add_element(misc, "PlugLoadType", "other")
+    
+    # Television
+    tv = XMLHelper.add_element(new_misc_loads, "PlugLoad")
+    sys_id = XMLHelper.add_element(tv, "SystemIdentifier")
+    XMLHelper.add_attribute(sys_id, "id", "TelevisionPlugLoad")
+    XMLHelper.add_element(tv, "PlugLoadType", "TV other")
+  end
+  
+  def self.set_misc_loads_rated(new_misc_loads)
+    set_misc_loads_reference(new_misc_loads)
+  end
+  
+  def self.set_misc_loads_iad(new_misc_loads)
+    set_misc_loads_reference(new_misc_loads)
   end
 
   private

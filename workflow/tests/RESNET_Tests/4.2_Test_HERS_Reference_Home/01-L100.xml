@@ -85,7 +85,7 @@
                   <Area>1539</Area>
                   <Insulation>
                     <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>16.95</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
@@ -103,7 +103,7 @@
                   <Emittance>0.9</Emittance>
                   <Insulation>
                     <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>2.16</AssemblyEffectiveRValue>
+                    <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                   </Insulation>
                   <extension>
                     <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
@@ -127,7 +127,7 @@
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
-                <AssemblyEffectiveRValue>14.08</AssemblyEffectiveRValue>
+                <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
