@@ -11,6 +11,12 @@ require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
+  def before_setup
+    @resnet_tests_dir = File.join(File.dirname(__FILE__), "RESNET_Tests", "results")
+    _rm_path(@resnet_tests_dir)
+    Dir.mkdir(@resnet_tests_dir)
+  end
+
   def test_valid_xmls
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
 
@@ -73,8 +79,6 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
 
   def test_downloading_weather
-    require 'csv'
-
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" --download-weather"
@@ -90,25 +94,39 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
 
   def test_resnet_ashrae_140
+    require 'csv'
+
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
 
     # Run tests
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Test_Standard_140")
-    results = {}
+    out_data = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      sql_path = run_straight_sim(xml, this_dir)
+      sql_path, sim_time = run_straight_sim(xml, this_dir)
       htg_load, clg_load = _get_building_loads(sql_path)
-      if xml.include? "AC"
-        results[File.basename(xml)] = htg_load
-      elsif xml.include? "AL"
-        results[File.basename(xml)] = clg_load
+      if xml.include? "C.xml"
+        out_data << [xml, htg_load, sim_time]
+      elsif xml.include? "L.xml"
+        out_data << [xml, clg_load, sim_time]
       end
     end
 
     # Display results
-    results.each do |xml, load|
-      puts "#{xml}: #{load}"
+    out_csv = File.absolute_path(File.join(@resnet_tests_dir, "4.1_Test_Standard_140.csv"))
+    CSV.open(out_csv, "w") do |csv|
+      csv << ["Test", "Annual Load [MMBtu]", "Simulation Runtime [s]"]
+      out_data.each do |out_line|
+        next unless out_line[0].include? "C.xml"
+
+        csv << out_line
+      end
+      out_data.each do |out_line|
+        next unless out_line[0].include? "L.xml"
+
+        csv << out_line
+      end
     end
+    puts "Wrote results to #{out_csv}."
   end
 
   def test_resnet_hers_reference_home_auto_generation
@@ -352,17 +370,6 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     xml = File.absolute_path(xml)
 
-    def rm_path(path)
-      if Dir.exists?(path)
-        FileUtils.rm_r(path)
-      end
-      while true
-        break if not Dir.exists?(path)
-
-        sleep(0.01)
-      end
-    end
-
     def get_sql_query_result(sqlFile, query)
       result = sqlFile.execAndReturnFirstDouble(query)
       if result.is_initialized
@@ -379,7 +386,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
 
     rundir = File.join(this_dir, "SimulationHome")
-    rm_path(rundir)
+    _rm_path(rundir)
     Dir.mkdir(rundir)
 
     model = OpenStudio::Model::Model.new
@@ -427,13 +434,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     # Run EnergyPlus
     ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
     command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
+    start_time = Time.now
     system(command, :err => File::NULL)
-    puts "Completed #{File.basename(args['hpxml_path'])} simulation."
+    sim_time = (Time.now - start_time).round(1)
+    puts "Completed #{File.basename(args['hpxml_path'])} simulation in #{sim_time}s."
 
     sql_path = File.join(rundir, "eplusout.sql")
     assert(File.exists?(sql_path))
 
-    return sql_path
+    return sql_path, sim_time
   end
 
   def _get_building_loads(sql_path)
@@ -452,7 +461,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     sqlFile.close
 
-    return htg_load, clg_load
+    return htg_load.round(2), clg_load.round(2)
   end
 
   def _test_schema_validation(this_dir, xml)
@@ -1219,6 +1228,17 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     if not fl_delta_percent.nil?
       assert_operator(fl_delta_percent, :>=, min_max_fl_delta_percent[0])
       assert_operator(fl_delta_percent, :<=, min_max_fl_delta_percent[1])
+    end
+  end
+
+  def _rm_path(path)
+    if Dir.exists?(path)
+      FileUtils.rm_r(path)
+    end
+    while true
+      break if not Dir.exists?(path)
+
+      sleep(0.01)
     end
   end
 end
