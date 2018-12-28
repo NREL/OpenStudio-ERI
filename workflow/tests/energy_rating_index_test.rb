@@ -91,7 +91,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
   def test_resnet_ashrae_140
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    
+
     # Run tests
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Test_Standard_140")
     results = {}
@@ -104,7 +104,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         results[File.basename(xml)] = clg_load
       end
     end
-    
+
     # Display results
     results.each do |xml, load|
       puts "#{xml}: #{load}"
@@ -347,11 +347,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
   def run_straight_sim(xml, this_dir)
     require_relative '../../measures/HPXMLtoOpenStudio/resources/meta_measure'
-    
+
     puts "Running #{xml}..."
-  
+
     xml = File.absolute_path(xml)
-    
+
     def rm_path(path)
       if Dir.exists?(path)
         FileUtils.rm_r(path)
@@ -362,7 +362,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         sleep(0.01)
       end
     end
-    
+
     def get_sql_query_result(sqlFile, query)
       result = sqlFile.execAndReturnFirstDouble(query)
       if result.is_initialized
@@ -371,7 +371,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
       return 0
     end
-    
+
     def get_ideal_air_load_vars
       htg_load_var = 'Zone Ideal Loads Zone Total Heating Energy'
       clg_load_var = 'Zone Ideal Loads Zone Total Cooling Energy'
@@ -381,22 +381,22 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     rundir = File.join(this_dir, "SimulationHome")
     rm_path(rundir)
     Dir.mkdir(rundir)
-    
+
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    
+
     args = {}
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), "weather"))
     args['skip_validation'] = false
     args['epw_output_path'] = File.absolute_path(File.join(rundir, "in.epw"))
     args['osm_output_path'] = File.absolute_path(File.join(rundir, "in.osm"))
     args['hpxml_path'] = xml
-    
+
     # Add measure to workflow
     measures = {}
     measure_subdir = "HPXMLtoOpenStudio"
     update_args_hash(measures, measure_subdir, args)
-    
+
     # Apply measure
     measures_dir = File.join(this_dir, "../measures")
     success = apply_measures(measures_dir, measures, runner, model, nil, nil, true)
@@ -411,14 +411,14 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       end
     end
     assert(success)
-    
+
     # Add output variables for heating/cooling loads
     get_ideal_air_load_vars.each do |var|
       output_var = OpenStudio::Model::OutputVariable.new(var, model)
       output_var.setReportingFrequency('runperiod')
       output_var.setKeyValue('*')
     end
-    
+
     # Write model to IDF
     forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
     model_idf = forward_translator.translateModel(model)
@@ -432,10 +432,10 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     sql_path = File.join(rundir, "eplusout.sql")
     assert(File.exists?(sql_path))
-  
+
     return sql_path
   end
-  
+
   def _get_building_loads(sql_path)
     # Obtain heating/cooling loads
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
@@ -449,10 +449,10 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     # reported in the E+ output file?
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName='#{get_ideal_air_load_vars[1]}' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     clg_load = get_sql_query_result(sqlFile, query)
-    
+
     return htg_load, clg_load
   end
-  
+
   def _test_schema_validation(this_dir, xml)
     # TODO: Remove this when schema validation is included with CLI calls
     schemas_dir = File.absolute_path(File.join(this_dir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))

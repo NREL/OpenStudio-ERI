@@ -18,7 +18,6 @@ class MiscTest < MiniTest::Test
       hpxml_doc = _test_measure(hpxml_name, calc_type)
       _check_misc(hpxml_doc)
     end
-
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -72,5 +71,4 @@ class MiscTest < MiniTest::Test
     refute_nil(misc.elements["PlugLoad[PlugLoadType='other']"])
     refute_nil(misc.elements["PlugLoad[PlugLoadType='TV other']"])
   end
-
 end
