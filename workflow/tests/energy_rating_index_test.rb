@@ -450,6 +450,8 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName='#{get_ideal_air_load_vars[1]}' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     clg_load = get_sql_query_result(sqlFile, query)
 
+    sqlFile.close
+
     return htg_load, clg_load
   end
 
