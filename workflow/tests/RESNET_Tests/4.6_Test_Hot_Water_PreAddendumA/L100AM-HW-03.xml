@@ -54,9 +54,10 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='InfiltMeas64'/>
+            <HousePressure>50</HousePressure>
             <BuildingAirLeakage>
-              <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <AirLeakage>0.67</AirLeakage>
+              <UnitofMeasure>ACH</UnitofMeasure>
+              <AirLeakage>7.5</AirLeakage>
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
@@ -127,7 +128,7 @@
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
-                <AssemblyEffectiveRValue>14.08</AssemblyEffectiveRValue>
+                <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
               </Insulation>
               <extension>
                 <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
