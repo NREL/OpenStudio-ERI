@@ -128,10 +128,10 @@
             </FoundationType>
             <FoundationWall>
               <SystemIdentifier id='fndwall-1'/>
-              <Height>8</Height>
+              <Height>7.25</Height>
               <Area>1218</Area>
               <Thickness>6</Thickness>
-              <DepthBelowGrade>6.58</DepthBelowGrade>
+              <DepthBelowGrade>6.583</DepthBelowGrade>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <AssemblyEffectiveRValue>1.165</AssemblyEffectiveRValue>
@@ -147,7 +147,7 @@
               <ExposedPerimeter>168</ExposedPerimeter>
               <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
               <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
-              <DepthBelowGrade>6.58</DepthBelowGrade>
+              <DepthBelowGrade>6.583</DepthBelowGrade>
               <PerimeterInsulation>
                 <SystemIdentifier id='FSlab_PerimIns_ID1'/>
                 <Layer>

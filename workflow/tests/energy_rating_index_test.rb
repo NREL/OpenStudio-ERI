@@ -13,8 +13,7 @@ require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances
 class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def before_setup
     @resnet_tests_dir = File.join(File.dirname(__FILE__), "RESNET_Tests", "results")
-    _rm_path(@resnet_tests_dir)
-    Dir.mkdir(@resnet_tests_dir)
+    FileUtils.mkdir_p @resnet_tests_dir
   end
 
   def test_valid_xmls
@@ -94,6 +93,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
 
   def test_resnet_ashrae_140
+    results_csv = File.absolute_path(File.join(@resnet_tests_dir, "4.1_Test_Standard_140.csv"))
+    File.delete(results_csv) if File.exists? results_csv
+    
     require 'csv'
 
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
@@ -111,9 +113,8 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       end
     end
 
-    # Display results
-    out_csv = File.absolute_path(File.join(@resnet_tests_dir, "4.1_Test_Standard_140.csv"))
-    CSV.open(out_csv, "w") do |csv|
+    # Write results to csv
+    CSV.open(results_csv, "w") do |csv|
       csv << ["Test", "Annual Load [MMBtu]", "Simulation Runtime [s]"]
       out_data.each do |out_line|
         next unless out_line[0].include? "C.xml"
@@ -126,7 +127,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         csv << out_line
       end
     end
-    puts "Wrote results to #{out_csv}."
+    puts "Wrote results to #{results_csv}."
   end
 
   def test_resnet_hers_reference_home_auto_generation
@@ -379,12 +380,6 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       return 0
     end
 
-    def get_ideal_air_load_vars
-      htg_load_var = 'Zone Ideal Loads Zone Total Heating Energy'
-      clg_load_var = 'Zone Ideal Loads Zone Total Cooling Energy'
-      return htg_load_var, clg_load_var
-    end
-
     rundir = File.join(this_dir, "SimulationHome")
     _rm_path(rundir)
     Dir.mkdir(rundir)
@@ -419,13 +414,6 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
     assert(success)
 
-    # Add output variables for heating/cooling loads
-    get_ideal_air_load_vars.each do |var|
-      output_var = OpenStudio::Model::OutputVariable.new(var, model)
-      output_var.setReportingFrequency('runperiod')
-      output_var.setKeyValue('*')
-    end
-
     # Write model to IDF
     forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
     model_idf = forward_translator.translateModel(model)
@@ -450,13 +438,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
 
     # Space Heating Load
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName='#{get_ideal_air_load_vars[0]}' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
     htg_load = get_sql_query_result(sqlFile, query)
 
     # Space Cooling Load
-    # FIXME: Why is there a discrepancy between this result and Cooling:EnergyTransfer
-    # reported in the E+ output file?
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup='System' AND TimestepType='Zone' AND VariableName='#{get_ideal_air_load_vars[1]}' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
     clg_load = get_sql_query_result(sqlFile, query)
 
     sqlFile.close
