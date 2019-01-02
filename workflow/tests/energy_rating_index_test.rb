@@ -95,7 +95,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_resnet_ashrae_140
     results_csv = File.absolute_path(File.join(@resnet_tests_dir, "4.1_Test_Standard_140.csv"))
     File.delete(results_csv) if File.exists? results_csv
-    
+
     require 'csv'
 
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
@@ -104,6 +104,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Test_Standard_140")
     out_data = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      _test_schema_validation(this_dir, xml)
       sql_path, sim_time = run_straight_sim(xml, this_dir)
       htg_load, clg_load = _get_building_loads(sql_path)
       if xml.include? "C.xml"
