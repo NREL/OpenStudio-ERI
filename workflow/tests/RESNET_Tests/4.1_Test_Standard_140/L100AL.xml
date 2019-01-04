@@ -58,7 +58,7 @@
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='InfiltMeas64'/>
             <extension>
-              <ConstantACHnatural>1.5</ConstantACHnatural>
+              <ConstantACHnatural>0.67</ConstantACHnatural>
             </extension>
           </AirInfiltrationMeasurement>
         </AirInfiltration>

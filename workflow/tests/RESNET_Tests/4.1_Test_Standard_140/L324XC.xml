@@ -154,7 +154,6 @@
               <SystemIdentifier id='fndwall-all'/>
               <Height>7.25</Height>
               <Area>1218</Area>
-              <Azimuth>0</Azimuth>
               <Thickness>6</Thickness>
               <DepthBelowGrade>6.583</DepthBelowGrade>
               <AdjacentTo>ground</AdjacentTo>
@@ -200,7 +199,6 @@
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>126</Area>
-            <Azimuth>0</Azimuth>
             <Insulation>
               <SystemIdentifier id='RimJoist_Ins_ID1'/>
               <AssemblyEffectiveRValue>13.14</AssemblyEffectiveRValue>
