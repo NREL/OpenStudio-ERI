@@ -61,62 +61,56 @@
             </BuildingAirLeakage>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
-        <AtticAndRoof>
-          <Attics>
-            <Attic>
-              <SystemIdentifier id='Attic_ID1'/>
-              <AtticType>vented attic</AtticType>
-              <Roofs>
-                <Roof>
-                  <SystemIdentifier id='attic-roof-1'/>
-                  <Area>1622.2</Area>
-                  <SolarAbsorptance>0.6</SolarAbsorptance>
-                  <Emittance>0.9</Emittance>
-                  <Pitch>4</Pitch>
-                  <RadiantBarrier>false</RadiantBarrier>
-                  <Insulation>
-                    <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
-                  </Insulation>
-                </Roof>
-              </Roofs>
-              <Floors>
-                <Floor>
-                  <SystemIdentifier id='attic-floor-1'/>
-                  <Area>1539</Area>
-                  <Insulation>
-                    <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
-                  </Insulation>
-                  <extension>
-                    <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-                  </extension>
-                </Floor>
-              </Floors>
-              <Walls>
-                <Wall>
-                  <SystemIdentifier id='attic-wall-1'/>
-                  <WallType>
-                    <WoodStud></WoodStud>
-                  </WallType>
-                  <Area>121.5</Area>
-                  <SolarAbsorptance>0.6</SolarAbsorptance>
-                  <Emittance>0.9</Emittance>
-                  <Insulation>
-                    <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
-                    <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
-                  </Insulation>
-                  <extension>
-                    <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-                  </extension>
-                </Wall>
-              </Walls>
-              <extension>
-                <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-              </extension>
-            </Attic>
-          </Attics>
-        </AtticAndRoof>
+        <Attics>
+          <Attic>
+            <SystemIdentifier id='Attic_ID1'/>
+            <AtticType>vented attic</AtticType>
+            <Roofs>
+              <Roof>
+                <SystemIdentifier id='attic-roof-1'/>
+                <Area>1622.2</Area>
+                <SolarAbsorptance>0.6</SolarAbsorptance>
+                <Emittance>0.9</Emittance>
+                <Pitch>4</Pitch>
+                <RadiantBarrier>false</RadiantBarrier>
+                <Insulation>
+                  <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
+                  <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
+                </Insulation>
+              </Roof>
+            </Roofs>
+            <Floors>
+              <Floor>
+                <SystemIdentifier id='attic-floor-1'/>
+                <AdjacentTo>living space</AdjacentTo>
+                <Area>1539</Area>
+                <Insulation>
+                  <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
+                  <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
+                </Insulation>
+              </Floor>
+            </Floors>
+            <Walls>
+              <Wall>
+                <SystemIdentifier id='attic-wall-1'/>
+                <AdjacentTo>outside</AdjacentTo>
+                <WallType>
+                  <WoodStud></WoodStud>
+                </WallType>
+                <Area>121.5</Area>
+                <SolarAbsorptance>0.6</SolarAbsorptance>
+                <Emittance>0.9</Emittance>
+                <Insulation>
+                  <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
+                  <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
+                </Insulation>
+              </Wall>
+            </Walls>
+            <extension>
+              <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
+            </extension>
+          </Attic>
+        </Attics>
         <Foundations>
           <Foundation>
             <SystemIdentifier id='Foundation_ID1'/>
@@ -127,14 +121,12 @@
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Floor_ID1'/>
+              <AdjacentTo>living space</AdjacentTo>
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
                 <AssemblyEffectiveRValue>20.4</AssemblyEffectiveRValue>
               </Insulation>
-              <extension>
-                <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-              </extension>
             </FrameFloor>
             <FoundationWall>
               <SystemIdentifier id='fndwall-1'/>
@@ -142,13 +134,11 @@
               <Area>336</Area>
               <Thickness>6</Thickness>
               <DepthBelowGrade>0</DepthBelowGrade>
+              <AdjacentTo>ground</AdjacentTo>
               <Insulation>
                 <SystemIdentifier id='FWall_Ins_ID1'/>
                 <AssemblyEffectiveRValue>1.34</AssemblyEffectiveRValue>
               </Insulation>
-              <extension>
-                <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-              </extension>
             </FoundationWall>
             <Slab>
               <SystemIdentifier id='fndslab-1'/>
@@ -185,6 +175,8 @@
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -195,10 +187,6 @@
               <SystemIdentifier id='AGW_Ins_ID1'/>
               <AssemblyEffectiveRValue>16.9</AssemblyEffectiveRValue>
             </Insulation>
-            <extension>
-              <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            </extension>
           </Wall>
         </Walls>
         <Windows>
@@ -309,13 +297,13 @@
                 <Ducts>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
-                  <DuctLocation>conditioned space</DuctLocation>
+                  <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>0.001</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
-                  <DuctLocation>conditioned space</DuctLocation>
+                  <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>0.001</DuctSurfaceArea>
                 </Ducts>
               </AirDistribution>
@@ -339,7 +327,7 @@
             <SystemIdentifier id='DHW_ID1'/>
             <FuelType>natural gas</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>conditioned space</Location>
+            <Location>living space</Location>
             <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
             <HeatingCapacity>38000</HeatingCapacity>
