@@ -221,7 +221,7 @@ class ApplianceTest < MiniTest::Test
       _check_cooking_range(hpxml_doc, "natural gas", false, false)
     end
   end
-  
+
   def test_appliances_in_basement
     hpxml_name = "valid-misc-appliances-in-basement.xml"
 

@@ -289,11 +289,9 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
-          <Location>living space</Location>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <Location>living space</Location>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
         </ClothesDryer>
