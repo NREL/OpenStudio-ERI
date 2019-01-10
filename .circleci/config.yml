@@ -7,5 +7,6 @@ jobs:
       - checkout
       - run: rm -f Gemfile.lock && bundle install
       - run: rake test:all
-      - store_test_results:
-          path: test/reports/
+      - store_artifacts:
+          path: workflow/tests/RESNET_Tests/results
+          destination: results

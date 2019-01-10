@@ -44,7 +44,7 @@ end
 desc 'process weather'
 task :process_weather do
   require 'openstudio'
-  require_relative 'measures/301EnergyRatingIndexRuleset/resources/weather'
+  require_relative 'measures/HPXMLtoOpenStudio/resources/weather'
 
   # Download all weather files
   Dir.chdir('workflow')
@@ -61,7 +61,7 @@ task :process_weather do
     model = OpenStudio::Model::Model.new
     epw_file = OpenStudio::EpwFile.new(epw)
     OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
-    weather = WeatherProcess.new(model, runner, "../measures/301EnergyRatingIndexRuleset/resources")
+    weather = WeatherProcess.new(model, runner)
     if weather.error? or weather.data.WSF.nil?
       fail "Error."
     end
