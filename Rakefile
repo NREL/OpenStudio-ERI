@@ -75,9 +75,6 @@ end
 
 desc 'update all measures'
 task :update_measures do
-  require 'openstudio'
-  measures_dir = File.expand_path("../measures/", __FILE__)
-
   # Apply rubocop
   command = "rubocop --auto-correct --format simple --only Layout"
   puts "Applying rubocop style to measures..."

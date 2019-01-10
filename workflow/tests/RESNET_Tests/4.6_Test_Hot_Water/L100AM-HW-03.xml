@@ -233,9 +233,11 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
+          <Location>living space</Location>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
+          <Location>living space</Location>
           <FuelType>electricity</FuelType>
         </ClothesDryer>
         <Dishwasher>
@@ -243,6 +245,7 @@
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
+          <Location>living space</Location>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange'/>
