@@ -1498,6 +1498,7 @@ class EnergyRatingIndex301Ruleset
 
     new_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
     XMLHelper.copy_element(new_washer, orig_washer, "SystemIdentifier")
+    XMLHelper.add_element(new_washer, "Location", "living space")
     XMLHelper.add_element(new_washer, "ModifiedEnergyFactor", cw_mef)
     XMLHelper.add_element(new_washer, "RatedAnnualkWh", cw_ler)
     XMLHelper.add_element(new_washer, "LabelElectricRate", cw_elec_rate)
@@ -1517,6 +1518,7 @@ class EnergyRatingIndex301Ruleset
 
     new_washer = XMLHelper.add_element(new_appliances, "ClothesWasher")
     XMLHelper.copy_element(new_washer, orig_washer, "SystemIdentifier")
+    XMLHelper.copy_element(new_washer, orig_washer, "Location")
     if not orig_washer.elements["ModifiedEnergyFactor"].nil?
       XMLHelper.copy_element(new_washer, orig_washer, "ModifiedEnergyFactor")
     else
@@ -1544,6 +1546,7 @@ class EnergyRatingIndex301Ruleset
 
     new_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
     XMLHelper.copy_element(new_dryer, orig_dryer, "SystemIdentifier")
+    XMLHelper.add_element(new_dryer, "Location", "living space")
     XMLHelper.copy_element(new_dryer, orig_dryer, "FuelType")
     XMLHelper.add_element(new_dryer, "EnergyFactor", cd_ef)
     XMLHelper.add_element(new_dryer, "ControlType", cd_control)
@@ -1560,6 +1563,7 @@ class EnergyRatingIndex301Ruleset
 
     new_dryer = XMLHelper.add_element(new_appliances, "ClothesDryer")
     XMLHelper.copy_element(new_dryer, orig_dryer, "SystemIdentifier")
+    XMLHelper.copy_element(new_dryer, orig_dryer, "Location")
     XMLHelper.copy_element(new_dryer, orig_dryer, "FuelType")
     if not orig_dryer.elements["EnergyFactor"].nil?
       XMLHelper.copy_element(new_dryer, orig_dryer, "EnergyFactor")
@@ -1620,6 +1624,7 @@ class EnergyRatingIndex301Ruleset
 
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
     XMLHelper.copy_element(new_fridge, orig_fridge, "SystemIdentifier")
+    XMLHelper.add_element(new_fridge, "Location", "living space")
     XMLHelper.add_element(new_fridge, "RatedAnnualkWh", refrigerator_kwh)
   end
 
@@ -1634,6 +1639,7 @@ class EnergyRatingIndex301Ruleset
 
     new_fridge = XMLHelper.add_element(new_appliances, "Refrigerator")
     XMLHelper.copy_element(new_fridge, orig_fridge, "SystemIdentifier")
+    XMLHelper.copy_element(new_fridge, orig_fridge, "Location")
     XMLHelper.copy_element(new_fridge, orig_fridge, "RatedAnnualkWh")
   end
 

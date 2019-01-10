@@ -289,10 +289,12 @@
       </Systems>
       <Appliances>
         <ClothesWasher>
-          <SystemIdentifier id='ClothesWasher_ID1'/>
+          <SystemIdentifier id='ClothesWasher'/>
+          <Location>living space</Location>
         </ClothesWasher>
         <ClothesDryer>
-          <SystemIdentifier id='ClothesDryer_ID1'/>
+          <SystemIdentifier id='ClothesDryer'/>
+          <Location>living space</Location>
           <FuelType>electricity</FuelType>
         </ClothesDryer>
         <Dishwasher>
@@ -301,7 +303,8 @@
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
         </Dishwasher>
         <Refrigerator>
-          <SystemIdentifier id='Refrigerator_ID1'/>
+          <SystemIdentifier id='Refrigerator'/>
+          <Location>living space</Location>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range_ID1'/>

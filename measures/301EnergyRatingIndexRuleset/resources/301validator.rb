@@ -540,6 +540,7 @@ class EnergyRatingIndex301Validator
       # [ClothesWasher]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        '[Location="living space" or Location="basement - conditioned" or Location="basement - unconditioned" or Location="garage"]' => one,
         '[ModifiedEnergyFactor | IntegratedModifiedEnergyFactor]' => zero_or_one, # Uses ERI Reference Home if neither provided; otherwise see [CWType=UserSpecified]
       },
 
@@ -555,6 +556,7 @@ class EnergyRatingIndex301Validator
       # [ClothesDryer]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        '[Location="living space" or Location="basement - conditioned" or Location="basement - unconditioned" or Location="garage"]' => one,
         '[FuelType="natural gas" or FuelType="fuel oil" or FuelType="propane" or FuelType="electricity"]' => one,
         '[EnergyFactor | CombinedEnergyFactor]' => zero_or_one, # Uses ERI Reference Home if neither provided; otherwise see [CDType=UserSpecified]
       },
@@ -578,6 +580,7 @@ class EnergyRatingIndex301Validator
       # [Refrigerator]
       '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        '[Location="living space" or Location="basement - conditioned" or Location="basement - unconditioned" or Location="garage"]' => one,
         'RatedAnnualkWh' => zero_or_one, # Uses ERI Reference Home if not provided
       },
 

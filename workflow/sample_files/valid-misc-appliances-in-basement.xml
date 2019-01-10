@@ -272,7 +272,7 @@
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
-            <ControlType>programmable thermostat</ControlType>
+            <ControlType>manual thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>
@@ -347,7 +347,7 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
-          <Location>living space</Location>
+          <Location>basement - conditioned</Location>
           <ModifiedEnergyFactor>1.2</ModifiedEnergyFactor>
           <RatedAnnualkWh>387.0</RatedAnnualkWh>
           <LabelElectricRate>0.127</LabelElectricRate>
@@ -357,7 +357,7 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <Location>living space</Location>
+          <Location>basement - conditioned</Location>
           <FuelType>electricity</FuelType>
           <EnergyFactor>3.01</EnergyFactor>
           <ControlType>timer</ControlType>
@@ -369,7 +369,7 @@
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
-          <Location>living space</Location>
+          <Location>basement - conditioned</Location>
           <RatedAnnualkWh>609</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
