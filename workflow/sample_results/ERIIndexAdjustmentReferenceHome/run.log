@@ -1,3 +1,3 @@
-Warning: C:/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml: No schema dir provided, no HPXML validation performed.
-Warning: C:/GitHub/OpenStudio-ERI/workflow/results/ERIIndexAdjustmentReferenceHome.xml: No schema dir provided, no HPXML validation performed.
-Warning: Adding adiabatic conditioned floors with 1200.0 ft^2 to preserve building total conditioned floor area.
+Warning: Could not load nokogiri, no HPXML validation performed.
+Warning: Could not load nokogiri, no HPXML validation performed.
+Warning: Adding adiabatic conditioned floor with 1200.0 ft^2 to preserve building total conditioned floor area.

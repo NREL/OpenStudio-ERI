@@ -102,19 +102,18 @@
             <Floors>
               <Floor>
                 <SystemIdentifier id='attic-floor-1'/>
+                <AdjacentTo>living space</AdjacentTo>
                 <Area>1200.0</Area>
                 <Insulation>
                   <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
                   <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
                 </Insulation>
-                <extension>
-                  <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-                </extension>
               </Floor>
             </Floors>
             <Walls>
               <Wall>
                 <SystemIdentifier id='attic-wall-1'/>
+                <AdjacentTo>living space</AdjacentTo>
                 <WallType>
                   <WoodStud/>
                 </WallType>
@@ -125,9 +124,6 @@
                   <SystemIdentifier id='Attic_Wall_Ins_ID1'/>
                   <AssemblyEffectiveRValue>4.0</AssemblyEffectiveRValue>
                 </Insulation>
-                <extension>
-                  <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-                </extension>
               </Wall>
             </Walls>
           </Attic>
@@ -142,14 +138,12 @@
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Foundation_Floor'/>
+              <AdjacentTo>living space</AdjacentTo>
               <Area>1200</Area>
               <Insulation>
                 <SystemIdentifier id='Foundation_Floor_Ins'/>
                 <AssemblyEffectiveRValue>30.3030303030303</AssemblyEffectiveRValue>
               </Insulation>
-              <extension>
-                <ExteriorAdjacentTo>living space</ExteriorAdjacentTo>
-              </extension>
             </FrameFloor>
             <FoundationWall>
               <SystemIdentifier id='Foundation_Wall'/>
@@ -157,13 +151,11 @@
               <Area>277.12</Area>
               <Thickness>8</Thickness>
               <DepthBelowGrade>0</DepthBelowGrade>
+              <AdjacentTo>ground</AdjacentTo>
               <Insulation>
                 <SystemIdentifier id='Foundation_Wall_Ins'/>
                 <AssemblyEffectiveRValue>30.3030303030303</AssemblyEffectiveRValue>
               </Insulation>
-              <extension>
-                <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-              </extension>
             </FoundationWall>
             <Slab>
               <SystemIdentifier id='Foundation_Slab'/>
@@ -202,36 +194,44 @@
             <SystemIdentifier id='rimjoist-1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>106.841046277666</Area>
+            <Area>102.21366698748797</Area>
             <Insulation>
               <SystemIdentifier id='rimjoist_Ins_ID1'/>
               <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+          <RimJoist>
+            <SystemIdentifier id='rimjoist-2'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>102.21366698748797</Area>
+            <Insulation>
+              <SystemIdentifier id='rimjoist_Ins_ID2'/>
+              <AssemblyEffectiveRValue>10.69</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
         </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='agwall-1'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>2295.394532796621</Area>
+            <Area>2239.4007569932373</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='AGW_Ins_ID1'/>
               <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
             </Insulation>
-            <extension>
-              <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-              <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            </extension>
           </Wall>
         </Walls>
         <Windows>
           <Window>
             <SystemIdentifier id='Window_agwall-1_north'/>
-            <Area>108.0</Area>
+            <Area>82.51256371686715</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -239,12 +239,11 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
             </extension>
           </Window>
           <Window>
             <SystemIdentifier id='Window_agwall-1_south'/>
-            <Area>108.0</Area>
+            <Area>82.51256371686715</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -252,12 +251,11 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
             </extension>
           </Window>
           <Window>
             <SystemIdentifier id='Window_agwall-1_east'/>
-            <Area>108.0</Area>
+            <Area>82.51256371686715</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -265,12 +263,11 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
             </extension>
           </Window>
           <Window>
             <SystemIdentifier id='Window_agwall-1_west'/>
-            <Area>108.0</Area>
+            <Area>82.51256371686715</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
@@ -278,7 +275,6 @@
             <extension>
               <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-              <Height>5.0</Height>
             </extension>
           </Window>
         </Windows>
@@ -296,8 +292,8 @@
         <HVAC>
           <HVACPlant>
             <HeatingSystem>
-              <SystemIdentifier id='HeatingSystem'/>
-              <DistributionSystem idref='HVACDistribution'/>
+              <SystemIdentifier id='HeatingSystem1'/>
+              <DistributionSystem idref='HVACDistribution_DSE_80'/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
@@ -310,8 +306,8 @@
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
             </HeatingSystem>
             <CoolingSystem>
-              <SystemIdentifier id='CoolingSystem'/>
-              <DistributionSystem idref='HVACDistribution'/>
+              <SystemIdentifier id='CoolingSystem1'/>
+              <DistributionSystem idref='HVACDistribution_DSE_80'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>-1</CoolingCapacity>
@@ -320,9 +316,6 @@
                 <Units>SEER</Units>
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
-              <extension>
-                <PerformanceAdjustmentSEER>1.0626992561105209</PerformanceAdjustmentSEER>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
@@ -330,7 +323,7 @@
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
-            <SystemIdentifier id='HVACDistribution'/>
+            <SystemIdentifier id='HVACDistribution_DSE_80'/>
             <DistributionSystemType>
               <Other>DSE</Other>
             </DistributionSystemType>
@@ -352,7 +345,7 @@
         </MechanicalVentilation>
         <WaterHeating>
           <WaterHeatingSystem>
-            <SystemIdentifier id='WaterHeatingSystem'/>
+            <SystemIdentifier id='DHW_ID1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
@@ -386,7 +379,8 @@
       </Systems>
       <Appliances>
         <ClothesWasher>
-          <SystemIdentifier id='ClothesWasher_ID1'/>
+          <SystemIdentifier id='ClothesWasher'/>
+          <Location>living space</Location>
           <ModifiedEnergyFactor>0.817</ModifiedEnergyFactor>
           <RatedAnnualkWh>704.0</RatedAnnualkWh>
           <LabelElectricRate>0.08</LabelElectricRate>
@@ -395,7 +389,8 @@
           <Capacity>2.874</Capacity>
         </ClothesWasher>
         <ClothesDryer>
-          <SystemIdentifier id='ClothesDryer_ID1'/>
+          <SystemIdentifier id='ClothesDryer'/>
+          <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <EnergyFactor>3.01</EnergyFactor>
           <ControlType>timer</ControlType>
@@ -406,7 +401,8 @@
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
         </Dishwasher>
         <Refrigerator>
-          <SystemIdentifier id='Refrigerator_ID1'/>
+          <SystemIdentifier id='Refrigerator'/>
+          <Location>living space</Location>
           <RatedAnnualkWh>691.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
@@ -431,6 +427,16 @@
           </extension>
         </LightingFractions>
       </Lighting>
+      <MiscLoads>
+        <PlugLoad>
+          <SystemIdentifier id='MiscPlugLoad'/>
+          <PlugLoadType>other</PlugLoadType>
+        </PlugLoad>
+        <PlugLoad>
+          <SystemIdentifier id='TelevisionPlugLoad'/>
+          <PlugLoadType>TV other</PlugLoadType>
+        </PlugLoad>
+      </MiscLoads>
     </BuildingDetails>
   </Building>
 </HPXML>

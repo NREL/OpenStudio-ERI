@@ -1,2 +1,3 @@
-Warning: C:/GitHub/OpenStudio-ERI/workflow/sample_files/valid.xml: No schema dir provided, no HPXML validation performed.
-Warning: C:/GitHub/OpenStudio-ERI/workflow/results/ERIReferenceHome.xml: No schema dir provided, no HPXML validation performed.
+Warning: Could not load nokogiri, no HPXML validation performed.
+Warning: Could not load nokogiri, no HPXML validation performed.
+Warning: Adding finished basement adiabatic ceiling with 3500.0 ft^2.
