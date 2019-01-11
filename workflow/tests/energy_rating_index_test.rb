@@ -93,8 +93,8 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
 
   def test_resnet_ashrae_140
-    results_csv = File.absolute_path(File.join(@resnet_tests_dir, "4.1_Test_Standard_140.csv"))
-    File.delete(results_csv) if File.exists? results_csv
+    test_results_csv = File.absolute_path(File.join(@resnet_tests_dir, "4.1_Test_Standard_140.csv"))
+    File.delete(test_results_csv) if File.exists? test_results_csv
 
     require 'csv'
 
@@ -102,53 +102,80 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     # Run tests
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Test_Standard_140")
-    out_data = []
+    all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(this_dir, xml)
       sql_path, sim_time = run_straight_sim(xml, this_dir)
       htg_load, clg_load = _get_building_loads(sql_path)
       if xml.include? "C.xml"
-        out_data << [xml, htg_load, sim_time]
+        all_results << [xml, htg_load, sim_time]
       elsif xml.include? "L.xml"
-        out_data << [xml, clg_load, sim_time]
+        all_results << [xml, clg_load, sim_time]
       end
     end
 
     # Write results to csv
-    CSV.open(results_csv, "w") do |csv|
+    CSV.open(test_results_csv, "w") do |csv|
       csv << ["Test", "Annual Load [MMBtu]", "Simulation Runtime [s]"]
-      out_data.each do |out_line|
-        next unless out_line[0].include? "C.xml"
+      all_results.each do |results|
+        next unless results[0].include? "C.xml"
 
-        csv << out_line
+        csv << results
       end
-      out_data.each do |out_line|
-        next unless out_line[0].include? "L.xml"
+      all_results.each do |results|
+        next unless results[0].include? "L.xml"
 
-        csv << out_line
+        csv << results
       end
     end
-    puts "Wrote results to #{results_csv}."
+    puts "Wrote results to #{test_results_csv}."
   end
 
   def test_resnet_hers_reference_home_auto_generation
+    test_results_csv = File.absolute_path(File.join(@resnet_tests_dir, "4.2_Test_HERS_Reference_Home.csv"))
+    File.delete(test_results_csv) if File.exists? test_results_csv
+
+    require 'csv'
+
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+
+    all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_Test_HERS_Reference_Home")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next if xml.end_with? "ERIReferenceHome.xml"
 
-      test_num = File.basename(xml)[0, 2].to_i
-
       # Run test
       ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
-      _check_reference_home_components(ref_hpxml, test_num)
+
+      # Get results
+      test_num = File.basename(xml)[0, 2].to_i
+      all_results[File.basename(xml)] = _get_reference_home_components(ref_hpxml, test_num)
 
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
       ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
       ref_hpxml2, rated_hpxml2, results_csv2 = run_eri_and_check(ref_hpxml, this_dir)
       eri = _get_eri(results_csv2)
-      assert_in_epsilon(100, eri, 0.0075) # FIXME: Should be 0.005
+      all_results[File.basename(xml)]["e-Ratio"] = eri / 100.0
+    end
+
+    # Write results to csv
+    CSV.open(test_results_csv, "w") do |csv|
+      csv << ["Component", "Test 1 Results", "Test 2 Results", "Test 3 Results", "Test 4 Results"]
+      all_results["01-L100.xml"].keys.each do |component|
+        csv << [component,
+                all_results["01-L100.xml"][component],
+                all_results["02-L100.xml"][component],
+                all_results["03-L304.xml"][component],
+                all_results["04-L324.xml"][component]]
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    all_results.each do |xml, results|
+      test_num = File.basename(xml)[0, 2].to_i
+      _check_reference_home_components(results, test_num)
     end
   end
 
@@ -462,176 +489,268 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     assert_equal(0, errors.size)
   end
 
-  def _check_reference_home_components(ref_hpxml, test_num)
+  def _get_reference_home_components(ref_hpxml, test_num)
+    results = {}
     hpxml_doc = REXML::Document.new(File.read(ref_hpxml))
-
-    # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 - 4
-
-    epsilon = 0.0005 # 0.05%
 
     # Above-grade walls
     wall_u, wall_solar_abs, wall_emiss = _get_above_grade_walls(hpxml_doc)
-    if test_num <= 3
-      assert_in_delta(0.082, wall_u, 0.001)
-    else
-      assert_in_delta(0.060, wall_u, 0.001)
-    end
-    assert_equal(0.75, wall_solar_abs)
-    assert_equal(0.90, wall_emiss)
+    results["Above-grade walls (Uo)"] = wall_u
+    results["Above-grade wall solar absorptance (α)"] = wall_solar_abs
+    results["Above-grade wall infrared emittance (ε)"] = wall_emiss
 
     # Basement walls
     bsmt_wall_u = _get_basement_walls(hpxml_doc)
     if test_num == 4
-      assert_in_delta(0.059, bsmt_wall_u, 0.001)
+      results["Basement walls (Uo)"] = bsmt_wall_u
     else
-      pass
+      results["Basement walls (Uo)"] = "n/a"
     end
 
     # Above-grade floors
     floors_u = _get_above_grade_floors(hpxml_doc)
     if test_num <= 2
-      assert_in_delta(0.047, floors_u, 0.001)
+      results["Above-grade floors (Uo)"] = floors_u
     else
-      pass
+      results["Above-grade floors (Uo)"] = "n/a"
     end
 
     # Slab insulation
     slab_r, carpet_r, exp_mas_floor_area = get_hpxml_slabs(hpxml_doc)
     if test_num >= 3
-      assert_equal(0, slab_r)
+      results["Slab insulation R-Value"] = slab_r
     else
-      pass
+      results["Slab insulation R-Value"] = "n/a"
     end
 
     # Ceilings
     ceil_u = _get_ceilings(hpxml_doc)
-    if test_num == 1 or test_num == 4
-      assert_in_delta(0.030, ceil_u, 0.001)
-    else
-      assert_in_delta(0.035, ceil_u, 0.001)
-    end
+    results["Ceilings (Uo)"] = ceil_u
 
     # Roofs
     roof_solar_abs, roof_emiss = _get_roof(hpxml_doc)
-    assert_equal(0.75, roof_solar_abs)
-    assert_equal(0.90, roof_emiss)
+    results["Roof solar absorptance (α)"] = roof_solar_abs
+    results["Roof infrared emittance (ε)"] = roof_emiss
 
     # Attic vent area
     attic_vent_area = _get_attic_vent_area(hpxml_doc)
-    assert_in_epsilon(5.13, attic_vent_area, epsilon)
+    results["Attic vent area (ft2)"] = attic_vent_area
 
     # Crawlspace vent area
     crawl_vent_area = _get_crawl_vent_area(hpxml_doc)
     if test_num == 2
-      assert_in_epsilon(10.26, crawl_vent_area, epsilon)
+      results["Crawlspace vent area (ft2)"] = crawl_vent_area
     else
-      pass
+      results["Crawlspace vent area (ft2)"] = "n/a"
     end
 
     # Slabs
     if test_num >= 3
-      assert_in_epsilon(307.8, exp_mas_floor_area, epsilon)
-      assert_equal(2.0, carpet_r)
+      results["Exposed masonry floor area (ft2)"] = exp_mas_floor_area
+      results["Carpet & pad R-Value"] = carpet_r
     else
-      pass
-      pass
+      results["Exposed masonry floor area (ft2)"] = "n/a"
+      results["Carpet & pad R-Value"] = "n/a"
     end
 
     # Doors
     door_u, door_area = _get_doors(hpxml_doc)
-    assert_equal(40, door_area)
-    if test_num == 1
-      assert_in_delta(0.40, door_u, 0.01)
-    elsif test_num == 2
-      assert_in_delta(0.65, door_u, 0.01)
-    elsif test_num == 3
-      assert_in_delta(1.20, door_u, 0.01)
-    else
-      assert_in_delta(0.35, door_u, 0.01)
-    end
+    results["Door Area (ft2)"] = door_area
+    results["Door U-Factor"] = door_u
 
     # Windows
     win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_doc)
-    win_areas.values.each do |win_area|
-      if test_num <= 3
-        assert_in_epsilon(69.26, win_area, epsilon)
-      else
-        assert_in_epsilon(102.63, win_area, epsilon)
-      end
-    end
-    if test_num == 1
-      assert_in_delta(0.40, win_u, 0.01)
-    elsif test_num == 2
-      assert_in_delta(0.65, win_u, 0.01)
-    elsif test_num == 3
-      assert_in_delta(1.20, win_u, 0.01)
-    else
-      assert_in_delta(0.35, win_u, 0.01)
-    end
-    assert_in_delta(0.34, win_shgc_htg, 0.01)
-    assert_in_delta(0.28, win_shgc_clg, 0.01)
+    results["North window area (ft2)"] = win_areas[0]
+    results["South window area (ft2)"] = win_areas[180]
+    results["East window area (ft2)"] = win_areas[90]
+    results["West window area (ft2)"] = win_areas[270]
+    results["Window U-Factor"] = win_u
+    results["Window SHGCo (heating)"] = win_shgc_htg
+    results["Window SHGCo (cooling)"] = win_shgc_clg
 
     # SLA
     sla = _get_sla(hpxml_doc)
-    assert_in_delta(0.00036, sla, 0.00001)
+    results["SLAo (ft2/ft2)"] = sla
 
     # Internal gains
     xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_doc)
-    if test_num == 1
-      assert_in_epsilon(55470, xml_it_sens, epsilon)
-      assert_in_epsilon(13807, xml_it_lat, epsilon)
-    elsif test_num == 2
-      assert_in_epsilon(52794, xml_it_sens, epsilon)
-      assert_in_epsilon(12698, xml_it_lat, epsilon)
-    elsif test_num == 3
-      assert_in_epsilon(48111, xml_it_sens, epsilon)
-      assert_in_epsilon(9259, xml_it_lat, epsilon)
-    else
-      assert_in_epsilon(83103, xml_it_sens, epsilon)
-      assert_in_epsilon(17934, xml_it_lat, epsilon)
-    end
+    results["Sensible Internal gains (Btu/day)"] = xml_it_sens
+    results["Latent Internal gains (Btu/day)"] = xml_it_lat
 
     # HVAC
     afue, hspf, seer, dse = _get_hvac(hpxml_doc)
     if test_num == 1 or test_num == 4
-      assert_equal(0.78, afue)
+      results["Labeled heating system rating and efficiency"] = afue
     else
-      assert_equal(7.7, hspf)
+      results["Labeled heating system rating and efficiency"] = hspf
     end
-    assert_equal(13.0, seer)
-    assert_equal(0.80, dse)
+    results["Labeled cooling system rating and efficiency"] = seer
+    results["Air Distribution System Efficiency"] = dse
 
     # Thermostat
     tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
-    assert_equal("manual", tstat)
-    assert_equal(68, htg_sp)
-    assert_nil(htg_setback)
-    assert_equal(78, clg_sp)
-    assert_nil(clg_setup)
+    results["Thermostat Type"] = tstat
+    results["Heating thermostat settings"] = htg_sp
+    results["Cooling thermostat settings"] = clg_sp
 
     # Mechanical ventilation
     mv_kwh = _get_mech_vent(hpxml_doc)
-    mv_epsilon = 0.001 # 0.1%
-    if test_num == 1
-      assert_in_epsilon(0.0, mv_kwh, mv_epsilon)
-    elsif test_num == 2
-      assert_in_epsilon(77.9, mv_kwh, mv_epsilon)
-    elsif test_num == 3
-      assert_in_epsilon(140.4, mv_kwh, mv_epsilon)
-    else
-      assert_in_epsilon(379.1, mv_kwh, mv_epsilon)
-    end
+    results["Mechanical ventilation (kWh/y)"] = mv_kwh
 
     # Domestic hot water
     ref_pipe_l, ref_loop_l = _get_dhw(hpxml_doc)
+    results["DHW pipe length refPipeL"] = ref_pipe_l
+    results["DHW loop length refLoopL"] = ref_loop_l
+
+    return results
+  end
+
+  def _check_reference_home_components(results, test_num)
+    # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 - 4
+
+    epsilon = 0.0005 # 0.05%
+
+    # Above-grade walls
+    if test_num <= 3
+      assert_in_delta(0.082, results["Above-grade walls (Uo)"], 0.001)
+    else
+      assert_in_delta(0.060, results["Above-grade walls (Uo)"], 0.001)
+    end
+    assert_equal(0.75, results["Above-grade wall solar absorptance (α)"])
+    assert_equal(0.90, results["Above-grade wall infrared emittance (ε)"])
+
+    # Basement walls
+    if test_num == 4
+      assert_in_delta(0.059, results["Basement walls (Uo)"], 0.001)
+    end
+
+    # Above-grade floors
+    if test_num <= 2
+      assert_in_delta(0.047, results["Above-grade floors (Uo)"], 0.001)
+    end
+
+    # Slab insulation
+    if test_num >= 3
+      assert_equal(0, results["Slab insulation R-Value"])
+    end
+
+    # Ceilings
+    if test_num == 1 or test_num == 4
+      assert_in_delta(0.030, results["Ceilings (Uo)"], 0.001)
+    else
+      assert_in_delta(0.035, results["Ceilings (Uo)"], 0.001)
+    end
+
+    # Roofs
+    assert_equal(0.75, results["Roof solar absorptance (α)"])
+    assert_equal(0.90, results["Roof infrared emittance (ε)"])
+
+    # Attic vent area
+    assert_in_epsilon(5.13, results["Attic vent area (ft2)"], epsilon)
+
+    # Crawlspace vent area
+    if test_num == 2
+      assert_in_epsilon(10.26, results["Crawlspace vent area (ft2)"], epsilon)
+    end
+
+    # Slabs
+    if test_num >= 3
+      assert_in_epsilon(307.8, results["Exposed masonry floor area (ft2)"], epsilon)
+      assert_equal(2.0, results["Carpet & pad R-Value"])
+    end
+
+    # Doors
+    assert_equal(40, results["Door Area (ft2)"])
+    if test_num == 1
+      assert_in_delta(0.40, results["Door U-Factor"], 0.01)
+    elsif test_num == 2
+      assert_in_delta(0.65, results["Door U-Factor"], 0.01)
+    elsif test_num == 3
+      assert_in_delta(1.20, results["Door U-Factor"], 0.01)
+    else
+      assert_in_delta(0.35, results["Door U-Factor"], 0.01)
+    end
+
+    # Windows
+    if test_num <= 3
+      assert_in_epsilon(69.26, results["North window area (ft2)"], epsilon)
+      assert_in_epsilon(69.26, results["South window area (ft2)"], epsilon)
+      assert_in_epsilon(69.26, results["East window area (ft2)"], epsilon)
+      assert_in_epsilon(69.26, results["West window area (ft2)"], epsilon)
+    else
+      assert_in_epsilon(102.63, results["North window area (ft2)"], epsilon)
+      assert_in_epsilon(102.63, results["South window area (ft2)"], epsilon)
+      assert_in_epsilon(102.63, results["East window area (ft2)"], epsilon)
+      assert_in_epsilon(102.63, results["West window area (ft2)"], epsilon)
+    end
+    if test_num == 1
+      assert_in_delta(0.40, results["Window U-Factor"], 0.01)
+    elsif test_num == 2
+      assert_in_delta(0.65, results["Window U-Factor"], 0.01)
+    elsif test_num == 3
+      assert_in_delta(1.20, results["Window U-Factor"], 0.01)
+    else
+      assert_in_delta(0.35, results["Window U-Factor"], 0.01)
+    end
+    assert_in_delta(0.34, results["Window SHGCo (heating)"], 0.01)
+    assert_in_delta(0.28, results["Window SHGCo (cooling)"], 0.01)
+
+    # SLA
+    assert_in_delta(0.00036, results["SLAo (ft2/ft2)"], 0.00001)
+
+    # Internal gains
+    if test_num == 1
+      assert_in_epsilon(55470, results["Sensible Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(13807, results["Latent Internal gains (Btu/day)"], epsilon)
+    elsif test_num == 2
+      assert_in_epsilon(52794, results["Sensible Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(12698, results["Latent Internal gains (Btu/day)"], epsilon)
+    elsif test_num == 3
+      assert_in_epsilon(48111, results["Sensible Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(9259, results["Latent Internal gains (Btu/day)"], epsilon)
+    else
+      assert_in_epsilon(83103, results["Sensible Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(17934, results["Latent Internal gains (Btu/day)"], epsilon)
+    end
+
+    # HVAC
+    if test_num == 1 or test_num == 4
+      assert_equal(0.78, results["Labeled heating system rating and efficiency"])
+    else
+      assert_equal(7.7, results["Labeled heating system rating and efficiency"])
+    end
+    assert_equal(13.0, results["Labeled cooling system rating and efficiency"])
+    assert_equal(0.80, results["Air Distribution System Efficiency"])
+
+    # Thermostat
+    assert_equal("manual", results["Thermostat Type"])
+    assert_equal(68, results["Heating thermostat settings"])
+    assert_equal(78, results["Cooling thermostat settings"])
+
+    # Mechanical ventilation
+    mv_epsilon = 0.001 # 0.1%
+    if test_num == 1
+      assert_in_epsilon(0.0, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+    elsif test_num == 2
+      assert_in_epsilon(77.9, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+    elsif test_num == 3
+      assert_in_epsilon(140.4, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+    else
+      assert_in_epsilon(379.1, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+    end
+
+    # Domestic hot water
     dhw_epsilon = 0.1 # 0.1 ft
     if test_num <= 3
-      assert_in_delta(88.5, ref_pipe_l, dhw_epsilon)
-      assert_in_delta(156.9, ref_loop_l, dhw_epsilon)
+      assert_in_delta(88.5, results["DHW pipe length refPipeL"], dhw_epsilon)
+      assert_in_delta(156.9, results["DHW loop length refLoopL"], dhw_epsilon)
     else
-      assert_in_delta(98.5, ref_pipe_l, dhw_epsilon)
-      assert_in_delta(176.9, ref_loop_l, dhw_epsilon)
+      assert_in_delta(98.5, results["DHW pipe length refPipeL"], dhw_epsilon)
+      assert_in_delta(176.9, results["DHW loop length refLoopL"], dhw_epsilon)
     end
+
+    # e-Ratio
+    assert_in_epsilon(1, results["e-Ratio"], 0.0075) # FIXME: Should be 0.005
   end
 
   def _get_above_grade_walls(hpxml_doc)

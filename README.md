@@ -39,10 +39,10 @@ There are additional ways that software developers using this workflow can reduc
 ## Outputs
 
 Upon completion, multiple outputs are currently available:
-* ERI_Results.csv and ERI_Worksheet.csv files (that mirror the [RESNET HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
 * Reference/Rated/IndexAdjustment Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
 * Summary annual energy consumption by fuel type and/or end use
 * EnergyPlus input/output files
+* ERI_Results.csv and ERI_Worksheet.csv files
 
 See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results) directory for examples of these outputs.
 
@@ -64,7 +64,7 @@ At the completion of the test, there will be output that denotes the number of f
 
 ## Software Developers
 
-To use this workflow, software tools must produce a valid HPXML file. HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is available that specifies the specific HPXML fields required to run this workflow. The [HPXML ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log` files.
+To use this workflow, software tools must produce a valid HPXML file. HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is available that specifies the specific HPXML fields required to run this workflow. The [HPXML ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/ERIRatedHome/run.log` and/or `workflow/ERIReferenceHome/run.log` files.
 
 ## Status
 
