@@ -45,12 +45,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
 
     # Write results to csv
+    keys = all_results.values[0].keys
     CSV.open(test_results_csv, "w") do |csv|
+      csv << ["XML"] + keys
       all_results.each_with_index do |(xml, results), i|
-        if i == 0 # Header
-          csv << ["XML"] + results.keys
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
         end
-        csv << [File.basename(xml)] + results.values
+        csv << csv_line
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -214,12 +217,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
 
     # Write results to csv
+    keys = all_results.values[0].keys
     CSV.open(test_results_csv, "w") do |csv|
+      csv << ["Test Case"] + keys
       all_results.each_with_index do |(xml, results), i|
-        if i == 0 # Header
-          csv << ["Test Case"] + results.keys
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
         end
-        csv << [File.basename(xml)] + results.values
+        csv << csv_line
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -248,12 +254,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
 
     # Write results to csv
+    keys = all_results.values[0].keys
     CSV.open(test_results_csv, "w") do |csv|
+      csv << ["Test Case"] + keys
       all_results.each_with_index do |(xml, results), i|
-        if i == 0 # Header
-          csv << ["Test Case"] + results.keys
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
         end
-        csv << [File.basename(xml)] + results.values
+        csv << csv_line
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -290,12 +299,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
 
     # Write results to csv
+    keys = all_results.values[0].keys
     CSV.open(test_results_csv, "w") do |csv|
+      csv << ["Test Case"] + keys
       all_results.each_with_index do |(xml, results), i|
-        if i == 0 # Header
-          csv << ["Test Case"] + results.keys
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
         end
-        csv << [File.basename(xml)] + results.values
+        csv << csv_line
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -454,12 +466,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
 
     # Write results to csv
+    keys = all_results.values[0].keys
     CSV.open(test_results_csv, "w") do |csv|
+      csv << ["XML"] + keys
       all_results.each_with_index do |(xml, results), i|
-        if i == 0 # Header
-          csv << ["XML"] + results.keys
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
         end
-        csv << [File.basename(xml)] + results.values
+        csv << csv_line
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -1223,7 +1238,11 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     require 'csv'
     results = {}
     CSV.foreach(results_csv) do |row|
-      results[row[0]] = Float(row[1])
+      if row[1].include? "," # Occurs if, e.g., multiple HVAC
+        results[row[0]] = row[1]
+      else
+        results[row[0]] = Float(row[1])
+      end
     end
 
     return results
