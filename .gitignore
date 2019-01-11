@@ -9,5 +9,6 @@ coverage
 /workflow/ERIIndexAdjustmentDesign
 /workflow/ERIIndexAdjustmentReferenceHome
 /workflow/results
-/workflow/tests/RESNET_Tests/4.2_Test_HERS_Reference_Home
 /workflow/SimulationHome
+/workflow/tests/RESNET_Tests/results
+/workflow/tests/RESNET_Tests/4.2_Test_HERS_Reference_Home/ERIReferenceHome.xml
