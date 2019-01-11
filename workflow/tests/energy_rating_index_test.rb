@@ -288,6 +288,22 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   def test_resnet_verification_appliances
     # TODO
   end
+  
+  def test_resnet_hers_consistency_task_group
+    skip # TODO: Allow duct location outside, hookup ducts, retrieve results
+    
+    # HERS Consistency Task Group files
+    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    results = {}
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/HERS_Consistency_Task_Group")
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      # Run test
+      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      results[File.basename(xml)] = _get_eri(results_csv)
+    end
+    
+    puts results.to_s
+  end
 
   def test_naseo_technical_exercises
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
