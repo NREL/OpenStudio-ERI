@@ -3,7 +3,7 @@ OpenStudio-ERI
 
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
 
-The ERI is defined by [ANSI/RESNET/ICC 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index"](http://www.resnet.us/blog/ansiresneticc-standard-301-2014-january-15-2016/).
+The ERI is defined by [ANSI/RESNET/ICC 301-2014© "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index"](http://www.resnet.us/blog/ansiresneticc-standard-301-2014-january-15-2016/).
 
 **Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master)
 
@@ -48,17 +48,20 @@ See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/work
 
 ## Tests
 
-Continuous integration tests are automatically run for any change to this repository. The current set of tests include:
+Tests are automatically run for any change to this repository. Test results can be found on the [CI machine](https://circleci.com/gh/NREL/OpenStudio-ERI) for any build under the "Artifacts" tab.
+
+The current set of tests include:
 - [x] Successful ERI calculations for all sample files
-- [x] RESNET HERS Reference Home auto-generation tests
+- [x] RESNET® ANSI/ASHRAE Standard 140-2011, Class II, Tier 1 Tests
+- [x] RESNET HERS® Reference Home auto-generation tests
 - [x] RESNET HERS method tests (including IAF and 2016-proposed tests)
 - [x] RESNET Hot water system performance tests (including pre-Addendum A tests)
 
-Tests can be run locally as follows. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
+Tests can also be run locally, as shown below. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
 ```openstudio tests/energy_rating_index_test.rb``` (all tests)  
 ```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
 
-At the completion of the test, there will be output that denotes the number of failures/errors like so:  
+Test results are created at workflow/tests/test_results. At the completion of the test, there will be output that denotes the number of failures/errors like so:  
 ```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  
 ```1 runs, 35 assertions, 0 failures, 0 errors, 0 skips```
 
