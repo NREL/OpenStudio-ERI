@@ -595,6 +595,8 @@ class EnergyRatingIndex301Ruleset
         foundation_type = "UnventedCrawlspace"
       elsif XMLHelper.has_element(orig_foundation, "FoundationType/Crawlspace[Vented='true']")
         foundation_type = "VentedCrawlspace"
+      elsif XMLHelper.has_element(orig_foundation, "FoundationType/Ambient")
+        foundation_type = "Ambient"
       end
       if foundation_type == "UnventedCrawlspace"
         foundation_type = "VentedCrawlspace"
@@ -710,6 +712,8 @@ class EnergyRatingIndex301Ruleset
         if vent < min_crawl_vent
           vent = min_crawl_vent
         end
+      elsif XMLHelper.has_element(orig_foundation, "FoundationType/Ambient")
+        foundation_type = "Ambient"
       end
 
       new_foundation = HPXML.add_foundation(foundations: new_foundations,
@@ -1364,19 +1368,17 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Thermal distribution systems
     orig_details.elements.each("Systems/HVAC/HVACDistribution") do |orig_dist|
-      other = orig_dist.elements["DistributionSystemType/Other"]
-      distribution_system_type = nil
-      unless other.nil?
-        distribution_system_type = other.text
+      distribution_system_type = XMLHelper.get_child_name(orig_dist, "DistributionSystemType")
+      if distribution_system_type == "Other"
+        distribution_system_type = XMLHelper.get_value(orig_dist.elements["DistributionSystemType"], "Other")
       end
       new_hvac_dist = HPXML.add_hvac_distribution(hvac: new_hvac,
                                                   id: XMLHelper.get_id(orig_dist),
                                                   distribution_system_type: distribution_system_type,
                                                   annual_heating_distribution_system_efficiency: XMLHelper.get_value(orig_dist, "AnnualHeatingDistributionSystemEfficiency"),
                                                   annual_cooling_distribution_system_efficiency: XMLHelper.get_value(orig_dist, "AnnualCoolingDistributionSystemEfficiency"))
-      orig_air_dist = orig_dist.elements["DistributionSystemType/AirDistribution"]
-      unless orig_air_dist.nil?
-        new_air_dist = XMLHelper.add_element(new_hvac_dist, "DistributionSystemType/AirDistribution")
+      if distribution_system_type == "AirDistribution"
+        new_air_dist = new_hvac_dist.elements["DistributionSystemType/AirDistribution"]
         orig_dist.elements.each("DistributionSystemType/AirDistribution/DuctLeakageMeasurement") do |orig_duct_leakage_measurement|
           orig_duct_leakage = orig_duct_leakage_measurement.elements["DuctLeakage"]
           HPXML.add_duct_leakage_measurement(air_distribution: new_air_dist,
