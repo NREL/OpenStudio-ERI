@@ -1233,51 +1233,71 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Service water heating systems
 
-    orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
-
-    wh_type = nil
-    wh_tank_vol = nil
-    wh_fuel_type = nil
-    wh_sys_id = "WaterHeatingSystem"
-    if not orig_wh_sys.nil?
+    orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |orig_wh_sys|
+    
+      wh_id = orig_wh_sys.elements["SystemIdentifier"].attributes["id"]
       wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
-      if orig_wh_sys.elements["TankVolume"]
+      if XMLHelper.has_element(orig_wh_sys, "TankVolume")
         wh_tank_vol = Float(XMLHelper.get_value(orig_wh_sys, "TankVolume"))
       end
       wh_fuel_type = XMLHelper.get_value(orig_wh_sys, "FuelType")
       wh_location = XMLHelper.get_value(orig_wh_sys, "Location")
       wh_sys_id = orig_wh_sys.elements["SystemIdentifier"].attributes["id"]
-    end
+      if wh_type == 'instantaneous water heater'
+        wh_tank_vol = 40.0
+      end
+      wh_type = 'storage water heater'
+      
+      wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+      wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
+      
+      # New water heater
+      new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
+      sys_id = XMLHelper.add_element(new_wh_sys, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", wh_sys_id)
+      XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
+      XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
+      XMLHelper.add_element(new_wh_sys, "Location", wh_location)
+      XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
+      XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
+      XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
+      XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
+      if not wh_re.nil?
+        XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
+      end
 
-    if orig_wh_sys.nil?
+    end
+    
+    if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
+    
       wh_tank_vol = 40.0
-      wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
+      wh_fuel_type = get_predominant_heating_fuel(orig_details)
       if wh_fuel_type.nil? # Electric heat pump or no heating system
         wh_fuel_type = 'electricity'
       end
       wh_location = 'living space' # 301 Standard doesn't specify the location
-    elsif wh_type == 'instantaneous water heater'
-      wh_tank_vol = 40.0
-    end
-    wh_type = 'storage water heater'
+      wh_type = 'storage water heater'
+      
+      wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+      wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
+    
+      # New water heater
+      new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
+      sys_id = XMLHelper.add_element(new_wh_sys, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "WaterHeatingSystem")
+      XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
+      XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
+      XMLHelper.add_element(new_wh_sys, "Location", wh_location)
+      XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
+      XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
+      XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
+      XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
+      if not wh_re.nil?
+        XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
+      end
 
-    wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
-
-    # New water heater
-    new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
-    sys_id = XMLHelper.add_element(new_wh_sys, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", wh_sys_id)
-    XMLHelper.add_element(new_wh_sys, "FuelType", wh_fuel_type)
-    XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
-    XMLHelper.add_element(new_wh_sys, "Location", wh_location)
-    XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
-    XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
-    XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
-    XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
-    if not wh_re.nil?
-      XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
     end
+
   end
 
   def self.set_systems_water_heater_rated(new_systems, orig_details)
@@ -1285,9 +1305,7 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Service water heating systems
 
-    orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
-
-    if not orig_wh_sys.nil?
+    orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |orig_wh_sys|
 
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
@@ -1308,12 +1326,14 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
+      
+    end
 
-    else
+    if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
 
       wh_type = 'storage water heater'
       wh_tank_vol = 40.0
-      wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
+      wh_fuel_type = get_predominant_heating_fuel(orig_details)
       if wh_fuel_type.nil? # Electric heat pump or no heating system
         wh_fuel_type = 'electricity'
       end
@@ -1840,8 +1860,7 @@ class EnergyRatingIndex301Ruleset
   def self.has_fuel_access(orig_details)
     orig_details.elements.each("BuildingSummary/Site/FuelTypesAvailable/Fuel") do |fuel|
       fuels = ["natural gas", "fuel oil", "propane", "kerosene", "diesel",
-               "anthracite coal", "bituminous coal", "coke",
-               "wood", "wood pellets"]
+               "coal", "coke", "wood", "wood pellets"]
       if fuels.include?(fuel.text)
         return true
       end
@@ -1965,6 +1984,32 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_hvac_dist, "DistributionSystemType/Other", "DSE")
     XMLHelper.add_element(new_hvac_dist, "AnnualHeatingDistributionSystemEfficiency", 0.8)
     XMLHelper.add_element(new_hvac_dist, "AnnualCoolingDistributionSystemEfficiency", 0.8)
+  end
+  
+  def self.get_predominant_heating_fuel(orig_details)
+    fuel_fracs = {}
+    
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+      fuel = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
+      load_frac = Float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed"))
+      if fuel_fracs[fuel].nil?
+        fuel_fracs[fuel] = 0.0
+      end
+      fuel_fracs[fuel] += load_frac
+    end
+    
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+      fuel = "electricity"
+      load_frac = Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed"))
+      if fuel_fracs[fuel].nil?
+        fuel_fracs[fuel] = 0.0
+      end
+      fuel_fracs[fuel] += load_frac
+    end
+    
+    return if fuel_fracs.empty?
+    
+    return fuel_fracs.key(fuel_fracs.values.max)
   end
 end
 
