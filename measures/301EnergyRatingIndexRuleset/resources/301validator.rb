@@ -663,6 +663,12 @@ class EnergyRatingIndex301Validator
       errors << "Expected FractionHeatLoadServed to sum to 1, but calculated sum is #{frac_heat_load}."
     end
 
+    # Check sum of FractionDHWLoadServed == 1
+    frac_dhw_load = hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem/FractionDHWLoadServed/text())']
+    if frac_dhw_load > 0 and (frac_dhw_load < 0.99 or frac_dhw_load > 1.01)
+      errors << "Expected FractionDHWLoadServed to sum to 1, but calculated sum is #{frac_dhw_load}."
+    end
+
     return errors
   end
 

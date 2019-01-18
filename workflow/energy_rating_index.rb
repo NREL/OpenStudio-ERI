@@ -185,20 +185,25 @@ def read_output(design, designdir, output_hpxml_path)
   end
 
   # Water Heating (by System)
-  # FIXME: Update code when multiple water heating systems are allowed
-  # map_tsv_data = CSV.read(File.join(designdir, "run", "map_water_heating.tsv"), headers: false, col_sep: "\t")
+  map_tsv_data = CSV.read(File.join(designdir, "run", "map_water_heating.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHotWaterBySystem] = {}
   design_output[:fuelHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
   design_output[:hpxml_dhw_sys_ids].each do |sys_id|
+    ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
+    keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
     # Electricity Use
-    design_output[:elecHotWaterBySystem][sys_id] = get_sql_result(sqlFile.electricityWaterSystems, design)
-    # Recirculation pump
+    vars = "'" + get_all_var_keys(Constants.OutputVarsWaterHeatingElectricity).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:elecHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Recirculation pump FIXME
     query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameHotWaterRecircPump}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
     design_output[:elecHotWaterBySystem][sys_id] += get_sql_query_result(sqlFile, query)
     design_output[:elecAppliances] -= get_sql_query_result(sqlFile, query)
     # Fuel use
-    design_output[:fuelHotWaterBySystem][sys_id] = get_sql_result(sqlFile.naturalGasWaterSystems, design) + get_sql_result(sqlFile.otherFuelWaterSystems, design)
+    vars = "'" + get_all_var_keys(Constants.OutputVarsWaterHeatingFuel).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:fuelHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Load
     vars = "'" + get_all_var_keys(Constants.OutputVarsWaterHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND IndexGroup IN ('System','HVAC') AND TimestepType='Zone' AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
@@ -539,6 +544,16 @@ def get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design
     sys_id = system.elements["SystemIdentifier"].attributes["id"]
   end
 
+  map_tsv_data.each do |tsv_line|
+    next unless tsv_line[0] == sys_id
+
+    return tsv_line[1..-1]
+  end
+
+  fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}."
+end
+
+def get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
   map_tsv_data.each do |tsv_line|
     next unless tsv_line[0] == sys_id
 

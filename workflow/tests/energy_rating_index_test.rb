@@ -26,7 +26,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     # Run simulations
 
-    files = "valid*.xml"
+    files = "valid-dhw-tank*.xml"
     all_results = {}
 
     xmldir = "#{this_dir}/sample_files"
@@ -34,12 +34,6 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       next if File.basename(xml) == "valid-hvac-furnace-elec-furnace-gas.xml" # TODO: Remove when HVAC sizing has been updated
       next if File.basename(xml) == "valid-hvac-all.xml" # TODO: Remove when HVAC sizing has been updated
 
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
-      all_results[File.basename(xml)] = _get_method_results(results_csv)
-    end
-
-    xmldir_mult = "#{this_dir}/sample_files/multiple_hvac"
-    Dir["#{xmldir_mult}/#{files}"].sort.each do |xml|
       ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
     end
@@ -60,27 +54,48 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     # Additional checks across multiple files
 
-    # Check that x3 ERIs are equal to x1 ERIs
-    Dir["#{xmldir_mult}/#{files}"].sort.each do |xml|
+    # Check that HVAC x3 ERIs are equal to HVAC x1 ERIs
+    Dir["#{xmldir}/valid-hvac*-x3*"].sort.each do |xml|
       # TODO: Remove lines below once enhanced HVAC controls are available in E+
       next unless xml.include? "boiler" or xml.include? "central-ac" or
                   xml.include? "room-ac" or xml.include? "stove"
 
-      xml_x3 = File.basename(xml)
-      xml_x1 = xml_x3.gsub('-x3', '')
-      eri_x3 = all_results[xml_x3]["ERI"]
-      eri_x1 = all_results[xml_x1]["ERI"]
-      puts "#{xml_x1}, #{xml_x3}: #{eri_x1.round(2)}, #{eri_x3.round(2)}"
-      assert_in_epsilon(eri_x1, eri_x3, 0.06) # TODO: Tighten tolerance
+      x3_xml = File.basename(xml)
+      x1_xml = x3_xml.gsub('-x3', '')
+      x3_results = all_results[x3_xml]
+      x1_results = all_results[x1_xml]
+      if not x3_results.nil? and not x1_results.nil?
+        assert_in_epsilon(x1_results['ERI'], x3_results['ERI'], 0.06) # TODO: Tighten tolerance
+      end
     end
 
     # Check that ERI calculation for 50% gas furnace + 50% elec furnace is
     # exactly between ERI calculations for 100% gas furnace and 100% elec furnace.
-    gas_results = all_results["valid-hvac-furnace-gas-only.xml"]
     elec_results = all_results["valid-hvac-furnace-elec-only.xml"]
+    gas_results = all_results["valid-hvac-furnace-gas-only.xml"]
     both_results = all_results["valid-hvac-furnace-elec-furnace-gas.xml"]
     if not gas_results.nil? and not elec_results.nil? and not both_results.nil?
-      assert_in_epsilon((gas_results["ERI"] + elec_results["ERI"]) / 2.0, both_results["ERI"], 0.01)
+      assert_in_epsilon((gas_results['ERI'] + elec_results['ERI']) / 2.0, both_results['ERI'], 0.01)
+    end
+
+    # Check that Tankless Water Heating x3 ERIs are equal to Tankless Water Heating x1 ERIs
+    Dir["#{xmldir}/valid-dhw-tankless*-x3*"].sort.each do |xml|
+      x3_xml = File.basename(xml)
+      x1_xml = x3_xml.gsub('-x3', '')
+      x3_results = all_results[x3_xml]
+      x1_results = all_results[x1_xml]
+      if not x3_results.nil? and not x1_results.nil?
+        assert_in_epsilon(x1_results['ERI'], x3_results['ERI'], 0.06) # TODO: Tighten tolerance
+      end
+    end
+
+    # Check that ERI calculation for 50% gas water heater + 50% elec water heater is
+    # exactly between ERI calculations for 100% gas water heater and 100% elec water heater.
+    elec_results = all_results["valid-dhw-tankless-elec.xml"]
+    gas_results = all_results["valid-dhw-tankless-gas.xml"]
+    both_results = all_results["valid-dhw-tankless-gas-tankless-elec.xml"]
+    if not gas_results.nil? and not elec_results.nil? and not both_results.nil?
+      assert_in_epsilon((gas_results['ERI'] + elec_results['ERI']) / 2.0, both_results['ERI'], 0.01)
     end
   end
 

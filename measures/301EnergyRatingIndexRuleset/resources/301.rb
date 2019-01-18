@@ -1234,7 +1234,6 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |orig_wh_sys|
-    
       wh_id = orig_wh_sys.elements["SystemIdentifier"].attributes["id"]
       wh_type = XMLHelper.get_value(orig_wh_sys, "WaterHeaterType")
       if XMLHelper.has_element(orig_wh_sys, "TankVolume")
@@ -1247,10 +1246,11 @@ class EnergyRatingIndex301Ruleset
         wh_tank_vol = 40.0
       end
       wh_type = 'storage water heater'
-      
+      frac_dhw_load = Float(XMLHelper.get_value(orig_wh_sys, "FractionDHWLoadServed"))
+
       wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
       wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
-      
+
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
       sys_id = XMLHelper.add_element(new_wh_sys, "SystemIdentifier")
@@ -1259,17 +1259,16 @@ class EnergyRatingIndex301Ruleset
       XMLHelper.add_element(new_wh_sys, "WaterHeaterType", wh_type)
       XMLHelper.add_element(new_wh_sys, "Location", wh_location)
       XMLHelper.add_element(new_wh_sys, "TankVolume", wh_tank_vol)
-      XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", 1.0)
+      XMLHelper.add_element(new_wh_sys, "FractionDHWLoadServed", frac_dhw_load)
       XMLHelper.add_element(new_wh_sys, "HeatingCapacity", wh_cap)
       XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       if not wh_re.nil?
         XMLHelper.add_element(new_wh_sys, "RecoveryEfficiency", wh_re)
       end
-
     end
-    
+
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
-    
+
       wh_tank_vol = 40.0
       wh_fuel_type = get_predominant_heating_fuel(orig_details)
       if wh_fuel_type.nil? # Electric heat pump or no heating system
@@ -1277,10 +1276,10 @@ class EnergyRatingIndex301Ruleset
       end
       wh_location = 'living space' # 301 Standard doesn't specify the location
       wh_type = 'storage water heater'
-      
+
       wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
       wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
-    
+
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
       sys_id = XMLHelper.add_element(new_wh_sys, "SystemIdentifier")
@@ -1297,7 +1296,6 @@ class EnergyRatingIndex301Ruleset
       end
 
     end
-
   end
 
   def self.set_systems_water_heater_rated(new_systems, orig_details)
@@ -1306,7 +1304,6 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |orig_wh_sys|
-
       # New water heater
       new_wh_sys = XMLHelper.add_element(new_water_heating, "WaterHeatingSystem")
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "SystemIdentifier")
@@ -1326,7 +1323,6 @@ class EnergyRatingIndex301Ruleset
         XMLHelper.add_element(new_wh_sys, "EnergyFactor", wh_ef)
       end
       XMLHelper.copy_element(new_wh_sys, orig_wh_sys, "RecoveryEfficiency")
-      
     end
 
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
@@ -1985,10 +1981,10 @@ class EnergyRatingIndex301Ruleset
     XMLHelper.add_element(new_hvac_dist, "AnnualHeatingDistributionSystemEfficiency", 0.8)
     XMLHelper.add_element(new_hvac_dist, "AnnualCoolingDistributionSystemEfficiency", 0.8)
   end
-  
+
   def self.get_predominant_heating_fuel(orig_details)
     fuel_fracs = {}
-    
+
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
       fuel = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
       load_frac = Float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed"))
@@ -1997,7 +1993,7 @@ class EnergyRatingIndex301Ruleset
       end
       fuel_fracs[fuel] += load_frac
     end
-    
+
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
       fuel = "electricity"
       load_frac = Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed"))
@@ -2006,9 +2002,9 @@ class EnergyRatingIndex301Ruleset
       end
       fuel_fracs[fuel] += load_frac
     end
-    
+
     return if fuel_fracs.empty?
-    
+
     return fuel_fracs.key(fuel_fracs.values.max)
   end
 end
