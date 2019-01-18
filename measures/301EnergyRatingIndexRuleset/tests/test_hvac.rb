@@ -408,8 +408,8 @@ class HVACtest < MiniTest::Test
     _check_thermostat(hpxml_doc, "manual thermostat")
   end
 
-  def test_all_hvac
-    hpxml_name = "valid-hvac-all.xml"
+  def test_multiple_hvac
+    hpxml_name = "valid-hvac-multiple.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
