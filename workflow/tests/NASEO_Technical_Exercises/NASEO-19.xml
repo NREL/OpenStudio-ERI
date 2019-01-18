@@ -45,7 +45,7 @@
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
-          <SystemIdentifiersInfo id='Weather_Station'/>
+          <SystemIdentifier id='Weather_Station'/>
           <Name>Colorado Springs, CO</Name>
           <WMO>724660</WMO>
         </WeatherStation>
@@ -201,6 +201,7 @@
             <HeatPump>
               <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <HeatPumpType>mini-split</HeatPumpType>
+              <HeatPumpFuel>electricity</HeatPumpFuel>
               <CoolingCapacity>60000</CoolingCapacity>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
