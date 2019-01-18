@@ -76,7 +76,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         assert_in_epsilon(base_reul_dhw, compare_reul_dhw, 0.01)
       end
     end
-    
+
     # TODO: Verify that REUL Heating & REUL Cooling are identical across HVAC types
   end
 
