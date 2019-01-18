@@ -1932,6 +1932,7 @@ class EnergyRatingIndex301Ruleset
     dist = XMLHelper.add_element(heat_pump, "DistributionSystem")
     XMLHelper.add_attribute(dist, "idref", "HVACDistribution_DSE_80")
     XMLHelper.add_element(heat_pump, "HeatPumpType", "air-to-air")
+    XMLHelper.add_element(heat_pump, "HeatPumpFuel", "electricity")
     XMLHelper.add_element(heat_pump, "CoolingCapacity", -1) # Use Manual J auto-sizing
     XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", load_frac)
     XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", 0.0)
@@ -1995,7 +1996,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
-      fuel = "electricity"
+      fuel = XMLHelper.get_value(heat_pump, "HeatPumpFuel")
       load_frac = Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed"))
       if fuel_fracs[fuel].nil?
         fuel_fracs[fuel] = 0.0

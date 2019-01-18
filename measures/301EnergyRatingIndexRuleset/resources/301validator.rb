@@ -88,7 +88,7 @@ class EnergyRatingIndex301Validator
 
       # [WeatherStation]
       '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => {
-        'SystemIdentifiersInfo' => one, # Required by HPXML schema
+        'SystemIdentifier' => one, # Required by HPXML schema
         'Name' => one, # Required by HPXML schema
         'WMO' => one, # Reference weather/data.csv for the list of acceptable WMO station numbers
       },
@@ -374,6 +374,7 @@ class EnergyRatingIndex301Validator
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
         '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
+        '[HeatPumpFuel="electricity"]' => one,
         'CoolingCapacity' => one,
         'FractionHeatLoadServed' => one, # Must sum to 1 across all HeatPumps and HeatingSystems
         'FractionCoolLoadServed' => one, # Must sum to 1 across all HeatPumps and CoolingSystems

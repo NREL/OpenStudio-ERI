@@ -344,7 +344,7 @@ def get_heat_fuels(hpxml_doc, design)
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)
-    heat_fuels[sys_id] = "electricity"
+    heat_fuels[sys_id] = XMLHelper.get_value(heat_pump, "HeatPumpFuel")
   end
 
   if heat_fuels.empty?
