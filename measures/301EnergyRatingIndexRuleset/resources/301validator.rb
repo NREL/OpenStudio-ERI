@@ -38,7 +38,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
         '/HPXML/Building/ProjectStatus/EventType' => one, # Required by HPXML schema
 
-        '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable[Fuel="electricity" or Fuel="natural gas" or Fuel="fuel oil" or Fuel="propane" or Fuel="kerosene" or Fuel="diesel" or Fuel="anthracite coal" or Fuel="bituminous coal" or Fuel="coke" or Fuel="wood" or Fuel="wood pellets"]' => one_or_more,
+        '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable[Fuel="electricity" or Fuel="natural gas" or Fuel="fuel oil" or Fuel="propane" or Fuel="kerosene" or Fuel="diesel" or Fuel="coal" or Fuel="coke" or Fuel="wood" or Fuel="wood pellets"]' => one_or_more,
         '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
         '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
         '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
@@ -50,24 +50,26 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2012"]' => one, # See [ClimateZone]
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => one, # See [WeatherStation]
 
-        '/HPXML/Building/BuildingDetails/Enclosure/Attics' => one, # See [Attic]
-        '/HPXML/Building/BuildingDetails/Enclosure/Foundations' => one, # See [Foundation]
-        '/HPXML/Building/BuildingDetails/Enclosure/RimJoists' => zero_or_one, # See [RimJoist]
-        '/HPXML/Building/BuildingDetails/Enclosure/Walls' => one, # See [Wall]
-        '/HPXML/Building/BuildingDetails/Enclosure/Windows' => zero_or_one, # See [Window]
-        '/HPXML/Building/BuildingDetails/Enclosure/Skylights' => zero_or_one, # See [Skylight]
-        '/HPXML/Building/BuildingDetails/Enclosure/Doors' => zero_or_one, # See [Door]
+        '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => one_or_more, # See [Attic]
+        '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation' => one_or_more, # See [Foundation]
+        '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => zero_or_more, # See [RimJoist]
+        '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => one_or_more, # See [Wall]
+        '/HPXML/Building/BuildingDetails/Enclosure/Windows/Window' => zero_or_more, # See [Window]
+        '/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight' => zero_or_more, # See [Skylight]
+        '/HPXML/Building/BuildingDetails/Enclosure/Doors/Door' => zero_or_more, # See [Door]
 
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
 
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_more, # See [HeatingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_more, # See [CoolingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_more, # See [HeatPump]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HVACControl' => zero_or_one, # See [HVACControl]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => zero_or_one, # See [HVACControl]
+        '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution' => zero_or_more, # See [HVACDistribution]
 
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
-        '/HPXML/Building/BuildingDetails/Systems/WaterHeating' => zero_or_one, # See [WaterHeatingSystem]
-        '/HPXML/Building/BuildingDetails/Systems/Photovoltaics' => zero_or_one, # See [PVSystem]
+        '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => zero_or_more, # See [WaterHeatingSystem]
+        '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => zero_or_one, # See [HotWaterDistribution]
+        '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => zero_or_more, # See [PVSystem]
 
         '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => one, # See [ClothesWasher]
         '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => one, # See [ClothesDryer]
@@ -86,7 +88,7 @@ class EnergyRatingIndex301Validator
 
       # [WeatherStation]
       '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => {
-        'SystemIdentifiersInfo' => one, # Required by HPXML schema
+        'SystemIdentifier' => one, # Required by HPXML schema
         'Name' => one, # Required by HPXML schema
         'WMO' => one, # Reference weather/data.csv for the list of acceptable WMO station numbers
       },
@@ -372,6 +374,7 @@ class EnergyRatingIndex301Validator
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
         '[HeatPumpType="air-to-air" or HeatPumpType="mini-split" or HeatPumpType="ground-to-air"]' => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
+        '[HeatPumpFuel="electricity"]' => one,
         'CoolingCapacity' => one,
         'FractionHeatLoadServed' => one, # Must sum to 1 across all HeatPumps and HeatingSystems
         'FractionCoolLoadServed' => one, # Must sum to 1 across all HeatPumps and CoolingSystems
@@ -659,6 +662,12 @@ class EnergyRatingIndex301Validator
     frac_heat_load += hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump/FractionHeatLoadServed/text())']
     if frac_heat_load > 0 and (frac_heat_load < 0.99 or frac_heat_load > 1.01)
       errors << "Expected FractionHeatLoadServed to sum to 1, but calculated sum is #{frac_heat_load}."
+    end
+
+    # Check sum of FractionDHWLoadServed == 1
+    frac_dhw_load = hpxml_doc.elements['sum(/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem/FractionDHWLoadServed/text())']
+    if frac_dhw_load > 0 and (frac_dhw_load < 0.99 or frac_dhw_load > 1.01)
+      errors << "Expected FractionDHWLoadServed to sum to 1, but calculated sum is #{frac_dhw_load}."
     end
 
     return errors

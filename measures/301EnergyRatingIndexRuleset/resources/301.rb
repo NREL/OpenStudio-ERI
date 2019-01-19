@@ -311,7 +311,7 @@ class EnergyRatingIndex301Ruleset
                                            effective_leakage_area: ela)
 
     HPXML.add_extension(parent: new_infil,
-                        extensions: {"BuildingSpecificLeakageArea": sla})
+                        extensions: { "BuildingSpecificLeakageArea": sla })
   end
 
   def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
@@ -362,7 +362,7 @@ class EnergyRatingIndex301Ruleset
                                            effective_leakage_area: ela)
 
     HPXML.add_extension(parent: new_infil,
-                        extensions: {"BuildingSpecificLeakageArea": sla})
+                        extensions: { "BuildingSpecificLeakageArea": sla })
   end
 
   def self.set_enclosure_air_infiltration_iad(new_enclosure)
@@ -401,7 +401,7 @@ class EnergyRatingIndex301Ruleset
                                            effective_leakage_area: ela)
 
     HPXML.add_extension(parent: new_infil,
-                        extensions: {"BuildingSpecificLeakageArea": sla})
+                        extensions: { "BuildingSpecificLeakageArea": sla })
   end
 
   def self.set_enclosure_attics_roofs_reference(new_enclosure, orig_details)
@@ -489,9 +489,8 @@ class EnergyRatingIndex301Ruleset
       # Table 4.2.2(1) - Attics
       if attic_type == 'vented attic'
         HPXML.add_extension(parent: new_attic,
-                            extensions: {"AtticSpecificLeakageArea": Airflow.get_default_vented_attic_sla()})
+                            extensions: { "AtticSpecificLeakageArea": Airflow.get_default_vented_attic_sla() })
       end
-
     end
   end
 
@@ -503,7 +502,7 @@ class EnergyRatingIndex301Ruleset
       new_attic = HPXML.add_attic(attics: new_attics,
                                   id: orig_attic_values[:id],
                                   attic_type: orig_attic_values[:attic_type])
-      
+
       new_roofs = XMLHelper.add_element(new_attic, "Roofs")
       orig_attic.elements.each("Roofs/Roof") do |orig_roof|
         orig_roof_values = HPXML.get_roof_values(roof: orig_roof)
@@ -555,7 +554,6 @@ class EnergyRatingIndex301Ruleset
                              id: orig_wall_ins_values[:id],
                              assembly_effective_r_value: orig_wall_ins_values[:assembly_effective_r_value])
       end
-
     end
   end
 
@@ -616,9 +614,9 @@ class EnergyRatingIndex301Ruleset
         orig_floor_values = HPXML.get_floor_values(floor: orig_floor)
         exterior_adjacent_to = orig_floor_values[:adjacent_to]
         new_floor = HPXML.add_frame_floor(foundation: new_foundation,
-                                    id: orig_floor_values[:id],
-                                    adjacent_to: exterior_adjacent_to,
-                                    area: orig_floor_values[:area])
+                                          id: orig_floor_values[:id],
+                                          adjacent_to: exterior_adjacent_to,
+                                          area: orig_floor_values[:area])
         orig_floor_ins = orig_floor.elements["Insulation"]
         orig_floor_ins_values = HPXML.get_insulation_values(insulation: orig_floor_ins)
         assembly_effective_r_value = orig_floor_ins_values[:assembly_effective_r_value]
@@ -659,7 +657,7 @@ class EnergyRatingIndex301Ruleset
         orig_perim_ins = orig_slab.elements["PerimeterInsulation"]
         orig_under_ins = orig_slab.elements["UnderSlabInsulation"]
         # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, "ground")?
-        if not ( interior_adjacent_to == "living space" and is_external_thermal_boundary(interior_adjacent_to, "ground") )
+        if not ( interior_adjacent_to == "living space" and is_external_thermal_boundary(interior_adjacent_to, "ground"))
           slab_perim_depth = orig_slab_values[:perimeter_insulation_depth]
           slab_under_width = orig_slab_values[:under_slab_insulation_width]
           perim_ins_layer = orig_perim_ins.elements["Layer"]
@@ -688,14 +686,14 @@ class EnergyRatingIndex301Ruleset
                         installation_type: "continuous",
                         nominal_r_value: slab_under_rvalue)
         HPXML.add_extension(parent: new_slab,
-                            extensions: {"CarpetFraction": 0.8,
-                                         "CarpetRValue": 2.0})
+                            extensions: { "CarpetFraction": 0.8,
+                                          "CarpetRValue": 2.0 })
       end
 
       # Table 4.2.2(1) - Crawlspaces
       if foundation_type == "VentedCrawlspace"
         HPXML.add_extension(parent: new_foundation,
-                            extensions: {"CrawlspaceSpecificLeakageArea": Airflow.get_default_vented_crawl_sla()})
+                            extensions: { "CrawlspaceSpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
       end
     end
   end
@@ -725,14 +723,14 @@ class EnergyRatingIndex301Ruleset
       orig_foundation.elements.each("FrameFloor") do |orig_floor|
         orig_floor_values = HPXML.get_floor_values(floor: orig_floor)
         new_floor = HPXML.add_frame_floor(foundation: new_foundation,
-                                    id: orig_floor_values[:id],
-                                    adjacent_to: orig_floor_values[:adjacent_to],
-                                    area: orig_floor_values[:area])
+                                          id: orig_floor_values[:id],
+                                          adjacent_to: orig_floor_values[:adjacent_to],
+                                          area: orig_floor_values[:area])
         orig_floor_ins = orig_floor.elements["Insulation"]
         orig_floor_ins_values = HPXML.get_insulation_values(insulation: orig_floor_ins)
         HPXML.add_insulation(parent: new_floor,
-                              id: orig_floor_ins_values[:id],
-                              assembly_effective_r_value: orig_floor_ins_values[:assembly_effective_r_value])
+                             id: orig_floor_ins_values[:id],
+                             assembly_effective_r_value: orig_floor_ins_values[:assembly_effective_r_value])
       end
 
       orig_foundation.elements.each("FoundationWall") do |orig_fwall|
@@ -778,12 +776,11 @@ class EnergyRatingIndex301Ruleset
                         installation_type: "continuous",
                         nominal_r_value: under_ins_layer_values[:nominal_r_value])
         HPXML.add_extension(parent: new_slab,
-                            extensions: {"CarpetFraction": orig_slab_values[:carpet_fraction],
-                                         "CarpetRValue": orig_slab_values[:carpet_r_value]})
-
+                            extensions: { "CarpetFraction": orig_slab_values[:carpet_fraction],
+                                          "CarpetRValue": orig_slab_values[:carpet_r_value] })
       end
       HPXML.add_extension(parent: new_foundation,
-                          extensions: {"CrawlspaceSpecificLeakageArea": vent})
+                          extensions: { "CrawlspaceSpecificLeakageArea": vent })
     end
   end
 
@@ -839,10 +836,10 @@ class EnergyRatingIndex301Ruleset
                     nominal_r_value: 0)
 
     HPXML.add_extension(parent: new_slab,
-                        extensions: {"CarpetFraction": 0,
-                                     "CarpetRValue": 0})
+                        extensions: { "CarpetFraction": 0,
+                                      "CarpetRValue": 0 })
     HPXML.add_extension(parent: new_foundation,
-                        extensions: {"CrawlspaceSpecificLeakageArea": Airflow.get_default_vented_crawl_sla()})
+                        extensions: { "CrawlspaceSpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
   end
 
   def self.set_enclosure_rim_joists_reference(new_enclosure, orig_details)
@@ -1101,8 +1098,8 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Glazing
     HPXML.add_extension(parent: window,
-                        extensions: {"InteriorShadingFactorSummer": shade_summer,
-                                     "InteriorShadingFactorWinter": shade_winter})
+                        extensions: { "InteriorShadingFactorSummer": shade_summer,
+                                      "InteriorShadingFactorWinter": shade_winter })
   end
 
   def self.set_enclosure_windows_rated(new_enclosure, orig_details)
@@ -1313,7 +1310,7 @@ class EnergyRatingIndex301Ruleset
                                             heating_capacity: orig_heating_values[:heating_capacity],
                                             annual_heating_efficiency_units: orig_heating_values[:annual_heating_efficiency_units],
                                             annual_heating_efficiency_value: orig_heating_values[:annual_heating_efficiency_value],
-                                            fraction_heat_load_served: orig_heating_values[:fraction_heat_load_served]) 
+                                            fraction_heat_load_served: orig_heating_values[:fraction_heat_load_served])
       end
     end
     if heating_system.nil? and heat_pump.nil? and has_fuel_access(orig_details)
@@ -1352,6 +1349,7 @@ class EnergyRatingIndex301Ruleset
                                         id: orig_hp_values[:id],
                                         idref: orig_hp_values[:idref],
                                         heat_pump_type: orig_hp_values[:heat_pump_type],
+                                        heat_pump_fuel: orig_hp_values[:heat_pump_fuel],
                                         heating_capacity: orig_hp_values[:heating_capacity],
                                         cooling_capacity: orig_hp_values[:cooling_capacity],
                                         fraction_heat_load_served: orig_hp_values[:fraction_heat_load_served],
@@ -1393,10 +1391,10 @@ class EnergyRatingIndex301Ruleset
         orig_dist.elements.each("DistributionSystemType/AirDistribution/DuctLeakageMeasurement") do |orig_duct_leakage_measurement|
           orig_duct_leakage_measurement_values = HPXML.get_duct_leakage_measurement_values(duct_leakage_measurement: orig_duct_leakage_measurement)
           HPXML.add_duct_leakage_measurement(air_distribution: new_air_dist,
-                                            duct_type: orig_duct_leakage_measurement_values[:duct_type],
-                                            duct_leakage_units: orig_duct_leakage_measurement_values[:duct_leakage_units],
-                                            duct_leakage_value: orig_duct_leakage_measurement_values[:duct_leakage_value],
-                                            duct_leakage_total_or_to_outside: orig_duct_leakage_measurement_values[:duct_leakage_total_or_to_outside])
+                                             duct_type: orig_duct_leakage_measurement_values[:duct_type],
+                                             duct_leakage_units: orig_duct_leakage_measurement_values[:duct_leakage_units],
+                                             duct_leakage_value: orig_duct_leakage_measurement_values[:duct_leakage_value],
+                                             duct_leakage_total_or_to_outside: orig_duct_leakage_measurement_values[:duct_leakage_total_or_to_outside])
         end
         orig_dist.elements.each("DistributionSystemType/AirDistribution/Ducts") do |orig_ducts|
           orig_ducts_values = HPXML.get_ducts_values(ducts: orig_ducts)
@@ -1545,49 +1543,35 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Service water heating systems
 
-    orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
-    orig_wh_sys_values = HPXML.get_water_heating_system_values(water_heating_system: orig_wh_sys)
+    orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |orig_wh_sys|
+      orig_wh_sys_values = HPXML.get_water_heating_system_values(water_heating_system: orig_wh_sys)
 
-    wh_type = nil
-    wh_tank_vol = nil
-    wh_fuel_type = nil
-    wh_sys_id = "WaterHeatingSystem"
-    if not orig_wh_sys.nil?
-      wh_type = orig_wh_sys_values[:water_heater_type]
-      if orig_wh_sys.elements["TankVolume"]
+      if orig_wh_sys_values[:water_heater_type] == 'instantaneous water heater'
+        wh_tank_vol = 40.0
+      else
         wh_tank_vol = Float(orig_wh_sys_values[:tank_volume])
       end
       wh_fuel_type = orig_wh_sys_values[:fuel_type]
-      wh_location = orig_wh_sys_values[:location]
-      wh_sys_id = orig_wh_sys_values[:id]
+
+      wh_ef, wh_re = get_water_heater_ef_and_re(orig_wh_sys_values[:fuel_type], wh_tank_vol)
+      wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
+
+      # New water heater
+      new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
+                                                  id: orig_wh_sys_values[:id],
+                                                  fuel_type: wh_fuel_type,
+                                                  water_heater_type: 'storage water heater',
+                                                  location: orig_wh_sys_values[:location],
+                                                  tank_volume: wh_tank_vol,
+                                                  fraction_dhw_load_served: orig_wh_sys_values[:fraction_dhw_load_served],
+                                                  heating_capacity: wh_cap,
+                                                  energy_factor: wh_ef,
+                                                  recovery_efficiency: wh_re)
     end
 
-    if orig_wh_sys.nil?
-      wh_tank_vol = 40.0
-      wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
-      if wh_fuel_type.nil? # Electric heat pump or no heating system
-        wh_fuel_type = 'electricity'
-      end
-      wh_location = 'living space' # 301 Standard doesn't specify the location
-    elsif wh_type == 'instantaneous water heater'
-      wh_tank_vol = 40.0
+    if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
+      add_reference_water_heater(orig_details, new_water_heating)
     end
-    wh_type = 'storage water heater'
-
-    wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
-
-    # New water heater
-    new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
-                                                id: wh_sys_id,
-                                                fuel_type: wh_fuel_type,
-                                                water_heater_type: wh_type,
-                                                location: wh_location,
-                                                tank_volume: wh_tank_vol,
-                                                fraction_dhw_load_served: 1.0,
-                                                heating_capacity: wh_cap,
-                                                energy_factor: wh_ef,
-                                                recovery_efficiency: wh_re)
   end
 
   def self.set_systems_water_heater_rated(new_systems, orig_details)
@@ -1596,52 +1580,33 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
-    orig_wh_sys_values = HPXML.get_water_heating_system_values(water_heating_system: orig_wh_sys)
 
-    if not orig_wh_sys.nil?
+    orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |orig_wh_sys|
+      orig_wh_sys_values = HPXML.get_water_heating_system_values(water_heating_system: orig_wh_sys)
+
       wh_ef = orig_wh_sys_values[:energy_factor]
-      wh_uef = orig_wh_sys_values[:uniform_energy_factor]
-      if wh_ef.nil? and not wh_uef.nil?
+      wh_fuel_type = orig_wh_sys_values[:fuel_type]
+      wh_type = orig_wh_sys_values[:water_heater_type]
+      if wh_ef.nil?
         wh_uef = Float(orig_wh_sys_values[:uniform_energy_factor])
-        wh_type = orig_wh_sys_values[:water_heater_type]
-        wh_fuel_type = orig_wh_sys_values[:fuel_type]
         wh_ef = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_type), to_beopt_fuel(wh_fuel_type))
       end
 
       # New water heater
       new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
                                                   id: orig_wh_sys_values[:id],
-                                                  fuel_type: orig_wh_sys_values[:fuel_type],
-                                                  water_heater_type: orig_wh_sys_values[:water_heater_type],
+                                                  fuel_type: wh_fuel_type,
+                                                  water_heater_type: wh_type,
                                                   location: orig_wh_sys_values[:location],
                                                   tank_volume: orig_wh_sys_values[:tank_volume],
                                                   fraction_dhw_load_served: orig_wh_sys_values[:fraction_dhw_load_served],
                                                   heating_capacity: orig_wh_sys_values[:heating_capacity],
                                                   energy_factor: wh_ef,
                                                   recovery_efficiency: orig_wh_sys_values[:recovery_efficiency])
-    else
+    end
 
-      wh_type = 'storage water heater'
-      wh_tank_vol = 40.0
-      wh_fuel_type = XMLHelper.get_value(orig_details, "Systems/HVAC/HVACPlant/HeatingSystem/HeatingSystemFuel")
-      if wh_fuel_type.nil? # Electric heat pump or no heating system
-        wh_fuel_type = 'electricity'
-      end
-      wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-      wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
-      wh_location = 'living space' # 301 Standard doesn't specify the location
-
-      # New water heater
-      new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
-                                                  id: "WaterHeatingSystem",
-                                                  fuel_type: wh_fuel_type,
-                                                  water_heater_type: wh_type,
-                                                  location: wh_location,
-                                                  tank_volume: wh_tank_vol,
-                                                  fraction_dhw_load_served: 1.0,
-                                                  heating_capacity: wh_cap,
-                                                  energy_factor: wh_ef,
-                                                  recovery_efficiency: wh_re)
+    if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
+      add_reference_water_heater(orig_details, new_water_heating)
     end
   end
 
@@ -1714,7 +1679,7 @@ class EnergyRatingIndex301Ruleset
 
     has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
     std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
-    recirc_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)    
+    recirc_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)
     orig_standard = orig_hw_dist.elements["SystemType/Standard"]
     orig_recirc = orig_hw_dist.elements["SystemType/Recirculation"]
     if not orig_standard.nil?
@@ -2119,8 +2084,7 @@ class EnergyRatingIndex301Ruleset
   def self.has_fuel_access(orig_details)
     orig_details.elements.each("BuildingSummary/Site/FuelTypesAvailable/Fuel") do |fuel|
       fuels = ["natural gas", "fuel oil", "propane", "kerosene", "diesel",
-               "anthracite coal", "bituminous coal", "coke",
-               "wood", "wood pellets"]
+               "coal", "coke", "wood", "wood pellets"]
       if fuels.include?(fuel.text)
         return true
       end
@@ -2154,7 +2118,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: heat_sys,
-                          extensions: {"SeedId": seed_id})
+                          extensions: { "SeedId": seed_id })
     end
   end
 
@@ -2174,7 +2138,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: heat_sys,
-                          extensions: {"SeedId": seed_id})
+                          extensions: { "SeedId": seed_id })
     end
   end
 
@@ -2185,6 +2149,7 @@ class EnergyRatingIndex301Ruleset
                                     id: "HeatPump#{cnt + 1}",
                                     idref: "HVACDistribution_DSE_80",
                                     heat_pump_type: "air-to-air",
+                                    heat_pump_fuel: "electricity",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
                                     fraction_heat_load_served: load_frac,
                                     fraction_cool_load_served: 0.0,
@@ -2196,7 +2161,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: heat_pump,
-                          extensions: {"SeedId": seed_id})
+                          extensions: { "SeedId": seed_id })
     end
   end
 
@@ -2216,7 +2181,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: cool_sys,
-                          extensions: {"SeedId": seed_id})
+                          extensions: { "SeedId": seed_id })
     end
   end
 
@@ -2227,6 +2192,51 @@ class EnergyRatingIndex301Ruleset
                                                 distribution_system_type: "DSE",
                                                 annual_heating_distribution_system_efficiency: 0.8,
                                                 annual_cooling_distribution_system_efficiency: 0.8)
+  end
+
+  def self.add_reference_water_heater(orig_details, new_water_heating)
+    wh_fuel_type = get_predominant_heating_fuel(orig_details)
+    wh_tank_vol = 40.0
+
+    wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
+
+    new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
+                                                id: 'WaterHeatingSystem',
+                                                fuel_type: wh_fuel_type,
+                                                water_heater_type: 'storage water heater',
+                                                location: 'living space', # 301 Standard doesn't specify the location
+                                                tank_volume: wh_tank_vol,
+                                                fraction_dhw_load_served: 1.0,
+                                                heating_capacity: wh_cap,
+                                                energy_factor: wh_ef,
+                                                recovery_efficiency: wh_re)
+  end
+
+  def self.get_predominant_heating_fuel(orig_details)
+    fuel_fracs = {}
+
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+      fuel = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
+      load_frac = Float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed"))
+      if fuel_fracs[fuel].nil?
+        fuel_fracs[fuel] = 0.0
+      end
+      fuel_fracs[fuel] += load_frac
+    end
+
+    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |heat_pump|
+      fuel = XMLHelper.get_value(heat_pump, "HeatPumpFuel")
+      load_frac = Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed"))
+      if fuel_fracs[fuel].nil?
+        fuel_fracs[fuel] = 0.0
+      end
+      fuel_fracs[fuel] += load_frac
+    end
+
+    return "electricity" if fuel_fracs.empty?
+
+    return fuel_fracs.key(fuel_fracs.values.max)
   end
 end
 

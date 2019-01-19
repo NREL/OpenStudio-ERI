@@ -31,15 +31,8 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     xmldir = "#{this_dir}/sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      next if File.basename(xml) == "valid-hvac-furnace-elec-furnace-gas.xml" # TODO: Remove when HVAC sizing has been updated
-      next if File.basename(xml) == "valid-hvac-all.xml" # TODO: Remove when HVAC sizing has been updated
+      next if File.basename(xml) == "valid-hvac-multiple.xml" # TODO: Remove when HVAC sizing has been updated
 
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
-      all_results[File.basename(xml)] = _get_method_results(results_csv)
-    end
-
-    xmldir_mult = "#{this_dir}/sample_files/multiple_hvac"
-    Dir["#{xmldir_mult}/#{files}"].sort.each do |xml|
       ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
     end
@@ -58,30 +51,33 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     end
     puts "Wrote results to #{test_results_csv}."
 
-    # Additional checks across multiple files
+    # Cross-simulation tests
 
-    # Check that x3 ERIs are equal to x1 ERIs
-    Dir["#{xmldir_mult}/#{files}"].sort.each do |xml|
-      # TODO: Remove lines below once enhanced HVAC controls are available in E+
-      next unless xml.include? "boiler" or xml.include? "central-ac" or
-                  xml.include? "room-ac" or xml.include? "stove"
+    # Verify that REUL Hot Water is identical across water heater types
+    base_results = all_results["valid.xml"]
+    compare_xmls = ["valid-dhw-tank-gas.xml",
+                    "valid-dhw-tank-oil.xml",
+                    "valid-dhw-tank-propane.xml",
+                    "valid-dhw-tank-heat-pump.xml",
+                    "valid-dhw-tankless-electric.xml",
+                    "valid-dhw-tankless-gas.xml",
+                    "valid-dhw-multiple.xml"]
+    if not base_results.nil?
+      base_reul_dhw = base_results["REUL Hot Water (MBtu)"]
+      compare_xmls.each do |compare_xml|
+        compare_results = all_results[compare_xml]
+        next if compare_results.nil?
 
-      xml_x3 = File.basename(xml)
-      xml_x1 = xml_x3.gsub('-x3', '')
-      eri_x3 = all_results[xml_x3]["ERI"]
-      eri_x1 = all_results[xml_x1]["ERI"]
-      puts "#{xml_x1}, #{xml_x3}: #{eri_x1.round(2)}, #{eri_x3.round(2)}"
-      assert_in_epsilon(eri_x1, eri_x3, 0.06) # TODO: Tighten tolerance
+        if compare_xml == "valid-dhw-multiple.xml"
+          compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"].split(",").map(&:to_f).inject(0, :+) # sum values
+        else
+          compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"]
+        end
+        assert_in_epsilon(base_reul_dhw, compare_reul_dhw, 0.01)
+      end
     end
 
-    # Check that ERI calculation for 50% gas furnace + 50% elec furnace is
-    # exactly between ERI calculations for 100% gas furnace and 100% elec furnace.
-    gas_results = all_results["valid-hvac-furnace-gas-only.xml"]
-    elec_results = all_results["valid-hvac-furnace-elec-only.xml"]
-    both_results = all_results["valid-hvac-furnace-elec-furnace-gas.xml"]
-    if not gas_results.nil? and not elec_results.nil? and not both_results.nil?
-      assert_in_epsilon((gas_results["ERI"] + elec_results["ERI"]) / 2.0, both_results["ERI"], 0.01)
-    end
+    # TODO: Verify that REUL Heating & REUL Cooling are identical across HVAC types
   end
 
   def test_invalid_xmls
