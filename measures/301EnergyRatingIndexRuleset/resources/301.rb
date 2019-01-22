@@ -14,18 +14,8 @@ class EnergyRatingIndex301Ruleset
   def self.apply_ruleset(hpxml_doc, calc_type, weather)
     building = hpxml_doc.elements["/HPXML/Building"]
 
-    # Update XML type
-    header = hpxml_doc.elements["/HPXML/XMLTransactionHeaderInformation"]
-    if header.elements["XMLType"].nil?
-      header.elements["XMLType"].text = calc_type
-    else
-      header.elements["XMLType"].text += ", #{calc_type}"
-    end
-
     # Global variables
-    @eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
     @weather = weather
-    @ndu = 1 # Dwelling units
     orig_building_construction = building.elements["BuildingDetails/BuildingSummary/BuildingConstruction"]
     orig_building_construction_values = HPXML.get_building_construction_values(building_construction: orig_building_construction)
     @cfa = Float(orig_building_construction_values[:conditioned_floor_area])
@@ -40,182 +30,182 @@ class EnergyRatingIndex301Ruleset
 
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
-      apply_reference_home_ruleset(building)
+      hpxml_doc = apply_reference_home_ruleset(hpxml_doc)
     elsif calc_type == Constants.CalcTypeERIRatedHome
-      apply_rated_home_ruleset(building)
+      hpxml_doc = apply_rated_home_ruleset(hpxml_doc)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-      apply_index_adjustment_design_ruleset(building)
+      hpxml_doc = apply_index_adjustment_design_ruleset(hpxml_doc)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-      apply_index_adjustment_design_ruleset(building)
-      apply_reference_home_ruleset(building)
+      hpxml_doc = apply_index_adjustment_design_ruleset(hpxml_doc)
+      hpxml_doc = apply_reference_home_ruleset(hpxml_doc)
     end
+
+    return hpxml_doc
   end
 
-  def self.apply_reference_home_ruleset(building)
-    # Create new BuildingDetails element
-    orig_details = XMLHelper.delete_element(building, "BuildingDetails")
-    XMLHelper.delete_element(building, "ModeledUsages")
-    XMLHelper.delete_element(building, "extensions")
-    new_details = XMLHelper.add_element(building, "BuildingDetails")
+  def self.create_new_doc(hpxml_doc)
+    xml_transaction_header_information_values = HPXML.get_xml_transaction_header_information_values(xml_transaction_header_information: hpxml_doc.elements["/HPXML/XMLTransactionHeaderInformation"])
+    software_info_values = HPXML.get_software_info(software_info: hpxml_doc.elements["/HPXML/SoftwareInfo"])
+    building_values = HPXML.get_building_values(building: hpxml_doc.elements["/HPXML/Building"])
+    project_status_values = HPXML.get_project_status_values(project_status: hpxml_doc.elements["/HPXML/Building/ProjectStatus"])
+
+    hpxml_doc = HPXML.create_hpxml(xml_type: xml_transaction_header_information_values[:xml_type],
+                                   xml_generated_by: xml_transaction_header_information_values[:xml_generated_by],
+                                   transaction: xml_transaction_header_information_values[:transaction],
+                                   software_program_used: software_info_values[:software_program_used],
+                                   software_program_version: software_info_values[:software_program_version],
+                                   eri_calculation_version: software_info_values[:eri_calculation_version],
+                                   building_id: building_values[:id],
+                                   event_type: project_status_values[:event_type])
+
+    return hpxml_doc
+  end
+
+  def self.apply_reference_home_ruleset(hpxml_doc)
+    orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+    hpxml_doc = create_new_doc(hpxml_doc)
+    hpxml = hpxml_doc.elements["HPXML"]
 
     # BuildingSummary
-    new_summary = XMLHelper.add_element(new_details, "BuildingSummary")
-    set_summary_reference(new_summary, orig_details)
+    set_summary_reference(orig_details, hpxml)
 
     # ClimateAndRiskZones
-    new_climate = XMLHelper.add_element(new_details, "ClimateandRiskZones")
-    set_climate(new_climate, orig_details)
+    set_climate(orig_details, hpxml)
 
     # Enclosure
-    new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
-    set_enclosure_air_infiltration_reference(new_enclosure)
-    set_enclosure_attics_roofs_reference(new_enclosure, orig_details)
-    set_enclosure_foundations_reference(new_enclosure, orig_details)
-    set_enclosure_rim_joists_reference(new_enclosure, orig_details)
-    set_enclosure_walls_reference(new_enclosure, orig_details)
-    set_enclosure_windows_reference(new_enclosure, orig_details)
-    set_enclosure_skylights_reference(new_enclosure)
-    set_enclosure_doors_reference(new_enclosure, orig_details)
+    set_enclosure_air_infiltration_reference(hpxml)
+    set_enclosure_attics_roofs_reference(orig_details, hpxml)
+    set_enclosure_foundations_reference(orig_details, hpxml)
+    set_enclosure_rim_joists_reference(orig_details, hpxml)
+    set_enclosure_walls_reference(orig_details, hpxml)
+    set_enclosure_windows_reference(orig_details, hpxml)
+    set_enclosure_skylights_reference(hpxml)
+    set_enclosure_doors_reference(orig_details, hpxml)
 
     # Systems
-    new_systems = XMLHelper.add_element(new_details, "Systems")
-    set_systems_hvac_reference(new_systems, orig_details)
-    set_systems_mechanical_ventilation_reference(new_systems, orig_details, new_enclosure)
-    set_systems_water_heater_reference(new_systems, orig_details)
-    set_systems_water_heating_use_reference(new_systems, orig_details)
-    set_systems_photovoltaics_reference(new_systems)
+    set_systems_hvac_reference(orig_details, hpxml)
+    set_systems_mechanical_ventilation_reference(orig_details, hpxml)
+    set_systems_water_heater_reference(orig_details, hpxml)
+    set_systems_water_heating_use_reference(orig_details, hpxml)
+    set_systems_photovoltaics_reference(hpxml)
 
     # Appliances
-    new_appliances = XMLHelper.add_element(new_details, "Appliances")
-    set_appliances_clothes_washer_reference(new_appliances, orig_details)
-    set_appliances_clothes_dryer_reference(new_appliances, orig_details)
-    set_appliances_dishwasher_reference(new_appliances, orig_details)
-    set_appliances_refrigerator_reference(new_appliances, orig_details)
-    set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
+    set_appliances_clothes_washer_reference(orig_details, hpxml)
+    set_appliances_clothes_dryer_reference(orig_details, hpxml)
+    set_appliances_dishwasher_reference(orig_details, hpxml)
+    set_appliances_refrigerator_reference(orig_details, hpxml)
+    set_appliances_cooking_range_oven_reference(orig_details, hpxml)
 
     # Lighting
-    new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_lighting_reference(new_lighting, orig_details)
-    set_ceiling_fans_reference(new_lighting, orig_details)
+    set_lighting_reference(orig_details, hpxml)
+    set_ceiling_fans_reference(orig_details, hpxml)
 
     # MiscLoads
-    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
-    set_misc_loads_reference(new_misc_loads)
+    set_misc_loads_reference(hpxml)
+
+    return hpxml_doc
   end
 
-  def self.apply_rated_home_ruleset(building)
-    # Create new BuildingDetails element
-    orig_details = XMLHelper.delete_element(building, "BuildingDetails")
-    XMLHelper.delete_element(building, "ModeledUsages")
-    XMLHelper.delete_element(building, "extensions")
-    new_details = XMLHelper.add_element(building, "BuildingDetails")
+  def self.apply_rated_home_ruleset(hpxml_doc)
+    orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+    hpxml_doc = create_new_doc(hpxml_doc)
+    hpxml = hpxml_doc.elements["HPXML"]
 
     # BuildingSummary
-    new_summary = XMLHelper.add_element(new_details, "BuildingSummary")
-    set_summary_rated(new_summary, orig_details)
+    set_summary_rated(orig_details, hpxml)
 
     # ClimateAndRiskZones
-    new_climate = XMLHelper.add_element(new_details, "ClimateandRiskZones")
-    set_climate(new_climate, orig_details)
+    set_climate(orig_details, hpxml)
 
     # Enclosure
-    new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
-    set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
-    set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
-    set_enclosure_foundations_rated(new_enclosure, orig_details)
-    set_enclosure_rim_joists_rated(new_enclosure, orig_details)
-    set_enclosure_walls_rated(new_enclosure, orig_details)
-    set_enclosure_windows_rated(new_enclosure, orig_details)
-    set_enclosure_skylights_rated(new_enclosure, orig_details)
-    set_enclosure_doors_rated(new_enclosure, orig_details)
+    set_enclosure_air_infiltration_rated(orig_details, hpxml)
+    set_enclosure_attics_roofs_rated(orig_details, hpxml)
+    set_enclosure_foundations_rated(orig_details, hpxml)
+    set_enclosure_rim_joists_rated(orig_details, hpxml)
+    set_enclosure_walls_rated(orig_details, hpxml)
+    set_enclosure_windows_rated(orig_details, hpxml)
+    set_enclosure_skylights_rated(orig_details, hpxml)
+    set_enclosure_doors_rated(orig_details, hpxml)
 
     # Systems
-    new_systems = XMLHelper.add_element(new_details, "Systems")
-    set_systems_hvac_rated(new_systems, orig_details)
-    set_systems_mechanical_ventilation_rated(new_systems, orig_details)
-    set_systems_water_heater_rated(new_systems, orig_details)
-    set_systems_water_heating_use_rated(new_systems, orig_details)
-    set_systems_photovoltaics_rated(new_systems, orig_details)
+    set_systems_hvac_rated(orig_details, hpxml)
+    set_systems_mechanical_ventilation_rated(orig_details, hpxml)
+    set_systems_water_heater_rated(orig_details, hpxml)
+    set_systems_water_heating_use_rated(orig_details, hpxml)
+    set_systems_photovoltaics_rated(orig_details, hpxml)
 
     # Appliances
-    new_appliances = XMLHelper.add_element(new_details, "Appliances")
-    set_appliances_clothes_washer_rated(new_appliances, orig_details)
-    set_appliances_clothes_dryer_rated(new_appliances, orig_details)
-    set_appliances_dishwasher_rated(new_appliances, orig_details)
-    set_appliances_refrigerator_rated(new_appliances, orig_details)
-    set_appliances_cooking_range_oven_rated(new_appliances, orig_details)
+    set_appliances_clothes_washer_rated(orig_details, hpxml)
+    set_appliances_clothes_dryer_rated(orig_details, hpxml)
+    set_appliances_dishwasher_rated(orig_details, hpxml)
+    set_appliances_refrigerator_rated(orig_details, hpxml)
+    set_appliances_cooking_range_oven_rated(orig_details, hpxml)
 
     # Lighting
-    new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_lighting_rated(new_lighting, orig_details)
-    set_ceiling_fans_rated(new_lighting, orig_details)
+    set_lighting_rated(orig_details, hpxml)
+    set_ceiling_fans_rated(orig_details, hpxml)
 
     # MiscLoads
-    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
-    set_misc_loads_rated(new_misc_loads)
+    set_misc_loads_rated(hpxml)
+
+    return hpxml_doc
   end
 
-  def self.apply_index_adjustment_design_ruleset(building)
-    # Create new BuildingDetails element
-    orig_details = XMLHelper.delete_element(building, "BuildingDetails")
-    XMLHelper.delete_element(building, "ModeledUsages")
-    XMLHelper.delete_element(building, "extensions")
-    new_details = XMLHelper.add_element(building, "BuildingDetails")
+  def self.apply_index_adjustment_design_ruleset(hpxml_doc)
+    orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+    hpxml_doc = create_new_doc(hpxml_doc)
+    hpxml = hpxml_doc.elements["HPXML"]
 
     # BuildingSummary
-    new_summary = XMLHelper.add_element(new_details, "BuildingSummary")
-    set_summary_iad(new_summary, orig_details)
+    set_summary_iad(orig_details, hpxml)
 
     # ClimateAndRiskZones
-    new_climate = XMLHelper.add_element(new_details, "ClimateandRiskZones")
-    set_climate(new_climate, orig_details)
+    set_climate(orig_details, hpxml)
 
     # Enclosure
-    new_enclosure = XMLHelper.add_element(new_details, "Enclosure")
-    set_enclosure_air_infiltration_iad(new_enclosure)
-    set_enclosure_attics_roofs_iad(new_enclosure, orig_details)
-    set_enclosure_foundations_iad(new_enclosure)
-    set_enclosure_rim_joists_iad(new_enclosure, orig_details)
-    set_enclosure_walls_iad(new_enclosure, orig_details)
-    set_enclosure_windows_iad(new_enclosure, orig_details)
-    set_enclosure_skylights_iad(new_enclosure, orig_details)
-    set_enclosure_doors_iad(new_enclosure, orig_details)
+    set_enclosure_air_infiltration_iad(hpxml)
+    set_enclosure_attics_roofs_iad(orig_details, hpxml)
+    set_enclosure_foundations_iad(hpxml)
+    set_enclosure_rim_joists_iad(orig_details, hpxml)
+    set_enclosure_walls_iad(orig_details, hpxml)
+    set_enclosure_windows_iad(orig_details, hpxml)
+    set_enclosure_skylights_iad(orig_details, hpxml)
+    set_enclosure_doors_iad(orig_details, hpxml)
 
     # Systems
-    new_systems = XMLHelper.add_element(new_details, "Systems")
-    set_systems_hvac_iad(new_systems, orig_details)
-    set_systems_mechanical_ventilation_iad(new_systems, orig_details, new_enclosure)
-    set_systems_water_heater_iad(new_systems, orig_details)
-    set_systems_water_heating_use_iad(new_systems, orig_details)
-    set_systems_photovoltaics_iad(new_systems)
+    set_systems_hvac_iad(orig_details, hpxml)
+    set_systems_mechanical_ventilation_iad(orig_details, hpxml)
+    set_systems_water_heater_iad(orig_details, hpxml)
+    set_systems_water_heating_use_iad(orig_details, hpxml)
+    set_systems_photovoltaics_iad(hpxml)
 
     # Appliances
-    new_appliances = XMLHelper.add_element(new_details, "Appliances")
-    set_appliances_clothes_washer_iad(new_appliances, orig_details)
-    set_appliances_clothes_dryer_iad(new_appliances, orig_details)
-    set_appliances_dishwasher_iad(new_appliances, orig_details)
-    set_appliances_refrigerator_iad(new_appliances, orig_details)
-    set_appliances_cooking_range_oven_iad(new_appliances, orig_details)
+    set_appliances_clothes_washer_iad(orig_details, hpxml)
+    set_appliances_clothes_dryer_iad(orig_details, hpxml)
+    set_appliances_dishwasher_iad(orig_details, hpxml)
+    set_appliances_refrigerator_iad(orig_details, hpxml)
+    set_appliances_cooking_range_oven_iad(orig_details, hpxml)
 
     # Lighting
-    new_lighting = XMLHelper.add_element(new_details, "Lighting")
-    set_lighting_iad(new_lighting, orig_details)
-    set_ceiling_fans_iad(new_lighting, orig_details)
+    set_lighting_iad(orig_details, hpxml)
+    set_ceiling_fans_iad(orig_details, hpxml)
 
     # MiscLoads
-    new_misc_loads = XMLHelper.add_element(new_details, "MiscLoads")
-    set_misc_loads_iad(new_misc_loads)
+    set_misc_loads_iad(hpxml)
+
+    return hpxml_doc
   end
 
-  def self.set_summary_reference(new_summary, orig_details)
+  def self.set_summary_reference(orig_details, hpxml)
     orig_site = orig_details.elements["BuildingSummary/Site"]
     orig_site_values = HPXML.get_site_values(site: orig_site)
-    HPXML.add_site(building_summary: new_summary,
+    HPXML.add_site(hpxml: hpxml,
                    fuels: orig_site_values[:fuels],
                    shelter_coefficient: Airflow.get_default_shelter_coefficient())
-    HPXML.add_building_occupancy(building_summary: new_summary,
+    HPXML.add_building_occupancy(hpxml: hpxml,
                                  number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
-    HPXML.add_building_construction(building_summary: new_summary,
+
+    HPXML.add_building_construction(hpxml: hpxml,
                                     number_of_conditioned_floors: Integer(@ncfl),
                                     number_of_conditioned_floors_above_grade: Integer(@ncfl_ag),
                                     number_of_bedrooms: Integer(@nbeds),
@@ -224,15 +214,15 @@ class EnergyRatingIndex301Ruleset
                                     garage_present: @garage_present)
   end
 
-  def self.set_summary_rated(new_summary, orig_details)
+  def self.set_summary_rated(orig_details, hpxml)
     orig_site = orig_details.elements["BuildingSummary/Site"]
     orig_site_values = HPXML.get_site_values(site: orig_site)
-    HPXML.add_site(building_summary: new_summary,
+    HPXML.add_site(hpxml: hpxml,
                    fuels: orig_site_values[:fuels],
                    shelter_coefficient: Airflow.get_default_shelter_coefficient())
-    HPXML.add_building_occupancy(building_summary: new_summary,
+    HPXML.add_building_occupancy(hpxml: hpxml,
                                  number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
-    HPXML.add_building_construction(building_summary: new_summary,
+    HPXML.add_building_construction(hpxml: hpxml,
                                     number_of_conditioned_floors: Integer(@ncfl),
                                     number_of_conditioned_floors_above_grade: Integer(@ncfl_ag),
                                     number_of_bedrooms: Integer(@nbeds),
@@ -241,7 +231,7 @@ class EnergyRatingIndex301Ruleset
                                     garage_present: @garage_present)
   end
 
-  def self.set_summary_iad(new_summary, orig_details)
+  def self.set_summary_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
     @cfa = 2400
     @nbeds = 3
@@ -252,12 +242,12 @@ class EnergyRatingIndex301Ruleset
 
     orig_site = orig_details.elements["BuildingSummary/Site"]
     orig_site_values = HPXML.get_site_values(site: orig_site)
-    HPXML.add_site(building_summary: new_summary,
+    HPXML.add_site(hpxml: hpxml,
                    fuels: orig_site_values[:fuels],
                    shelter_coefficient: Airflow.get_default_shelter_coefficient())
-    HPXML.add_building_occupancy(building_summary: new_summary,
+    HPXML.add_building_occupancy(hpxml: hpxml,
                                  number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
-    HPXML.add_building_construction(building_summary: new_summary,
+    HPXML.add_building_construction(hpxml: hpxml,
                                     number_of_conditioned_floors: Integer(@ncfl),
                                     number_of_conditioned_floors_above_grade: Integer(@ncfl_ag),
                                     number_of_bedrooms: Integer(@nbeds),
@@ -266,24 +256,22 @@ class EnergyRatingIndex301Ruleset
                                     garage_present: @garage_present)
   end
 
-  def self.set_climate(new_climate, orig_details)
+  def self.set_climate(orig_details, hpxml)
     orig_details.elements.each("ClimateandRiskZones/ClimateZoneIECC") do |orig_climate_zone|
       orig_climate_zone_values = HPXML.get_climate_zone_iecc_values(climate_zone_iecc: orig_climate_zone)
-      HPXML.add_climate_zone_iecc(climate_and_risk_zones: new_climate,
+      HPXML.add_climate_zone_iecc(hpxml: hpxml,
                                   year: orig_climate_zone_values[:year],
                                   climate_zone: orig_climate_zone_values[:climate_zone])
     end
     orig_weather_station = orig_details.elements["ClimateandRiskZones/WeatherStation"]
     orig_weather_station_values = HPXML.get_weather_station_values(weather_station: orig_weather_station)
-    HPXML.add_weather_station(climate_and_risk_zones: new_climate,
+    HPXML.add_weather_station(hpxml: hpxml,
                               id: orig_weather_station_values[:id],
                               name: orig_weather_station_values[:name],
                               wmo: orig_weather_station_values[:wmo])
   end
 
-  def self.set_enclosure_air_infiltration_reference(new_enclosure)
-    new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
-
+  def self.set_enclosure_air_infiltration_reference(hpxml)
     # Table 4.2.2(1) - Air exchange rate
     sla = 0.00036
 
@@ -292,13 +280,13 @@ class EnergyRatingIndex301Ruleset
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
 
     # nACH
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACHnatural",
                                            unit_of_measure: "ACHnatural",
                                            air_leakage: nach)
 
     # ACH50
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
                                            unit_of_measure: "ACH",
@@ -306,16 +294,15 @@ class EnergyRatingIndex301Ruleset
 
     # ELA/SLA
     ela = sla * @cfa
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ELA_SLA",
                                            effective_leakage_area: ela)
 
-    HPXML.add_extension(parent: new_infil,
+    HPXML.add_extension(parent: hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"],
                         extensions: { "BuildingSpecificLeakageArea": sla })
   end
 
-  def self.set_enclosure_air_infiltration_rated(new_enclosure, orig_details)
-    new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
+  def self.set_enclosure_air_infiltration_rated(orig_details, hpxml)
     orig_infil = orig_details.elements["Enclosure/AirInfiltration"]
     orig_mv = orig_details.elements["Systems/MechanicalVentilation"]
 
@@ -344,30 +331,28 @@ class EnergyRatingIndex301Ruleset
     end
 
     # nACH
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACHnatural",
                                            unit_of_measure: "ACHnatural",
                                            air_leakage: nach)
 
     # ACH50
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
                                            unit_of_measure: "ACH",
                                            air_leakage: ach50)
 
     # ELA/SLA
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ELA_SLA",
                                            effective_leakage_area: ela)
 
-    HPXML.add_extension(parent: new_infil,
+    HPXML.add_extension(parent: hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"],
                         extensions: { "BuildingSpecificLeakageArea": sla })
   end
 
-  def self.set_enclosure_air_infiltration_iad(new_enclosure)
-    new_infil = XMLHelper.add_element(new_enclosure, "AirInfiltration")
-
+  def self.set_enclosure_air_infiltration_iad(hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
     if ["1A", "1B", "1C", "2A", "2B", "2C"].include? @iecc_zone_2012
       ach50 = 3.0
@@ -382,13 +367,13 @@ class EnergyRatingIndex301Ruleset
     nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
 
     # nACH
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACHnatural",
                                            unit_of_measure: "ACHnatural",
                                            air_leakage: nach)
 
     # ACH50
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
                                            unit_of_measure: "ACH",
@@ -396,17 +381,15 @@ class EnergyRatingIndex301Ruleset
 
     # ELA/SLA
     ela = sla * @cfa
-    HPXML.add_air_infiltration_measurement(air_infiltration: new_infil,
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ELA_SLA",
                                            effective_leakage_area: ela)
 
-    HPXML.add_extension(parent: new_infil,
+    HPXML.add_extension(parent: hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"],
                         extensions: { "BuildingSpecificLeakageArea": sla })
   end
 
-  def self.set_enclosure_attics_roofs_reference(new_enclosure, orig_details)
-    new_attics = XMLHelper.add_element(new_enclosure, "Attics")
-
+  def self.set_enclosure_attics_roofs_reference(orig_details, hpxml)
     ceiling_ufactor = FloorConstructions.get_default_ceiling_ufactor(@iecc_zone_2006)
     wall_ufactor = WallConstructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
@@ -417,21 +400,20 @@ class EnergyRatingIndex301Ruleset
         attic_type = 'vented attic'
       end
       interior_adjacent_to = get_attic_adjacent_to(attic_type)
-      new_attic = HPXML.add_attic(attics: new_attics,
+      new_attic = HPXML.add_attic(hpxml: hpxml,
                                   id: HPXML.get_id(orig_attic),
                                   attic_type: attic_type)
 
       # Table 4.2.2(1) - Roofs
-      new_roofs = XMLHelper.add_element(new_attic, "Roofs")
       orig_attic.elements.each("Roofs/Roof") do |orig_roof|
         orig_roof_values = HPXML.get_roof_values(roof: orig_roof)
-        new_roof = HPXML.add_roof(roofs: new_roofs,
-                                  id: orig_roof_values[:id],
-                                  area: orig_roof_values[:area],
-                                  solar_absorptance: 0.75,
-                                  emittance: 0.90,
-                                  pitch: orig_roof_values[:pitch],
-                                  radiant_barrier: orig_roof_values[:radiant_barrier])
+        new_roof = HPXML.add_attic_roof(attic: new_attic,
+                                        id: orig_roof_values[:id],
+                                        area: orig_roof_values[:area],
+                                        solar_absorptance: 0.75,
+                                        emittance: 0.90,
+                                        pitch: orig_roof_values[:pitch],
+                                        radiant_barrier: orig_roof_values[:radiant_barrier])
         orig_roof_ins = orig_roof.elements["Insulation"]
         orig_roof_ins_values = HPXML.get_insulation_values(insulation: orig_roof_ins)
         assembly_effective_r_value = orig_roof_ins_values[:assembly_effective_r_value]
@@ -444,14 +426,13 @@ class EnergyRatingIndex301Ruleset
       end
 
       # Table 4.2.2(1) - Ceilings
-      new_floors = XMLHelper.add_element(new_attic, "Floors")
       orig_attic.elements.each("Floors/Floor") do |orig_floor|
         orig_floor_values = HPXML.get_floor_values(floor: orig_floor)
         exterior_adjacent_to = orig_floor_values[:adjacent_to]
-        new_floor = HPXML.add_floor(floors: new_floors,
-                                    id: orig_floor_values[:id],
-                                    adjacent_to: exterior_adjacent_to,
-                                    area: orig_floor_values[:area])
+        new_floor = HPXML.add_attic_floor(attic: new_attic,
+                                          id: orig_floor_values[:id],
+                                          adjacent_to: exterior_adjacent_to,
+                                          area: orig_floor_values[:area])
         orig_floor_ins = orig_floor.elements["Insulation"]
         orig_floor_ins_values = HPXML.get_insulation_values(insulation: orig_floor_ins)
         assembly_effective_r_value = orig_floor_ins_values[:assembly_effective_r_value]
@@ -464,17 +445,16 @@ class EnergyRatingIndex301Ruleset
       end
 
       # Table 4.2.2(1) - Above-grade walls
-      new_walls = XMLHelper.add_element(new_attic, "Walls")
       orig_attic.elements.each("Walls/Wall") do |orig_wall|
         orig_wall_values = HPXML.get_wall_values(wall: orig_wall)
         exterior_adjacent_to = orig_wall_values[:adjacent_to]
-        new_wall = HPXML.add_wall(walls: new_walls,
-                                  id: orig_wall_values[:id],
-                                  adjacent_to: exterior_adjacent_to,
-                                  wall_type: orig_wall_values[:wall_type],
-                                  area: orig_wall_values[:area],
-                                  solar_absorptance: orig_wall_values[:solar_absorptance],
-                                  emittance: orig_wall_values[:emittance])
+        new_wall = HPXML.add_attic_wall(attic: new_attic,
+                                        id: orig_wall_values[:id],
+                                        adjacent_to: exterior_adjacent_to,
+                                        wall_type: orig_wall_values[:wall_type],
+                                        area: orig_wall_values[:area],
+                                        solar_absorptance: orig_wall_values[:solar_absorptance],
+                                        emittance: orig_wall_values[:emittance])
         orig_wall_ins = orig_wall.elements["Insulation"]
         orig_wall_ins_values = HPXML.get_insulation_values(insulation: orig_wall_ins)
         assembly_effective_r_value = orig_wall_ins_values[:assembly_effective_r_value]
@@ -494,26 +474,23 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
-    new_attics = XMLHelper.add_element(new_enclosure, "Attics")
-
+  def self.set_enclosure_attics_roofs_rated(orig_details, hpxml)
     orig_details.elements.each("Enclosure/Attics/Attic") do |orig_attic|
       orig_attic_values = HPXML.get_attic_values(attic: orig_attic)
-      new_attic = HPXML.add_attic(attics: new_attics,
+      new_attic = HPXML.add_attic(hpxml: hpxml,
                                   id: orig_attic_values[:id],
                                   attic_type: orig_attic_values[:attic_type])
 
-      new_roofs = XMLHelper.add_element(new_attic, "Roofs")
       orig_attic.elements.each("Roofs/Roof") do |orig_roof|
         orig_roof_values = HPXML.get_roof_values(roof: orig_roof)
-        new_roof = HPXML.add_roof(roofs: new_roofs,
-                                  id: orig_roof_values[:id],
-                                  area: orig_roof_values[:area],
-                                  azimuth: orig_roof_values[:azimuth],
-                                  solar_absorptance: orig_roof_values[:solar_absorptance],
-                                  emittance: orig_roof_values[:emittance],
-                                  pitch: orig_roof_values[:pitch],
-                                  radiant_barrier: orig_roof_values[:radiant_barrier])
+        new_roof = HPXML.add_attic_roof(attic: new_attic,
+                                        id: orig_roof_values[:id],
+                                        area: orig_roof_values[:area],
+                                        azimuth: orig_roof_values[:azimuth],
+                                        solar_absorptance: orig_roof_values[:solar_absorptance],
+                                        emittance: orig_roof_values[:emittance],
+                                        pitch: orig_roof_values[:pitch],
+                                        radiant_barrier: orig_roof_values[:radiant_barrier])
         orig_roof_ins = orig_roof.elements["Insulation"]
         orig_roof_ins_values = HPXML.get_insulation_values(insulation: orig_roof_ins)
         HPXML.add_insulation(parent: new_roof,
@@ -521,13 +498,12 @@ class EnergyRatingIndex301Ruleset
                              assembly_effective_r_value: orig_roof_ins_values[:assembly_effective_r_value])
       end
 
-      new_floors = XMLHelper.add_element(new_attic, "Floors")
       orig_attic.elements.each("Floors/Floor") do |orig_floor|
         orig_floor_values = HPXML.get_floor_values(floor: orig_floor)
-        new_floor = HPXML.add_floor(floors: new_floors,
-                                    id: orig_floor_values[:id],
-                                    adjacent_to: orig_floor_values[:adjacent_to],
-                                    area: orig_floor_values[:area])
+        new_floor = HPXML.add_attic_floor(attic: new_attic,
+                                          id: orig_floor_values[:id],
+                                          adjacent_to: orig_floor_values[:adjacent_to],
+                                          area: orig_floor_values[:area])
         orig_floor_ins = orig_floor.elements["Insulation"]
         orig_floor_ins_values = HPXML.get_insulation_values(insulation: orig_floor_ins)
         HPXML.add_insulation(parent: new_floor,
@@ -535,19 +511,18 @@ class EnergyRatingIndex301Ruleset
                              assembly_effective_r_value: orig_floor_ins_values[:assembly_effective_r_value])
       end
 
-      new_walls = XMLHelper.add_element(new_attic, "Walls")
       orig_attic.elements.each("Walls/Wall") do |orig_wall|
         orig_wall_values = HPXML.get_wall_values(wall: orig_wall)
-        new_wall = HPXML.add_wall(walls: new_walls,
-                                  id: orig_wall_values[:id],
-                                  exterior_adjacent_to: orig_wall_values[:exterior_adjacent_to],
-                                  interior_adjacent_to: orig_wall_values[:interior_adjacent_to],
-                                  adjacent_to: orig_wall_values[:adjacent_to],
-                                  wall_type: orig_wall_values[:wall_type],
-                                  area: orig_wall_values[:area],
-                                  azimuth: orig_wall_values[:azimuth],
-                                  solar_absorptance: orig_wall_values[:solar_absorptance],
-                                  emittance: orig_wall_values[:emittance])
+        new_wall = HPXML.add_attic_wall(attic: new_attic,
+                                        id: orig_wall_values[:id],
+                                        exterior_adjacent_to: orig_wall_values[:exterior_adjacent_to],
+                                        interior_adjacent_to: orig_wall_values[:interior_adjacent_to],
+                                        adjacent_to: orig_wall_values[:adjacent_to],
+                                        wall_type: orig_wall_values[:wall_type],
+                                        area: orig_wall_values[:area],
+                                        azimuth: orig_wall_values[:azimuth],
+                                        solar_absorptance: orig_wall_values[:solar_absorptance],
+                                        emittance: orig_wall_values[:emittance])
         orig_wall_ins = orig_wall.elements["Insulation"]
         orig_wall_ins_values = HPXML.get_insulation_values(insulation: orig_wall_ins)
         HPXML.add_insulation(parent: new_wall,
@@ -557,11 +532,11 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_attics_roofs_iad(new_enclosure, orig_details)
-    set_enclosure_attics_roofs_rated(new_enclosure, orig_details)
+  def self.set_enclosure_attics_roofs_iad(orig_details, hpxml)
+    set_enclosure_attics_roofs_rated(orig_details, hpxml)
 
+    new_enclosure = hpxml.elements["Building/BuildingDetails/Enclosure"]
     new_enclosure.elements.each("Attics/Attic") do |new_attic|
-      new_attic_values = HPXML.get_attic_values(attic: new_attic)
       # Table 4.3.1(1) Configuration of Index Adjustment Design - Roofs
       sum_roof_area = 0.0
       new_attic.elements.each("Roofs/Roof") do |new_roof|
@@ -588,9 +563,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_foundations_reference(new_enclosure, orig_details)
-    new_foundations = XMLHelper.add_element(new_enclosure, "Foundations")
-
+  def self.set_enclosure_foundations_reference(orig_details, hpxml)
     floor_ufactor = FloorConstructions.get_default_floor_ufactor(@iecc_zone_2006)
     wall_ufactor = FoundationConstructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
     slab_perim_rvalue, slab_perim_depth = FoundationConstructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
@@ -605,7 +578,7 @@ class EnergyRatingIndex301Ruleset
       end
       interior_adjacent_to = get_foundation_adjacent_to(orig_foundation.elements["FoundationType"])
 
-      new_foundation = HPXML.add_foundation(foundations: new_foundations,
+      new_foundation = HPXML.add_foundation(hpxml: hpxml,
                                             id: HPXML.get_id(orig_foundation),
                                             foundation_type: foundation_type)
 
@@ -698,9 +671,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_foundations_rated(new_enclosure, orig_details)
-    new_foundations = XMLHelper.add_element(new_enclosure, "Foundations")
-
+  def self.set_enclosure_foundations_rated(orig_details, hpxml)
     min_crawl_vent = Airflow.get_default_vented_crawl_sla() # Reference Home vent
 
     orig_details.elements.each("Enclosure/Foundations/Foundation") do |orig_foundation|
@@ -716,7 +687,7 @@ class EnergyRatingIndex301Ruleset
         end
       end
 
-      new_foundation = HPXML.add_foundation(foundations: new_foundations,
+      new_foundation = HPXML.add_foundation(hpxml: hpxml,
                                             id: orig_foundation_values[:id],
                                             foundation_type: foundation_type)
 
@@ -784,12 +755,11 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_foundations_iad(new_enclosure)
+  def self.set_enclosure_foundations_iad(hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Foundation
     floor_ufactor = FloorConstructions.get_default_floor_ufactor(@iecc_zone_2006)
 
-    new_foundations = XMLHelper.add_element(new_enclosure, "Foundations")
-    new_foundation = HPXML.add_foundation(foundations: new_foundations,
+    new_foundation = HPXML.add_foundation(hpxml: hpxml,
                                           id: "Foundation_Crawlspace",
                                           foundation_type: "VentedCrawlspace")
 
@@ -842,10 +812,8 @@ class EnergyRatingIndex301Ruleset
                         extensions: { "CrawlspaceSpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
   end
 
-  def self.set_enclosure_rim_joists_reference(new_enclosure, orig_details)
+  def self.set_enclosure_rim_joists_reference(orig_details, hpxml)
     return if not XMLHelper.has_element(orig_details, "Enclosure/RimJoists")
-
-    new_rim_joists = XMLHelper.add_element(new_enclosure, "RimJoists")
 
     # Table 4.2.2(1) - Above-grade walls
     ufactor = WallConstructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
@@ -854,7 +822,7 @@ class EnergyRatingIndex301Ruleset
       orig_rim_joist_values = HPXML.get_rim_joist_values(rim_joist: orig_rim_joist)
       interior_adjacent_to = orig_rim_joist_values[:interior_adjacent_to]
       exterior_adjacent_to = orig_rim_joist_values[:exterior_adjacent_to]
-      new_rim_joist = HPXML.add_rim_joist(rim_joists: new_rim_joists,
+      new_rim_joist = HPXML.add_rim_joist(hpxml: hpxml,
                                           id: orig_rim_joist_values[:id],
                                           exterior_adjacent_to: exterior_adjacent_to,
                                           interior_adjacent_to: interior_adjacent_to,
@@ -871,16 +839,14 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_rim_joists_rated(new_enclosure, orig_details)
+  def self.set_enclosure_rim_joists_rated(orig_details, hpxml)
     return if not XMLHelper.has_element(orig_details, "Enclosure/RimJoists")
-
-    new_rim_joists = XMLHelper.add_element(new_enclosure, "RimJoists")
 
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |orig_rim_joist|
       orig_rim_joist_values = HPXML.get_rim_joist_values(rim_joist: orig_rim_joist)
       interior_adjacent_to = orig_rim_joist_values[:interior_adjacent_to]
       exterior_adjacent_to = orig_rim_joist_values[:exterior_adjacent_to]
-      new_rim_joist = HPXML.add_rim_joist(rim_joists: new_rim_joists,
+      new_rim_joist = HPXML.add_rim_joist(hpxml: hpxml,
                                           id: orig_rim_joist_values[:id],
                                           exterior_adjacent_to: exterior_adjacent_to,
                                           interior_adjacent_to: interior_adjacent_to,
@@ -926,9 +892,9 @@ class EnergyRatingIndex301Ruleset
     return sum_wall_area
   end
 
-  def self.set_enclosure_rim_joists_iad(new_enclosure, orig_details)
+  def self.set_enclosure_rim_joists_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
-    set_enclosure_rim_joists_rated(new_enclosure, orig_details)
+    set_enclosure_rim_joists_rated(orig_details, hpxml)
 
     orig_rim_joists = orig_details.elements["Enclosure/RimJoists"]
     return if orig_rim_joists.nil?
@@ -937,8 +903,7 @@ class EnergyRatingIndex301Ruleset
 
     sum_wall_area = get_iad_sum_external_wall_area(orig_walls, orig_rim_joists)
 
-    new_rim_joists = new_enclosure.elements["RimJoists"]
-
+    new_rim_joists = hpxml.elements["Building/BuildingDetails/Enclosure/RimJoists"]
     new_rim_joists.elements.each("RimJoist") do |new_rim_joist|
       new_rim_joist_values = HPXML.get_rim_joist_values(rim_joist: new_rim_joist)
       interior_adjacent_to = new_rim_joist_values[:interior_adjacent_to]
@@ -955,9 +920,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_walls_reference(new_enclosure, orig_details)
-    new_walls = XMLHelper.add_element(new_enclosure, "Walls")
-
+  def self.set_enclosure_walls_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Above-grade walls
     ufactor = WallConstructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
@@ -975,7 +938,7 @@ class EnergyRatingIndex301Ruleset
         emittance = 0.90
         assembly_effective_r_value = 1.0 / ufactor
       end
-      new_wall = HPXML.add_wall(walls: new_walls,
+      new_wall = HPXML.add_wall(hpxml: hpxml,
                                 id: orig_wall_values[:id],
                                 exterior_adjacent_to: exterior_adjacent_to,
                                 interior_adjacent_to: interior_adjacent_to,
@@ -990,12 +953,10 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_walls_rated(new_enclosure, orig_details)
-    new_walls = XMLHelper.add_element(new_enclosure, "Walls")
-
+  def self.set_enclosure_walls_rated(orig_details, hpxml)
     orig_details.elements.each("Enclosure/Walls/Wall") do |orig_wall|
       orig_wall_values = HPXML.get_wall_values(wall: orig_wall)
-      new_wall = HPXML.add_wall(walls: new_walls,
+      new_wall = HPXML.add_wall(hpxml: hpxml,
                                 id: orig_wall_values[:id],
                                 exterior_adjacent_to: orig_wall_values[:exterior_adjacent_to],
                                 interior_adjacent_to: orig_wall_values[:interior_adjacent_to],
@@ -1015,17 +976,16 @@ class EnergyRatingIndex301Ruleset
     # nop
   end
 
-  def self.set_enclosure_walls_iad(new_enclosure, orig_details)
+  def self.set_enclosure_walls_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
-    set_enclosure_walls_rated(new_enclosure, orig_details)
+    set_enclosure_walls_rated(orig_details, hpxml)
 
     orig_walls = orig_details.elements["Enclosure/Walls"]
     orig_rim_joists = orig_details.elements["Enclosure/RimJoists"]
 
     sum_wall_area = get_iad_sum_external_wall_area(orig_walls, orig_rim_joists)
 
-    new_walls = new_enclosure.elements["Walls"]
-
+    new_walls = hpxml.elements["Building/BuildingDetails/Enclosure/Walls"]
     new_walls.elements.each("Wall") do |new_wall|
       new_wall_values = HPXML.get_wall_values(wall: new_wall)
       interior_adjacent_to = new_wall_values[:interior_adjacent_to]
@@ -1037,7 +997,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_windows_reference(new_enclosure, orig_details)
+  def self.set_enclosure_windows_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Glazing
     ufactor, shgc = SubsurfaceConstructions.get_default_ufactor_shgc(@iecc_zone_2006)
 
@@ -1074,13 +1034,12 @@ class EnergyRatingIndex301Ruleset
     wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
 
     # Create new windows
-    new_windows = XMLHelper.add_element(new_enclosure, "Windows")
     for orientation, azimuth in { "north" => 0, "south" => 180, "east" => 90, "west" => 270 }
       window_area = 0.25 * total_window_area # Equal distribution to N/S/E/W
       # Distribute this orientation's window area proportionally across all exterior walls
       wall_area_fracs.each do |wall, wall_area_frac|
         wall_id = HPXML.get_id(wall)
-        new_window = HPXML.add_window(windows: new_windows,
+        new_window = HPXML.add_window(hpxml: hpxml,
                                       id: "Window_#{wall_id}_#{orientation}",
                                       area: window_area * wall_area_frac,
                                       azimuth: azimuth,
@@ -1102,13 +1061,11 @@ class EnergyRatingIndex301Ruleset
                                       "InteriorShadingFactorWinter": shade_winter })
   end
 
-  def self.set_enclosure_windows_rated(new_enclosure, orig_details)
-    new_windows = XMLHelper.add_element(new_enclosure, "Windows")
-
+  def self.set_enclosure_windows_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Glazing
     orig_details.elements.each("Enclosure/Windows/Window") do |orig_window|
       orig_window_values = HPXML.get_window_values(window: orig_window)
-      new_window = HPXML.add_window(windows: new_windows,
+      new_window = HPXML.add_window(hpxml: hpxml,
                                     id: orig_window_values[:id],
                                     area: orig_window_values[:area],
                                     azimuth: orig_window_values[:azimuth],
@@ -1123,11 +1080,11 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_windows_iad(new_enclosure, orig_details)
+  def self.set_enclosure_windows_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Glazing
-    set_enclosure_windows_reference(new_enclosure, orig_details)
+    set_enclosure_windows_reference(orig_details, hpxml)
 
-    new_windows = new_enclosure.elements["Windows"]
+    new_windows = hpxml.elements["Building/BuildingDetails/Enclosure/Windows"]
 
     # Calculate area-weighted averages
     sum_u_a = 0.0
@@ -1149,20 +1106,18 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_skylights_reference(enclosure)
+  def self.set_enclosure_skylights_reference(hpxml)
     # Table 4.2.2(1) - Skylights
     # nop
   end
 
-  def self.set_enclosure_skylights_rated(new_enclosure, orig_details)
+  def self.set_enclosure_skylights_rated(orig_details, hpxml)
     return if not XMLHelper.has_element(orig_details, "Enclosure/Skylights")
-
-    new_skylights = XMLHelper.add_element(new_enclosure, "Skylights")
 
     # Table 4.2.2(1) - Skylights
     orig_details.elements.each("Enclosure/Skylights/Skylight") do |orig_skylight|
       orig_skylight_values = HPXML.get_skylight_values(skylight: orig_skylight)
-      new_skylight = HPXML.add_skylight(skylights: new_skylights,
+      new_skylight = HPXML.add_skylight(hpxml: hpxml,
                                         id: orig_skylight_values[:id],
                                         area: orig_skylight_values[:area],
                                         azimuth: orig_skylight_values[:azimuth],
@@ -1172,12 +1127,12 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_skylights_iad(new_enclosure, orig_details)
+  def self.set_enclosure_skylights_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Skylights
-    set_enclosure_skylights_rated(new_enclosure, orig_details)
+    set_enclosure_skylights_rated(orig_details, hpxml)
   end
 
-  def self.set_enclosure_doors_reference(new_enclosure, orig_details)
+  def self.set_enclosure_doors_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Doors
     ufactor, shgc = SubsurfaceConstructions.get_default_ufactor_shgc(@iecc_zone_2006)
     door_area = SubsurfaceConstructions.get_default_door_area()
@@ -1185,12 +1140,11 @@ class EnergyRatingIndex301Ruleset
     wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
 
     # Create new doors
-    new_doors = XMLHelper.add_element(new_enclosure, "Doors")
     # Distribute door area proportionally across all exterior walls
     wall_area_fracs.each do |wall, wall_area_frac|
       wall_id = HPXML.get_id(wall)
 
-      new_door = HPXML.add_door(doors: new_doors,
+      new_door = HPXML.add_door(hpxml: hpxml,
                                 id: "Door_#{wall_id}",
                                 idref: wall_id,
                                 area: door_area * wall_area_frac,
@@ -1199,13 +1153,11 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_doors_rated(new_enclosure, orig_details)
-    new_doors = XMLHelper.add_element(new_enclosure, "Doors")
-
+  def self.set_enclosure_doors_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Doors
     orig_details.elements.each("Enclosure/Doors/Door") do |orig_door|
       orig_door_values = HPXML.get_door_values(door: orig_door)
-      new_door = HPXML.add_door(doors: new_doors,
+      new_door = HPXML.add_door(hpxml: hpxml,
                                 id: orig_door_values[:id],
                                 idref: orig_door_values[:idref],
                                 area: orig_door_values[:area],
@@ -1214,15 +1166,12 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_doors_iad(new_enclosure, orig_details)
+  def self.set_enclosure_doors_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
-    set_enclosure_doors_rated(new_enclosure, orig_details)
+    set_enclosure_doors_rated(orig_details, hpxml)
   end
 
-  def self.set_systems_hvac_reference(new_systems, orig_details)
-    new_hvac = XMLHelper.add_element(new_systems, "HVAC")
-    new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
-
+  def self.set_systems_hvac_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
@@ -1234,28 +1183,28 @@ class EnergyRatingIndex301Ruleset
       next unless orig_heating_values[:heating_system_fuel] != "electricity"
 
       if XMLHelper.has_element(orig_heating, "HeatingSystemType/Boiler")
-        add_reference_heating_gas_boiler(new_hvac_plant, Float(orig_heating_values[:fraction_heat_load_served]), orig_heating_values[:id])
+        add_reference_heating_gas_boiler(hpxml, Float(orig_heating_values[:fraction_heat_load_served]), orig_heating_values[:id])
       else
-        add_reference_heating_gas_furnace(new_hvac_plant, Float(orig_heating_values[:fraction_heat_load_served]), orig_heating_values[:id])
+        add_reference_heating_gas_furnace(hpxml, Float(orig_heating_values[:fraction_heat_load_served]), orig_heating_values[:id])
       end
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
       if has_fuel
-        add_reference_heating_gas_furnace(new_hvac_plant)
+        add_reference_heating_gas_furnace(hpxml)
       end
     end
 
     # Cooling
     orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |orig_cooling|
       orig_cooling_values = HPXML.get_cooling_system_values(cooling_system: orig_cooling)
-      add_reference_cooling_air_conditioner(new_hvac_plant,  Float(orig_cooling_values[:fraction_cool_load_served]), orig_cooling_values[:id])
+      add_reference_cooling_air_conditioner(hpxml, Float(orig_cooling_values[:fraction_cool_load_served]), orig_cooling_values[:id])
     end
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |orig_hp|
       orig_hp_values = HPXML.get_heat_pump_values(heat_pump: orig_hp)
-      add_reference_cooling_air_conditioner(new_hvac_plant, orig_hp_values[:fraction_cool_load_served], orig_hp_values[:id])
+      add_reference_cooling_air_conditioner(hpxml, orig_hp_values[:fraction_cool_load_served], orig_hp_values[:id])
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]"].nil?
-      add_reference_cooling_air_conditioner(new_hvac_plant)
+      add_reference_cooling_air_conditioner(hpxml)
     end
 
     # HeatPump
@@ -1263,30 +1212,28 @@ class EnergyRatingIndex301Ruleset
       orig_heating_values = HPXML.get_heating_system_values(heating_system: orig_heating)
       next unless orig_heating_values[:heating_system_fuel] == "electricity"
 
-      add_reference_heating_heat_pump(new_hvac_plant, orig_heating_values[:fraction_heat_load_served], orig_heating_values[:id])
+      add_reference_heating_heat_pump(hpxml, orig_heating_values[:fraction_heat_load_served], orig_heating_values[:id])
     end
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |orig_hp|
       orig_hp_values = HPXML.get_heat_pump_values(heat_pump: orig_hp)
-      add_reference_heating_heat_pump(new_hvac_plant, orig_hp_values[:fraction_heat_load_served], orig_hp_values[:id])
+      add_reference_heating_heat_pump(hpxml, orig_hp_values[:fraction_heat_load_served], orig_hp_values[:id])
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
       if not has_fuel
-        add_reference_heating_heat_pump(new_hvac_plant)
+        add_reference_heating_heat_pump(hpxml)
       end
     end
 
     # Table 303.4.1(1) - Thermostat
-    new_hvac_control = HPXML.add_hvac_control(hvac: new_hvac,
+    new_hvac_control = HPXML.add_hvac_control(hpxml: hpxml,
                                               id: "HVACControl",
                                               control_type: "manual thermostat")
 
     # Distribution system
-    add_reference_distribution_system(new_hvac)
+    add_reference_distribution_system(hpxml)
   end
 
-  def self.set_systems_hvac_rated(new_systems, orig_details)
-    new_hvac = XMLHelper.add_element(new_systems, "HVAC")
-
+  def self.set_systems_hvac_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
@@ -1294,15 +1241,13 @@ class EnergyRatingIndex301Ruleset
     heat_pump = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
     cooling_system = orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"]
 
-    new_hvac_plant = XMLHelper.add_element(new_hvac, "HVACPlant")
-
     # Heating
     added_reference_heating = false
     if not heating_system.nil?
       # Retain heating system(s)
       orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |orig_heating|
         orig_heating_values = HPXML.get_heating_system_values(heating_system: orig_heating)
-        heat_sys = HPXML.add_heating_system(hvac_plant: new_hvac_plant,
+        heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                             id: orig_heating_values[:id],
                                             idref: orig_heating_values[:idref],
                                             heating_system_type: orig_heating_values[:heating_system_type],
@@ -1314,7 +1259,7 @@ class EnergyRatingIndex301Ruleset
       end
     end
     if heating_system.nil? and heat_pump.nil? and has_fuel_access(orig_details)
-      add_reference_heating_gas_furnace(new_hvac_plant)
+      add_reference_heating_gas_furnace(hpxml)
       added_reference_heating = true
     end
 
@@ -1324,7 +1269,7 @@ class EnergyRatingIndex301Ruleset
       # Retain cooling system(s)
       orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |orig_cooling|
         orig_cooling_values = HPXML.get_cooling_system_values(cooling_system: orig_cooling)
-        cool_sys = HPXML.add_cooling_system(hvac_plant: new_hvac_plant,
+        cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                             id: orig_cooling_values[:id],
                                             idref: orig_cooling_values[:idref],
                                             cooling_system_type: orig_cooling_values[:cooling_system_type],
@@ -1336,7 +1281,7 @@ class EnergyRatingIndex301Ruleset
       end
     end
     if cooling_system.nil? and heat_pump.nil?
-      add_reference_cooling_air_conditioner(new_hvac_plant)
+      add_reference_cooling_air_conditioner(hpxml)
       added_reference_cooling = true
     end
 
@@ -1345,7 +1290,7 @@ class EnergyRatingIndex301Ruleset
       # Retain heat pump(s)
       orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |orig_hp|
         orig_hp_values = HPXML.get_heat_pump_values(heat_pump: orig_hp)
-        heat_pump = HPXML.add_heat_pump(hvac_plant: new_hvac_plant,
+        heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
                                         id: orig_hp_values[:id],
                                         idref: orig_hp_values[:idref],
                                         heat_pump_type: orig_hp_values[:heat_pump_type],
@@ -1361,7 +1306,7 @@ class EnergyRatingIndex301Ruleset
       end
     end
     if heating_system.nil? and heat_pump.nil? and not has_fuel_access(orig_details)
-      add_reference_heating_heat_pump(new_hvac_plant)
+      add_reference_heating_heat_pump(hpxml)
       added_reference_heating = true
     end
 
@@ -1369,11 +1314,11 @@ class EnergyRatingIndex301Ruleset
     if not orig_details.elements["Systems/HVAC/HVACControl"].nil?
       orig_hvac_control = orig_details.elements["Systems/HVAC/HVACControl"]
       orig_hvac_control_values = HPXML.get_hvac_control_values(hvac_control: orig_hvac_control)
-      new_hvac_control = HPXML.add_hvac_control(hvac: new_hvac,
+      new_hvac_control = HPXML.add_hvac_control(hpxml: hpxml,
                                                 id: orig_hvac_control_values[:id],
                                                 control_type: orig_hvac_control_values[:control_type])
     else
-      new_hvac_control = HPXML.add_hvac_control(hvac: new_hvac,
+      new_hvac_control = HPXML.add_hvac_control(hpxml: hpxml,
                                                 id: "HVACControl",
                                                 control_type: "manual thermostat")
     end
@@ -1381,7 +1326,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Thermal distribution systems
     orig_details.elements.each("Systems/HVAC/HVACDistribution") do |orig_dist|
       orig_dist_values = HPXML.get_hvac_distribution_values(hvac_distribution: orig_dist)
-      new_hvac_dist = HPXML.add_hvac_distribution(hvac: new_hvac,
+      new_hvac_dist = HPXML.add_hvac_distribution(hpxml: hpxml,
                                                   id: orig_dist_values[:id],
                                                   distribution_system_type: orig_dist_values[:distribution_system_type],
                                                   annual_heating_distribution_system_efficiency: orig_dist_values[:annual_heating_distribution_system_efficiency],
@@ -1408,24 +1353,24 @@ class EnergyRatingIndex301Ruleset
     end
     if added_reference_heating or added_reference_cooling
       # Add DSE distribution for these systems
-      add_reference_distribution_system(new_hvac)
+      add_reference_distribution_system(hpxml)
     end
   end
 
-  def self.set_systems_hvac_iad(new_systems, orig_details)
+  def self.set_systems_hvac_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Heating systems
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Cooling systems
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Thermostat
-    set_systems_hvac_reference(new_systems, orig_details)
+    set_systems_hvac_reference(orig_details, hpxml)
 
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Thermal distribution systems
     # Change DSE to 1.0
-    new_hvac_dist = new_systems.elements["HVAC/HVACDistribution"]
+    new_hvac_dist = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACDistribution"]
     new_hvac_dist.elements["AnnualHeatingDistributionSystemEfficiency"].text = 1.0
     new_hvac_dist.elements["AnnualCoolingDistributionSystemEfficiency"].text = 1.0
   end
 
-  def self.set_systems_mechanical_ventilation_reference(new_systems, orig_details, new_enclosure)
+  def self.set_systems_mechanical_ventilation_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
     # Init
@@ -1441,7 +1386,7 @@ class EnergyRatingIndex301Ruleset
 
       # Calculate fan cfm for airflow rate using Reference Home infiltration
       # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
-      sla = Float(XMLHelper.get_value(new_enclosure, "AirInfiltration/extension/BuildingSpecificLeakageArea"))
+      sla = Float(XMLHelper.get_value(hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"], "extension/BuildingSpecificLeakageArea"))
       q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
 
       # Calculate fan cfm for fan power using Rated Home infiltration
@@ -1468,9 +1413,7 @@ class EnergyRatingIndex301Ruleset
         fan_type = 'balanced'
       end
 
-      new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
-      new_vent_fans = XMLHelper.add_element(new_mech_vent, "VentilationFans")
-      new_vent_fan = HPXML.add_ventilation_fan(ventilation_fans: new_vent_fans,
+      new_vent_fan = HPXML.add_ventilation_fan(hpxml: hpxml,
                                                id: "VentilationFan",
                                                fan_type: fan_type,
                                                rated_flow_rate: q_fan_airflow,
@@ -1481,16 +1424,13 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_systems_mechanical_ventilation_rated(new_systems, orig_details)
+  def self.set_systems_mechanical_ventilation_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     orig_vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     orig_vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: orig_vent_fan)
 
     if not orig_vent_fan.nil?
-
-      new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
-      new_vent_fans = XMLHelper.add_element(new_mech_vent, "VentilationFans")
-      new_vent_fan = HPXML.add_ventilation_fan(ventilation_fans: new_vent_fans,
+      new_vent_fan = HPXML.add_ventilation_fan(hpxml: hpxml,
                                                id: "VentilationFan",
                                                fan_type: orig_vent_fan_values[:fan_type],
                                                rated_flow_rate: orig_vent_fan_values[:rated_flow_rate],
@@ -1503,14 +1443,14 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_systems_mechanical_ventilation_iad(new_systems, orig_details, new_enclosure)
+  def self.set_systems_mechanical_ventilation_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
 
     q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
 
     # Calculate fan cfm for airflow rate using IAD Home infiltration
-    sla = Float(XMLHelper.get_value(new_enclosure, "AirInfiltration/extension/BuildingSpecificLeakageArea"))
+    sla = Float(XMLHelper.get_value(hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"], "extension/BuildingSpecificLeakageArea"))
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
@@ -1527,9 +1467,7 @@ class EnergyRatingIndex301Ruleset
     w_cfm = 0.70
     fan_power_w = w_cfm * q_fan_power
 
-    new_mech_vent = XMLHelper.add_element(new_systems, "MechanicalVentilation")
-    new_vent_fans = XMLHelper.add_element(new_mech_vent, "VentilationFans")
-    new_vent_fan = HPXML.add_ventilation_fan(ventilation_fans: new_vent_fans,
+    new_vent_fan = HPXML.add_ventilation_fan(hpxml: hpxml,
                                              id: "VentilationFan",
                                              fan_type: "balanced",
                                              rated_flow_rate: q_fan_airflow,
@@ -1538,9 +1476,7 @@ class EnergyRatingIndex301Ruleset
                                              fan_power: fan_power_w)
   end
 
-  def self.set_systems_water_heater_reference(new_systems, orig_details)
-    new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
-
+  def self.set_systems_water_heater_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
     orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |orig_wh_sys|
@@ -1557,7 +1493,7 @@ class EnergyRatingIndex301Ruleset
       wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
 
       # New water heater
-      new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
+      new_wh_sys = HPXML.add_water_heating_system(hpxml: hpxml,
                                                   id: orig_wh_sys_values[:id],
                                                   fuel_type: wh_fuel_type,
                                                   water_heater_type: 'storage water heater',
@@ -1570,13 +1506,11 @@ class EnergyRatingIndex301Ruleset
     end
 
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
-      add_reference_water_heater(orig_details, new_water_heating)
+      add_reference_water_heater(orig_details, hpxml)
     end
   end
 
-  def self.set_systems_water_heater_rated(new_systems, orig_details)
-    new_water_heating = XMLHelper.add_element(new_systems, "WaterHeating")
-
+  def self.set_systems_water_heater_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
     orig_wh_sys = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"]
@@ -1593,7 +1527,7 @@ class EnergyRatingIndex301Ruleset
       end
 
       # New water heater
-      new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
+      new_wh_sys = HPXML.add_water_heating_system(hpxml: hpxml,
                                                   id: orig_wh_sys_values[:id],
                                                   fuel_type: wh_fuel_type,
                                                   water_heater_type: wh_type,
@@ -1606,19 +1540,18 @@ class EnergyRatingIndex301Ruleset
     end
 
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
-      add_reference_water_heater(orig_details, new_water_heating)
+      add_reference_water_heater(orig_details, hpxml)
     end
   end
 
-  def self.set_systems_water_heater_iad(new_systems, orig_details)
+  def self.set_systems_water_heater_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
-    set_systems_water_heater_reference(new_systems, orig_details)
+    set_systems_water_heater_reference(orig_details, hpxml)
   end
 
-  def self.set_systems_water_heating_use_reference(new_systems, orig_details)
+  def self.set_systems_water_heating_use_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
-    new_water_heating = new_systems.elements["WaterHeating"]
     orig_water_heating = orig_details.elements["Systems/WaterHeating"]
 
     has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
@@ -1634,7 +1567,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # New hot water distribution
-    new_hw_dist = HPXML.add_hot_water_distribution(water_heating: new_water_heating,
+    new_hw_dist = HPXML.add_hot_water_distribution(hpxml: hpxml,
                                                    id: sys_id,
                                                    system_type: "Standard",
                                                    pipe_r_value: 0,
@@ -1643,20 +1576,20 @@ class EnergyRatingIndex301Ruleset
     # New water fixtures
     if orig_water_heating.nil?
       # Shower Head
-      new_fixture = HPXML.add_water_fixture(water_heating: new_water_heating,
+      new_fixture = HPXML.add_water_fixture(hpxml: hpxml,
                                             id: "ShowerHead",
                                             water_fixture_type: "shower head",
                                             low_flow: false)
 
       # Faucet
-      new_fixture = HPXML.add_water_fixture(water_heating: new_water_heating,
+      new_fixture = HPXML.add_water_fixture(hpxml: hpxml,
                                             id: "Faucet",
                                             water_fixture_type: "faucet",
                                             low_flow: false)
     else
       orig_water_heating.elements.each("WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |orig_fixture|
         orig_fixture_values = HPXML.get_water_fixture_values(water_fixture: orig_fixture)
-        new_fixture = HPXML.add_water_fixture(water_heating: new_water_heating,
+        new_fixture = HPXML.add_water_fixture(hpxml: hpxml,
                                               id: orig_fixture_values[:id],
                                               water_fixture_type: orig_fixture_values[:water_fixture_type],
                                               low_flow: false)
@@ -1664,13 +1597,12 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_systems_water_heating_use_rated(new_systems, orig_details)
+  def self.set_systems_water_heating_use_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
-    new_water_heating = new_systems.elements["WaterHeating"]
     orig_water_heating = orig_details.elements["Systems/WaterHeating"]
     if orig_water_heating.nil?
-      set_systems_water_heating_use_reference(new_systems, orig_details)
+      set_systems_water_heating_use_reference(orig_details, hpxml)
       return
     end
 
@@ -1693,7 +1625,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # New hot water distribution
-    new_hw_dist = HPXML.add_hot_water_distribution(water_heating: new_water_heating,
+    new_hw_dist = HPXML.add_hot_water_distribution(hpxml: hpxml,
                                                    id: orig_hw_dist_values[:id],
                                                    system_type: orig_hw_dist_values[:system_type],
                                                    pipe_r_value: orig_hw_dist_values[:pipe_r_value],
@@ -1709,30 +1641,28 @@ class EnergyRatingIndex301Ruleset
     # New water fixtures
     orig_water_heating.elements.each("WaterFixture[WaterFixtureType='shower head' or WaterFixtureType='faucet']") do |orig_fixture|
       orig_fixture_values = HPXML.get_water_fixture_values(water_fixture: orig_fixture)
-      new_fixture = HPXML.add_water_fixture(water_heating: new_water_heating,
+      new_fixture = HPXML.add_water_fixture(hpxml: hpxml,
                                             id: orig_fixture_values[:id],
                                             water_fixture_type: orig_fixture_values[:water_fixture_type],
                                             low_flow: orig_fixture_values[:low_flow])
     end
   end
 
-  def self.set_systems_water_heating_use_iad(new_systems, orig_details)
+  def self.set_systems_water_heating_use_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
-    set_systems_water_heating_use_reference(new_systems, orig_details)
+    set_systems_water_heating_use_reference(orig_details, hpxml)
   end
 
-  def self.set_systems_photovoltaics_reference(new_systems)
+  def self.set_systems_photovoltaics_reference(hpxml)
     # nop
   end
 
-  def self.set_systems_photovoltaics_rated(new_systems, orig_details)
+  def self.set_systems_photovoltaics_rated(orig_details, hpxml)
     return if not XMLHelper.has_element(orig_details, "Systems/Photovoltaics")
-
-    new_pvs = XMLHelper.add_element(new_systems, "Photovoltaics")
 
     orig_details.elements.each("Systems/Photovoltaics/PVSystem") do |orig_pv|
       orig_pv_values = HPXML.get_pv_system_values(pv_system: orig_pv)
-      new_pv = HPXML.add_pv_system(photovoltaics: new_pvs,
+      new_pv = HPXML.add_pv_system(hpxml: hpxml,
                                    id: orig_pv_values[:id],
                                    module_type: orig_pv_values[:module_type],
                                    array_type: orig_pv_values[:array_type],
@@ -1744,17 +1674,17 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_systems_photovoltaics_iad(new_systems)
+  def self.set_systems_photovoltaics_iad(hpxml)
     # 4.3.1 Index Adjustment Design (IAD)
     # Renewable Energy Systems that offset the energy consumption requirements of the Rated Home shall not be included in the IAD.
     # nop
   end
 
-  def self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
+  def self.set_appliances_clothes_washer_reference(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_washer = orig_appliances.elements["ClothesWasher"]
 
-    new_washer = HPXML.add_clothes_washer(appliances: new_appliances,
+    new_washer = HPXML.add_clothes_washer(hpxml: hpxml,
                                           id: HPXML.get_id(orig_washer),
                                           location: "living space",
                                           modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_mef(),
@@ -1765,17 +1695,17 @@ class EnergyRatingIndex301Ruleset
                                           capacity: HotWaterAndAppliances.get_clothes_washer_reference_cap())
   end
 
-  def self.set_appliances_clothes_washer_rated(new_appliances, orig_details)
+  def self.set_appliances_clothes_washer_rated(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_washer = orig_appliances.elements["ClothesWasher"]
     orig_washer_values = HPXML.get_clothes_washer_values(clothes_washer: orig_washer)
 
     if orig_washer.elements["ModifiedEnergyFactor"].nil? and orig_washer.elements["IntegratedModifiedEnergyFactor"].nil?
-      self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
+      self.set_appliances_clothes_washer_reference(orig_details, hpxml)
       return
     end
 
-    new_washer = HPXML.add_clothes_washer(appliances: new_appliances,
+    new_washer = HPXML.add_clothes_washer(hpxml: hpxml,
                                           id: orig_washer_values[:id],
                                           location: orig_washer_values[:location],
                                           modified_energy_factor: orig_washer_values[:modified_energy_factor],
@@ -1787,12 +1717,12 @@ class EnergyRatingIndex301Ruleset
                                           capacity: orig_washer_values[:capacity])
   end
 
-  def self.set_appliances_clothes_washer_iad(new_appliances, orig_details)
+  def self.set_appliances_clothes_washer_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_clothes_washer_reference(new_appliances, orig_details)
+    self.set_appliances_clothes_washer_reference(orig_details, hpxml)
   end
 
-  def self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
+  def self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_dryer = orig_appliances.elements["ClothesDryer"]
     orig_dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_dryer)
@@ -1801,7 +1731,7 @@ class EnergyRatingIndex301Ruleset
     cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(to_beopt_fuel(cd_fuel))
     cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
 
-    new_dryer = HPXML.add_clothes_dryer(appliances: new_appliances,
+    new_dryer = HPXML.add_clothes_dryer(hpxml: hpxml,
                                         id: orig_dryer_values[:id],
                                         location: "living space",
                                         fuel_type: cd_fuel,
@@ -1809,17 +1739,17 @@ class EnergyRatingIndex301Ruleset
                                         control_type: cd_control)
   end
 
-  def self.set_appliances_clothes_dryer_rated(new_appliances, orig_details)
+  def self.set_appliances_clothes_dryer_rated(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_dryer = orig_appliances.elements["ClothesDryer"]
     orig_dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_dryer)
 
     if orig_dryer.elements["EnergyFactor"].nil? and orig_dryer.elements["CombinedEnergyFactor"].nil?
-      self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
+      self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
       return
     end
 
-    new_dryer = HPXML.add_clothes_dryer(appliances: new_appliances,
+    new_dryer = HPXML.add_clothes_dryer(hpxml: hpxml,
                                         id: orig_dryer_values[:id],
                                         location: orig_dryer_values[:location],
                                         fuel_type: orig_dryer_values[:fuel_type],
@@ -1828,44 +1758,44 @@ class EnergyRatingIndex301Ruleset
                                         control_type: orig_dryer_values[:control_type])
   end
 
-  def self.set_appliances_clothes_dryer_iad(new_appliances, orig_details)
+  def self.set_appliances_clothes_dryer_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_clothes_dryer_reference(new_appliances, orig_details)
+    self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
   end
 
-  def self.set_appliances_dishwasher_reference(new_appliances, orig_details)
+  def self.set_appliances_dishwasher_reference(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_dishwasher = orig_appliances.elements["Dishwasher"]
 
-    new_dishwasher = HPXML.add_dishwasher(appliances: new_appliances,
+    new_dishwasher = HPXML.add_dishwasher(hpxml: hpxml,
                                           id: HPXML.get_id(orig_dishwasher),
                                           energy_factor: HotWaterAndAppliances.get_dishwasher_reference_ef(),
                                           place_setting_capacity: Integer(HotWaterAndAppliances.get_dishwasher_reference_cap()))
   end
 
-  def self.set_appliances_dishwasher_rated(new_appliances, orig_details)
+  def self.set_appliances_dishwasher_rated(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_dishwasher = orig_appliances.elements["Dishwasher"]
     orig_dishwasher_values = HPXML.get_dishwasher_values(dishwasher: orig_dishwasher)
 
     if orig_dishwasher.elements["EnergyFactor"].nil? and orig_dishwasher.elements["RatedAnnualkWh"].nil?
-      self.set_appliances_dishwasher_reference(new_appliances, orig_details)
+      self.set_appliances_dishwasher_reference(orig_details, hpxml)
       return
     end
 
-    new_dishwasher = HPXML.add_dishwasher(appliances: new_appliances,
+    new_dishwasher = HPXML.add_dishwasher(hpxml: hpxml,
                                           id: orig_dishwasher_values[:id],
                                           energy_factor: orig_dishwasher_values[:energy_factor],
                                           rated_annual_kwh: orig_dishwasher_values[:rated_annual_kwh],
                                           place_setting_capacity: orig_dishwasher_values[:place_setting_capacity])
   end
 
-  def self.set_appliances_dishwasher_iad(new_appliances, orig_details)
+  def self.set_appliances_dishwasher_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_dishwasher_reference(new_appliances, orig_details)
+    self.set_appliances_dishwasher_reference(orig_details, hpxml)
   end
 
-  def self.set_appliances_refrigerator_reference(new_appliances, orig_details)
+  def self.set_appliances_refrigerator_reference(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_fridge = orig_appliances.elements["Refrigerator"]
     orig_fridge_values = HPXML.get_refrigerator_values(refrigerator: orig_fridge)
@@ -1873,51 +1803,51 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric ERI Reference Homes
     refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
 
-    new_fridge = HPXML.add_refrigerator(appliances: new_appliances,
+    new_fridge = HPXML.add_refrigerator(hpxml: hpxml,
                                         id: orig_fridge_values[:id],
                                         location: "living space",
                                         rated_annual_kwh: refrigerator_kwh)
   end
 
-  def self.set_appliances_refrigerator_rated(new_appliances, orig_details)
+  def self.set_appliances_refrigerator_rated(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_fridge = orig_appliances.elements["Refrigerator"]
     orig_fridge_values = HPXML.get_refrigerator_values(refrigerator: orig_fridge)
 
     if orig_fridge.elements["RatedAnnualkWh"].nil?
-      self.set_appliances_refrigerator_reference(new_appliances, orig_details)
+      self.set_appliances_refrigerator_reference(orig_details, hpxml)
       return
     end
 
-    new_fridge = HPXML.add_refrigerator(appliances: new_appliances,
+    new_fridge = HPXML.add_refrigerator(hpxml: hpxml,
                                         id: orig_fridge_values[:id],
                                         location: orig_fridge_values[:location],
                                         rated_annual_kwh: orig_fridge_values[:rated_annual_kwh])
   end
 
-  def self.set_appliances_refrigerator_iad(new_appliances, orig_details)
+  def self.set_appliances_refrigerator_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_refrigerator_reference(new_appliances, orig_details)
+    self.set_appliances_refrigerator_reference(orig_details, hpxml)
   end
 
-  def self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
+  def self.set_appliances_cooking_range_oven_reference(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_range = orig_appliances.elements["CookingRange"]
     orig_range_values = HPXML.get_cooking_range_values(cooking_range: orig_range)
     orig_oven = orig_appliances.elements["Oven"]
     orig_oven_values = HPXML.get_oven_values(oven: orig_oven)
 
-    new_range = HPXML.add_cooking_range(appliances: new_appliances,
+    new_range = HPXML.add_cooking_range(hpxml: hpxml,
                                         id: orig_range_values[:id],
                                         fuel_type: orig_range_values[:fuel_type],
                                         is_induction: HotWaterAndAppliances.get_range_oven_reference_is_induction())
 
-    new_oven = HPXML.add_oven(appliances: new_appliances,
+    new_oven = HPXML.add_oven(hpxml: hpxml,
                               id: orig_oven_values[:id],
                               is_convection: HotWaterAndAppliances.get_range_oven_reference_is_convection())
   end
 
-  def self.set_appliances_cooking_range_oven_rated(new_appliances, orig_details)
+  def self.set_appliances_cooking_range_oven_rated(orig_details, hpxml)
     orig_appliances = orig_details.elements["Appliances"]
     orig_range = orig_appliances.elements["CookingRange"]
     orig_range_values = HPXML.get_cooking_range_values(cooking_range: orig_range)
@@ -1925,29 +1855,29 @@ class EnergyRatingIndex301Ruleset
     orig_oven_values = HPXML.get_oven_values(oven: orig_oven)
 
     if orig_range.elements["IsInduction"].nil?
-      self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
+      self.set_appliances_cooking_range_oven_reference(orig_details, hpxml)
       return
     end
 
-    new_range = HPXML.add_cooking_range(appliances: new_appliances,
+    new_range = HPXML.add_cooking_range(hpxml: hpxml,
                                         id: orig_range_values[:id],
                                         fuel_type: orig_range_values[:fuel_type],
                                         is_induction: orig_range_values[:is_induction])
 
-    new_oven = HPXML.add_oven(appliances: new_appliances,
+    new_oven = HPXML.add_oven(hpxml: hpxml,
                               id: orig_oven_values[:id],
                               is_convection: orig_oven_values[:is_convection])
   end
 
-  def self.set_appliances_cooking_range_oven_iad(new_appliances, orig_details)
+  def self.set_appliances_cooking_range_oven_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
-    self.set_appliances_cooking_range_oven_reference(new_appliances, orig_details)
+    self.set_appliances_cooking_range_oven_reference(orig_details, hpxml)
   end
 
-  def self.set_lighting_reference(new_lighting, orig_details)
+  def self.set_lighting_reference(orig_details, hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
 
-    new_fractions = HPXML.add_lighting_fractions(lighting: new_lighting,
+    new_fractions = HPXML.add_lighting_fractions(hpxml: hpxml,
                                                  fraction_qualifying_tier_i_fixtures_interior: fFI_int,
                                                  fraction_qualifying_tier_i_fixtures_exterior: fFI_ext,
                                                  fraction_qualifying_tier_i_fixtures_garage: fFI_grg,
@@ -1956,13 +1886,13 @@ class EnergyRatingIndex301Ruleset
                                                  fraction_qualifying_tier_ii_fixtures_garage: fFII_grg)
   end
 
-  def self.set_lighting_rated(new_lighting, orig_details)
+  def self.set_lighting_rated(orig_details, hpxml)
     orig_lighting = orig_details.elements["Lighting"]
     orig_fractions = orig_lighting.elements["LightingFractions"]
     orig_fractions_values = HPXML.get_lighting_fractions_values(lighting_fractions: orig_fractions)
 
     if orig_fractions.nil?
-      self.set_lighting_reference(new_lighting, orig_details)
+      self.set_lighting_reference(orig_details, hpxml)
       return
     end
 
@@ -1973,7 +1903,7 @@ class EnergyRatingIndex301Ruleset
       fFI_int = 0.1 - fFII_int
     end
 
-    new_fractions = HPXML.add_lighting_fractions(lighting: new_lighting,
+    new_fractions = HPXML.add_lighting_fractions(hpxml: hpxml,
                                                  fraction_qualifying_tier_i_fixtures_interior: fFI_int,
                                                  fraction_qualifying_tier_i_fixtures_exterior: orig_fractions_values[:fraction_qualifying_tier_i_fixtures_exterior],
                                                  fraction_qualifying_tier_i_fixtures_garage: orig_fractions_values[:fraction_qualifying_tier_i_fixtures_garage],
@@ -1982,10 +1912,10 @@ class EnergyRatingIndex301Ruleset
                                                  fraction_qualifying_tier_ii_fixtures_garage: orig_fractions_values[:fraction_qualifying_tier_ii_fixtures_garage])
   end
 
-  def self.set_lighting_iad(new_lighting, orig_details)
+  def self.set_lighting_iad(orig_details, hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
 
-    new_fractions = HPXML.add_lighting_fractions(lighting: new_lighting,
+    new_fractions = HPXML.add_lighting_fractions(hpxml: hpxml,
                                                  fraction_qualifying_tier_i_fixtures_interior: fFI_int,
                                                  fraction_qualifying_tier_i_fixtures_exterior: fFI_ext,
                                                  fraction_qualifying_tier_i_fixtures_garage: fFI_grg,
@@ -1994,20 +1924,20 @@ class EnergyRatingIndex301Ruleset
                                                  fraction_qualifying_tier_ii_fixtures_garage: fFII_grg)
   end
 
-  def self.set_ceiling_fans_reference(new_lighting, orig_details)
+  def self.set_ceiling_fans_reference(orig_details, hpxml)
     return if not XMLHelper.has_element(orig_details, "Lighting/CeilingFan")
 
     orig_cf = orig_details.elements["Lighting/CeilingFan"]
     medium_cfm = 3000.0
 
-    new_cf = HPXML.add_ceiling_fan(lighting: new_lighting,
+    new_cf = HPXML.add_ceiling_fan(hpxml: hpxml,
                                    id: "CeilingFans",
                                    fan_speed: "medium",
                                    efficiency: medium_cfm / HVAC.get_default_ceiling_fan_power(),
                                    quantity: Integer(HVAC.get_default_ceiling_fan_quantity(@nbeds)))
   end
 
-  def self.set_ceiling_fans_rated(new_lighting, orig_details)
+  def self.set_ceiling_fans_rated(orig_details, hpxml)
     return if not XMLHelper.has_element(orig_details, "Lighting/CeilingFan")
 
     medium_cfm = 3000.0
@@ -2030,36 +1960,36 @@ class EnergyRatingIndex301Ruleset
     end
     avg_w = sum_w / num_cfs
 
-    new_cf = HPXML.add_ceiling_fan(lighting: new_lighting,
+    new_cf = HPXML.add_ceiling_fan(hpxml: hpxml,
                                    id: "CeilingFans",
                                    fan_speed: "medium",
                                    efficiency: medium_cfm / avg_w,
                                    quantity: Integer(HVAC.get_default_ceiling_fan_quantity(@nbeds)))
   end
 
-  def self.set_ceiling_fans_iad(new_lighting, orig_details)
+  def self.set_ceiling_fans_iad(orig_details, hpxml)
     # Not described in Addendum E; use Reference Home?
-    set_ceiling_fans_reference(new_lighting, orig_details)
+    set_ceiling_fans_reference(orig_details, hpxml)
   end
 
-  def self.set_misc_loads_reference(new_misc_loads)
+  def self.set_misc_loads_reference(hpxml)
     # Misc
-    misc = HPXML.add_plug_load(misc_loads: new_misc_loads,
+    misc = HPXML.add_plug_load(hpxml: hpxml,
                                id: "MiscPlugLoad",
                                plug_load_type: "other")
 
     # Television
-    tv = HPXML.add_plug_load(misc_loads: new_misc_loads,
+    tv = HPXML.add_plug_load(hpxml: hpxml,
                              id: "TelevisionPlugLoad",
                              plug_load_type: "TV other")
   end
 
-  def self.set_misc_loads_rated(new_misc_loads)
-    set_misc_loads_reference(new_misc_loads)
+  def self.set_misc_loads_rated(hpxml)
+    set_misc_loads_reference(hpxml)
   end
 
-  def self.set_misc_loads_iad(new_misc_loads)
-    set_misc_loads_reference(new_misc_loads)
+  def self.set_misc_loads_iad(hpxml)
+    set_misc_loads_reference(hpxml)
   end
 
   private
@@ -2102,10 +2032,13 @@ class EnergyRatingIndex301Ruleset
     return q_tot - q_inf
   end
 
-  def self.add_reference_heating_gas_furnace(new_hvac_plant, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_gas_furnace(hpxml, load_frac = 1.0, seed_id = nil)
     # 78% AFUE gas furnace
-    cnt = new_hvac_plant.elements["count(HeatingSystem)"]
-    heat_sys = HPXML.add_heating_system(hvac_plant: new_hvac_plant,
+    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(HeatingSystem)"]
+    if cnt.nil?
+      cnt = 0
+    end
+    heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
                                         idref: "HVACDistribution_DSE_80",
                                         heating_system_type: "Furnace",
@@ -2122,10 +2055,13 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_heating_gas_boiler(new_hvac_plant, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_gas_boiler(hpxml, load_frac = 1.0, seed_id = nil)
     # 80% AFUE gas boiler
-    cnt = new_hvac_plant.elements["count(HeatingSystem)"]
-    heat_sys = HPXML.add_heating_system(hvac_plant: new_hvac_plant,
+    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(HeatingSystem)"]
+    if cnt.nil?
+      cnt = 0
+    end
+    heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
                                         idref: "HVACDistribution_DSE_80",
                                         heating_system_type: "Boiler",
@@ -2142,9 +2078,12 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_heating_heat_pump(new_hvac_plant, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_heat_pump(hpxml, load_frac = 1.0, seed_id = nil)
     # 7.7 HSPF air source heat pump
-    cnt = new_hvac_plant.elements["count(HeatPump)"]
+    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(HeatPump)"]
+    if cnt.nil?
+      cnt = 0
+    end
     heat_pump = HPXML.add_heat_pump(hvac_plant: new_hvac_plant,
                                     id: "HeatPump#{cnt + 1}",
                                     idref: "HVACDistribution_DSE_80",
@@ -2165,10 +2104,13 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_cooling_air_conditioner(new_hvac_plant, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_cooling_air_conditioner(hpxml, load_frac = 1.0, seed_id = nil)
     # 13 SEER electric air conditioner
-    cnt = new_hvac_plant.elements["count(CoolingSystem)"]
-    cool_sys = HPXML.add_cooling_system(hvac_plant: new_hvac_plant,
+    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(CoolingSystem)"]
+    if cnt.nil?
+      cnt = 0
+    end
+    cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                         id: "CoolingSystem#{cnt + 1}",
                                         idref: "HVACDistribution_DSE_80",
                                         cooling_system_type: "central air conditioning",
@@ -2185,23 +2127,23 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_distribution_system(new_hvac)
+  def self.add_reference_distribution_system(hpxml)
     # Table 4.2.2(1) - Thermal distribution systems
-    new_hvac_dist = HPXML.add_hvac_distribution(hvac: new_hvac,
+    new_hvac_dist = HPXML.add_hvac_distribution(hpxml: hpxml,
                                                 id: "HVACDistribution_DSE_80",
                                                 distribution_system_type: "DSE",
                                                 annual_heating_distribution_system_efficiency: 0.8,
                                                 annual_cooling_distribution_system_efficiency: 0.8)
   end
 
-  def self.add_reference_water_heater(orig_details, new_water_heating)
+  def self.add_reference_water_heater(orig_details, hpxml)
     wh_fuel_type = get_predominant_heating_fuel(orig_details)
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
     wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
 
-    new_wh_sys = HPXML.add_water_heating_system(water_heating: new_water_heating,
+    new_wh_sys = HPXML.add_water_heating_system(hpxml: hpxml,
                                                 id: 'WaterHeatingSystem',
                                                 fuel_type: wh_fuel_type,
                                                 water_heater_type: 'storage water heater',
