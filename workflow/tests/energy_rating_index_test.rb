@@ -453,19 +453,36 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
   end
   
   def test_resnet_hers_consistency_task_group
-    skip # TODO: Allow duct location outside, hookup ducts, retrieve results
-    
+    skip # TODO: Allow duct location outside, hookup ducts in HPXML measure
+
     # HERS Consistency Task Group files
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "HERS_Consistency_Task_Group.csv"))
+    File.delete(test_results_csv) if File.exists? test_results_csv
+
+    require 'csv'
+
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    results = {}
+    all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/HERS_Consistency_Task_Group")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
-      results[File.basename(xml)] = _get_eri(results_csv)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
+      all_results[File.basename(xml)] = _get_method_results(results_csv)
     end
     
-    puts results.to_s
+    # Write results to csv
+    keys = all_results.values[0].keys
+    CSV.open(test_results_csv, "w") do |csv|
+      csv << ["XML"] + keys
+      all_results.each_with_index do |(xml, results), i|
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
+        end
+        csv << csv_line
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
   end
 
   def test_naseo_technical_exercises
@@ -522,9 +539,15 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     system(command)
     runtime = (Time.now - start_time).round(2)
 
+    ref_hpxml = File.join(this_dir, "results", "ERIReferenceHome.xml")
+    rated_hpxml = File.join(this_dir, "results", "ERIRatedHome.xml")
     results_csv = File.join(this_dir, "results", "ERI_Results.csv")
+    worksheet_csv = File.join(this_dir, "results", "ERI_Worksheet.csv")
     if expect_error
+      assert(!File.exists?(ref_hpxml))
+      assert(!File.exists?(rated_hpxml))
       assert(!File.exists?(results_csv))
+      assert(!File.exists?(worksheet_csv))
 
       if not expect_error_msgs.nil?
         run_log = File.readlines(File.join(this_dir, "ERIRatedHome", "run.log")).map(&:strip)
@@ -542,9 +565,6 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     else
       # Check all output files exist
-      ref_hpxml = File.join(this_dir, "results", "ERIReferenceHome.xml")
-      rated_hpxml = File.join(this_dir, "results", "ERIRatedHome.xml")
-      worksheet_csv = File.join(this_dir, "results", "ERI_Worksheet.csv")
       assert(File.exists?(ref_hpxml))
       assert(File.exists?(rated_hpxml))
       assert(File.exists?(results_csv))
@@ -1268,7 +1288,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
 
     return results
   end
-
+  
   def _check_method_results(results, test_num, has_tankless_water_heater, using_iaf)
     cooling_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'elec', 4 => 'elec', 5 => 'elec' }
     cooling_mepr =  { 1 => 10.00,  2 => 10.00,  3 => 10.00,  4 => 10.00,  5 => 10.00 }
