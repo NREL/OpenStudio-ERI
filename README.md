@@ -3,7 +3,7 @@ OpenStudio-ERI
 
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
 
-The ERI is defined by [ANSI/RESNET/ICC 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index"](http://www.resnet.us/blog/ansiresneticc-standard-301-2014-january-15-2016/).
+The ERI is defined by [ANSI/RESNET/ICC 301-2014© "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index"](http://www.resnet.us/blog/ansiresneticc-standard-301-2014-january-15-2016/).
 
 **Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master)
 
@@ -39,32 +39,35 @@ There are additional ways that software developers using this workflow can reduc
 ## Outputs
 
 Upon completion, multiple outputs are currently available:
-* ERI_Results.csv and ERI_Worksheet.csv files (that mirror the [RESNET HERS Method Test form](http://www.resnet.us/programs/2014_HERS-Method_Results-Form.xlsx))
 * Reference/Rated/IndexAdjustment Home HPXML files (transformations of the input HPXML file via the 301 ruleset)
 * Summary annual energy consumption by fuel type and/or end use
 * EnergyPlus input/output files
+* ERI_Results.csv and ERI_Worksheet.csv files
 
 See the [sample_results](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results) directory for examples of these outputs.
 
 ## Tests
 
-Continuous integration tests are automatically run for any change to this repository. The current set of tests include:
+Tests are automatically run for any change to this repository. Test results can be found on the [CI machine](https://circleci.com/gh/NREL/OpenStudio-ERI) for any build under the "Artifacts" tab.
+
+The current set of tests include:
 - [x] Successful ERI calculations for all sample files
-- [x] RESNET HERS Reference Home auto-generation tests
+- [x] RESNET® ANSI/ASHRAE Standard 140-2011, Class II, Tier 1 Tests
+- [x] RESNET HERS® Reference Home auto-generation tests
 - [x] RESNET HERS method tests (including IAF and 2016-proposed tests)
 - [x] RESNET Hot water system performance tests (including pre-Addendum A tests)
 
-Tests can be run locally as follows. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
+Tests can also be run locally, as shown below. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
 ```openstudio tests/energy_rating_index_test.rb``` (all tests)  
 ```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
 
-At the completion of the test, there will be output that denotes the number of failures/errors like so:  
+Test results are created at workflow/tests/test_results. At the completion of the test, there will be output that denotes the number of failures/errors like so:  
 ```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  
 ```1 runs, 35 assertions, 0 failures, 0 errors, 0 skips```
 
 ## Software Developers
 
-To use this workflow, software tools must produce a valid HPXML file. HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is available that specifies the specific HPXML fields required to run this workflow. The [HPXML ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/HERSRatedHome/run.log` and/or `workflow/HERSReferenceHome/run.log` files.
+To use this workflow, software tools must produce a valid HPXML file. HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is available that specifies the specific HPXML fields required to run this workflow. The [HPXML ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/ERIRatedHome/run.log` and/or `workflow/ERIReferenceHome/run.log` files.
 
 ## Status
 
