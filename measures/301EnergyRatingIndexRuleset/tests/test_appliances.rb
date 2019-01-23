@@ -223,7 +223,7 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_in_basement
-    hpxml_name = "valid-misc-appliances-in-basement.xml"
+    hpxml_name = "valid-appliances-in-basement.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

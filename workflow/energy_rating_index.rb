@@ -836,7 +836,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].values.map { |x| x.round(2) }.join(",")
   results_out["EC_x L&A (MBtu)"] = results[:eul_la].round(2)
   if using_iaf
-    results_out["IAD_Save (%)"] = results[:iad_save]
+    results_out["IAD_Save (%)"] = results[:iad_save].round(5)
   end
   # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
   CSV.open(results_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
