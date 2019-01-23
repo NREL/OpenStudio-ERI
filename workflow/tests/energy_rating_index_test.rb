@@ -149,6 +149,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       end
     end
     puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    # TODO: Currently not implemented since E+ does not pass test criteria
   end
 
   def test_resnet_hers_reference_home_auto_generation
