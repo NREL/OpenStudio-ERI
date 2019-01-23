@@ -127,8 +127,10 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       htg_load, clg_load = _get_building_loads(sql_path)
       if xml.include? "C.xml"
         all_results << [xml, htg_load, sim_time]
+        assert_operator(htg_load, :>, 0)
       elsif xml.include? "L.xml"
         all_results << [xml, clg_load, sim_time]
+        assert_operator(clg_load, :>, 0)
       end
     end
 
