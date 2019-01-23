@@ -45,7 +45,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.create_new_doc(hpxml_doc)
     xml_transaction_header_information_values = HPXML.get_xml_transaction_header_information_values(xml_transaction_header_information: hpxml_doc.elements["/HPXML/XMLTransactionHeaderInformation"])
-    software_info_values = HPXML.get_software_info(software_info: hpxml_doc.elements["/HPXML/SoftwareInfo"])
+    software_info_values = HPXML.get_software_info_values(software_info: hpxml_doc.elements["/HPXML/SoftwareInfo"])
     building_values = HPXML.get_building_values(building: hpxml_doc.elements["/HPXML/Building"])
     project_status_values = HPXML.get_project_status_values(project_status: hpxml_doc.elements["/HPXML/Building/ProjectStatus"])
 
@@ -2084,7 +2084,7 @@ class EnergyRatingIndex301Ruleset
     if cnt.nil?
       cnt = 0
     end
-    heat_pump = HPXML.add_heat_pump(hvac_plant: new_hvac_plant,
+    heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
                                     id: "HeatPump#{cnt + 1}",
                                     idref: "HVACDistribution_DSE_80",
                                     heat_pump_type: "air-to-air",
