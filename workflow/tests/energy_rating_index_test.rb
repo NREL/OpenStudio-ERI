@@ -33,8 +33,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       next if File.basename(xml) == "valid-hvac-multiple.xml" # TODO: Remove when HVAC sizing has been updated
 
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
+      all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
 
     # Write results to csv
@@ -126,8 +127,10 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       htg_load, clg_load = _get_building_loads(sql_path)
       if xml.include? "C.xml"
         all_results << [xml, htg_load, sim_time]
+        assert_operator(htg_load, :>, 0)
       elsif xml.include? "L.xml"
         all_results << [xml, clg_load, sim_time]
+        assert_operator(clg_load, :>, 0)
       end
     end
 
@@ -146,6 +149,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       end
     end
     puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    # TODO: Currently not implemented since E+ does not pass test criteria
   end
 
   def test_resnet_hers_reference_home_auto_generation
@@ -162,7 +168,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       next if xml.end_with? "ERIReferenceHome.xml"
 
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
 
       # Get results
       test_num = File.basename(xml)[0, 2].to_i
@@ -171,7 +177,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       # Re-simulate reference HPXML file
       FileUtils.cp(ref_hpxml, xmldir)
       ref_hpxml = "#{xmldir}/#{File.basename(ref_hpxml)}"
-      ref_hpxml2, rated_hpxml2, results_csv2 = run_eri_and_check(ref_hpxml, this_dir)
+      ref_hpxml2, rated_hpxml2, results_csv2, runtime2 = run_eri_and_check(ref_hpxml, this_dir)
       eri = _get_eri(results_csv2)
       all_results[File.basename(xml)]["e-Ratio"] = eri / 100.0
     end
@@ -208,7 +214,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_method_results(results_csv)
     end
 
@@ -245,7 +251,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_IAF")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir, true)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir, true)
       all_results[xml] = _get_method_results(results_csv)
     end
 
@@ -290,7 +296,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
         test_num = File.basename(xml).gsub('L100-AL-', '').gsub('.xml', '').to_i
         test_loc = 'AL'
       end
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_method_results(results_csv)
     end
 
@@ -343,7 +349,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_hot_water(results_csv)
       assert_operator(all_results[xml], :>, 0)
     end
@@ -398,7 +404,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Test_Hot_Water_PreAddendumA")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       # Run test
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_hot_water(results_csv)
       assert_operator(all_results[xml], :>, 0)
     end
@@ -457,8 +463,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     all_results = {}
     xmldir = "#{this_dir}/tests/NASEO_Technical_Exercises"
     Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
-      ref_hpxml, rated_hpxml, results_csv = run_eri_and_check(xml, this_dir)
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
+      all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
 
     # Write results to csv
@@ -495,7 +502,9 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}"
+    start_time = Time.now
     system(command)
+    runtime = (Time.now - start_time).round(2)
 
     results_csv = File.join(this_dir, "results", "ERI_Results.csv")
     if expect_error
@@ -541,7 +550,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
       end
     end
 
-    return ref_hpxml, rated_hpxml, results_csv
+    return ref_hpxml, rated_hpxml, results_csv, runtime
   end
 
   def run_straight_sim(xml, this_dir)
