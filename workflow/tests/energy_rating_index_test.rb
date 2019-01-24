@@ -1337,7 +1337,7 @@ class EnergyRatingIndexTest < Minitest::Unit::TestCase
     heating_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'gas',  4 => 'elec', 5 => 'gas',  6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
     heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96,   6 => 6.80,   7 => 6.80,   8 => 6.80,   9 => 6.80,   10 => 6.80,   11 => 6.80,   12 => 6.80   }
     hotwater_fuel = { 1 => 'elec', 2 => 'gas',  3 => 'elec', 4 => 'elec', 5 => 'elec', 6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
-    hotwater_mepr = { 1 => 0.88,   2 => 0.88,   3 => 0.88,   4 => 0.88,   5 => 0.88,   6 => 0.88,   7 => 0.88,   8 => 0.88,   9 => 0.88,   10 => 0.88,   11 => 0.88,   12 => 0.88   }
+    hotwater_mepr = { 1 => 0.88,   2 => 0.82,   3 => 0.88,   4 => 0.88,   5 => 0.88,   6 => 0.88,   7 => 0.88,   8 => 0.88,   9 => 0.88,   10 => 0.88,   11 => 0.88,   12 => 0.88   }
     ec_x_la =       { 1 => 21.27,  2 => 23.33,  3 => 22.05,  4 => 22.35,  5 => 23.33,  6 => 21.27,  7 => 21.27,  8 => 21.27,  9 => 21.27,  10 => 21.27,  11 => 21.27,  12 => 21.27  }
 
     _check_method_results_eri(test_num, results, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
