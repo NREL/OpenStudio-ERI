@@ -1045,7 +1045,7 @@ class EnergyRatingIndex301Ruleset
                                       azimuth: azimuth,
                                       ufactor: ufactor,
                                       shgc: shgc,
-                                      idref: wall_id)
+                                      wall_idref: wall_id)
 
         set_window_interior_shading_reference(new_window)
       end
@@ -1074,7 +1074,7 @@ class EnergyRatingIndex301Ruleset
                                     overhangs_depth: orig_window_values[:overhangs_depth],
                                     overhangs_distance_to_top_of_window: orig_window_values[:overhangs_distance_to_top_of_window],
                                     overhangs_distance_to_bottom_of_window: orig_window_values[:overhangs_distance_to_bottom_of_window],
-                                    idref: orig_window_values[:idref])
+                                    wall_idref: orig_window_values[:wall_idref])
 
       set_window_interior_shading_reference(new_window)
     end
@@ -1123,7 +1123,7 @@ class EnergyRatingIndex301Ruleset
                                         azimuth: orig_skylight_values[:azimuth],
                                         ufactor: orig_skylight_values[:ufactor],
                                         shgc: orig_skylight_values[:shgc],
-                                        idref: orig_skylight_values[:idref])
+                                        roof_idref: orig_skylight_values[:roof_idref])
     end
   end
 
@@ -1146,7 +1146,7 @@ class EnergyRatingIndex301Ruleset
 
       new_door = HPXML.add_door(hpxml: hpxml,
                                 id: "Door_#{wall_id}",
-                                idref: wall_id,
+                                wall_idref: wall_id,
                                 area: door_area * wall_area_frac,
                                 azimuth: 0,
                                 r_value: 1.0 / ufactor)
@@ -1159,7 +1159,7 @@ class EnergyRatingIndex301Ruleset
       orig_door_values = HPXML.get_door_values(door: orig_door)
       new_door = HPXML.add_door(hpxml: hpxml,
                                 id: orig_door_values[:id],
-                                idref: orig_door_values[:idref],
+                                wall_idref: orig_door_values[:wall_idref],
                                 area: orig_door_values[:area],
                                 azimuth: orig_door_values[:azimuth],
                                 r_value: orig_door_values[:r_value])
@@ -1249,7 +1249,7 @@ class EnergyRatingIndex301Ruleset
         orig_heating_values = HPXML.get_heating_system_values(heating_system: orig_heating)
         heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                             id: orig_heating_values[:id],
-                                            idref: orig_heating_values[:idref],
+                                            distribution_system_idref: orig_heating_values[:distribution_system_idref],
                                             heating_system_type: orig_heating_values[:heating_system_type],
                                             heating_system_fuel: orig_heating_values[:heating_system_fuel],
                                             heating_capacity: orig_heating_values[:heating_capacity],
@@ -1271,7 +1271,7 @@ class EnergyRatingIndex301Ruleset
         orig_cooling_values = HPXML.get_cooling_system_values(cooling_system: orig_cooling)
         cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                             id: orig_cooling_values[:id],
-                                            idref: orig_cooling_values[:idref],
+                                            distribution_system_idref: orig_cooling_values[:distribution_system_idref],
                                             cooling_system_type: orig_cooling_values[:cooling_system_type],
                                             cooling_system_fuel: orig_cooling_values[:cooling_system_fuel],
                                             cooling_capacity: orig_cooling_values[:cooling_capacity],
@@ -1292,7 +1292,7 @@ class EnergyRatingIndex301Ruleset
         orig_hp_values = HPXML.get_heat_pump_values(heat_pump: orig_hp)
         heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
                                         id: orig_hp_values[:id],
-                                        idref: orig_hp_values[:idref],
+                                        distribution_system_idref: orig_hp_values[:distribution_system_idref],
                                         heat_pump_type: orig_hp_values[:heat_pump_type],
                                         heat_pump_fuel: orig_hp_values[:heat_pump_fuel],
                                         heating_capacity: orig_hp_values[:heating_capacity],
@@ -1377,6 +1377,7 @@ class EnergyRatingIndex301Ruleset
     fan_type = nil
 
     orig_vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    orig_vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: orig_vent_fan)
 
     if not orig_vent_fan.nil?
 
@@ -1420,7 +1421,7 @@ class EnergyRatingIndex301Ruleset
                                                hours_in_operation: 24, # TODO: CFIS
                                                used_for_whole_building_ventilation: true,
                                                fan_power: fan_power_w,
-                                               idref: HPXML.get_idref(orig_vent_fan, "AttachedToHVACDistributionSystem"))
+                                               distribution_system_idref: orig_vent_fan_values[:distribution_system_idref])
     end
   end
 
@@ -1439,7 +1440,7 @@ class EnergyRatingIndex301Ruleset
                                                total_recovery_efficiency: orig_vent_fan_values[:total_recovery_efficiency],
                                                sensible_recovery_efficiency: orig_vent_fan_values[:sensible_recovery_efficiency],
                                                fan_power: orig_vent_fan_values[:fan_power],
-                                               idref: orig_vent_fan_values[:idref])
+                                               distribution_system_idref: orig_vent_fan_values[:distribution_system_idref])
     end
   end
 
@@ -2040,7 +2041,7 @@ class EnergyRatingIndex301Ruleset
     end
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
-                                        idref: "HVACDistribution_DSE_80",
+                                        distribution_system_idref: "HVACDistribution_DSE_80",
                                         heating_system_type: "Furnace",
                                         heating_system_fuel: "natural gas",
                                         heating_capacity: -1, # Use Manual J auto-sizing
@@ -2063,7 +2064,7 @@ class EnergyRatingIndex301Ruleset
     end
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
-                                        idref: "HVACDistribution_DSE_80",
+                                        distribution_system_idref: "HVACDistribution_DSE_80",
                                         heating_system_type: "Boiler",
                                         heating_system_fuel: "natural gas",
                                         heating_capacity: -1, # Use Manual J auto-sizing
@@ -2086,7 +2087,7 @@ class EnergyRatingIndex301Ruleset
     end
     heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
                                     id: "HeatPump#{cnt + 1}",
-                                    idref: "HVACDistribution_DSE_80",
+                                    distribution_system_idref: "HVACDistribution_DSE_80",
                                     heat_pump_type: "air-to-air",
                                     heat_pump_fuel: "electricity",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
@@ -2112,7 +2113,7 @@ class EnergyRatingIndex301Ruleset
     end
     cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                         id: "CoolingSystem#{cnt + 1}",
-                                        idref: "HVACDistribution_DSE_80",
+                                        distribution_system_idref: "HVACDistribution_DSE_80",
                                         cooling_system_type: "central air conditioning",
                                         cooling_system_fuel: "electricity",
                                         cooling_capacity: -1, # Use Manual J auto-sizing
