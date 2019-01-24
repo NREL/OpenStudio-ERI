@@ -851,7 +851,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_rated(new_enclosure, orig_details)
     return if not XMLHelper.has_element(new_enclosure, "Windows")
-    
+
     new_windows = XMLHelper.add_element(new_enclosure, "Windows")
 
     # Table 4.2.2(1) - Glazing
