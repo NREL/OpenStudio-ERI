@@ -185,7 +185,7 @@ class EnergyRatingIndex301Ruleset
     site_values = HPXML.get_site_values(site: site)
     building_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
     building_construction_values = HPXML.get_building_construction_values(building_construction: building_construction)
-    
+
     # Global variables
     @cfa = building_construction_values[:conditioned_floor_area]
     @nbeds = building_construction_values[:number_of_bedrooms]
@@ -193,7 +193,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = building_construction_values[:number_of_conditioned_floors_above_grade]
     @cvolume = building_construction_values[:conditioned_building_volume]
     @garage_present = building_construction_values[:garage_present]
-    
+
     HPXML.add_site(hpxml: hpxml,
                    fuels: site_values[:fuels],
                    shelter_coefficient: Airflow.get_default_shelter_coefficient())
@@ -209,7 +209,7 @@ class EnergyRatingIndex301Ruleset
     site_values = HPXML.get_site_values(site: site)
     building_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
     building_construction_values = HPXML.get_building_construction_values(building_construction: building_construction)
-    
+
     # Global variables
     @cfa = building_construction_values[:conditioned_floor_area]
     @nbeds = building_construction_values[:number_of_bedrooms]
@@ -231,7 +231,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_summary_iad(orig_details, hpxml)
     site = orig_details.elements["BuildingSummary/Site"]
     site_values = HPXML.get_site_values(site: site)
-    
+
     # Global variables
     # Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
     @cfa = 2400
@@ -267,7 +267,7 @@ class EnergyRatingIndex301Ruleset
         @iecc_zone_2012 = climate_zone_iecc_values[:climate_zone]
       end
     end
-    
+
     weather_station = orig_details.elements["ClimateandRiskZones/WeatherStation"]
     weather_station_values = HPXML.get_weather_station_values(weather_station: weather_station)
     HPXML.add_weather_station(hpxml: hpxml, **weather_station_values)
@@ -1064,7 +1064,7 @@ class EnergyRatingIndex301Ruleset
 
     vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     return if vent_fan.nil?
-    
+
     vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
 
     fan_type = vent_fan_values[:fan_type]
@@ -1264,7 +1264,7 @@ class EnergyRatingIndex301Ruleset
 
     hw_dist = water_heating.elements["HotWaterDistribution"]
     hw_dist_values = HPXML.get_hot_water_distribution_values(hot_water_distribution: hw_dist)
-    
+
     has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
     std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
     recirc_pipe_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)
