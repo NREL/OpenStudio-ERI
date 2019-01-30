@@ -91,7 +91,7 @@ def get_sql_result(sqlValue, design)
 end
 
 def read_output(design, designdir, output_hpxml_path)
-  sql_path = File.join(designdir, "run", "eplusout.sql")
+  sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
     puts "[#{design}] Processing output unsuccessful."
     return nil
@@ -135,7 +135,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:fuelAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design) + get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
 
   # Space Heating (by System)
-  map_tsv_data = CSV.read(File.join(designdir, "run", "map_hvac_heating.tsv"), headers: false, col_sep: "\t")
+  map_tsv_data = CSV.read(File.join(designdir, "map_hvac_heating.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHeatingBySystem] = {}
   design_output[:fuelHeatingBySystem] = {}
   design_output[:loadHeatingBySystem] = {}
@@ -157,7 +157,7 @@ def read_output(design, designdir, output_hpxml_path)
   end
 
   # Space Cooling (by System)
-  map_tsv_data = CSV.read(File.join(designdir, "run", "map_hvac_cooling.tsv"), headers: false, col_sep: "\t")
+  map_tsv_data = CSV.read(File.join(designdir, "map_hvac_cooling.tsv"), headers: false, col_sep: "\t")
   design_output[:elecCoolingBySystem] = {}
   design_output[:loadCoolingBySystem] = {}
   design_output[:hpxml_cool_sys_ids].each do |sys_id|
@@ -183,7 +183,7 @@ def read_output(design, designdir, output_hpxml_path)
   end
 
   # Water Heating (by System)
-  map_tsv_data = CSV.read(File.join(designdir, "run", "map_water_heating.tsv"), headers: false, col_sep: "\t")
+  map_tsv_data = CSV.read(File.join(designdir, "map_water_heating.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHotWaterBySystem] = {}
   design_output[:fuelHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
@@ -1039,7 +1039,7 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
 
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
     output_hpxml_path, designdir = run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
-    next unless File.exists? File.join(designdir, "run", "in.idf")
+    next unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
     next if design_output.nil?
@@ -1066,7 +1066,7 @@ else # e.g., Windows
 
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
     output_hpxml_path, designdir = run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
-    next unless File.exists? File.join(designdir, "run", "in.idf")
+    next unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
     next if design_output.nil?

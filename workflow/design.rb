@@ -14,11 +14,11 @@ end
 def run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design}] Creating input...\n"
-  output_hpxml_path, rundir = create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
+  output_hpxml_path, designdir = create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
 
-  if not rundir.nil?
+  if not designdir.nil?
     print "[#{design}] Running simulation...\n"
-    run_energyplus(design, rundir)
+    run_energyplus(design, designdir)
   end
 
   return output_hpxml_path
@@ -27,9 +27,6 @@ end
 def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   designdir = get_designdir(basedir, design)
   Dir.mkdir(designdir)
-
-  rundir = File.join(designdir, "run")
-  Dir.mkdir(rundir)
 
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
 
@@ -58,12 +55,12 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   args['hpxml_path'] = output_hpxml_path
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
   args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
-  args['epw_output_path'] = File.join(rundir, "in.epw")
+  args['epw_output_path'] = File.join(designdir, "in.epw")
   if debug
-    args['osm_output_path'] = File.join(rundir, "in.osm")
+    args['osm_output_path'] = File.join(designdir, "in.osm")
   end
   args['skip_validation'] = skip_validation
-  args['map_tsv_dir'] = rundir
+  args['map_tsv_dir'] = designdir
   update_args_hash(measures, measure_subdir, args)
 
   # Apply measures
@@ -92,15 +89,15 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   # Write model to IDF
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
-  File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
+  File.open(File.join(designdir, "in.idf"), 'w') { |f| f << model_idf.to_s }
 
-  return output_hpxml_path, rundir
+  return output_hpxml_path, designdir
 end
 
-def run_energyplus(design, rundir)
+def run_energyplus(design, designdir)
   # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
   ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
-  command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
+  command = "cd #{designdir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
   system(command, :err => File::NULL)
 end
 
