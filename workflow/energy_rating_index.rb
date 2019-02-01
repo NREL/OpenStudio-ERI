@@ -1016,10 +1016,12 @@ if ['2014AE', '2014AEG'].include? eri_version
   using_iaf = true
 end
 
-run_designs = { Constants.CalcTypeERIRatedHome => true,
-                Constants.CalcTypeERIReferenceHome => true,
-                Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf,
-                Constants.CalcTypeERIIndexAdjustmentReferenceHome => using_iaf }
+run_designs = {
+  Constants.CalcTypeERIRatedHome => true,
+  Constants.CalcTypeERIReferenceHome => true,
+  Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf,
+  Constants.CalcTypeERIIndexAdjustmentReferenceHome => using_iaf
+}
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"

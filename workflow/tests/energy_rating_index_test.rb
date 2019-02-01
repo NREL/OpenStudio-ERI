@@ -10,7 +10,7 @@ require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 
-class EnergyRatingIndexTest < Minitest::Unit::TestCase
+class EnergyRatingIndexTest < Minitest::Test
   def before_setup
     @test_results_dir = File.join(File.dirname(__FILE__), "test_results")
     FileUtils.mkdir_p @test_results_dir

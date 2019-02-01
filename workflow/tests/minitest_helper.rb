@@ -16,8 +16,11 @@ if not called_from_cli # cli can't load codecov gem
       SimpleCov.coverage_dir(dir)
     end
     SimpleCov.formatter = SimpleCov::Formatter::Codecov
-    SimpleCov.start
+  else
+    SimpleCov.coverage_dir("coverage")
   end
+  SimpleCov.start
+
   require 'minitest/autorun'
   require 'minitest/reporters'
 
