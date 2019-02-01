@@ -171,8 +171,8 @@ class EnergyRatingIndex301Ruleset
     hpxml_doc = HPXML.create_hpxml(xml_type: hpxml_values[:xml_type],
                                    xml_generated_by: hpxml_values[:xml_generated_by],
                                    transaction: hpxml_values[:transaction],
-                                   software_program_used: hpxml_values[:software_program_used],
-                                   software_program_version: hpxml_values[:software_program_version],
+                                   software_program_used: "OpenStudio-ERI workflow",
+                                   software_program_version: "X.X",
                                    eri_calculation_version: hpxml_values[:eri_calculation_version],
                                    building_id: hpxml_values[:building_id],
                                    event_type: hpxml_values[:event_type])
@@ -360,9 +360,9 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_iad(hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
     if ["1A", "1B", "1C", "2A", "2B", "2C"].include? @iecc_zone_2012
-      ach50 = 3.0
-    elsif ["3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2012
       ach50 = 5.0
+    elsif ["3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2012
+      ach50 = 3.0
     else
       fail "Unhandled IECC 2012 climate zone #{@iecc_zone_2012}."
     end
@@ -697,8 +697,7 @@ class EnergyRatingIndex301Ruleset
 
     sum_wall_area = get_iad_sum_external_wall_area(walls, rim_joists)
 
-    new_rim_joists = hpxml.elements["Building/BuildingDetails/Enclosure/RimJoists"]
-    new_rim_joists.elements.each("RimJoist") do |new_rim_joist|
+    hpxml.elements.each("Building/BuildingDetails/Enclosure/RimJoists/RimJoist") do |new_rim_joist|
       new_rim_joist_values = HPXML.get_rim_joist_values(rim_joist: new_rim_joist)
       interior_adjacent_to = new_rim_joist_values[:interior_adjacent_to]
       if ["basement - unconditioned", "basement - conditioned"].include? interior_adjacent_to
@@ -748,8 +747,7 @@ class EnergyRatingIndex301Ruleset
 
     sum_wall_area = get_iad_sum_external_wall_area(walls, rim_joists)
 
-    new_walls = hpxml.elements["Building/BuildingDetails/Enclosure/Walls"]
-    new_walls.elements.each("Wall") do |new_wall|
+    hpxml.elements.each("Building/BuildingDetails/Enclosure/Walls/Wall") do |new_wall|
       new_wall_values = HPXML.get_wall_values(wall: new_wall)
       interior_adjacent_to = new_wall_values[:interior_adjacent_to]
       exterior_adjacent_to = new_wall_values[:exterior_adjacent_to]
@@ -768,15 +766,22 @@ class EnergyRatingIndex301Ruleset
     bg_wall_area = 0.0
 
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      wall = HPXML.get_wall_values(wall: wall)
-      next if not ((wall[:interior_adjacent_to] == "living space" or wall[:exterior_adjacent_to] == "living space") and wall[:interior_adjacent_to] != wall[:exterior_adjacent_to])
+      wall_values = HPXML.get_wall_values(wall: wall)
+      next if not is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
 
-      ag_wall_area += wall[:area]
+      ag_wall_area += wall_values[:area]
+    end
+
+    orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
+      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
+      next if not is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
+
+      ag_wall_area += rim_joist_values[:area]
     end
 
     orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned='true']/FoundationWall") do |fwall|
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-      next if fwall_values[:adjacent_to] == "living space"
+      next if not is_external_thermal_boundary("basement - conditioned", fwall_values[:adjacent_to])
 
       height = fwall_values[:height]
       bg_depth = fwall_values[:depth_below_grade]
@@ -826,15 +831,17 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Glazing
-    set_enclosure_windows_reference(orig_details, hpxml)
+    total_window_area = 0.18 * @cfa
 
-    new_windows = hpxml.elements["Building/BuildingDetails/Enclosure/Windows"]
+    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
+
+    shade_summer, shade_winter = SubsurfaceConstructions.get_default_interior_shading_factors()
 
     # Calculate area-weighted averages
     sum_u_a = 0.0
     sum_shgc_a = 0.0
     sum_a = 0.0
-    new_windows.elements.each("Window") do |new_window|
+    orig_details.elements.each("Enclosure/Windows/Window") do |new_window|
       new_window_values = HPXML.get_window_values(window: new_window)
       window_area = new_window_values[:area]
       sum_a += window_area
@@ -844,9 +851,22 @@ class EnergyRatingIndex301Ruleset
     avg_u = sum_u_a / sum_a
     avg_shgc = sum_shgc_a / sum_a
 
-    new_windows.elements.each("Window") do |new_window|
-      new_window.elements["UFactor"].text = avg_u
-      new_window.elements["SHGC"].text = avg_shgc
+    # Create new windows
+    for orientation, azimuth in { "north" => 0, "south" => 180, "east" => 90, "west" => 270 }
+      window_area = 0.25 * total_window_area # Equal distribution to N/S/E/W
+      # Distribute this orientation's window area proportionally across all exterior walls
+      wall_area_fracs.each do |wall, wall_area_frac|
+        wall_id = HPXML.get_id(wall)
+        HPXML.add_window(hpxml: hpxml,
+                         id: "Window_#{wall_id}_#{orientation}",
+                         area: window_area * wall_area_frac,
+                         azimuth: azimuth,
+                         ufactor: avg_u,
+                         shgc: avg_shgc,
+                         wall_idref: wall_id,
+                         interior_shading_factor_summer: shade_summer,
+                         interior_shading_factor_winter: shade_winter)
+      end
     end
   end
 

@@ -50,6 +50,8 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2012"]' => one, # See [ClimateZone]
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => one, # See [WeatherStation]
 
+        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
+
         '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => one_or_more, # See [Attic]
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation' => one_or_more, # See [Foundation]
         '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => zero_or_more, # See [RimJoist]
@@ -57,8 +59,6 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Enclosure/Windows/Window' => zero_or_more, # See [Window]
         '/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight' => zero_or_more, # See [Skylight]
         '/HPXML/Building/BuildingDetails/Enclosure/Doors/Door' => zero_or_more, # See [Door]
-
-        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50 or nACH; see [AirInfiltration]
 
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => zero_or_more, # See [HeatingSystem]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem' => zero_or_more, # See [CoolingSystem]
@@ -68,6 +68,7 @@ class EnergyRatingIndex301Validator
 
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => zero_or_more, # See [WaterHeatingSystem]
+        '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => zero_or_more, # See [WaterFixture]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => zero_or_one, # See [HotWaterDistribution]
         '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => zero_or_more, # See [PVSystem]
 
@@ -96,24 +97,24 @@ class EnergyRatingIndex301Validator
       # [Attic]
       '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => {
         '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]' => one, # See [AtticType=Unvented] or [AtticType=Vented] or [AtticType=Cape]
-        'Roofs' => one, # See [AtticRoof]
-        'Walls' => zero_or_one, # See [AtticWall]
+        'Roofs/Roof' => one_or_more, # See [AtticRoof]
+        'Walls/Wall' => zero_or_one, # See [AtticWall]
       },
 
       ## [AtticType=Unvented]
       '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType="unvented attic"]' => {
-        'Floors' => one, # See [AtticFloor]
+        'Floors/Floor' => one_or_more, # See [AtticFloor]
       },
 
       ## [AtticType=Vented]
       '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType="vented attic"]' => {
-        'Floors' => one, # See [AtticFloor]
+        'Floors/Floor' => one_or_more, # See [AtticFloor]
         'extension/AtticSpecificLeakageArea' => one,
       },
 
       ## [AtticType=Cape]
       '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType="cape cod"]' => {
-        'Floors' => one, # See [AtticFloor]
+        'Floors/Floor' => one_or_more, # See [AtticFloor]
       },
 
       ## [AtticRoof]
@@ -462,7 +463,7 @@ class EnergyRatingIndex301Validator
       # [WaterHeatingSystem]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => {
         '../HotWaterDistribution' => one, # See [HotWaterDistribution]
-        '../WaterFixture[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => one_or_more, # See [WaterFixture]
+        '../WaterFixture' => one_or_more, # See [WaterFixture]
         'SystemIdentifier' => one, # Required by HPXML schema
         '[WaterHeaterType="storage water heater" or WaterHeaterType="instantaneous water heater" or WaterHeaterType="heat pump water heater"]' => one, # See [WHType=Tank]
         '[Location="living space" or Location="basement - unconditioned" or Location="basement - conditioned" or Location="attic - unvented" or Location="attic - vented" or Location="garage" or Location="crawlspace - unvented" or Location="crawlspace - vented"]' => one,
@@ -524,7 +525,7 @@ class EnergyRatingIndex301Validator
       # [WaterFixture]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'WaterFixtureType' => one, # Required by HPXML schema
+        '[WaterFixtureType="shower head" or WaterFixtureType="faucet"]' => one, # Required by HPXML schema
         'LowFlow' => one,
       },
 
