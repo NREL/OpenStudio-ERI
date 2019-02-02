@@ -289,13 +289,6 @@ class EnergyRatingIndexTest < Minitest::Test
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_Proposed")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      if xml.include? 'AC'
-        test_num = File.basename(xml).gsub('L100-AC-', '').gsub('.xml', '').to_i
-        test_loc = 'AC'
-      elsif xml.include? 'AL'
-        test_num = File.basename(xml).gsub('L100-AL-', '').gsub('.xml', '').to_i
-        test_loc = 'AL'
-      end
       ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_method_results(results_csv)
     end
@@ -324,6 +317,49 @@ class EnergyRatingIndexTest < Minitest::Test
         test_loc = 'AL'
       end
       _check_method_proposed_results(results, test_num, test_loc, test_num == 8)
+    end
+  end
+
+  def test_resnet_hers_method_proposed_task_group
+    # HERS Consistency Task Group files
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "RESNET_Test_4.3_HERS_Method_Task_Group.csv"))
+    File.delete(test_results_csv) if File.exists? test_results_csv
+
+    require 'csv'
+
+    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    all_results = {}
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_Test_HERS_Method_Task_Group")
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      # Run test
+      ref_hpxml, rated_hpxml, results_csv, runtime = run_eri_and_check(xml, this_dir)
+      all_results[File.basename(xml)] = _get_method_results(results_csv)
+    end
+
+    # Write results to csv
+    keys = all_results.values[0].keys
+    CSV.open(test_results_csv, "w") do |csv|
+      csv << ["XML"] + keys
+      all_results.each_with_index do |(xml, results), i|
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
+        end
+        csv << csv_line
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    all_results.each do |xml, results|
+      if xml.include? 'CO'
+        test_num = File.basename(xml).gsub('L100A-CO-', '').gsub('.xml', '').to_i
+        test_loc = 'CO'
+      elsif xml.include? 'LV'
+        test_num = File.basename(xml).gsub('L100A-LV-', '').gsub('.xml', '').to_i
+        test_loc = 'LV'
+      end
+      _check_method_task_group_results(results, test_num, test_loc, test_num == 2)
     end
   end
 
@@ -506,9 +542,15 @@ class EnergyRatingIndexTest < Minitest::Test
     system(command)
     runtime = (Time.now - start_time).round(2)
 
+    ref_hpxml = File.join(this_dir, "results", "ERIReferenceHome.xml")
+    rated_hpxml = File.join(this_dir, "results", "ERIRatedHome.xml")
     results_csv = File.join(this_dir, "results", "ERI_Results.csv")
+    worksheet_csv = File.join(this_dir, "results", "ERI_Worksheet.csv")
     if expect_error
+      assert(!File.exists?(ref_hpxml))
+      assert(!File.exists?(rated_hpxml))
       assert(!File.exists?(results_csv))
+      assert(!File.exists?(worksheet_csv))
 
       if not expect_error_msgs.nil?
         run_log = File.readlines(File.join(this_dir, "ERIRatedHome", "run.log")).map(&:strip)
@@ -526,9 +568,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
     else
       # Check all output files exist
-      ref_hpxml = File.join(this_dir, "results", "ERIReferenceHome.xml")
-      rated_hpxml = File.join(this_dir, "results", "ERIRatedHome.xml")
-      worksheet_csv = File.join(this_dir, "results", "ERI_Worksheet.csv")
       assert(File.exists?(ref_hpxml))
       assert(File.exists?(rated_hpxml))
       assert(File.exists?(results_csv))
@@ -1287,6 +1326,18 @@ class EnergyRatingIndexTest < Minitest::Test
       hotwater_mepr = { 6 => 0.62,   7 => 0.62,   8 => 0.83,   9 => 0.62,   10 => 0.62,   11 => 0.62,   12 => 0.95,   13 => 2.50,   14 => 0.62,   15 => 0.62,   16 => 0.62,   17 => 0.62,   18 => 0.62,   19 => 0.62,   20 => 0.62,   21 => 0.62,   22 => 0.62  }
       ec_x_la =       { 6 => 21.86,  7 => 21.86,  8 => 21.86,  9 => 20.70,  10 => 23.02,  11 => 23.92,  12 => 21.86,  13 => 21.86,  14 => 21.86,  15 => 21.86,  16 => 21.86,  17 => 21.86,  18 => 21.86,  19 => 21.86,  20 => 21.86,  21 => 21.86,  22 => 21.86 }
     end
+
+    _check_method_results_eri(test_num, results, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
+  end
+
+  def _check_method_task_group_results(results, test_num, test_loc, has_tankless_water_heater)
+    cooling_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'elec', 4 => 'elec', 5 => 'elec', 6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
+    cooling_mepr =  { 1 => 10.00,  2 => 10.00,  3 => 10.00,  4 => 10.00,  5 => 10.00,  6 => 10.00,  7 => 10.00,  8 => 10.00,  9 => 10.00,  10 => 10.00,  11 => 10.00,  12 => 10.00  }
+    heating_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'gas',  4 => 'elec', 5 => 'gas',  6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
+    heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96,   6 => 6.80,   7 => 6.80,   8 => 6.80,   9 => 6.80,   10 => 6.80,   11 => 6.80,   12 => 6.80   }
+    hotwater_fuel = { 1 => 'elec', 2 => 'gas',  3 => 'elec', 4 => 'elec', 5 => 'elec', 6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
+    hotwater_mepr = { 1 => 0.88,   2 => 0.82,   3 => 0.88,   4 => 0.88,   5 => 0.88,   6 => 0.88,   7 => 0.88,   8 => 0.88,   9 => 0.88,   10 => 0.88,   11 => 0.88,   12 => 0.88   }
+    ec_x_la =       { 1 => 21.27,  2 => 23.33,  3 => 22.05,  4 => 22.35,  5 => 23.33,  6 => 21.27,  7 => 21.27,  8 => 21.27,  9 => 21.27,  10 => 21.27,  11 => 21.27,  12 => 21.27  }
 
     _check_method_results_eri(test_num, results, cooling_fuel, cooling_mepr, heating_fuel, heating_mepr, hotwater_fuel, hotwater_mepr, ec_x_la, has_tankless_water_heater, false, nil, nil, nil)
   end

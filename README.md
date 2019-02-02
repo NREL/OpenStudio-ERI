@@ -54,8 +54,8 @@ The current set of tests include:
 - [x] Successful ERI calculations for all sample files
 - [x] RESNET® ANSI/ASHRAE Standard 140-2011, Class II, Tier 1 Tests
 - [x] RESNET HERS® Reference Home auto-generation tests
-- [x] RESNET HERS method tests (including IAF and 2016-proposed tests)
-- [x] RESNET Hot water system performance tests (including pre-Addendum A tests)
+- [x] RESNET HERS method tests
+- [x] RESNET Hot water system performance tests
 
 Tests can also be run locally, as shown below. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
 ```openstudio tests/energy_rating_index_test.rb``` (all tests)  
