@@ -11,18 +11,19 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, false, nil)
+    _check_mech_vent(hpxml_doc)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, false, nil)
+    _check_mech_vent(hpxml_doc)
 
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
+      puts calc_type
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_mech_vent(hpxml_doc, true, "balanced")
+      _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
     end
   end
 
@@ -31,18 +32,18 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, true, "exhaust only")
+    _check_mech_vent(hpxml_doc, "exhaust only", 82.5, 24, 40.9)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, true, "exhaust only")
+    _check_mech_vent(hpxml_doc, "exhaust only", 247, 24, 60)
 
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_mech_vent(hpxml_doc, true, "balanced")
+      _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
     end
   end
 
@@ -51,18 +52,18 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, true, "supply only")
+    _check_mech_vent(hpxml_doc, "supply only", 82.5, 24, 40.9)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, true, "supply only")
+    _check_mech_vent(hpxml_doc, "supply only", 247, 24, 60)
 
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_mech_vent(hpxml_doc, true, "balanced")
+      _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
     end
   end
 
@@ -71,18 +72,18 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, true, "balanced")
+    _check_mech_vent(hpxml_doc, "balanced", 82.5, 24, 81.8)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, true, "balanced")
+    _check_mech_vent(hpxml_doc, "balanced", 247, 24, 123.5)
 
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_mech_vent(hpxml_doc, true, "balanced")
+      _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
     end
   end
 
@@ -91,18 +92,18 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, true, "balanced")
+    _check_mech_vent(hpxml_doc, "balanced", 82.5, 24, 116.9)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, true, "energy recovery ventilator")
+    _check_mech_vent(hpxml_doc, "energy recovery ventilator", 247, 24, 123.5, 0.72, 0.48)
 
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_mech_vent(hpxml_doc, true, "balanced")
+      _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
     end
   end
 
@@ -111,18 +112,18 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, true, "balanced")
+    _check_mech_vent(hpxml_doc, "balanced", 82.5, 24, 116.9)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, true, "heat recovery ventilator")
+    _check_mech_vent(hpxml_doc, "heat recovery ventilator", 247, 24, 123.5, 0.72)
 
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_mech_vent(hpxml_doc, true, "balanced")
+      _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
     end
   end
 
@@ -131,18 +132,18 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, true, "central fan integrated supply")
+    _check_mech_vent(hpxml_doc, "central fan integrated supply", 82.5, 24, 40.9)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, true, "central fan integrated supply")
+    _check_mech_vent(hpxml_doc, "central fan integrated supply", 247, 8, 360)
 
     # IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_mech_vent(hpxml_doc, true, "balanced")
+      _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
     end
   end
 
@@ -192,11 +193,23 @@ class MechVentTest < MiniTest::Test
     return hpxml_doc
   end
 
-  def _check_mech_vent(hpxml_doc, exists, fantype) # flowrate, hours, power, sre, tre
+  def _check_mech_vent(hpxml_doc, fantype = nil, flowrate = nil, hours = nil, power = nil, sre = nil, tre = nil)
     mechvent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    if exists
-      assert_equal(mechvent.elements["FanType"].text, fantype)
-      # TODO: Check more fields
+    if not fantype.nil?
+      assert_equal(fantype, mechvent.elements["FanType"].text)
+      assert_in_epsilon(flowrate, Float(mechvent.elements["RatedFlowRate"].text), 0.01)
+      assert_equal(hours, Float(mechvent.elements["HoursInOperation"].text))
+      assert_in_epsilon(power, Float(mechvent.elements["FanPower"].text), 0.01)
+      if sre.nil?
+        assert_nil(mechvent.elements["SensibleRecoveryEfficiency"])
+      else
+        assert_equal(sre, Float(mechvent.elements["SensibleRecoveryEfficiency"].text))
+      end
+      if tre.nil?
+        assert_nil(mechvent.elements["TotalRecoveryEfficiency"])
+      else
+        assert_equal(tre, Float(mechvent.elements["TotalRecoveryEfficiency"].text))
+      end
     else
       assert_nil(mechvent)
     end
