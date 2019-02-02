@@ -322,13 +322,13 @@
                 <Ducts>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>outside</DuctLocation>
                   <DuctSurfaceArea>385.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>outside</DuctLocation>
                   <DuctSurfaceArea>77.0</DuctSurfaceArea>
                 </Ducts>
               </AirDistribution>
