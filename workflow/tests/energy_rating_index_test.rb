@@ -322,7 +322,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_resnet_hers_method_proposed_task_group
     # HERS Consistency Task Group files
-    # FIXME: Allow duct location outside, hookup ducts in HPXML measure
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "RESNET_Test_4.3_HERS_Method_Task_Group.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
