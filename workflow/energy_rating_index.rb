@@ -1010,10 +1010,13 @@ Dir.mkdir(resultsdir)
 
 # Run w/ Addendum E House Size Index Adjustment Factor?
 using_iaf = false
-hpxml_doc = REXML::Document.new(File.read(options[:hpxml]))
-eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
-if ['2014AE', '2014AEG'].include? eri_version
-  using_iaf = true
+File.open(options[:hpxml],'r').each do |line|
+  if line.strip.downcase.start_with? "<version>"
+    if line.include? '2014AE' or line.include? '2014AEG'
+      using_iaf = true
+    end
+    break
+  end
 end
 
 run_designs = {

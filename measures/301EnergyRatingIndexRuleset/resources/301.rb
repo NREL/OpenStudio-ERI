@@ -1149,33 +1149,25 @@ class EnergyRatingIndex301Ruleset
 
     q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
 
-    # Calculate fan cfm for airflow rate using IAD Home infiltration
-    sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
-
-    # Calculate fan cfm for fan power using Rated Home infiltration
-    # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
-    orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
+    # Calculate fan cfm
+    sla = nil
+    hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
       air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
-      if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
-        nach = air_infiltration_measurement_values[:air_leakage]
-        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
-        break
-      elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
+      if air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         ach50 = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
         break
       end
     end
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla)
 
     w_cfm = 0.70
-    fan_power_w = w_cfm * q_fan_power
+    fan_power_w = w_cfm * q_fan
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: "VentilationFan",
                               fan_type: "balanced",
-                              rated_flow_rate: q_fan_airflow,
+                              rated_flow_rate: q_fan,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
   end

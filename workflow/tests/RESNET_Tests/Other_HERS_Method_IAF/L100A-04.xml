@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014AEG</Version>
+        <Version>2014AE</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -29,7 +29,7 @@
         <BuildingConstruction>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
-          <NumberofBedrooms>3</NumberofBedrooms>
+          <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
@@ -212,7 +212,7 @@
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>6.8</Value>
+                <Value>9.85</Value>
               </AnnualHeatingEfficiency>
             </HeatPump>
           </HVACPlant>
@@ -259,11 +259,13 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='DHW_ID1'/>
-            <FuelType>natural gas</FuelType>
-            <WaterHeaterType>instantaneous water heater</WaterHeaterType>
+            <FuelType>electricity</FuelType>
+            <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
+            <TankVolume>40</TankVolume>
             <FractionDHWLoadServed>1</FractionDHWLoadServed>
-            <EnergyFactor>0.82</EnergyFactor>
+            <HeatingCapacity>15355</HeatingCapacity>
+            <EnergyFactor>0.88</EnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HWDist_ID1'/>
@@ -294,7 +296,7 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
-          <FuelType>natural gas</FuelType>
+          <FuelType>electricity</FuelType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
@@ -305,7 +307,7 @@
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange'/>
-          <FuelType>natural gas</FuelType>
+          <FuelType>electricity</FuelType>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven'/>
