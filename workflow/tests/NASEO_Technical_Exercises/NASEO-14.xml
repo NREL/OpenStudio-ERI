@@ -63,7 +63,12 @@
         <Attics>
           <Attic>
             <SystemIdentifier id='Attic_ID1'/>
-            <AtticType>vented attic</AtticType>
+            <AtticType>
+              <Attic>
+                <Vented>true</Vented>
+                <SpecificLeakageArea>0.0008</SpecificLeakageArea>
+              </Attic>
+            </AtticType>
             <Roofs>
               <Roof>
                 <SystemIdentifier id='attic-roof-1'/>
@@ -105,9 +110,6 @@
                 </Insulation>
               </Wall>
             </Walls>
-            <extension>
-              <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-            </extension>
           </Attic>
         </Attics>
         <Foundations>
@@ -116,6 +118,7 @@
             <FoundationType>
               <Crawlspace>
                 <Vented>true</Vented>
+                <SpecificLeakageArea>0.00667</SpecificLeakageArea>
               </Crawlspace>
             </FoundationType>
             <FrameFloor>
@@ -166,9 +169,6 @@
                 <CarpetRValue>2.5</CarpetRValue>
               </extension>
             </Slab>
-            <extension>
-              <CrawlspaceSpecificLeakageArea>0.00667</CrawlspaceSpecificLeakageArea>
-            </extension>
           </Foundation>
         </Foundations>
         <Walls>

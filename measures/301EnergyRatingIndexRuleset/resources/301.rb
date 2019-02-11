@@ -192,6 +192,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl = building_construction_values[:number_of_conditioned_floors]
     @ncfl_ag = building_construction_values[:number_of_conditioned_floors_above_grade]
     @cvolume = building_construction_values[:conditioned_building_volume]
+    @infilvolume = get_infiltration_volume(orig_details)
     @garage_present = building_construction_values[:garage_present]
 
     HPXML.add_site(hpxml: hpxml,
@@ -216,6 +217,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl = building_construction_values[:number_of_conditioned_floors]
     @ncfl_ag = building_construction_values[:number_of_conditioned_floors_above_grade]
     @cvolume = building_construction_values[:conditioned_building_volume]
+    @infilvolume = get_infiltration_volume(orig_details)
     @garage_present = building_construction_values[:garage_present]
 
     HPXML.add_site(hpxml: hpxml,
@@ -239,6 +241,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl = 2
     @ncfl_ag = 2
     @cvolume = 20400
+    @infilvolume = 20400
     @garage_present = false
 
     HPXML.add_site(hpxml: hpxml,
@@ -276,32 +279,15 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_reference(hpxml)
     # Table 4.2.2(1) - Air exchange rate
     sla = 0.00036
-
-    # Convert to other forms
-    nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
-    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
-
-    # nACH
-    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                           id: "Infiltration_ACHnatural",
-                                           unit_of_measure: "ACHnatural",
-                                           air_leakage: nach)
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @infilvolume)
 
     # ACH50
     HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
                                            unit_of_measure: "ACH",
-                                           air_leakage: ach50)
-
-    # ELA/SLA
-    ela = sla * @cfa
-    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                           id: "Infiltration_ELA_SLA",
-                                           effective_leakage_area: ela)
-
-    HPXML.add_extension(parent: hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"],
-                        extensions: { "BuildingSpecificLeakageArea": sla })
+                                           air_leakage: ach50,
+                                           infiltration_volume: @infilvolume)
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_details, hpxml)
@@ -309,10 +295,7 @@ class EnergyRatingIndex301Ruleset
 
     whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
-    nach = nil
     ach50 = nil
-    ela = nil
-    sla = nil
     orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
       air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
       if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
@@ -320,41 +303,22 @@ class EnergyRatingIndex301Ruleset
         if whole_house_fan.nil? and nach < 0.30
           nach = 0.30
         end
-        # Convert to other forms
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
-        ela = sla * @cfa
-        ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @cvolume)
+        ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.67, @cfa, @infilvolume)
         break
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         ach50 = air_infiltration_measurement_values[:air_leakage]
-        # Convert to other forms
-        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
-        ela = sla * @cfa
-        nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
         break
       end
     end
-
-    # nACH
-    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                           id: "Infiltration_ACHnatural",
-                                           unit_of_measure: "ACHnatural",
-                                           air_leakage: nach)
 
     # ACH50
     HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
                                            unit_of_measure: "ACH",
-                                           air_leakage: ach50)
-
-    # ELA/SLA
-    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                           id: "Infiltration_ELA_SLA",
-                                           effective_leakage_area: ela)
-
-    HPXML.add_extension(parent: hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"],
-                        extensions: { "BuildingSpecificLeakageArea": sla })
+                                           air_leakage: ach50,
+                                           infiltration_volume: @infilvolume)
   end
 
   def self.set_enclosure_air_infiltration_iad(hpxml)
@@ -367,31 +331,13 @@ class EnergyRatingIndex301Ruleset
       fail "Unhandled IECC 2012 climate zone #{@iecc_zone_2012}."
     end
 
-    # Convert to other forms
-    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
-    nach = Airflow.get_infiltration_ACH_from_SLA(sla, @ncfl_ag, @weather)
-
-    # nACH
-    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                           id: "Infiltration_ACHnatural",
-                                           unit_of_measure: "ACHnatural",
-                                           air_leakage: nach)
-
     # ACH50
     HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
                                            unit_of_measure: "ACH",
-                                           air_leakage: ach50)
-
-    # ELA/SLA
-    ela = sla * @cfa
-    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                           id: "Infiltration_ELA_SLA",
-                                           effective_leakage_area: ela)
-
-    HPXML.add_extension(parent: hpxml.elements["Building/BuildingDetails/Enclosure/AirInfiltration"],
-                        extensions: { "BuildingSpecificLeakageArea": sla })
+                                           air_leakage: ach50,
+                                           infiltration_volume: @infilvolume)
   end
 
   def self.set_enclosure_attics_roofs_reference(orig_details, hpxml)
@@ -400,8 +346,8 @@ class EnergyRatingIndex301Ruleset
 
     orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
       attic_values = HPXML.get_attic_values(attic: attic)
-      if ['unvented attic', 'vented attic'].include? attic_values[:attic_type]
-        attic_values[:attic_type] = 'vented attic'
+      if attic_values[:attic_type] == 'UnventedAttic'
+        attic_values[:attic_type] = 'VentedAttic'
       end
       interior_adjacent_to = get_attic_adjacent_to(attic_values[:attic_type])
 
@@ -436,9 +382,9 @@ class EnergyRatingIndex301Ruleset
         HPXML.add_attic_wall(attic: new_attic, **wall_values)
       end
 
-      if attic_values[:attic_type] == 'vented attic'
+      if attic_values[:attic_type] == 'VentedAttic'
         HPXML.add_extension(parent: new_attic,
-                            extensions: { "AtticSpecificLeakageArea": Airflow.get_default_vented_attic_sla() })
+                            extensions: { "SpecificLeakageArea": Airflow.get_default_vented_attic_sla() })
       end
     end
   end
@@ -463,8 +409,14 @@ class EnergyRatingIndex301Ruleset
         HPXML.add_attic_wall(attic: new_attic, **wall_values)
       end
 
-      HPXML.add_extension(parent: new_attic,
-                          extensions: { "AtticSpecificLeakageArea": attic_values[:attic_specific_leakage_area] })
+      if attic_values[:attic_type] == 'VentedAttic'
+        attic_sla = attic_values[:specific_leakage_area]
+        if attic_sla.nil?
+          attic_sla = Airflow.get_default_vented_attic_sla()
+        end
+        HPXML.add_extension(parent: new_attic,
+                            extensions: { "SpecificLeakageArea": attic_sla })
+      end
     end
   end
 
@@ -510,7 +462,7 @@ class EnergyRatingIndex301Ruleset
       if foundation_values[:foundation_type] == "UnventedCrawlspace"
         foundation_values[:foundation_type] = "VentedCrawlspace"
       end
-      interior_adjacent_to = get_foundation_adjacent_to(foundation.elements["FoundationType"])
+      interior_adjacent_to = get_foundation_adjacent_to(foundation_values[:foundation_type])
 
       new_foundation = HPXML.add_foundation(hpxml: hpxml, **foundation_values)
 
@@ -550,7 +502,7 @@ class EnergyRatingIndex301Ruleset
 
       if foundation_values[:foundation_type] == "VentedCrawlspace"
         HPXML.add_extension(parent: new_foundation,
-                            extensions: { "CrawlspaceSpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
+                            extensions: { "SpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
       end
     end
   end
@@ -579,13 +531,16 @@ class EnergyRatingIndex301Ruleset
 
       if foundation_values[:foundation_type] == "VentedCrawlspace"
         # Table 4.2.2(1) - Crawlspaces
-        crawlspace_sla = foundation_values[:crawlspace_specific_leakage_area]
+        crawlspace_sla = foundation_values[:specific_leakage_area]
+        if crawlspace_sla.nil?
+          crawlspace_sla = Airflow.get_default_vented_crawl_sla()
+        end
         # TODO: Handle approved ground cover
         if crawlspace_sla < min_crawlspace_sla
           crawlspace_sla = min_crawlspace_sla
         end
         HPXML.add_extension(parent: new_foundation,
-                            extensions: { "CrawlspaceSpecificLeakageArea": crawlspace_sla })
+                            extensions: { "SpecificLeakageArea": crawlspace_sla })
       end
     end
   end
@@ -634,7 +589,7 @@ class EnergyRatingIndex301Ruleset
                    under_slab_insulation_r_value: 0)
 
     HPXML.add_extension(parent: new_foundation,
-                        extensions: { "CrawlspaceSpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
+                        extensions: { "SpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
   end
 
   def self.set_enclosure_rim_joists_reference(orig_details, hpxml)
@@ -1106,7 +1061,7 @@ class EnergyRatingIndex301Ruleset
         break
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         ach50 = air_infiltration_measurement_values[:air_leakage]
-        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @infilvolume)
         break
       end
     end
@@ -1163,7 +1118,7 @@ class EnergyRatingIndex301Ruleset
         break
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         ach50 = air_infiltration_measurement_values[:air_leakage]
-        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @cvolume)
+        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, @cfa, @infilvolume)
         break
       end
     end
@@ -1476,42 +1431,58 @@ class EnergyRatingIndex301Ruleset
   def self.set_lighting_reference(orig_details, hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
 
-    HPXML.add_lighting_fractions(hpxml: hpxml,
-                                 fraction_tier_i_interior: fFI_int,
-                                 fraction_tier_i_exterior: fFI_ext,
-                                 fraction_tier_i_garage: fFI_grg,
-                                 fraction_tier_ii_interior: fFII_int,
-                                 fraction_tier_ii_exterior: fFII_ext,
-                                 fraction_tier_ii_garage: fFII_grg)
+    HPXML.add_lighting(hpxml: hpxml,
+                       fraction_tier_i_interior: fFI_int,
+                       fraction_tier_i_exterior: fFI_ext,
+                       fraction_tier_i_garage: fFI_grg,
+                       fraction_tier_ii_interior: fFII_int,
+                       fraction_tier_ii_exterior: fFII_ext,
+                       fraction_tier_ii_garage: fFII_grg)
   end
 
   def self.set_lighting_rated(orig_details, hpxml)
-    fractions = orig_details.elements["Lighting/LightingFractions"]
-    fractions_values = HPXML.get_lighting_fractions_values(lighting_fractions: fractions)
+    lighting = orig_details.elements["Lighting"]
+    lighting_values = HPXML.get_lighting_values(lighting: lighting)
 
-    if fractions.nil?
-      self.set_lighting_reference(orig_details, hpxml)
-      return
+    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
+
+    if lighting_values[:fraction_tier_i_interior].nil?
+      lighting_values[:fraction_tier_i_interior] = fFI_int
+    end
+    if lighting_values[:fraction_tier_i_exterior].nil?
+      lighting_values[:fraction_tier_i_exterior] = fFI_ext
+    end
+    if lighting_values[:fraction_tier_i_garage].nil?
+      lighting_values[:fraction_tier_i_garage] = fFI_grg
+    end
+    if lighting_values[:fraction_tier_ii_interior].nil?
+      lighting_values[:fraction_tier_ii_interior] = fFII_int
+    end
+    if lighting_values[:fraction_tier_ii_exterior].nil?
+      lighting_values[:fraction_tier_ii_exterior] = fFII_ext
+    end
+    if lighting_values[:fraction_tier_ii_garage].nil?
+      lighting_values[:fraction_tier_ii_garage] = fFII_grg
     end
 
     # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
-    if fractions_values[:fraction_tier_i_interior] + fractions_values[:fraction_tier_ii_interior] < 0.1
-      fractions_values[:fraction_tier_i_interior] = 0.1 - fractions_values[:fraction_tier_ii_interior]
+    if lighting_values[:fraction_tier_i_interior] + lighting_values[:fraction_tier_ii_interior] < 0.1
+      lighting_values[:fraction_tier_i_interior] = 0.1 - lighting_values[:fraction_tier_ii_interior]
     end
 
-    HPXML.add_lighting_fractions(hpxml: hpxml, **fractions_values)
+    HPXML.add_lighting(hpxml: hpxml, **lighting_values)
   end
 
   def self.set_lighting_iad(orig_details, hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
 
-    HPXML.add_lighting_fractions(hpxml: hpxml,
-                                 fraction_tier_i_interior: fFI_int,
-                                 fraction_tier_i_exterior: fFI_ext,
-                                 fraction_tier_i_garage: fFI_grg,
-                                 fraction_tier_ii_interior: fFII_int,
-                                 fraction_tier_ii_exterior: fFII_ext,
-                                 fraction_tier_ii_garage: fFII_grg)
+    HPXML.add_lighting(hpxml: hpxml,
+                       fraction_tier_i_interior: fFI_int,
+                       fraction_tier_i_exterior: fFI_ext,
+                       fraction_tier_i_garage: fFI_grg,
+                       fraction_tier_ii_interior: fFII_int,
+                       fraction_tier_ii_exterior: fFII_ext,
+                       fraction_tier_ii_garage: fFII_grg)
   end
 
   def self.set_ceiling_fans_reference(orig_details, hpxml)
@@ -1764,6 +1735,19 @@ class EnergyRatingIndex301Ruleset
     return "electricity" if fuel_fracs.empty?
 
     return fuel_fracs.key(fuel_fracs.values.max)
+  end
+
+  def self.get_infiltration_volume(orig_details)
+    infilvolume = nil
+    orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
+      air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+      next if air_infiltration_measurement_values[:infiltration_volume].nil?
+
+      infilvolume = air_infiltration_measurement_values[:infiltration_volume]
+      break
+    end
+
+    return infilvolume
   end
 end
 

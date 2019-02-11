@@ -187,9 +187,6 @@
                 <CarpetRValue>2.0</CarpetRValue>
               </extension>
             </Slab>
-            <extension>
-              <CrawlspaceSpecificLeakageArea>0.006666666666666667</CrawlspaceSpecificLeakageArea>
-            </extension>
           </Foundation>
         </Foundations>
         <RimJoists>
