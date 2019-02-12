@@ -351,6 +351,10 @@ class EnergyRatingIndex301Ruleset
       end
       interior_adjacent_to = get_attic_adjacent_to(attic_values[:attic_type])
 
+      if attic_values[:attic_type] == 'VentedAttic'
+        attic_values[:specific_leakage_area] = Airflow.get_default_vented_attic_sla()
+      end
+
       new_attic = HPXML.add_attic(hpxml: hpxml, **attic_values)
 
       # Table 4.2.2(1) - Roofs
@@ -381,17 +385,19 @@ class EnergyRatingIndex301Ruleset
         end
         HPXML.add_attic_wall(attic: new_attic, **wall_values)
       end
-
-      if attic_values[:attic_type] == 'VentedAttic'
-        HPXML.add_extension(parent: new_attic,
-                            extensions: { "SpecificLeakageArea": Airflow.get_default_vented_attic_sla() })
-      end
     end
   end
 
   def self.set_enclosure_attics_roofs_rated(orig_details, hpxml)
     orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
       attic_values = HPXML.get_attic_values(attic: attic)
+
+      if attic_values[:attic_type] == 'VentedAttic'
+        if attic_values[:specific_leakage_area].nil?
+          attic_values[:specific_leakage_area] = Airflow.get_default_vented_attic_sla()
+        end
+      end
+
       new_attic = HPXML.add_attic(hpxml: hpxml, **attic_values)
 
       attic.elements.each("Roofs/Roof") do |roof|
@@ -407,15 +413,6 @@ class EnergyRatingIndex301Ruleset
       attic.elements.each("Walls/Wall") do |wall|
         wall_values = HPXML.get_attic_wall_values(wall: wall)
         HPXML.add_attic_wall(attic: new_attic, **wall_values)
-      end
-
-      if attic_values[:attic_type] == 'VentedAttic'
-        attic_sla = attic_values[:specific_leakage_area]
-        if attic_sla.nil?
-          attic_sla = Airflow.get_default_vented_attic_sla()
-        end
-        HPXML.add_extension(parent: new_attic,
-                            extensions: { "SpecificLeakageArea": attic_sla })
       end
     end
   end
@@ -464,6 +461,10 @@ class EnergyRatingIndex301Ruleset
       end
       interior_adjacent_to = get_foundation_adjacent_to(foundation_values[:foundation_type])
 
+      if foundation_values[:foundation_type] == "VentedCrawlspace"
+        foundation_values[:specific_leakage_area] = Airflow.get_default_vented_crawl_sla()
+      end
+
       new_foundation = HPXML.add_foundation(hpxml: hpxml, **foundation_values)
 
       # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
@@ -499,11 +500,6 @@ class EnergyRatingIndex301Ruleset
         slab_values[:carpet_r_value] = 2.0
         new_slab = HPXML.add_slab(foundation: new_foundation, **slab_values)
       end
-
-      if foundation_values[:foundation_type] == "VentedCrawlspace"
-        HPXML.add_extension(parent: new_foundation,
-                            extensions: { "SpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
-      end
     end
   end
 
@@ -512,6 +508,18 @@ class EnergyRatingIndex301Ruleset
 
     orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
       foundation_values = HPXML.get_foundation_values(foundation: foundation)
+
+      if foundation_values[:foundation_type] == "VentedCrawlspace"
+        # Table 4.2.2(1) - Crawlspaces
+        if foundation_values[:specific_leakage_area].nil?
+          foundation_values[:specific_leakage_area] = Airflow.get_default_vented_crawl_sla()
+        end
+        # TODO: Handle approved ground cover
+        if foundation_values[:specific_leakage_area] < min_crawlspace_sla
+          foundation_values[:specific_leakage_area] = min_crawlspace_sla
+        end
+      end
+
       new_foundation = HPXML.add_foundation(hpxml: hpxml, **foundation_values)
 
       foundation.elements.each("FrameFloor") do |floor|
@@ -528,20 +536,6 @@ class EnergyRatingIndex301Ruleset
         slab_values = HPXML.get_slab_values(slab: slab)
         HPXML.add_slab(foundation: new_foundation, **slab_values)
       end
-
-      if foundation_values[:foundation_type] == "VentedCrawlspace"
-        # Table 4.2.2(1) - Crawlspaces
-        crawlspace_sla = foundation_values[:specific_leakage_area]
-        if crawlspace_sla.nil?
-          crawlspace_sla = Airflow.get_default_vented_crawl_sla()
-        end
-        # TODO: Handle approved ground cover
-        if crawlspace_sla < min_crawlspace_sla
-          crawlspace_sla = min_crawlspace_sla
-        end
-        HPXML.add_extension(parent: new_foundation,
-                            extensions: { "SpecificLeakageArea": crawlspace_sla })
-      end
     end
   end
 
@@ -551,7 +545,8 @@ class EnergyRatingIndex301Ruleset
 
     new_foundation = HPXML.add_foundation(hpxml: hpxml,
                                           id: "Foundation_Crawlspace",
-                                          foundation_type: "VentedCrawlspace")
+                                          foundation_type: "VentedCrawlspace",
+                                          specific_leakage_area: Airflow.get_default_vented_crawl_sla())
 
     # Ceiling
     HPXML.add_frame_floor(foundation: new_foundation,
@@ -587,9 +582,6 @@ class EnergyRatingIndex301Ruleset
                    perimeter_insulation_r_value: 0,
                    under_slab_insulation_id: "Foundation_Slab_Under_Ins",
                    under_slab_insulation_r_value: 0)
-
-    HPXML.add_extension(parent: new_foundation,
-                        extensions: { "SpecificLeakageArea": Airflow.get_default_vented_crawl_sla() })
   end
 
   def self.set_enclosure_rim_joists_reference(orig_details, hpxml)

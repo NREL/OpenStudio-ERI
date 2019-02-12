@@ -59,6 +59,7 @@
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>7.5</AirLeakage>
             </BuildingAirLeakage>
+            <InfiltrationVolume>12312</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
