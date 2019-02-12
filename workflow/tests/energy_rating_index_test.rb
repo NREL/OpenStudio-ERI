@@ -1031,9 +1031,9 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_attic_vent_area(hpxml_doc)
     area = 0.0
     sla = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType='vented attic']") do |attc|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic") do |attc|
       area = REXML::XPath.first(attc, "sum(Floors/Floor/Area/text())")
-      sla += Float(XMLHelper.get_value(attc, "extension/AtticSpecificLeakageArea"))
+      sla += XMLHelper.get_value(attc, "AtticType/Attic[Vented='true']/SpecificLeakageArea").to_f
     end
     return sla * area
   end
@@ -1041,9 +1041,9 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_crawl_vent_area(hpxml_doc)
     area = 0.0
     sla = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]") do |foundation|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
       area = REXML::XPath.first(foundation, "sum(FrameFloor/Area/text())")
-      sla += Float(XMLHelper.get_value(foundation, "extension/CrawlspaceSpecificLeakageArea"))
+      sla = XMLHelper.get_value(foundation, "FoundationType/Crawlspace[Vented='true']/SpecificLeakageArea").to_f
     end
     return sla * area
   end
@@ -1081,9 +1081,11 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_sla(hpxml_doc)
-    ela = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/EffectiveLeakageArea"))
-    area = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    return ela / area
+    ach50 = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    infilVolume = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume"))
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.67, cfa, infilVolume)
+    return sla
   end
 
   def _get_internal_gains(hpxml_doc)
@@ -1187,13 +1189,13 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Lighting
     xml_ltg_sens = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting/LightingFractions") do |ltg|
-      fFI_int = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesInterior"))
-      fFI_ext = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesExterior"))
-      fFI_grg = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIFixturesGarage"))
-      fFII_int = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesInterior"))
-      fFII_ext = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesExterior"))
-      fFII_grg = Float(XMLHelper.get_value(ltg, "extension/FractionQualifyingTierIIFixturesGarage"))
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting") do |ltg|
+      fFI_int = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']/FractionofUnitsInLocation"))
+      fFI_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']/FractionofUnitsInLocation"))
+      fFI_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']/FractionofUnitsInLocation"))
+      fFII_int = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']/FractionofUnitsInLocation"))
+      fFII_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation"))
+      fFII_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation"))
       int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, garage_present, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
       xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, "kWh", "Btu")
     end

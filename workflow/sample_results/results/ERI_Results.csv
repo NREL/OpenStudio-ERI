@@ -1,12 +1,12 @@
-ERI,67.15
-REUL Heating (MBtu),49.65
-REUL Cooling (MBtu),13.33
+ERI,104.21
+REUL Heating (MBtu),49.76
+REUL Cooling (MBtu),13.48
 REUL Hot Water (MBtu),12.41
-EC_r Heating (MBtu),98.53
-EC_r Cooling (MBtu),5.49
+EC_r Heating (MBtu),98.76
+EC_r Cooling (MBtu),5.55
 EC_r Hot Water (MBtu),13.49
-EC_x Heating (MBtu),46.93
-EC_x Cooling (MBtu),2.74
+EC_x Heating (MBtu),116.39
+EC_x Cooling (MBtu),7.74
 EC_x Hot Water (MBtu),12.52
 EC_x L&A (MBtu),42.84
-IAD_Save (%),0.21260778287854748
+IAD_Save (%),0.25709
