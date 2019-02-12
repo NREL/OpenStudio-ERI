@@ -71,7 +71,6 @@
                 <SpecificLeakageArea>0.0008</SpecificLeakageArea>
               </Attic>
             </AtticType>
-            <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
             <Roofs>
               <Roof>
                 <SystemIdentifier id='attic-roof-1'/>

@@ -1,12 +1,14 @@
-<?xml version='1.0' encoding='UTF-8'?> 
+<?xml version='1.0' encoding='UTF-8'?>
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
-    <XMLType>HPXML, ERI Index Adjustment Reference Home</XMLType>
+    <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Hand</XMLGeneratedBy>
-    <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-02-11T21:06:33-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
+    <SoftwareProgramUsed>OpenStudio-ERI workflow</SoftwareProgramUsed>
+    <SoftwareProgramVersion>X.X</SoftwareProgramVersion>
     <extension>
       <ERICalculation>
         <Version>2014AEG</Version>
@@ -36,8 +38,8 @@
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <ConditionedFloorArea>2400</ConditionedFloorArea>
-          <ConditionedBuildingVolume>20400</ConditionedBuildingVolume>
+          <ConditionedFloorArea>2400.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>20400.0</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
       </BuildingSummary>
@@ -59,39 +61,31 @@
       <Enclosure>
         <AirInfiltration>
           <AirInfiltrationMeasurement>
-            <SystemIdentifier id='Infiltration_ACHnatural'/>
-            <BuildingAirLeakage>
-              <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <AirLeakage>0.3692142163704932</AirLeakage>
-            </BuildingAirLeakage>
-          </AirInfiltrationMeasurement>
-          <AirInfiltrationMeasurement>
             <SystemIdentifier id='Infiltration_ACH50'/>
-            <HousePressure>50</HousePressure>
+            <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>7.010903074041902</AirLeakage>
             </BuildingAirLeakage>
+            <InfiltrationVolume>20400.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
-          <AirInfiltrationMeasurement>
-            <SystemIdentifier id='Infiltration_ELA_SLA'/>
-            <EffectiveLeakageArea>0.8640000000000001</EffectiveLeakageArea>
-          </AirInfiltrationMeasurement>
-          <extension>
-            <BuildingSpecificLeakageArea>0.00036</BuildingSpecificLeakageArea>
-          </extension>
         </AirInfiltration>
         <Attics>
           <Attic>
             <SystemIdentifier id='Attic_ID1'/>
-            <AtticType>vented attic</AtticType>
+            <AtticType>
+              <Attic>
+                <Vented>true</Vented>
+                <SpecificLeakageArea>0.0033333333333333335</SpecificLeakageArea>
+              </Attic>
+            </AtticType>
             <Roofs>
               <Roof>
                 <SystemIdentifier id='attic-roof-1'/>
                 <Area>1300.0</Area>
                 <SolarAbsorptance>0.75</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
-                <Pitch>6</Pitch>
+                <Pitch>6.0</Pitch>
                 <RadiantBarrier>false</RadiantBarrier>
                 <Insulation>
                   <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
@@ -117,7 +111,7 @@
                 <WallType>
                   <WoodStud/>
                 </WallType>
-                <Area>32</Area>
+                <Area>32.0</Area>
                 <SolarAbsorptance>0.75</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
                 <Insulation>
@@ -126,9 +120,6 @@
                 </Insulation>
               </Wall>
             </Walls>
-            <extension>
-              <AtticSpecificLeakageArea>0.0033333333333333335</AtticSpecificLeakageArea>
-            </extension>
           </Attic>
         </Attics>
         <Foundations>
@@ -137,12 +128,13 @@
             <FoundationType>
               <Crawlspace>
                 <Vented>true</Vented>
+                <SpecificLeakageArea>0.006666666666666667</SpecificLeakageArea>
               </Crawlspace>
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Foundation_Floor'/>
               <AdjacentTo>living space</AdjacentTo>
-              <Area>1200</Area>
+              <Area>1200.0</Area>
               <Insulation>
                 <SystemIdentifier id='Foundation_Floor_Ins'/>
                 <AssemblyEffectiveRValue>30.3030303030303</AssemblyEffectiveRValue>
@@ -150,10 +142,10 @@
             </FrameFloor>
             <FoundationWall>
               <SystemIdentifier id='Foundation_Wall'/>
-              <Height>2</Height>
+              <Height>2.0</Height>
               <Area>277.12</Area>
-              <Thickness>8</Thickness>
-              <DepthBelowGrade>0</DepthBelowGrade>
+              <Thickness>8.0</Thickness>
+              <DepthBelowGrade>0.0</DepthBelowGrade>
               <AdjacentTo>ground</AdjacentTo>
               <Insulation>
                 <SystemIdentifier id='Foundation_Wall_Ins'/>
@@ -162,24 +154,24 @@
             </FoundationWall>
             <Slab>
               <SystemIdentifier id='Foundation_Slab'/>
-              <Area>1200</Area>
-              <Thickness>0</Thickness>
+              <Area>1200.0</Area>
+              <Thickness>0.0</Thickness>
               <ExposedPerimeter>138.56</ExposedPerimeter>
-              <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
-              <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
-              <DepthBelowGrade>0</DepthBelowGrade>
+              <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
+              <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+              <DepthBelowGrade>0.0</DepthBelowGrade>
               <PerimeterInsulation>
                 <SystemIdentifier id='Foundation_Slab_Perim_Ins'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
+                  <NominalRValue>0.0</NominalRValue>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
                 <SystemIdentifier id='Foundation_Slab_Under_Ins'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0</NominalRValue>
+                  <NominalRValue>0.0</NominalRValue>
                 </Layer>
               </UnderSlabInsulation>
               <extension>
@@ -219,7 +211,7 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>2239.4007569932373</Area>
+            <Area>2155.572666025024</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -298,7 +290,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>-1</HeatingCapacity>
+              <HeatingCapacity>-1.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.78</Value>
@@ -313,7 +305,7 @@
               <DistributionSystem idref='HVACDistribution_DSE_80'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>-1</CoolingCapacity>
+              <CoolingCapacity>-1.0</CoolingCapacity>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -343,9 +335,9 @@
               <SystemIdentifier id='VentilationFan'/>
               <FanType>balanced</FanType>
               <RatedFlowRate>34.0</RatedFlowRate>
-              <HoursInOperation>24</HoursInOperation>
+              <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
-              <FanPower>25.400938229016962</FanPower>
+              <FanPower>43.800562937410184</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
@@ -368,7 +360,7 @@
               </Standard>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>0</PipeRValue>
+              <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>
@@ -422,16 +414,42 @@
         </Oven>
       </Appliances>
       <Lighting>
-        <LightingFractions>
-          <extension>
-            <FractionQualifyingTierIFixturesInterior>0.1</FractionQualifyingTierIFixturesInterior>
-            <FractionQualifyingTierIFixturesExterior>0.0</FractionQualifyingTierIFixturesExterior>
-            <FractionQualifyingTierIFixturesGarage>0.0</FractionQualifyingTierIFixturesGarage>
-            <FractionQualifyingTierIIFixturesInterior>0.0</FractionQualifyingTierIIFixturesInterior>
-            <FractionQualifyingTierIIFixturesExterior>0.0</FractionQualifyingTierIIFixturesExterior>
-            <FractionQualifyingTierIIFixturesGarage>0.0</FractionQualifyingTierIIFixturesGarage>
-          </extension>
-        </LightingFractions>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Interior'/>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>0.1</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Interior'/>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
       </Lighting>
       <MiscLoads>
         <PlugLoad>
