@@ -98,7 +98,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_downloading_weather
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" --download-weather"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --download-weather"
     system(command)
 
     num_epws_expected = File.readlines(File.join(this_dir, "..", "weather", "data.csv")).size - 1
