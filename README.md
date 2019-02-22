@@ -11,21 +11,20 @@ The ERI is defined by [ANSI/RESNET/ICC 301-2014© "Standard for the Calculation 
 
 ## Setup
 
-1. Download [OpenStudio 2.7.1](https://github.com/NREL/OpenStudio/releases/tag/v2.7.1). At a minimum, install the Command Line Interface and EnergyPlus components.
+1. Either download [OpenStudio 2.7.1](https://github.com/NREL/OpenStudio/releases/tag/v2.7.1) (at a minimum, install the Command Line Interface and EnergyPlus components) or use the [nrel/openstudio docker image](https://hub.docker.com/r/nrel/openstudio).
 2. Clone or download this repository's source code. 
-3. To obtain all available weather files, navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory and run:  
-```openstudio --no-ssl energy_rating_index.rb --download-weather``` 
+3. To obtain all available weather files, run:  
+```openstudio workflow/energy_rating_index.rb --download-weather``` 
 
 ## Running
 
-1. Navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory.
-2. Run the ERI calculation on a provided sample HPXML file:  
-```openstudio --no-ssl energy_rating_index.rb -s -x sample_files/valid.xml```  
+Run the ERI calculation on a provided sample HPXML file:  
+```openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/valid.xml```  
 Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) simulations will be executed in parallel on the local machine.
-3. This will generate output as shown below:
+This will generate output as shown below:
 ![CLI output](https://user-images.githubusercontent.com/5861765/46991458-4e8f1480-d0c3-11e8-8234-22ed4bb4f383.png)
 
-Run `openstudio energy_rating_index.rb -h` to see all available commands/arguments.
+Run `openstudio workflow/energy_rating_index.rb -h` to see all available commands/arguments.
 
 ## Speed
 
@@ -58,8 +57,8 @@ The current set of tests include:
 - [x] RESNET Hot water system performance tests
 
 Tests can also be run locally, as shown below. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
-```openstudio tests/energy_rating_index_test.rb``` (all tests)  
-```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
+```openstudio workflow/tests/energy_rating_index_test.rb``` (all tests)  
+```openstudio workflow/tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
 
 Test results are created at workflow/tests/test_results. At the completion of the test, there will be output that denotes the number of failures/errors like so:  
 ```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  
