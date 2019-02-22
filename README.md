@@ -21,6 +21,7 @@ The ERI is defined by [ANSI/RESNET/ICC 301-2014© "Standard for the Calculation 
 Run the ERI calculation on a provided sample HPXML file:  
 ```openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/valid.xml```  
 Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) simulations will be executed in parallel on the local machine.
+
 This will generate output as shown below:
 ![CLI output](https://user-images.githubusercontent.com/5861765/46991458-4e8f1480-d0c3-11e8-8234-22ed4bb4f383.png)
 
