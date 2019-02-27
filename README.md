@@ -5,6 +5,10 @@ Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workf
 
 The ERI is defined by [ANSI/RESNET/ICC 301-2014© "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index"](http://www.resnet.us/blog/ansiresneticc-standard-301-2014-january-15-2016/).
 
+Downloading and using this software from this website does not constitute accreditation of the final software product by RESNET®.  If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
+
+Disclaimer: Any reference herein to RESNET, its activities, products, or services, or any linkages from this website to RESNET's website, does not constitute or imply the endorsement, recommendation, or favoring of the U.S. Government, the Alliance for Sustainable Energy, or any of their employees or contractors acting on their behalf.
+
 **Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master)
 
 **Code Coverage:** [![codecov](https://codecov.io/gh/NREL/OpenStudio-ERI/branch/master/graph/badge.svg?token=HpCKohTsLI)](https://codecov.io/gh/NREL/OpenStudio-ERI)
@@ -52,7 +56,7 @@ Tests are automatically run for any change to this repository. Test results can 
 
 The current set of tests include:
 - [x] Successful ERI calculations for all sample files
-- [x] RESNET® ANSI/ASHRAE Standard 140-2011, Class II, Tier 1 Tests
+- [x] RESNET ANSI/ASHRAE Standard 140-2011, Class II, Tier 1 Tests
 - [x] RESNET HERS® Reference Home auto-generation tests
 - [x] RESNET HERS method tests
 - [x] RESNET Hot water system performance tests
