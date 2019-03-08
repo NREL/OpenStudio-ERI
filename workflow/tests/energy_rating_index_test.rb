@@ -157,7 +157,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_resnet_hers_reference_home_auto_generation
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "RESNET_Test_4.2_HERS_AutoGen_Reference_Home.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
-    
+
     require 'csv'
 
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
@@ -173,7 +173,7 @@ class EnergyRatingIndexTest < Minitest::Test
       # Get results
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_reference_home_components(hpxmls[:ref], test_num)
-      
+
       # Re-simulate reference HPXML file
       FileUtils.cp(hpxmls[:ref], xmldir)
       hpxmls[:ref] = "#{xmldir}/#{File.basename(hpxmls[:ref])}"
@@ -205,7 +205,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_resnet_hers_iad_home_auto_generation
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "RESNET_Test_Other_HERS_AutoGen_IAD_Home.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
-    
+
     require 'csv'
 
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
@@ -580,9 +580,9 @@ class EnergyRatingIndexTest < Minitest::Test
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
-    
+
     using_iaf = false
-    File.open(xml,'r').each do |line|
+    File.open(xml, 'r').each do |line|
       if line.strip.downcase.start_with? "<version>"
         if line.include? '2014AE' or line.include? '2014AEG'
           using_iaf = true
@@ -865,30 +865,30 @@ class EnergyRatingIndexTest < Minitest::Test
     results["Number of Bedrooms"] = nbeds
     results["Conditioned Floor Area (ft2)"] = cfa
     results["Infiltration Volume (ft3)"] = infil_volume
-    
+
     # Above-grade Walls
     wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml_doc)
     results["Above-grade walls area (ft2)"] = wall_area
     results["Above-grade walls (Uo)"] = wall_u
-    
+
     # Roof
     roof_solar_abs, roof_emiss, roof_area = _get_roof(hpxml_doc)
     results["Roof gross area (ft2)"] = roof_area
-    
+
     # Ceilings
     ceil_u, ceil_area = _get_ceilings(hpxml_doc)
     results["Ceiling gross projected footprint area (ft2)"] = ceil_area
     results["Ceilings (Uo)"] = ceil_u
-    
+
     # Crawlspace
     crawl_vent_area = _get_crawl_vent_area(hpxml_doc)
     results["Crawlspace vent area (ft2)"] = crawl_vent_area
-    
+
     # Doors
     door_u, door_area = _get_doors(hpxml_doc)
     results["Door Area (ft2)"] = door_area
-    results["Door R-value"] = 1.0/door_u
-    
+    results["Door R-value"] = 1.0 / door_u
+
     # Windows
     win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_doc)
     results["North window area (ft2)"] = win_areas[0]
@@ -898,16 +898,16 @@ class EnergyRatingIndexTest < Minitest::Test
     results["Window U-Factor"] = win_u
     results["Window SHGCo (heating)"] = win_shgc_htg
     results["Window SHGCo (cooling)"] = win_shgc_clg
-    
+
     # Infiltration
     sla, ach50 = _get_infiltration(hpxml_doc)
     results["Infiltration rate (ACH50)"] = ach50
-    
+
     # Mechanical Ventilation
     mv_kwh, mv_cfm = _get_mech_vent(hpxml_doc)
     results["Mechanical ventilation rate"] = mv_cfm
     results["Mechanical ventilation"] = mv_kwh
-    
+
     # HVAC
     afue, hspf, seer, dse = _get_hvac(hpxml_doc)
     if test_num == 1 or test_num == 4
@@ -916,16 +916,16 @@ class EnergyRatingIndexTest < Minitest::Test
       results["Labeled heating system rating and efficiency"] = hspf
     end
     results["Labeled cooling system rating and efficiency"] = seer
-    
+
     # Thermostat
     tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
     results["Thermostat Type"] = tstat
     results["Heating thermostat settings"] = htg_sp
     results["Cooling thermostat settings"] = clg_sp
-    
+
     return results
   end
-  
+
   def _check_reference_home_components(results, test_num)
     # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 - 4
 
@@ -1082,26 +1082,26 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(3, results["Number of Bedrooms"])
     assert_equal(2400, results["Conditioned Floor Area (ft2)"])
     assert_equal(20400, results["Infiltration Volume (ft3)"])
-    
+
     # Above-grade Walls
     # FIXME: Spec says 2360 vs 2355.52???
-    #assert_in_delta(2355.52, results["Above-grade walls area (ft2)"], 0.01)
+    # assert_in_delta(2355.52, results["Above-grade walls area (ft2)"], 0.01)
     assert_in_delta(0.085, results["Above-grade walls (Uo)"], 0.001)
-    
+
     # Roof
     assert_equal(1300, results["Roof gross area (ft2)"])
-    
+
     # Ceilings
     assert_equal(1200, results["Ceiling gross projected footprint area (ft2)"])
     assert_in_delta(0.054, results["Ceilings (Uo)"], 0.01)
-    
+
     # Crawlspace
     assert_in_epsilon(8, results["Crawlspace vent area (ft2)"], 0.01)
-    
+
     # Doors
     assert_equal(40, results["Door Area (ft2)"])
     assert_in_delta(3.04, results["Door R-value"], 0.01)
-    
+
     # Windows
     assert_in_epsilon(108.00, results["North window area (ft2)"], epsilon)
     assert_in_epsilon(108.00, results["South window area (ft2)"], epsilon)
@@ -1110,14 +1110,14 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_in_delta(1.039, results["Window U-Factor"], 0.01)
     assert_in_delta(0.57, results["Window SHGCo (heating)"], 0.01)
     assert_in_delta(0.47, results["Window SHGCo (cooling)"], 0.01)
-    
+
     # Infiltration
     if test_num != 3
       assert_equal(3.0, results["Infiltration rate (ACH50)"])
     else
       assert_equal(5.0, results["Infiltration rate (ACH50)"])
     end
-    
+
     # Mechanical Ventilation
     if test_num == 1
       # FIXME assert_in_delta(66.4, results["Mechanical ventilation rate"], 0.2)
@@ -1132,7 +1132,7 @@ class EnergyRatingIndexTest < Minitest::Test
       # FIXME assert_in_delta(57.1, results["Mechanical ventilation rate"], 0.2)
       # FIXME assert_in_delta(350, results["Mechanical ventilation"], 1.0)
     end
-    
+
     # HVAC
     if test_num == 1 or test_num == 4
       assert_equal(0.78, results["Labeled heating system rating and efficiency"])
@@ -1140,22 +1140,21 @@ class EnergyRatingIndexTest < Minitest::Test
       assert_equal(7.7, results["Labeled heating system rating and efficiency"])
     end
     assert_equal(13.0, results["Labeled cooling system rating and efficiency"])
-    
+
     # Thermostat
     assert_equal("manual", results["Thermostat Type"])
     assert_equal(68, results["Heating thermostat settings"])
     assert_equal(78, results["Cooling thermostat settings"])
   end
-  
+
   def _get_geometry_values(hpxml_doc)
     nstories = Integer(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
     nbeds = Integer(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    # FIXME
-    infil_volume = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"))
+    infil_volume = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume"))
     return nstories, nbeds, cfa, infil_volume
   end
-  
+
   def _get_above_grade_walls(hpxml_doc)
     u_factor = 0.0
     solar_abs = 0.0
@@ -1290,10 +1289,18 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_infiltration(hpxml_doc)
-    ela = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/EffectiveLeakageArea"))
-    area = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    sla = ela / area
-    ach50 = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+    ela = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/EffectiveLeakageArea")
+    if not ela.nil?
+      ela = Float(ela)
+      area = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+      sla = ela / area
+    else
+      sla = nil
+    end
+    ach50 = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage")
+    if not ach50.nil?
+      ach50 = Float(ach50)
+    end
     return sla, ach50
   end
 

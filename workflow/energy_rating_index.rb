@@ -1010,7 +1010,7 @@ Dir.mkdir(resultsdir)
 
 # Run w/ Addendum E House Size Index Adjustment Factor?
 using_iaf = false
-File.open(options[:hpxml],'r').each do |line|
+File.open(options[:hpxml], 'r').each do |line|
   if line.strip.downcase.start_with? "<version>"
     if line.include? '2014AE' or line.include? '2014AEG'
       using_iaf = true

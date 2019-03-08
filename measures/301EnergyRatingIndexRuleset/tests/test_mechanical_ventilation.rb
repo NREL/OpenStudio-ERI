@@ -20,7 +20,7 @@ class MechVentTest < MiniTest::Test
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml_doc, "balanced", 62.57, 24, 43.8)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
@@ -40,7 +40,7 @@ class MechVentTest < MiniTest::Test
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml_doc, "balanced", 62.57, 24, 43.8)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
@@ -60,7 +60,7 @@ class MechVentTest < MiniTest::Test
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml_doc, "balanced", 62.57, 24, 43.8)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
@@ -80,7 +80,7 @@ class MechVentTest < MiniTest::Test
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml_doc, "balanced", 62.57, 24, 43.8)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
@@ -100,7 +100,7 @@ class MechVentTest < MiniTest::Test
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml_doc, "balanced", 62.57, 24, 43.8)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
@@ -120,7 +120,7 @@ class MechVentTest < MiniTest::Test
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml_doc, "balanced", 62.57, 24, 43.8)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
@@ -140,7 +140,7 @@ class MechVentTest < MiniTest::Test
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml_doc, "balanced", 62.57, 24, 43.8)
-    
+
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 34, 24, 43.8)
