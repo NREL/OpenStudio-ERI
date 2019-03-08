@@ -52,6 +52,7 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => one, # See [WeatherStation]
 
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH"]/AirLeakage | AirInfiltrationMeasurement/extension/ConstantACHnatural]' => one, # ACH50 or constant nACH; see [AirInfiltration]
+        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume' => zero_or_one, # Assumes InfiltrationVolume = ConditionedVolume if not provided
 
         '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => one_or_more, # See [Attic]
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation' => one_or_more, # See [Foundation]
@@ -66,7 +67,6 @@ class EnergyPlusValidator
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump' => zero_or_more, # See [HeatPump]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl' => zero_or_one, # See [HVACControl]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution' => zero_or_more, # See [HVACDistribution]
-        '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/Dehumidifier' => zero_or_one, # See [Dehumidifier]
         '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/NaturalVentilation' => zero_or_one, # See [NaturalVentilation]
 
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_one, # See [MechanicalVentilation]
@@ -102,25 +102,20 @@ class EnergyPlusValidator
 
       # [Attic]
       '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => {
-        '[AtticType="unvented attic" or AtticType="vented attic" or AtticType="flat roof" or AtticType="cathedral ceiling" or AtticType="cape cod"]' => one, # See [AtticType=Unvented] or [AtticType=Vented] or [AtticType=Cape]
+        'AtticType[Attic[Vented="false"] | Attic[Vented="true"] | Attic[Conditioned="true"] | FlatRoof | CathedralCeiling]' => one, # See [AtticType=Unvented] or [AtticType=Vented] or [AtticType=Conditioned]
         'Roofs/Roof' => one_or_more, # See [AtticRoof]
         'Walls/Wall' => zero_or_more, # See [AtticWall]
       },
 
       ## [AtticType=Unvented]
-      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType="unvented attic"]' => {
+      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="false"]]' => {
         'Floors/Floor' => one_or_more, # See [AtticFloor]
       },
 
       ## [AtticType=Vented]
-      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType="vented attic"]' => {
+      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]' => {
         'Floors/Floor' => one_or_more, # See [AtticFloor]
-        'extension[AtticSpecificLeakageArea | AtticConstantACHnatural]' => zero_or_one, # Uses ERI Reference Home if not provided
-      },
-
-      ## [AtticType=Cape]
-      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType="cape cod"]' => {
-        'Floors/Floor' => one_or_more, # See [AtticFloor]
+        '[SpecificLeakageArea | extension/AtticConstantACHnatural]' => zero_or_one, # Uses ERI Reference Home if not provided
       },
 
       ## [AtticRoof]
@@ -186,7 +181,7 @@ class EnergyPlusValidator
 
       ## [FoundationType=VentedCrawl]
       '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]' => {
-        'extension/CrawlspaceSpecificLeakageArea' => zero_or_one, # Uses ERI Reference Home if not provided
+        'SpecificLeakageArea' => zero_or_one, # Uses ERI Reference Home if not provided
       },
 
       ## [FoundationType=Slab]
@@ -356,7 +351,7 @@ class EnergyPlusValidator
       ## [HeatingType=Stove]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Stove]' => {
         'DistributionSystem' => zero,
-        '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+        '[HeatingSystemFuel="natural gas" or HeatingSystemFuel="fuel oil" or HeatingSystemFuel="propane" or HeatingSystemFuel="electricity" or HeatingSystemFuel="wood" or HeatingSystemFuel="wood pellets"]' => one, # See [HeatingType=FuelEquipment] if not electricity
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
@@ -382,7 +377,7 @@ class EnergyPlusValidator
       },
 
       ## [CoolingType=RoomAC]
-      '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioning"]' => {
+      '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="room air conditioner"]' => {
         'DistributionSystem' => zero,
         'AnnualCoolingEfficiency[Units="EER"]/Value' => one,
       },
@@ -425,14 +420,6 @@ class EnergyPlusValidator
         '[ControlType="manual thermostat" or ControlType="programmable thermostat"]' => one,
         'SetpointTempHeatingSeason' => zero_or_one, # Uses ERI assumption if not provided
         'SetpointTempCoolingSeason' => zero_or_one, # Uses ERI assumption if not provided
-      },
-
-      # [Dehumidifier]
-      '/HPXML/Building/BuildingDetails/Systems/HVAC/extension/Dehumidifier' => {
-        'EnergyFactor' => one,
-        'WaterRemovalRrate' => one,
-        'AirFlowRate' => one,
-        'HumiditySetpoint' => one,
       },
 
       # [HVACDistribution]
@@ -630,17 +617,18 @@ class EnergyPlusValidator
 
       # [Lighting]
       '/HPXML/Building/BuildingDetails/Lighting' => {
-        'LightingFractions' => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LtgType=UserSpecified]
+        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="interior"]' => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
+        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="exterior"]' => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
+        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="garage"]' => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
+        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="interior"]' => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
+        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="exterior"]' => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
+        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="garage"]' => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
       },
 
-      ## [LtgType=UserSpecified]
-      '/HPXML/Building/BuildingDetails/Lighting/LightingFractions' => {
-        'extension/FractionQualifyingTierIFixturesInterior' => one,
-        'extension/FractionQualifyingTierIFixturesExterior' => one,
-        'extension/FractionQualifyingTierIFixturesGarage' => one,
-        'extension/FractionQualifyingTierIIFixturesInterior' => one,
-        'extension/FractionQualifyingTierIIFixturesExterior' => one,
-        'extension/FractionQualifyingTierIIFixturesGarage' => one,
+      ## [LightingGroup]
+      '/HPXML/Building/BuildingDetails/Lighting/LightingGroup[ThirdPartyCertification="ERI Tier I" or ThirdPartyCertification="ERI Tier II"][Location="interior" or Location="exterior" or Location="garage"]' => {
+        'SystemIdentifier' => one, # Required by HPXML schema
+        'FractionofUnitsInLocation' => one,
       },
 
       # [CeilingFan]

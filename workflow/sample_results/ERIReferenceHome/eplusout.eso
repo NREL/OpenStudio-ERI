@@ -1,0 +1,34 @@
+Program Version,EnergyPlus, Version 9.0.1-777fe647b7, YMD=2019.02.11 21:06
+1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
+2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
+3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Report Variables Requested
+4,2,Cumulative Days of Simulation[],Month[]  ! When Monthly Report Variables Requested
+5,1,Cumulative Days of Simulation[] ! When Run Period Report Variables Requested
+6,1,Calendar Year of Simulation[] ! When Annual Report Variables Requested
+464,11,RES AC CLG SUPPLY FAN,Fan Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+501,11,RES FUR GAS HTG SUPPLY FAN,Fan Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+516,11,RES AC COOLING COIL,Cooling Coil Total Cooling Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+541,11,RES AC COOLING COIL,Cooling Coil Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+554,11,RES FUR GAS HEATING COIL,Heating Coil Heating Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+567,11,RES FUR GAS HEATING COIL,Heating Coil Gas Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+871,11,WATER USE CONNECTIONS 1,Water Use Connections Plant Hot Water Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+921,11,RES WH,Water Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+958,11,RES WH,Water Heater Off Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+959,11,RES WH,Water Heater On Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1122,11,RES AC COOLING COIL,Cooling Coil Crankcase Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+End of Data Dictionary
+1,RUN PERIOD 1,  39.83,-104.65,  -7.00,1650.00
+5,365
+464,876702588.2326031,0.0, 1, 1, 1,60,2034984.1615498197, 6,26,17,60
+501,1621509337.2161227,0.0, 1, 2,13,60,1469369.8092900727,12,31,24,60
+516,17776340393.583768,0.0, 1, 1, 1,60,42117295.531170997, 8, 5,18,60
+541,4979206268.119088,0.0, 1, 1, 1,60,14589439.816175906, 6,26,17,60
+554,64006965581.42677,0.0, 1, 2,13,60,58001456.20566483,12,31,24,60
+567,102575265354.85086,0.0, 1, 2,13,60,92951051.61164235,12,31,24,60
+871,13092888339.986102,241971.5517496329, 8,12,24,60,3227382.6363361945, 2,14, 8,60
+921,14231379974.599656,0.0, 1, 1, 1,60,4067865.9515246187, 2,13, 8,60
+958,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+959,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+1122,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+End of Data
+ Number of Records Written=          11

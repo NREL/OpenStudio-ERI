@@ -119,13 +119,13 @@ class LightingTest < MiniTest::Test
   end
 
   def _check_lighting(hpxml_doc, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
-    ltg_frac = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting/LightingFractions"]
-    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesInterior"].text), fFI_int, 0.01)
-    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesExterior"].text), fFI_ext, 0.01)
-    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIFixturesGarage"].text), fFI_grg, 0.01)
-    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesInterior"].text), fFII_int, 0.01)
-    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesExterior"].text), fFII_ext, 0.01)
-    assert_in_epsilon(Float(ltg_frac.elements["extension/FractionQualifyingTierIIFixturesGarage"].text), fFII_grg, 0.01)
+    ltg = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting"]
+    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']/FractionofUnitsInLocation"].text), fFI_int, 0.01)
+    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']/FractionofUnitsInLocation"].text), fFI_ext, 0.01)
+    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']/FractionofUnitsInLocation"].text), fFI_grg, 0.01)
+    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']/FractionofUnitsInLocation"].text), fFII_int, 0.01)
+    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation"].text), fFII_ext, 0.01)
+    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation"].text), fFII_grg, 0.01)
   end
 
   def _check_ceiling_fans(hpxml_doc, cfm_per_w, quantity)

@@ -11,21 +11,21 @@ The ERI is defined by [ANSI/RESNET/ICC 301-2014© "Standard for the Calculation 
 
 ## Setup
 
-1. Download [OpenStudio 2.7.1](https://github.com/NREL/OpenStudio/releases/tag/v2.7.1). At a minimum, install the Command Line Interface and EnergyPlus components.
+1. Either download [OpenStudio 2.7.1](https://github.com/NREL/OpenStudio/releases/tag/v2.7.1) (at a minimum, install the Command Line Interface and EnergyPlus components) or use the [nrel/openstudio docker image](https://hub.docker.com/r/nrel/openstudio).
 2. Clone or download this repository's source code. 
-3. To obtain all available weather files, navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory and run:  
-```openstudio --no-ssl energy_rating_index.rb --download-weather``` 
+3. To obtain all available weather files, run:  
+```openstudio workflow/energy_rating_index.rb --download-weather``` 
 
 ## Running
 
-1. Navigate to the [workflow](https://github.com/NREL/OpenStudio-ERI/tree/master/workflow) directory.
-2. Run the ERI calculation on a provided sample HPXML file:  
-```openstudio --no-ssl energy_rating_index.rb -s -x sample_files/valid.xml```  
+Run the ERI calculation on a provided sample HPXML file:  
+```openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/valid.xml```  
 Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) simulations will be executed in parallel on the local machine.
-3. This will generate output as shown below:
+
+This will generate output as shown below:
 ![CLI output](https://user-images.githubusercontent.com/5861765/46991458-4e8f1480-d0c3-11e8-8234-22ed4bb4f383.png)
 
-Run `openstudio energy_rating_index.rb -h` to see all available commands/arguments.
+Run `openstudio workflow/energy_rating_index.rb -h` to see all available commands/arguments.
 
 ## Speed
 
@@ -58,8 +58,8 @@ The current set of tests include:
 - [x] RESNET Hot water system performance tests
 
 Tests can also be run locally, as shown below. Individual tests (any method in `energy_rating_index_test.rb` that begins with "test_") can also be run. For example:  
-```openstudio tests/energy_rating_index_test.rb``` (all tests)  
-```openstudio tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
+```openstudio workflow/tests/energy_rating_index_test.rb``` (all tests)  
+```openstudio workflow/tests/energy_rating_index_test.rb --name=test_resnet_hers_method``` (RESNET HERS Method tests only)
 
 Test results are created at workflow/tests/test_results. At the completion of the test, there will be output that denotes the number of failures/errors like so:  
 ```Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.```  
@@ -69,6 +69,10 @@ Test results are created at workflow/tests/test_results. At the completion of th
 
 To use this workflow, software tools must produce a valid HPXML file. HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included. Because of this, an ERI Use Case for HPXML is available that specifies the specific HPXML fields required to run this workflow. The [HPXML ERI Use Case](https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb) is defined as a set of conditional XPath expressions. Invalid HPXML files produce errors found in, e.g., the `workflow/ERIRatedHome/run.log` and/or `workflow/ERIReferenceHome/run.log` files.
 
+## License
+
+This workflow is available under a BSD-3-like license, which is a free, open-source, and permissive license. For more information, check out the [license file](https://github.com/NREL/OpenStudio-ERI/blob/master/LICENSE.md).
+
 ## Status
 
 *	The 301 ruleset and ERI calculation are **works-in-progress**. 
@@ -76,3 +80,8 @@ To use this workflow, software tools must produce a valid HPXML file. HPXML is a
 *	The workflow has only been tested with the sample files provided in the `workflow/sample_files` directory.
 *	Errors/warnings are not yet being handled gracefully.
 
+## Disclaimer
+
+Downloading and using this software from this website does not constitute accreditation of the final software product by RESNET.  If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
+
+Any reference herein to RESNET, its activities, products, or services, or any linkages from this website to RESNET's website, does not constitute or imply the endorsement, recommendation, or favoring of the U.S. Government, the Alliance for Sustainable Energy, or any of their employees or contractors acting on their behalf.

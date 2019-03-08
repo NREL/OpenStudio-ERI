@@ -199,6 +199,8 @@ class HPXML
                                             unit_of_measure: nil,
                                             air_leakage: nil,
                                             effective_leakage_area: nil,
+                                            constant_ach_natural: nil,
+                                            infiltration_volume: nil,
                                             **remainder)
     air_infiltration = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Enclosure", "AirInfiltration"])
     air_infiltration_measurement = XMLHelper.add_element(air_infiltration, "AirInfiltrationMeasurement")
@@ -211,6 +213,9 @@ class HPXML
       XMLHelper.add_element(building_air_leakage, "AirLeakage", to_float(air_leakage))
     end
     XMLHelper.add_element(air_infiltration_measurement, "EffectiveLeakageArea", to_float(effective_leakage_area)) unless effective_leakage_area.nil?
+    XMLHelper.add_element(air_infiltration_measurement, "InfiltrationVolume", to_float(infiltration_volume)) unless infiltration_volume.nil?
+    HPXML.add_extension(parent: air_infiltration_measurement,
+                        extensions: { "ConstantACHnatural": to_float(constant_ach_natural) })
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
@@ -226,22 +231,42 @@ class HPXML
              :house_pressure => to_float(XMLHelper.get_value(air_infiltration_measurement, "HousePressure")),
              :unit_of_measure => XMLHelper.get_value(air_infiltration_measurement, "BuildingAirLeakage/UnitofMeasure"),
              :air_leakage => to_float(XMLHelper.get_value(air_infiltration_measurement, "BuildingAirLeakage/AirLeakage")),
-             :effective_leakage_area => to_float(XMLHelper.get_value(air_infiltration_measurement, "EffectiveLeakageArea")) }
+             :effective_leakage_area => to_float(XMLHelper.get_value(air_infiltration_measurement, "EffectiveLeakageArea")),
+             :infiltration_volume => to_float(XMLHelper.get_value(air_infiltration_measurement, "InfiltrationVolume")),
+             :constant_ach_natural => to_float(XMLHelper.get_value(air_infiltration_measurement, "extension/ConstantACHnatural")) }
   end
 
   def self.add_attic(hpxml:,
                      id:,
                      attic_type: nil,
+                     specific_leakage_area: nil,
                      **remainder)
     attics = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Enclosure", "Attics"])
     attic = XMLHelper.add_element(attics, "Attic")
     sys_id = XMLHelper.add_element(attic, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", id)
-    XMLHelper.add_element(attic, "AtticType", attic_type) unless attic_type.nil?
+    unless attic_type.nil?
+      attic_type_e = XMLHelper.add_element(attic, "AtticType")
+      if attic_type == "UnventedAttic"
+        attic_type_attic = XMLHelper.add_element(attic_type_e, "Attic")
+        XMLHelper.add_element(attic_type_attic, "Vented", false)
+      elsif attic_type == "VentedAttic"
+        attic_type_attic = XMLHelper.add_element(attic_type_e, "Attic")
+        XMLHelper.add_element(attic_type_attic, "Vented", true)
+        XMLHelper.add_element(attic_type_attic, "SpecificLeakageArea", to_float(specific_leakage_area)) unless specific_leakage_area.nil?
+      elsif attic_type == "ConditionedAttic"
+        attic_type_attic = XMLHelper.add_element(attic_type_e, "Attic")
+        XMLHelper.add_element(attic_type_attic, "Conditioned", true)
+      elsif attic_type == "FlatRoof" or attic_type == "CathedralCeiling"
+        XMLHelper.add_element(attic_type_e, attic_type)
+      else
+        fail "Unhandled attic type '#{attic_type}'."
+      end
+    end
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
-                    expected_kwargs: [:attic_specific_leakage_area])
+                    expected_kwargs: [:attic_constant_ach_natural])
 
     return attic
   end
@@ -249,9 +274,23 @@ class HPXML
   def self.get_attic_values(attic:)
     return nil if attic.nil?
 
+    attic_type = nil
+    if XMLHelper.has_element(attic, "AtticType/Attic[Vented='false']")
+      attic_type = "UnventedAttic"
+    elsif XMLHelper.has_element(attic, "AtticType/Attic[Vented='true']")
+      attic_type = "VentedAttic"
+    elsif XMLHelper.has_element(attic, "AtticType/Attic[Conditioned='true']")
+      attic_type = "ConditionedAttic"
+    elsif XMLHelper.has_element(attic, "AtticType/FlatRoof")
+      attic_type = "FlatRoof"
+    elsif XMLHelper.has_element(attic, "AtticType/CathedralCeiling")
+      attic_type = "CathedralCeiling"
+    end
+
     return { :id => HPXML.get_id(attic),
-             :attic_type => XMLHelper.get_value(attic, "AtticType"),
-             :attic_specific_leakage_area => to_float(XMLHelper.get_value(attic, "extension/AtticSpecificLeakageArea")) }
+             :attic_type => attic_type,
+             :specific_leakage_area => to_float(XMLHelper.get_value(attic, "AtticType/Attic[Vented='true']/SpecificLeakageArea")),
+             :attic_constant_ach_natural => to_float(XMLHelper.get_value(attic, "extension/AtticConstantACHnatural")) }
   end
 
   def self.add_attic_roof(attic:,
@@ -396,6 +435,7 @@ class HPXML
   def self.add_foundation(hpxml:,
                           id:,
                           foundation_type: nil,
+                          specific_leakage_area: nil,
                           **remainder)
     foundations = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Enclosure", "Foundations"])
     foundation = XMLHelper.add_element(foundations, "Foundation")
@@ -414,6 +454,7 @@ class HPXML
       elsif foundation_type == "VentedCrawlspace"
         crawlspace = XMLHelper.add_element(foundation_type_e, "Crawlspace")
         XMLHelper.add_element(crawlspace, "Vented", true)
+        XMLHelper.add_element(crawlspace, "SpecificLeakageArea", to_float(specific_leakage_area)) unless specific_leakage_area.nil?
       elsif foundation_type == "UnventedCrawlspace"
         crawlspace = XMLHelper.add_element(foundation_type_e, "Crawlspace")
         XMLHelper.add_element(crawlspace, "Vented", false)
@@ -424,7 +465,7 @@ class HPXML
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
-                    expected_kwargs: [:crawlspace_specific_leakage_area])
+                    expected_kwargs: [])
 
     return foundation
   end
@@ -449,7 +490,7 @@ class HPXML
 
     return { :id => HPXML.get_id(foundation),
              :foundation_type => foundation_type,
-             :crawlspace_specific_leakage_area => to_float(XMLHelper.get_value(foundation, "extension/CrawlspaceSpecificLeakageArea")) }
+             :specific_leakage_area => to_float(XMLHelper.get_value(foundation, "FoundationType/Crawlspace[Vented='true']/SpecificLeakageArea")) }
   end
 
   def self.add_frame_floor(foundation:,
@@ -729,7 +770,7 @@ class HPXML
                                       "InteriorShadingFactorWinter": to_float(interior_shading_factor_winter) })
     check_remainder(remainder,
                     calling_method: __method__.to_s,
-                    expected_kwargs: [:orientation, :frame_type, :glass_layers, :glass_type, :gas_fill])
+                    expected_kwargs: [:orientation, :frame_type, :glass_layers, :glass_type, :gas_fill, :exterior_shading])
 
     return window
   end
@@ -752,6 +793,7 @@ class HPXML
              :gas_fill => XMLHelper.get_value(window, "GasFill"),
              :ufactor => to_float(XMLHelper.get_value(window, "UFactor")),
              :shgc => to_float(XMLHelper.get_value(window, "SHGC")),
+             :exterior_shading => XMLHelper.get_value(window, "ExteriorShading"),
              :overhangs_depth => to_float(XMLHelper.get_value(window, "Overhangs/Depth")),
              :overhangs_distance_to_top_of_window => to_float(XMLHelper.get_value(window, "Overhangs/DistanceToTopOfWindow")),
              :overhangs_distance_to_bottom_of_window => to_float(XMLHelper.get_value(window, "Overhangs/DistanceToBottomOfWindow")),
@@ -783,7 +825,7 @@ class HPXML
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
-                    expected_kwargs: [:orientation, :frame_type, :glass_layers, :glass_type, :gas_fill])
+                    expected_kwargs: [:orientation, :frame_type, :glass_layers, :glass_type, :gas_fill, :exterior_shading])
 
     return skylight
   end
@@ -806,6 +848,7 @@ class HPXML
              :gas_fill => XMLHelper.get_value(skylight, "GasFill"),
              :ufactor => to_float(XMLHelper.get_value(skylight, "UFactor")),
              :shgc => to_float(XMLHelper.get_value(skylight, "SHGC")),
+             :exterior_shading => XMLHelper.get_value(skylight, "ExteriorShading"),
              :roof_idref => HPXML.get_idref(skylight, "AttachedToRoof") }
   end
 
@@ -854,6 +897,7 @@ class HPXML
                               heating_efficiency_units: nil,
                               heating_efficiency_value: nil,
                               fraction_heat_load_served: nil,
+                              electric_auxiliary_energy: nil,
                               **remainder)
     hvac_plant = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Systems", "HVAC", "HVACPlant"])
     heating_system = XMLHelper.add_element(hvac_plant, "HeatingSystem")
@@ -875,6 +919,7 @@ class HPXML
       XMLHelper.add_element(annual_heating_efficiency, "Value", to_float(heating_efficiency_value))
     end
     XMLHelper.add_element(heating_system, "FractionHeatLoadServed", to_float(fraction_heat_load_served)) unless fraction_heat_load_served.nil?
+    XMLHelper.add_element(heating_system, "ElectricAuxiliaryEnergy", to_float(electric_auxiliary_energy)) unless electric_auxiliary_energy.nil?
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
@@ -894,7 +939,8 @@ class HPXML
              :heating_capacity => to_float(XMLHelper.get_value(heating_system, "HeatingCapacity")),
              :heating_efficiency_units => XMLHelper.get_value(heating_system, "AnnualHeatingEfficiency/Units"),
              :heating_efficiency_value => to_float(XMLHelper.get_value(heating_system, "AnnualHeatingEfficiency/Value")),
-             :fraction_heat_load_served => to_float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed")) }
+             :fraction_heat_load_served => to_float(XMLHelper.get_value(heating_system, "FractionHeatLoadServed")),
+             :electric_auxiliary_energy => to_float(XMLHelper.get_value(heating_system, "ElectricAuxiliaryEnergy")) }
   end
 
   def self.add_cooling_system(hpxml:,
@@ -953,6 +999,7 @@ class HPXML
                          heat_pump_fuel: nil,
                          heating_capacity: nil,
                          cooling_capacity: nil,
+                         backup_heating_capacity: nil,
                          fraction_heat_load_served: nil,
                          fraction_cool_load_served: nil,
                          heating_efficiency_units: nil,
@@ -972,6 +1019,7 @@ class HPXML
     XMLHelper.add_element(heat_pump, "HeatPumpFuel", heat_pump_fuel) unless heat_pump_fuel.nil?
     XMLHelper.add_element(heat_pump, "HeatingCapacity", to_float(heating_capacity)) unless heating_capacity.nil?
     XMLHelper.add_element(heat_pump, "CoolingCapacity", to_float(cooling_capacity)) unless cooling_capacity.nil?
+    XMLHelper.add_element(heat_pump, "BackupHeatingCapacity", to_float(backup_heating_capacity)) unless backup_heating_capacity.nil?
     XMLHelper.add_element(heat_pump, "FractionHeatLoadServed", to_float(fraction_heat_load_served)) unless fraction_heat_load_served.nil?
     XMLHelper.add_element(heat_pump, "FractionCoolLoadServed", to_float(fraction_cool_load_served)) unless fraction_cool_load_served.nil?
     if not cooling_efficiency_units.nil? and not cooling_efficiency_value.nil?
@@ -1002,6 +1050,7 @@ class HPXML
              :heat_pump_fuel => XMLHelper.get_value(heat_pump, "HeatPumpFuel"),
              :heating_capacity => to_float(XMLHelper.get_value(heat_pump, "HeatingCapacity")),
              :cooling_capacity => to_float(XMLHelper.get_value(heat_pump, "CoolingCapacity")),
+             :backup_heating_capacity => to_float(XMLHelper.get_value(heat_pump, "BackupHeatingCapacity")),
              :fraction_heat_load_served => to_float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed")),
              :fraction_cool_load_served => to_float(XMLHelper.get_value(heat_pump, "FractionCoolLoadServed")),
              :heating_efficiency_units => XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency/Units"),
@@ -1013,12 +1062,16 @@ class HPXML
   def self.add_hvac_control(hpxml:,
                             id:,
                             control_type: nil,
+                            setpoint_temp_heating_season: nil,
+                            setpoint_temp_cooling_season: nil,
                             **remainder)
     hvac = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Systems", "HVAC"])
     hvac_control = XMLHelper.add_element(hvac, "HVACControl")
     sys_id = XMLHelper.add_element(hvac_control, "SystemIdentifier")
     XMLHelper.add_attribute(sys_id, "id", id)
     XMLHelper.add_element(hvac_control, "ControlType", control_type) unless control_type.nil?
+    XMLHelper.add_element(hvac_control, "SetpointTempHeatingSeason", to_float(setpoint_temp_heating_season)) unless setpoint_temp_heating_season.nil?
+    XMLHelper.add_element(hvac_control, "SetpointTempCoolingSeason", to_float(setpoint_temp_cooling_season)) unless setpoint_temp_cooling_season.nil?
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
@@ -1031,7 +1084,9 @@ class HPXML
     return nil if hvac_control.nil?
 
     return { :id => HPXML.get_id(hvac_control),
-             :control_type => XMLHelper.get_value(hvac_control, "ControlType") }
+             :control_type => XMLHelper.get_value(hvac_control, "ControlType"),
+             :setpoint_temp_heating_season => to_float(XMLHelper.get_value(hvac_control, "SetpointTempHeatingSeason")),
+             :setpoint_temp_cooling_season => to_float(XMLHelper.get_value(hvac_control, "SetpointTempCoolingSeason")) }
   end
 
   def self.add_hvac_distribution(hpxml:,
@@ -1191,6 +1246,7 @@ class HPXML
                                     energy_factor: nil,
                                     uniform_energy_factor: nil,
                                     recovery_efficiency: nil,
+                                    energy_factor_multiplier: nil,
                                     **remainder)
     water_heating = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Systems", "WaterHeating"])
     water_heating_system = XMLHelper.add_element(water_heating, "WaterHeatingSystem")
@@ -1205,6 +1261,8 @@ class HPXML
     XMLHelper.add_element(water_heating_system, "EnergyFactor", to_float(energy_factor)) unless energy_factor.nil?
     XMLHelper.add_element(water_heating_system, "UniformEnergyFactor", to_float(uniform_energy_factor)) unless uniform_energy_factor.nil?
     XMLHelper.add_element(water_heating_system, "RecoveryEfficiency", to_float(recovery_efficiency)) unless recovery_efficiency.nil?
+    HPXML.add_extension(parent: water_heating_system,
+                        extensions: { "EnergyFactorMultiplier": to_float(energy_factor_multiplier) })
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
@@ -1226,7 +1284,8 @@ class HPXML
              :heating_capacity => to_float(XMLHelper.get_value(water_heating_system, "HeatingCapacity")),
              :energy_factor => to_float(XMLHelper.get_value(water_heating_system, "EnergyFactor")),
              :uniform_energy_factor => to_float(XMLHelper.get_value(water_heating_system, "UniformEnergyFactor")),
-             :recovery_efficiency => to_float(XMLHelper.get_value(water_heating_system, "RecoveryEfficiency")) }
+             :recovery_efficiency => to_float(XMLHelper.get_value(water_heating_system, "RecoveryEfficiency")),
+             :energy_factor_multiplier => to_float(XMLHelper.get_value(water_heating_system, "extension/EnergyFactorMultiplier")) }
   end
 
   def self.add_hot_water_distribution(hpxml:,
@@ -1555,44 +1614,80 @@ class HPXML
              :is_convection => to_bool(XMLHelper.get_value(oven, "IsConvection")) }
   end
 
-  def self.add_lighting_fractions(hpxml:,
-                                  fraction_tier_i_interior: nil,
-                                  fraction_tier_i_exterior: nil,
-                                  fraction_tier_i_garage: nil,
-                                  fraction_tier_ii_interior: nil,
-                                  fraction_tier_ii_exterior: nil,
-                                  fraction_tier_ii_garage: nil,
-                                  **remainder)
+  def self.add_lighting(hpxml:,
+                        fraction_tier_i_interior: nil,
+                        fraction_tier_i_exterior: nil,
+                        fraction_tier_i_garage: nil,
+                        fraction_tier_ii_interior: nil,
+                        fraction_tier_ii_exterior: nil,
+                        fraction_tier_ii_garage: nil,
+                        **remainder)
     lighting = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Lighting"])
-    frac_array = [fraction_tier_i_interior, fraction_tier_i_exterior, fraction_tier_i_garage,
-                  fraction_tier_ii_interior, fraction_tier_ii_exterior, fraction_tier_ii_garage]
-    if frac_array.count(nil) != frac_array.length
-      lighting_fractions = XMLHelper.add_element(lighting, "LightingFractions")
-      HPXML.add_extension(parent: lighting_fractions,
-                          extensions: { "FractionQualifyingTierIFixturesInterior": to_float(fraction_tier_i_interior),
-                                        "FractionQualifyingTierIFixturesExterior": to_float(fraction_tier_i_exterior),
-                                        "FractionQualifyingTierIFixturesGarage": to_float(fraction_tier_i_garage),
-                                        "FractionQualifyingTierIIFixturesInterior": to_float(fraction_tier_ii_interior),
-                                        "FractionQualifyingTierIIFixturesExterior": to_float(fraction_tier_ii_exterior),
-                                        "FractionQualifyingTierIIFixturesGarage": to_float(fraction_tier_ii_garage) })
+    if not fraction_tier_i_interior.nil?
+      lighting_group = XMLHelper.add_element(lighting, "LightingGroup")
+      sys_id = XMLHelper.add_element(lighting_group, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Lighting_TierI_Interior")
+      XMLHelper.add_element(lighting_group, "Location", "interior")
+      XMLHelper.add_element(lighting_group, "FractionofUnitsInLocation", fraction_tier_i_interior)
+      XMLHelper.add_element(lighting_group, "ThirdPartyCertification", "ERI Tier I")
+    end
+    if not fraction_tier_i_exterior.nil?
+      lighting_group = XMLHelper.add_element(lighting, "LightingGroup")
+      sys_id = XMLHelper.add_element(lighting_group, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Lighting_TierI_Exterior")
+      XMLHelper.add_element(lighting_group, "Location", "exterior")
+      XMLHelper.add_element(lighting_group, "FractionofUnitsInLocation", fraction_tier_i_exterior)
+      XMLHelper.add_element(lighting_group, "ThirdPartyCertification", "ERI Tier I")
+    end
+    if not fraction_tier_i_garage.nil?
+      lighting_group = XMLHelper.add_element(lighting, "LightingGroup")
+      sys_id = XMLHelper.add_element(lighting_group, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Lighting_TierI_Garage")
+      XMLHelper.add_element(lighting_group, "Location", "garage")
+      XMLHelper.add_element(lighting_group, "FractionofUnitsInLocation", fraction_tier_i_garage)
+      XMLHelper.add_element(lighting_group, "ThirdPartyCertification", "ERI Tier I")
+    end
+    if not fraction_tier_ii_interior.nil?
+      lighting_group = XMLHelper.add_element(lighting, "LightingGroup")
+      sys_id = XMLHelper.add_element(lighting_group, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Lighting_TierII_Interior")
+      XMLHelper.add_element(lighting_group, "Location", "interior")
+      XMLHelper.add_element(lighting_group, "FractionofUnitsInLocation", fraction_tier_ii_interior)
+      XMLHelper.add_element(lighting_group, "ThirdPartyCertification", "ERI Tier II")
+    end
+    if not fraction_tier_ii_exterior.nil?
+      lighting_group = XMLHelper.add_element(lighting, "LightingGroup")
+      sys_id = XMLHelper.add_element(lighting_group, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Lighting_TierII_Exterior")
+      XMLHelper.add_element(lighting_group, "Location", "exterior")
+      XMLHelper.add_element(lighting_group, "FractionofUnitsInLocation", fraction_tier_ii_exterior)
+      XMLHelper.add_element(lighting_group, "ThirdPartyCertification", "ERI Tier II")
+    end
+    if not fraction_tier_ii_garage.nil?
+      lighting_group = XMLHelper.add_element(lighting, "LightingGroup")
+      sys_id = XMLHelper.add_element(lighting_group, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Lighting_TierII_Garage")
+      XMLHelper.add_element(lighting_group, "Location", "garage")
+      XMLHelper.add_element(lighting_group, "FractionofUnitsInLocation", fraction_tier_ii_garage)
+      XMLHelper.add_element(lighting_group, "ThirdPartyCertification", "ERI Tier II")
     end
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
                     expected_kwargs: [])
 
-    return lighting_fractions
+    return lighting_group
   end
 
-  def self.get_lighting_fractions_values(lighting_fractions:)
-    return nil if lighting_fractions.nil?
+  def self.get_lighting_values(lighting:)
+    return nil if lighting.nil?
 
-    return { :fraction_tier_i_interior => to_float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesInterior")),
-             :fraction_tier_i_exterior => to_float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesExterior")),
-             :fraction_tier_i_garage => to_float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIFixturesGarage")),
-             :fraction_tier_ii_interior => to_float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesInterior")),
-             :fraction_tier_ii_exterior => to_float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesExterior")),
-             :fraction_tier_ii_garage => to_float(XMLHelper.get_value(lighting_fractions, "extension/FractionQualifyingTierIIFixturesGarage")) }
+    return { :fraction_tier_i_interior => to_float(XMLHelper.get_value(lighting, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']/FractionofUnitsInLocation")),
+             :fraction_tier_i_exterior => to_float(XMLHelper.get_value(lighting, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']/FractionofUnitsInLocation")),
+             :fraction_tier_i_garage => to_float(XMLHelper.get_value(lighting, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']/FractionofUnitsInLocation")),
+             :fraction_tier_ii_interior => to_float(XMLHelper.get_value(lighting, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']/FractionofUnitsInLocation")),
+             :fraction_tier_ii_exterior => to_float(XMLHelper.get_value(lighting, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation")),
+             :fraction_tier_ii_garage => to_float(XMLHelper.get_value(lighting, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation")) }
   end
 
   def self.add_ceiling_fan(hpxml:,
@@ -1685,9 +1780,9 @@ class HPXML
   def self.get_misc_loads_schedule_values(misc_loads:)
     return nil if misc_loads.nil?
 
-    return { :weekday_fractions => XMLHelper.get_value(misc_loads, "WeekdayScheduleFractions"),
-             :weekend_fractions => XMLHelper.get_value(misc_loads, "WeekendScheduleFractions"),
-             :monthly_multipliers => XMLHelper.get_value(misc_loads, "MonthlyScheduleMultipliers") }
+    return { :weekday_fractions => XMLHelper.get_value(misc_loads, "extension/WeekdayScheduleFractions"),
+             :weekend_fractions => XMLHelper.get_value(misc_loads, "extension/WeekendScheduleFractions"),
+             :monthly_multipliers => XMLHelper.get_value(misc_loads, "extension/MonthlyScheduleMultipliers") }
   end
 
   def self.add_assembly_insulation(parent:,
@@ -1768,6 +1863,14 @@ class HPXML
     end
 
     return extension
+  end
+
+  def self.get_extension_values(parent:)
+    return {} if parent.nil?
+
+    return { :use_only_ideal_air_system => to_bool(XMLHelper.get_value(parent, "extension/UseOnlyIdealAirSystem")),
+             :load_distribution_scheme => XMLHelper.get_value(parent, "extension/LoadDistributionScheme"),
+             :disable_natural_ventilation => to_bool(XMLHelper.get_value(parent, "extension/DisableNaturalVentilation")) }
   end
 
   private
