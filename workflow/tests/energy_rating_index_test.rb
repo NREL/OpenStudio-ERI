@@ -1084,8 +1084,7 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(20400, results["Infiltration Volume (ft3)"])
 
     # Above-grade Walls
-    # FIXME: Spec says 2360 vs 2355.52???
-    # assert_in_delta(2355.52, results["Above-grade walls area (ft2)"], 0.01)
+    assert_in_delta(2355.52, results["Above-grade walls area (ft2)"], 0.01)
     assert_in_delta(0.085, results["Above-grade walls (Uo)"], 0.001)
 
     # Roof
@@ -1120,17 +1119,17 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Mechanical Ventilation
     if test_num == 1
-      # FIXME assert_in_delta(66.4, results["Mechanical ventilation rate"], 0.2)
-      # FIXME assert_in_delta(407, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(66.4, results["Mechanical ventilation rate"], 0.2)
+      assert_in_delta(407, results["Mechanical ventilation"], 1.0)
     elsif test_num == 2
-      # FIXME assert_in_delta(64.2, results["Mechanical ventilation rate"], 0.2)
-      # FIXME assert_in_delta(394, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(64.2, results["Mechanical ventilation rate"], 0.2)
+      assert_in_delta(394, results["Mechanical ventilation"], 1.0)
     elsif test_num == 3
-      # FIXME assert_in_delta(53.3, results["Mechanical ventilation rate"], 0.2)
-      # FIXME assert_in_delta(327, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(53.3, results["Mechanical ventilation rate"], 0.2)
+      assert_in_delta(327, results["Mechanical ventilation"], 1.0)
     elsif test_num == 4
-      # FIXME assert_in_delta(57.1, results["Mechanical ventilation rate"], 0.2)
-      # FIXME assert_in_delta(350, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(57.1, results["Mechanical ventilation rate"], 0.2)
+      assert_in_delta(350, results["Mechanical ventilation"], 1.0)
     end
 
     # HVAC
@@ -1159,14 +1158,16 @@ class EnergyRatingIndexTest < Minitest::Test
     u_factor = 0.0
     solar_abs = 0.0
     emittance = 0.0
-    area = 0.0
     num = 0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall") do |wall|
       u_factor += 1.0 / Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
       solar_abs += Float(XMLHelper.get_value(wall, "SolarAbsorptance"))
       emittance += Float(XMLHelper.get_value(wall, "Emittance"))
-      area += Float(XMLHelper.get_value(wall, "Area"))
       num += 1
+    end
+    area = 0.0
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall | /HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist") do |wall|
+      area += Float(XMLHelper.get_value(wall, "Area"))
     end
     return u_factor / num, solar_abs / num, emittance / num, area
   end
@@ -1289,18 +1290,10 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_infiltration(hpxml_doc)
-    ela = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/EffectiveLeakageArea")
-    if not ela.nil?
-      ela = Float(ela)
-      area = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-      sla = ela / area
-    else
-      sla = nil
-    end
-    ach50 = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage")
-    if not ach50.nil?
-      ach50 = Float(ach50)
-    end
+    ach50 = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
+    infil_volume = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume"))
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, cfa, infil_volume)
     return sla, ach50
   end
 
