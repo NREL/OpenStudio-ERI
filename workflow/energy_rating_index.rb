@@ -255,8 +255,6 @@ def read_output(design, designdir, output_hpxml_path)
   query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMechanicalVentilation}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
 
-  return design_output if design != "ERI Rated Home" # FIXME TEMPORARY !!!!!!!!!!!!!!!
-
   # Error Checking
   tolerance = 0.1 # MMBtu
 
@@ -1010,10 +1008,13 @@ Dir.mkdir(resultsdir)
 
 # Run w/ Addendum E House Size Index Adjustment Factor?
 using_iaf = false
-hpxml_doc = REXML::Document.new(File.read(options[:hpxml]))
-eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
-if ['2014AE', '2014AEG'].include? eri_version
-  using_iaf = true
+File.open(options[:hpxml], 'r').each do |line|
+  if line.strip.downcase.start_with? "<version>"
+    if line.include? '2014AE' or line.include? '2014AEG'
+      using_iaf = true
+    end
+    break
+  end
 end
 
 run_designs = {

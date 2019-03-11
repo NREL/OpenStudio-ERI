@@ -54,6 +54,7 @@ The current set of tests include:
 - [x] Successful ERI calculations for all sample files
 - [x] RESNET® ANSI/ASHRAE Standard 140-2011, Class II, Tier 1 Tests
 - [x] RESNET HERS® Reference Home auto-generation tests
+- [x] RESNET HERS Index Adjustment Design auto-generation tests
 - [x] RESNET HERS method tests
 - [x] RESNET Hot water system performance tests
 

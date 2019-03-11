@@ -25,7 +25,7 @@ class EnclosureTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_infiltration(hpxml_doc, 6.17)
+    _check_infiltration(hpxml_doc, 5.87)
     _check_attics(hpxml_doc)
     _check_foundations(hpxml_doc)
     _check_walls_and_rim_joists(hpxml_doc)
@@ -53,7 +53,7 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_infiltration(hpxml_doc, 7.01)
+    _check_infiltration(hpxml_doc, 6.67)
     _check_attics(hpxml_doc)
     _check_foundations(hpxml_doc)
     _check_walls_and_rim_joists(hpxml_doc)

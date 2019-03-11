@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014AEG</Version>
+        <Version>2014AE</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -29,7 +29,7 @@
         <BuildingConstruction>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
-          <NumberofBedrooms>4</NumberofBedrooms>
+          <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
@@ -201,23 +201,32 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <HeatPump>
-              <SystemIdentifier id='SpaceHeatPump_ID1'/>
+            <HeatingSystem>
+              <SystemIdentifier id='SpaceHeat_ID1'/>
               <DistributionSystem idref="HVAC_Dist_ID1"/>
-              <HeatPumpType>air-to-air</HeatPumpType>
-              <HeatPumpFuel>electricity</HeatPumpFuel>
-              <CoolingCapacity>60000</CoolingCapacity>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>60000</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.96</Value>
+              </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1</FractionHeatLoadServed>
+            </HeatingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID1'/>
+              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>60000</CoolingCapacity>
               <FractionCoolLoadServed>1</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>10</Value>
               </AnnualCoolingEfficiency>
-              <AnnualHeatingEfficiency>
-                <Units>HSPF</Units>
-                <Value>9.85</Value>
-              </AnnualHeatingEfficiency>
-            </HeatPump>
+            </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
@@ -299,7 +308,7 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
-          <FuelType>electricity</FuelType>
+          <FuelType>natural gas</FuelType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
@@ -310,7 +319,7 @@
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange'/>
-          <FuelType>electricity</FuelType>
+          <FuelType>natural gas</FuelType>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven'/>

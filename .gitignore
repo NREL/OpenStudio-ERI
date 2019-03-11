@@ -11,7 +11,7 @@ coverage
 /workflow/results
 /workflow/SimulationHome
 /workflow/tests/test_results
-/workflow/tests/RESNET_Tests/4.2_Test_HERS_Reference_Home/ERIReferenceHome.xml
+/workflow/tests/RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/ERIReferenceHome.xml
 /weather/USA_AK_Adak.NAS.704540_TMY3.cache
 /weather/USA_AK_Adak.NAS.704540_TMY3.epw
 /weather/USA_AK_Ambler.701718_TMY3.cache
