@@ -255,8 +255,6 @@ def read_output(design, designdir, output_hpxml_path)
   query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameMechanicalVentilation}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
 
-  return design_output if design != "ERI Rated Home" # FIXME TEMPORARY !!!!!!!!!!!!!!!
-
   # Error Checking
   tolerance = 0.1 # MMBtu
 
