@@ -1041,7 +1041,8 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
     sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, @ncfl * 8.2)
+    vert_distance = @ncfl_ag * 8.2 + get_above_grade_basement_height(orig_details)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
@@ -1057,7 +1058,7 @@ class EnergyRatingIndex301Ruleset
         break
       end
     end
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, @ncfl * 8.2)
+    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
 
     fan_power_w = nil
     if fan_type == 'supply only' or fan_type == 'exhaust only' or fan_type == 'central fan integrated supply'
@@ -1732,6 +1733,20 @@ class EnergyRatingIndex301Ruleset
     end
 
     return infilvolume
+  end
+
+  def self.get_above_grade_basement_height(orig_details)
+    above_grade_height = 0
+    orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned]") do |cond_bsmnt|
+      cond_bsmnt.elements.each("FoundationWall") do |cond_bsmnt_wall|
+        cond_bsmnt_wall_values = HPXML.get_foundation_wall_values(foundation_wall: cond_bsmnt_wall)
+        ag_height = cond_bsmnt_wall_values[:height] - cond_bsmnt_wall_values[:depth_below_grade]
+        if ag_height > above_grade_height
+          above_grade_height = ag_height
+        end
+      end
+    end
+    return above_grade_height
   end
 end
 
