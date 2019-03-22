@@ -261,19 +261,10 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_climate(orig_details, hpxml)
-    orig_details.elements.each("ClimateandRiskZones/ClimateZoneIECC") do |climate_zone_iecc|
-      climate_zone_iecc_values = HPXML.get_climate_zone_iecc_values(climate_zone_iecc: climate_zone_iecc)
-      HPXML.add_climate_zone_iecc(hpxml: hpxml, **climate_zone_iecc_values)
-      if climate_zone_iecc_values[:year] == 2006
-        @iecc_zone_2006 = climate_zone_iecc_values[:climate_zone]
-      elsif climate_zone_iecc_values[:year] == 2012
-        @iecc_zone_2012 = climate_zone_iecc_values[:climate_zone]
-      end
-    end
-
-    weather_station = orig_details.elements["ClimateandRiskZones/WeatherStation"]
-    weather_station_values = HPXML.get_weather_station_values(weather_station: weather_station)
-    HPXML.add_weather_station(hpxml: hpxml, **weather_station_values)
+    climate_and_risk_zones_values = HPXML.get_climate_and_risk_zones_values(climate_and_risk_zones: orig_details.elements["ClimateandRiskZones"])
+    HPXML.add_climate_and_risk_zones(hpxml: hpxml, **climate_and_risk_zones_values)
+    @iecc_zone_2006 = climate_and_risk_zones_values[:iecc2006]
+    @iecc_zone_2012 = climate_and_risk_zones_values[:iecc2012]
   end
 
   def self.set_enclosure_air_infiltration_reference(hpxml)
@@ -1585,8 +1576,7 @@ class EnergyRatingIndex301Ruleset
                                         heating_system_type: "Furnace",
                                         heating_system_fuel: "natural gas",
                                         heating_capacity: -1, # Use Manual J auto-sizing
-                                        heating_efficiency_units: "AFUE",
-                                        heating_efficiency_value: 0.78,
+                                        heating_efficiency_afue: 0.78,
                                         fraction_heat_load_served: load_frac)
     if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
@@ -1608,8 +1598,7 @@ class EnergyRatingIndex301Ruleset
                                         heating_system_type: "Boiler",
                                         heating_system_fuel: "natural gas",
                                         heating_capacity: -1, # Use Manual J auto-sizing
-                                        heating_efficiency_units: "AFUE",
-                                        heating_efficiency_value: 0.80,
+                                        heating_efficiency_afue: 0.80,
                                         fraction_heat_load_served: load_frac)
     if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
@@ -1633,10 +1622,8 @@ class EnergyRatingIndex301Ruleset
                                     cooling_capacity: -1, # Use Manual J auto-sizing
                                     fraction_heat_load_served: load_frac,
                                     fraction_cool_load_served: 0.0,
-                                    cooling_efficiency_units: "SEER",
-                                    cooling_efficiency_value: 13.0, # Arbitrary, not used
-                                    heating_efficiency_units: "HSPF",
-                                    heating_efficiency_value: 7.7)
+                                    cooling_efficiency_seer: 13.0, # Arbitrary, not used
+                                    heating_efficiency_hspf: 7.7)
     if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
@@ -1658,8 +1645,7 @@ class EnergyRatingIndex301Ruleset
                                         cooling_system_fuel: "electricity",
                                         cooling_capacity: -1, # Use Manual J auto-sizing
                                         fraction_cool_load_served: load_frac,
-                                        cooling_efficiency_units: "SEER",
-                                        cooling_efficiency_value: 13.0)
+                                        cooling_efficiency_seer: 13.0)
     if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
