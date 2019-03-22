@@ -1071,7 +1071,7 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # e-Ratio
-    assert_in_epsilon(1, results["e-Ratio"], 0.0075) # FIXME: Should be 0.005
+    assert_in_delta(1, results["e-Ratio"], 0.0075) # FIXME: Should be 0.005
   end
 
   def _check_iad_home_components(results, test_num)
@@ -1617,7 +1617,7 @@ class EnergyRatingIndexTest < Minitest::Test
       eri = 100 * tnml / trl
     end
 
-    assert_operator((results['ERI'] - eri).abs / results['ERI'], :<, 0.0051) # FIXME: Should be 0.005
+    assert_operator((results['ERI'] - eri).abs / results['ERI'], :<, 0.005)
   end
 
   def _get_hot_water(results_csv)
