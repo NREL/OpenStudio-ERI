@@ -41,16 +41,16 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>5B</ClimateZone>
+          <ClimateZone>3B</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
           <Year>2012</Year>
-          <ClimateZone>5B</ClimateZone>
+          <ClimateZone>3B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='Weather_Station'/>
-          <Name>Colorado Springs, CO</Name>
-          <WMO>724660</WMO>
+          <Name>Las Vegas, NV</Name>
+          <WMO>723860</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -59,7 +59,7 @@
             <SystemIdentifier id='InfiltMeas64'/>
             <InfiltrationVolume>12312</InfiltrationVolume>
             <extension>
-              <ConstantACHnatural>1.5</ConstantACHnatural>
+              <ConstantACHnatural>0.67</ConstantACHnatural>
             </extension>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
@@ -303,13 +303,31 @@
       </Enclosure>
       <Systems>
         <HVAC>
+          <HVACPlant>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID1'/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>38300</CoolingCapacity>
+              <FractionCoolLoadServed>1</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>10</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
+          </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
-          <extension>
-            <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
-          </extension>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <Other>DSE</Other>
+            </DistributionSystemType>
+            <AnnualCoolingDistributionSystemEfficiency>1.0</AnnualCoolingDistributionSystemEfficiency>
+          </HVACDistribution>
         </HVAC>
       </Systems>
       <MiscLoads>

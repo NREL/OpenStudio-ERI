@@ -59,7 +59,7 @@
             <SystemIdentifier id='InfiltMeas64'/>
             <InfiltrationVolume>12312</InfiltrationVolume>
             <extension>
-              <ConstantACHnatural>1.5</ConstantACHnatural>
+              <ConstantACHnatural>0.67</ConstantACHnatural>
             </extension>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
@@ -303,13 +303,34 @@
       </Enclosure>
       <Systems>
         <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='SpaceHeat_ID1'/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>56100</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.78</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+              <ElectricAuxiliaryEnergy>1040</ElectricAuxiliaryEnergy>
+            </HeatingSystem>
+          </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
-          <extension>
-            <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
-          </extension>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <Other>DSE</Other>
+            </DistributionSystemType>
+            <AnnualHeatingDistributionSystemEfficiency>1.0</AnnualHeatingDistributionSystemEfficiency>
+          </HVACDistribution>
         </HVAC>
       </Systems>
       <MiscLoads>

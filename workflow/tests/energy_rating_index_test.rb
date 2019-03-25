@@ -124,7 +124,7 @@ class EnergyRatingIndexTest < Minitest::Test
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(this_dir, xml)
       sql_path, sim_time = run_straight_sim(xml, this_dir)
-      htg_load, clg_load = _get_building_loads(sql_path)
+      htg_load, clg_load = _get_simulation_load_results(sql_path)
       if xml.include? "C.xml"
         all_results << [xml, htg_load, sim_time]
         assert_operator(htg_load, :>, 0)
@@ -403,7 +403,49 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_hvac
-    # TODO
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "RESNET_Test_4.4_HERS_HVAC.csv"))
+    File.delete(test_results_csv) if File.exists? test_results_csv
+
+    require 'csv'
+
+    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+
+    # Run tests
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.4_HERS_HVAC")
+    all_results = {}
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      _test_schema_validation(this_dir, xml)
+      sql_path, sim_time = run_straight_sim(xml, this_dir)
+
+      hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, xml)
+      all_results[File.basename(xml)] = [hvac, hvac_fan]
+    end
+
+    # Write results to csv
+    CSV.open(test_results_csv, "w") do |csv|
+      all_results.each_with_index do |(xml, results), i|
+        if i == 0 # Header
+          csv << ["Test Case", "HVAC (kWh or therm)", "HVAC Fan (kWh)"]
+        end
+        csv << [xml, results[0], results[1]]
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    all_results.each_with_index do |(xml, results), i|
+      base_results = nil
+      if xml == 'HVAC1b.xml'
+        base_results = all_results['HVAC1a.xml']
+      elsif xml == 'HVAC2b.xml'
+        base_results = all_results['HVAC2a.xml']
+      elsif ['HVAC2d.xml', 'HVAC2e.xml'].include? xml
+        base_results = all_results['HVAC2c.xml']
+      end
+      next if base_results.nil?
+
+      _check_hvac_test_results(xml, results, base_results)
+    end
   end
 
   def test_resnet_dse
@@ -649,15 +691,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
     xml = File.absolute_path(xml)
 
-    def get_sql_query_result(sqlFile, query)
-      result = sqlFile.execAndReturnFirstDouble(query)
-      if result.is_initialized
-        return result.get * 0.9478171203133172 # GJ => MBtu
-      end
-
-      return 0
-    end
-
     rundir = File.join(this_dir, "SimulationHome")
     _rm_path(rundir)
     Dir.mkdir(rundir)
@@ -711,21 +744,53 @@ class EnergyRatingIndexTest < Minitest::Test
     return sql_path, sim_time
   end
 
-  def _get_building_loads(sql_path)
+  def _get_simulation_load_results(sql_path)
     # Obtain heating/cooling loads
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
 
     # Space Heating Load
     query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-    htg_load = get_sql_query_result(sqlFile, query)
+    htg_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Space Cooling Load
     query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-    clg_load = get_sql_query_result(sqlFile, query)
+    clg_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     sqlFile.close
 
     return htg_load.round(2), clg_load.round(2)
+  end
+
+  def _get_simulation_hvac_energy_results(sql_path, xml)
+    # Obtain heating/cooling loads
+    sqlFile = OpenStudio::SqlFile.new(sql_path, false)
+
+    if xml.include? 'HVAC1'
+      # Cool
+      query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Cooling' AND ColumnName='Electricity' AND Units='GJ'"
+      hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+
+      # Cool Fan
+      query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Fans' AND ColumnName='Electricity' AND Units='GJ'"
+      hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+    elsif xml.include? 'HVAC2'
+      # Heat
+      if xml.include? 'HVAC2a' or xml.include? 'HVAC2b'
+        query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Heating' AND ColumnName='Natural Gas' AND Units='GJ'"
+        hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "therm")
+      else
+        query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Heating' AND ColumnName='Electricity' AND Units='GJ'"
+        hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+      end
+
+      # Heat Fan
+      query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Fans' AND ColumnName='Electricity' AND Units='GJ'"
+      hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+    end
+
+    sqlFile.close
+
+    return hvac.round(2), hvac_fan.round(2)
   end
 
   def _test_schema_validation(this_dir, xml)
@@ -1618,6 +1683,42 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     assert_operator((results['ERI'] - eri).abs / results['ERI'], :<, 0.005)
+  end
+
+  def _check_hvac_test_results(xml, results, base_results)
+    percent_min = nil
+    percent_max = nil
+
+    # Table 4.4.4.1(2): Air Conditioning System Acceptance Criteria
+    if xml == 'HVAC1b.xml'
+      percent_min = -21.24 # %
+      percent_max = -17.38 # %
+    end
+
+    if xml == 'HVAC2b.xml'
+      percent_min = -13.30 # %
+      percent_max = -11.57 # %
+    elsif xml == 'HVAC2d.xml'
+      percent_min = -29.03 # %
+      percent_max = -16.73 # %
+    elsif xml == 'HVAC2e.xml'
+      percent_min = 41.81 # %
+      percent_max = 80.81 # %
+    end
+
+    if xml == 'HVAC2b.xml'
+      curr_val = results[0] / 10.0 + results[1] / 293.0
+      base_val = base_results[0] / 10.0 + base_results[1] / 293.0
+    else
+      curr_val = results[0] + results[1]
+      base_val = base_results[0] + base_results[1]
+    end
+
+    percent_change = (curr_val - base_val) / base_val * 100.0
+
+    # FIXME: Test checks currently disabled
+    # assert_operator(percent_change, :>=, percent_min)
+    # assert_operator(percent_change, :<=, percent_max)
   end
 
   def _get_hot_water(results_csv)
