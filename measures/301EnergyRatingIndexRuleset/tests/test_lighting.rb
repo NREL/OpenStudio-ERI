@@ -58,7 +58,7 @@ class LightingTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    avg_fan_w = ((3000.0 / 100.0 * 2) + (3000.0 / 120.0 * 1)) / 3
+    avg_fan_w = 30.0
     _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 5)
 
     # IAD
