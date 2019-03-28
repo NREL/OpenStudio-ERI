@@ -25,6 +25,9 @@
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
+          <extension>
+            <DisableNaturalVentilation>true</DisableNaturalVentilation>
+          </extension>
         </Site>
         <BuildingOccupancy>
           <NumberofResidents>0</NumberofResidents>
@@ -36,6 +39,9 @@
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
+          <extension>
+            <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
+          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -261,9 +267,6 @@
             <RValue>3.04</RValue>
           </Door>
         </Doors>
-        <extension>
-          <DisableNaturalVentilation>true</DisableNaturalVentilation>
-        </extension>
       </Enclosure>
       <Systems>
         <HVAC>
@@ -271,9 +274,6 @@
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
-          <extension>
-            <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
-          </extension>
         </HVAC>
       </Systems>
       <MiscLoads>
