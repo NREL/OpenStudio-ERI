@@ -94,6 +94,7 @@ def create_hpxmls
   hpxmls_files = {
     'RESNET_Tests/4.1_Standard_140/L100AC.xml' => nil,
     'RESNET_Tests/4.1_Standard_140/L100AL.xml' => nil,
+    'RESNET_Tests/4.1_Standard_140/L110AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
   }
 
   hpxmls_files.each do |derivative, parent|
@@ -389,6 +390,8 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     air_infiltration_measurement_values = { :id => "InfiltMeas64",
                                             :constant_ach_natural => 0.67,
                                             :infiltration_volume => 12312 }
+  elsif ['RESNET_Tests/4.1_Standard_140/L110AC.xml'].include? hpxml_file
+    air_infiltration_measurement_values[:constant_ach_natural] = 1.5
   end
   return air_infiltration_measurement_values
 end
