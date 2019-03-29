@@ -34,7 +34,7 @@ class EnergyRatingIndexTest < Minitest::Test
       all_results[File.basename(xml)] = _get_method_results(results_csv)
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     keys = all_results.values[0].keys
@@ -129,7 +129,7 @@ class EnergyRatingIndexTest < Minitest::Test
         assert_operator(clg_load, :>, 0)
       end
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
@@ -174,7 +174,7 @@ class EnergyRatingIndexTest < Minitest::Test
       eri = _get_eri(results_csv)
       all_results[File.basename(xml)]["e-Ratio"] = eri / 100.0
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
@@ -210,7 +210,7 @@ class EnergyRatingIndexTest < Minitest::Test
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_iad_home_components(hpxmls[:iad], test_num)
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
@@ -246,7 +246,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_method_results(results_csv)
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     keys = all_results.values[0].keys
@@ -283,7 +283,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_method_results(results_csv)
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     keys = all_results.values[0].keys
@@ -321,7 +321,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[xml] = _get_method_results(results_csv)
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     keys = all_results.values[0].keys
@@ -363,7 +363,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     keys = all_results.values[0].keys
@@ -418,7 +418,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
       all_results[File.basename(xml)] = [hvac, hvac_fan]
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
@@ -468,7 +468,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
       all_results[File.basename(xml)] = [hvac, hvac_fan]
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
@@ -516,7 +516,7 @@ class EnergyRatingIndexTest < Minitest::Test
       all_results[xml] = _get_hot_water(results_csv)
       assert_operator(all_results[xml], :>, 0)
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     # TODO: Break out recirculation pump energy
@@ -569,7 +569,7 @@ class EnergyRatingIndexTest < Minitest::Test
       all_results[xml] = _get_hot_water(results_csv)
       assert_operator(all_results[xml], :>, 0)
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
@@ -626,7 +626,7 @@ class EnergyRatingIndexTest < Minitest::Test
       all_results[File.basename(xml)] = _get_method_results(results_csv)
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
-    aseert(all_results.size > 0)
+    assert(all_results.size > 0)
 
     # Write results to csv
     keys = all_results.values[0].keys
