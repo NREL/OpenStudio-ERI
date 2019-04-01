@@ -141,7 +141,21 @@ def create_hpxmls
     'RESNET_Tests/4.5_DSE/HVAC3e.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
     'RESNET_Tests/4.5_DSE/HVAC3f.xml' => 'RESNET_Tests/4.5_DSE/HVAC3e.xml',
     'RESNET_Tests/4.5_DSE/HVAC3g.xml' => 'RESNET_Tests/4.5_DSE/HVAC3e.xml',
-    'RESNET_Tests/4.5_DSE/HVAC3h.xml' => 'RESNET_Tests/4.5_DSE/HVAC3e.xml'
+    'RESNET_Tests/4.5_DSE/HVAC3h.xml' => 'RESNET_Tests/4.5_DSE/HVAC3e.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AD-HW-03.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AD-HW-05.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AD-HW-06.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-05.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AD-HW-07.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-03.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-05.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-06.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-05.xml',
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-07.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml'
   }
 
   hpxmls_files.each do |derivative, parent|
@@ -391,7 +405,7 @@ def get_hpxml_file_site_values(hpxml_file, site_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     site_values = { :fuels => ["electricity", "natural gas"],
                     :disable_natural_ventilation => true }
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     site_values[:disable_natural_ventilation] = nil
   end
   return site_values
@@ -400,7 +414,7 @@ end
 def get_hpxml_file_building_occupancy_values(hpxml_file, building_occupancys_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     building_occupancys_values << { :number_of_residents => 0 }
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     building_occupancys_values = []
   end
   return building_occupancys_values
@@ -421,7 +435,7 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:conditioned_building_volume] = 24624
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.4_HVAC/HVAC1a.xml', 'RESNET_Tests/4.4_HVAC/HVAC2a.xml', 'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     building_construction_values[:use_only_ideal_air_system] = nil
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 2
     building_construction_values[:use_only_ideal_air_system] = nil
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
@@ -429,7 +443,7 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:use_only_ideal_air_system] = nil
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 2
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 4
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     building_construction_values[:number_of_conditioned_floors] = 1
@@ -463,11 +477,16 @@ def get_hpxml_file_climate_and_risk_zones_values(hpxml_file, climate_and_risk_zo
     climate_and_risk_zones_values[:iecc2012] = "3A"
     climate_and_risk_zones_values[:weather_station_name] = "Dallas, TX"
     climate_and_risk_zones_values[:weather_station_wmo] = "722590"
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     climate_and_risk_zones_values[:iecc2006] = "1A"
     climate_and_risk_zones_values[:iecc2012] = "1A"
     climate_and_risk_zones_values[:weather_station_name] = "Miami, FL"
     climate_and_risk_zones_values[:weather_station_wmo] = "722020"
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml'].include? hpxml_file
+    climate_and_risk_zones_values[:iecc2006] = "7"
+    climate_and_risk_zones_values[:iecc2012] = "7"
+    climate_and_risk_zones_values[:weather_station_name] = "Duluth, MN"
+    climate_and_risk_zones_values[:weather_station_wmo] = "727450"
   end
   return climate_and_risk_zones_values
 end
@@ -485,6 +504,11 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     air_infiltration_measurement_values[:constant_ach_natural] = nil
     air_infiltration_measurement_values[:unit_of_measure] = "ACHnatural"
     air_infiltration_measurement_values[:air_leakage] = 0.67
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
+    air_infiltration_measurement_values[:constant_ach_natural] = nil
+    air_infiltration_measurement_values[:house_pressure] = 50
+    air_infiltration_measurement_values[:unit_of_measure] = "ACH"
+    air_infiltration_measurement_values[:air_leakage] = 7.5
   end
   return air_infiltration_measurement_values
 end
@@ -496,6 +520,9 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
                      :constant_ach_natural => 2.4 }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     attic_values[:constant_ach_natural] = nil
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
+    attic_values[:constant_ach_natural] = nil
+    attic_values[:specific_leakage_area] = 0.0008
   end
   return attic_values
 end
@@ -523,7 +550,7 @@ def get_hpxml_file_attic_roofs_values(hpxml_file, attic_roofs_values)
   elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml', 'RESNET_Tests/4.1_Standard_140/L202AL.xml'].include? hpxml_file
     attic_roofs_values[0][:solar_absorptance] = 0.2
     attic_roofs_values[1][:solar_absorptance] = 0.2
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     attic_roofs_values = [{ :id => "attic-roof-1",
                             :area => 1622.2,
                             :solar_absorptance => 0.6,
@@ -574,7 +601,7 @@ def get_hpxml_file_attic_walls_values(hpxml_file, attic_walls_values)
   elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml', 'RESNET_Tests/4.1_Standard_140/L202AL.xml'].include? hpxml_file
     attic_walls_values[0][:solar_absorptance] = 0.2
     attic_walls_values[1][:solar_absorptance] = 0.2
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     attic_walls_values = [{ :id => "attic-wall-1",
                             :adjacent_to => "outside",
                             :wall_type => "WoodStud",
@@ -770,7 +797,7 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
     walls_values[1][:solar_absorptance] = 0.2
     walls_values[2][:solar_absorptance] = 0.2
     walls_values[3][:solar_absorptance] = 0.2
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     walls_values = [{ :id => "agwall-1",
                       :exterior_adjacent_to => "outside",
                       :interior_adjacent_to => "living space",
@@ -868,7 +895,7 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
     windows_values[2][:interior_shading_factor_winter] = nil
     windows_values[3][:interior_shading_factor_summer] = nil
     windows_values[3][:interior_shading_factor_winter] = nil
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     windows_values[0][:wall_idref] = "agwall-1"
     windows_values[0][:interior_shading_factor_summer] = nil
     windows_values[0][:interior_shading_factor_winter] = nil
@@ -897,7 +924,7 @@ def get_hpxml_file_doors_values(hpxml_file, doors_values)
                       :area => 20,
                       :azimuth => 0,
                       :r_value => 3.04 }]
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     doors_values[0][:wall_idref] = "agwall-1"
     doors_values[1][:wall_idref] = "agwall-1"
   end
@@ -1084,6 +1111,8 @@ def get_hpxml_file_hvac_control_values(hpxml_file, hvac_controls_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     hvac_controls_values = [{ :id => "HVAC_Ctrl_ID1",
                               :control_type => "manual thermostat" }]
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
+    hvac_controls_values = []
   end
   return hvac_controls_values
 end
@@ -1192,33 +1221,64 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
     water_heating_systems_values[0][:tank_volume] = nil
     water_heating_systems_values[0][:heating_capacity] = nil
     water_heating_systems_values[0][:energy_factor] = 0.82
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
+    water_heating_systems_values = [{ :id => "DHW_ID1",
+                                      :fuel_type => "natural gas",
+                                      :water_heater_type => "storage water heater",
+                                      :location => "living space",
+                                      :tank_volume => 40,
+                                      :fraction_dhw_load_served => 1,
+                                      :heating_capacity => 40000,
+                                      :energy_factor => 0.56,
+                                      :recovery_efficiency => 0.78 }]
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-03.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-03.xml'].include? hpxml_file
+    water_heating_systems_values[0][:energy_factor] = 0.62
   end
   return water_heating_systems_values
 end
 
 def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distributions_values)
-  if ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     hot_water_distributions_values = [{ :id => "HWDist_ID1",
                                         :system_type => "Standard",
                                         :pipe_r_value => 0.0 }]
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-05.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-05.xml'].include? hpxml_file
+    hot_water_distributions_values[0][:system_type] = "Recirculation"
+    hot_water_distributions_values[0][:recirculation_control_type] = "no control"
+    hot_water_distributions_values[0][:recirculation_branch_piping_length] = 10
+    hot_water_distributions_values[0][:recirculation_pump_power] = 50
+    hot_water_distributions_values[0][:pipe_r_value] = 3
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-07.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-07.xml'].include? hpxml_file
+    hot_water_distributions_values[0][:dwhr_facilities_connected] = "all"
+    hot_water_distributions_values[0][:dwhr_equal_flow] = true
+    hot_water_distributions_values[0][:dwhr_efficiency] = 0.54
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-06.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-06.xml'].include? hpxml_file
+    hot_water_distributions_values[0][:recirculation_control_type] = "manual demand control"
   end
   return hot_water_distributions_values
 end
 
 def get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
-  if ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml'].include? hpxml_file
     water_fixtures_values = [{ :id => "WF_ID1",
                                :water_fixture_type => "shower head",
                                :low_flow => true },
                              { :id => "WF_ID2",
                                :water_fixture_type => "faucet",
                                :low_flow => true }]
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
+    water_fixtures_values = [{ :id => "WF_ID1",
+                               :water_fixture_type => "shower head",
+                               :low_flow => false },
+                             { :id => "WF_ID2",
+                               :water_fixture_type => "faucet",
+                               :low_flow => false }]
   end
   return water_fixtures_values
 end
 
 def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washers_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     clothes_washers_values << { :id => "ClothesWasher",
                                 :location => "living space" }
   end
@@ -1230,7 +1290,7 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryers_values)
     clothes_dryers_values << { :id => "ClothesDryer",
                                :location => "living space",
                                :fuel_type => "natural gas" }
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     clothes_dryers_values << { :id => "ClothesDryer",
                                :location => "living space",
                                :fuel_type => "electricity" }
@@ -1241,14 +1301,14 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryers_values)
 end
 
 def get_hpxml_file_dishwasher_values(hpxml_file, dishwashers_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     dishwashers_values << { :id => "Dishwasher_ID1" }
   end
   return dishwashers_values
 end
 
 def get_hpxml_file_refrigerator_values(hpxml_file, refrigerators_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     refrigerators_values << { :id => "Refrigerator",
                               :location => "living space" }
   end
@@ -1259,7 +1319,7 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_ranges_values)
   if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     cooking_ranges_values << { :id => "Range_ID1",
                                :fuel_type => "natural gas" }
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     cooking_ranges_values << { :id => "Range_ID1",
                                :fuel_type => "electricity" }
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-03.xml'].include? hpxml_file
@@ -1269,7 +1329,7 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_ranges_values)
 end
 
 def get_hpxml_file_oven_values(hpxml_file, ovens_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     ovens_values << { :id => "Oven_ID1" }
   end
   return ovens_values
@@ -1284,7 +1344,7 @@ def get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
                            :frac_latent => 0.18 }
   elsif ['RESNET_Tests/4.1_Standard_140/L170AC.xml', 'RESNET_Tests/4.1_Standard_140/L170AL.xml'].include? hpxml_file
     plug_loads_values[0][:kWh_per_year] = 0
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     plug_loads_values = []
   end
   return plug_loads_values
@@ -1295,7 +1355,7 @@ def get_hpxml_file_misc_loads_schedule_values(hpxml_file, misc_loads_schedules_v
     misc_loads_schedules_values << { :weekday_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
                                      :weekend_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
                                      :monthly_multipliers => "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0" }
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     misc_loads_schedules_values = []
   end
   return misc_loads_schedules_values
