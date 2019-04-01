@@ -484,7 +484,7 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 4
     building_construction_values[:use_only_ideal_air_system] = nil
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 2
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-10.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-10.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 4
@@ -1127,7 +1127,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :heating_capacity => 60000,
                                 :heating_efficiency_afue => 0.8,
                                 :fraction_heat_load_served => 1 }]
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-07.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-07.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-07.xml'].include? hpxml_file
     heating_systems_values[0][:heating_efficiency_afue] = 0.96
   end
   return heating_systems_values
@@ -1188,7 +1188,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :cooling_capacity => 60000,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 13 }]
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-14.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-14.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-14.xml'].include? hpxml_file
     cooling_systems_values[0][:cooling_efficiency_seer] = 21
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
     cooling_systems_values = []
@@ -1241,7 +1241,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :fraction_cool_load_served => 0,
                            :heating_efficiency_hspf => 9.85,
                            :cooling_efficiency_seer => 13 }
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml'].include? hpxml_file
     heat_pumps_values << { :id => "SpaceHeatPump_ID1",
                            :distribution_system_idref => "HVAC_Dist_ID1",
                            :heat_pump_type => "air-to-air",
@@ -1251,7 +1251,17 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 8.2,
                            :cooling_efficiency_seer => 13 }
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml'].include? hpxml_file
+    heat_pumps_values << { :id => "SpaceHeatPump_ID1",
+                           :distribution_system_idref => "HVAC_Dist_ID1",
+                           :heat_pump_type => "air-to-air",
+                           :heat_pump_fuel => "electricity",
+                           :cooling_capacity => 60000,
+                           :fraction_heat_load_served => 1,
+                           :fraction_cool_load_served => 1,
+                           :heating_efficiency_hspf => 8.2,
+                           :cooling_efficiency_seer => 14 }
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml'].include? hpxml_file
     heat_pumps_values << { :id => "SpaceHeatPump_ID1",
                            :distribution_system_idref => "HVAC_Dist_ID1",
                            :heat_pump_type => "air-to-air",
@@ -1261,6 +1271,16 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 12,
                            :cooling_efficiency_seer => 13 }
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
+    heat_pumps_values << { :id => "SpaceHeatPump_ID1",
+                           :distribution_system_idref => "HVAC_Dist_ID1",
+                           :heat_pump_type => "air-to-air",
+                           :heat_pump_fuel => "electricity",
+                           :cooling_capacity => 60000,
+                           :fraction_heat_load_served => 1,
+                           :fraction_cool_load_served => 1,
+                           :heating_efficiency_hspf => 12,
+                           :cooling_efficiency_seer => 14 }
   end
   return heat_pumps_values
 end
@@ -1353,7 +1373,7 @@ def get_hpxml_file_ducts_values(hpxml_file, ducts_values)
                        :duct_insulation_r_value => 6,
                        :duct_location => "living space",
                        :duct_surface_area => 0.001 }]]
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-22.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-22.xml'].include? hpxml_file
     ducts_values[0][0][:duct_location] = "crawlspace - vented"
     ducts_values[0][1][:duct_location] = "crawlspace - vented"
   end
@@ -1374,12 +1394,18 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :hours_in_operation => 24,
                                  :sensible_recovery_efficiency => 0.6,
                                  :fan_power => 14 }
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml'].include? hpxml_file
     ventilation_fans_values[0][:rated_flow_rate] = 48.7
     ventilation_fans_values[0][:fan_power] = 12.2
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-10.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-10.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml'].include? hpxml_file
+    ventilation_fans_values[0][:rated_flow_rate] = 51.2
+    ventilation_fans_values[0][:fan_power] = 12.8
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-10.xml'].include? hpxml_file
     ventilation_fans_values[0][:rated_flow_rate] = 63.7
     ventilation_fans_values[0][:fan_power] = 15.9
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-10.xml'].include? hpxml_file
+    ventilation_fans_values[0][:rated_flow_rate] = 66.2
+    ventilation_fans_values[0][:fan_power] = 16.6
   end
   return ventilation_fans_values
 end
