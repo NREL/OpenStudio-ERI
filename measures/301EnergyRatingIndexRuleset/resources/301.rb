@@ -351,9 +351,9 @@ class EnergyRatingIndex301Ruleset
       # Table 4.2.2(1) - Roofs
       attic.elements.each("Roofs/Roof") do |roof|
         roof_values = HPXML.get_attic_roof_values(roof: roof)
-        roof_values[:solar_absorptance] = 0.75
-        roof_values[:emittance] = 0.90
         if is_external_thermal_boundary(interior_adjacent_to, "outside")
+          roof_values[:solar_absorptance] = 0.75
+          roof_values[:emittance] = 0.90
           roof_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
         end
         HPXML.add_attic_roof(attic: new_attic, **roof_values)
@@ -582,6 +582,8 @@ class EnergyRatingIndex301Ruleset
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
       if is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
+        rim_joist_values[:solar_absorptance] = 0.75
+        rim_joist_values[:emittance] = 0.90
         rim_joist_values[:insulation_assembly_r_value] = 1.0 / ufactor
       end
       HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
