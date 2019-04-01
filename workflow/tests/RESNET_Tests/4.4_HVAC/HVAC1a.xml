@@ -39,9 +39,6 @@
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
-          <extension>
-            <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
-          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -306,10 +303,31 @@
       </Enclosure>
       <Systems>
         <HVAC>
+          <HVACPlant>
+            <CoolingSystem>
+              <SystemIdentifier id='SpaceCool_ID1'/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>38300</CoolingCapacity>
+              <FractionCoolLoadServed>1</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>10</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
+          </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <Other>DSE</Other>
+            </DistributionSystemType>
+            <AnnualCoolingDistributionSystemEfficiency>1.0</AnnualCoolingDistributionSystemEfficiency>
+          </HVACDistribution>
         </HVAC>
       </Systems>
       <MiscLoads>
@@ -318,7 +336,7 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>0</Value>
+            <Value>7302</Value>
           </Load>
           <extension>
             <FracSensible>0.82</FracSensible>

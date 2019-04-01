@@ -39,31 +39,28 @@
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
-          <extension>
-            <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
-          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>3B</ClimateZone>
+          <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
           <Year>2012</Year>
-          <ClimateZone>3B</ClimateZone>
+          <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='Weather_Station'/>
-          <Name>Las Vegas, NV</Name>
-          <WMO>723860</WMO>
+          <Name>Colorado Springs, CO</Name>
+          <WMO>724660</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='InfiltMeas64'/>
-            <InfiltrationVolume>12312</InfiltrationVolume>
+            <InfiltrationVolume>24624</InfiltrationVolume>
             <extension>
               <ConstantACHnatural>0.67</ConstantACHnatural>
             </extension>
@@ -158,7 +155,9 @@
           <Foundation>
             <SystemIdentifier id='Foundation_ID1'/>
             <FoundationType>
-              <Ambient/>
+              <Basement>
+                <Conditioned>false</Conditioned>
+              </Basement>
             </FoundationType>
             <FrameFloor>
               <SystemIdentifier id='Floor_ID1'/>
@@ -166,9 +165,52 @@
               <Area>1539</Area>
               <Insulation>
                 <SystemIdentifier id='Floor_Ins_ID1'/>
-                <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
+                <AssemblyEffectiveRValue>13.8</AssemblyEffectiveRValue>
               </Insulation>
+              <extension>
+                <CarpetFraction>0.5</CarpetFraction>
+                <CarpetRValue>2.0</CarpetRValue>
+              </extension>
             </FrameFloor>
+            <FoundationWall>
+              <SystemIdentifier id='fndwall-all'/>
+              <Height>7.25</Height>
+              <Area>1218</Area>
+              <Thickness>6</Thickness>
+              <DepthBelowGrade>6.583</DepthBelowGrade>
+              <AdjacentTo>ground</AdjacentTo>
+              <Insulation>
+                <SystemIdentifier id='FWall_Ins_all'/>
+                <AssemblyEffectiveRValue>1.165</AssemblyEffectiveRValue>
+              </Insulation>
+            </FoundationWall>
+            <Slab>
+              <SystemIdentifier id='fndslab-1'/>
+              <Area>1539</Area>
+              <Thickness>4</Thickness>
+              <ExposedPerimeter>168</ExposedPerimeter>
+              <PerimeterInsulationDepth>0</PerimeterInsulationDepth>
+              <UnderSlabInsulationWidth>0</UnderSlabInsulationWidth>
+              <DepthBelowGrade>6.583</DepthBelowGrade>
+              <PerimeterInsulation>
+                <SystemIdentifier id='FSlab_PerimIns_ID1'/>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                </Layer>
+              </PerimeterInsulation>
+              <UnderSlabInsulation>
+                <SystemIdentifier id='FSlab_UnderIns_ID1'/>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0</NominalRValue>
+                </Layer>
+              </UnderSlabInsulation>
+              <extension>
+                <CarpetFraction>0</CarpetFraction>
+                <CarpetRValue>0</CarpetRValue>
+              </extension>
+            </Slab>
           </Foundation>
         </Foundations>
         <Walls>
@@ -306,10 +348,61 @@
       </Enclosure>
       <Systems>
         <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='SpaceHeat_ID1'/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>49000</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.78</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+            </HeatingSystem>
+          </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <AirDistribution>
+                <DuctLeakageMeasurement>
+                  <DuctType>supply</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>0.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <DuctLeakageMeasurement>
+                  <DuctType>return</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>0.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>6.0</DuctInsulationRValue>
+                  <DuctLocation>basement - unconditioned</DuctLocation>
+                  <DuctSurfaceArea>308.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>6.0</DuctInsulationRValue>
+                  <DuctLocation>basement - unconditioned</DuctLocation>
+                  <DuctSurfaceArea>77.0</DuctSurfaceArea>
+                </Ducts>
+              </AirDistribution>
+            </DistributionSystemType>
+          </HVACDistribution>
         </HVAC>
       </Systems>
       <MiscLoads>
@@ -318,7 +411,7 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>0</Value>
+            <Value>7302</Value>
           </Load>
           <extension>
             <FracSensible>0.82</FracSensible>

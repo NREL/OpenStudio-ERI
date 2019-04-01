@@ -39,24 +39,21 @@
           <ConditionedFloorArea>1539</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
-          <extension>
-            <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
-          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>3B</ClimateZone>
+          <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
           <Year>2012</Year>
-          <ClimateZone>3B</ClimateZone>
+          <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='Weather_Station'/>
-          <Name>Las Vegas, NV</Name>
-          <WMO>723860</WMO>
+          <Name>Colorado Springs, CO</Name>
+          <WMO>724660</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -306,10 +303,34 @@
       </Enclosure>
       <Systems>
         <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='SpaceHeat_ID1'/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>56100</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.78</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+              <ElectricAuxiliaryEnergy>1040</ElectricAuxiliaryEnergy>
+            </HeatingSystem>
+          </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVAC_Ctrl_ID1'/>
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <Other>DSE</Other>
+            </DistributionSystemType>
+            <AnnualHeatingDistributionSystemEfficiency>1.0</AnnualHeatingDistributionSystemEfficiency>
+          </HVACDistribution>
         </HVAC>
       </Systems>
       <MiscLoads>
@@ -318,7 +339,7 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>0</Value>
+            <Value>7302</Value>
           </Load>
           <extension>
             <FracSensible>0.82</FracSensible>
