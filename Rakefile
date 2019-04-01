@@ -155,7 +155,11 @@ def create_hpxmls
     'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
     'RESNET_Tests/4.6_Hot_Water/L100AM-HW-05.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
     'RESNET_Tests/4.6_Hot_Water/L100AM-HW-06.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-05.xml',
-    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-07.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml'
+    'RESNET_Tests/4.6_Hot_Water/L100AM-HW-07.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
   }
 
   hpxmls_files.each do |derivative, parent|
@@ -253,7 +257,7 @@ def create_hpxmls
       refrigerators_values = get_hpxml_file_refrigerator_values(hpxml_file, refrigerators_values)
       cooking_ranges_values = get_hpxml_file_cooking_range_values(hpxml_file, cooking_ranges_values)
       ovens_values = get_hpxml_file_oven_values(hpxml_file, ovens_values)
-      # lightings_values = get_hpxml_file_lighting_values(hpxml_file, lightings_values)
+      lightings_values = get_hpxml_file_lighting_values(hpxml_file, lightings_values)
       # ceiling_fans_values = get_hpxml_file_ceiling_fan_values(hpxml_file, ceiling_fans_values)
       plug_loads_values = get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
       misc_loads_schedules_values = get_hpxml_file_misc_loads_schedule_values(hpxml_file, misc_loads_schedules_values)
@@ -367,9 +371,9 @@ def create_hpxmls
     ovens_values.each do |oven_values|
       HPXML.add_oven(hpxml: hpxml, **oven_values)
     end
-    # lightings_values.each do |lighting_values|
-    #   HPXML.add_lighting(hpxml: hpxml, **lighting_values)
-    # end
+    lightings_values.each do |lighting_values|
+      HPXML.add_lighting(hpxml: hpxml, **lighting_values)
+    end
     # ceiling_fans_values.each do |ceiling_fan_values|
     #   HPXML.add_ceiling_fan(hpxml: hpxml, **ceiling_fan_values)
     # end
@@ -397,6 +401,8 @@ def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
                      :eri_calculation_version => "2014A",
                      :building_id => "MyBuilding",
                      :event_type => "proposed workscope" }
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml'].include? hpxml_file
+    hpxml_values[:eri_calculation_version] = "2014AE"
   end
   return hpxml_values
 end
@@ -523,6 +529,8 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     attic_values[:constant_ach_natural] = nil
     attic_values[:specific_leakage_area] = 0.0008
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml'].include? hpxml_file
+    attic_values[:specific_leakage_area] = 0.0008
   end
   return attic_values
 end
@@ -643,14 +651,14 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
     foundation_walls_values[0][:insulation_assembly_r_value] = 10.69
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
-    foundation_walls = [{ :id => "fndwall-1",
-                          :height => 4,
-                          :area => 672,
-                          :thickness => 8,
-                          :depth_below_grade => 3,
-                          :adjacent_to => "ground",
-                          :insulation_id => "FWall_Ins_ID1",
-                          :insulation_assembly_r_value => 8.165 }]
+    foundation_walls_values = [{ :id => "fndwall-1",
+                                 :height => 4,
+                                 :area => 672,
+                                 :thickness => 8,
+                                 :depth_below_grade => 3,
+                                 :adjacent_to => "ground",
+                                 :insulation_id => "FWall_Ins_ID1",
+                                 :insulation_assembly_r_value => 8.165 }]
   end
   return foundation_walls_values
 end
@@ -1333,6 +1341,13 @@ def get_hpxml_file_oven_values(hpxml_file, ovens_values)
     ovens_values << { :id => "Oven_ID1" }
   end
   return ovens_values
+end
+
+def get_hpxml_file_lighting_values(hpxml_file, lightings_values)
+  if ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml'].include? hpxml_file
+    lightings_values = [{}]
+  end
+  return lightings_values
 end
 
 def get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
