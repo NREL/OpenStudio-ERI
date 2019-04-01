@@ -95,6 +95,29 @@ def create_hpxmls
     'RESNET_Tests/4.1_Standard_140/L100AC.xml' => nil,
     'RESNET_Tests/4.1_Standard_140/L100AL.xml' => nil,
     'RESNET_Tests/4.1_Standard_140/L110AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L110AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L120AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L120AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L130AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L130AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L140AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L140AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L150AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L150AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L160AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L160AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L170AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L170AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L200AC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L200AL.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L302XC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L322XC.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L155AC.xml' => 'RESNET_Tests/4.1_Standard_140/L150AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L155AL.xml' => 'RESNET_Tests/4.1_Standard_140/L150AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L202AC.xml' => 'RESNET_Tests/4.1_Standard_140/L200AC.xml',
+    'RESNET_Tests/4.1_Standard_140/L202AL.xml' => 'RESNET_Tests/4.1_Standard_140/L200AL.xml',
+    'RESNET_Tests/4.1_Standard_140/L304XC.xml' => 'RESNET_Tests/4.1_Standard_140/L302XC.xml',
+    'RESNET_Tests/4.1_Standard_140/L324XC.xml' => 'RESNET_Tests/4.1_Standard_140/L322XC.xml',
   }
 
   hpxmls_files.each do |derivative, parent|
@@ -167,9 +190,9 @@ def create_hpxmls
       attic_walls_values = get_hpxml_file_attic_walls_values(hpxml_file, attic_walls_values)
       foundation_values = get_hpxml_file_foundation_values(hpxml_file, foundation_values)
       frame_floors_values = get_hpxml_file_frame_floor_values(hpxml_file, frame_floors_values)
-      # foundation_walls_values = get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
-      # slabs_values = get_hpxml_file_slab_values(hpxml_file, slabs_values)
-      # rim_joists_values = get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
+      foundation_walls_values = get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
+      slabs_values = get_hpxml_file_slab_values(hpxml_file, slabs_values)
+      rim_joists_values = get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
       walls_values = get_hpxml_file_walls_values(hpxml_file, walls_values)
       windows_values = get_hpxml_file_windows_values(hpxml_file, windows_values)
       # skylights_values = get_hpxml_file_skylights_values(hpxml_file, skylights_values)
@@ -228,15 +251,15 @@ def create_hpxmls
     frame_floors_values.each do |frame_floor_values|
       HPXML.add_frame_floor(foundation: foundation, **frame_floor_values)
     end
-    # foundation_walls_values.each do |foundation_wall_values|
-    #   HPXML.add_foundation_wall(foundation: foundation, **foundation_wall_values)
-    # end
-    # slabs_values.each do |slab_values|
-    #   HPXML.add_slab(foundation: foundation, **slab_values)
-    # end
-    # rim_joists_values.each do |rim_joist_values|
-    #   HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
-    # end
+    foundation_walls_values.each do |foundation_wall_values|
+      HPXML.add_foundation_wall(foundation: foundation, **foundation_wall_values)
+    end
+    slabs_values.each do |slab_values|
+      HPXML.add_slab(foundation: foundation, **slab_values)
+    end
+    rim_joists_values.each do |rim_joist_values|
+      HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
+    end
     walls_values.each do |wall_values|
       HPXML.add_wall(hpxml: hpxml, **wall_values)
     end
@@ -364,6 +387,10 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
                                      :conditioned_building_volume => 12312,
                                      :garage_present => false,
                                      :use_only_ideal_air_system => true }
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    building_construction_values[:number_of_conditioned_floors] = 2
+    building_construction_values[:conditioned_floor_area] = 3078
+    building_construction_values[:conditioned_building_volume] = 24624
   end
   return building_construction_values
 end
@@ -390,8 +417,10 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     air_infiltration_measurement_values = { :id => "InfiltMeas64",
                                             :constant_ach_natural => 0.67,
                                             :infiltration_volume => 12312 }
-  elsif ['RESNET_Tests/4.1_Standard_140/L110AC.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.1_Standard_140/L110AC.xml', 'RESNET_Tests/4.1_Standard_140/L110AL.xml', 'RESNET_Tests/4.1_Standard_140/L200AC.xml', 'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
     air_infiltration_measurement_values[:constant_ach_natural] = 1.5
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    air_infiltration_measurement_values[:infiltration_volume] = 24624
   end
   return air_infiltration_measurement_values
 end
@@ -426,6 +455,9 @@ def get_hpxml_file_attic_roofs_values(hpxml_file, attic_roofs_values)
                             :radiant_barrier => false,
                             :insulation_id => "Attic_Roof_Ins_south",
                             :insulation_assembly_r_value => 1.99 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml', 'RESNET_Tests/4.1_Standard_140/L202AL.xml'].include? hpxml_file
+    attic_roofs_values[0][:solar_absorptance] = 0.2
+    attic_roofs_values[1][:solar_absorptance] = 0.2
   end
   return attic_roofs_values
 end
@@ -437,6 +469,10 @@ def get_hpxml_file_attic_floors_values(hpxml_file, attic_floors_values)
                              :area => 1539,
                              :insulation_id => "Attic_Floor_Ins_ID1",
                              :insulation_assembly_r_value => 18.45 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L120AC.xml', 'RESNET_Tests/4.1_Standard_140/L120AL.xml'].include? hpxml_file
+    attic_floors_values[0][:insulation_assembly_r_value] = 57.49
+  elsif ['RESNET_Tests/4.1_Standard_140/L200AC.xml', 'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
+    attic_floors_values[0][:insulation_assembly_r_value] = 11.75
   end
   return attic_floors_values
 end
@@ -461,6 +497,9 @@ def get_hpxml_file_attic_walls_values(hpxml_file, attic_walls_values)
                             :emittance => 0.9,
                             :insulation_id => "Attic_Wall_Ins_west",
                             :insulation_assembly_r_value => 2.15 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml', 'RESNET_Tests/4.1_Standard_140/L202AL.xml'].include? hpxml_file
+    attic_walls_values[0][:solar_absorptance] = 0.2
+    attic_walls_values[1][:solar_absorptance] = 0.2
   end
   return attic_walls_values
 end
@@ -469,8 +508,64 @@ def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     foundation_values = { :id => "Foundation_ID1",
                           :foundation_type => "Ambient" }
+  elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml'].include? hpxml_file
+    foundation_values[:foundation_type] = "SlabOnGrade"
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    foundation_values[:foundation_type] = "ConditionedBasement"
   end
   return foundation_values
+end
+
+def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
+  if ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    foundation_walls_values = [{ :id => "fndwall-all",
+                                 :height => 7.25,
+                                 :area => 1218,
+                                 :thickness => 6,
+                                 :depth_below_grade => 6.583,
+                                 :adjacent_to => "ground",
+                                 :insulation_id => "FWall_Ins_all",
+                                 :insulation_assembly_r_value => 1.165 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
+    foundation_walls_values[0][:insulation_assembly_r_value] = 10.69
+  end
+  return foundation_walls_values
+end
+
+def get_hpxml_file_slab_values(hpxml_file, slabs_values)
+  if ['RESNET_Tests/4.1_Standard_140/L302XC.xml'].include? hpxml_file
+    slabs_values = [{ :id => "Slab_ID1",
+                      :area => 1539,
+                      :thickness => 4,
+                      :exposed_perimeter => 168,
+                      :perimeter_insulation_depth => 0,
+                      :under_slab_insulation_width => 0,
+                      :depth_below_grade => 0,
+                      :perimeter_insulation_id => "PerimeterInsulation_ID1",
+                      :perimeter_insulation_r_value => 0,
+                      :under_slab_insulation_id => "UnderSlabInsulation_ID1",
+                      :under_slab_insulation_r_value => 0,
+                      :carpet_fraction => 1,
+                      :carpet_r_value => 2.08 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    slabs_values = [{ :id => "fndslab-1",
+                      :area => 1539,
+                      :thickness => 4,
+                      :exposed_perimeter => 168,
+                      :perimeter_insulation_depth => 0,
+                      :under_slab_insulation_width => 0,
+                      :depth_below_grade => 6.583,
+                      :perimeter_insulation_id => "FSlab_PerimIns_ID1",
+                      :perimeter_insulation_r_value => 0,
+                      :under_slab_insulation_id => "FSlab_UnderIns_ID1",
+                      :under_slab_insulation_r_value => 0,
+                      :carpet_fraction => 0,
+                      :carpet_r_value => 0 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L304XC.xml'].include? hpxml_file
+    slabs_values[0][:perimeter_insulation_depth] = 2.5
+    slabs_values[0][:perimeter_insulation_r_value] = 5.4
+  end
+  return slabs_values
 end
 
 def get_hpxml_file_frame_floor_values(hpxml_file, frame_floors_values)
@@ -480,8 +575,26 @@ def get_hpxml_file_frame_floor_values(hpxml_file, frame_floors_values)
                              :area => 1539,
                              :insulation_id => "Floor_Ins_ID1",
                              :insulation_assembly_r_value => 14.15 }
+  elsif ['RESNET_Tests/4.1_Standard_140/L200AC.xml', 'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
+    frame_floors_values[0][:insulation_assembly_r_value] = 4.24
+  elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml'].include? hpxml_file
+    frame_floors_values = []
   end
   return frame_floors_values
+end
+
+def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
+  if ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    rim_joists_values = [{ :id => "RimJoist_ID1",
+                           :exterior_adjacent_to => "outside",
+                           :interior_adjacent_to => "living space",
+                           :area => 126,
+                           :insulation_id => "RimJoist_Ins_ID1",
+                           :insulation_assembly_r_value => 5.01 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
+    rim_joists_values[0][:insulation_assembly_r_value] = 13.14
+  end
+  return rim_joists_values
 end
 
 def get_hpxml_file_walls_values(hpxml_file, walls_values)
@@ -526,6 +639,21 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
                       :emittance => 0.9,
                       :insulation_id => "AGW_Ins_west",
                       :insulation_assembly_r_value => 11.76 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L120AC.xml', 'RESNET_Tests/4.1_Standard_140/L120AL.xml'].include? hpxml_file
+    walls_values[0][:insulation_assembly_r_value] = 23.58
+    walls_values[1][:insulation_assembly_r_value] = 23.58
+    walls_values[2][:insulation_assembly_r_value] = 23.58
+    walls_values[3][:insulation_assembly_r_value] = 23.58
+  elsif ['RESNET_Tests/4.1_Standard_140/L200AC.xml', 'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
+    walls_values[0][:insulation_assembly_r_value] = 4.84
+    walls_values[1][:insulation_assembly_r_value] = 4.84
+    walls_values[2][:insulation_assembly_r_value] = 4.84
+    walls_values[3][:insulation_assembly_r_value] = 4.84
+  elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml', 'RESNET_Tests/4.1_Standard_140/L202AL.xml'].include? hpxml_file
+    walls_values[0][:solar_absorptance] = 0.2
+    walls_values[1][:solar_absorptance] = 0.2
+    walls_values[2][:solar_absorptance] = 0.2
+    walls_values[3][:solar_absorptance] = 0.2
   end
   return walls_values
 end
@@ -564,6 +692,47 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
                         :wall_idref => "agwall-west",
                         :interior_shading_factor_summer => 1,
                         :interior_shading_factor_winter => 1 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml', 'RESNET_Tests/4.1_Standard_140/L130AL.xml'].include? hpxml_file
+    windows_values[0][:ufactor] = 0.3
+    windows_values[0][:shgc] = 0.335
+    windows_values[1][:ufactor] = 0.3
+    windows_values[1][:shgc] = 0.335
+    windows_values[2][:ufactor] = 0.3
+    windows_values[2][:shgc] = 0.335
+    windows_values[3][:ufactor] = 0.3
+    windows_values[3][:shgc] = 0.335
+  elsif ['RESNET_Tests/4.1_Standard_140/L140AC.xml', 'RESNET_Tests/4.1_Standard_140/L140AL.xml'].include? hpxml_file
+    windows_values = []
+  elsif ['RESNET_Tests/4.1_Standard_140/L150AC.xml', 'RESNET_Tests/4.1_Standard_140/L150AL.xml'].include? hpxml_file
+    windows_values = [{ :id => "Window_South",
+                        :area => 270,
+                        :azimuth => 180,
+                        :ufactor => 1.039,
+                        :shgc => 0.67,
+                        :wall_idref => "agwall-south",
+                        :interior_shading_factor_summer => 1,
+                        :interior_shading_factor_winter => 1 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L160AC.xml', 'RESNET_Tests/4.1_Standard_140/L160AL.xml'].include? hpxml_file
+    windows_values = [{ :id => "Window_East",
+                        :area => 135,
+                        :azimuth => 90,
+                        :ufactor => 1.039,
+                        :shgc => 0.67,
+                        :wall_idref => "agwall-east",
+                        :interior_shading_factor_summer => 1,
+                        :interior_shading_factor_winter => 1 },
+                      { :id => "Window_West",
+                        :area => 135,
+                        :azimuth => 270,
+                        :ufactor => 1.039,
+                        :shgc => 0.67,
+                        :wall_idref => "agwall-south",
+                        :interior_shading_factor_summer => 1,
+                        :interior_shading_factor_winter => 1 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml', 'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
+    windows_values[0][:overhangs_depth] = 2.5
+    windows_values[0][:overhangs_distance_to_top_of_window] = 1
+    windows_values[0][:overhangs_distance_to_bottom_of_window] = 6
   end
   return windows_values
 end
@@ -587,9 +756,7 @@ end
 def get_hpxml_file_hvac_control_values(hpxml_file, hvac_controls_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     hvac_controls_values = [{ :id => "HVAC_Ctrl_ID1",
-                              :control_type => "manual thermostat",
-                              :setpoint_temp_heating_season => 68,
-                              :setpoint_temp_cooling_season => 78 }]
+                              :control_type => "manual thermostat" }]
   end
   return hvac_controls_values
 end
@@ -601,6 +768,8 @@ def get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
                            :kWh_per_year => 7302,
                            :frac_sensible => 0.82,
                            :frac_latent => 0.18 }
+  elsif ['RESNET_Tests/4.1_Standard_140/L170AC.xml', 'RESNET_Tests/4.1_Standard_140/L170AL.xml'].include? hpxml_file
+    plug_loads_values[0][:kWh_per_year] = 0
   end
   return plug_loads_values
 end
