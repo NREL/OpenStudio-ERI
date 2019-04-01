@@ -75,7 +75,9 @@
             <AtticType>
               <Attic>
                 <Vented>true</Vented>
-                <SpecificLeakageArea>0.0008</SpecificLeakageArea>
+                <extension>
+                  <ConstantACHnatural>2.4</ConstantACHnatural>
+                </extension>
               </Attic>
             </AtticType>
             <Roofs>
@@ -149,9 +151,6 @@
                 </Insulation>
               </Wall>
             </Walls>
-            <extension>
-              <AtticConstantACHnatural>2.4</AtticConstantACHnatural>
-            </extension>
           </Attic>
         </Attics>
         <Foundations>

@@ -146,9 +146,6 @@
                 </Insulation>
               </Wall>
             </Walls>
-            <extension>
-              <AtticConstantACHnatural>2.4</AtticConstantACHnatural>
-            </extension>
           </Attic>
         </Attics>
         <Foundations>

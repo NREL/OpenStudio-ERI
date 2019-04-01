@@ -58,7 +58,7 @@
               <UnitofMeasure>ACHnatural</UnitofMeasure>
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>12312</InfiltrationVolume>
+            <InfiltrationVolume>24624</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -67,6 +67,7 @@
             <AtticType>
               <Attic>
                 <Vented>true</Vented>
+                <SpecificLeakageArea>0.0008</SpecificLeakageArea>
               </Attic>
             </AtticType>
             <Roofs>
@@ -140,9 +141,6 @@
                 </Insulation>
               </Wall>
             </Walls>
-            <extension>
-              <AtticSpecificLeakageArea>0.0008</AtticSpecificLeakageArea>
-            </extension>
           </Attic>
         </Attics>
         <Foundations>
