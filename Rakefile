@@ -481,9 +481,9 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
     attic_values = { :id => "Attic_ID1",
                      :attic_type => "VentedAttic",
                      :specific_leakage_area => 0.0008,
-                     :attic_constant_ach_natural => 2.4 }
+                     :constant_ach_natural => 2.4 }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
-    attic_values[:attic_constant_ach_natural] = nil
+    attic_values[:constant_ach_natural] = nil
   end
   return attic_values
 end
