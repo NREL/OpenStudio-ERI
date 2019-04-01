@@ -118,6 +118,10 @@ def create_hpxmls
     'RESNET_Tests/4.1_Standard_140/L202AL.xml' => 'RESNET_Tests/4.1_Standard_140/L200AL.xml',
     'RESNET_Tests/4.1_Standard_140/L304XC.xml' => 'RESNET_Tests/4.1_Standard_140/L302XC.xml',
     'RESNET_Tests/4.1_Standard_140/L324XC.xml' => 'RESNET_Tests/4.1_Standard_140/L322XC.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml' => 'RESNET_Tests/4.1_Standard_140/L304XC.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml' => 'RESNET_Tests/4.1_Standard_140/L324XC.xml',
   }
 
   hpxmls_files.each do |derivative, parent|
@@ -197,24 +201,24 @@ def create_hpxmls
       windows_values = get_hpxml_file_windows_values(hpxml_file, windows_values)
       # skylights_values = get_hpxml_file_skylights_values(hpxml_file, skylights_values)
       doors_values = get_hpxml_file_doors_values(hpxml_file, doors_values)
-      # heating_systems_values = get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
-      # cooling_systems_values = get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
-      # heat_pumps_values = get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
+      heating_systems_values = get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
+      cooling_systems_values = get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
+      heat_pumps_values = get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
       hvac_controls_values = get_hpxml_file_hvac_control_values(hpxml_file, hvac_controls_values)
-      # hvac_distributions_values = get_hpxml_file_hvac_distribution_values(hpxml_file, hvac_distributions_values)
-      # duct_leakage_measurements_values = get_hpxml_file_duct_leakage_measurements_values(hpxml_file, duct_leakage_measurements_values)
-      # ducts_values = get_hpxml_file_ducts_values(hpxml_file, ducts_values)
-      # ventilation_fans_values = get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
+      hvac_distributions_values = get_hpxml_file_hvac_distribution_values(hpxml_file, hvac_distributions_values)
+      duct_leakage_measurements_values = get_hpxml_file_duct_leakage_measurements_values(hpxml_file, duct_leakage_measurements_values)
+      ducts_values = get_hpxml_file_ducts_values(hpxml_file, ducts_values)
+      ventilation_fans_values = get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
       # water_heating_systems_values = get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems_values)
       # hot_water_distributions_values = get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distributions_values)
       # water_fixtures_values = get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
       # pv_systems_values = get_hpxml_file_pv_system_values(hpxml_file, pv_systems_values)
-      # clothes_washers_values = get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washers_values)
-      # clothes_dryers_values = get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryers_values)
-      # dishwashers_values = get_hpxml_file_dishwasher_values(hpxml_file, dishwashers_values)
-      # refrigerators_values = get_hpxml_file_refrigerator_values(hpxml_file, refrigerators_values)
-      # cooking_ranges_values = get_hpxml_file_cooking_range_values(hpxml_file, cooking_ranges_values)
-      # ovens_values = get_hpxml_file_oven_values(hpxml_file, ovens_values)
+      clothes_washers_values = get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washers_values)
+      clothes_dryers_values = get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryers_values)
+      dishwashers_values = get_hpxml_file_dishwasher_values(hpxml_file, dishwashers_values)
+      refrigerators_values = get_hpxml_file_refrigerator_values(hpxml_file, refrigerators_values)
+      cooking_ranges_values = get_hpxml_file_cooking_range_values(hpxml_file, cooking_ranges_values)
+      ovens_values = get_hpxml_file_oven_values(hpxml_file, ovens_values)
       # lightings_values = get_hpxml_file_lighting_values(hpxml_file, lightings_values)
       # ceiling_fans_values = get_hpxml_file_ceiling_fan_values(hpxml_file, ceiling_fans_values)
       plug_loads_values = get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
@@ -272,33 +276,33 @@ def create_hpxmls
     doors_values.each do |door_values|
       HPXML.add_door(hpxml: hpxml, **door_values)
     end
-    # heating_systems_values.each do |heating_system_values|
-    #   HPXML.add_heating_system(hpxml: hpxml, **heating_system_values)
-    # end
-    # cooling_systems_values.each do |cooling_system_values|
-    #   HPXML.add_cooling_system(hpxml: hpxml, **cooling_system_values)
-    # end
-    # heat_pumps_values.each do |heat_pump_values|
-    #   HPXML.add_heat_pump(hpxml: hpxml, **heat_pump_values)
-    # end
+    heating_systems_values.each do |heating_system_values|
+      HPXML.add_heating_system(hpxml: hpxml, **heating_system_values)
+    end
+    cooling_systems_values.each do |cooling_system_values|
+      HPXML.add_cooling_system(hpxml: hpxml, **cooling_system_values)
+    end
+    heat_pumps_values.each do |heat_pump_values|
+      HPXML.add_heat_pump(hpxml: hpxml, **heat_pump_values)
+    end
     hvac_controls_values.each do |hvac_control_values|
       HPXML.add_hvac_control(hpxml: hpxml, **hvac_control_values)
     end
-    # hvac_distributions_values.each_with_index do |hvac_distribution_values, i|
-    #   hvac_distribution = HPXML.add_hvac_distribution(hpxml: hpxml, **hvac_distribution_values)
-    #   air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
-    #   next if air_distribution.nil?
+    hvac_distributions_values.each_with_index do |hvac_distribution_values, i|
+      hvac_distribution = HPXML.add_hvac_distribution(hpxml: hpxml, **hvac_distribution_values)
+      air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
+      next if air_distribution.nil?
 
-    #   duct_leakage_measurements_values[i].each do |duct_leakage_measurement_values|
-    #     HPXML.add_duct_leakage_measurement(air_distribution: air_distribution, **duct_leakage_measurement_values)
-    #   end
-    #   ducts_values[i].each do |duct_values|
-    #     HPXML.add_ducts(air_distribution: air_distribution, **duct_values)
-    #   end
-    # end
-    # ventilation_fans_values.each do |ventilation_fan_values|
-    #   HPXML.add_ventilation_fan(hpxml: hpxml, **ventilation_fan_values)
-    # end
+      duct_leakage_measurements_values[i].each do |duct_leakage_measurement_values|
+        HPXML.add_duct_leakage_measurement(air_distribution: air_distribution, **duct_leakage_measurement_values)
+      end
+      ducts_values[i].each do |duct_values|
+        HPXML.add_ducts(air_distribution: air_distribution, **duct_values)
+      end
+    end
+    ventilation_fans_values.each do |ventilation_fan_values|
+      HPXML.add_ventilation_fan(hpxml: hpxml, **ventilation_fan_values)
+    end
     # water_heating_systems_values.each do |water_heating_system_values|
     #   HPXML.add_water_heating_system(hpxml: hpxml, **water_heating_system_values)
     # end
@@ -311,24 +315,24 @@ def create_hpxmls
     # pv_systems_values.each do |pv_system_values|
     #   HPXML.add_pv_system(hpxml: hpxml, **pv_system_values)
     # end
-    # clothes_washers_values.each do |clothes_washer_values|
-    #   HPXML.add_clothes_washer(hpxml: hpxml, **clothes_washer_values)
-    # end
-    # clothes_dryers_values.each do |clothes_dryer_values|
-    #   HPXML.add_clothes_dryer(hpxml: hpxml, **clothes_dryer_values)
-    # end
-    # dishwashers_values.each do |dishwasher_values|
-    #   HPXML.add_dishwasher(hpxml: hpxml, **dishwasher_values)
-    # end
-    # refrigerators_values.each do |refrigerator_values|
-    #   HPXML.add_refrigerator(hpxml: hpxml, **refrigerator_values)
-    # end
-    # cooking_ranges_values.each do |cooking_range_values|
-    #   HPXML.add_cooking_range(hpxml: hpxml, **cooking_range_values)
-    # end
-    # ovens_values.each do |oven_values|
-    #   HPXML.add_oven(hpxml: hpxml, **oven_values)
-    # end
+    clothes_washers_values.each do |clothes_washer_values|
+      HPXML.add_clothes_washer(hpxml: hpxml, **clothes_washer_values)
+    end
+    clothes_dryers_values.each do |clothes_dryer_values|
+      HPXML.add_clothes_dryer(hpxml: hpxml, **clothes_dryer_values)
+    end
+    dishwashers_values.each do |dishwasher_values|
+      HPXML.add_dishwasher(hpxml: hpxml, **dishwasher_values)
+    end
+    refrigerators_values.each do |refrigerator_values|
+      HPXML.add_refrigerator(hpxml: hpxml, **refrigerator_values)
+    end
+    cooking_ranges_values.each do |cooking_range_values|
+      HPXML.add_cooking_range(hpxml: hpxml, **cooking_range_values)
+    end
+    ovens_values.each do |oven_values|
+      HPXML.add_oven(hpxml: hpxml, **oven_values)
+    end
     # lightings_values.each do |lighting_values|
     #   HPXML.add_lighting(hpxml: hpxml, **lighting_values)
     # end
@@ -367,6 +371,8 @@ def get_hpxml_file_site_values(hpxml_file, site_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     site_values = { :fuels => ["electricity", "natural gas"],
                     :disable_natural_ventilation => true }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    site_values[:disable_natural_ventilation] = nil
   end
   return site_values
 end
@@ -374,6 +380,8 @@ end
 def get_hpxml_file_building_occupancy_values(hpxml_file, building_occupancys_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     building_occupancys_values << { :number_of_residents => 0 }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    building_occupancys_values = []
   end
   return building_occupancys_values
 end
@@ -391,6 +399,14 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:number_of_conditioned_floors] = 2
     building_construction_values[:conditioned_floor_area] = 3078
     building_construction_values[:conditioned_building_volume] = 24624
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    building_construction_values[:use_only_ideal_air_system] = nil
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    building_construction_values[:number_of_bedrooms] = 2
+    building_construction_values[:use_only_ideal_air_system] = nil
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    building_construction_values[:number_of_bedrooms] = 4
+    building_construction_values[:use_only_ideal_air_system] = nil
   end
   return building_construction_values
 end
@@ -408,6 +424,21 @@ def get_hpxml_file_climate_and_risk_zones_values(hpxml_file, climate_and_risk_zo
                                       :weather_station_id => "Weather_Station",
                                       :weather_station_name => "Las Vegas, NV",
                                       :weather_station_wmo => "723860" }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
+    climate_and_risk_zones_values[:iecc2006] = "4A"
+    climate_and_risk_zones_values[:iecc2012] = "4A"
+    climate_and_risk_zones_values[:weather_station_name] = "Baltimore, MD"
+    climate_and_risk_zones_values[:weather_station_wmo] = "724060"
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    climate_and_risk_zones_values[:iecc2006] = "3A"
+    climate_and_risk_zones_values[:iecc2012] = "3A"
+    climate_and_risk_zones_values[:weather_station_name] = "Dallas, TX"
+    climate_and_risk_zones_values[:weather_station_wmo] = "722590"
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    climate_and_risk_zones_values[:iecc2006] = "1A"
+    climate_and_risk_zones_values[:iecc2012] = "1A"
+    climate_and_risk_zones_values[:weather_station_name] = "Miami, FL"
+    climate_and_risk_zones_values[:weather_station_wmo] = "722020"
   end
   return climate_and_risk_zones_values
 end
@@ -421,6 +452,10 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     air_infiltration_measurement_values[:constant_ach_natural] = 1.5
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     air_infiltration_measurement_values[:infiltration_volume] = 24624
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    air_infiltration_measurement_values[:constant_ach_natural] = nil
+    air_infiltration_measurement_values[:unit_of_measure] = "ACHnatural"
+    air_infiltration_measurement_values[:air_leakage] = 0.67
   end
   return air_infiltration_measurement_values
 end
@@ -431,6 +466,8 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
                      :attic_type => "VentedAttic",
                      :specific_leakage_area => 0.0008,
                      :attic_constant_ach_natural => 2.4 }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    attic_values[:attic_constant_ach_natural] = nil
   end
   return attic_values
 end
@@ -512,6 +549,8 @@ def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
     foundation_values[:foundation_type] = "SlabOnGrade"
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     foundation_values[:foundation_type] = "ConditionedBasement"
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    foundation_values[:foundation_type] = "UnventedCrawlspace"
   end
   return foundation_values
 end
@@ -528,6 +567,15 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
                                  :insulation_assembly_r_value => 1.165 }]
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
     foundation_walls_values[0][:insulation_assembly_r_value] = 10.69
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    foundation_walls = [{ :id => "fndwall-1",
+                          :height => 4,
+                          :area => 672,
+                          :thickness => 8,
+                          :depth_below_grade => 3,
+                          :adjacent_to => "ground",
+                          :insulation_id => "FWall_Ins_ID1",
+                          :insulation_assembly_r_value => 8.165 }]
   end
   return foundation_walls_values
 end
@@ -564,6 +612,20 @@ def get_hpxml_file_slab_values(hpxml_file, slabs_values)
   elsif ['RESNET_Tests/4.1_Standard_140/L304XC.xml'].include? hpxml_file
     slabs_values[0][:perimeter_insulation_depth] = 2.5
     slabs_values[0][:perimeter_insulation_r_value] = 5.4
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    slabs_values = [{ :id => "Slab_ID1",
+                      :area => 1539,
+                      :thickness => 0,
+                      :exposed_perimeter => 168,
+                      :perimeter_insulation_depth => 0,
+                      :under_slab_insulation_width => 0,
+                      :depth_below_grade => 3,
+                      :perimeter_insulation_id => "PerimeterInsulation_ID1",
+                      :perimeter_insulation_r_value => 0,
+                      :under_slab_insulation_id => "UnderSlabInsulation_ID1",
+                      :under_slab_insulation_r_value => 0,
+                      :carpet_fraction => 0,
+                      :carpet_r_value => 2.5 }]
   end
   return slabs_values
 end
@@ -577,8 +639,10 @@ def get_hpxml_file_frame_floor_values(hpxml_file, frame_floors_values)
                              :insulation_assembly_r_value => 14.15 }
   elsif ['RESNET_Tests/4.1_Standard_140/L200AC.xml', 'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
     frame_floors_values[0][:insulation_assembly_r_value] = 4.24
-  elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     frame_floors_values = []
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    frame_floors_values[0][:insulation_assembly_r_value] = 3.1
   end
   return frame_floors_values
 end
@@ -733,6 +797,15 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
     windows_values[0][:overhangs_depth] = 2.5
     windows_values[0][:overhangs_distance_to_top_of_window] = 1
     windows_values[0][:overhangs_distance_to_bottom_of_window] = 6
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    windows_values[0][:interior_shading_factor_summer] = nil
+    windows_values[0][:interior_shading_factor_winter] = nil
+    windows_values[1][:interior_shading_factor_summer] = nil
+    windows_values[1][:interior_shading_factor_winter] = nil
+    windows_values[2][:interior_shading_factor_summer] = nil
+    windows_values[2][:interior_shading_factor_winter] = nil
+    windows_values[3][:interior_shading_factor_summer] = nil
+    windows_values[3][:interior_shading_factor_winter] = nil
   end
   return windows_values
 end
@@ -753,12 +826,180 @@ def get_hpxml_file_doors_values(hpxml_file, doors_values)
   return doors_values
 end
 
+def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
+    heating_systems_values = [{ :id => "SpaceHeat_ID1",
+                                :distribution_system_idref => "HVAC_Dist_ID1",
+                                :heating_system_type => "Furnace",
+                                :heating_system_fuel => "natural gas",
+                                :heating_capacity => 60000,
+                                :heating_efficiency_afue => 0.82,
+                                :fraction_heat_load_served => 1 }]
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    heating_systems_values = [{ :id => "SpaceHeat_ID1",
+                                :heating_system_type => "ElectricResistance",
+                                :heating_system_fuel => "electricity",
+                                :heating_capacity => 60000,
+                                :heating_efficiency_percent => 1,
+                                :fraction_heat_load_served => 1 }]
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    heating_systems_values = [{ :id => "SpaceHeat_ID1",
+                                :distribution_system_idref => "HVAC_Dist_ID1",
+                                :heating_system_type => "Furnace",
+                                :heating_system_fuel => "natural gas",
+                                :heating_capacity => 60000,
+                                :heating_efficiency_afue => 0.95,
+                                :fraction_heat_load_served => 1 }]
+  end
+  return heating_systems_values
+end
+
+def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
+    cooling_systems_values = [{ :id => "SpaceCool_ID1",
+                                :distribution_system_idref => "HVAC_Dist_ID1",
+                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_fuel => "electricity",
+                                :cooling_capacity => 60000,
+                                :fraction_cool_load_served => 1,
+                                :cooling_efficiency_seer => 11 }]
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    cooling_systems_values = [{ :id => "SpaceCool_ID1",
+                                :distribution_system_idref => "HVAC_Dist_ID1",
+                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_fuel => "electricity",
+                                :cooling_capacity => 60000,
+                                :fraction_cool_load_served => 1,
+                                :cooling_efficiency_seer => 15 }]
+  end
+  return cooling_systems_values
+end
+
+def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    heat_pumps_values << { :id => "SpaceHeatPump_ID1",
+                           :distribution_system_idref => "HVAC_Dist_ID1",
+                           :heat_pump_type => "air-to-air",
+                           :heat_pump_fuel => "electricity",
+                           :cooling_capacity => 60000,
+                           :fraction_heat_load_served => 1,
+                           :fraction_cool_load_served => 1,
+                           :heating_efficiency_hspf => 7.5,
+                           :cooling_efficiency_seer => 12 }
+  end
+  return heat_pumps_values
+end
+
 def get_hpxml_file_hvac_control_values(hpxml_file, hvac_controls_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     hvac_controls_values = [{ :id => "HVAC_Ctrl_ID1",
                               :control_type => "manual thermostat" }]
   end
   return hvac_controls_values
+end
+
+def get_hpxml_file_hvac_distribution_values(hpxml_file, hvac_distributions_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    hvac_distributions_values = [{ :id => "HVAC_Dist_ID1",
+                                   :distribution_system_type => "AirDistribution" }]
+  end
+  return hvac_distributions_values
+end
+
+def get_hpxml_file_duct_leakage_measurements_values(hpxml_file, duct_leakage_measurements_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    duct_leakage_measurements_values = [[{ :duct_type => "supply",
+                                           :duct_leakage_value => 0 },
+                                         { :duct_type => "return",
+                                           :duct_leakage_value => 0 }]]
+  end
+  return duct_leakage_measurements_values
+end
+
+def get_hpxml_file_ducts_values(hpxml_file, ducts_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    ducts_values = [[{ :duct_type => "supply",
+                       :duct_insulation_r_value => 0,
+                       :duct_location => "living space",
+                       :duct_surface_area => 100 },
+                     { :duct_type => "return",
+                       :duct_insulation_r_value => 0,
+                       :duct_location => "living space",
+                       :duct_surface_area => 100 }]]
+  end
+  return ducts_values
+end
+
+def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    ventilation_fans_values << { :id => "Mech_Vent_ID1",
+                                 :fan_type => "exhaust only",
+                                 :rated_flow_rate => 56.2,
+                                 :hours_in_operation => 24,
+                                 :fan_power => 14 }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    ventilation_fans_values << { :id => "Mech_Vent_ID1",
+                                 :fan_type => "heat recovery ventilator",
+                                 :rated_flow_rate => 56.2,
+                                 :hours_in_operation => 24,
+                                 :sensible_recovery_efficiency => 0.6,
+                                 :fan_power => 14 }
+  end
+  return ventilation_fans_values
+end
+
+def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washers_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    clothes_washers_values << { :id => "ClothesWasher",
+                                :location => "living space" }
+  end
+  return clothes_washers_values
+end
+
+def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryers_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    clothes_dryers_values << { :id => "ClothesDryer",
+                               :location => "living space",
+                               :fuel_type => "natural gas" }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    clothes_dryers_values << { :id => "ClothesDryer",
+                               :location => "living space",
+                               :fuel_type => "electricity" }
+  end
+  return clothes_dryers_values
+end
+
+def get_hpxml_file_dishwasher_values(hpxml_file, dishwashers_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    dishwashers_values << { :id => "Dishwasher_ID1" }
+  end
+  return dishwashers_values
+end
+
+def get_hpxml_file_refrigerator_values(hpxml_file, refrigerators_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    refrigerators_values << { :id => "Refrigerator",
+                              :location => "living space" }
+  end
+  return refrigerators_values
+end
+
+def get_hpxml_file_cooking_range_values(hpxml_file, cooking_ranges_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    cooking_ranges_values << { :id => "Range_ID1",
+                               :fuel_type => "natural gas" }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    cooking_ranges_values << { :id => "Range_ID1",
+                               :fuel_type => "electricity" }
+  end
+  return cooking_ranges_values
+end
+
+def get_hpxml_file_oven_values(hpxml_file, ovens_values)
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    ovens_values << { :id => "Oven_ID1" }
+  end
+  return ovens_values
 end
 
 def get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
@@ -770,6 +1011,8 @@ def get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
                            :frac_latent => 0.18 }
   elsif ['RESNET_Tests/4.1_Standard_140/L170AC.xml', 'RESNET_Tests/4.1_Standard_140/L170AL.xml'].include? hpxml_file
     plug_loads_values[0][:kWh_per_year] = 0
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    plug_loads_values = []
   end
   return plug_loads_values
 end
@@ -779,6 +1022,8 @@ def get_hpxml_file_misc_loads_schedule_values(hpxml_file, misc_loads_schedules_v
     misc_loads_schedules_values << { :weekday_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
                                      :weekend_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
                                      :monthly_multipliers => "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0" }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    misc_loads_schedules_values = []
   end
   return misc_loads_schedules_values
 end
