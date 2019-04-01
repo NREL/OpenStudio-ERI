@@ -75,7 +75,6 @@
             <AtticType>
               <Attic>
                 <Vented>true</Vented>
-                <SpecificLeakageArea>0.0008</SpecificLeakageArea>
                 <extension>
                   <ConstantACHnatural>2.4</ConstantACHnatural>
                 </extension>
