@@ -134,6 +134,14 @@ def create_hpxmls
     'RESNET_Tests/4.4_HVAC/HVAC2c.xml' => 'RESNET_Tests/4.4_HVAC/HVAC2a.xml',
     'RESNET_Tests/4.4_HVAC/HVAC2d.xml' => 'RESNET_Tests/4.4_HVAC/HVAC2a.xml',
     'RESNET_Tests/4.4_HVAC/HVAC2e.xml' => 'RESNET_Tests/4.4_HVAC/HVAC2a.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3a.xml' => 'RESNET_Tests/4.1_Standard_140/L322XC.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3b.xml' => 'RESNET_Tests/4.5_DSE/HVAC3a.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3c.xml' => 'RESNET_Tests/4.5_DSE/HVAC3a.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3d.xml' => 'RESNET_Tests/4.5_DSE/HVAC3a.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3e.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3f.xml' => 'RESNET_Tests/4.5_DSE/HVAC3e.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3g.xml' => 'RESNET_Tests/4.5_DSE/HVAC3e.xml',
+    'RESNET_Tests/4.5_DSE/HVAC3h.xml' => 'RESNET_Tests/4.5_DSE/HVAC3e.xml'
   }
 
   hpxmls_files.each do |derivative, parent|
@@ -411,7 +419,7 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:number_of_conditioned_floors] = 2
     building_construction_values[:conditioned_floor_area] = 3078
     building_construction_values[:conditioned_building_volume] = 24624
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.4_HVAC/HVAC1a.xml', 'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.4_HVAC/HVAC1a.xml', 'RESNET_Tests/4.4_HVAC/HVAC2a.xml', 'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     building_construction_values[:use_only_ideal_air_system] = nil
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 2
@@ -423,6 +431,11 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:number_of_bedrooms] = 2
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml'].include? hpxml_file
     building_construction_values[:number_of_bedrooms] = 4
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    building_construction_values[:number_of_conditioned_floors] = 1
+    building_construction_values[:conditioned_floor_area] = 1539
+    building_construction_values[:conditioned_building_volume] = 12312
+    building_construction_values[:use_only_ideal_air_system] = nil
   end
   return building_construction_values
 end
@@ -481,7 +494,7 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
     attic_values = { :id => "Attic_ID1",
                      :attic_type => "VentedAttic",
                      :constant_ach_natural => 2.4 }
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     attic_values[:constant_ach_natural] = nil
   end
   return attic_values
@@ -584,6 +597,8 @@ def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
     foundation_values[:foundation_type] = "ConditionedBasement"
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     foundation_values[:foundation_type] = "UnventedCrawlspace"
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    foundation_values[:foundation_type] = "UnconditionedBasement"
   end
   return foundation_values
 end
@@ -676,6 +691,8 @@ def get_hpxml_file_frame_floor_values(hpxml_file, frame_floors_values)
     frame_floors_values = []
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     frame_floors_values[0][:insulation_assembly_r_value] = 3.1
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    frame_floors_values[0][:insulation_assembly_r_value] = 13.8
   end
   return frame_floors_values
 end
@@ -690,6 +707,8 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
                            :insulation_assembly_r_value => 5.01 }]
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
     rim_joists_values[0][:insulation_assembly_r_value] = 13.14
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    rim_joists_values = []
   end
   return rim_joists_values
 end
@@ -943,6 +962,20 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
     heating_systems_values[0][:heating_system_fuel] = "electricity"
     heating_systems_values[0][:heating_efficiency_afue] = 1
     heating_systems_values[0][:electric_auxiliary_energy] = nil
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    heating_systems_values = [{ :id => "SpaceHeat_ID1",
+                                :distribution_system_idref => "HVAC_Dist_ID1",
+                                :heating_system_type => "Furnace",
+                                :heating_system_fuel => "natural gas",
+                                :heating_capacity => 46600,
+                                :heating_efficiency_afue => 0.78,
+                                :fraction_heat_load_served => 1 }]
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
+    heating_systems_values[0][:heating_capacity] = 56000
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3c.xml'].include? hpxml_file
+    heating_systems_values[0][:heating_capacity] = 49000
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
+    heating_systems_values[0][:heating_capacity] = 61000
   end
   return heating_systems_values
 end
@@ -982,6 +1015,18 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :cooling_efficiency_seer => 10 }]
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     cooling_systems_values[0][:cooling_efficiency_seer] = 13
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
+    cooling_systems_values = [{ :id => "SpaceCool_ID1",
+                                :distribution_system_idref => "HVAC_Dist_ID1",
+                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_fuel => "electricity",
+                                :cooling_capacity => 38400,
+                                :fraction_cool_load_served => 1,
+                                :cooling_efficiency_seer => 10 }]
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
+    cooling_systems_values[0][:cooling_capacity] = 49900
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3g.xml', 'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
+    cooling_systems_values[0][:cooling_capacity] = 42200
   end
   return cooling_systems_values
 end
@@ -1044,7 +1089,7 @@ def get_hpxml_file_hvac_control_values(hpxml_file, hvac_controls_values)
 end
 
 def get_hpxml_file_hvac_distribution_values(hpxml_file, hvac_distributions_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.5_DSE/HVAC3a.xml', 'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     hvac_distributions_values = [{ :id => "HVAC_Dist_ID1",
                                    :distribution_system_type => "AirDistribution" }]
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
@@ -1062,11 +1107,14 @@ def get_hpxml_file_hvac_distribution_values(hpxml_file, hvac_distributions_value
 end
 
 def get_hpxml_file_duct_leakage_measurements_values(hpxml_file, duct_leakage_measurements_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.5_DSE/HVAC3a.xml', 'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     duct_leakage_measurements_values = [[{ :duct_type => "supply",
                                            :duct_leakage_value => 0 },
                                          { :duct_type => "return",
                                            :duct_leakage_value => 0 }]]
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml', 'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
+    duct_leakage_measurements_values[0][0][:duct_leakage_value] = 125
+    duct_leakage_measurements_values[0][1][:duct_leakage_value] = 125
   end
   return duct_leakage_measurements_values
 end
@@ -1081,6 +1129,31 @@ def get_hpxml_file_ducts_values(hpxml_file, ducts_values)
                        :duct_insulation_r_value => 0,
                        :duct_location => "living space",
                        :duct_surface_area => 100 }]]
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml', 'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
+    ducts_values = [[{ :duct_type => "supply",
+                       :duct_insulation_r_value => 0,
+                       :duct_location => "living space",
+                       :duct_surface_area => 308 },
+                     { :duct_type => "return",
+                       :duct_insulation_r_value => 0,
+                       :duct_location => "living space",
+                       :duct_surface_area => 77 }]]
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
+    ducts_values[0][0][:duct_location] = "basement - unconditioned"
+    ducts_values[0][1][:duct_location] = "basement - unconditioned"
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3c.xml', 'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
+    ducts_values[0][0][:duct_insulation_r_value] = 6
+    ducts_values[0][0][:duct_location] = "basement - unconditioned"
+    ducts_values[0][1][:duct_insulation_r_value] = 6
+    ducts_values[0][1][:duct_location] = "basement - unconditioned"
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
+    ducts_values[0][0][:duct_location] = "attic - vented"
+    ducts_values[0][1][:duct_location] = "attic - vented"
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3g.xml', 'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
+    ducts_values[0][0][:duct_insulation_r_value] = 6
+    ducts_values[0][0][:duct_location] = "attic - vented"
+    ducts_values[0][1][:duct_insulation_r_value] = 6
+    ducts_values[0][1][:duct_location] = "attic - vented"
   end
   return ducts_values
 end
