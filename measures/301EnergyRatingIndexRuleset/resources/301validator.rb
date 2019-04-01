@@ -103,13 +103,13 @@ class EnergyRatingIndex301Validator
       },
 
       ## [AtticType=Unvented]
-      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="false"]]' => {
-        'Floors/Floor' => one_or_more, # See [AtticFloor]
+      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic/AtticType/Attic[Vented="false"]' => {
+        '../../Floors/Floor' => one_or_more, # See [AtticFloor]
       },
 
       ## [AtticType=Vented]
-      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]' => {
-        'Floors/Floor' => one_or_more, # See [AtticFloor]
+      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic/AtticType/Attic[Vented="true"]' => {
+        '../../Floors/Floor' => one_or_more, # See [AtticFloor]
         'SpecificLeakageArea' => zero_or_one, # Uses ERI Reference Home if not provided
       },
 
@@ -175,7 +175,7 @@ class EnergyRatingIndex301Validator
       },
 
       ## [FoundationType=VentedCrawl]
-      '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]' => {
+      '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented="true"]' => {
         'SpecificLeakageArea' => zero_or_one, # Uses ERI Reference Home if not provided
       },
 
