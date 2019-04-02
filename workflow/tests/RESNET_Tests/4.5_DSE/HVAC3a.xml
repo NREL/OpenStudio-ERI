@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -60,7 +60,7 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='InfiltMeas64'/>
-            <InfiltrationVolume>24624</InfiltrationVolume>
+            <InfiltrationVolume>24624.0</InfiltrationVolume>
             <extension>
               <ConstantACHnatural>0.67</ConstantACHnatural>
             </extension>
@@ -353,12 +353,12 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>46600</HeatingCapacity>
+              <HeatingCapacity>46600.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.78</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>

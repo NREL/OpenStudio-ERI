@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -304,23 +304,23 @@
                 <ElectricResistance/>
               </HeatingSystemType>
               <HeatingSystemFuel>electricity</HeatingSystemFuel>
-              <HeatingCapacity>60000</HeatingCapacity>
+              <HeatingCapacity>60000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>Percent</Units>
                 <Value>1.0</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='SpaceCool_ID1'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>60000</CoolingCapacity>
-              <FractionCoolLoadServed>1</FractionCoolLoadServed>
+              <CoolingCapacity>60000.0</CoolingCapacity>
+              <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>15</Value>
+                <Value>15.0</Value>
               </AnnualCoolingEfficiency>
             </CoolingSystem>
           </HVACPlant>
@@ -370,7 +370,7 @@
               <SystemIdentifier id='Mech_Vent_ID1'/>
               <FanType>balanced</FanType>
               <RatedFlowRate>56.2</RatedFlowRate>
-              <HoursInOperation>24</HoursInOperation>
+              <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <FanPower>14.0</FanPower>
             </VentilationFan>

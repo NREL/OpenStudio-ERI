@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -306,11 +306,11 @@
               <DistributionSystem idref='HVAC_Dist_ID1'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>38300</CoolingCapacity>
-              <FractionCoolLoadServed>1</FractionCoolLoadServed>
+              <CoolingCapacity>38300.0</CoolingCapacity>
+              <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>13</Value>
+                <Value>13.0</Value>
               </AnnualCoolingEfficiency>
             </CoolingSystem>
           </HVACPlant>

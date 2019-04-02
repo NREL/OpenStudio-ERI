@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -282,28 +282,28 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>60000</HeatingCapacity>
+              <HeatingCapacity>60000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.82</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='SpaceCool_ID1'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>60000</CoolingCapacity>
-              <FractionCoolLoadServed>1</FractionCoolLoadServed>
+              <CoolingCapacity>60000.0</CoolingCapacity>
+              <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>11</Value>
+                <Value>11.0</Value>
               </AnnualCoolingEfficiency>
             </CoolingSystem>
           </HVACPlant>

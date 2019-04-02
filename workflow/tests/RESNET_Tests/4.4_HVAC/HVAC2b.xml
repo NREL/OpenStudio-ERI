@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -308,13 +308,13 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>56100</HeatingCapacity>
+              <HeatingCapacity>56100.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
-                <Value>0.90</Value>
+                <Value>0.9</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>780</ElectricAuxiliaryEnergy>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <ElectricAuxiliaryEnergy>780.0</ElectricAuxiliaryEnergy>
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>

@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -241,7 +241,7 @@
             <SystemIdentifier id='Window_North'/>
             <Area>90.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.300</UFactor>
+            <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
             <AttachedToWall idref='agwall-north'/>
             <extension>
@@ -253,7 +253,7 @@
             <SystemIdentifier id='Window_East'/>
             <Area>45.0</Area>
             <Azimuth>90</Azimuth>
-            <UFactor>0.300</UFactor>
+            <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
             <AttachedToWall idref='agwall-east'/>
             <extension>
@@ -265,7 +265,7 @@
             <SystemIdentifier id='Window_South'/>
             <Area>90.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.300</UFactor>
+            <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
             <AttachedToWall idref='agwall-south'/>
             <extension>
@@ -277,7 +277,7 @@
             <SystemIdentifier id='Window_West'/>
             <Area>45.0</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.300</UFactor>
+            <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
             <AttachedToWall idref='agwall-west'/>
             <extension>

@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -30,8 +30,8 @@
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
-          <ConditionedFloorArea>3078</ConditionedFloorArea>
-          <ConditionedBuildingVolume>24624</ConditionedBuildingVolume>
+          <ConditionedFloorArea>3078.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>24624.0</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
       </BuildingSummary>
@@ -58,7 +58,7 @@
               <UnitofMeasure>ACHnatural</UnitofMeasure>
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>24624</InfiltrationVolume>
+            <InfiltrationVolume>24624.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -330,17 +330,17 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='SpaceHeat_ID1'/>
-              <DistributionSystem idref="HVAC_Dist_ID1"/>
+              <DistributionSystem idref='HVAC_Dist_ID1'/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>60000</HeatingCapacity>
+              <HeatingCapacity>60000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.95</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1</FractionHeatLoadServed>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>
@@ -389,9 +389,9 @@
               <SystemIdentifier id='Mech_Vent_ID1'/>
               <FanType>heat recovery ventilator</FanType>
               <RatedFlowRate>56.2</RatedFlowRate>
-              <HoursInOperation>24</HoursInOperation>
+              <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
-              <SensibleRecoveryEfficiency>0.60</SensibleRecoveryEfficiency>
+              <SensibleRecoveryEfficiency>0.6</SensibleRecoveryEfficiency>
               <FanPower>14.0</FanPower>
             </VentilationFan>
           </VentilationFans>

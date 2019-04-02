@@ -2,7 +2,7 @@
 <HPXML xmlns='http://hpxmlonline.com/2014/6' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2014/6' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>Hand</XMLGeneratedBy>
+    <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
     <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
@@ -36,8 +36,8 @@
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <ConditionedFloorArea>3078</ConditionedFloorArea>
-          <ConditionedBuildingVolume>24624</ConditionedBuildingVolume>
+          <ConditionedFloorArea>3078.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>24624.0</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
           <extension>
             <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
@@ -63,7 +63,7 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='InfiltMeas64'/>
-            <InfiltrationVolume>24624</InfiltrationVolume>
+            <InfiltrationVolume>24624.0</InfiltrationVolume>
             <extension>
               <ConstantACHnatural>0.67</ConstantACHnatural>
             </extension>
