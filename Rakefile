@@ -327,7 +327,6 @@ def create_hpxmls
       rim_joists_values = get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
       walls_values = get_hpxml_file_walls_values(hpxml_file, walls_values)
       windows_values = get_hpxml_file_windows_values(hpxml_file, windows_values)
-      # skylights_values = get_hpxml_file_skylights_values(hpxml_file, skylights_values)
       doors_values = get_hpxml_file_doors_values(hpxml_file, doors_values)
       heating_systems_values = get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
       cooling_systems_values = get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
@@ -340,7 +339,6 @@ def create_hpxmls
       water_heating_systems_values = get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems_values)
       hot_water_distributions_values = get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distributions_values)
       water_fixtures_values = get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
-      # pv_systems_values = get_hpxml_file_pv_system_values(hpxml_file, pv_systems_values)
       clothes_washers_values = get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washers_values)
       clothes_dryers_values = get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryers_values)
       dishwashers_values = get_hpxml_file_dishwasher_values(hpxml_file, dishwashers_values)
@@ -348,7 +346,6 @@ def create_hpxmls
       cooking_ranges_values = get_hpxml_file_cooking_range_values(hpxml_file, cooking_ranges_values)
       ovens_values = get_hpxml_file_oven_values(hpxml_file, ovens_values)
       lightings_values = get_hpxml_file_lighting_values(hpxml_file, lightings_values)
-      # ceiling_fans_values = get_hpxml_file_ceiling_fan_values(hpxml_file, ceiling_fans_values)
       plug_loads_values = get_hpxml_file_plug_load_values(hpxml_file, plug_loads_values)
       misc_loads_schedules_values = get_hpxml_file_misc_loads_schedule_values(hpxml_file, misc_loads_schedules_values)
     end
@@ -398,9 +395,6 @@ def create_hpxmls
     windows_values.each do |window_values|
       HPXML.add_window(hpxml: hpxml, **window_values)
     end
-    # skylights_values.each do |skylight_values|
-    #   HPXML.add_skylight(hpxml: hpxml, **skylight_values)
-    # end
     doors_values.each do |door_values|
       HPXML.add_door(hpxml: hpxml, **door_values)
     end
@@ -440,9 +434,6 @@ def create_hpxmls
     water_fixtures_values.each do |water_fixture_values|
       HPXML.add_water_fixture(hpxml: hpxml, **water_fixture_values)
     end
-    # pv_systems_values.each do |pv_system_values|
-    #   HPXML.add_pv_system(hpxml: hpxml, **pv_system_values)
-    # end
     clothes_washers_values.each do |clothes_washer_values|
       HPXML.add_clothes_washer(hpxml: hpxml, **clothes_washer_values)
     end
@@ -464,9 +455,6 @@ def create_hpxmls
     lightings_values.each do |lighting_values|
       HPXML.add_lighting(hpxml: hpxml, **lighting_values)
     end
-    # ceiling_fans_values.each do |ceiling_fan_values|
-    #   HPXML.add_ceiling_fan(hpxml: hpxml, **ceiling_fan_values)
-    # end
     plug_loads_values.each do |plug_load_values|
       HPXML.add_plug_load(hpxml: hpxml, **plug_load_values)
     end
