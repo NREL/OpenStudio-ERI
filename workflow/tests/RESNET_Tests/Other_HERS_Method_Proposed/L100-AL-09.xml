@@ -29,7 +29,7 @@
         <BuildingConstruction>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
-          <NumberofBedrooms>3</NumberofBedrooms>
+          <NumberofBedrooms>2</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
@@ -316,10 +316,10 @@
             <VentilationFan>
               <SystemIdentifier id='Mech_Vent_ID1'/>
               <FanType>exhaust only</FanType>
-              <RatedFlowRate>48.7</RatedFlowRate>
+              <RatedFlowRate>51.2</RatedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
-              <FanPower>12.2</FanPower>
+              <FanPower>12.8</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
