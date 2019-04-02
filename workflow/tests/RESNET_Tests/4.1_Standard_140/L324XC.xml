@@ -208,14 +208,12 @@
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>126</Area>
+            <SolarAbsorptance>0.6</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist_Ins_ID1'/>
               <AssemblyEffectiveRValue>13.14</AssemblyEffectiveRValue>
             </Insulation>
-            <extension>
-              <SolarAbsorptance>0.6</SolarAbsorptance>
-              <Emittance>0.9</Emittance>
-            </extension>
           </RimJoist>
         </RimJoists>
         <Walls>
