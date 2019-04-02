@@ -58,7 +58,7 @@
               <UnitofMeasure>ACHnatural</UnitofMeasure>
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
-          <InfiltrationVolume>12312.0</InfiltrationVolume>
+            <InfiltrationVolume>12312.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -125,7 +125,7 @@
               <Thickness>4.0</Thickness>
               <ExposedPerimeter>168.0</ExposedPerimeter>
               <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
-              <UnderSlabInsulationWidth>4</UnderSlabInsulationWidth>
+              <UnderSlabInsulationWidth>4.0</UnderSlabInsulationWidth>
               <DepthBelowGrade>0.0</DepthBelowGrade>
               <PerimeterInsulation>
                 <SystemIdentifier id='PerimeterInsulation_ID1'/>
@@ -138,7 +138,7 @@
                 <SystemIdentifier id='UnderSlabInsulation_ID1'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
-                  <NominalRValue>5</NominalRValue>
+                  <NominalRValue>5.0</NominalRValue>
                 </Layer>
               </UnderSlabInsulation>
               <extension>

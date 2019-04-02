@@ -58,7 +58,7 @@
               <UnitofMeasure>ACHnatural</UnitofMeasure>
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
-          <InfiltrationVolume>12312.0</InfiltrationVolume>
+            <InfiltrationVolume>12312.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -317,16 +317,42 @@
         </Oven>
       </Appliances>
       <Lighting>
-        <LightingFractions>
-          <extension>
-            <FractionQualifyingTierIFixturesInterior>0.75</FractionQualifyingTierIFixturesInterior>
-            <FractionQualifyingTierIFixturesExterior>0.75</FractionQualifyingTierIFixturesExterior>
-            <FractionQualifyingTierIFixturesGarage>0.0</FractionQualifyingTierIFixturesGarage>
-            <FractionQualifyingTierIIFixturesInterior>0.0</FractionQualifyingTierIIFixturesInterior>
-            <FractionQualifyingTierIIFixturesExterior>0.0</FractionQualifyingTierIIFixturesExterior>
-            <FractionQualifyingTierIIFixturesGarage>0.0</FractionQualifyingTierIIFixturesGarage>
-          </extension>
-        </LightingFractions>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Interior'/>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>0.75</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.75</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Interior'/>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
       </Lighting>
     </BuildingDetails>
   </Building>
