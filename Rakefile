@@ -482,8 +482,8 @@ end
 def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     hpxml_values = { :xml_type => "HPXML",
-                     #  :xml_generated_by => "Hand",
-                     :xml_generated_by => "Rakefile", # FIXME: eventually use this, and remove Hand
+                     :xml_generated_by => "Hand",
+                     #  :xml_generated_by => "Rakefile", # FIXME: eventually use this, and remove Hand
                      :transaction => "create",
                      :software_program_used => nil,
                      :software_program_version => nil,
