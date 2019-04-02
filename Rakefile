@@ -923,6 +923,8 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
                            :exterior_adjacent_to => "outside",
                            :interior_adjacent_to => "living space",
                            :area => 126,
+                           :solar_absorptance => 0.6,
+                           :emittance => 0.9,
                            :insulation_id => "RimJoist_Ins_ID1",
                            :insulation_assembly_r_value => 5.01 }]
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
