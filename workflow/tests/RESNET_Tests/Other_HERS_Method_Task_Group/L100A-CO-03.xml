@@ -80,7 +80,7 @@
                 <Pitch>4.0</Pitch>
                 <RadiantBarrier>false</RadiantBarrier>
                 <Insulation>
-                  <SystemIdentifier id='Attic_Roof_Ins_ID1'/>
+                  <SystemIdentifier id='Attic_Roof_Ins_north'/>
                   <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
                 </Insulation>
               </Roof>
@@ -390,18 +390,18 @@
           <FuelType>natural gas</FuelType>
         </ClothesDryer>
         <Dishwasher>
-          <SystemIdentifier id='Dishwasher'/>
+          <SystemIdentifier id='Dishwasher_ID1'/>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
           <Location>living space</Location>
         </Refrigerator>
         <CookingRange>
-          <SystemIdentifier id='Range'/>
+          <SystemIdentifier id='Range_ID1'/>
           <FuelType>natural gas</FuelType>
         </CookingRange>
         <Oven>
-          <SystemIdentifier id='Oven'/>
+          <SystemIdentifier id='Oven_ID1'/>
         </Oven>
       </Appliances>
       <Lighting/>
