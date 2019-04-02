@@ -221,6 +221,12 @@ def create_hpxmls
     'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-10.xml' => 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-08.xml',
     'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-11.xml' => 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml',
     'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-12.xml.skip' => 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-07.xml.skip',
+    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-01.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
+    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-02.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml',
+    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-03.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-03.xml',
+    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-01.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
+    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-02.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
+    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-03.xml',
   }
 
   hpxmls_files.each do |derivative, parent|
@@ -464,6 +470,8 @@ def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
                      :event_type => "proposed workscope" }
   elsif ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-01.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-02.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-03.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-04.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml'].include? hpxml_file
     hpxml_values[:eri_calculation_version] = "2014AE"
+  elsif ['RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-03.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml'].include? hpxml_file
+    hpxml_values[:eri_calculation_version] = "2014"
   end
   return hpxml_values
 end
@@ -1617,7 +1625,7 @@ def get_hpxml_file_oven_values(hpxml_file, ovens_values)
 end
 
 def get_hpxml_file_lighting_values(hpxml_file, lightings_values)
-  if ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-01.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-02.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-03.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-04.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+  if ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-01.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-02.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-03.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-04.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-03.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml'].include? hpxml_file
     lightings_values = [{}]
   end
   return lightings_values
