@@ -581,6 +581,8 @@ class EnergyRatingIndex301Ruleset
 
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
+      rim_joist_values[:solar_absorptance] = 0.75
+      rim_joist_values[:emittance] = 0.90
       if is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
         rim_joist_values[:insulation_assembly_r_value] = 1.0 / ufactor
       end
@@ -657,9 +659,9 @@ class EnergyRatingIndex301Ruleset
 
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
+      wall_values[:solar_absorptance] = 0.75
+      wall_values[:emittance] = 0.90
       if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
-        wall_values[:solar_absorptance] = 0.75
-        wall_values[:emittance] = 0.90
         wall_values[:insulation_assembly_r_value] = 1.0 / ufactor
       end
       HPXML.add_wall(hpxml: hpxml, **wall_values)
