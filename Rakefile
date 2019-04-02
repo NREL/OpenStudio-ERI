@@ -482,7 +482,8 @@ end
 def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml', 'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     hpxml_values = { :xml_type => "HPXML",
-                     :xml_generated_by => "Rakefile",
+                     #  :xml_generated_by => "Hand",
+                     :xml_generated_by => "Rakefile", # FIXME: eventually use this, and remove Hand
                      :transaction => "create",
                      :software_program_used => nil,
                      :software_program_version => nil,
@@ -1292,7 +1293,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :cooling_capacity => 60000,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 15 }]
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-05.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml', 'NASEO_Technical_Exercises/NASEO-07.xml', 'NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-05.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml', 'NASEO_Technical_Exercises/NASEO-07.xml'].include? hpxml_file
     cooling_systems_values = [{ :id => "SpaceCool_ID1",
                                 :distribution_system_idref => "HVAC_Dist_ID1",
                                 :cooling_system_type => "central air conditioning",
@@ -1334,6 +1335,14 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     cooling_systems_values[0][:cooling_efficiency_seer] = 21
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
     cooling_systems_values = []
+  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
+    cooling_systems_values = [{ :id => "SpaceCool_ID1",
+                                :distribution_system_idref => "HVAC_Dist_ID2",
+                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_fuel => "electricity",
+                                :cooling_capacity => 60000,
+                                :fraction_cool_load_served => 1,
+                                :cooling_efficiency_seer => 10 }]
   end
   return cooling_systems_values
 end
@@ -1466,6 +1475,11 @@ def get_hpxml_file_hvac_distribution_values(hpxml_file, hvac_distributions_value
     hvac_distributions_values[0][:annual_cooling_dse] = 1
   elsif ['NASEO_Technical_Exercises/NASEO-19.xml', 'NASEO_Technical_Exercises/NASEO-20.xml', 'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
     hvac_distributions_values = []
+  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
+    hvac_distributions_values = [{ :id => "HVAC_Dist_ID1",
+                                   :distribution_system_type => "HydronicDistribution" },
+                                 { :id => "HVAC_Dist_ID2",
+                                   :distribution_system_type => "AirDistribution" }]
   end
   return hvac_distributions_values
 end
@@ -1490,6 +1504,8 @@ def get_hpxml_file_duct_leakage_measurements_values(hpxml_file, duct_leakage_mea
     duct_leakage_measurements_values[0][1][:duct_leakage_value] = 30
   elsif ['NASEO_Technical_Exercises/NASEO-19.xml', 'NASEO_Technical_Exercises/NASEO-20.xml', 'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
     duct_leakage_measurements_values = []
+  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
+    duct_leakage_measurements_values.unshift([])
   end
   return duct_leakage_measurements_values
 end
@@ -1557,6 +1573,8 @@ def get_hpxml_file_ducts_values(hpxml_file, ducts_values)
     ducts_values[0][1][:duct_surface_area] = 75
   elsif ['NASEO_Technical_Exercises/NASEO-19.xml', 'NASEO_Technical_Exercises/NASEO-20.xml', 'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
     ducts_values = []
+  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
+    ducts_values.unshift([])
   end
   return ducts_values
 end
@@ -1796,12 +1814,14 @@ end
 def get_hpxml_file_oven_values(hpxml_file, ovens_values)
   if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml', 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml', 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml', 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     ovens_values << { :id => "Oven_ID1" }
+  elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
+    ovens_values[0][:is_convection] = true
   end
   return ovens_values
 end
 
 def get_hpxml_file_lighting_values(hpxml_file, lightings_values)
-  if ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-01.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-02.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-03.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-04.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-03.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml', 'NASEO_Technical_Exercises/NASEO-01.xml', 'NASEO_Technical_Exercises/NASEO-02.xml', 'NASEO_Technical_Exercises/NASEO-03.xml', 'NASEO_Technical_Exercises/NASEO-04.xml', 'NASEO_Technical_Exercises/NASEO-05.xml', 'NASEO_Technical_Exercises/NASEO-06.xml', 'NASEO_Technical_Exercises/NASEO-07.xml', 'NASEO_Technical_Exercises/NASEO-08.xml', 'NASEO_Technical_Exercises/NASEO-09.xml', 'NASEO_Technical_Exercises/NASEO-09b.xml', 'NASEO_Technical_Exercises/NASEO-10.xml', 'NASEO_Technical_Exercises/NASEO-10b.xml', 'NASEO_Technical_Exercises/NASEO-11.xml', 'NASEO_Technical_Exercises/NASEO-12.xml', 'NASEO_Technical_Exercises/NASEO-13.xml', 'NASEO_Technical_Exercises/NASEO-14.xml', 'NASEO_Technical_Exercises/NASEO-15.xml', 'NASEO_Technical_Exercises/NASEO-16.xml', 'NASEO_Technical_Exercises/NASEO-17.xml', 'NASEO_Technical_Exercises/NASEO-18.xml', 'NASEO_Technical_Exercises/NASEO-19.xml', 'NASEO_Technical_Exercises/NASEO-20.xml', 'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
+  if ['RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml', 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-01.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-02.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-03.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-04.xml', 'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml', 'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-03.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-01.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-02.xml', 'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml', 'NASEO_Technical_Exercises/NASEO-01.xml', 'NASEO_Technical_Exercises/NASEO-02.xml', 'NASEO_Technical_Exercises/NASEO-03.xml', 'NASEO_Technical_Exercises/NASEO-04.xml', 'NASEO_Technical_Exercises/NASEO-06.xml', 'NASEO_Technical_Exercises/NASEO-07.xml', 'NASEO_Technical_Exercises/NASEO-08.xml', 'NASEO_Technical_Exercises/NASEO-09.xml', 'NASEO_Technical_Exercises/NASEO-09b.xml', 'NASEO_Technical_Exercises/NASEO-10.xml', 'NASEO_Technical_Exercises/NASEO-10b.xml', 'NASEO_Technical_Exercises/NASEO-11.xml', 'NASEO_Technical_Exercises/NASEO-12.xml', 'NASEO_Technical_Exercises/NASEO-13.xml', 'NASEO_Technical_Exercises/NASEO-14.xml', 'NASEO_Technical_Exercises/NASEO-15.xml', 'NASEO_Technical_Exercises/NASEO-16.xml', 'NASEO_Technical_Exercises/NASEO-17.xml', 'NASEO_Technical_Exercises/NASEO-18.xml', 'NASEO_Technical_Exercises/NASEO-19.xml', 'NASEO_Technical_Exercises/NASEO-20.xml', 'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
     lightings_values = [{}]
   elsif ['NASEO_Technical_Exercises/NASEO-05.xml'].include? hpxml_file
     lightings_values = [{ :fraction_tier_i_interior => 0.75,

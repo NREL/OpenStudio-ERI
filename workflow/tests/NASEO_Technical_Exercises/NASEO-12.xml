@@ -315,6 +315,7 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>
+          <IsConvection>true</IsConvection>
         </Oven>
       </Appliances>
       <Lighting/>

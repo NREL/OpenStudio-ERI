@@ -217,7 +217,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='SpaceCool_ID1'/>
-              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <DistributionSystem idref='HVAC_Dist_ID2'/>
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>60000.0</CoolingCapacity>
@@ -234,6 +234,12 @@
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <DistributionSystemType>
+              <HydronicDistribution/>
+            </DistributionSystemType>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVAC_Dist_ID2'/>
             <DistributionSystemType>
               <AirDistribution>
                 <DuctLeakageMeasurement>
