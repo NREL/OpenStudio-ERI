@@ -1881,10 +1881,10 @@ def get_hpxml_file_lighting_values(hpxml_file, lightings_values)
   elsif ['NASEO_Technical_Exercises/NASEO-05.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml', 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file
     lightings_values = [{ :fraction_tier_i_interior => 0.75,
                           :fraction_tier_i_exterior => 0.75,
-                          :fraction_tier_i_garage => 0,
-                          :fraction_tier_ii_interior => 0,
-                          :fraction_tier_ii_exterior => 0,
-                          :fraction_tier_ii_garage => 0 }]
+                          :fraction_tier_i_garage => 0.0,
+                          :fraction_tier_ii_interior => 0.0,
+                          :fraction_tier_ii_exterior => 0.0,
+                          :fraction_tier_ii_garage => 0.0 }]
   end
   return lightings_values
 end

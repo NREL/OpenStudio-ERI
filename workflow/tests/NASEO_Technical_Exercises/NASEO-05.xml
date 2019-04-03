@@ -332,25 +332,25 @@
         <LightingGroup>
           <SystemIdentifier id='Lighting_TierI_Garage'/>
           <Location>garage</Location>
-          <FractionofUnitsInLocation>0</FractionofUnitsInLocation>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
         </LightingGroup>
         <LightingGroup>
           <SystemIdentifier id='Lighting_TierII_Interior'/>
           <Location>interior</Location>
-          <FractionofUnitsInLocation>0</FractionofUnitsInLocation>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
         </LightingGroup>
         <LightingGroup>
           <SystemIdentifier id='Lighting_TierII_Exterior'/>
           <Location>exterior</Location>
-          <FractionofUnitsInLocation>0</FractionofUnitsInLocation>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
         </LightingGroup>
         <LightingGroup>
           <SystemIdentifier id='Lighting_TierII_Garage'/>
           <Location>garage</Location>
-          <FractionofUnitsInLocation>0</FractionofUnitsInLocation>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
         </LightingGroup>
       </Lighting>
