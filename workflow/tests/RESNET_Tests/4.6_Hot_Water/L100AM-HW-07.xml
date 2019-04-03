@@ -263,6 +263,7 @@
           <SystemIdentifier id='Oven_ID1'/>
         </Oven>
       </Appliances>
+      <Lighting/>
     </BuildingDetails>
   </Building>
 </HPXML>

@@ -67,6 +67,7 @@
             <AtticType>
               <Attic>
                 <Vented>true</Vented>
+                <SpecificLeakageArea>0.0008</SpecificLeakageArea>
               </Attic>
             </AtticType>
             <Roofs>

@@ -308,7 +308,7 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
-          <FuelType>electricity</FuelType>
+          <FuelType>natural gas</FuelType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher_ID1'/>
@@ -319,7 +319,7 @@
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range_ID1'/>
-          <FuelType>electricity</FuelType>
+          <FuelType>natural gas</FuelType>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven_ID1'/>

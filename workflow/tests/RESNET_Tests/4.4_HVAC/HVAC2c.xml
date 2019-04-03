@@ -72,9 +72,7 @@
             <AtticType>
               <Attic>
                 <Vented>true</Vented>
-                <extension>
-                  <ConstantACHnatural>2.4</ConstantACHnatural>
-                </extension>
+                <SpecificLeakageArea>0.0008</SpecificLeakageArea>
               </Attic>
             </AtticType>
             <Roofs>
@@ -303,21 +301,6 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <HeatingSystem>
-              <SystemIdentifier id='SpaceHeat_ID1'/>
-              <DistributionSystem idref='HVAC_Dist_ID1'/>
-              <HeatingSystemType>
-                <Furnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>56100.0</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>0.78</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>1040.0</ElectricAuxiliaryEnergy>
-            </HeatingSystem>
             <HeatPump>
               <SystemIdentifier id='SpaceHeatPump_ID1'/>
               <DistributionSystem idref='HVAC_Dist_ID1'/>
