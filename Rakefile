@@ -1946,40 +1946,46 @@ def get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
 end
 
 def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-      'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
+    clothes_washer_values = {}
+  elsif ['NASEO_Technical_Exercises/NASEO-09.xml',
+         'NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
+    clothes_washer_values = { :id => "ClothesWasher",
+                              :location => "living space",
+                              :rated_annual_kwh => 150,
+                              :label_electric_rate => 0.11,
+                              :label_gas_rate => 1.1,
+                              :label_annual_gas_cost => 12,
+                              :capacity => 3.3 }
+    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-09.xml'
+      clothes_washer_values[:integrated_modified_energy_factor] = 2.2
+    elsif hpxml_file == 'NASEO_Technical_Exercises/NASEO-09b.xml'
+      clothes_washer_values[:modified_energy_factor] = 2.593
+    end
+  else
     clothes_washer_values = { :id => "ClothesWasher",
                               :location => "living space" }
-  elsif ['NASEO_Technical_Exercises/NASEO-09.xml'].include? hpxml_file
-    clothes_washer_values[:integrated_modified_energy_factor] = 2.2
-    clothes_washer_values[:rated_annual_kwh] = 150
-    clothes_washer_values[:label_electric_rate] = 0.11
-    clothes_washer_values[:label_gas_rate] = 1.1
-    clothes_washer_values[:label_annual_gas_cost] = 12
-    clothes_washer_values[:capacity] = 3.3
-  elsif ['NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
-    clothes_washer_values[:modified_energy_factor] = 2.593
-    clothes_washer_values[:rated_annual_kwh] = 150
-    clothes_washer_values[:label_electric_rate] = 0.11
-    clothes_washer_values[:label_gas_rate] = 1.1
-    clothes_washer_values[:label_annual_gas_cost] = 12
-    clothes_washer_values[:capacity] = 3.3
   end
   return clothes_washer_values
 end
 
 def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
   if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+      'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
+      'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
+      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
+      'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
+      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
+      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-02.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     clothes_dryer_values = { :id => "ClothesDryer",
                              :location => "living space",
                              :fuel_type => "natural gas" }
@@ -1995,77 +2001,73 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
     clothes_dryer_values = { :id => "ClothesDryer",
                              :location => "living space",
                              :fuel_type => "electricity" }
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-02.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
-    clothes_dryer_values[:fuel_type] = "natural gas"
-  elsif ['NASEO_Technical_Exercises/NASEO-09.xml'].include? hpxml_file
-    clothes_dryer_values[:fuel_type] = "natural gas"
-    clothes_dryer_values[:combined_energy_factor] = 2.3
-    clothes_dryer_values[:control_type] = "moisture"
-  elsif ['NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
-    clothes_dryer_values[:fuel_type] = "natural gas"
-    clothes_dryer_values[:energy_factor] = 2.645
-    clothes_dryer_values[:control_type] = "moisture"
+  elsif ['NASEO_Technical_Exercises/NASEO-09.xml',
+         'NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
+    clothes_dryer_values = { :id => "ClothesDryer",
+                             :location => "living space",
+                             :fuel_type => "natural gas",
+                             :control_type => "moisture" }
+    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-09.xml'
+      clothes_dryer_values[:combined_energy_factor] = 2.3
+    elsif hpxml_file == 'NASEO_Technical_Exercises/NASEO-09b.xml'
+      clothes_dryer_values[:energy_factor] = 2.645
+    end
   end
   return clothes_dryer_values
 end
 
 def get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-      'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
+    dishwasher_values = {}
+  elsif ['NASEO_Technical_Exercises/NASEO-10.xml',
+         'NASEO_Technical_Exercises/NASEO-10b.xml'].include? hpxml_file
+    dishwasher_values = { :id => "Dishwasher_ID1",
+
+                          :place_setting_capacity => 12 }
+    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-10.xml'
+      dishwasher_values[:energy_factor] = 0.5
+    elsif hpxml_file == 'NASEO_Technical_Exercises/NASEO-10b.xml'
+      dishwasher_values[:rated_annual_kwh] = 430
+    end
+  else
     dishwasher_values = { :id => "Dishwasher_ID1" }
-  elsif ['NASEO_Technical_Exercises/NASEO-10.xml'].include? hpxml_file
-    dishwasher_values[:energy_factor] = 0.5
-    dishwasher_values[:place_setting_capacity] = 12
-  elsif ['NASEO_Technical_Exercises/NASEO-10b.xml'].include? hpxml_file
-    dishwasher_values[:rated_annual_kwh] = 430
-    dishwasher_values[:place_setting_capacity] = 12
   end
   return dishwasher_values
 end
 
 def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-      'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
+    refrigerator_values = {}
+  elsif ['NASEO_Technical_Exercises/NASEO-11.xml'].include? hpxml_file
+    refrigerator_values = { :id => "Refrigerator",
+                            :location => "living space",
+                            :rated_annual_kwh => 614 }
+  else
     refrigerator_values = { :id => "Refrigerator",
                             :location => "living space" }
-  elsif ['NASEO_Technical_Exercises/NASEO-11.xml'].include? hpxml_file
-    refrigerator_values[:rated_annual_kwh] = 614
   end
   return refrigerator_values
 end
 
 def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
   if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+      'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
+      'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
+      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
+      'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
+      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
+      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-02.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     cooking_range_values = { :id => "Range_ID1",
                              :fuel_type => "natural gas" }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
@@ -2079,19 +2081,6 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     cooking_range_values = { :id => "Range_ID1",
                              :fuel_type => "electricity" }
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-02.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
-    cooking_range_values[:fuel_type] = "natural gas"
   elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
     cooking_range_values[:is_induction] = true
   end
@@ -2099,49 +2088,23 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
 end
 
 def get_hpxml_file_oven_values(hpxml_file, oven_values)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-      'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-      'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
-    oven_values = { :id => "Oven_ID1" }
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
+    oven_values = {}
   elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
     oven_values[:is_convection] = true
+  else
+    oven_values = { :id => "Oven_ID1" }
   end
   return oven_values
 end
 
 def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
-  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     lighting_values = nil
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml',
-         'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml',
-         'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml',
-         'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml',
-         'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-01.xml',
-         'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-02.xml',
-         'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-03.xml',
-         'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-02.xml',
-         'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml'].include? hpxml_file
-    lighting_values = {}
   elsif ['NASEO_Technical_Exercises/NASEO-05.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file
@@ -2151,32 +2114,26 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
                         :fraction_tier_ii_interior => 0.0,
                         :fraction_tier_ii_exterior => 0.0,
                         :fraction_tier_ii_garage => 0.0 }
+  else
+    lighting_values = {}
   end
   return lighting_values
 end
 
 def get_hpxml_file_plug_load_values(hpxml_file, plug_load_values)
-  if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
-      'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     plug_load_values = { :id => "Misc",
                          :plug_load_type => "other",
                          :kWh_per_year => 7302,
                          :frac_sensible => 0.82,
                          :frac_latent => 0.18 }
-  elsif ['RESNET_Tests/4.1_Standard_140/L170AC.xml',
-         'RESNET_Tests/4.1_Standard_140/L170AL.xml'].include? hpxml_file
-    plug_load_values[:kWh_per_year] = 0
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+    if ['RESNET_Tests/4.1_Standard_140/L170AC.xml',
+        'RESNET_Tests/4.1_Standard_140/L170AL.xml'].include? hpxml_file
+      plug_load_values[:kWh_per_year] = 0
+    end
+  else
     plug_load_values = {}
   end
   return plug_load_values
