@@ -82,6 +82,10 @@ task :update_measures do
   system(command)
 
   create_hpxmls
+
+  copy_sample_files
+
+  puts "Done."
 end
 
 def create_hpxmls
@@ -2308,4 +2312,51 @@ def get_hpxml_file_misc_load_schedule_values(hpxml_file, misc_load_schedule_valu
     misc_load_schedule_values = {}
   end
   return misc_load_schedule_values
+end
+
+def copy_sample_files
+  # Copy sample files from HPXMLtoOpenStudio repo
+  puts "Copying sample files..."
+  FileUtils.rm_f(Dir.glob("workflow/sample_files/*.xml*"))
+  FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml*"))
+  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/*.xml*"), "workflow/sample_files")
+  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml*"), "workflow/sample_files/invalid_files")
+  
+  # Remove files we're not interested in
+  exclude_list = ['invalid_files/invalid-missing-surfaces.xml',
+                  'invalid_files/invalid-net-area-negative-roof.xml',
+                  'invalid_files/invalid-net-area-negative-wall.xml',
+                  'invalid_files/invalid-unattached-cfis.xml.skip',
+                  'invalid_files/invalid-unattached-door.xml',
+                  'invalid_files/invalid-unattached-hvac.xml.skip',
+                  'invalid_files/invalid-unattached-skylight.xml',
+                  'invalid_files/invalid-unattached-window.xml',
+                  'valid-appliances-none.xml',
+                  'valid-dhw-recirc-timer-reference.xml',
+                  'valid-dhw-standard-reference.xml',
+                  'valid-enclosure-doors-reference.xml',
+                  'valid-enclosure-no-natural-ventilation.xml',
+                  'valid-enclosure-walltype-woodstud-reference.xml',
+                  'valid-enclosure-windows-interior-shading.xml',
+                  'valid-foundation-conditioned-basement-reference.xml',
+                  'valid-foundation-pier-beam-reference.xml',
+                  'valid-foundation-slab-reference.xml',
+                  'valid-foundation-unconditioned-basement-reference.xml',
+                  'valid-foundation-unvented-crawlspace-reference.xml',
+                  'valid-foundation-vented-crawlspace-reference.xml',
+                  'valid-hvac-boiler-gas-only-no-eae.xml',
+                  'valid-hvac-furnace-gas-only-no-eae.xml',
+                  'valid-hvac-ideal-air.xml',
+                  'valid-hvac-mini-split-heat-pump-ductless-no-backup.xml',
+                  'valid-hvac-setpoints.xml',
+                  'valid-infiltration-ach-natural.xml',
+                  'valid-misc-appliances-in-basement.xml',
+                  'valid-misc-ceiling-fans-reference.xml',
+                  'valid-misc-lighting-default.xml',
+                  'valid-misc-lighting-none.xml',
+                  'valid-misc-loads-detailed.xml',
+                  'valid-misc-number-of-occupants.xml']
+  exclude_list.each do |exclude_file|
+    FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
+  end
 end
