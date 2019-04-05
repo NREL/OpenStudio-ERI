@@ -894,9 +894,7 @@ def get_hpxml_file_slab_values(hpxml_file, foundations_slabs_values)
     # Slab-on-Grade, Insulated ASHRAE Slab
     foundations_slabs_values[0][0][:perimeter_insulation_depth] = 2.5
     foundations_slabs_values[0][0][:perimeter_insulation_r_value] = 5.4
-  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml',
-         'NASEO_Technical_Exercises/NASEO-15.xml',
-         'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
     foundations_slabs_values = [[{ :id => "FoundationSlab",
                                    :area => 1539,
@@ -944,6 +942,21 @@ def get_hpxml_file_slab_values(hpxml_file, foundations_slabs_values)
                                    :under_slab_insulation_r_value => 0,
                                    :carpet_fraction => 1,
                                    :carpet_r_value => 2 }]]
+  elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
+         'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
+    foundations_slabs_values = [[{ :id => "FoundationSlab",
+                                   :area => 1539,
+                                   :thickness => 4,
+                                   :exposed_perimeter => 168,
+                                   :perimeter_insulation_depth => 0,
+                                   :under_slab_insulation_width => 0,
+                                   :depth_below_grade => 7,
+                                   :perimeter_insulation_id => "FoundationSlabPerimeterIns",
+                                   :perimeter_insulation_r_value => 0,
+                                   :under_slab_insulation_id => "FoundationSlabUnderIns",
+                                   :under_slab_insulation_r_value => 0,
+                                   :carpet_fraction => 0,
+                                   :carpet_r_value => 2.5 }]]
   elsif ['NASEO_Technical_Exercises/NASEO-17.xml'].include? hpxml_file
     # Slab-on-grade foundation with 4 ft of R-5 horizontal under-slab insulation
     foundations_slabs_values = [[{ :id => "FoundationSlab",
