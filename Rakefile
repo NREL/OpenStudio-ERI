@@ -638,6 +638,12 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :unit_of_measure => "ACHnatural",
                                             :air_leakage => 0.67 } # TODO: Review this
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
+    air_infiltration_measurement_values[:constant_ach_natural] = nil
+    air_infiltration_measurement_values[:house_pressure] = 50
+    air_infiltration_measurement_values[:unit_of_measure] = "ACH"
+    air_infiltration_measurement_values[:air_leakage] = 7.5 # TODO: Review this
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 3 ACH50
@@ -672,10 +678,11 @@ def get_hpxml_file_attic_roofs_values(hpxml_file, attics_roofs_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     attics_roofs_values = [[]]
-    roofs = { "AtticRoofNorth" => 0, "AtticRoofSouth" => 180 }
-    roofs.each do |roof_name, azimuth|
+    roofs = { "AtticRoofNorth" => [0, 811.1], "AtticRoofSouth" => [180, 811.1] }
+    roofs.each do |roof_name, roof_values|
+      azimuth, area = roof_values
       attics_roofs_values[0] << { :id => roof_name,
-                                  :area => 405.55,
+                                  :area => area,
                                   :azimuth => azimuth,
                                   :solar_absorptance => 0.6,
                                   :emittance => 0.9,
@@ -734,12 +741,13 @@ def get_hpxml_file_attic_walls_values(hpxml_file, attics_walls_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     attics_walls_values = [[]]
-    walls = { "AtticWallEast" => 90, "AtticWallWest" => 270 }
-    walls.each do |wall_name, azimuth|
+    walls = { "AtticWallEast" => [90, 60.75], "AtticWallWest" => [270, 60.75] }
+    walls.each do |wall_name, wall_values|
+      azimuth, area = wall_values
       attics_walls_values[0] << { :id => wall_name,
                                   :adjacent_to => "outside",
                                   :wall_type => "WoodStud",
-                                  :area => 60.75,
+                                  :area => area,
                                   :azimuth => azimuth,
                                   :solar_absorptance => 0.6,
                                   :emittance => 0.9,
@@ -789,16 +797,18 @@ def get_hpxml_file_foundation_values(hpxml_file, foundations_values)
 end
 
 def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
-  walls = { "FoundationWallsAll" => 0 } # TODO: Allow multiple foundation walls
+  # TODO: Allow multiple foundation walls
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     foundations_walls_values = [[]]
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
-    walls.each do |wall_name, azimuth|
+    walls = { "FoundationWallsAll" => [0, 1218] }
+    walls.each do |wall_name, wall_values|
+      azimuth, area = wall_values
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 7.25,
-                                       :area => 1218,
+                                       :area => area,
                                        :azimuth => azimuth,
                                        :thickness => 6,
                                        :depth_below_grade => 6.583,
@@ -814,10 +824,12 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
     # Un-vented crawlspace with R-7 crawlspace wall insulation
-    walls.each do |wall_name, azimuth|
+    walls = { "FoundationWallsAll" => [0, 672] }
+    walls.each do |wall_name, wall_values|
+      azimuth, area = wall_values
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 4,
-                                       :area => 672,
+                                       :area => area,
                                        :azimuth => azimuth,
                                        :thickness => 8,
                                        :depth_below_grade => 3,
@@ -828,10 +840,12 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # 2 ft. high crawlspace above grade
-    walls.each do |wall_name, azimuth|
+    walls = { "FoundationWallsAll" => [0, 336] }
+    walls.each do |wall_name, wall_values|
+      azimuth, area = wall_values
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 2,
-                                       :area => 336,
+                                       :area => area,
                                        :azimuth => azimuth,
                                        :thickness => 6,
                                        :depth_below_grade => 0,
@@ -841,10 +855,12 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
     end
   elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # Vented crawlspace foundation with 4 ft height and uninsulated crawlspace wall insulation
-    walls.each do |wall_name, azimuth|
+    walls = { "FoundationWallsAll" => [0, 672] }
+    walls.each do |wall_name, wall_values|
+      azimuth, area = wall_values
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 4,
-                                       :area => 672,
+                                       :area => area,
                                        :azimuth => azimuth,
                                        :thickness => 8,
                                        :depth_below_grade => 3,
@@ -855,10 +871,12 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
   elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
          'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
     # R-19 basement wall insulation
-    walls.each do |wall_name, azimuth|
+    walls = { "FoundationWallsAll" => [0, 1344] }
+    walls.each do |wall_name, wall_values|
+      azimuth, area = wall_values
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 8,
-                                       :area => 1344,
+                                       :area => area,
                                        :azimuth => azimuth,
                                        :thickness => 8,
                                        :depth_below_grade => 7,
@@ -1016,12 +1034,13 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
   if ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
     rim_joists_values = []
-    rim_joists = { "RimJoistNorth" => 0, "RimJoistEast" => 90, "RimJoistSouth" => 180, "RimJoistWest" => 270 }
-    rim_joists.each do |rim_joist_name, azimuth|
+    rim_joists = { "RimJoistNorth" => [0, 42.75], "RimJoistEast" => [90, 20.25], "RimJoistSouth" => [180, 42.75], "RimJoistWest" => [270, 20.25] }
+    rim_joists.each do |rim_joist_name, rim_joist_values|
+      azimuth, area = rim_joist_values
       rim_joists_values << { :id => rim_joist_name,
                              :exterior_adjacent_to => "outside",
                              :interior_adjacent_to => "living space",
-                             :area => 31.5, # FIXME: Should not be equal area per azimuth
+                             :area => area,
                              :azimuth => azimuth,
                              :solar_absorptance => 0.6,
                              :emittance => 0.9,
@@ -1042,13 +1061,14 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     walls_values = []
-    walls = { "WallNorth" => 0, "WallEast" => 90, "WallSouth" => 180, "WallWest" => 270 }
-    walls.each do |wall_name, azimuth|
+    walls = { "WallNorth" => [0, 456], "WallEast" => [90, 216], "WallSouth" => [180, 456], "WallWest" => [270, 216] }
+    walls.each do |wall_name, wall_values|
+      azimuth, area = wall_values
       walls_values << { :id => wall_name,
                         :exterior_adjacent_to => "outside",
                         :interior_adjacent_to => "living space",
                         :wall_type => "WoodStud",
-                        :area => 456, # FIXME: Should not be equal area per azimuth
+                        :area => area,
                         :azimuth => azimuth,
                         :solar_absorptance => 0.6,
                         :emittance => 0.9,
@@ -1089,10 +1109,11 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     windows_values = []
-    windows = { "WindowNorth" => 0, "WindowEast" => 90, "WindowSouth" => 180, "WindowWest" => 270 }
-    windows.each do |window_name, azimuth|
+    windows = { "WindowNorth" => [0, 90], "WindowEast" => [90, 90], "WindowSouth" => [180, 90], "WindowWest" => [270, 90] }
+    windows.each do |window_name, window_values|
+      azimuth, area = window_values
       windows_values << { :id => window_name,
-                          :area => 90,
+                          :area => area,
                           :azimuth => azimuth,
                           :ufactor => 1.039,
                           :shgc => 0.67,
@@ -1130,10 +1151,11 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
          'RESNET_Tests/4.1_Standard_140/L160AL.xml'].include? hpxml_file
     # East and West windows only
     windows_values = []
-    windows = { "WindowEast" => 90, "WindowWest" => 270 }
-    windows.each do |window_name, azimuth|
+    windows = { "WindowEast" => [90, 135], "WindowWest" => [270, 135] }
+    windows.each do |window_name, window_values|
+      azimuth, area = window_values
       windows_values << { :id => window_name,
-                          :area => 135,
+                          :area => area,
                           :azimuth => azimuth,
                           :ufactor => 1.039,
                           :shgc => 0.67,
@@ -1185,11 +1207,12 @@ def get_hpxml_file_doors_values(hpxml_file, doors_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     doors_values = []
-    doors = { "DoorSouth" => 180, "DoorNorth" => 0 }
-    doors.each do |door_name, azimuth|
+    doors = { "DoorSouth" => [180, 20], "DoorNorth" => [0, 20] }
+    doors.each do |door_name, door_values|
+      azimuth, area = door_values
       doors_values << { :id => door_name,
                         :wall_idref => door_name.gsub("Door", "Wall"),
-                        :area => 20,
+                        :area => area,
                         :azimuth => azimuth,
                         :r_value => 3.04 }
     end

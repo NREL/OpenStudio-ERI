@@ -73,7 +73,7 @@
             <Roofs>
               <Roof>
                 <SystemIdentifier id='AtticRoofNorth'/>
-                <Area>405.55</Area>
+                <Area>811.1</Area>
                 <Azimuth>0</Azimuth>
                 <SolarAbsorptance>0.6</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
@@ -86,7 +86,7 @@
               </Roof>
               <Roof>
                 <SystemIdentifier id='AtticRoofSouth'/>
-                <Area>405.55</Area>
+                <Area>811.1</Area>
                 <Azimuth>180</Azimuth>
                 <SolarAbsorptance>0.6</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
@@ -198,7 +198,7 @@
             <SystemIdentifier id='RimJoistNorth'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>31.5</Area>
+            <Area>42.75</Area>
             <Azimuth>0</Azimuth>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -211,7 +211,7 @@
             <SystemIdentifier id='RimJoistEast'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>31.5</Area>
+            <Area>20.25</Area>
             <Azimuth>90</Azimuth>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -224,7 +224,7 @@
             <SystemIdentifier id='RimJoistSouth'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>31.5</Area>
+            <Area>42.75</Area>
             <Azimuth>180</Azimuth>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -237,7 +237,7 @@
             <SystemIdentifier id='RimJoistWest'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>31.5</Area>
+            <Area>20.25</Area>
             <Azimuth>270</Azimuth>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -271,7 +271,7 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>456.0</Area>
+            <Area>216.0</Area>
             <Azimuth>90</Azimuth>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -303,7 +303,7 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>456.0</Area>
+            <Area>216.0</Area>
             <Azimuth>270</Azimuth>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
