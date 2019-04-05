@@ -327,6 +327,7 @@ def create_hpxmls
       rim_joists_values = get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
       walls_values = get_hpxml_file_walls_values(hpxml_file, walls_values)
       windows_values = get_hpxml_file_windows_values(hpxml_file, windows_values)
+      skylights_values = get_hpxml_file_skylights_values(hpxml_file, skylights_values)
       doors_values = get_hpxml_file_doors_values(hpxml_file, doors_values)
       heating_systems_values = get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
       cooling_systems_values = get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
@@ -339,6 +340,7 @@ def create_hpxmls
       water_heating_systems_values = get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems_values)
       hot_water_distribution_values = get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values)
       water_fixtures_values = get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
+      pv_systems_values = get_hpxml_file_pv_system_values(hpxml_file, pv_systems_values)
       clothes_washer_values = get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
       clothes_dryer_values = get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
       dishwasher_values = get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
@@ -346,6 +348,7 @@ def create_hpxmls
       cooking_range_values = get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
       oven_values = get_hpxml_file_oven_values(hpxml_file, oven_values)
       lighting_values = get_hpxml_file_lighting_values(hpxml_file, lighting_values)
+      ceiling_fans_values = get_hpxml_file_ceiling_fan_values(hpxml_file, ceiling_fans_values)
       plug_load_values = get_hpxml_file_plug_load_values(hpxml_file, plug_load_values)
       misc_load_schedule_values = get_hpxml_file_misc_load_schedule_values(hpxml_file, misc_load_schedule_values)
     end
@@ -397,6 +400,9 @@ def create_hpxmls
     windows_values.each do |window_values|
       HPXML.add_window(hpxml: hpxml, **window_values)
     end
+    skylights_values.each do |skylight_values|
+      HPXML.add_skylight(hpxml: hpxml, **skylight_values)
+    end
     doors_values.each do |door_values|
       HPXML.add_door(hpxml: hpxml, **door_values)
     end
@@ -432,6 +438,9 @@ def create_hpxmls
     water_fixtures_values.each do |water_fixture_values|
       HPXML.add_water_fixture(hpxml: hpxml, **water_fixture_values)
     end
+    pv_systems_values.each do |pv_system_values|
+      HPXML.add_pv_system(hpxml: hpxml, **pv_system_values)
+    end
     HPXML.add_clothes_washer(hpxml: hpxml, **clothes_washer_values) unless clothes_washer_values.empty?
     HPXML.add_clothes_dryer(hpxml: hpxml, **clothes_dryer_values) unless clothes_dryer_values.empty?
     HPXML.add_dishwasher(hpxml: hpxml, **dishwasher_values) unless dishwasher_values.empty?
@@ -439,6 +448,9 @@ def create_hpxmls
     HPXML.add_cooking_range(hpxml: hpxml, **cooking_range_values) unless cooking_range_values.empty?
     HPXML.add_oven(hpxml: hpxml, **oven_values) unless oven_values.empty?
     HPXML.add_lighting(hpxml: hpxml, **lighting_values) unless lighting_values.nil?
+    ceiling_fans_values.each do |ceiling_fan_values|
+      HPXML.add_ceiling_fan(hpxml: hpxml, **ceiling_fan_values)
+    end
     HPXML.add_plug_load(hpxml: hpxml, **plug_load_values) unless plug_load_values.empty?
     HPXML.add_misc_loads_schedule(hpxml: hpxml, **misc_load_schedule_values) unless misc_load_schedule_values.empty?
 
@@ -616,6 +628,16 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     # High Infiltration
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :constant_ach_natural => 1.5 }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
+         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
+         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+         'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
+         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
+         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+    air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
+                                            :unit_of_measure => "ACHnatural",
+                                            :air_leakage => 0.67 } # TODO: Review this
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 3 ACH50
@@ -767,7 +789,7 @@ def get_hpxml_file_foundation_values(hpxml_file, foundations_values)
 end
 
 def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
-  walls = { "FoundationWallNorth" => 0, "FoundationWallEast" => 90, "FoundationWallSouth" => 180, "FoundationWallWest" => 270 }
+  walls = { "FoundationWallsAll" => 0 } # TODO: Allow multiple foundation walls
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     foundations_walls_values = [[]]
@@ -776,7 +798,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
     walls.each do |wall_name, azimuth|
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 7.25,
-                                       :area => 304.5,
+                                       :area => 1218,
                                        :azimuth => azimuth,
                                        :thickness => 6,
                                        :depth_below_grade => 6.583,
@@ -795,7 +817,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
     walls.each do |wall_name, azimuth|
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 4,
-                                       :area => 168,
+                                       :area => 672,
                                        :azimuth => azimuth,
                                        :thickness => 8,
                                        :depth_below_grade => 3,
@@ -809,7 +831,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
     walls.each do |wall_name, azimuth|
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 2,
-                                       :area => 84,
+                                       :area => 336,
                                        :azimuth => azimuth,
                                        :thickness => 6,
                                        :depth_below_grade => 0,
@@ -822,7 +844,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
     walls.each do |wall_name, azimuth|
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 4,
-                                       :area => 168,
+                                       :area => 672,
                                        :azimuth => azimuth,
                                        :thickness => 8,
                                        :depth_below_grade => 3,
@@ -836,7 +858,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
     walls.each do |wall_name, azimuth|
       foundations_walls_values[0] << { :id => wall_name,
                                        :height => 8,
-                                       :area => 336,
+                                       :area => 1344,
                                        :azimuth => azimuth,
                                        :thickness => 8,
                                        :depth_below_grade => 7,
@@ -986,7 +1008,7 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
       rim_joists_values << { :id => rim_joist_name,
                              :exterior_adjacent_to => "outside",
                              :interior_adjacent_to => "living space",
-                             :area => 31.5,
+                             :area => 31.5, # FIXME: Should not be equal area per azimuth
                              :azimuth => azimuth,
                              :solar_absorptance => 0.6,
                              :emittance => 0.9,
@@ -1013,7 +1035,7 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
                         :exterior_adjacent_to => "outside",
                         :interior_adjacent_to => "living space",
                         :wall_type => "WoodStud",
-                        :area => 456,
+                        :area => 456, # FIXME: Should not be equal area per azimuth
                         :azimuth => azimuth,
                         :solar_absorptance => 0.6,
                         :emittance => 0.9,
@@ -1139,6 +1161,10 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
     end
   end
   return windows_values
+end
+
+def get_hpxml_file_skylights_values(hpxml_file, skylights_values)
+  return skylights_values
 end
 
 def get_hpxml_file_doors_values(hpxml_file, doors_values)
@@ -1438,7 +1464,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
-    # FIXME: Update this to be HP + AC
+    # TODO: Update this to be HP + AC
     # Heating system – electric HP with HSPF = 6.8
     # Cooling system – electric A/C with SEER
     heat_pumps_values = [{ :id => "HeatPump",
@@ -1453,7 +1479,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-04.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-04.xml'].include? hpxml_file
-    # FIXME: Update this to be HP + AC
+    # TODO: Update this to be HP + AC
     # Change to a high efficiency HP with HSPF = 9.85
     heat_pumps_values[0][:heating_efficiency_hspf] = 9.85
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml'].include? hpxml_file
@@ -1997,6 +2023,10 @@ def get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
   return water_fixtures_values
 end
 
+def get_hpxml_file_pv_system_values(hpxml_file, pv_systems_values)
+  return pv_systems_values
+end
+
 def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
@@ -2203,6 +2233,10 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
     lighting_values = {}
   end
   return lighting_values
+end
+
+def get_hpxml_file_ceiling_fan_values(hpxml_file, ceiling_fans_values)
+  return ceiling_fans_values
 end
 
 def get_hpxml_file_plug_load_values(hpxml_file, plug_load_values)
