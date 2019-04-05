@@ -158,6 +158,15 @@
                 <Conditioned>false</Conditioned>
               </Basement>
             </FoundationType>
+            <FrameFloor>
+              <SystemIdentifier id='FoundationFrameFloor'/>
+              <AdjacentTo>living space</AdjacentTo>
+              <Area>1539.0</Area>
+              <Insulation>
+                <SystemIdentifier id='FoundationFrameFloorIns'/>
+                <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
+              </Insulation>
+            </FrameFloor>
             <FoundationWall>
               <SystemIdentifier id='FoundationWallsAll'/>
               <Height>7.25</Height>

@@ -996,7 +996,8 @@ end
 
 def get_hpxml_file_frame_floor_values(hpxml_file, foundations_framefloors_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
-      'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
+      'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+      'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
     foundations_framefloors_values = [[{ :id => "FoundationFrameFloor",
                                          :adjacent_to => "living space",
