@@ -130,7 +130,6 @@ class EnergyRatingIndexTest < Minitest::Test
         all_results << [xml, clg_load, sim_time]
         assert_operator(clg_load, :>, 0)
       end
-      fail
     end
     assert(all_results.size > 0)
 
