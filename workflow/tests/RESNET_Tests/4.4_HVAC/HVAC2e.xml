@@ -51,7 +51,7 @@
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
-          <SystemIdentifier id='Weather_Station'/>
+          <SystemIdentifier id='WeatherStation'/>
           <Name>Colorado Springs, CO</Name>
           <WMO>724660</WMO>
         </WeatherStation>
@@ -59,7 +59,7 @@
       <Enclosure>
         <AirInfiltration>
           <AirInfiltrationMeasurement>
-            <SystemIdentifier id='InfiltMeas64'/>
+            <SystemIdentifier id='InfiltrationMeasurement'/>
             <InfiltrationVolume>12312.0</InfiltrationVolume>
             <extension>
               <ConstantACHnatural>0.67</ConstantACHnatural>
@@ -68,16 +68,18 @@
         </AirInfiltration>
         <Attics>
           <Attic>
-            <SystemIdentifier id='Attic_ID1'/>
+            <SystemIdentifier id='Attic'/>
             <AtticType>
               <Attic>
                 <Vented>true</Vented>
-                <SpecificLeakageArea>0.0008</SpecificLeakageArea>
+                <extension>
+                  <ConstantACHnatural>2.4</ConstantACHnatural>
+                </extension>
               </Attic>
             </AtticType>
             <Roofs>
               <Roof>
-                <SystemIdentifier id='attic-roof-north'/>
+                <SystemIdentifier id='AtticRoofNorth'/>
                 <Area>811.1</Area>
                 <Azimuth>0</Azimuth>
                 <SolarAbsorptance>0.6</SolarAbsorptance>
@@ -85,12 +87,12 @@
                 <Pitch>4.0</Pitch>
                 <RadiantBarrier>false</RadiantBarrier>
                 <Insulation>
-                  <SystemIdentifier id='Attic_Roof_Ins_north'/>
+                  <SystemIdentifier id='AtticRoofNorthIns'/>
                   <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
                 </Insulation>
               </Roof>
               <Roof>
-                <SystemIdentifier id='attic-roof-south'/>
+                <SystemIdentifier id='AtticRoofSouth'/>
                 <Area>811.1</Area>
                 <Azimuth>180</Azimuth>
                 <SolarAbsorptance>0.6</SolarAbsorptance>
@@ -98,25 +100,25 @@
                 <Pitch>4.0</Pitch>
                 <RadiantBarrier>false</RadiantBarrier>
                 <Insulation>
-                  <SystemIdentifier id='Attic_Roof_Ins_south'/>
+                  <SystemIdentifier id='AtticRoofSouthIns'/>
                   <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
                 </Insulation>
               </Roof>
             </Roofs>
             <Floors>
               <Floor>
-                <SystemIdentifier id='attic-floor-1'/>
+                <SystemIdentifier id='AtticFloor'/>
                 <AdjacentTo>living space</AdjacentTo>
                 <Area>1539.0</Area>
                 <Insulation>
-                  <SystemIdentifier id='Attic_Floor_Ins_ID1'/>
+                  <SystemIdentifier id='AtticFloorIns'/>
                   <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
                 </Insulation>
               </Floor>
             </Floors>
             <Walls>
               <Wall>
-                <SystemIdentifier id='attic-wall-east'/>
+                <SystemIdentifier id='AtticWallEast'/>
                 <AdjacentTo>outside</AdjacentTo>
                 <WallType>
                   <WoodStud/>
@@ -126,12 +128,12 @@
                 <SolarAbsorptance>0.6</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
                 <Insulation>
-                  <SystemIdentifier id='Attic_Wall_Ins_east'/>
+                  <SystemIdentifier id='AtticWallEastIns'/>
                   <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                 </Insulation>
               </Wall>
               <Wall>
-                <SystemIdentifier id='attic-wall-west'/>
+                <SystemIdentifier id='AtticWallWest'/>
                 <AdjacentTo>outside</AdjacentTo>
                 <WallType>
                   <WoodStud/>
@@ -141,7 +143,7 @@
                 <SolarAbsorptance>0.6</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
                 <Insulation>
-                  <SystemIdentifier id='Attic_Wall_Ins_west'/>
+                  <SystemIdentifier id='AtticWallWestIns'/>
                   <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                 </Insulation>
               </Wall>
@@ -150,16 +152,16 @@
         </Attics>
         <Foundations>
           <Foundation>
-            <SystemIdentifier id='Foundation_ID1'/>
+            <SystemIdentifier id='Foundation'/>
             <FoundationType>
               <Ambient/>
             </FoundationType>
             <FrameFloor>
-              <SystemIdentifier id='Floor_ID1'/>
+              <SystemIdentifier id='FoundationFrameFloor'/>
               <AdjacentTo>living space</AdjacentTo>
               <Area>1539.0</Area>
               <Insulation>
-                <SystemIdentifier id='Floor_Ins_ID1'/>
+                <SystemIdentifier id='FoundationFrameFloorIns'/>
                 <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
               </Insulation>
             </FrameFloor>
@@ -167,7 +169,7 @@
         </Foundations>
         <Walls>
           <Wall>
-            <SystemIdentifier id='agwall-north'/>
+            <SystemIdentifier id='WallNorth'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -178,12 +180,12 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='AGW_Ins_north'/>
+              <SystemIdentifier id='WallNorthIns'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='agwall-east'/>
+            <SystemIdentifier id='WallEast'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -194,12 +196,12 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='AGW_Ins_east'/>
+              <SystemIdentifier id='WallEastIns'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='agwall-south'/>
+            <SystemIdentifier id='WallSouth'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -210,12 +212,12 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='AGW_Ins_south'/>
+              <SystemIdentifier id='WallSouthIns'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='agwall-west'/>
+            <SystemIdentifier id='WallWest'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -226,55 +228,55 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='AGW_Ins_west'/>
+              <SystemIdentifier id='WallWestIns'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
         </Walls>
         <Windows>
           <Window>
-            <SystemIdentifier id='Window_North'/>
+            <SystemIdentifier id='WindowNorth'/>
             <Area>90.0</Area>
             <Azimuth>0</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <AttachedToWall idref='agwall-north'/>
+            <AttachedToWall idref='WallNorth'/>
             <extension>
               <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_East'/>
-            <Area>45.0</Area>
+            <SystemIdentifier id='WindowEast'/>
+            <Area>90.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <AttachedToWall idref='agwall-east'/>
+            <AttachedToWall idref='WallEast'/>
             <extension>
               <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_South'/>
+            <SystemIdentifier id='WindowSouth'/>
             <Area>90.0</Area>
             <Azimuth>180</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <AttachedToWall idref='agwall-south'/>
+            <AttachedToWall idref='WallSouth'/>
             <extension>
               <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             </extension>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_West'/>
-            <Area>45.0</Area>
+            <SystemIdentifier id='WindowWest'/>
+            <Area>90.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <AttachedToWall idref='agwall-west'/>
+            <AttachedToWall idref='WallWest'/>
             <extension>
               <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
               <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
@@ -283,15 +285,15 @@
         </Windows>
         <Doors>
           <Door>
-            <SystemIdentifier id='Door_South'/>
-            <AttachedToWall idref='agwall-south'/>
+            <SystemIdentifier id='DoorSouth'/>
+            <AttachedToWall idref='WallSouth'/>
             <Area>20.0</Area>
             <Azimuth>180</Azimuth>
             <RValue>3.04</RValue>
           </Door>
           <Door>
-            <SystemIdentifier id='Door_North'/>
-            <AttachedToWall idref='agwall-north'/>
+            <SystemIdentifier id='DoorNorth'/>
+            <AttachedToWall idref='WallNorth'/>
             <Area>20.0</Area>
             <Azimuth>0</Azimuth>
             <RValue>3.04</RValue>
@@ -302,8 +304,8 @@
         <HVAC>
           <HVACPlant>
             <HeatingSystem>
-              <SystemIdentifier id='SpaceHeat_ID1'/>
-              <DistributionSystem idref='HVAC_Dist_ID1'/>
+              <SystemIdentifier id='HeatingSystem'/>
+              <DistributionSystem idref='HVACDistribution'/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
@@ -317,11 +319,11 @@
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>
-            <SystemIdentifier id='HVAC_Ctrl_ID1'/>
+            <SystemIdentifier id='HVACControl'/>
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
-            <SystemIdentifier id='HVAC_Dist_ID1'/>
+            <SystemIdentifier id='HVACDistribution'/>
             <DistributionSystemType>
               <Other>DSE</Other>
             </DistributionSystemType>
@@ -332,7 +334,7 @@
       </Systems>
       <MiscLoads>
         <PlugLoad>
-          <SystemIdentifier id='Misc'/>
+          <SystemIdentifier id='PlugLoadMisc'/>
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
