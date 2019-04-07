@@ -433,9 +433,11 @@
         <CookingRange>
           <SystemIdentifier id='Range'/>
           <FuelType>electricity</FuelType>
+          <IsInduction>false</IsInduction>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven'/>
+          <IsConvection>false</IsConvection>
         </Oven>
       </Appliances>
       <Lighting>

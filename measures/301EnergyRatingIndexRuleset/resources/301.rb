@@ -1396,11 +1396,6 @@ class EnergyRatingIndex301Ruleset
     range_values = HPXML.get_cooking_range_values(cooking_range: orig_details.elements["Appliances/CookingRange"])
     oven_values = HPXML.get_oven_values(oven: orig_details.elements["Appliances/Oven"])
 
-    if range_values[:is_induction].nil?
-      self.set_appliances_cooking_range_oven_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_cooking_range(hpxml: hpxml, **range_values)
 
     HPXML.add_oven(hpxml: hpxml, **oven_values)

@@ -451,7 +451,7 @@ def create_hpxmls
     HPXML.add_refrigerator(hpxml: hpxml, **refrigerator_values) unless refrigerator_values.empty?
     HPXML.add_cooking_range(hpxml: hpxml, **cooking_range_values) unless cooking_range_values.empty?
     HPXML.add_oven(hpxml: hpxml, **oven_values) unless oven_values.empty?
-    HPXML.add_lighting(hpxml: hpxml, **lighting_values) unless lighting_values.nil?
+    HPXML.add_lighting(hpxml: hpxml, **lighting_values) unless lighting_values.empty?
     ceiling_fans_values.each do |ceiling_fan_values|
       HPXML.add_ceiling_fan(hpxml: hpxml, **ceiling_fan_values)
     end
@@ -2217,7 +2217,8 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
     cooking_range_values = { :id => "Range",
-                             :fuel_type => "natural gas" }
+                             :fuel_type => "natural gas",
+                             :is_induction => false }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2229,7 +2230,8 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
     cooking_range_values = { :id => "Range",
-                             :fuel_type => "electricity" }
+                             :fuel_type => "electricity",
+                             :is_induction => false }
   elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
     # Induction
     cooking_range_values = { :id => "Range",
@@ -2251,7 +2253,8 @@ def get_hpxml_file_oven_values(hpxml_file, oven_values)
                     :is_convection => true }
   else
     # Standard
-    oven_values = { :id => "Oven" }
+    oven_values = { :id => "Oven",
+                    :is_convection => false }
   end
   return oven_values
 end
@@ -2261,7 +2264,7 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    lighting_values = nil
+    lighting_values = {}
   elsif ['NASEO_Technical_Exercises/NASEO-05.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file

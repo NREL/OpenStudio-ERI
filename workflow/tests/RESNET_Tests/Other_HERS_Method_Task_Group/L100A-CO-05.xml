@@ -399,9 +399,11 @@
         <CookingRange>
           <SystemIdentifier id='Range'/>
           <FuelType>natural gas</FuelType>
+          <IsInduction>false</IsInduction>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven'/>
+          <IsConvection>false</IsConvection>
         </Oven>
       </Appliances>
       <Lighting>
