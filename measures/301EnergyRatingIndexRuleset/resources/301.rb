@@ -1312,11 +1312,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_dryer_rated(orig_details, hpxml)
     dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_details.elements["Appliances/ClothesDryer"])
 
-    if dryer_values[:energy_factor].nil? and dryer_values[:combined_energy_factor].nil?
-      self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_clothes_dryer(hpxml: hpxml, **dryer_values)
   end
 
