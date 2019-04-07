@@ -311,7 +311,7 @@ def create_hpxmls
     oven_values = {}
     lighting_values = {}
     ceiling_fans_values = []
-    plug_load_values = {}
+    plug_loads_values = []
     misc_load_schedule_values = {}
     hpxml_files.each do |hpxml_file|
       hpxml_values = get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
@@ -320,14 +320,14 @@ def create_hpxmls
       building_construction_values = get_hpxml_file_building_construction_values(hpxml_file, building_construction_values)
       climate_and_risk_zones_values = get_hpxml_file_climate_and_risk_zones_values(hpxml_file, climate_and_risk_zones_values)
       air_infiltration_measurement_values = get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltration_measurement_values, building_construction_values)
-      attics_values = get_hpxml_file_attic_values(hpxml_file, attics_values)
-      attics_roofs_values = get_hpxml_file_attic_roofs_values(hpxml_file, attics_roofs_values)
-      attics_floors_values = get_hpxml_file_attic_floors_values(hpxml_file, attics_floors_values)
-      attics_walls_values = get_hpxml_file_attic_walls_values(hpxml_file, attics_walls_values)
-      foundations_values = get_hpxml_file_foundation_values(hpxml_file, foundations_values)
-      foundations_framefloors_values = get_hpxml_file_frame_floor_values(hpxml_file, foundations_framefloors_values)
-      foundations_walls_values = get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
-      foundations_slabs_values = get_hpxml_file_slab_values(hpxml_file, foundations_slabs_values)
+      attics_values = get_hpxml_file_attics_values(hpxml_file, attics_values)
+      attics_roofs_values = get_hpxml_file_attics_roofs_values(hpxml_file, attics_roofs_values)
+      attics_floors_values = get_hpxml_file_attics_floors_values(hpxml_file, attics_floors_values)
+      attics_walls_values = get_hpxml_file_attics_walls_values(hpxml_file, attics_walls_values)
+      foundations_values = get_hpxml_file_foundations_values(hpxml_file, foundations_values)
+      foundations_framefloors_values = get_hpxml_file_foundations_framefloors_values(hpxml_file, foundations_framefloors_values)
+      foundations_walls_values = get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values)
+      foundations_slabs_values = get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values)
       rim_joists_values = get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
       walls_values = get_hpxml_file_walls_values(hpxml_file, walls_values)
       windows_values = get_hpxml_file_windows_values(hpxml_file, windows_values)
@@ -353,7 +353,7 @@ def create_hpxmls
       oven_values = get_hpxml_file_oven_values(hpxml_file, oven_values)
       lighting_values = get_hpxml_file_lighting_values(hpxml_file, lighting_values)
       ceiling_fans_values = get_hpxml_file_ceiling_fan_values(hpxml_file, ceiling_fans_values)
-      plug_load_values = get_hpxml_file_plug_load_values(hpxml_file, plug_load_values)
+      plug_loads_values = get_hpxml_file_plug_loads_values(hpxml_file, plug_loads_values)
       misc_load_schedule_values = get_hpxml_file_misc_load_schedule_values(hpxml_file, misc_load_schedule_values)
     end
 
@@ -455,7 +455,9 @@ def create_hpxmls
     ceiling_fans_values.each do |ceiling_fan_values|
       HPXML.add_ceiling_fan(hpxml: hpxml, **ceiling_fan_values)
     end
-    HPXML.add_plug_load(hpxml: hpxml, **plug_load_values) unless plug_load_values.empty?
+    plug_loads_values.each do |plug_load_values|
+      HPXML.add_plug_load(hpxml: hpxml, **plug_load_values)
+    end
     HPXML.add_misc_loads_schedule(hpxml: hpxml, **misc_load_schedule_values) unless misc_load_schedule_values.empty?
 
     hpxml_path = File.join(tests_dir, derivative)
@@ -660,7 +662,7 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
   return air_infiltration_measurement_values
 end
 
-def get_hpxml_file_attic_values(hpxml_file, attics_values)
+def get_hpxml_file_attics_values(hpxml_file, attics_values)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
@@ -677,7 +679,7 @@ def get_hpxml_file_attic_values(hpxml_file, attics_values)
   return attics_values
 end
 
-def get_hpxml_file_attic_roofs_values(hpxml_file, attics_roofs_values)
+def get_hpxml_file_attics_roofs_values(hpxml_file, attics_roofs_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
@@ -713,7 +715,7 @@ def get_hpxml_file_attic_roofs_values(hpxml_file, attics_roofs_values)
   return attics_roofs_values
 end
 
-def get_hpxml_file_attic_floors_values(hpxml_file, attics_floors_values)
+def get_hpxml_file_attics_floors_values(hpxml_file, attics_floors_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
@@ -740,7 +742,7 @@ def get_hpxml_file_attic_floors_values(hpxml_file, attics_floors_values)
   return attics_floors_values
 end
 
-def get_hpxml_file_attic_walls_values(hpxml_file, attics_walls_values)
+def get_hpxml_file_attics_walls_values(hpxml_file, attics_walls_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
@@ -768,7 +770,7 @@ def get_hpxml_file_attic_walls_values(hpxml_file, attics_walls_values)
   return attics_walls_values
 end
 
-def get_hpxml_file_foundation_values(hpxml_file, foundations_values)
+def get_hpxml_file_foundations_values(hpxml_file, foundations_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
@@ -800,7 +802,7 @@ def get_hpxml_file_foundation_values(hpxml_file, foundations_values)
   return foundations_values
 end
 
-def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
+def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values)
   # TODO: Allow multiple foundation walls
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
@@ -892,7 +894,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundations_walls_values)
   return foundations_walls_values
 end
 
-def get_hpxml_file_slab_values(hpxml_file, foundations_slabs_values)
+def get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values)
   # TODO: Review carpet values
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
@@ -998,7 +1000,7 @@ def get_hpxml_file_slab_values(hpxml_file, foundations_slabs_values)
   return foundations_slabs_values
 end
 
-def get_hpxml_file_frame_floor_values(hpxml_file, foundations_framefloors_values)
+def get_hpxml_file_foundations_framefloors_values(hpxml_file, foundations_framefloors_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
@@ -2280,24 +2282,24 @@ def get_hpxml_file_ceiling_fan_values(hpxml_file, ceiling_fans_values)
   return ceiling_fans_values
 end
 
-def get_hpxml_file_plug_load_values(hpxml_file, plug_load_values)
+def get_hpxml_file_plug_loads_values(hpxml_file, plug_loads_values)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    plug_load_values = { :id => "PlugLoadMisc",
-                         :plug_load_type => "other",
-                         :kWh_per_year => 7302,
-                         :frac_sensible => 0.82,
-                         :frac_latent => 0.18 }
+    plug_loads_values = [{ :id => "PlugLoadMisc",
+                           :plug_load_type => "other",
+                           :kWh_per_year => 7302,
+                           :frac_sensible => 0.82,
+                           :frac_latent => 0.18 }]
     if ['RESNET_Tests/4.1_Standard_140/L170AC.xml',
         'RESNET_Tests/4.1_Standard_140/L170AL.xml'].include? hpxml_file
-      plug_load_values[:kWh_per_year] = 0
+      plug_loads_values[0][:kWh_per_year] = 0
     end
   else
-    plug_load_values = {}
+    plug_loads_values = []
   end
-  return plug_load_values
+  return plug_loads_values
 end
 
 def get_hpxml_file_misc_load_schedule_values(hpxml_file, misc_load_schedule_values)

@@ -201,12 +201,12 @@ class HPXML
 
     weather_station = climate_and_risk_zones.elements["WeatherStation"]
 
-    return { :iecc2003 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year='2003']/ClimateZone"),
-             :iecc2006 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year='2006']/ClimateZone"),
-             :iecc2009 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year='2009']/ClimateZone"),
-             :iecc2012 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year='2012']/ClimateZone"),
-             :iecc2015 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year='2015']/ClimateZone"),
-             :iecc2018 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year='2018']/ClimateZone"),
+    return { :iecc2003 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year=2003]/ClimateZone"),
+             :iecc2006 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year=2006]/ClimateZone"),
+             :iecc2009 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year=2009]/ClimateZone"),
+             :iecc2012 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year=2012]/ClimateZone"),
+             :iecc2015 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year=2015]/ClimateZone"),
+             :iecc2018 => XMLHelper.get_value(climate_and_risk_zones, "ClimateZoneIECC[Year=2018]/ClimateZone"),
              :weather_station_id => HPXML.get_id(weather_station),
              :weather_station_name => XMLHelper.get_value(weather_station, "Name"),
              :weather_station_wmo => XMLHelper.get_value(weather_station, "WMO") }
@@ -304,8 +304,6 @@ class HPXML
       attic_type = "VentedAttic"
     elsif XMLHelper.has_element(attic, "AtticType/Attic[Conditioned='true']")
       attic_type = "ConditionedAttic"
-    elsif XMLHelper.has_element(attic, "AtticType/Attic[CapeCod='true']")
-      attic_type = "CapeCod"
     elsif XMLHelper.has_element(attic, "AtticType/FlatRoof")
       attic_type = "FlatRoof"
     elsif XMLHelper.has_element(attic, "AtticType/CathedralCeiling")
@@ -1267,7 +1265,7 @@ class HPXML
 
     check_remainder(remainder,
                     calling_method: __method__.to_s,
-                    expected_kwargs: [:duct_fraction_area, :hescore_ducts_insulated])
+                    expected_kwargs: [:duct_fraction_area, :duct_insulation_present])
 
     return ducts
   end
@@ -1277,10 +1275,10 @@ class HPXML
 
     return { :duct_type => XMLHelper.get_value(ducts, "DuctType"),
              :duct_insulation_r_value => to_float(XMLHelper.get_value(ducts, "DuctInsulationRValue")),
+             :duct_insulation_present => to_bool(XMLHelper.get_value(ducts, "DuctInsulationPresent")),
              :duct_location => XMLHelper.get_value(ducts, "DuctLocation"),
              :duct_fraction_area => to_float(XMLHelper.get_value(ducts, "FractionDuctArea")),
-             :duct_surface_area => to_float(XMLHelper.get_value(ducts, "DuctSurfaceArea")),
-             :hescore_ducts_insulated => to_bool(XMLHelper.get_value(ducts, "extension/hescore_ducts_insulated")) }
+             :duct_surface_area => to_float(XMLHelper.get_value(ducts, "DuctSurfaceArea")) }
   end
 
   def self.add_ventilation_fan(hpxml:,
