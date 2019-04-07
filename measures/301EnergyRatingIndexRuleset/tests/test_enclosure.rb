@@ -71,8 +71,8 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_skylights(hpxml_doc, [15, 90, 0.33, 0.45],
-                     [15, 270, 0.35, 0.47])
+    _check_skylights(hpxml_doc, [15, 0, 0.33, 0.45],
+                     [15, 180, 0.35, 0.47])
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -80,8 +80,8 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_skylights(hpxml_doc, [15, 90, 0.33, 0.45],
-                     [15, 270, 0.35, 0.47])
+    _check_skylights(hpxml_doc, [15, 0, 0.33, 0.45],
+                     [15, 180, 0.35, 0.47])
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
