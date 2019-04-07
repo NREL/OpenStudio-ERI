@@ -1282,11 +1282,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_washer_rated(orig_details, hpxml)
     washer_values = HPXML.get_clothes_washer_values(clothes_washer: orig_details.elements["Appliances/ClothesWasher"])
 
-    if washer_values[:modified_energy_factor].nil? and washer_values[:integrated_modified_energy_factor].nil?
-      self.set_appliances_clothes_washer_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_clothes_washer(hpxml: hpxml, **washer_values)
   end
 

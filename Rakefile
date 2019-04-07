@@ -2096,7 +2096,13 @@ def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
   else
     # Standard
     clothes_washer_values = { :id => "ClothesWasher",
-                              :location => "living space" }
+                              :location => "living space",
+                              :modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_mef(),
+                              :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
+                              :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
+                              :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
+                              :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
+                              :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap() }
   end
   return clothes_washer_values
 end
