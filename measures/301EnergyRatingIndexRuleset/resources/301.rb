@@ -1427,27 +1427,6 @@ class EnergyRatingIndex301Ruleset
     lighting = orig_details.elements["Lighting"]
     lighting_values = HPXML.get_lighting_values(lighting: lighting)
 
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
-
-    if lighting_values[:fraction_tier_i_interior].nil?
-      lighting_values[:fraction_tier_i_interior] = fFI_int
-    end
-    if lighting_values[:fraction_tier_i_exterior].nil?
-      lighting_values[:fraction_tier_i_exterior] = fFI_ext
-    end
-    if lighting_values[:fraction_tier_i_garage].nil?
-      lighting_values[:fraction_tier_i_garage] = fFI_grg
-    end
-    if lighting_values[:fraction_tier_ii_interior].nil?
-      lighting_values[:fraction_tier_ii_interior] = fFII_int
-    end
-    if lighting_values[:fraction_tier_ii_exterior].nil?
-      lighting_values[:fraction_tier_ii_exterior] = fFII_ext
-    end
-    if lighting_values[:fraction_tier_ii_garage].nil?
-      lighting_values[:fraction_tier_ii_garage] = fFII_grg
-    end
-
     # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
     if lighting_values[:fraction_tier_i_interior] + lighting_values[:fraction_tier_ii_interior] < 0.1
       lighting_values[:fraction_tier_i_interior] = 0.1 - lighting_values[:fraction_tier_ii_interior]

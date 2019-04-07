@@ -2273,7 +2273,13 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
                         :fraction_tier_ii_exterior => 0.0,
                         :fraction_tier_ii_garage => 0.0 }
   else
-    lighting_values = {}
+    # ERI Reference
+    lighting_values = { :fraction_tier_i_interior => 0.1,
+                        :fraction_tier_i_exterior => 0.0,
+                        :fraction_tier_i_garage => 0.0,
+                        :fraction_tier_ii_interior => 0.0,
+                        :fraction_tier_ii_exterior => 0.0,
+                        :fraction_tier_ii_garage => 0.0 }
   end
   return lighting_values
 end
@@ -2323,7 +2329,7 @@ def copy_sample_files
   FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml*"))
   FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/*.xml*"), "workflow/sample_files")
   FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml*"), "workflow/sample_files/invalid_files")
-  
+
   # Remove files we're not interested in
   exclude_list = ['invalid_files/invalid-missing-surfaces.xml',
                   'invalid_files/invalid-net-area-negative-roof.xml',

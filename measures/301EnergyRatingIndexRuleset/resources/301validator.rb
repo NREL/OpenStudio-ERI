@@ -561,7 +561,7 @@ class EnergyRatingIndex301Validator
       },
 
       ## [CWType=UserSpecified]
-      "/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[ModifiedEnergyFactor]" => {
+      "/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[ModifiedEnergyFactor | IntegratedModifiedEnergyFactor]" => {
         "RatedAnnualkWh" => one,
         "LabelElectricRate" => one,
         "LabelGasRate" => one,
@@ -578,7 +578,7 @@ class EnergyRatingIndex301Validator
       },
 
       ## [CDType=UserSpecified]
-      "/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EnergyFactor]" => {
+      "/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EnergyFactor | CombinedEnergyFactor]" => {
         "[ControlType='timer' or ControlType='moisture']" => one,
       },
 
@@ -614,12 +614,12 @@ class EnergyRatingIndex301Validator
 
       # [Lighting]
       "/HPXML/Building/BuildingDetails/Lighting" => {
-        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']" => one, # See [LightingGroup]
       },
 
       ## [LightingGroup]
