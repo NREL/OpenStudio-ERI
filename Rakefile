@@ -3,8 +3,6 @@ require 'fileutils'
 require 'rake'
 require 'rake/testtask'
 require 'ci/reporter/rake/minitest'
-require_relative "measures/HPXMLtoOpenStudio/resources/hpxml"
-
 require 'pp'
 require 'colored'
 require 'json'
@@ -89,6 +87,10 @@ task :update_measures do
 end
 
 def create_hpxmls
+  require_relative "measures/HPXMLtoOpenStudio/resources/hpxml"
+  require_relative "measures/HPXMLtoOpenStudio/resources/hotwater_appliances"
+  require_relative "measures/HPXMLtoOpenStudio/resources/lighting"
+
   puts "Generating HPXML files..."
 
   this_dir = File.dirname(__FILE__)
@@ -348,7 +350,7 @@ def create_hpxmls
       clothes_washer_values = get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
       clothes_dryer_values = get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
       dishwasher_values = get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
-      refrigerator_values = get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values)
+      refrigerator_values = get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values, building_construction_values)
       cooking_range_values = get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
       oven_values = get_hpxml_file_oven_values(hpxml_file, oven_values)
       lighting_values = get_hpxml_file_lighting_values(hpxml_file, lighting_values)
@@ -2176,7 +2178,7 @@ def get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
   return dishwasher_values
 end
 
-def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values)
+def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values, building_construction_values)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
@@ -2189,8 +2191,10 @@ def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values)
                             :rated_annual_kwh => 614 }
   else
     # Standard
+    rated_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(building_construction_values[:number_of_bedrooms])
     refrigerator_values = { :id => "Refrigerator",
-                            :location => "living space" }
+                            :location => "living space",
+                            :rated_annual_kwh => rated_annual_kwh }
   end
   return refrigerator_values
 end
@@ -2218,7 +2222,7 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
     # Standard gas
     cooking_range_values = { :id => "Range",
                              :fuel_type => "natural gas",
-                             :is_induction => false }
+                             :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection() }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2231,7 +2235,7 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
     # Standard electric
     cooking_range_values = { :id => "Range",
                              :fuel_type => "electricity",
-                             :is_induction => false }
+                             :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection() }
   elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
     # Induction
     cooking_range_values = { :id => "Range",
@@ -2254,7 +2258,7 @@ def get_hpxml_file_oven_values(hpxml_file, oven_values)
   else
     # Standard
     oven_values = { :id => "Oven",
-                    :is_convection => false }
+                    :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_induction() }
   end
   return oven_values
 end
@@ -2277,12 +2281,13 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
                         :fraction_tier_ii_garage => 0.0 }
   else
     # ERI Reference
-    lighting_values = { :fraction_tier_i_interior => 0.1,
-                        :fraction_tier_i_exterior => 0.0,
-                        :fraction_tier_i_garage => 0.0,
-                        :fraction_tier_ii_interior => 0.0,
-                        :fraction_tier_ii_exterior => 0.0,
-                        :fraction_tier_ii_garage => 0.0 }
+    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
+    lighting_values = { :fraction_tier_i_interior => fFI_int,
+                        :fraction_tier_i_exterior => fFI_ext,
+                        :fraction_tier_i_garage => fFI_grg,
+                        :fraction_tier_ii_interior => fFII_int,
+                        :fraction_tier_ii_exterior => fFII_ext,
+                        :fraction_tier_ii_garage => fFII_grg }
   end
   return lighting_values
 end
@@ -2361,9 +2366,7 @@ def copy_sample_files
                   'valid-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'valid-hvac-setpoints.xml',
                   'valid-infiltration-ach-natural.xml',
-                  'valid-misc-appliances-in-basement.xml',
                   'valid-misc-ceiling-fans-reference.xml',
-                  'valid-misc-lighting-default.xml',
                   'valid-misc-lighting-none.xml',
                   'valid-misc-loads-detailed.xml',
                   'valid-misc-number-of-occupants.xml']

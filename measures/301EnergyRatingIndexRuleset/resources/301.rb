@@ -1365,11 +1365,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_refrigerator_rated(orig_details, hpxml)
     fridge_values = HPXML.get_refrigerator_values(refrigerator: orig_details.elements["Appliances/Refrigerator"])
 
-    if fridge_values[:rated_annual_kwh].nil?
-      self.set_appliances_refrigerator_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_refrigerator(hpxml: hpxml, **fridge_values)
   end
 
