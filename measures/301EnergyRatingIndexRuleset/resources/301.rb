@@ -1337,11 +1337,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_dishwasher_rated(orig_details, hpxml)
     dishwasher_values = HPXML.get_dishwasher_values(dishwasher: orig_details.elements["Appliances/Dishwasher"])
 
-    if dishwasher_values[:energy_factor].nil? and dishwasher_values[:rated_annual_kwh].nil?
-      self.set_appliances_dishwasher_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_dishwasher(hpxml: hpxml, **dishwasher_values)
   end
 

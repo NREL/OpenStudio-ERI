@@ -585,11 +585,7 @@ class EnergyRatingIndex301Validator
       # [Dishwasher]
       "/HPXML/Building/BuildingDetails/Appliances/Dishwasher" => {
         "SystemIdentifier" => one, # Required by HPXML schema
-        "[EnergyFactor | RatedAnnualkWh]" => zero_or_one, # Uses ERI Reference Home if neither provided; otherwise see [DWType=UserSpecified]
-      },
-
-      ## [DWType=UserSpecified]
-      "/HPXML/Building/BuildingDetails/Appliances/Dishwasher[EnergyFactor | RatedAnnualkWh]" => {
+        "[EnergyFactor | RatedAnnualkWh]" => one,
         "PlaceSettingCapacity" => one,
       },
 

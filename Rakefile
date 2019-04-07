@@ -2164,7 +2164,6 @@ def get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
          'NASEO_Technical_Exercises/NASEO-10b.xml'].include? hpxml_file
     # EF 0.5
     dishwasher_values = { :id => "Dishwasher",
-
                           :place_setting_capacity => 12 }
     if hpxml_file == 'NASEO_Technical_Exercises/NASEO-10.xml'
       dishwasher_values[:energy_factor] = 0.5
@@ -2173,7 +2172,9 @@ def get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
     end
   else
     # Standard
-    dishwasher_values = { :id => "Dishwasher" }
+    dishwasher_values = { :id => "Dishwasher",
+                          :place_setting_capacity => 12,
+                          :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef() }
   end
   return dishwasher_values
 end
