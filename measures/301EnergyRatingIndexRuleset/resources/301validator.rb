@@ -110,7 +110,7 @@ class EnergyRatingIndex301Validator
       ## [AtticType=VentedAttic]
       "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented='true']]" => {
         "Floors/Floor" => one_or_more, # See [AtticFloor]
-        "AtticType/Attic/SpecificLeakageArea" => zero_or_one, # Uses ERI Reference Home if not provided
+        "AtticType/Attic/SpecificLeakageArea" => one,
       },
 
       ## [AtticRoof]
@@ -170,7 +170,7 @@ class EnergyRatingIndex301Validator
 
       ## [FoundationType=VentedCrawlspace]
       "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]" => {
-        "SpecificLeakageArea" => zero_or_one, # Uses ERI Reference Home if not provided
+        "SpecificLeakageArea" => one,
         "FrameFloor" => one_or_more, # See [FoundationFrameFloor]
         "FoundationWall" => one_or_more, # See [FoundationWall]
         "Slab" => one_or_more, # See [FoundationSlab]; use slab with zero thickness for dirt floor

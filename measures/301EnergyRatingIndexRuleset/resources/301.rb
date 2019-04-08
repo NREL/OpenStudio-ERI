@@ -383,12 +383,6 @@ class EnergyRatingIndex301Ruleset
     orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
       attic_values = HPXML.get_attic_values(attic: attic)
 
-      if attic_values[:attic_type] == 'VentedAttic'
-        if attic_values[:specific_leakage_area].nil?
-          attic_values[:specific_leakage_area] = Airflow.get_default_vented_attic_sla()
-        end
-      end
-
       new_attic = HPXML.add_attic(hpxml: hpxml, **attic_values)
 
       attic.elements.each("Roofs/Roof") do |roof|
@@ -501,10 +495,6 @@ class EnergyRatingIndex301Ruleset
       foundation_values = HPXML.get_foundation_values(foundation: foundation)
 
       if foundation_values[:foundation_type] == "VentedCrawlspace"
-        # Table 4.2.2(1) - Crawlspaces
-        if foundation_values[:specific_leakage_area].nil?
-          foundation_values[:specific_leakage_area] = Airflow.get_default_vented_crawl_sla()
-        end
         # TODO: Handle approved ground cover
         if foundation_values[:specific_leakage_area] < min_crawlspace_sla
           foundation_values[:specific_leakage_area] = min_crawlspace_sla
