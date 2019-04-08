@@ -110,7 +110,7 @@ class EnergyRatingIndex301Validator
       ## [AtticType=VentedAttic]
       "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented='true']]" => {
         "Floors/Floor" => one_or_more, # See [AtticFloor]
-        "AtticType/Attic/SpecificLeakageArea" => zero_or_one, # Uses ERI Reference Home if not provided
+        "AtticType/Attic/SpecificLeakageArea" => one,
       },
 
       ## [AtticRoof]
@@ -170,7 +170,7 @@ class EnergyRatingIndex301Validator
 
       ## [FoundationType=VentedCrawlspace]
       "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]" => {
-        "SpecificLeakageArea" => zero_or_one, # Uses ERI Reference Home if not provided
+        "FoundationType/Crawlspace/SpecificLeakageArea" => one,
         "FrameFloor" => one_or_more, # See [FoundationFrameFloor]
         "FoundationWall" => one_or_more, # See [FoundationWall]
         "Slab" => one_or_more, # See [FoundationSlab]; use slab with zero thickness for dirt floor
@@ -516,13 +516,13 @@ class EnergyRatingIndex301Validator
 
       ## [HWDistType=Standard]
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Standard" => {
-        "PipingLength" => zero_or_one, # Uses ERI Reference Home if not provided
+        "PipingLength" => one,
       },
 
       ## [HWDistType=Recirculation]
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation" => {
         "ControlType" => one,
-        "RecirculationPipingLoopLength" => zero_or_one, # Uses ERI Reference Home if not provided
+        "RecirculationPipingLoopLength" => one,
         "BranchPipingLoopLength" => one,
         "PumpPower" => one,
       },
@@ -557,11 +557,7 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Appliances/ClothesWasher" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "[Location='living space' or Location='basement - conditioned' or Location='basement - unconditioned' or Location='garage']" => one,
-        "[ModifiedEnergyFactor | IntegratedModifiedEnergyFactor]" => zero_or_one, # Uses ERI Reference Home if neither provided; otherwise see [CWType=UserSpecified]
-      },
-
-      ## [CWType=UserSpecified]
-      "/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[ModifiedEnergyFactor]" => {
+        "[ModifiedEnergyFactor | IntegratedModifiedEnergyFactor]" => one,
         "RatedAnnualkWh" => one,
         "LabelElectricRate" => one,
         "LabelGasRate" => one,
@@ -574,22 +570,14 @@ class EnergyRatingIndex301Validator
         "SystemIdentifier" => one, # Required by HPXML schema
         "[Location='living space' or Location='basement - conditioned' or Location='basement - unconditioned' or Location='garage']" => one,
         "[FuelType='natural gas' or FuelType='fuel oil' or FuelType='propane' or FuelType='electricity']" => one,
-        "[EnergyFactor | CombinedEnergyFactor]" => zero_or_one, # Uses ERI Reference Home if neither provided; otherwise see [CDType=UserSpecified]
-      },
-
-      ## [CDType=UserSpecified]
-      "/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[EnergyFactor]" => {
+        "[EnergyFactor | CombinedEnergyFactor]" => one,
         "[ControlType='timer' or ControlType='moisture']" => one,
       },
 
       # [Dishwasher]
       "/HPXML/Building/BuildingDetails/Appliances/Dishwasher" => {
         "SystemIdentifier" => one, # Required by HPXML schema
-        "[EnergyFactor | RatedAnnualkWh]" => zero_or_one, # Uses ERI Reference Home if neither provided; otherwise see [DWType=UserSpecified]
-      },
-
-      ## [DWType=UserSpecified]
-      "/HPXML/Building/BuildingDetails/Appliances/Dishwasher[EnergyFactor | RatedAnnualkWh]" => {
+        "[EnergyFactor | RatedAnnualkWh]" => one,
         "PlaceSettingCapacity" => one,
       },
 
@@ -597,29 +585,25 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Appliances/Refrigerator" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "[Location='living space' or Location='basement - conditioned' or Location='basement - unconditioned' or Location='garage']" => one,
-        "RatedAnnualkWh" => zero_or_one, # Uses ERI Reference Home if not provided
+        "RatedAnnualkWh" => one,
       },
 
       # [CookingRange]
       "/HPXML/Building/BuildingDetails/Appliances/CookingRange" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "[FuelType='natural gas' or FuelType='fuel oil' or FuelType='propane' or FuelType='electricity']" => one,
-        "IsInduction" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [CRType=UserSpecified]
-      },
-
-      ## [CRType=UserSpecified]
-      "/HPXML/Building/BuildingDetails/Appliances/CookingRange[IsInduction]" => {
+        "IsInduction" => one,
         "../Oven/IsConvection" => one,
       },
 
       # [Lighting]
       "/HPXML/Building/BuildingDetails/Lighting" => {
-        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
-        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']" => zero_or_one, # Uses ERI Reference Home if not provided; otherwise see [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']" => one, # See [LightingGroup]
+        "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']" => one, # See [LightingGroup]
       },
 
       ## [LightingGroup]

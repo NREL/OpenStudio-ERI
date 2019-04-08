@@ -166,62 +166,6 @@ class ApplianceTest < MiniTest::Test
     end
   end
 
-  def test_appliances_reference_elec
-    hpxml_name = "valid-appliances-reference-elec.xml"
-
-    # Reference Home, Rated Home
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome]
-    calc_types.each do |calc_type|
-      hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
-      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "living space")
-      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-      _check_refrigerator(hpxml_doc, 709.0, "living space")
-      _check_cooking_range(hpxml_doc, "electricity", false, false)
-    end
-
-    # IAD, IAD Reference
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
-      _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "living space")
-      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-      _check_refrigerator(hpxml_doc, 691.0, "living space")
-      _check_cooking_range(hpxml_doc, "electricity", false, false)
-    end
-  end
-
-  def test_appliances_reference_gas
-    hpxml_name = "valid-appliances-reference-gas.xml"
-
-    # Reference Home, Rated Home
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome]
-    calc_types.each do |calc_type|
-      hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
-      _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "timer", "living space")
-      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-      _check_refrigerator(hpxml_doc, 709.0, "living space")
-      _check_cooking_range(hpxml_doc, "natural gas", false, false)
-    end
-
-    # IAD, IAD Reference
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
-      _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "timer", "living space")
-      _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-      _check_refrigerator(hpxml_doc, 691.0, "living space")
-      _check_cooking_range(hpxml_doc, "natural gas", false, false)
-    end
-  end
-
   def test_appliances_in_basement
     hpxml_name = "valid-appliances-in-basement.xml"
 

@@ -383,12 +383,6 @@ class EnergyRatingIndex301Ruleset
     orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
       attic_values = HPXML.get_attic_values(attic: attic)
 
-      if attic_values[:attic_type] == 'VentedAttic'
-        if attic_values[:specific_leakage_area].nil?
-          attic_values[:specific_leakage_area] = Airflow.get_default_vented_attic_sla()
-        end
-      end
-
       new_attic = HPXML.add_attic(hpxml: hpxml, **attic_values)
 
       attic.elements.each("Roofs/Roof") do |roof|
@@ -501,10 +495,6 @@ class EnergyRatingIndex301Ruleset
       foundation_values = HPXML.get_foundation_values(foundation: foundation)
 
       if foundation_values[:foundation_type] == "VentedCrawlspace"
-        # Table 4.2.2(1) - Crawlspaces
-        if foundation_values[:specific_leakage_area].nil?
-          foundation_values[:specific_leakage_area] = Airflow.get_default_vented_crawl_sla()
-        end
         # TODO: Handle approved ground cover
         if foundation_values[:specific_leakage_area] < min_crawlspace_sla
           foundation_values[:specific_leakage_area] = min_crawlspace_sla
@@ -1223,16 +1213,6 @@ class EnergyRatingIndex301Ruleset
     hw_dist = water_heating.elements["HotWaterDistribution"]
     hw_dist_values = HPXML.get_hot_water_distribution_values(hot_water_distribution: hw_dist)
 
-    has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
-    std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
-    recirc_pipe_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)
-
-    if hw_dist_values[:system_type] == "Standard" and hw_dist_values[:standard_piping_length].nil?
-      hw_dist_values[:standard_piping_length] = std_pipe_length
-    elsif hw_dist_values[:system_type] == "Recirculation" and hw_dist_values[:recirculation_piping_length].nil?
-      hw_dist_values[:recirculation_piping_length] = recirc_pipe_length
-    end
-
     # New hot water distribution
     HPXML.add_hot_water_distribution(hpxml: hpxml, **hw_dist_values)
 
@@ -1282,11 +1262,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_washer_rated(orig_details, hpxml)
     washer_values = HPXML.get_clothes_washer_values(clothes_washer: orig_details.elements["Appliances/ClothesWasher"])
 
-    if washer_values[:modified_energy_factor].nil? and washer_values[:integrated_modified_energy_factor].nil?
-      self.set_appliances_clothes_washer_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_clothes_washer(hpxml: hpxml, **washer_values)
   end
 
@@ -1312,11 +1287,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_dryer_rated(orig_details, hpxml)
     dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_details.elements["Appliances/ClothesDryer"])
 
-    if dryer_values[:energy_factor].nil? and dryer_values[:combined_energy_factor].nil?
-      self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_clothes_dryer(hpxml: hpxml, **dryer_values)
   end
 
@@ -1336,11 +1306,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dishwasher_rated(orig_details, hpxml)
     dishwasher_values = HPXML.get_dishwasher_values(dishwasher: orig_details.elements["Appliances/Dishwasher"])
-
-    if dishwasher_values[:energy_factor].nil? and dishwasher_values[:rated_annual_kwh].nil?
-      self.set_appliances_dishwasher_reference(orig_details, hpxml)
-      return
-    end
 
     HPXML.add_dishwasher(hpxml: hpxml, **dishwasher_values)
   end
@@ -1364,11 +1329,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_refrigerator_rated(orig_details, hpxml)
     fridge_values = HPXML.get_refrigerator_values(refrigerator: orig_details.elements["Appliances/Refrigerator"])
-
-    if fridge_values[:rated_annual_kwh].nil?
-      self.set_appliances_refrigerator_reference(orig_details, hpxml)
-      return
-    end
 
     HPXML.add_refrigerator(hpxml: hpxml, **fridge_values)
   end
@@ -1396,11 +1356,6 @@ class EnergyRatingIndex301Ruleset
     range_values = HPXML.get_cooking_range_values(cooking_range: orig_details.elements["Appliances/CookingRange"])
     oven_values = HPXML.get_oven_values(oven: orig_details.elements["Appliances/Oven"])
 
-    if range_values[:is_induction].nil?
-      self.set_appliances_cooking_range_oven_reference(orig_details, hpxml)
-      return
-    end
-
     HPXML.add_cooking_range(hpxml: hpxml, **range_values)
 
     HPXML.add_oven(hpxml: hpxml, **oven_values)
@@ -1426,27 +1381,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_lighting_rated(orig_details, hpxml)
     lighting = orig_details.elements["Lighting"]
     lighting_values = HPXML.get_lighting_values(lighting: lighting)
-
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
-
-    if lighting_values[:fraction_tier_i_interior].nil?
-      lighting_values[:fraction_tier_i_interior] = fFI_int
-    end
-    if lighting_values[:fraction_tier_i_exterior].nil?
-      lighting_values[:fraction_tier_i_exterior] = fFI_ext
-    end
-    if lighting_values[:fraction_tier_i_garage].nil?
-      lighting_values[:fraction_tier_i_garage] = fFI_grg
-    end
-    if lighting_values[:fraction_tier_ii_interior].nil?
-      lighting_values[:fraction_tier_ii_interior] = fFII_int
-    end
-    if lighting_values[:fraction_tier_ii_exterior].nil?
-      lighting_values[:fraction_tier_ii_exterior] = fFII_ext
-    end
-    if lighting_values[:fraction_tier_ii_garage].nil?
-      lighting_values[:fraction_tier_ii_garage] = fFII_grg
-    end
 
     # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
     if lighting_values[:fraction_tier_i_interior] + lighting_values[:fraction_tier_ii_interior] < 0.1

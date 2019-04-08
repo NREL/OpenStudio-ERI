@@ -409,7 +409,9 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDstribution'/>
             <SystemType>
-              <Standard/>
+              <Standard>
+                <PipingLength>88.46</PipingLength>
+              </Standard>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>0.0</PipeRValue>
@@ -431,28 +433,78 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
+          <ModifiedEnergyFactor>0.817</ModifiedEnergyFactor>
+          <RatedAnnualkWh>704.0</RatedAnnualkWh>
+          <LabelElectricRate>0.08</LabelElectricRate>
+          <LabelGasRate>0.58</LabelGasRate>
+          <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
+          <Capacity>2.874</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
+          <EnergyFactor>3.01</EnergyFactor>
+          <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
+          <EnergyFactor>0.46</EnergyFactor>
+          <PlaceSettingCapacity>12</PlaceSettingCapacity>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
           <Location>living space</Location>
+          <RatedAnnualkWh>691.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range'/>
           <FuelType>electricity</FuelType>
+          <IsInduction>false</IsInduction>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven'/>
+          <IsConvection>false</IsConvection>
         </Oven>
       </Appliances>
-      <Lighting/>
+      <Lighting>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Interior'/>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>0.1</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierI_Garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Interior'/>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='Lighting_TierII_Garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+        </LightingGroup>
+      </Lighting>
     </BuildingDetails>
   </Building>
 </HPXML>

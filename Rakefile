@@ -3,8 +3,6 @@ require 'fileutils'
 require 'rake'
 require 'rake/testtask'
 require 'ci/reporter/rake/minitest'
-require_relative "measures/HPXMLtoOpenStudio/resources/hpxml"
-
 require 'pp'
 require 'colored'
 require 'json'
@@ -89,6 +87,10 @@ task :update_measures do
 end
 
 def create_hpxmls
+  require_relative "measures/HPXMLtoOpenStudio/resources/hpxml"
+  require_relative "measures/HPXMLtoOpenStudio/resources/hotwater_appliances"
+  require_relative "measures/HPXMLtoOpenStudio/resources/lighting"
+
   puts "Generating HPXML files..."
 
   this_dir = File.dirname(__FILE__)
@@ -342,13 +344,13 @@ def create_hpxmls
       ducts_values = get_hpxml_file_ducts_values(hpxml_file, ducts_values)
       ventilation_fans_values = get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
       water_heating_systems_values = get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems_values)
-      hot_water_distribution_values = get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values)
+      hot_water_distribution_values = get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values, building_construction_values, foundations_values)
       water_fixtures_values = get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
       pv_systems_values = get_hpxml_file_pv_system_values(hpxml_file, pv_systems_values)
       clothes_washer_values = get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
       clothes_dryer_values = get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
       dishwasher_values = get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
-      refrigerator_values = get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values)
+      refrigerator_values = get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values, building_construction_values)
       cooking_range_values = get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
       oven_values = get_hpxml_file_oven_values(hpxml_file, oven_values)
       lighting_values = get_hpxml_file_lighting_values(hpxml_file, lighting_values)
@@ -451,7 +453,7 @@ def create_hpxmls
     HPXML.add_refrigerator(hpxml: hpxml, **refrigerator_values) unless refrigerator_values.empty?
     HPXML.add_cooking_range(hpxml: hpxml, **cooking_range_values) unless cooking_range_values.empty?
     HPXML.add_oven(hpxml: hpxml, **oven_values) unless oven_values.empty?
-    HPXML.add_lighting(hpxml: hpxml, **lighting_values) unless lighting_values.nil?
+    HPXML.add_lighting(hpxml: hpxml, **lighting_values) unless lighting_values.empty?
     ceiling_fans_values.each do |ceiling_fan_values|
       HPXML.add_ceiling_fan(hpxml: hpxml, **ceiling_fan_values)
     end
@@ -1972,7 +1974,7 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
   return water_heating_systems_values
 end
 
-def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values)
+def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values, building_construction_values, foundations_values)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
@@ -2029,6 +2031,22 @@ def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribut
     hot_water_distribution_values[:recirculation_branch_piping_length] = 10
     hot_water_distribution_values[:recirculation_pump_power] = 50
     hot_water_distribution_values[:pipe_r_value] = 3
+  end
+
+  has_uncond_bsmnt = false
+  foundations_values.each do |foundation_values|
+    next unless foundation_values[:foundation_type] == "UnconditionedBasement"
+
+    has_uncond_bsmnt = true
+  end
+  cfa = building_construction_values[:conditioned_floor_area]
+  ncfl = building_construction_values[:number_of_conditioned_floors]
+  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+
+  if hot_water_distribution_values[:system_type] == "Standard" and hot_water_distribution_values[:standard_piping_length].nil?
+    hot_water_distribution_values[:standard_piping_length] = piping_length.round(2)
+  elsif hot_water_distribution_values[:system_type] == "Recirculation" and hot_water_distribution_values[:recirculation_piping_length].nil?
+    hot_water_distribution_values[:recirculation_piping_length] = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length).round(2)
   end
   return hot_water_distribution_values
 end
@@ -2094,7 +2112,13 @@ def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
   else
     # Standard
     clothes_washer_values = { :id => "ClothesWasher",
-                              :location => "living space" }
+                              :location => "living space",
+                              :modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_mef(),
+                              :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
+                              :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
+                              :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
+                              :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
+                              :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap() }
   end
   return clothes_washer_values
 end
@@ -2122,7 +2146,9 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
     # Standard gas
     clothes_dryer_values = { :id => "ClothesDryer",
                              :location => "living space",
-                             :fuel_type => "natural gas" }
+                             :fuel_type => "natural gas",
+                             :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
+                             :energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_ef(Constants.FuelTypeGas) }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2135,7 +2161,9 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
     # Standard electric
     clothes_dryer_values = { :id => "ClothesDryer",
                              :location => "living space",
-                             :fuel_type => "electricity" }
+                             :fuel_type => "electricity",
+                             :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
+                             :energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_ef(Constants.FuelTypeElectric) }
   elsif ['NASEO_Technical_Exercises/NASEO-09.xml',
          'NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
     clothes_dryer_values = { :id => "ClothesDryer",
@@ -2162,7 +2190,6 @@ def get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
          'NASEO_Technical_Exercises/NASEO-10b.xml'].include? hpxml_file
     # EF 0.5
     dishwasher_values = { :id => "Dishwasher",
-
                           :place_setting_capacity => 12 }
     if hpxml_file == 'NASEO_Technical_Exercises/NASEO-10.xml'
       dishwasher_values[:energy_factor] = 0.5
@@ -2171,12 +2198,14 @@ def get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
     end
   else
     # Standard
-    dishwasher_values = { :id => "Dishwasher" }
+    dishwasher_values = { :id => "Dishwasher",
+                          :place_setting_capacity => 12,
+                          :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef() }
   end
   return dishwasher_values
 end
 
-def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values)
+def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values, building_construction_values)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
@@ -2189,8 +2218,10 @@ def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values)
                             :rated_annual_kwh => 614 }
   else
     # Standard
+    rated_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(building_construction_values[:number_of_bedrooms])
     refrigerator_values = { :id => "Refrigerator",
-                            :location => "living space" }
+                            :location => "living space",
+                            :rated_annual_kwh => rated_annual_kwh }
   end
   return refrigerator_values
 end
@@ -2217,7 +2248,8 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
     cooking_range_values = { :id => "Range",
-                             :fuel_type => "natural gas" }
+                             :fuel_type => "natural gas",
+                             :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection() }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2229,7 +2261,8 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
     cooking_range_values = { :id => "Range",
-                             :fuel_type => "electricity" }
+                             :fuel_type => "electricity",
+                             :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection() }
   elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
     # Induction
     cooking_range_values = { :id => "Range",
@@ -2251,7 +2284,8 @@ def get_hpxml_file_oven_values(hpxml_file, oven_values)
                     :is_convection => true }
   else
     # Standard
-    oven_values = { :id => "Oven" }
+    oven_values = { :id => "Oven",
+                    :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_induction() }
   end
   return oven_values
 end
@@ -2261,7 +2295,7 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    lighting_values = nil
+    lighting_values = {}
   elsif ['NASEO_Technical_Exercises/NASEO-05.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file
@@ -2273,7 +2307,14 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
                         :fraction_tier_ii_exterior => 0.0,
                         :fraction_tier_ii_garage => 0.0 }
   else
-    lighting_values = {}
+    # ERI Reference
+    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
+    lighting_values = { :fraction_tier_i_interior => fFI_int,
+                        :fraction_tier_i_exterior => fFI_ext,
+                        :fraction_tier_i_garage => fFI_grg,
+                        :fraction_tier_ii_interior => fFII_int,
+                        :fraction_tier_ii_exterior => fFII_ext,
+                        :fraction_tier_ii_garage => fFII_grg }
   end
   return lighting_values
 end
@@ -2323,7 +2364,7 @@ def copy_sample_files
   FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml*"))
   FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/*.xml*"), "workflow/sample_files")
   FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml*"), "workflow/sample_files/invalid_files")
-  
+
   # Remove files we're not interested in
   exclude_list = ['invalid_files/invalid-missing-surfaces.xml',
                   'invalid_files/invalid-net-area-negative-roof.xml',
@@ -2334,27 +2375,14 @@ def copy_sample_files
                   'invalid_files/invalid-unattached-skylight.xml',
                   'invalid_files/invalid-unattached-window.xml',
                   'valid-appliances-none.xml',
-                  'valid-dhw-recirc-timer-reference.xml',
-                  'valid-dhw-standard-reference.xml',
-                  'valid-enclosure-doors-reference.xml',
                   'valid-enclosure-no-natural-ventilation.xml',
-                  'valid-enclosure-walltype-woodstud-reference.xml',
                   'valid-enclosure-windows-interior-shading.xml',
-                  'valid-foundation-conditioned-basement-reference.xml',
-                  'valid-foundation-pier-beam-reference.xml',
-                  'valid-foundation-slab-reference.xml',
-                  'valid-foundation-unconditioned-basement-reference.xml',
-                  'valid-foundation-unvented-crawlspace-reference.xml',
-                  'valid-foundation-vented-crawlspace-reference.xml',
                   'valid-hvac-boiler-gas-only-no-eae.xml',
                   'valid-hvac-furnace-gas-only-no-eae.xml',
                   'valid-hvac-ideal-air.xml',
                   'valid-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'valid-hvac-setpoints.xml',
                   'valid-infiltration-ach-natural.xml',
-                  'valid-misc-appliances-in-basement.xml',
-                  'valid-misc-ceiling-fans-reference.xml',
-                  'valid-misc-lighting-default.xml',
                   'valid-misc-lighting-none.xml',
                   'valid-misc-loads-detailed.xml',
                   'valid-misc-number-of-occupants.xml']

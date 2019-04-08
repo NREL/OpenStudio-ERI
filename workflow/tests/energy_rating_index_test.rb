@@ -118,8 +118,6 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Standard_140")
     all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next unless xml.include? "322"
-
       _test_schema_validation(this_dir, xml)
       sql_path, sim_time = run_straight_sim(xml, this_dir)
       htg_load, clg_load = _get_simulation_load_results(sql_path)
