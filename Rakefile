@@ -2044,9 +2044,9 @@ def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribut
   piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
 
   if hot_water_distribution_values[:system_type] == "Standard" and hot_water_distribution_values[:standard_piping_length].nil?
-    hot_water_distribution_values[:standard_piping_length] = piping_length
+    hot_water_distribution_values[:standard_piping_length] = piping_length.round(2)
   elsif hot_water_distribution_values[:system_type] == "Recirculation" and hot_water_distribution_values[:recirculation_piping_length].nil?
-    hot_water_distribution_values[:recirculation_piping_length] = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length)
+    hot_water_distribution_values[:recirculation_piping_length] = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length).round(2)
   end
   return hot_water_distribution_values
 end
