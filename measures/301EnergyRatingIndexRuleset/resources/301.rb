@@ -1223,16 +1223,6 @@ class EnergyRatingIndex301Ruleset
     hw_dist = water_heating.elements["HotWaterDistribution"]
     hw_dist_values = HPXML.get_hot_water_distribution_values(hot_water_distribution: hw_dist)
 
-    has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
-    std_pipe_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
-    recirc_pipe_length = HotWaterAndAppliances.get_default_recirc_loop_length(std_pipe_length)
-
-    if hw_dist_values[:system_type] == "Standard" and hw_dist_values[:standard_piping_length].nil?
-      hw_dist_values[:standard_piping_length] = std_pipe_length
-    elsif hw_dist_values[:system_type] == "Recirculation" and hw_dist_values[:recirculation_piping_length].nil?
-      hw_dist_values[:recirculation_piping_length] = recirc_pipe_length
-    end
-
     # New hot water distribution
     HPXML.add_hot_water_distribution(hpxml: hpxml, **hw_dist_values)
 

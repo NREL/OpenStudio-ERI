@@ -296,6 +296,7 @@
             <SystemType>
               <Recirculation>
                 <ControlType>manual demand control</ControlType>
+                <RecirculationPipingLoopLength>156.92036196746426</RecirculationPipingLoopLength>
                 <BranchPipingLoopLength>10.0</BranchPipingLoopLength>
                 <PumpPower>50.0</PumpPower>
               </Recirculation>

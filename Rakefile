@@ -344,7 +344,7 @@ def create_hpxmls
       ducts_values = get_hpxml_file_ducts_values(hpxml_file, ducts_values)
       ventilation_fans_values = get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
       water_heating_systems_values = get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems_values)
-      hot_water_distribution_values = get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values)
+      hot_water_distribution_values = get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values, building_construction_values, foundations_values)
       water_fixtures_values = get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
       pv_systems_values = get_hpxml_file_pv_system_values(hpxml_file, pv_systems_values)
       clothes_washer_values = get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
@@ -1974,7 +1974,7 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
   return water_heating_systems_values
 end
 
-def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values)
+def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribution_values, building_construction_values, foundations_values)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
@@ -2031,6 +2031,22 @@ def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribut
     hot_water_distribution_values[:recirculation_branch_piping_length] = 10
     hot_water_distribution_values[:recirculation_pump_power] = 50
     hot_water_distribution_values[:pipe_r_value] = 3
+  end
+
+  has_uncond_bsmnt = false
+  foundations_values.each do |foundation_values|
+    next unless foundation_values[:foundation_type] == "UnconditionedBasement"
+
+    has_uncond_bsmnt = true
+  end
+  cfa = building_construction_values[:conditioned_floor_area]
+  ncfl = building_construction_values[:number_of_conditioned_floors]
+  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+
+  if hot_water_distribution_values[:system_type] == "Standard" and hot_water_distribution_values[:standard_piping_length].nil?
+    hot_water_distribution_values[:standard_piping_length] = piping_length
+  elsif hot_water_distribution_values[:system_type] == "Recirculation" and hot_water_distribution_values[:recirculation_piping_length].nil?
+    hot_water_distribution_values[:recirculation_piping_length] = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length)
   end
   return hot_water_distribution_values
 end
@@ -2359,8 +2375,6 @@ def copy_sample_files
                   'invalid_files/invalid-unattached-skylight.xml',
                   'invalid_files/invalid-unattached-window.xml',
                   'valid-appliances-none.xml',
-                  'valid-dhw-recirc-timer-reference.xml',
-                  'valid-dhw-standard-reference.xml',
                   'valid-enclosure-doors-reference.xml',
                   'valid-enclosure-no-natural-ventilation.xml',
                   'valid-enclosure-walltype-woodstud-reference.xml',
