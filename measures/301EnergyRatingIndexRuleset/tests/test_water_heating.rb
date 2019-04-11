@@ -64,19 +64,19 @@ class WaterHeatingTest < MiniTest::Test
     end
   end
 
-  def test_water_heating_location_attic
-    hpxml_name = "valid-dhw-location-attic.xml"
+  def test_water_heating_location_basement
+    hpxml_name = "valid-foundation-unconditioned-basement.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "attic - unvented", 40, 0.9172])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 126.6, nil, nil, nil, nil)
+    _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "basement - unconditioned", 40, 0.9172])
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 102.7, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "attic - unvented", 40, 0.95])
+    _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "basement - unconditioned", 40, 0.95])
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
