@@ -64,7 +64,7 @@ def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
   update_args_hash(measures, measure_subdir, args)
 
   # Apply measures
-  success = apply_measures(measures_dir, measures, runner, model, true)
+  success = apply_measures(measures_dir, measures, runner, model)
 
   # Report warnings/errors
   File.open(File.join(designdir, 'run.log'), 'w') do |f|
