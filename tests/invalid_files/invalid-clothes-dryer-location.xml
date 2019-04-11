@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-03-27T16:56:27-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-04-09T14:31:14-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -27,11 +27,11 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
-          <NumberofConditionedFloors>2</NumberofConditionedFloors>
+          <NumberofConditionedFloors>3</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
-          <ConditionedFloorArea>3500.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>33787.5</ConditionedBuildingVolume>
+          <ConditionedFloorArea>7000.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>67575.0</ConditionedBuildingVolume>
           <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
       </BuildingSummary>
@@ -59,7 +59,7 @@
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>33787.5</InfiltrationVolume>
+            <InfiltrationVolume>67575.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -147,16 +147,49 @@
           <Foundation>
             <SystemIdentifier id='Foundation'/>
             <FoundationType>
-              <Ambient/>
+              <Basement>
+                <Conditioned>true</Conditioned>
+              </Basement>
             </FoundationType>
-            <FrameFloor>
-              <SystemIdentifier id='FoundationFrameFloor'/>
-              <AdjacentTo>living space</AdjacentTo>
-              <Area>3500.0</Area>
+            <FoundationWall>
+              <SystemIdentifier id='FoundationWall'/>
+              <Height>9.0</Height>
+              <Area>2160.0</Area>
+              <Thickness>8.0</Thickness>
+              <DepthBelowGrade>7.0</DepthBelowGrade>
+              <AdjacentTo>ground</AdjacentTo>
               <Insulation>
-                <SystemIdentifier id='FoundationFrameFloorIns'/>
+                <SystemIdentifier id='FoundationWallIns'/>
+                <AssemblyEffectiveRValue>10.69</AssemblyEffectiveRValue>
               </Insulation>
-            </FrameFloor>
+            </FoundationWall>
+            <Slab>
+              <SystemIdentifier id='FoundationSlab'/>
+              <Area>3500.0</Area>
+              <Thickness>4.0</Thickness>
+              <ExposedPerimeter>240.0</ExposedPerimeter>
+              <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
+              <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+              <DepthBelowGrade>7.0</DepthBelowGrade>
+              <PerimeterInsulation>
+                <SystemIdentifier id='FoundationSlabPerimeterIns'/>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0.0</NominalRValue>
+                </Layer>
+              </PerimeterInsulation>
+              <UnderSlabInsulation>
+                <SystemIdentifier id='FoundationSlabUnderIns'/>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0.0</NominalRValue>
+                </Layer>
+              </UnderSlabInsulation>
+              <extension>
+                <CarpetFraction>0.0</CarpetFraction>
+                <CarpetRValue>0.0</CarpetRValue>
+              </extension>
+            </Slab>
           </Foundation>
         </Foundations>
         <RimJoists>
@@ -170,6 +203,18 @@
             <Insulation>
               <SystemIdentifier id='RimJoistIns'/>
               <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist2'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>180.0</Area>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='RimJoist2Ins'/>
+              <AssemblyEffectiveRValue>10.69</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
         </RimJoists>
@@ -351,7 +396,7 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <Location>living space</Location>
+          <Location>garage</Location>
           <FuelType>electricity</FuelType>
           <EnergyFactor>3.01</EnergyFactor>
           <ControlType>timer</ControlType>
