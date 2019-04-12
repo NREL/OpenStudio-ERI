@@ -395,7 +395,7 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
-          <Location>living space</Location>
+          <Location>basement - unconditioned</Location>
           <ModifiedEnergyFactor>1.2</ModifiedEnergyFactor>
           <RatedAnnualkWh>387.0</RatedAnnualkWh>
           <LabelElectricRate>0.127</LabelElectricRate>
@@ -405,7 +405,7 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <Location>living space</Location>
+          <Location>basement - unconditioned</Location>
           <FuelType>electricity</FuelType>
           <EnergyFactor>3.01</EnergyFactor>
           <ControlType>timer</ControlType>
@@ -417,7 +417,7 @@
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
-          <Location>living space</Location>
+          <Location>basement - unconditioned</Location>
           <RatedAnnualkWh>609.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>

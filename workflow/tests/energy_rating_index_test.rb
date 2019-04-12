@@ -755,7 +755,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Apply measure
     measures_dir = File.join(this_dir, "../measures")
-    success = apply_measures(measures_dir, measures, runner, model, nil, nil, true)
+    success = apply_measures(measures_dir, measures, runner, model)
 
     # Report warnings/errors
     File.open(File.join(rundir, 'run.log'), 'w') do |f|

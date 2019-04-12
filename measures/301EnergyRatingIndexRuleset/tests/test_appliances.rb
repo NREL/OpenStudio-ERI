@@ -167,7 +167,7 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_in_basement
-    hpxml_name = "valid-appliances-in-basement.xml"
+    hpxml_name = "valid-foundation-unconditioned-basement.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -179,10 +179,10 @@ class ApplianceTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_washer(hpxml_doc, 1.2, nil, 387, 0.127, 1.003, 24, 3.5, "basement - conditioned")
-    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "basement - conditioned")
+    _check_clothes_washer(hpxml_doc, 1.2, nil, 387, 0.127, 1.003, 24, 3.5, "basement - unconditioned")
+    _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "basement - unconditioned")
     _check_dishwasher(hpxml_doc, nil, 100, 12)
-    _check_refrigerator(hpxml_doc, 609.0, "basement - conditioned")
+    _check_refrigerator(hpxml_doc, 609.0, "basement - unconditioned")
     _check_cooking_range(hpxml_doc, "electricity", true, true)
 
     # IAD, IAD Reference
