@@ -324,7 +324,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast'/>
-            <Area>90.0</Area>
+            <Area>45.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
@@ -340,7 +340,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest'/>
-            <Area>90.0</Area>
+            <Area>45.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
