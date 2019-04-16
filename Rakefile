@@ -1141,7 +1141,7 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     windows_values = []
-    windows = { "WindowNorth" => [0, 90], "WindowEast" => [90, 90], "WindowSouth" => [180, 90], "WindowWest" => [270, 90] }
+    windows = { "WindowNorth" => [0, 90], "WindowEast" => [90, 45], "WindowSouth" => [180, 90], "WindowWest" => [270, 45] }
     windows.each do |window_name, window_values|
       azimuth, area = window_values
       windows_values << { :id => window_name,
