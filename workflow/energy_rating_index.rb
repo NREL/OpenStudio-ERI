@@ -502,7 +502,17 @@ def get_eec_dhws(hpxml_doc)
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
     wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
-    value_adj = Waterheater.get_ef_multiplier(to_beopt_wh_type(wh_type))
+    if wh_type == "instantaneous water heater"
+      cycling_derate = XMLHelper.get_value(dhw_system, "TanklessCyclingDerate")
+      if cycling_derate.nil?
+        cycling_derate = Waterheater.get_tankless_cycling_derate()
+      else
+        cycling_derate = Float(cycling_derate)
+      end
+      value_adj = 1.0 - cycling_derate
+    else
+      value_adj = 1.0
+    end
     if not value.nil? and not value_adj.nil?
       eec_dhws[sys_id] = get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end
