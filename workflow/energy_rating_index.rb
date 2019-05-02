@@ -27,31 +27,31 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, design, resultsdir, hpxml, debug, skip_validation, run)
+def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
-  designdir = get_designdir(basedir, design)
+  designdir = get_designdir(output_dir, design)
   rm_path(designdir)
 
   if run
-    output_hpxml_path = run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
+    output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
   end
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, design, resultsdir, hpxml, debug, skip_validation, run)
+def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
-  designdir = get_designdir(basedir, design)
+  designdir = get_designdir(output_dir, design)
   rm_path(designdir)
 
   if run
     cli_path = OpenStudio.getOpenStudioCLI
-    system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation}")
+    system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation}")
   end
 
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
@@ -970,6 +970,10 @@ OptionParser.new do |opts|
     options[:hpxml] = t
   end
 
+  opts.on('-o', '--output-dir <DIR>', 'Output directory') do |t|
+    options[:output_dir] = t
+  end
+
   opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
     options[:epws] = t
   end
@@ -1011,8 +1015,17 @@ if OpenStudio.openStudioVersion != os_version
   fail "OpenStudio version #{os_version} is required."
 end
 
+if options[:output_dir].nil?
+  options[:output_dir] = basedir # default
+end
+options[:output_dir] = File.expand_path(options[:output_dir])
+
+unless Dir.exists?(options[:output_dir])
+  FileUtils.mkdir_p(options[:output_dir])
+end
+
 # Create results dir
-resultsdir = File.join(basedir, "results")
+resultsdir = File.join(options[:output_dir], "results")
 rm_path(resultsdir)
 Dir.mkdir(resultsdir)
 
@@ -1049,7 +1062,7 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   end
 
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_direct(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
     next unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
@@ -1076,7 +1089,7 @@ else # e.g., Windows
   # multiple processors.
 
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_spawn(basedir, design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
+    output_hpxml_path, designdir = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
     next unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)

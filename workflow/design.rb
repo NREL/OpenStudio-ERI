@@ -3,18 +3,18 @@
 
 require_relative "../measures/HPXMLtoOpenStudio/resources/meta_measure"
 
-def get_designdir(basedir, design)
-  return File.join(basedir, design.gsub(' ', ''))
+def get_designdir(output_dir, design)
+  return File.join(output_dir, design.gsub(' ', ''))
 end
 
 def get_output_hpxml_path(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
+def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design}] Creating input...\n"
-  output_hpxml_path, designdir = create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
+  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation)
 
   if not designdir.nil?
     print "[#{design}] Running simulation...\n"
@@ -24,8 +24,8 @@ def run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
   return output_hpxml_path
 end
 
-def create_idf(design, basedir, resultsdir, hpxml, debug, skip_validation)
-  designdir = get_designdir(basedir, design)
+def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation)
+  designdir = get_designdir(output_dir, design)
   Dir.mkdir(designdir)
 
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
@@ -101,12 +101,13 @@ def run_energyplus(design, designdir)
   system(command, :err => File::NULL)
 end
 
-if ARGV.size == 6
+if ARGV.size == 7
   basedir = ARGV[0]
-  design = ARGV[1]
-  resultsdir = ARGV[2]
-  hpxml = ARGV[3]
-  debug = (ARGV[4].downcase.to_s == "true")
-  skip_validation = (ARGV[5].downcase.to_s == "true")
-  run_design(basedir, design, resultsdir, hpxml, debug, skip_validation)
+  output_dir = ARGV[1]
+  design = ARGV[2]
+  resultsdir = ARGV[3]
+  hpxml = ARGV[4]
+  debug = (ARGV[5].downcase.to_s == "true")
+  skip_validation = (ARGV[6].downcase.to_s == "true")
+  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
 end
