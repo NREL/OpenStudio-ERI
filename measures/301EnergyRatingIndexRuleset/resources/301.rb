@@ -1486,9 +1486,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.has_fuel_access(orig_details)
     orig_details.elements.each("BuildingSummary/Site/FuelTypesAvailable/Fuel") do |fuel|
-      fuels = ["natural gas", "fuel oil", "propane", "kerosene", "diesel",
-               "coal", "coke", "wood", "wood pellets"]
-      if fuels.include?(fuel.text)
+      if fuel.text != "electricity"
         return true
       end
     end
