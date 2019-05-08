@@ -1630,7 +1630,6 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
   elsif ['NASEO_Technical_Exercises/NASEO-19.xml'].include? hpxml_file
     # Ductless mini-split heat pump system with SEER 23 and HSPF 10.5
     heat_pumps_values = [{ :id => "HeatPump",
-                           :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "mini-split",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => 60000,

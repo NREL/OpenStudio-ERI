@@ -282,7 +282,6 @@
           <HVACPlant>
             <HeatPump>
               <SystemIdentifier id='HeatPump'/>
-              <DistributionSystem idref='HVACDistribution'/>
               <HeatPumpType>mini-split</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <CoolingCapacity>60000.0</CoolingCapacity>
