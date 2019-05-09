@@ -7,7 +7,7 @@ require 'fileutils'
 
 class MiscTest < MiniTest::Test
   def test_misc
-    hpxml_name = "valid.xml"
+    hpxml_name = "base.xml"
 
     # Reference Home, Rated Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,

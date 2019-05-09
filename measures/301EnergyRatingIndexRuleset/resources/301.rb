@@ -709,6 +709,8 @@ class EnergyRatingIndex301Ruleset
       ag_wall_area += rim_joist_values[:area]
     end
 
+    # TODO: Add conditioned attics
+
     orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned='true']/FoundationWall") do |fwall|
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
       next if not is_external_thermal_boundary("basement - conditioned", fwall_values[:adjacent_to])
