@@ -7,72 +7,76 @@ require 'fileutils'
 
 class EnclosureTest < MiniTest::Test
   def test_enclosure
-    hpxml_name = "valid.xml"
+    hpxml_name = "base.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_infiltration(hpxml_doc, 3.0)
     _check_attics(hpxml_doc)
     _check_foundations(hpxml_doc)
+    _check_garages(hpxml_doc)
     _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, [240, 180, 0.33, 0.45],
-                   [120, 0, 0.33, 0.45],
-                   [120, 90, 0.33, 0.45],
-                   [120, 270, 0.33, 0.45])
+    _check_windows(hpxml_doc, { 0 => [120, 0.33, 0.45],
+                                180 => [240, 0.33, 0.45],
+                                90 => [120, 0.33, 0.45],
+                                270 => [120, 0.33, 0.45] })
     _check_overhangs(hpxml_doc)
     _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, [80, 270, 4.4])
+    _check_doors(hpxml_doc, { 270 => [80, 4.4] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_infiltration(hpxml_doc, 5.87)
+    _check_infiltration(hpxml_doc, 7.09)
     _check_attics(hpxml_doc)
     _check_foundations(hpxml_doc)
+    _check_garages(hpxml_doc)
     _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, [266.68, 0, 0.35, 0.40],
-                   [266.68, 180, 0.35, 0.40],
-                   [266.68, 90, 0.35, 0.40],
-                   [266.68, 270, 0.35, 0.40])
+    _check_windows(hpxml_doc, { 0 => [90, 0.35, 0.40],
+                                180 => [90, 0.35, 0.40],
+                                90 => [90, 0.35, 0.40],
+                                270 => [90, 0.35, 0.40] })
     _check_overhangs(hpxml_doc)
     _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, [40, 0, 2.86])
+    _check_doors(hpxml_doc, { 0 => [40, 2.86] })
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_infiltration(hpxml_doc, 3.0)
     _check_attics(hpxml_doc)
     _check_foundations(hpxml_doc)
+    _check_garages(hpxml_doc)
     _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, [108, 0, 0.33, 0.45],
-                   [108, 180, 0.33, 0.45],
-                   [108, 90, 0.33, 0.45],
-                   [108, 270, 0.33, 0.45])
+    _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                180 => [108, 0.33, 0.45],
+                                90 => [108, 0.33, 0.45],
+                                270 => [108, 0.33, 0.45] })
     _check_overhangs(hpxml_doc)
     _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, [80, 270, 4.4])
+    _check_doors(hpxml_doc, { 270 => [80, 4.4] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
     _check_attics(hpxml_doc)
     _check_foundations(hpxml_doc)
+    _check_garages(hpxml_doc)
     _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, [108, 0, 0.35, 0.40],
-                   [108, 180, 0.35, 0.40],
-                   [108, 90, 0.35, 0.40],
-                   [108, 270, 0.35, 0.40])
+    _check_windows(hpxml_doc, { 0 => [108, 0.35, 0.40],
+                                180 => [108, 0.35, 0.40],
+                                90 => [108, 0.35, 0.40],
+                                270 => [108, 0.35, 0.40] })
     _check_overhangs(hpxml_doc)
     _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, [40, 0, 2.86])
+    _check_doors(hpxml_doc, { 0 => [40, 2.86] })
   end
 
   def test_enclosure_skylights
-    hpxml_name = "valid-enclosure-skylights.xml"
+    hpxml_name = "base-enclosure-skylights.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_skylights(hpxml_doc, [15, 0, 0.33, 0.45],
-                     [15, 180, 0.35, 0.47])
+    _check_skylights(hpxml_doc, { 0 => [15, 0.33, 0.45],
+                                  180 => [15, 0.35, 0.47] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -80,8 +84,8 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_skylights(hpxml_doc, [15, 0, 0.33, 0.45],
-                     [15, 180, 0.35, 0.47])
+    _check_skylights(hpxml_doc, { 0 => [15, 0.33, 0.45],
+                                  180 => [15, 0.35, 0.47] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -89,7 +93,7 @@ class EnclosureTest < MiniTest::Test
   end
 
   def test_enclosure_overhangs
-    hpxml_name = "valid-enclosure-overhangs.xml"
+    hpxml_name = "base-enclosure-overhangs.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -138,6 +142,10 @@ class EnclosureTest < MiniTest::Test
     # TODO
   end
 
+  def test_enclosure_garage
+    # TODO
+  end
+
   def _test_measure(hpxml_name, calc_type)
     root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
@@ -179,7 +187,7 @@ class EnclosureTest < MiniTest::Test
     assert(File.exists? args_hash['hpxml_output_path'])
 
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
-    File.delete(args_hash['hpxml_output_path'])
+    # File.delete(args_hash['hpxml_output_path'])
 
     return hpxml_doc
   end
@@ -196,21 +204,42 @@ class EnclosureTest < MiniTest::Test
     # TODO
   end
 
+  def _check_garages(hpxml_doc)
+    # TODO
+  end
+
   def _check_walls_and_rim_joists(hpxml_doc)
     # TODO
   end
 
-  def _check_windows(hpxml_doc, *windows)
-    num_windows = 0
+  def _check_windows(hpxml_doc, azimuth_values = {})
+    azimuth_area_values = {}
+    azimuth_ufactor_values = {}
+    azimuth_shgc_values = {}
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Windows/Window") do |window|
-      area, azimuth, ufactor, shgc = windows[num_windows]
-      assert_in_epsilon(area, Float(window.elements["Area"].text), 0.01)
-      assert_equal(azimuth, Float(window.elements["Azimuth"].text))
-      assert_equal(ufactor, Float(window.elements["UFactor"].text))
-      assert_equal(shgc, Float(window.elements["SHGC"].text))
-      num_windows += 1
+      azimuth = Integer(window.elements["Azimuth"].text)
+
+      # Init if needed
+      azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?
+      azimuth_ufactor_values[azimuth] = [] if azimuth_ufactor_values[azimuth].nil?
+      azimuth_shgc_values[azimuth] = [] if azimuth_shgc_values[azimuth].nil?
+
+      # Update
+      azimuth_area_values[azimuth] << Float(window.elements["Area"].text)
+      azimuth_ufactor_values[azimuth] << Float(window.elements["UFactor"].text)
+      azimuth_shgc_values[azimuth] << Float(window.elements["SHGC"].text)
     end
-    assert_equal(windows.size, num_windows)
+
+    assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_ufactor_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_shgc_values.size)
+
+    azimuth_values.each do |azimuth, values|
+      area, ufactor, shgc = values
+      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_equal(ufactor, azimuth_ufactor_values[azimuth].inject(:+) / azimuth_ufactor_values[azimuth].size)
+      assert_equal(shgc, azimuth_shgc_values[azimuth].inject(:+) / azimuth_shgc_values[azimuth].size)
+    end
   end
 
   def _check_overhangs(hpxml_doc, *overhangs)
@@ -227,28 +256,58 @@ class EnclosureTest < MiniTest::Test
     assert_equal(overhangs.size, num_overhangs)
   end
 
-  def _check_skylights(hpxml_doc, *skylights)
-    num_skylights = 0
+  def _check_skylights(hpxml_doc, azimuth_values = {})
+    azimuth_area_values = {}
+    azimuth_ufactor_values = {}
+    azimuth_shgc_values = {}
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight") do |skylight|
-      area, azimuth, ufactor, shgc = skylights[num_skylights]
-      assert_in_epsilon(area, Float(skylight.elements["Area"].text), 0.01)
-      assert_equal(azimuth, Float(skylight.elements["Azimuth"].text))
-      assert_equal(ufactor, Float(skylight.elements["UFactor"].text))
-      assert_equal(shgc, Float(skylight.elements["SHGC"].text))
-      num_skylights += 1
+      azimuth = Integer(skylight.elements["Azimuth"].text)
+
+      # Init if needed
+      azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?
+      azimuth_ufactor_values[azimuth] = [] if azimuth_ufactor_values[azimuth].nil?
+      azimuth_shgc_values[azimuth] = [] if azimuth_shgc_values[azimuth].nil?
+
+      # Update
+      azimuth_area_values[azimuth] << Float(skylight.elements["Area"].text)
+      azimuth_ufactor_values[azimuth] << Float(skylight.elements["UFactor"].text)
+      azimuth_shgc_values[azimuth] << Float(skylight.elements["SHGC"].text)
     end
-    assert_equal(skylights.size, num_skylights)
+
+    assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_ufactor_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_shgc_values.size)
+
+    azimuth_values.each do |azimuth, values|
+      area, ufactor, shgc = values
+      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_equal(ufactor, azimuth_ufactor_values[azimuth].inject(:+) / azimuth_ufactor_values[azimuth].size)
+      assert_equal(shgc, azimuth_shgc_values[azimuth].inject(:+) / azimuth_shgc_values[azimuth].size)
+    end
   end
 
-  def _check_doors(hpxml_doc, *doors)
-    num_doors = 0
+  def _check_doors(hpxml_doc, azimuth_values = {})
+    azimuth_area_values = {}
+    azimuth_rvalue_values = {}
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Doors/Door") do |door|
-      area, azimuth, rvalue = doors[num_doors]
-      assert_in_epsilon(area, Float(door.elements["Area"].text), 0.01)
-      assert_equal(azimuth, Float(door.elements["Azimuth"].text))
-      assert_in_epsilon(rvalue, Float(door.elements["RValue"].text), 0.01)
-      num_doors += 1
+      azimuth = Integer(door.elements["Azimuth"].text)
+
+      # Init if needed
+      azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?
+      azimuth_rvalue_values[azimuth] = [] if azimuth_rvalue_values[azimuth].nil?
+
+      # Update
+      azimuth_area_values[azimuth] << Float(door.elements["Area"].text)
+      azimuth_rvalue_values[azimuth] << Float(door.elements["RValue"].text)
     end
-    assert_equal(doors.size, num_doors)
+
+    assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_rvalue_values.size)
+
+    azimuth_values.each do |azimuth, values|
+      area, rvalue = values
+      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(rvalue, azimuth_rvalue_values[azimuth].inject(:+) / azimuth_rvalue_values[azimuth].size, 0.01)
+    end
   end
 end

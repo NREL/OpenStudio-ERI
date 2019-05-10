@@ -74,6 +74,10 @@ end
 
 desc 'update all measures'
 task :update_measures do
+  # Prevent NREL error regarding U: drive when not VPNed in
+  ENV['HOME'] = 'C:' if !ENV['HOME'].nil? and ENV['HOME'].start_with? 'U:'
+  ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? and ENV['HOMEDRIVE'].start_with? 'U:'
+
   # Apply rubocop
   command = "rubocop --auto-correct --format simple --only Layout"
   puts "Applying rubocop style to measures..."
@@ -2388,31 +2392,31 @@ def copy_sample_files
   FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml*"), "workflow/sample_files/invalid_files")
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/invalid-clothes-washer-location.xml',
-                  'invalid_files/invalid-clothes-dryer-location.xml',
-                  'invalid_files/invalid-duct-location.xml.skip',
-                  'invalid_files/invalid-refrigerator-location.xml',
-                  'invalid_files/invalid-water-heater-location.xml',
-                  'invalid_files/invalid-missing-surfaces.xml',
-                  'invalid_files/invalid-net-area-negative-roof.xml',
-                  'invalid_files/invalid-net-area-negative-wall.xml',
-                  'invalid_files/invalid-unattached-cfis.xml.skip',
-                  'invalid_files/invalid-unattached-door.xml',
-                  'invalid_files/invalid-unattached-hvac.xml.skip',
-                  'invalid_files/invalid-unattached-skylight.xml',
-                  'invalid_files/invalid-unattached-window.xml',
-                  'valid-appliances-none.xml',
-                  'valid-enclosure-no-natural-ventilation.xml',
-                  'valid-enclosure-windows-interior-shading.xml',
-                  'valid-hvac-boiler-gas-only-no-eae.xml',
-                  'valid-hvac-furnace-gas-only-no-eae.xml',
-                  'valid-hvac-ideal-air.xml',
-                  'valid-hvac-mini-split-heat-pump-ductless-no-backup.xml',
-                  'valid-hvac-setpoints.xml',
-                  'valid-infiltration-ach-natural.xml',
-                  'valid-misc-lighting-none.xml',
-                  'valid-misc-loads-detailed.xml',
-                  'valid-misc-number-of-occupants.xml']
+  exclude_list = ['invalid_files/clothes-washer-location.xml',
+                  'invalid_files/clothes-dryer-location.xml',
+                  'invalid_files/duct-location.xml.skip',
+                  'invalid_files/refrigerator-location.xml',
+                  'invalid_files/water-heater-location.xml',
+                  'invalid_files/missing-surfaces.xml',
+                  'invalid_files/net-area-negative-roof.xml',
+                  'invalid_files/net-area-negative-wall.xml',
+                  'invalid_files/unattached-cfis.xml.skip',
+                  'invalid_files/unattached-door.xml',
+                  'invalid_files/unattached-hvac.xml.skip',
+                  'invalid_files/unattached-skylight.xml',
+                  'invalid_files/unattached-window.xml',
+                  'base-appliances-none.xml',
+                  'base-enclosure-no-natural-ventilation.xml',
+                  'base-enclosure-windows-interior-shading.xml',
+                  'base-hvac-boiler-gas-only-no-eae.xml',
+                  'base-hvac-furnace-gas-only-no-eae.xml',
+                  'base-hvac-ideal-air.xml',
+                  'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
+                  'base-hvac-setpoints.xml',
+                  'base-infiltration-ach-natural.xml',
+                  'base-misc-lighting-none.xml',
+                  'base-misc-loads-detailed.xml',
+                  'base-misc-number-of-occupants.xml']
   exclude_list.each do |exclude_file|
     FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
   end

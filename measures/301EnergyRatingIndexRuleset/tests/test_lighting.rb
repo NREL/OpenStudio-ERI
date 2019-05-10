@@ -7,7 +7,7 @@ require 'fileutils'
 
 class LightingTest < MiniTest::Test
   def test_lighting
-    hpxml_name = "valid.xml"
+    hpxml_name = "base.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -27,7 +27,7 @@ class LightingTest < MiniTest::Test
   end
 
   def test_lighting_pre_addendum_g
-    hpxml_name = "valid-addenda-exclude-g.xml"
+    hpxml_name = "base-addenda-exclude-g.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -47,19 +47,19 @@ class LightingTest < MiniTest::Test
   end
 
   def test_ceiling_fans
-    hpxml_name = "valid-misc-ceiling-fans.xml"
+    hpxml_name = "base-misc-ceiling-fans.xml"
 
     medium_cfm = 3000.0
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 5)
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     avg_fan_w = 30.0
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 5)
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)

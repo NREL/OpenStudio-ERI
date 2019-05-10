@@ -24,11 +24,11 @@ class EnergyRatingIndexTest < Minitest::Test
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
 
     # Run simulations
-    files = "valid*.xml"
+    files = "base*.xml"
     all_results = {}
     xmldir = "#{this_dir}/sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      next if File.basename(xml) == "valid-hvac-multiple.xml" # TODO: Remove when HVAC sizing has been updated
+      next if File.basename(xml) == "base-hvac-multiple.xml" # TODO: Remove when HVAC sizing has been updated
 
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
@@ -53,21 +53,21 @@ class EnergyRatingIndexTest < Minitest::Test
     # Cross-simulation tests
 
     # Verify that REUL Hot Water is identical across water heater types
-    base_results = all_results["valid.xml"]
-    compare_xmls = ["valid-dhw-tank-gas.xml",
-                    "valid-dhw-tank-oil.xml",
-                    "valid-dhw-tank-propane.xml",
-                    "valid-dhw-tank-heat-pump.xml",
-                    "valid-dhw-tankless-electric.xml",
-                    "valid-dhw-tankless-gas.xml",
-                    "valid-dhw-multiple.xml"]
+    base_results = all_results["base.xml"]
+    compare_xmls = ["base-dhw-tank-gas.xml",
+                    "base-dhw-tank-oil.xml",
+                    "base-dhw-tank-propane.xml",
+                    "base-dhw-tank-heat-pump.xml",
+                    "base-dhw-tankless-electric.xml",
+                    "base-dhw-tankless-gas.xml",
+                    "base-dhw-multiple.xml"]
     if not base_results.nil?
       base_reul_dhw = base_results["REUL Hot Water (MBtu)"]
       compare_xmls.each do |compare_xml|
         compare_results = all_results[compare_xml]
         next if compare_results.nil?
 
-        if compare_xml == "valid-dhw-multiple.xml"
+        if compare_xml == "base-dhw-multiple.xml"
           compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"].split(",").map(&:to_f).inject(0, :+) # sum values
         else
           compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"]
@@ -80,15 +80,15 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_invalid_xmls
-    expected_error_msgs = { 'invalid-bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
-                            'invalid-missing-elements.xml' => ["Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors",
-                                                               "Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"],
-                            'invalid-hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.",
-                                                                    "Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1."] }
+    expected_error_msgs = { 'bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
+                            'missing-elements.xml' => ["Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors",
+                                                       "Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"],
+                            'hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.",
+                                                            "Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1."] }
 
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{this_dir}/sample_files/invalid_files"
-    Dir["#{xmldir}/invalid*.xml"].sort.each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       run_eri_and_check(xml, this_dir, true, expected_error_msgs[File.basename(xml)])
     end
   end
