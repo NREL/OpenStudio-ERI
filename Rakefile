@@ -393,13 +393,13 @@ def create_hpxmls
       foundations_values.each_with_index do |foundation_values, i|
         foundation = HPXML.add_foundation(hpxml: hpxml, **foundation_values)
         foundations_framefloors_values[i].each do |foundation_framefloor_values|
-          HPXML.add_frame_floor(foundation: foundation, **foundation_framefloor_values)
+          HPXML.add_foundation_framefloor(foundation: foundation, **foundation_framefloor_values)
         end
         foundations_walls_values[i].each do |foundation_wall_values|
           HPXML.add_foundation_wall(foundation: foundation, **foundation_wall_values)
         end
         foundations_slabs_values[i].each do |foundation_slab_values|
-          HPXML.add_slab(foundation: foundation, **foundation_slab_values)
+          HPXML.add_foundation_slab(foundation: foundation, **foundation_slab_values)
         end
       end
       rim_joists_values.each do |rim_joist_values|
@@ -560,8 +560,7 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
                                      :number_of_conditioned_floors_above_grade => 1,
                                      :number_of_bedrooms => 3,
                                      :conditioned_floor_area => 1539,
-                                     :conditioned_building_volume => 12312,
-                                     :garage_present => false }
+                                     :conditioned_building_volume => 12312 }
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml',
          'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
     # Conditioned basement
@@ -723,7 +722,6 @@ def get_hpxml_file_attics_roofs_values(hpxml_file, attics_roofs_values)
                                   :emittance => 0.9,
                                   :pitch => 4,
                                   :radiant_barrier => false,
-                                  :insulation_id => "#{roof_name}Ins",
                                   :insulation_assembly_r_value => 1.99 }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml',
@@ -751,7 +749,6 @@ def get_hpxml_file_attics_floors_values(hpxml_file, attics_floors_values)
     attics_floors_values = [[{ :id => "AtticFloor",
                                :adjacent_to => "living space",
                                :area => 1539,
-                               :insulation_id => "AtticFloorIns",
                                :insulation_assembly_r_value => 18.45 }]]
   elsif ['RESNET_Tests/4.1_Standard_140/L120AC.xml',
          'RESNET_Tests/4.1_Standard_140/L120AL.xml'].include? hpxml_file
@@ -786,7 +783,6 @@ def get_hpxml_file_attics_walls_values(hpxml_file, attics_walls_values)
                                   :azimuth => azimuth,
                                   :solar_absorptance => 0.6,
                                   :emittance => 0.9,
-                                  :insulation_id => "#{wall_name}Ins",
                                   :insulation_assembly_r_value => 2.15 }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml',
@@ -842,13 +838,13 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
     walls.each do |wall_name, wall_values|
       azimuth, area = wall_values
       foundations_walls_values[0] << { :id => wall_name,
-                                       :height => 7.25,
+                                       :height => 8,
                                        :area => area,
                                        :azimuth => azimuth,
                                        :thickness => 6,
-                                       :depth_below_grade => 6.583,
+                                       :depth_below_grade => 7.25,
                                        :adjacent_to => "ground",
-                                       :insulation_id => "#{wall_name}Ins",
+                                       :insulation_height => 7.25,
                                        :insulation_assembly_r_value => 1.165 }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
@@ -869,7 +865,7 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :thickness => 8,
                                        :depth_below_grade => 3,
                                        :adjacent_to => "ground",
-                                       :insulation_id => "#{wall_name}Ins",
+                                       :insulation_height => 4,
                                        :insulation_assembly_r_value => 8.165 }
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
@@ -885,7 +881,7 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :thickness => 6,
                                        :depth_below_grade => 0,
                                        :adjacent_to => "ground",
-                                       :insulation_id => "#{wall_name}Ins",
+                                       :insulation_height => 2,
                                        :insulation_assembly_r_value => 1.34 }
     end
   elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
@@ -900,7 +896,7 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :thickness => 8,
                                        :depth_below_grade => 3,
                                        :adjacent_to => "ground",
-                                       :insulation_id => "#{wall_name}Ins",
+                                       :insulation_height => 4,
                                        :insulation_assembly_r_value => 1.6 }
     end
   elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
@@ -916,7 +912,7 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :thickness => 8,
                                        :depth_below_grade => 7,
                                        :adjacent_to => "ground",
-                                       :insulation_id => "#{wall_name}Ins",
+                                       :insulation_height => 8,
                                        :insulation_assembly_r_value => 20.6 }
     end
   end
@@ -936,10 +932,9 @@ def get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values
                                    :exposed_perimeter => 168,
                                    :perimeter_insulation_depth => 0,
                                    :under_slab_insulation_width => 0,
+                                   :under_slab_insulation_spans_entire_slab => nil,
                                    :depth_below_grade => 0,
-                                   :perimeter_insulation_id => "FoundationSlabPerimeterIns",
                                    :perimeter_insulation_r_value => 0,
-                                   :under_slab_insulation_id => "FoundationSlabUnderIns",
                                    :under_slab_insulation_r_value => 0,
                                    :carpet_fraction => 1,
                                    :carpet_r_value => 2.08 }]]
@@ -955,10 +950,9 @@ def get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values
                                    :exposed_perimeter => 168,
                                    :perimeter_insulation_depth => 0,
                                    :under_slab_insulation_width => 0,
+                                   :under_slab_insulation_spans_entire_slab => nil,
                                    :depth_below_grade => 6.583,
-                                   :perimeter_insulation_id => "FoundationSlabPerimeterIns",
                                    :perimeter_insulation_r_value => 0,
-                                   :under_slab_insulation_id => "FoundationSlabUnderIns",
                                    :under_slab_insulation_r_value => 0,
                                    :carpet_fraction => 0,
                                    :carpet_r_value => 0 }]]
@@ -972,10 +966,9 @@ def get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values
                                    :exposed_perimeter => 168,
                                    :perimeter_insulation_depth => 0,
                                    :under_slab_insulation_width => 0,
+                                   :under_slab_insulation_spans_entire_slab => nil,
                                    :depth_below_grade => 3,
-                                   :perimeter_insulation_id => "FoundationSlabPerimeterIns",
                                    :perimeter_insulation_r_value => 0,
-                                   :under_slab_insulation_id => "FoundationSlabUnderIns",
                                    :under_slab_insulation_r_value => 0,
                                    :carpet_fraction => 0,
                                    :carpet_r_value => 2.5 }]]
@@ -988,10 +981,9 @@ def get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values
                                    :exposed_perimeter => 168,
                                    :perimeter_insulation_depth => 0,
                                    :under_slab_insulation_width => 0,
+                                   :under_slab_insulation_spans_entire_slab => nil,
                                    :depth_below_grade => 0,
-                                   :perimeter_insulation_id => "FoundationSlabPerimeterIns",
                                    :perimeter_insulation_r_value => 0,
-                                   :under_slab_insulation_id => "FoundationSlabUnderIns",
                                    :under_slab_insulation_r_value => 0,
                                    :carpet_fraction => 1,
                                    :carpet_r_value => 2 }]]
@@ -1003,10 +995,9 @@ def get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values
                                    :exposed_perimeter => 168,
                                    :perimeter_insulation_depth => 0,
                                    :under_slab_insulation_width => 0,
+                                   :under_slab_insulation_spans_entire_slab => nil,
                                    :depth_below_grade => 7,
-                                   :perimeter_insulation_id => "FoundationSlabPerimeterIns",
                                    :perimeter_insulation_r_value => 0,
-                                   :under_slab_insulation_id => "FoundationSlabUnderIns",
                                    :under_slab_insulation_r_value => 0,
                                    :carpet_fraction => 0,
                                    :carpet_r_value => 2.5 }]]
@@ -1018,10 +1009,9 @@ def get_hpxml_file_foundations_slabs_values(hpxml_file, foundations_slabs_values
                                    :exposed_perimeter => 168,
                                    :perimeter_insulation_depth => 0,
                                    :under_slab_insulation_width => 4,
+                                   :under_slab_insulation_spans_entire_slab => nil,
                                    :depth_below_grade => 0,
-                                   :perimeter_insulation_id => "FoundationSlabPerimeterIns",
                                    :perimeter_insulation_r_value => 0,
-                                   :under_slab_insulation_id => "FoundationSlabUnderIns",
                                    :under_slab_insulation_r_value => 5,
                                    :carpet_fraction => 0,
                                    :carpet_r_value => 2.5 }]]
@@ -1037,7 +1027,6 @@ def get_hpxml_file_foundations_framefloors_values(hpxml_file, foundations_framef
     foundations_framefloors_values = [[{ :id => "FoundationFrameFloor",
                                          :adjacent_to => "living space",
                                          :area => 1539,
-                                         :insulation_id => "FoundationFrameFloorIns",
                                          :insulation_assembly_r_value => 14.15 }]]
   elsif ['RESNET_Tests/4.1_Standard_140/L200AC.xml',
          'RESNET_Tests/4.1_Standard_140/L200AL.xml',
@@ -1080,7 +1069,6 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
                              :azimuth => azimuth,
                              :solar_absorptance => 0.6,
                              :emittance => 0.9,
-                             :insulation_id => "#{rim_joist_name}Ins",
                              :insulation_assembly_r_value => 5.01 }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
@@ -1108,7 +1096,6 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
                         :azimuth => azimuth,
                         :solar_absorptance => 0.6,
                         :emittance => 0.9,
-                        :insulation_id => "#{wall_name}Ins",
                         :insulation_assembly_r_value => 11.76 }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L120AC.xml',
@@ -2408,6 +2395,7 @@ def copy_sample_files
                   'base-appliances-none.xml',
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
+                  'base-foundation-multiple-slab.xml',
                   'base-hvac-boiler-gas-only-no-eae.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-ideal-air.xml',

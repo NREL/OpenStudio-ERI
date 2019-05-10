@@ -32,7 +32,6 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
-          <GaragePresent>false</GaragePresent>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -80,7 +79,7 @@
                 <Pitch>4.0</Pitch>
                 <RadiantBarrier>false</RadiantBarrier>
                 <Insulation>
-                  <SystemIdentifier id='AtticRoofNorthIns'/>
+                  <SystemIdentifier id='AtticRoofNorthInsulation'/>
                   <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
                 </Insulation>
               </Roof>
@@ -93,7 +92,7 @@
                 <Pitch>4.0</Pitch>
                 <RadiantBarrier>false</RadiantBarrier>
                 <Insulation>
-                  <SystemIdentifier id='AtticRoofSouthIns'/>
+                  <SystemIdentifier id='AtticRoofSouthInsulation'/>
                   <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
                 </Insulation>
               </Roof>
@@ -104,7 +103,7 @@
                 <AdjacentTo>living space</AdjacentTo>
                 <Area>1539.0</Area>
                 <Insulation>
-                  <SystemIdentifier id='AtticFloorIns'/>
+                  <SystemIdentifier id='AtticFloorInsulation'/>
                   <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
                 </Insulation>
               </Floor>
@@ -121,7 +120,7 @@
                 <SolarAbsorptance>0.6</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
                 <Insulation>
-                  <SystemIdentifier id='AtticWallEastIns'/>
+                  <SystemIdentifier id='AtticWallEastInsulation'/>
                   <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                 </Insulation>
               </Wall>
@@ -136,7 +135,7 @@
                 <SolarAbsorptance>0.6</SolarAbsorptance>
                 <Emittance>0.9</Emittance>
                 <Insulation>
-                  <SystemIdentifier id='AtticWallWestIns'/>
+                  <SystemIdentifier id='AtticWallWestInsulation'/>
                   <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
                 </Insulation>
               </Wall>
@@ -156,7 +155,7 @@
               <AdjacentTo>living space</AdjacentTo>
               <Area>1539.0</Area>
               <Insulation>
-                <SystemIdentifier id='FoundationFrameFloorIns'/>
+                <SystemIdentifier id='FoundationFrameFloorInsulation'/>
                 <AssemblyEffectiveRValue>4.24</AssemblyEffectiveRValue>
               </Insulation>
             </FrameFloor>
@@ -168,8 +167,9 @@
               <Thickness>8.0</Thickness>
               <DepthBelowGrade>3.0</DepthBelowGrade>
               <AdjacentTo>ground</AdjacentTo>
+              <InsulationHeight>4.0</InsulationHeight>
               <Insulation>
-                <SystemIdentifier id='FoundationWallsAllIns'/>
+                <SystemIdentifier id='FoundationWallsAllInsulation'/>
                 <AssemblyEffectiveRValue>8.165</AssemblyEffectiveRValue>
               </Insulation>
             </FoundationWall>
@@ -182,14 +182,14 @@
               <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
               <DepthBelowGrade>3.0</DepthBelowGrade>
               <PerimeterInsulation>
-                <SystemIdentifier id='FoundationSlabPerimeterIns'/>
+                <SystemIdentifier id='FoundationSlabPerimeterInsulation'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0.0</NominalRValue>
                 </Layer>
               </PerimeterInsulation>
               <UnderSlabInsulation>
-                <SystemIdentifier id='FoundationSlabUnderIns'/>
+                <SystemIdentifier id='FoundationSlabUnderSlabInsulation'/>
                 <Layer>
                   <InstallationType>continuous</InstallationType>
                   <NominalRValue>0.0</NominalRValue>
@@ -215,7 +215,7 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallNorthIns'/>
+              <SystemIdentifier id='WallNorthInsulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
@@ -231,7 +231,7 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallEastIns'/>
+              <SystemIdentifier id='WallEastInsulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
@@ -247,7 +247,7 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallSouthIns'/>
+              <SystemIdentifier id='WallSouthInsulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
@@ -263,7 +263,7 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallWestIns'/>
+              <SystemIdentifier id='WallWestInsulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
