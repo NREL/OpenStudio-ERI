@@ -168,10 +168,13 @@
               <Thickness>6.0</Thickness>
               <DepthBelowGrade>7.25</DepthBelowGrade>
               <AdjacentTo>ground</AdjacentTo>
-              <InsulationHeight>7.25</InsulationHeight>
+              <InsulationHeight>0.0</InsulationHeight>
               <Insulation>
                 <SystemIdentifier id='FoundationWallsAllInsulation'/>
-                <AssemblyEffectiveRValue>1.165</AssemblyEffectiveRValue>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>0.0</NominalRValue>
+                </Layer>
               </Insulation>
             </FoundationWall>
             <Slab>

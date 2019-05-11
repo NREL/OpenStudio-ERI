@@ -844,13 +844,14 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :thickness => 6,
                                        :depth_below_grade => 7.25,
                                        :adjacent_to => "ground",
-                                       :insulation_height => 7.25,
-                                       :insulation_assembly_r_value => 1.165 }
+                                       :insulation_height => 0,
+                                       :insulation_r_value => 0 }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
     # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
     for i in 0..foundations_walls_values[0].size - 1
-      foundations_walls_values[0][i][:insulation_assembly_r_value] = 10.69
+      foundations_walls_values[0][i][:insulation_height] = 7.25
+      foundations_walls_values[0][i][:insulation_r_value] = 10.2
     end
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
@@ -866,7 +867,7 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :depth_below_grade => 3,
                                        :adjacent_to => "ground",
                                        :insulation_height => 4,
-                                       :insulation_assembly_r_value => 8.165 }
+                                       :insulation_r_value => 7 }
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
@@ -881,8 +882,8 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :thickness => 6,
                                        :depth_below_grade => 0,
                                        :adjacent_to => "ground",
-                                       :insulation_height => 2,
-                                       :insulation_assembly_r_value => 1.34 }
+                                       :insulation_height => 0,
+                                       :insulation_r_value => 0 }
     end
   elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # Vented crawlspace foundation with 4 ft height and uninsulated crawlspace wall insulation
@@ -896,8 +897,8 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :thickness => 8,
                                        :depth_below_grade => 3,
                                        :adjacent_to => "ground",
-                                       :insulation_height => 4,
-                                       :insulation_assembly_r_value => 1.6 }
+                                       :insulation_height => 0,
+                                       :insulation_r_value => 0 }
     end
   elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
          'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
@@ -913,7 +914,7 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
                                        :depth_below_grade => 7,
                                        :adjacent_to => "ground",
                                        :insulation_height => 8,
-                                       :insulation_assembly_r_value => 20.6 }
+                                       :insulation_r_value => 19 }
     end
   end
   return foundations_walls_values
@@ -2379,7 +2380,8 @@ def copy_sample_files
   FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml*"), "workflow/sample_files/invalid_files")
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/clothes-washer-location.xml',
+  exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
+                  'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
                   'invalid_files/duct-location.xml.skip',
                   'invalid_files/refrigerator-location.xml',
@@ -2404,7 +2406,8 @@ def copy_sample_files
                   'base-infiltration-ach-natural.xml',
                   'base-misc-lighting-none.xml',
                   'base-misc-loads-detailed.xml',
-                  'base-misc-number-of-occupants.xml']
+                  'base-misc-number-of-occupants.xml',
+                  'base-site-neighbors.xml']
   exclude_list.each do |exclude_file|
     FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
   end

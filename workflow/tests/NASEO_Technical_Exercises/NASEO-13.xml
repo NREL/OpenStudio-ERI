@@ -170,7 +170,10 @@
               <InsulationHeight>4.0</InsulationHeight>
               <Insulation>
                 <SystemIdentifier id='FoundationWallsAllInsulation'/>
-                <AssemblyEffectiveRValue>8.165</AssemblyEffectiveRValue>
+                <Layer>
+                  <InstallationType>continuous</InstallationType>
+                  <NominalRValue>7.0</NominalRValue>
+                </Layer>
               </Insulation>
             </FoundationWall>
             <Slab>

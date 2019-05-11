@@ -434,9 +434,9 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_foundations_reference(orig_details, hpxml)
     floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
-    wall_ufactor = FoundationConstructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
-    slab_perim_rvalue, slab_perim_depth = FoundationConstructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
-    slab_under_rvalue, slab_under_width = FoundationConstructions.get_default_slab_under_rvalue_width()
+    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
+    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
+    slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
 
     orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
       foundation_values = HPXML.get_foundation_values(foundation: foundation)
@@ -753,7 +753,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Glazing
-    ufactor, shgc = SubsurfaceConstructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
 
     ag_wall_area = 0.0
     bg_wall_area = 0.0
@@ -792,7 +792,7 @@ class EnergyRatingIndex301Ruleset
 
     wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
 
-    shade_summer, shade_winter = SubsurfaceConstructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
     # Create new windows
     for orientation, azimuth in { "north" => 0, "south" => 180, "east" => 90, "west" => 270 }
@@ -815,7 +815,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Glazing
-    shade_summer, shade_winter = SubsurfaceConstructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
     orig_details.elements.each("Enclosure/Windows/Window") do |window|
       window_values = HPXML.get_window_values(window: window)
       window_values[:interior_shading_factor_summer] = shade_summer
@@ -830,7 +830,7 @@ class EnergyRatingIndex301Ruleset
 
     wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
 
-    shade_summer, shade_winter = SubsurfaceConstructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
     # Calculate area-weighted averages
     sum_u_a = 0.0
@@ -885,8 +885,8 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Doors
-    ufactor, shgc = SubsurfaceConstructions.get_default_ufactor_shgc(@iecc_zone_2006)
-    door_area = SubsurfaceConstructions.get_default_door_area()
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    door_area = Constructions.get_default_door_area()
 
     wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
 
