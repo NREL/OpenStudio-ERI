@@ -470,6 +470,30 @@ class HVACtest < MiniTest::Test
     _check_thermostat(hpxml_doc, "programmable thermostat")
   end
 
+  def test_dse
+    hpxml_name = "base-hvac-dse.xml"
+
+    # Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml_doc, ["central air conditioning", "electricity", 13, 1.0, _dse(calc_type)])
+      _check_heating_system(hpxml_doc, ["Furnace", "natural gas", 0.78, 1.0, _dse(calc_type)])
+      _check_heat_pump(hpxml_doc)
+      _check_thermostat(hpxml_doc, "manual thermostat")
+    end
+
+    # Rated Home
+    calc_type = Constants.CalcTypeERIRatedHome
+    hpxml_doc = _test_measure(hpxml_name, calc_type)
+    _check_cooling_system(hpxml_doc, ["central air conditioning", "electricity", nil, 1.0, 0.75])
+    _check_heating_system(hpxml_doc, ["Furnace", "natural gas", nil, 1.0, 0.75])
+    _check_heat_pump(hpxml_doc)
+    _check_thermostat(hpxml_doc, "manual thermostat")
+  end
+
   def _test_measure(hpxml_name, calc_type)
     root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
