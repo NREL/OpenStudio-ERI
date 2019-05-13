@@ -2392,7 +2392,8 @@ def copy_sample_files
   FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml*"), "workflow/sample_files/invalid_files")
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/clothes-washer-location.xml',
+  exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
+                  'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
                   'invalid_files/duct-location.xml.skip',
                   'invalid_files/refrigerator-location.xml',
@@ -2416,7 +2417,8 @@ def copy_sample_files
                   'base-infiltration-ach-natural.xml',
                   'base-misc-lighting-none.xml',
                   'base-misc-loads-detailed.xml',
-                  'base-misc-number-of-occupants.xml']
+                  'base-misc-number-of-occupants.xml',
+                  'base-site-neighbors.xml']
   exclude_list.each do |exclude_file|
     FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
   end
