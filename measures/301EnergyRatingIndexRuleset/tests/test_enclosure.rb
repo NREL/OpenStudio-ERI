@@ -16,13 +16,14 @@ class EnclosureTest < MiniTest::Test
     _check_foundations(hpxml_doc)
     _check_garages(hpxml_doc)
     _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, { 0 => [120, 0.33, 0.45],
-                                180 => [240, 0.33, 0.45],
-                                90 => [120, 0.33, 0.45],
-                                270 => [120, 0.33, 0.45] })
+    _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
+                                180 => [54, 0.33, 0.45],
+                                90 => [36, 0.33, 0.45],
+                                270 => [36, 0.33, 0.45] })
     _check_overhangs(hpxml_doc)
     _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, { 270 => [80, 4.4] })
+    _check_doors(hpxml_doc, { 0 => [40, 4.4],
+                              180 => [40, 4.4] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -52,7 +53,8 @@ class EnclosureTest < MiniTest::Test
                                 270 => [108, 0.33, 0.45] })
     _check_overhangs(hpxml_doc)
     _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, { 270 => [80, 4.4] })
+    _check_doors(hpxml_doc, { 0 => [40, 4.4],
+                              180 => [40, 4.4] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -134,6 +136,10 @@ class EnclosureTest < MiniTest::Test
     # TODO
   end
 
+  def test_enclosure_unconditioned_basement_foundation_above_grade
+    # TODO
+  end
+
   def test_enclosure_unvented_crawlspace_foundation
     # TODO
   end
@@ -187,7 +193,7 @@ class EnclosureTest < MiniTest::Test
     assert(File.exists? args_hash['hpxml_output_path'])
 
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
-    # File.delete(args_hash['hpxml_output_path'])
+    File.delete(args_hash['hpxml_output_path'])
 
     return hpxml_doc
   end

@@ -129,6 +129,7 @@ class EnergyRatingIndex301Ruleset
 
     # BuildingSummary
     set_summary_iad(orig_details, hpxml)
+    remove_garage_from_iad(orig_details)
 
     # ClimateAndRiskZones
     set_climate(orig_details, hpxml)
@@ -257,6 +258,71 @@ class EnergyRatingIndex301Ruleset
                                     number_of_bedrooms: @nbeds,
                                     conditioned_floor_area: @cfa,
                                     conditioned_building_volume: @cvolume)
+  end
+
+  def self.remove_garage_from_iad(orig_details)
+    # Remove enclosure elements that reference a garage.
+
+    # Attic
+    orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
+      attic.elements.each("Floors/Floor") do |floor|
+        floor_values = HPXML.get_attic_floor_values(floor: floor)
+        if floor_values[:adjacent_to] == "garage"
+          floor.parent.elements.delete floor
+        end
+      end
+      attic.elements.each("Walls/Wall") do |wall|
+        wall_values = HPXML.get_attic_wall_values(wall: wall)
+        if wall_values[:adjacent_to] == "garage"
+          wall.parent.elements.delete wall
+          delete_wall_subsurfaces(orig_details, wall_values[:id])
+        end
+      end
+    end
+
+    # Foundation
+    orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
+      foundation.elements.each("FrameFloor") do |floor|
+        floor_values = HPXML.get_foundation_framefloor_values(floor: floor)
+        if floor_values[:adjacent_to] == "garage"
+          floor.parent.elements.delete floor
+        end
+      end
+      foundation.elements.each("FoundationWall") do |fwall|
+        fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
+        if fwall_values[:adjacent_to] == "garage"
+          fwall.parent.elements.delete fwall
+          delete_wall_subsurfaces(orig_details, fwall_values[:id])
+        end
+      end
+    end
+
+    # Garage
+    orig_details.elements.each("Enclosure/Garages/Garage") do |garage|
+      garage.elements.each("Walls/Wall") do |wall|
+        wall_values = HPXML.get_garage_wall_values(wall: wall)
+        delete_wall_subsurfaces(orig_details, wall_values[:id])
+      end
+    end
+    garages = orig_details.elements["Enclosure/Garages"]
+    garages.parent.elements.delete garages unless garages.nil?
+
+    # Rim Joist
+    orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
+      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
+      if rim_joist_values[:interior_adjacent_to] == "garage" or rim_joist_values[:exterior_adjacent_to] == "garage"
+        rim_joist.parent.elements.delete rim_joist
+      end
+    end
+
+    # Wall
+    orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
+      wall_values = HPXML.get_wall_values(wall: wall)
+      if wall_values[:interior_adjacent_to] == "garage" or wall_values[:exterior_adjacent_to] == "garage"
+        wall.parent.elements.delete wall
+        delete_wall_subsurfaces(orig_details, wall_values[:id])
+      end
+    end
   end
 
   def self.set_climate(orig_details, hpxml)
@@ -755,35 +821,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Glazing
     ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
 
-    ag_wall_area = 0.0
-    bg_wall_area = 0.0
-
-    orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall)
-      next if not is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
-
-      ag_wall_area += wall_values[:area]
-    end
-
-    orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
-      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-      next if not is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
-
-      ag_wall_area += rim_joist_values[:area]
-    end
-
-    # TODO: Add conditioned attics
-
-    orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned='true']/FoundationWall") do |fwall|
-      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-      next if not is_external_thermal_boundary("basement - conditioned", fwall_values[:adjacent_to])
-
-      height = fwall_values[:height]
-      bg_depth = fwall_values[:depth_below_grade]
-      area = fwall_values[:area]
-      ag_wall_area += (height - bg_depth) / height * area
-      bg_wall_area += bg_depth / height * area
-    end
+    ag_wall_area, bg_wall_area = self.calc_wall_area_ag_bg(orig_details)
 
     fa = ag_wall_area / (ag_wall_area + 0.5 * bg_wall_area)
     f = 1.0 # TODO
@@ -1727,6 +1765,40 @@ class EnergyRatingIndex301Ruleset
     return infilvolume
   end
 
+  def self.calc_wall_area_ag_bg(orig_details)
+    ag_wall_area = 0.0
+    bg_wall_area = 0.0
+
+    orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
+      wall_values = HPXML.get_wall_values(wall: wall)
+      next if not is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
+
+      ag_wall_area += wall_values[:area]
+    end
+
+    orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
+      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
+      next if not is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
+
+      ag_wall_area += rim_joist_values[:area]
+    end
+
+    # TODO: Add conditioned attics
+
+    orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned='true']/FoundationWall") do |fwall|
+      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
+      next if not is_external_thermal_boundary("basement - conditioned", fwall_values[:adjacent_to])
+
+      height = fwall_values[:height]
+      bg_depth = fwall_values[:depth_below_grade]
+      area = fwall_values[:area]
+      ag_wall_area += (height - bg_depth) / height * area
+      bg_wall_area += bg_depth / height * area
+    end
+
+    return ag_wall_area, bg_wall_area
+  end
+
   def self.get_above_grade_basement_height(orig_details)
     above_grade_height = 0
     orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned]") do |cond_bsmnt|
@@ -1739,6 +1811,12 @@ class EnergyRatingIndex301Ruleset
       end
     end
     return above_grade_height
+  end
+
+  def self.delete_wall_subsurfaces(orig_details, surface_id)
+    orig_details.elements.each("//*[AttachedToWall[@idref='#{surface_id}']]") do |subsurface|
+      subsurface.parent.elements.delete subsurface
+    end
   end
 end
 
