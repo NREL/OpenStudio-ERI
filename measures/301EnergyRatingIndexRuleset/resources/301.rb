@@ -10,8 +10,6 @@ require_relative "../../HPXMLtoOpenStudio/resources/waterheater"
 require_relative "../../HPXMLtoOpenStudio/resources/hpxml"
 
 class EnergyRatingIndex301Ruleset
-  @@version = "0.1.0"
-
   def self.apply_ruleset(hpxml_doc, calc_type, weather)
     # Global variables
     @weather = weather
@@ -171,7 +169,7 @@ class EnergyRatingIndex301Ruleset
     hpxml_values = HPXML.get_hpxml_values(hpxml: hpxml_doc.elements["/HPXML"])
 
     hpxml_doc = HPXML.create_hpxml(xml_type: hpxml_values[:xml_type],
-                                   xml_generated_by: "OpenStudio-ERI #{@@version}",
+                                   xml_generated_by: "OpenStudio-ERI",
                                    transaction: hpxml_values[:transaction],
                                    software_program_used: hpxml_values[:software_program_used],
                                    software_program_version: hpxml_values[:software_program_version],
