@@ -9,7 +9,6 @@ require File.join(File.dirname(__FILE__), "design.rb")
 require_relative "../measures/HPXMLtoOpenStudio/measure"
 require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
 require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
-require_relative "../measures/HPXMLtoOpenStudio/resources/waterheater"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
@@ -503,12 +502,7 @@ def get_eec_dhws(hpxml_doc)
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
     wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
     if wh_type == "instantaneous water heater"
-      cycling_derate = XMLHelper.get_value(dhw_system, "TanklessCyclingDerate")
-      if cycling_derate.nil?
-        cycling_derate = Waterheater.get_tankless_cycling_derate()
-      else
-        cycling_derate = Float(cycling_derate)
-      end
+      cycling_derate = Float(XMLHelper.get_value(dhw_system, "PerformanceAdjustment"))
       value_adj = 1.0 - cycling_derate
     else
       value_adj = 1.0
@@ -988,11 +982,30 @@ OptionParser.new do |opts|
     options[:skip_validation] = true
   end
 
+  options[:version] = false
+  opts.on('-v', '--version', 'Reports the workflow version') do |t|
+    options[:version] = true
+  end
+
   opts.on_tail('-h', '--help', 'Display help') do
     puts opts
     exit!
   end
 end.parse!
+
+# Check for correct versions of OS
+os_version = "2.8.0"
+if OpenStudio.openStudioVersion != os_version
+  fail "OpenStudio version #{os_version} is required."
+end
+
+if options[:version]
+  workflow_version = "0.1.0"
+  puts "OpenStudio-ERI v#{workflow_version}"
+  puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
+  puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
+  exit!
+end
 
 if options[:epws]
   download_epws
@@ -1007,12 +1020,6 @@ unless (Pathname.new options[:hpxml]).absolute?
 end
 unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xml"
   fail "'#{options[:hpxml]}' does not exist or is not an .xml file."
-end
-
-# Check for correct versions of OS
-os_version = "2.8.0"
-if OpenStudio.openStudioVersion != os_version
-  fail "OpenStudio version #{os_version} is required."
 end
 
 if options[:output_dir].nil?

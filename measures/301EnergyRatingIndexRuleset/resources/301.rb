@@ -173,10 +173,10 @@ class EnergyRatingIndex301Ruleset
     hpxml_values = HPXML.get_hpxml_values(hpxml: hpxml_doc.elements["/HPXML"])
 
     hpxml_doc = HPXML.create_hpxml(xml_type: hpxml_values[:xml_type],
-                                   xml_generated_by: hpxml_values[:xml_generated_by],
+                                   xml_generated_by: "OpenStudio-ERI",
                                    transaction: hpxml_values[:transaction],
-                                   software_program_used: "OpenStudio-ERI workflow",
-                                   software_program_version: "X.X",
+                                   software_program_used: hpxml_values[:software_program_used],
+                                   software_program_version: hpxml_values[:software_program_version],
                                    eri_calculation_version: hpxml_values[:eri_calculation_version],
                                    building_id: hpxml_values[:building_id],
                                    event_type: hpxml_values[:event_type])
@@ -1253,6 +1253,10 @@ class EnergyRatingIndex301Ruleset
         wh_uef = wh_sys_values[:uniform_energy_factor]
         wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_sys_values[:water_heater_type]), to_beopt_fuel(wh_sys_values[:fuel_type]))
         wh_sys_values[:uniform_energy_factor] = nil
+      end
+
+      if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
+        wh_sys_values[:performance_adjustment] = Waterheater.get_tankless_cycling_derate()
       end
 
       # New water heater
