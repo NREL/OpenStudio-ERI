@@ -6,8 +6,8 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
+require_relative "../measures/HPXMLtoOpenStudio/measure"
 require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
-require_relative "../measures/HPXMLtoOpenStudio/resources/util"
 require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
 
 # TODO: Add error-checking
