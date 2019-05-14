@@ -252,8 +252,8 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_doors(hpxml_doc, { 0 => [40, 4.4],
-                              180 => [40, 4.4] })
+    _check_doors(hpxml_doc, { 0 => [20, 4.4],
+                              180 => [20, 4.4] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)

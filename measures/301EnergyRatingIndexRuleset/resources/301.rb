@@ -952,7 +952,16 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
-    set_enclosure_doors_rated(orig_details, hpxml)
+
+    # Area is incorrect in table: should be “Area: Same as Energy Rating Reference Home”
+    door_area = Constructions.get_default_door_area()
+    sum_door_area = Float(orig_details.elements["sum(Enclosure/Doors/Door/Area/text())"])
+
+    orig_details.elements.each("Enclosure/Doors/Door") do |door|
+      door_values = HPXML.get_door_values(door: door)
+      door_values[:area] *= door_area / sum_door_area # Scale
+      HPXML.add_door(hpxml: hpxml, **door_values)
+    end
   end
 
   def self.set_systems_hvac_reference(orig_details, hpxml)
