@@ -1145,6 +1145,10 @@ class EnergyRatingIndex301Ruleset
         wh_sys_values[:uniform_energy_factor] = nil
       end
 
+      if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
+        wh_sys_values[:performance_adjustment] = Waterheater.get_tankless_cycling_derate()
+      end
+
       # New water heater
       HPXML.add_water_heating_system(hpxml: hpxml, **wh_sys_values)
     end
