@@ -821,7 +821,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Glazing
     ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
 
-    ag_wall_area, bg_wall_area = self.calc_wall_area_ag_bg(orig_details)
+    ag_wall_area, bg_wall_area = self.calc_wall_area_ag_bg_for_windows(orig_details)
 
     fa = ag_wall_area / (ag_wall_area + 0.5 * bg_wall_area)
     f = 1.0 # TODO
@@ -1765,7 +1765,7 @@ class EnergyRatingIndex301Ruleset
     return infilvolume
   end
 
-  def self.calc_wall_area_ag_bg(orig_details)
+  def self.calc_wall_area_ag_bg_for_windows(orig_details)
     ag_wall_area = 0.0
     bg_wall_area = 0.0
 
@@ -1783,17 +1783,32 @@ class EnergyRatingIndex301Ruleset
       ag_wall_area += rim_joist_values[:area]
     end
 
-    # TODO: Add conditioned attics
+    orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
+      attic_values = HPXML.get_attic_values(attic: attic)
+      next unless ["ConditionedAttic", "CathedralCeiling"].include? attic_values[:attic_type]
 
-    orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned='true']/FoundationWall") do |fwall|
-      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-      next if not is_external_thermal_boundary("basement - conditioned", fwall_values[:adjacent_to])
+      attic.elements.each("Walls/Wall") do |wall|
+        wall_values = HPXML.get_attic_wall_values(wall: wall)
+        next if not is_external_thermal_boundary(get_attic_adjacent_to(attic_values[:attic_type]), wall_values[:adjacent_to])
 
-      height = fwall_values[:height]
-      bg_depth = fwall_values[:depth_below_grade]
-      area = fwall_values[:area]
-      ag_wall_area += (height - bg_depth) / height * area
-      bg_wall_area += bg_depth / height * area
+        ag_wall_area += wall_values[:area]
+      end
+    end
+
+    orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
+      foundation_values = HPXML.get_foundation_values(foundation: foundation)
+      next unless foundation_values[:foundation_type] == "ConditionedBasement"
+
+      foundation.elements.each("FoundationWall") do |fwall|
+        fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
+        next if not is_external_thermal_boundary(get_foundation_adjacent_to(foundation_values[:foundation_type]), fwall_values[:adjacent_to])
+
+        height = fwall_values[:height]
+        bg_depth = fwall_values[:depth_below_grade]
+        area = fwall_values[:area]
+        ag_wall_area += (height - bg_depth) / height * area
+        bg_wall_area += bg_depth / height * area
+      end
     end
 
     return ag_wall_area, bg_wall_area
