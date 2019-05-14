@@ -1410,7 +1410,7 @@ class EnergyRatingIndexTest < Minitest::Test
     nbeds = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
     eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
-    garage_present = Boolean(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+    gfa = Float(hpxml_doc.elements["sum(/HPXML/Building/BuildingDetails/Enclosure/Garages/Garage/Slabs/Slab/Area/text())"])
 
     xml_pl_sens = 0.0
     xml_pl_lat = 0.0
@@ -1513,7 +1513,7 @@ class EnergyRatingIndexTest < Minitest::Test
       fFII_int = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']/FractionofUnitsInLocation"))
       fFII_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation"))
       fFII_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation"))
-      int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, garage_present, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+      int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
       xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, "kWh", "Btu")
     end
     s += "#{xml_ltg_sens}\n"

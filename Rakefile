@@ -712,7 +712,7 @@ def get_hpxml_file_attics_roofs_values(hpxml_file, attics_roofs_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     attics_roofs_values = [[]]
-    roofs = { "AtticRoofNorth" => [0, 811.1], "AtticRoofSouth" => [180, 811.1] }
+    roofs = { "AtticRoof" => [nil, 1622.2] }
     roofs.each do |roof_name, roof_values|
       azimuth, area = roof_values
       attics_roofs_values[0] << { :id => roof_name,
@@ -773,7 +773,7 @@ def get_hpxml_file_attics_walls_values(hpxml_file, attics_walls_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     attics_walls_values = [[]]
-    walls = { "AtticWallEast" => [90, 60.75], "AtticWallWest" => [270, 60.75] }
+    walls = { "AtticWall" => [nil, 121.5] }
     walls.each do |wall_name, wall_values|
       azimuth, area = wall_values
       attics_walls_values[0] << { :id => wall_name,
@@ -838,11 +838,11 @@ def get_hpxml_file_foundations_walls_values(hpxml_file, foundations_walls_values
     walls.each do |wall_name, wall_values|
       azimuth, area = wall_values
       foundations_walls_values[0] << { :id => wall_name,
-                                       :height => 8,
+                                       :height => 7.25,
                                        :area => area,
                                        :azimuth => azimuth,
                                        :thickness => 6,
-                                       :depth_below_grade => 7.25,
+                                       :depth_below_grade => 6.583,
                                        :adjacent_to => "ground",
                                        :insulation_height => 0,
                                        :insulation_r_value => 0 }
@@ -1060,7 +1060,7 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
   if ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
     rim_joists_values = []
-    rim_joists = { "RimJoistNorth" => [0, 42.75], "RimJoistEast" => [90, 20.25], "RimJoistSouth" => [180, 42.75], "RimJoistWest" => [270, 20.25] }
+    rim_joists = { "RimJoist" => [nil, 126] }
     rim_joists.each do |rim_joist_name, rim_joist_values|
       azimuth, area = rim_joist_values
       rim_joists_values << { :id => rim_joist_name,
@@ -1086,7 +1086,7 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
     walls_values = []
-    walls = { "WallNorth" => [0, 456], "WallEast" => [90, 216], "WallSouth" => [180, 456], "WallWest" => [270, 216] }
+    walls = { "Wall" => [nil, 1344] }
     walls.each do |wall_name, wall_values|
       azimuth, area = wall_values
       walls_values << { :id => wall_name,
@@ -1141,7 +1141,7 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
                           :azimuth => azimuth,
                           :ufactor => 1.039,
                           :shgc => 0.67,
-                          :wall_idref => window_name.gsub("Window", "Wall") }
+                          :wall_idref => "Wall" }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
          'RESNET_Tests/4.1_Standard_140/L130AL.xml'].include? hpxml_file
@@ -1164,7 +1164,7 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
                         :azimuth => 180,
                         :ufactor => 1.039,
                         :shgc => 0.67,
-                        :wall_idref => "WallSouth" }]
+                        :wall_idref => "Wall" }]
   elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml',
          'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
     # South windows with overhangs
@@ -1183,7 +1183,7 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
                           :azimuth => azimuth,
                           :ufactor => 1.039,
                           :shgc => 0.67,
-                          :wall_idref => window_name.gsub("Window", "Wall") }
+                          :wall_idref => "Wall" }
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Base configuration
@@ -1235,7 +1235,7 @@ def get_hpxml_file_doors_values(hpxml_file, doors_values)
     doors.each do |door_name, door_values|
       azimuth, area = door_values
       doors_values << { :id => door_name,
-                        :wall_idref => door_name.gsub("Door", "Wall"),
+                        :wall_idref => "Wall",
                         :area => area,
                         :azimuth => azimuth,
                         :r_value => 3.04 }

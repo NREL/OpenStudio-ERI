@@ -500,7 +500,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_foundations_reference(orig_details, hpxml)
     floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
-    wall_rvalue = Constructions.get_default_basement_wall_rvalue(@iecc_zone_2006)
+    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
     slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
     slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
 
@@ -531,7 +531,7 @@ class EnergyRatingIndex301Ruleset
         fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
         # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)?
         if interior_adjacent_to == "basement - conditioned" and is_external_thermal_boundary(interior_adjacent_to, fwall_values[:adjacent_to])
-          fwall_values[:insulation_r_value] = wall_rvalue
+          fwall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
         end
         HPXML.add_foundation_wall(foundation: new_foundation, **fwall_values)
       end
