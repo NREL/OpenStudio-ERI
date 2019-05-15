@@ -6,71 +6,45 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class EnclosureTest < MiniTest::Test
-  def test_enclosure
+  def test_enclosure_infiltration
     hpxml_name = "base.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_infiltration(hpxml_doc, 3.0)
-    _check_attics(hpxml_doc)
-    _check_foundations(hpxml_doc)
-    _check_garages(hpxml_doc)
-    _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, { 0 => [120, 0.33, 0.45],
-                                180 => [240, 0.33, 0.45],
-                                90 => [120, 0.33, 0.45],
-                                270 => [120, 0.33, 0.45] })
-    _check_overhangs(hpxml_doc)
-    _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, { 270 => [80, 4.4] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_infiltration(hpxml_doc, 7.09)
-    _check_attics(hpxml_doc)
-    _check_foundations(hpxml_doc)
-    _check_garages(hpxml_doc)
-    _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, { 0 => [90, 0.35, 0.40],
-                                180 => [90, 0.35, 0.40],
-                                90 => [90, 0.35, 0.40],
-                                270 => [90, 0.35, 0.40] })
-    _check_overhangs(hpxml_doc)
-    _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, { 0 => [40, 2.86] })
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_infiltration(hpxml_doc, 3.0)
-    _check_attics(hpxml_doc)
-    _check_foundations(hpxml_doc)
-    _check_garages(hpxml_doc)
-    _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
-                                180 => [108, 0.33, 0.45],
-                                90 => [108, 0.33, 0.45],
-                                270 => [108, 0.33, 0.45] })
-    _check_overhangs(hpxml_doc)
-    _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, { 270 => [80, 4.4] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
-    _check_attics(hpxml_doc)
-    _check_foundations(hpxml_doc)
-    _check_garages(hpxml_doc)
-    _check_walls_and_rim_joists(hpxml_doc)
-    _check_windows(hpxml_doc, { 0 => [108, 0.35, 0.40],
-                                180 => [108, 0.35, 0.40],
-                                90 => [108, 0.35, 0.40],
-                                270 => [108, 0.35, 0.40] })
-    _check_overhangs(hpxml_doc)
-    _check_skylights(hpxml_doc)
-    _check_doors(hpxml_doc, { 0 => [40, 2.86] })
   end
 
   def test_enclosure_skylights
+    hpxml_name = "base.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_skylights(hpxml_doc)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_skylights(hpxml_doc)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_skylights(hpxml_doc)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_skylights(hpxml_doc)
+
     hpxml_name = "base-enclosure-skylights.xml"
 
     # Rated Home
@@ -93,6 +67,24 @@ class EnclosureTest < MiniTest::Test
   end
 
   def test_enclosure_overhangs
+    hpxml_name = "base.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_overhangs(hpxml_doc)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_overhangs(hpxml_doc)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_overhangs(hpxml_doc)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_overhangs(hpxml_doc)
+
     hpxml_name = "base-enclosure-overhangs.xml"
 
     # Rated Home
@@ -114,36 +106,158 @@ class EnclosureTest < MiniTest::Test
     _check_overhangs(hpxml_doc)
   end
 
-  def test_enclosure_multiple_walls
-    # TODO
+  def test_enclosure_windows
+    hpxml_names = ["base.xml",
+                   "base-atticroof-flat.xml",
+                   "base-atticroof-vented.xml"]
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
+                                  180 => [54, 0.33, 0.45],
+                                  90 => [36, 0.33, 0.45],
+                                  270 => [36, 0.33, 0.45] })
+
+      # Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_windows(hpxml_doc, { 0 => [89.5, 0.35, 0.40],
+                                  180 => [89.5, 0.35, 0.40],
+                                  90 => [89.5, 0.35, 0.40],
+                                  270 => [89.5, 0.35, 0.40] })
+
+      # IAD Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [108, 0.33, 0.45],
+                                  270 => [108, 0.33, 0.45] })
+
+      # IAD Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_windows(hpxml_doc, { 0 => [108, 0.35, 0.40],
+                                  180 => [108, 0.35, 0.40],
+                                  90 => [108, 0.35, 0.40],
+                                  270 => [108, 0.35, 0.40] })
+    end
+
+    hpxml_names = ["base-foundation-pier-beam.xml",
+                   "base-foundation-slab.xml",
+                   "base-foundation-unconditioned-basement.xml",
+                   "base-foundation-unvented-crawlspace.xml",
+                   "base-foundation-vented-crawlspace.xml"]
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
+                                  180 => [54, 0.33, 0.45],
+                                  90 => [36, 0.33, 0.45],
+                                  270 => [36, 0.33, 0.45] })
+
+      # Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_windows(hpxml_doc, { 0 => [60.75, 0.35, 0.40],
+                                  180 => [60.75, 0.35, 0.40],
+                                  90 => [60.75, 0.35, 0.40],
+                                  270 => [60.75, 0.35, 0.40] })
+
+      # IAD Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [108, 0.33, 0.45],
+                                  270 => [108, 0.33, 0.45] })
+
+      # IAD Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_windows(hpxml_doc, { 0 => [108, 0.35, 0.40],
+                                  180 => [108, 0.35, 0.40],
+                                  90 => [108, 0.35, 0.40],
+                                  270 => [108, 0.35, 0.40] })
+    end
+
+    hpxml_name = "base-atticroof-cathedral.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
+                                180 => [54, 0.33, 0.45],
+                                90 => [66, 0.33, 0.45],
+                                270 => [66, 0.33, 0.45] })
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_windows(hpxml_doc, { 0 => [93.5, 0.35, 0.40],
+                                180 => [93.5, 0.35, 0.40],
+                                90 => [93.5, 0.35, 0.40],
+                                270 => [93.5, 0.35, 0.40] })
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                180 => [108, 0.33, 0.45],
+                                90 => [108, 0.33, 0.45],
+                                270 => [108, 0.33, 0.45] })
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_windows(hpxml_doc, { 0 => [108, 0.35, 0.40],
+                                180 => [108, 0.35, 0.40],
+                                90 => [108, 0.35, 0.40],
+                                270 => [108, 0.35, 0.40] })
+
+    hpxml_name = "base-atticroof-conditioned.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
+                                180 => [54, 0.33, 0.45],
+                                90 => [66, 0.33, 0.45],
+                                270 => [66, 0.33, 0.45] })
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_windows(hpxml_doc, { 0 => [128.6, 0.35, 0.40],
+                                180 => [128.6, 0.35, 0.40],
+                                90 => [128.6, 0.35, 0.40],
+                                270 => [128.6, 0.35, 0.40] })
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                180 => [108, 0.33, 0.45],
+                                90 => [108, 0.33, 0.45],
+                                270 => [108, 0.33, 0.45] })
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_windows(hpxml_doc, { 0 => [108, 0.35, 0.40],
+                                180 => [108, 0.35, 0.40],
+                                90 => [108, 0.35, 0.40],
+                                270 => [108, 0.35, 0.40] })
   end
 
-  def test_enclosure_orientation_45
-    # TODO
-  end
+  def test_enclosure_doors
+    hpxml_name = "base.xml"
 
-  def test_enclosure_pier_beam_foundation
-    # TODO
-  end
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_doors(hpxml_doc, { 0 => [40, 4.4],
+                              180 => [40, 4.4] })
 
-  def test_enclosure_slab_foundation
-    # TODO
-  end
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_doors(hpxml_doc, { 0 => [40, 2.86] })
 
-  def test_enclosure_unconditioned_basement_foundation
-    # TODO
-  end
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_doors(hpxml_doc, { 0 => [20, 4.4],
+                              180 => [20, 4.4] })
 
-  def test_enclosure_unvented_crawlspace_foundation
-    # TODO
-  end
-
-  def test_enclosure_vented_crawlspace_foundation
-    # TODO
-  end
-
-  def test_enclosure_garage
-    # TODO
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_doors(hpxml_doc, { 0 => [40, 2.86] })
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -187,29 +301,13 @@ class EnclosureTest < MiniTest::Test
     assert(File.exists? args_hash['hpxml_output_path'])
 
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
-    # File.delete(args_hash['hpxml_output_path'])
+    File.delete(args_hash['hpxml_output_path'])
 
     return hpxml_doc
   end
 
   def _check_infiltration(hpxml_doc, ach50)
     assert_in_epsilon(ach50, Float(hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"].text), 0.01)
-  end
-
-  def _check_attics(hpxml_doc)
-    # TODO
-  end
-
-  def _check_foundations(hpxml_doc)
-    # TODO
-  end
-
-  def _check_garages(hpxml_doc)
-    # TODO
-  end
-
-  def _check_walls_and_rim_joists(hpxml_doc)
-    # TODO
   end
 
   def _check_windows(hpxml_doc, azimuth_values = {})
@@ -236,9 +334,9 @@ class EnclosureTest < MiniTest::Test
 
     azimuth_values.each do |azimuth, values|
       area, ufactor, shgc = values
-      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_equal(ufactor, azimuth_ufactor_values[azimuth].inject(:+) / azimuth_ufactor_values[azimuth].size)
-      assert_equal(shgc, azimuth_shgc_values[azimuth].inject(:+) / azimuth_shgc_values[azimuth].size)
+      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(ufactor, azimuth_ufactor_values[azimuth].inject(:+) / azimuth_ufactor_values[azimuth].size, 0.001)
+      assert_in_epsilon(shgc, azimuth_shgc_values[azimuth].inject(:+) / azimuth_shgc_values[azimuth].size, 0.001)
     end
   end
 
@@ -280,9 +378,9 @@ class EnclosureTest < MiniTest::Test
 
     azimuth_values.each do |azimuth, values|
       area, ufactor, shgc = values
-      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_equal(ufactor, azimuth_ufactor_values[azimuth].inject(:+) / azimuth_ufactor_values[azimuth].size)
-      assert_equal(shgc, azimuth_shgc_values[azimuth].inject(:+) / azimuth_shgc_values[azimuth].size)
+      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(ufactor, azimuth_ufactor_values[azimuth].inject(:+) / azimuth_ufactor_values[azimuth].size, 0.001)
+      assert_in_epsilon(shgc, azimuth_shgc_values[azimuth].inject(:+) / azimuth_shgc_values[azimuth].size, 0.001)
     end
   end
 
@@ -306,8 +404,8 @@ class EnclosureTest < MiniTest::Test
 
     azimuth_values.each do |azimuth, values|
       area, rvalue = values
-      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_in_epsilon(rvalue, azimuth_rvalue_values[azimuth].inject(:+) / azimuth_rvalue_values[azimuth].size, 0.01)
+      assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(rvalue, azimuth_rvalue_values[azimuth].inject(:+) / azimuth_rvalue_values[azimuth].size, 0.001)
     end
   end
 end
