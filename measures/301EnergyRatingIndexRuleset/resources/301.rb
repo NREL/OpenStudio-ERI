@@ -337,7 +337,7 @@ class EnergyRatingIndex301Ruleset
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
 
-    # ACH50
+    # Air Infiltration
     HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
@@ -351,7 +351,6 @@ class EnergyRatingIndex301Ruleset
 
     whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
-    ach50 = nil
     orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
       air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
       if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
@@ -360,21 +359,27 @@ class EnergyRatingIndex301Ruleset
           nach = 0.30
         end
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
-        ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
-        break
+        # Convert to ACH50
+        air_infiltration_measurement_values[:air_leakage] = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
+        air_infiltration_measurement_values[:unit_of_measure] = 'ACH'
+        air_infiltration_measurement_values[:house_pressure] = 50
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
-        ach50 = air_infiltration_measurement_values[:air_leakage]
-        break
+        # nop
+      elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
+        # nop
+      else
+        next
       end
-    end
 
-    # ACH50
-    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                           id: "Infiltration_ACH50",
-                                           house_pressure: 50,
-                                           unit_of_measure: "ACH",
-                                           air_leakage: ach50,
-                                           infiltration_volume: @infilvolume)
+      # Air Infiltration
+      HPXML.add_air_infiltration_measurement(hpxml: hpxml,
+                                             id: "Infiltration_ACH50",
+                                             house_pressure: air_infiltration_measurement_values[:house_pressure],
+                                             unit_of_measure: air_infiltration_measurement_values[:unit_of_measure],
+                                             air_leakage: air_infiltration_measurement_values[:air_leakage],
+                                             infiltration_volume: @infilvolume)
+      break
+    end
   end
 
   def self.set_enclosure_air_infiltration_iad(hpxml)
@@ -387,7 +392,7 @@ class EnergyRatingIndex301Ruleset
       fail "Unhandled IECC 2012 climate zone #{@iecc_zone_2012}."
     end
 
-    # ACH50
+    # Air Infiltration
     HPXML.add_air_infiltration_measurement(hpxml: hpxml,
                                            id: "Infiltration_ACH50",
                                            house_pressure: 50,
