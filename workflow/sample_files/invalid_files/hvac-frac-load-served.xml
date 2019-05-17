@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-05-03T09:27:24-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-05-03T09:27:30-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -262,7 +262,7 @@
                 <Units>AFUE</Units>
                 <Value>1.0</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+              <FractionHeatLoadServed>0.2</FractionHeatLoadServed>
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem2'/>
@@ -355,7 +355,7 @@
               <CoolingSystemType>central air conditioning</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>48000.0</CoolingCapacity>
-              <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
+              <FractionCoolLoadServed>0.4</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>13.0</Value>

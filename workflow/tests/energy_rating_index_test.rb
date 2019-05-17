@@ -28,8 +28,6 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{this_dir}/sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      next if File.basename(xml) == "base-hvac-multiple.xml" # TODO: Remove when HVAC sizing has been updated
-
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
@@ -81,6 +79,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_invalid_xmls
     expected_error_msgs = { 'bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
+                            'dhw-frac-load-served.xml' => ["Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15."],
                             'missing-elements.xml' => ["Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors",
                                                        "Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"],
                             'hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.",
