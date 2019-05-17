@@ -1628,10 +1628,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_heating_gas_furnace(hpxml, load_frac = 1.0, seed_id = nil)
     # 78% AFUE gas furnace
-    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(HeatingSystem)"]
-    if cnt.nil?
-      cnt = 0
-    end
+    cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem)")
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
                                         distribution_system_idref: "HVACDistribution_DSE_80",
@@ -1650,10 +1647,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_heating_gas_boiler(hpxml, load_frac = 1.0, seed_id = nil)
     # 80% AFUE gas boiler
-    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(HeatingSystem)"]
-    if cnt.nil?
-      cnt = 0
-    end
+    cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem)")
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
                                         distribution_system_idref: "HVACDistribution_DSE_80",
@@ -1672,10 +1666,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_heating_heat_pump(hpxml, load_frac = 1.0, seed_id = nil)
     # 7.7 HSPF air source heat pump
-    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(HeatPump)"]
-    if cnt.nil?
-      cnt = 0
-    end
+    cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump)")
     heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
                                     id: "HeatPump#{cnt + 1}",
                                     distribution_system_idref: "HVACDistribution_DSE_80",
@@ -1696,10 +1687,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_cooling_air_conditioner(hpxml, load_frac = 1.0, seed_id = nil)
     # 13 SEER electric air conditioner
-    cnt = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACPlant/count(CoolingSystem)"]
-    if cnt.nil?
-      cnt = 0
-    end
+    cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem)")
     cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                         id: "CoolingSystem#{cnt + 1}",
                                         distribution_system_idref: "HVACDistribution_DSE_80",
