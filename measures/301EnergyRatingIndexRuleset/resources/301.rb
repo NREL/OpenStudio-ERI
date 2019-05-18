@@ -329,7 +329,6 @@ class EnergyRatingIndex301Ruleset
     climate_and_risk_zones_values = HPXML.get_climate_and_risk_zones_values(climate_and_risk_zones: orig_details.elements["ClimateandRiskZones"])
     HPXML.add_climate_and_risk_zones(hpxml: hpxml, **climate_and_risk_zones_values)
     @iecc_zone_2006 = climate_and_risk_zones_values[:iecc2006]
-    @iecc_zone_2012 = climate_and_risk_zones_values[:iecc2012]
   end
 
   def self.set_enclosure_air_infiltration_reference(hpxml)
@@ -384,12 +383,10 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_air_infiltration_iad(hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-    if ["1A", "1B", "1C", "2A", "2B", "2C"].include? @iecc_zone_2012
+    if ["1A", "1B", "1C", "2A", "2B", "2C"].include? @iecc_zone_2006
       ach50 = 5.0
-    elsif ["3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2012
+    elsif ["3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", "8"].include? @iecc_zone_2006
       ach50 = 3.0
-    else
-      fail "Unhandled IECC 2012 climate zone #{@iecc_zone_2012}."
     end
 
     # Air Infiltration

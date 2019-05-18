@@ -46,7 +46,6 @@ class EnergyRatingIndex301Validator
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume" => one,
 
         "/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2006']" => one, # See [ClimateZone]
-        "/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2012']" => one, # See [ClimateZone]
         "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation" => one, # See [WeatherStation]
 
         "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH' or UnitofMeasure='CFM']/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage]" => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
