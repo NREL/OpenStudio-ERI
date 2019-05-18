@@ -1160,8 +1160,13 @@ class EnergyRatingIndex301Ruleset
     end
     q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
 
+    # Treat CFIS like supply ventilation. Is this correct?
+    if fan_type == 'central fan integrated supply'
+      fan_type = 'supply only'
+    end
+
     fan_power_w = nil
-    if fan_type == 'supply only' or fan_type == 'exhaust only' or fan_type == 'central fan integrated supply'
+    if fan_type == 'supply only' or fan_type == 'exhaust only'
       w_cfm = 0.35
       fan_power_w = w_cfm * q_fan_power
     elsif fan_type == 'balanced'
@@ -1177,9 +1182,8 @@ class EnergyRatingIndex301Ruleset
                               id: HPXML.get_id(vent_fan),
                               fan_type: fan_type,
                               rated_flow_rate: q_fan_airflow,
-                              hours_in_operation: 24, # TODO: CFIS
-                              fan_power: fan_power_w,
-                              distribution_system_idref: vent_fan_values[:distribution_system_idref])
+                              hours_in_operation: 24,
+                              fan_power: fan_power_w)
   end
 
   def self.set_systems_mechanical_ventilation_rated(orig_details, hpxml)
