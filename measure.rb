@@ -260,8 +260,8 @@ class OSModel
     @default_azimuth = get_default_azimuth(building)
     @min_neighbor_distance = get_min_neighbor_distance(building)
 
-    @hvac_map = {} # mapping between HPXML HVAC systems and model air/plant loops or zonal HVACs
-    @dhw_map = {}  # mapping between HPXML Water Heating systems and plant loops
+    @hvac_map = {} # mapping between HPXML HVAC systems and model objects
+    @dhw_map = {}  # mapping between HPXML Water Heating systems and model objects
 
     @use_only_ideal_air = false
     if not building_construction_values[:use_only_ideal_air_system].nil?
@@ -2120,8 +2120,6 @@ class OSModel
       wh.elements.each("WaterHeatingSystem") do |dhw|
         water_heating_system_values = HPXML.get_water_heating_system_values(water_heating_system: dhw)
 
-        orig_plant_loops = model.getPlantLoops
-
         space = get_space_from_location(water_heating_system_values[:location], "WaterHeatingSystem", model, spaces)
         setpoint_temp = Waterheater.get_default_hot_water_temperature(@eri_version)
         wh_type = water_heating_system_values[:water_heater_type]
@@ -2204,8 +2202,7 @@ class OSModel
 
         end
 
-        new_plant_loop = (model.getPlantLoops - orig_plant_loops)[0]
-        dhw_loop_fracs[new_plant_loop] = dhw_load_frac
+        dhw_loop_fracs[sys_id] = dhw_load_frac
       end
     end
 
@@ -2222,7 +2219,8 @@ class OSModel
                                           recirc_branch_length, recirc_control_type,
                                           recirc_pump_power, dwhr_present,
                                           dwhr_facilities_connected, dwhr_is_equal_flow,
-                                          dwhr_efficiency, dhw_loop_fracs, @eri_version)
+                                          dwhr_efficiency, dhw_loop_fracs, @eri_version,
+                                          @dhw_map)
     return false if not success
 
     return true
@@ -3258,21 +3256,50 @@ class OSModel
   end
 
   def self.add_building_output_variables(runner, model, map_tsv_dir)
-    @hvac_map.each do |sys_id, hvac_equip_list|
-      add_output_variables(model, OutputVars.SpaceHeatingElectricity, hvac_equip_list)
-      add_output_variables(model, OutputVars.SpaceHeatingFuel, hvac_equip_list)
-      add_output_variables(model, OutputVars.SpaceHeatingLoad, hvac_equip_list)
-      add_output_variables(model, OutputVars.SpaceCoolingElectricity, hvac_equip_list)
-      add_output_variables(model, OutputVars.SpaceCoolingLoad, hvac_equip_list)
+    hvac_output_vars = [OutputVars.SpaceHeatingElectricity,
+                        OutputVars.SpaceHeatingFuel,
+                        OutputVars.SpaceHeatingLoad,
+                        OutputVars.SpaceCoolingElectricity,
+                        OutputVars.SpaceCoolingLoad]
+
+    dhw_output_vars = [OutputVars.WaterHeatingElectricity,
+                       OutputVars.WaterHeatingElectricityRecircPump,
+                       OutputVars.WaterHeatingFuel,
+                       OutputVars.WaterHeatingLoad]
+
+    # Remove objects that are not referenced by output vars and are not
+    # EMS output vars.
+    { @hvac_map => hvac_output_vars,
+      @dhw_map => dhw_output_vars }.each do |map, vars|
+      all_vars = vars.reduce({}, :merge)
+      map.each do |sys_id, objects|
+        objects_to_delete = []
+        objects.each do |object|
+          next if object.is_a? OpenStudio::Model::EnergyManagementSystemOutputVariable
+          next unless all_vars[object.class.to_s].nil? # Referenced?
+
+          objects_to_delete << object
+        end
+        objects_to_delete.uniq.each do |object|
+          map[sys_id].delete object
+        end
+      end
     end
-    @dhw_map.each do |sys_id, dhw_equip_list|
-      add_output_variables(model, OutputVars.WaterHeatingElectricity, dhw_equip_list)
-      add_output_variables(model, OutputVars.WaterHeatingElectricityRecircPump, dhw_equip_list)
-      add_output_variables(model, OutputVars.WaterHeatingFuel, dhw_equip_list)
-      add_output_variables(model, OutputVars.WaterHeatingLoad, dhw_equip_list)
+
+    # Add output variables to model
+    @hvac_map.each do |sys_id, hvac_objects|
+      hvac_output_vars.each do |hvac_output_var|
+        add_output_variables(model, hvac_output_var, hvac_objects)
+      end
+    end
+    @dhw_map.each do |sys_id, dhw_objects|
+      dhw_output_vars.each do |dhw_output_var|
+        add_output_variables(model, dhw_output_var, dhw_objects)
+      end
     end
 
     if map_tsv_dir.is_initialized
+      # Write maps to file
       map_tsv_dir = map_tsv_dir.get
       write_mapping(@hvac_map, File.join(map_tsv_dir, "map_hvac.tsv"))
       write_mapping(@dhw_map, File.join(map_tsv_dir, "map_water_heating.tsv"))
@@ -3282,14 +3309,12 @@ class OSModel
   end
 
   def self.add_output_variables(model, vars, objects)
-    if objects.nil?
-      vars[nil].each do |object_var|
-        outputVariable = OpenStudio::Model::OutputVariable.new(object_var, model)
+    objects.each do |object|
+      if object.is_a? OpenStudio::Model::EnergyManagementSystemOutputVariable
+        outputVariable = OpenStudio::Model::OutputVariable.new(object.name.to_s, model)
         outputVariable.setReportingFrequency('runperiod')
         outputVariable.setKeyValue('*')
-      end
-    else
-      objects.each do |object|
+      else
         next if vars[object.class.to_s].nil?
 
         vars[object.class.to_s].each do |object_var|
@@ -4172,8 +4197,7 @@ class OutputVars
              'OpenStudio::Model::CoilHeatingElectric' => ['Heating Coil Electric Energy', 'Heating Coil Crankcase Heater Electric Energy', 'Heating Coil Defrost Electric Energy'],
              'OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit' => ['Heating Coil Electric Energy', 'Heating Coil Crankcase Heater Electric Energy', 'Heating Coil Defrost Electric Energy'],
              'OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric' => ['Baseboard Electric Energy'],
-             'OpenStudio::Model::BoilerHotWater' => ['Boiler Electric Energy'],
-             'OpenStudio::Model::FanOnOff' => ['Fan Electric Energy'] }
+             'OpenStudio::Model::BoilerHotWater' => ['Boiler Electric Energy'] }
   end
 
   def self.SpaceHeatingFuel
@@ -4189,22 +4213,19 @@ class OutputVars
              'OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit' => ['Heating Coil Heating Energy'],
              'OpenStudio::Model::CoilHeatingGas' => ['Heating Coil Heating Energy'],
              'OpenStudio::Model::ZoneHVACBaseboardConvectiveElectric' => ['Baseboard Total Heating Energy'],
-             'OpenStudio::Model::BoilerHotWater' => ['Boiler Heating Energy'],
-             'OpenStudio::Model::FanOnOff' => ['Fan Electric Energy'] }
+             'OpenStudio::Model::BoilerHotWater' => ['Boiler Heating Energy'] }
   end
 
   def self.SpaceCoolingElectricity
     return { 'OpenStudio::Model::CoilCoolingDXSingleSpeed' => ['Cooling Coil Electric Energy', 'Cooling Coil Crankcase Heater Electric Energy'],
              'OpenStudio::Model::CoilCoolingDXMultiSpeed' => ['Cooling Coil Electric Energy', 'Cooling Coil Crankcase Heater Electric Energy'],
-             'OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit' => ['Cooling Coil Electric Energy', 'Cooling Coil Crankcase Heater Electric Energy'],
-             'OpenStudio::Model::FanOnOff' => ['Fan Electric Energy'] }
+             'OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit' => ['Cooling Coil Electric Energy', 'Cooling Coil Crankcase Heater Electric Energy'] }
   end
 
   def self.SpaceCoolingLoad
     return { 'OpenStudio::Model::CoilCoolingDXSingleSpeed' => ['Cooling Coil Total Cooling Energy'],
              'OpenStudio::Model::CoilCoolingDXMultiSpeed' => ['Cooling Coil Total Cooling Energy'],
-             'OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit' => ['Cooling Coil Total Cooling Energy'],
-             'OpenStudio::Model::FanOnOff' => ['Fan Electric Energy'] }
+             'OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit' => ['Cooling Coil Total Cooling Energy'] }
   end
 
   def self.WaterHeatingElectricity
