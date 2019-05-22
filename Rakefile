@@ -605,28 +605,24 @@ def get_hpxml_file_climate_and_risk_zones_values(hpxml_file, climate_and_risk_zo
   if hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AC.xml'
     # Colorado Springs
     climate_and_risk_zones_values = { :iecc2006 => "5B",
-                                      :iecc2012 => "5B",
                                       :weather_station_id => "WeatherStation",
                                       :weather_station_name => "Colorado Springs, CO",
                                       :weather_station_wmo => "724660" }
   elsif hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AL.xml'
     # Las Vegas
     climate_and_risk_zones_values = { :iecc2006 => "3B",
-                                      :iecc2012 => "3B",
                                       :weather_station_id => "WeatherStation",
                                       :weather_station_name => "Las Vegas, NV",
                                       :weather_station_wmo => "723860" }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
     # Baltimore
     climate_and_risk_zones_values = { :iecc2006 => "4A",
-                                      :iecc2012 => "4A",
                                       :weather_station_id => "WeatherStation",
                                       :weather_station_name => "Baltimore, MD",
                                       :weather_station_wmo => "724060" }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Dallas
     climate_and_risk_zones_values = { :iecc2006 => "3A",
-                                      :iecc2012 => "3A",
                                       :weather_station_id => "WeatherStation",
                                       :weather_station_name => "Dallas, TX",
                                       :weather_station_wmo => "722590" }
@@ -634,14 +630,12 @@ def get_hpxml_file_climate_and_risk_zones_values(hpxml_file, climate_and_risk_zo
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
     climate_and_risk_zones_values = { :iecc2006 => "1A",
-                                      :iecc2012 => "1A",
                                       :weather_station_id => "WeatherStation",
                                       :weather_station_name => "Miami, FL",
                                       :weather_station_wmo => "722020" }
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
     climate_and_risk_zones_values = { :iecc2006 => "7",
-                                      :iecc2012 => "7",
                                       :weather_station_id => "WeatherStation",
                                       :weather_station_name => "Duluth, MN",
                                       :weather_station_wmo => "727450" }
