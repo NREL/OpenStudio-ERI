@@ -2375,19 +2375,27 @@ def copy_sample_files
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
+                  'invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
+                  'invalid_files/clothes-washer-location-other.xml',
                   'invalid_files/clothes-dryer-location.xml',
-                  'invalid_files/duct-location.xml.skip',
-                  'invalid_files/refrigerator-location.xml',
-                  'invalid_files/water-heater-location.xml',
+                  'invalid_files/clothes-dryer-location-other.xml',
+                  'invalid_files/duct-location.xml',
+                  'invalid_files/duct-location-other.xml',
+                  'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
+                  'invalid_files/hvac-distribution-multiple-attached-heating.xml',
                   'invalid_files/missing-surfaces.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
-                  'invalid_files/unattached-cfis.xml.skip',
+                  'invalid_files/refrigerator-location.xml',
+                  'invalid_files/refrigerator-location-other.xml',
+                  'invalid_files/unattached-cfis.xml',
                   'invalid_files/unattached-door.xml',
-                  'invalid_files/unattached-hvac.xml.skip',
+                  'invalid_files/unattached-hvac-distribution.xml',
                   'invalid_files/unattached-skylight.xml',
                   'invalid_files/unattached-window.xml',
+                  'invalid_files/water-heater-location.xml',
+                  'invalid_files/water-heater-location-other.xml',
                   'base-appliances-none.xml',
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
@@ -2403,6 +2411,10 @@ def copy_sample_files
                   'base-misc-number-of-occupants.xml',
                   'base-site-neighbors.xml']
   exclude_list.each do |exclude_file|
-    FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
+    if File.exists? "workflow/sample_files/#{exclude_file}"
+      FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
+    else
+      puts "Warning: Excluded file workflow/sample_files/#{exclude_file} not found."
+    end
   end
 end
