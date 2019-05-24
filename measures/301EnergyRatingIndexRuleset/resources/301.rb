@@ -1284,7 +1284,7 @@ class EnergyRatingIndex301Ruleset
 
     water_heating = orig_details.elements["Systems/WaterHeating"]
 
-    has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
+    has_uncond_bsmnt = (not hpxml.elements["Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationType/Basement[Conditioned='false']"].nil?)
     standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
 
     if water_heating.nil?
