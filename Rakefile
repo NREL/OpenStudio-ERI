@@ -286,8 +286,8 @@ def create_hpxmls
       climate_and_risk_zones_values = {}
       air_infiltration_measurement_values = {}
       roofs_values = []
-      walls_values = []
       rim_joists_values = []
+      walls_values = []
       foundation_walls_values = []
       floors_values = []
       slabs_values = []
@@ -324,8 +324,8 @@ def create_hpxmls
         climate_and_risk_zones_values = get_hpxml_file_climate_and_risk_zones_values(hpxml_file, climate_and_risk_zones_values)
         air_infiltration_measurement_values = get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltration_measurement_values, building_construction_values)
         roofs_values = get_hpxml_file_roofs_values(hpxml_file, roofs_values)
-        walls_values = get_hpxml_file_walls_values(hpxml_file, walls_values)
         rim_joists_values = get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
+        walls_values = get_hpxml_file_walls_values(hpxml_file, walls_values)
         foundation_walls_values = get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
         floors_values = get_hpxml_file_floors_values(hpxml_file, floors_values)
         slabs_values = get_hpxml_file_slabs_values(hpxml_file, slabs_values)
@@ -373,11 +373,11 @@ def create_hpxmls
       roofs_values.each do |roof_values|
         HPXML.add_roof(hpxml: hpxml, **roof_values)
       end
-      walls_values.each do |wall_values|
-        HPXML.add_wall(hpxml: hpxml, **wall_values)
-      end
       rim_joists_values.each do |rim_joist_values|
         HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
+      end
+      walls_values.each do |wall_values|
+        HPXML.add_wall(hpxml: hpxml, **wall_values)
       end
       foundation_walls_values.each do |foundation_wall_values|
         HPXML.add_foundation_wall(hpxml: hpxml, **foundation_wall_values)
@@ -707,6 +707,26 @@ def get_hpxml_file_roofs_values(hpxml_file, roofs_values)
   return roofs_values
 end
 
+def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
+  if ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    # Uninsulated ASHRAE Conditioned Basement
+    rim_joists_values = [{ :id => "RimJoist",
+                           :exterior_adjacent_to => "outside",
+                           :interior_adjacent_to => "living space",
+                           :area => 126,
+                           :azimuth => nil,
+                           :solar_absorptance => 0.6,
+                           :emittance => 0.9,
+                           :insulation_assembly_r_value => 5.01 }]
+  elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
+    # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
+    rim_joists_values[0][:insulation_assembly_r_value] = 13.14
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    rim_joists_values = []
+  end
+  return rim_joists_values
+end
+
 def get_hpxml_file_walls_values(hpxml_file, walls_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
@@ -749,26 +769,6 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
     walls_values[0][:insulation_assembly_r_value] = 16.9
   end
   return walls_values
-end
-
-def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
-  if ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
-    # Uninsulated ASHRAE Conditioned Basement
-    rim_joists_values = [{ :id => "RimJoist",
-                           :exterior_adjacent_to => "outside",
-                           :interior_adjacent_to => "living space",
-                           :area => 126,
-                           :azimuth => nil,
-                           :solar_absorptance => 0.6,
-                           :emittance => 0.9,
-                           :insulation_assembly_r_value => 5.01 }]
-  elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
-    # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
-    rim_joists_values[0][:insulation_assembly_r_value] = 13.14
-  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
-    rim_joists_values = []
-  end
-  return rim_joists_values
 end
 
 def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
@@ -1943,7 +1943,7 @@ def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribut
 
   has_uncond_bsmnt = false
   foundation_walls_values.each do |foundation_wall_values|
-    next unless foundation_wall_values[:interior_adjacent_to] == "basement - unconditioned"
+    next unless [foundation_wall_values[:interior_adjacent_to], foundation_wall_values[:exterior_adjacent_to]].include? "basement - unconditioned"
 
     has_uncond_bsmnt = true
   end

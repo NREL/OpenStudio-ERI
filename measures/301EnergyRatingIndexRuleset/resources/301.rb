@@ -43,11 +43,13 @@ class EnergyRatingIndex301Ruleset
 
     # Enclosure
     set_enclosure_air_infiltration_reference(hpxml)
-    set_enclosure_attics_roofs_reference(orig_details, hpxml)
-    set_enclosure_foundations_reference(orig_details, hpxml)
-    set_enclosure_garages_reference(orig_details, hpxml)
+    set_enclosure_roofs_reference(orig_details, hpxml)
     set_enclosure_rim_joists_reference(orig_details, hpxml)
     set_enclosure_walls_reference(orig_details, hpxml)
+    set_enclosure_foundation_walls_reference(orig_details, hpxml)
+    set_enclosure_ceilings_reference(orig_details, hpxml)
+    set_enclosure_floors_reference(orig_details, hpxml)
+    set_enclosure_slabs_reference(orig_details, hpxml)
     set_enclosure_windows_reference(orig_details, hpxml)
     set_enclosure_skylights_reference(hpxml)
     set_enclosure_doors_reference(orig_details, hpxml)
@@ -89,11 +91,13 @@ class EnergyRatingIndex301Ruleset
 
     # Enclosure
     set_enclosure_air_infiltration_rated(orig_details, hpxml)
-    set_enclosure_attics_roofs_rated(orig_details, hpxml)
-    set_enclosure_foundations_rated(orig_details, hpxml)
-    set_enclosure_garages_rated(orig_details, hpxml)
+    set_enclosure_roofs_rated(orig_details, hpxml)
     set_enclosure_rim_joists_rated(orig_details, hpxml)
     set_enclosure_walls_rated(orig_details, hpxml)
+    set_enclosure_foundation_walls_rated(orig_details, hpxml)
+    set_enclosure_ceilings_rated(orig_details, hpxml)
+    set_enclosure_floors_rated(orig_details, hpxml)
+    set_enclosure_slabs_rated(orig_details, hpxml)
     set_enclosure_windows_rated(orig_details, hpxml)
     set_enclosure_skylights_rated(orig_details, hpxml)
     set_enclosure_doors_rated(orig_details, hpxml)
@@ -127,20 +131,23 @@ class EnergyRatingIndex301Ruleset
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
+    remove_garage_and_adiabatic_from_iad(orig_details)
+
     # BuildingSummary
     set_summary_iad(orig_details, hpxml)
-    remove_garage_from_iad(orig_details)
 
     # ClimateAndRiskZones
     set_climate(orig_details, hpxml)
 
     # Enclosure
     set_enclosure_air_infiltration_iad(hpxml)
-    set_enclosure_attics_roofs_iad(orig_details, hpxml)
-    set_enclosure_foundations_iad(hpxml)
-    set_enclosure_garages_iad(hpxml)
+    set_enclosure_roofs_iad(orig_details, hpxml)
     set_enclosure_rim_joists_iad(orig_details, hpxml)
     set_enclosure_walls_iad(orig_details, hpxml)
+    set_enclosure_foundation_walls_iad(hpxml)
+    set_enclosure_ceilings_iad(orig_details, hpxml)
+    set_enclosure_floors_iad(hpxml)
+    set_enclosure_slabs_iad(orig_details, hpxml)
     set_enclosure_windows_iad(orig_details, hpxml)
     set_enclosure_skylights_iad(orig_details, hpxml)
     set_enclosure_doors_iad(orig_details, hpxml)
@@ -184,19 +191,77 @@ class EnergyRatingIndex301Ruleset
     return hpxml_doc
   end
 
+  def self.remove_garage_and_adiabatic_from_iad(orig_details)
+    # Remove garage/adiabatic enclosure elements.
+
+    adjacents = ["garage", "other housing unit"]
+
+    # Roof
+    orig_details.elements.each("Enclosure/Roofs/Roof") do |roof|
+      roof_values = HPXML.get_roof_values(roof: roof)
+      if adjacents.include? roof_values[:interior_adjacent_to] or adjacents.include? roof_values[:exterior_adjacent_to]
+        roof.parent.elements.delete roof
+        delete_roof_subsurfaces(orig_details, roof_values[:id])
+      end
+    end
+
+    # Rim Joist
+    orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
+      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
+      if adjacents.include? rim_joist_values[:interior_adjacent_to] or adjacents.include? rim_joist_values[:exterior_adjacent_to]
+        rim_joist.parent.elements.delete rim_joist
+      end
+    end
+
+    # Wall
+    orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
+      wall_values = HPXML.get_wall_values(wall: wall)
+      if adjacents.include? wall_values[:interior_adjacent_to] or adjacents.include? wall_values[:exterior_adjacent_to]
+        wall.parent.elements.delete wall
+        delete_wall_subsurfaces(orig_details, wall_values[:id])
+      end
+    end
+
+    # FoundationWall
+    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
+      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
+      if adjacents.include? fnd_wall_values[:interior_adjacent_to] or adjacents.include? fnd_wall_values[:exterior_adjacent_to]
+        fnd_wall.parent.elements.delete fnd_wall
+        delete_wall_subsurfaces(orig_details, fnd_wall_values[:id])
+      end
+    end
+
+    # Floor
+    orig_details.elements.each("Enclosure/Floors/Floor") do |floor|
+      floor_values = HPXML.get_floor_values(floor: floor)
+      if adjacents.include? floor_values[:interior_adjacent_to] or adjacents.include? floor_values[:exterior_adjacent_to]
+        floor.parent.elements.delete floor
+      end
+    end
+
+    # Slab
+    orig_details.elements.each("Enclosure/Slabs/Slab") do |slab|
+      slab_values = HPXML.get_slab_values(slab: slab)
+      if adjacents.include? slab_values[:interior_adjacent_to] or adjacents.include? slab_values[:exterior_adjacent_to]
+        slab.parent.elements.delete slab
+      end
+    end
+  end
+
   def self.set_summary_reference(orig_details, hpxml)
     site = orig_details.elements["BuildingSummary/Site"]
     site_values = HPXML.get_site_values(site: site)
-    building_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
-    building_construction_values = HPXML.get_building_construction_values(building_construction: building_construction)
+    construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
+    construction_values = HPXML.get_building_construction_values(building_construction: construction)
 
     # Global variables
-    @cfa = building_construction_values[:conditioned_floor_area]
-    @nbeds = building_construction_values[:number_of_bedrooms]
-    @ncfl = building_construction_values[:number_of_conditioned_floors]
-    @ncfl_ag = building_construction_values[:number_of_conditioned_floors_above_grade]
-    @cvolume = building_construction_values[:conditioned_building_volume]
+    @cfa = construction_values[:conditioned_floor_area]
+    @nbeds = construction_values[:number_of_bedrooms]
+    @ncfl = construction_values[:number_of_conditioned_floors]
+    @ncfl_ag = construction_values[:number_of_conditioned_floors_above_grade]
+    @cvolume = construction_values[:conditioned_building_volume]
     @infilvolume = get_infiltration_volume(orig_details)
+    @has_uncond_bsmnt = get_has_uncond_bsmnt(orig_details)
 
     HPXML.add_site(hpxml: hpxml,
                    fuels: site_values[:fuels],
@@ -205,22 +270,26 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_building_occupancy(hpxml: hpxml,
                                  number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
 
-    HPXML.add_building_construction(hpxml: hpxml, **building_construction_values)
+    construction_values[:vented_crawlspace_sla] = Airflow.get_default_vented_crawl_sla()
+    construction_values[:vented_attic_sla] = Airflow.get_default_vented_attic_sla()
+
+    HPXML.add_building_construction(hpxml: hpxml, **construction_values)
   end
 
   def self.set_summary_rated(orig_details, hpxml)
     site = orig_details.elements["BuildingSummary/Site"]
     site_values = HPXML.get_site_values(site: site)
-    building_construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
-    building_construction_values = HPXML.get_building_construction_values(building_construction: building_construction)
+    construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
+    construction_values = HPXML.get_building_construction_values(building_construction: construction)
 
     # Global variables
-    @cfa = building_construction_values[:conditioned_floor_area]
-    @nbeds = building_construction_values[:number_of_bedrooms]
-    @ncfl = building_construction_values[:number_of_conditioned_floors]
-    @ncfl_ag = building_construction_values[:number_of_conditioned_floors_above_grade]
-    @cvolume = building_construction_values[:conditioned_building_volume]
+    @cfa = construction_values[:conditioned_floor_area]
+    @nbeds = construction_values[:number_of_bedrooms]
+    @ncfl = construction_values[:number_of_conditioned_floors]
+    @ncfl_ag = construction_values[:number_of_conditioned_floors_above_grade]
+    @cvolume = construction_values[:conditioned_building_volume]
     @infilvolume = get_infiltration_volume(orig_details)
+    @has_uncond_bsmnt = get_has_uncond_bsmnt(orig_details)
 
     HPXML.add_site(hpxml: hpxml,
                    fuels: site_values[:fuels],
@@ -229,7 +298,13 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_building_occupancy(hpxml: hpxml,
                                  number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
 
-    HPXML.add_building_construction(hpxml: hpxml, **building_construction_values)
+    reference_crawlspace_sla = Airflow.get_default_vented_crawl_sla()
+    if construction_values[:vented_crawlspace_sla].nil? or construction_values[:vented_crawlspace_sla] < reference_crawlspace_sla
+      # FUTURE: Allow approved ground cover
+      construction_values[:vented_crawlspace_sla] = reference_crawlspace_sla
+    end
+
+    HPXML.add_building_construction(hpxml: hpxml, **construction_values)
   end
 
   def self.set_summary_iad(orig_details, hpxml)
@@ -244,6 +319,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = 2
     @cvolume = 20400
     @infilvolume = 20400
+    @has_uncond_bsmnt = false
 
     HPXML.add_site(hpxml: hpxml,
                    fuels: site_values[:fuels],
@@ -257,72 +333,8 @@ class EnergyRatingIndex301Ruleset
                                     number_of_conditioned_floors_above_grade: @ncfl_ag,
                                     number_of_bedrooms: @nbeds,
                                     conditioned_floor_area: @cfa,
-                                    conditioned_building_volume: @cvolume)
-  end
-
-  def self.remove_garage_from_iad(orig_details)
-    # Remove enclosure elements that reference a garage.
-
-    # Attic
-    orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
-      attic.elements.each("Floors/Floor") do |floor|
-        floor_values = HPXML.get_attic_floor_values(floor: floor)
-        if floor_values[:adjacent_to] == "garage"
-          floor.parent.elements.delete floor
-        end
-      end
-      attic.elements.each("Walls/Wall") do |wall|
-        wall_values = HPXML.get_attic_wall_values(wall: wall)
-        if wall_values[:adjacent_to] == "garage"
-          wall.parent.elements.delete wall
-          delete_wall_subsurfaces(orig_details, wall_values[:id])
-        end
-      end
-    end
-
-    # Foundation
-    orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
-      foundation.elements.each("FrameFloor") do |floor|
-        floor_values = HPXML.get_foundation_framefloor_values(floor: floor)
-        if floor_values[:adjacent_to] == "garage"
-          floor.parent.elements.delete floor
-        end
-      end
-      foundation.elements.each("FoundationWall") do |fwall|
-        fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-        if fwall_values[:adjacent_to] == "garage"
-          fwall.parent.elements.delete fwall
-          delete_wall_subsurfaces(orig_details, fwall_values[:id])
-        end
-      end
-    end
-
-    # Garage
-    orig_details.elements.each("Enclosure/Garages/Garage") do |garage|
-      garage.elements.each("Walls/Wall") do |wall|
-        wall_values = HPXML.get_garage_wall_values(wall: wall)
-        delete_wall_subsurfaces(orig_details, wall_values[:id])
-      end
-    end
-    garages = orig_details.elements["Enclosure/Garages"]
-    garages.parent.elements.delete garages unless garages.nil?
-
-    # Rim Joist
-    orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
-      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-      if rim_joist_values[:interior_adjacent_to] == "garage" or rim_joist_values[:exterior_adjacent_to] == "garage"
-        rim_joist.parent.elements.delete rim_joist
-      end
-    end
-
-    # Wall
-    orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall)
-      if wall_values[:interior_adjacent_to] == "garage" or wall_values[:exterior_adjacent_to] == "garage"
-        wall.parent.elements.delete wall
-        delete_wall_subsurfaces(orig_details, wall_values[:id])
-      end
-    end
+                                    conditioned_building_volume: @cvolume,
+                                    vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
   end
 
   def self.set_climate(orig_details, hpxml)
@@ -398,301 +410,43 @@ class EnergyRatingIndex301Ruleset
                                            infiltration_volume: @infilvolume)
   end
 
-  def self.set_enclosure_attics_roofs_reference(orig_details, hpxml)
+  def self.set_enclosure_roofs_reference(orig_details, hpxml)
     ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
-    wall_ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
-
-    orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
-      attic_values = HPXML.get_attic_values(attic: attic)
-      if attic_values[:attic_type] == 'UnventedAttic'
-        attic_values[:attic_type] = 'VentedAttic'
+    # Table 4.2.2(1) - Roofs
+    orig_details.elements.each("Enclosure/Roofs/Roof") do |roof|
+      roof_values = HPXML.get_roof_values(roof: roof)
+      roof_values[:solar_absorptance] = 0.75
+      roof_values[:emittance] = 0.90
+      if is_external_thermal_boundary(roof_values[:interior_adjacent_to], roof_values[:exterior_adjacent_to])
+        roof_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
       end
-      interior_adjacent_to = get_attic_adjacent_to(attic_values[:attic_type])
-
-      if attic_values[:attic_type] == 'VentedAttic'
-        attic_values[:specific_leakage_area] = Airflow.get_default_vented_attic_sla()
-      end
-
-      new_attic = HPXML.add_attic(hpxml: hpxml, **attic_values)
-
-      # Table 4.2.2(1) - Roofs
-      attic.elements.each("Roofs/Roof") do |roof|
-        roof_values = HPXML.get_attic_roof_values(roof: roof)
-        roof_values[:solar_absorptance] = 0.75
-        roof_values[:emittance] = 0.90
-        if is_external_thermal_boundary(interior_adjacent_to, "outside")
-          roof_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
-        end
-        HPXML.add_attic_roof(attic: new_attic, **roof_values)
-      end
-
-      # Table 4.2.2(1) - Ceilings
-      attic.elements.each("Floors/Floor") do |floor|
-        floor_values = HPXML.get_attic_floor_values(floor: floor)
-        if is_external_thermal_boundary(interior_adjacent_to, floor_values[:adjacent_to])
-          floor_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
-        end
-        HPXML.add_attic_floor(attic: new_attic, **floor_values)
-      end
-
-      # Table 4.2.2(1) - Above-grade walls
-      attic.elements.each("Walls/Wall") do |wall|
-        wall_values = HPXML.get_attic_wall_values(wall: wall)
-        if is_external_thermal_boundary(interior_adjacent_to, wall_values[:adjacent_to])
-          wall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
-        end
-        HPXML.add_attic_wall(attic: new_attic, **wall_values)
-      end
+      roof_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      HPXML.add_roof(hpxml: hpxml, **roof_values)
     end
   end
 
-  def self.set_enclosure_attics_roofs_rated(orig_details, hpxml)
-    orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
-      attic_values = HPXML.get_attic_values(attic: attic)
-
-      new_attic = HPXML.add_attic(hpxml: hpxml, **attic_values)
-
-      attic.elements.each("Roofs/Roof") do |roof|
-        roof_values = HPXML.get_attic_roof_values(roof: roof)
-        HPXML.add_attic_roof(attic: new_attic, **roof_values)
-      end
-
-      attic.elements.each("Floors/Floor") do |floor|
-        floor_values = HPXML.get_attic_floor_values(floor: floor)
-        HPXML.add_attic_floor(attic: new_attic, **floor_values)
-      end
-
-      attic.elements.each("Walls/Wall") do |wall|
-        wall_values = HPXML.get_attic_wall_values(wall: wall)
-        HPXML.add_attic_wall(attic: new_attic, **wall_values)
-      end
+  def self.set_enclosure_roofs_rated(orig_details, hpxml)
+    orig_details.elements.each("Enclosure/Roofs/Roof") do |roof|
+      roof_values = HPXML.get_roof_values(roof: roof)
+      HPXML.add_roof(hpxml: hpxml, **roof_values)
     end
   end
 
-  def self.set_enclosure_attics_roofs_iad(orig_details, hpxml)
-    set_enclosure_attics_roofs_rated(orig_details, hpxml)
-
+  def self.set_enclosure_roofs_iad(orig_details, hpxml)
+    set_enclosure_roofs_rated(orig_details, hpxml)
     new_enclosure = hpxml.elements["Building/BuildingDetails/Enclosure"]
-    new_enclosure.elements.each("Attics/Attic") do |new_attic|
-      # Table 4.3.1(1) Configuration of Index Adjustment Design - Roofs
-      sum_roof_area = 0.0
-      new_attic.elements.each("Roofs/Roof") do |new_roof|
-        new_roof_values = HPXML.get_attic_roof_values(roof: new_roof)
-        sum_roof_area += new_roof_values[:area]
-      end
-      new_attic.elements.each("Roofs/Roof") do |new_roof|
-        new_roof_values = HPXML.get_attic_roof_values(roof: new_roof)
-        roof_area = new_roof_values[:area]
-        new_roof.elements["Area"].text = 1300.0 * roof_area / sum_roof_area
-      end
 
-      # Table 4.3.1(1) Configuration of Index Adjustment Design - Ceilings
-      sum_floor_area = 0.0
-      new_attic.elements.each("Floors/Floor") do |new_floor|
-        new_floor_values = HPXML.get_attic_floor_values(floor: new_floor)
-        sum_floor_area += new_floor_values[:area]
-      end
-      new_attic.elements.each("Floors/Floor") do |new_floor|
-        new_floor_values = HPXML.get_attic_floor_values(floor: new_floor)
-        floor_area = new_floor_values[:area]
-        new_floor.elements["Area"].text = 1200.0 * floor_area / sum_floor_area
-      end
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Roofs
+    sum_roof_area = 0.0
+    new_enclosure.elements.each("Roofs/Roof") do |new_roof|
+      new_roof_values = HPXML.get_roof_values(roof: new_roof)
+      sum_roof_area += new_roof_values[:area]
     end
-  end
-
-  def self.set_enclosure_foundations_reference(orig_details, hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
-    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
-    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
-    slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
-
-    orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
-      foundation_values = HPXML.get_foundation_values(foundation: foundation)
-      if foundation_values[:foundation_type] == "UnventedCrawlspace"
-        foundation_values[:foundation_type] = "VentedCrawlspace"
-      end
-      interior_adjacent_to = get_foundation_adjacent_to(foundation_values[:foundation_type])
-
-      if foundation_values[:foundation_type] == "VentedCrawlspace"
-        foundation_values[:specific_leakage_area] = Airflow.get_default_vented_crawl_sla()
-      end
-
-      new_foundation = HPXML.add_foundation(hpxml: hpxml, **foundation_values)
-
-      # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
-      foundation.elements.each("FrameFloor") do |floor|
-        floor_values = HPXML.get_foundation_framefloor_values(floor: floor)
-        if is_external_thermal_boundary(interior_adjacent_to, floor_values[:adjacent_to])
-          floor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
-        end
-        HPXML.add_foundation_framefloor(foundation: new_foundation, **floor_values)
-      end
-
-      # Table 4.2.2(1) - Conditioned basement walls
-      foundation.elements.each("FoundationWall") do |fwall|
-        fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-        # TODO: Can this just be is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)?
-        if interior_adjacent_to == "basement - conditioned" and is_external_thermal_boundary(interior_adjacent_to, fwall_values[:adjacent_to])
-          fwall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
-        end
-        HPXML.add_foundation_wall(foundation: new_foundation, **fwall_values)
-      end
-
-      # Table 4.2.2(1) - Foundations
-      foundation.elements.each("Slab") do |slab|
-        slab_values = HPXML.get_foundation_slab_values(slab: slab)
-        if interior_adjacent_to == "living space" and is_external_thermal_boundary(interior_adjacent_to, "ground")
-          slab_values[:perimeter_insulation_depth] = slab_perim_depth
-          slab_values[:under_slab_insulation_width] = slab_under_width
-          slab_values[:under_slab_insulation_spans_entire_slab] = nil
-          slab_values[:perimeter_insulation_r_value] = slab_perim_rvalue
-          slab_values[:under_slab_insulation_r_value] = slab_under_rvalue
-        end
-        slab_values[:carpet_fraction] = 0.8
-        slab_values[:carpet_r_value] = 2.0
-        new_slab = HPXML.add_foundation_slab(foundation: new_foundation, **slab_values)
-      end
+    new_enclosure.elements.each("Roofs/Roof") do |new_roof|
+      new_roof_values = HPXML.get_roof_values(roof: new_roof)
+      roof_area = new_roof_values[:area]
+      new_roof.elements["Area"].text = 1300.0 * roof_area / sum_roof_area
     end
-  end
-
-  def self.set_enclosure_foundations_rated(orig_details, hpxml)
-    min_crawlspace_sla = Airflow.get_default_vented_crawl_sla() # Reference Home vent
-
-    orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
-      foundation_values = HPXML.get_foundation_values(foundation: foundation)
-
-      if foundation_values[:foundation_type] == "VentedCrawlspace"
-        # TODO: Handle approved ground cover
-        if foundation_values[:specific_leakage_area] < min_crawlspace_sla
-          foundation_values[:specific_leakage_area] = min_crawlspace_sla
-        end
-      end
-
-      new_foundation = HPXML.add_foundation(hpxml: hpxml, **foundation_values)
-
-      foundation.elements.each("FrameFloor") do |floor|
-        floor_values = HPXML.get_foundation_framefloor_values(floor: floor)
-        HPXML.add_foundation_framefloor(foundation: new_foundation, **floor_values)
-      end
-
-      foundation.elements.each("FoundationWall") do |fwall|
-        fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-        HPXML.add_foundation_wall(foundation: new_foundation, **fwall_values)
-      end
-
-      foundation.elements.each("Slab") do |slab|
-        slab_values = HPXML.get_foundation_slab_values(slab: slab)
-        HPXML.add_foundation_slab(foundation: new_foundation, **slab_values)
-      end
-    end
-  end
-
-  def self.set_enclosure_foundations_iad(hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Foundation
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
-
-    new_foundation = HPXML.add_foundation(hpxml: hpxml,
-                                          id: "Foundation_Crawlspace",
-                                          foundation_type: "VentedCrawlspace",
-                                          specific_leakage_area: Airflow.get_default_vented_crawl_sla())
-
-    # Ceiling
-    HPXML.add_foundation_framefloor(foundation: new_foundation,
-                                    id: "Foundation_Floor",
-                                    adjacent_to: "living space",
-                                    area: 1200,
-                                    insulation_assembly_r_value: 1.0 / floor_ufactor)
-
-    # Wall
-    HPXML.add_foundation_wall(foundation: new_foundation,
-                              id: "Foundation_Wall",
-                              height: 2,
-                              area: 2 * 34.64 * 4,
-                              thickness: 8,
-                              depth_below_grade: 0,
-                              adjacent_to: "ground",
-                              insulation_height: 0,
-                              insulation_r_value: 0)
-
-    # Floor
-    HPXML.add_foundation_slab(foundation: new_foundation,
-                              id: "Foundation_Slab",
-                              area: 1200,
-                              thickness: 0,
-                              exposed_perimeter: 4 * 34.64,
-                              perimeter_insulation_depth: 0,
-                              under_slab_insulation_width: 0,
-                              under_slab_insulation_spans_entire_slab: nil,
-                              depth_below_grade: 0,
-                              carpet_fraction: 0,
-                              carpet_r_value: 0,
-                              perimeter_insulation_r_value: 0,
-                              under_slab_insulation_r_value: 0)
-  end
-
-  def self.set_enclosure_garages_reference(orig_details, hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
-    wall_ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
-
-    orig_details.elements.each("Enclosure/Garages/Garage") do |garage|
-      garage_values = HPXML.get_garage_values(garage: garage)
-
-      new_garage = HPXML.add_garage(hpxml: hpxml, **garage_values)
-
-      # Table 4.2.2(1) - Floors over garage
-      garage.elements.each("Ceilings/Ceiling") do |ceiling|
-        ceiling_values = HPXML.get_garage_ceiling_values(ceiling: ceiling)
-        if is_external_thermal_boundary("garage", ceiling_values[:adjacent_to])
-          ceiling_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
-        end
-        HPXML.add_garage_ceiling(garage: new_garage, **ceiling_values)
-      end
-
-      # Table 4.2.2(1) - Above-grade walls
-      garage.elements.each("Walls/Wall") do |wall|
-        wall_values = HPXML.get_garage_wall_values(wall: wall)
-        if is_external_thermal_boundary("garage", wall_values[:adjacent_to])
-          wall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
-        end
-        HPXML.add_garage_wall(garage: new_garage, **wall_values)
-      end
-
-      # Table 4.2.2(1) - Foundations
-      garage.elements.each("Slabs/Slab") do |slab|
-        slab_values = HPXML.get_garage_slab_values(slab: slab)
-        HPXML.add_garage_slab(garage: new_garage, **slab_values)
-      end
-    end
-  end
-
-  def self.set_enclosure_garages_rated(orig_details, hpxml)
-    orig_details.elements.each("Enclosure/Garages/Garage") do |garage|
-      garage_values = HPXML.get_garage_values(garage: garage)
-
-      new_garage = HPXML.add_garage(hpxml: hpxml, **garage_values)
-
-      # Table 4.2.2(1) - Floors over garage
-      garage.elements.each("Ceilings/Ceiling") do |ceiling|
-        ceiling_values = HPXML.get_garage_ceiling_values(ceiling: ceiling)
-        HPXML.add_garage_ceiling(garage: new_garage, **ceiling_values)
-      end
-
-      # Table 4.2.2(1) - Above-grade walls
-      garage.elements.each("Walls/Wall") do |wall|
-        wall_values = HPXML.get_garage_wall_values(wall: wall)
-        HPXML.add_garage_wall(garage: new_garage, **wall_values)
-      end
-
-      # Table 4.2.2(1) - Foundations
-      garage.elements.each("Slabs/Slab") do |slab|
-        slab_values = HPXML.get_garage_slab_values(slab: slab)
-        HPXML.add_garage_slab(garage: new_garage, **slab_values)
-      end
-    end
-  end
-
-  def self.set_enclosure_garages_iad(hpxml)
-    # No attached garage
   end
 
   def self.set_enclosure_rim_joists_reference(orig_details, hpxml)
@@ -706,6 +460,8 @@ class EnergyRatingIndex301Ruleset
       if is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
         rim_joist_values[:insulation_assembly_r_value] = 1.0 / ufactor
       end
+      rim_joist_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      rim_joist_values[:exterior_adjacent_to].gsub!("unvented", "vented")
       HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
     end
   end
@@ -718,33 +474,6 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Above-grade walls
     # nop
-  end
-
-  def self.get_iad_sum_external_wall_area(walls, rim_joists)
-    sum_wall_area = 0.0
-
-    # TODO: Should we include attic walls?
-    walls.elements.each("Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall)
-      if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
-        sum_wall_area += wall_values[:area]
-      end
-    end
-
-    if not rim_joists.nil?
-      rim_joists.elements.each("RimJoist") do |rim_joist|
-        rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-        if ["basement - unconditioned", "basement - conditioned"].include? rim_joist_values[:interior_adjacent_to]
-          # IAD home has crawlspace
-          rim_joist_values[:interior_adjacent_to] = "crawlspace - vented"
-        end
-        if is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
-          sum_wall_area += rim_joist_values[:area]
-        end
-      end
-    end
-
-    return sum_wall_area
   end
 
   def self.set_enclosure_rim_joists_iad(orig_details, hpxml)
@@ -760,14 +489,13 @@ class EnergyRatingIndex301Ruleset
 
     hpxml.elements.each("Building/BuildingDetails/Enclosure/RimJoists/RimJoist") do |new_rim_joist|
       new_rim_joist_values = HPXML.get_rim_joist_values(rim_joist: new_rim_joist)
-      interior_adjacent_to = new_rim_joist_values[:interior_adjacent_to]
-      if ["basement - unconditioned", "basement - conditioned"].include? interior_adjacent_to
-        # IAD home has crawlspace
-        interior_adjacent_to = "crawlspace - vented"
-        new_rim_joist.elements["InteriorAdjacentTo"].text = interior_adjacent_to
+      # FIXME: Review: Should include unvented crawl too? Also check exterior_adjacent_to?
+      if ["basement - unconditioned", "basement - conditioned"].include? new_rim_joist_values[:interior_adjacent_to]
+        # Convert to vented crawlspace
+        new_rim_joist_values[:interior_adjacent_to] = "crawlspace - vented"
+        new_rim_joist.elements["InteriorAdjacentTo"].text = new_rim_joist_values[:interior_adjacent_to]
       end
-      exterior_adjacent_to = new_rim_joist_values[:exterior_adjacent_to]
-      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+      if is_external_thermal_boundary(new_rim_joist_values[:interior_adjacent_to], new_rim_joist_values[:exterior_adjacent_to])
         rim_joist_area = new_rim_joist_values[:area]
         new_rim_joist.elements["Area"].text = 2355.52 * rim_joist_area / sum_wall_area
       end
@@ -785,18 +513,18 @@ class EnergyRatingIndex301Ruleset
       if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
         wall_values[:insulation_assembly_r_value] = 1.0 / ufactor
       end
+      wall_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      wall_values[:exterior_adjacent_to].gsub!("unvented", "vented")
       HPXML.add_wall(hpxml: hpxml, **wall_values)
     end
   end
 
   def self.set_enclosure_walls_rated(orig_details, hpxml)
+    # Table 4.2.2(1) - Above-grade walls
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
       HPXML.add_wall(hpxml: hpxml, **wall_values)
     end
-
-    # Table 4.2.2(1) - Above-grade walls
-    # nop
   end
 
   def self.set_enclosure_walls_iad(orig_details, hpxml)
@@ -810,13 +538,182 @@ class EnergyRatingIndex301Ruleset
 
     hpxml.elements.each("Building/BuildingDetails/Enclosure/Walls/Wall") do |new_wall|
       new_wall_values = HPXML.get_wall_values(wall: new_wall)
-      interior_adjacent_to = new_wall_values[:interior_adjacent_to]
-      exterior_adjacent_to = new_wall_values[:exterior_adjacent_to]
-      if is_external_thermal_boundary(interior_adjacent_to, exterior_adjacent_to)
+      if is_external_thermal_boundary(new_wall_values[:interior_adjacent_to], new_wall_values[:exterior_adjacent_to])
         wall_area = new_wall_values[:area]
         new_wall.elements["Area"].text = 2355.52 * wall_area / sum_wall_area
       end
     end
+  end
+
+  def self.set_enclosure_foundation_walls_reference(orig_details, hpxml)
+    wall_ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+
+    # Table 4.2.2(1) - Conditioned basement walls
+    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
+      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
+      if [fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to]].include? "basement - conditioned" and is_external_thermal_boundary(fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to])
+        fwall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
+      end
+      fwall_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      fwall_values[:exterior_adjacent_to].gsub!("unvented", "vented")
+      HPXML.add_foundation_wall(hpxml: hpxml, **fwall_values)
+    end
+  end
+
+  def self.set_enclosure_foundation_walls_rated(orig_details, hpxml)
+    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
+      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
+      HPXML.add_foundation_wall(hpxml: hpxml, **fwall_values)
+    end
+  end
+
+  def self.set_enclosure_foundation_walls_iad(hpxml)
+    HPXML.add_foundation_wall(hpxml: hpxml,
+                              id: "FoundationWall",
+                              interior_adjacent_to: "crawlspace - vented",
+                              exterior_adjacent_to: "ground",
+                              height: 2,
+                              area: 2 * 34.64 * 4,
+                              thickness: 8,
+                              depth_below_grade: 0,
+                              insulation_height: 0,
+                              insulation_r_value: 0)
+  end
+
+  def self.set_enclosure_ceilings_reference(orig_details, hpxml)
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+
+    # Table 4.2.2(1) - Ceilings
+    orig_details.elements.each("Enclosure/Floors/Floor") do |floor|
+      floor_values = HPXML.get_floor_values(floor: floor)
+      next unless hpxml_floor_is_ceiling(floor_values[:interior_adjacent_to],
+                                         floor_values[:exterior_adjacent_to])
+
+      if is_external_thermal_boundary(floor_values[:interior_adjacent_to], floor_values[:exterior_adjacent_to])
+        floor_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
+      end
+      floor_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      floor_values[:exterior_adjacent_to].gsub!("unvented", "vented")
+      HPXML.add_floor(hpxml: hpxml, **floor_values)
+    end
+  end
+
+  def self.set_enclosure_ceilings_rated(orig_details, hpxml)
+    orig_details.elements.each("Enclosure/Floors/Floor") do |floor|
+      floor_values = HPXML.get_floor_values(floor: floor)
+      next unless hpxml_floor_is_ceiling(floor_values[:interior_adjacent_to],
+                                         floor_values[:exterior_adjacent_to])
+
+      HPXML.add_floor(hpxml: hpxml, **floor_values)
+    end
+  end
+
+  def self.set_enclosure_ceilings_iad(orig_details, hpxml)
+    set_enclosure_ceilings_rated(orig_details, hpxml)
+    new_enclosure = hpxml.elements["Building/BuildingDetails/Enclosure"]
+
+    # Table 4.3.1(1) Configuration of Index Adjustment Design - Ceilings
+    sum_ceiling_area = 0.0
+    new_enclosure.elements.each("Floors/Floor") do |new_floor|
+      new_floor_values = HPXML.get_floor_values(floor: new_floor)
+      next unless hpxml_floor_is_ceiling(new_floor_values[:interior_adjacent_to],
+                                         new_floor_values[:exterior_adjacent_to])
+
+      sum_ceiling_area += new_floor_values[:area]
+    end
+    new_enclosure.elements.each("Floors/Floor") do |new_floor|
+      new_floor_values = HPXML.get_floor_values(floor: new_floor)
+      next unless hpxml_floor_is_ceiling(new_floor_values[:interior_adjacent_to],
+                                         new_floor_values[:exterior_adjacent_to])
+
+      new_floor.elements["Area"].text = 1200.0 * new_floor_values[:area] / sum_ceiling_area
+    end
+  end
+
+  def self.set_enclosure_floors_reference(orig_details, hpxml)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+
+    # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
+    orig_details.elements.each("Enclosure/Floors/Floor") do |floor|
+      floor_values = HPXML.get_floor_values(floor: floor)
+      next if hpxml_floor_is_ceiling(floor_values[:interior_adjacent_to],
+                                     floor_values[:exterior_adjacent_to])
+
+      if is_external_thermal_boundary(floor_values[:interior_adjacent_to], floor_values[:exterior_adjacent_to])
+        floor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
+      end
+      floor_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      floor_values[:exterior_adjacent_to].gsub!("unvented", "vented")
+      HPXML.add_floor(hpxml: hpxml, **floor_values)
+    end
+  end
+
+  def self.set_enclosure_floors_rated(orig_details, hpxml)
+    orig_details.elements.each("Enclosure/Floors/Floor") do |floor|
+      floor_values = HPXML.get_floor_values(floor: floor)
+      next if hpxml_floor_is_ceiling(floor_values[:interior_adjacent_to],
+                                     floor_values[:exterior_adjacent_to])
+
+      HPXML.add_floor(hpxml: hpxml, **floor_values)
+    end
+  end
+
+  def self.set_enclosure_floors_iad(hpxml)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+
+    HPXML.add_floor(hpxml: hpxml,
+                    id: "FloorAboveCrawlspace",
+                    interior_adjacent_to: "living space",
+                    exterior_adjacent_to: "crawlspace - vented",
+                    area: 1200,
+                    insulation_assembly_r_value: 1.0 / floor_ufactor)
+  end
+
+  def self.set_enclosure_slabs_reference(orig_details, hpxml)
+    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
+    slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
+
+    # Table 4.2.2(1) - Foundations
+    orig_details.elements.each("Enclosure/Slabs/Slab") do |slab|
+      slab_values = HPXML.get_slab_values(slab: slab)
+      if slab_values[:interior_adjacent_to] == "living space" and is_external_thermal_boundary(slab_values[:interior_adjacent_to], slab_values[:exterior_adjacent_to])
+        slab_values[:perimeter_insulation_depth] = slab_perim_depth
+        slab_values[:under_slab_insulation_width] = slab_under_width
+        slab_values[:under_slab_insulation_spans_entire_slab] = nil
+        slab_values[:perimeter_insulation_r_value] = slab_perim_rvalue
+        slab_values[:under_slab_insulation_r_value] = slab_under_rvalue
+      end
+      if ["living space", "basement - conditioned"].include? slab_values[:interior_adjacent_to]
+        slab_values[:carpet_fraction] = 0.8
+        slab_values[:carpet_r_value] = 2.0
+      end
+      slab_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      new_slab = HPXML.add_slab(hpxml: hpxml, **slab_values)
+    end
+  end
+
+  def self.set_enclosure_slabs_rated(orig_details, hpxml)
+    orig_details.elements.each("Enclosure/Slabs/Slab") do |slab|
+      slab_values = HPXML.get_slab_values(slab: slab)
+      HPXML.add_slab(hpxml: hpxml, **slab_values)
+    end
+  end
+
+  def self.set_enclosure_slabs_iad(orig_details, hpxml)
+    HPXML.add_slab(hpxml: hpxml,
+                   id: "Slab",
+                   interior_adjacent_to: "crawlspace - vented",
+                   area: 1200,
+                   thickness: 0,
+                   exposed_perimeter: 4 * 34.64,
+                   perimeter_insulation_depth: 0,
+                   under_slab_insulation_width: 0,
+                   under_slab_insulation_spans_entire_slab: nil,
+                   depth_below_grade: 0,
+                   carpet_fraction: 0,
+                   carpet_r_value: 0,
+                   perimeter_insulation_r_value: 0,
+                   under_slab_insulation_r_value: 0)
   end
 
   def self.set_enclosure_windows_reference(orig_details, hpxml)
@@ -1138,7 +1035,7 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
     sla = 0.00036
-    vert_distance = @ncfl_ag * 8.2 + get_above_grade_basement_height(orig_details)
+    vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
@@ -1284,8 +1181,7 @@ class EnergyRatingIndex301Ruleset
 
     water_heating = orig_details.elements["Systems/WaterHeating"]
 
-    has_uncond_bsmnt = (not orig_details.elements["Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
+    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl)
 
     if water_heating.nil?
       sys_id = "HotWaterDistribution"
@@ -1778,61 +1674,73 @@ class EnergyRatingIndex301Ruleset
 
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
-      next if not is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
+      next unless is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
 
       ag_wall_area += wall_values[:area]
     end
 
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-      next if not is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
+      next unless is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
 
       ag_wall_area += rim_joist_values[:area]
     end
 
-    orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
-      attic_values = HPXML.get_attic_values(attic: attic)
-      next unless ["ConditionedAttic", "CathedralCeiling"].include? attic_values[:attic_type]
+    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
+      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
+      next unless [fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to]].include? "basement - conditioned"
+      next unless is_external_thermal_boundary(fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to])
 
-      attic.elements.each("Walls/Wall") do |wall|
-        wall_values = HPXML.get_attic_wall_values(wall: wall)
-        next if not is_external_thermal_boundary(get_attic_adjacent_to(attic_values[:attic_type]), wall_values[:adjacent_to])
-
-        ag_wall_area += wall_values[:area]
-      end
-    end
-
-    orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
-      foundation_values = HPXML.get_foundation_values(foundation: foundation)
-      next unless foundation_values[:foundation_type] == "ConditionedBasement"
-
-      foundation.elements.each("FoundationWall") do |fwall|
-        fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-        next if not is_external_thermal_boundary(get_foundation_adjacent_to(foundation_values[:foundation_type]), fwall_values[:adjacent_to])
-
-        height = fwall_values[:height]
-        bg_depth = fwall_values[:depth_below_grade]
-        area = fwall_values[:area]
-        ag_wall_area += (height - bg_depth) / height * area
-        bg_wall_area += bg_depth / height * area
-      end
+      height = fwall_values[:height]
+      bg_depth = fwall_values[:depth_below_grade]
+      area = fwall_values[:area]
+      ag_wall_area += (height - bg_depth) / height * area
+      bg_wall_area += bg_depth / height * area
     end
 
     return ag_wall_area, bg_wall_area
   end
 
-  def self.get_above_grade_basement_height(orig_details)
+  def self.get_ag_conditioned_basement_height(orig_details)
     above_grade_height = 0
-    orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement/Conditioned]") do |cond_bsmnt|
-      cond_bsmnt.elements.each("FoundationWall") do |cond_bsmnt_wall|
-        cond_bsmnt_wall_values = HPXML.get_foundation_wall_values(foundation_wall: cond_bsmnt_wall)
-        ag_height = cond_bsmnt_wall_values[:height] - cond_bsmnt_wall_values[:depth_below_grade]
-        if ag_height > above_grade_height
-          above_grade_height = ag_height
-        end
+    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
+      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
+      next unless [fnd_wall_values[:interior_adjacent_to], fnd_wall_values[:exterior_adjacent_to]].include? "basement - conditioned"
+
+      ag_height = fnd_wall_values[:height] - fnd_wall_values[:depth_below_grade]
+      if ag_height > above_grade_height
+        above_grade_height = ag_height
       end
     end
     return above_grade_height
+  end
+
+  def self.get_iad_sum_external_wall_area(walls, rim_joists)
+    # FUTURE: Review
+    sum_wall_area = 0.0
+
+    walls.elements.each("Wall") do |wall|
+      wall_values = HPXML.get_wall_values(wall: wall)
+      if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
+        sum_wall_area += wall_values[:area]
+      end
+    end
+
+    if not rim_joists.nil?
+      rim_joists.elements.each("RimJoist") do |rim_joist|
+        rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
+        # FIXME: Review: Should include unvented crawl too? Also check exterior_adjacent_to?
+        if ["basement - unconditioned", "basement - conditioned"].include? rim_joist_values[:interior_adjacent_to]
+          # IAD home has crawlspace
+          rim_joist_values[:interior_adjacent_to] = "crawlspace - vented"
+        end
+        if is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
+          sum_wall_area += rim_joist_values[:area]
+        end
+      end
+    end
+
+    return sum_wall_area
   end
 
   def self.delete_wall_subsurfaces(orig_details, surface_id)
@@ -1840,9 +1748,26 @@ class EnergyRatingIndex301Ruleset
       subsurface.parent.elements.delete subsurface
     end
   end
+
+  def self.delete_roof_subsurfaces(orig_details, surface_id)
+    orig_details.elements.each("//*[AttachedToRoof[@idref='#{surface_id}']]") do |subsurface|
+      subsurface.parent.elements.delete subsurface
+    end
+  end
+
+  def self.get_has_uncond_bsmnt(orig_details)
+    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
+      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
+      next unless [fnd_wall_values[:interior_adjacent_to], fnd_wall_values[:exterior_adjacent_to]].include? "basement - unconditioned"
+
+      return true
+    end
+    return false
+  end
 end
 
 def get_exterior_wall_area_fracs(orig_details)
+  # FIXME: Review
   # Get individual exterior wall areas and sum
   wall_areas = {}
   orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
