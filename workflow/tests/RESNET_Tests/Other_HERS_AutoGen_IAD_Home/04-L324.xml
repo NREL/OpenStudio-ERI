@@ -32,6 +32,10 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>3078.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>24624.0</ConditionedBuildingVolume>
+          <AtticVentilationRate>
+            <UnitofMeasure>SLA</UnitofMeasure>
+            <Value>0.00333</Value>
+          </AtticVentilationRate>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -56,126 +60,21 @@
             <InfiltrationVolume>24624.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
-        <Attics>
-          <Attic>
-            <SystemIdentifier id='Attic'/>
-            <AtticType>
-              <Attic>
-                <Vented>true</Vented>
-                <SpecificLeakageArea>0.00333</SpecificLeakageArea>
-              </Attic>
-            </AtticType>
-            <Roofs>
-              <Roof>
-                <SystemIdentifier id='AtticRoof'/>
-                <Area>1622.2</Area>
-                <SolarAbsorptance>0.6</SolarAbsorptance>
-                <Emittance>0.9</Emittance>
-                <Pitch>4.0</Pitch>
-                <RadiantBarrier>false</RadiantBarrier>
-                <Insulation>
-                  <SystemIdentifier id='AtticRoofInsulation'/>
-                  <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
-                </Insulation>
-              </Roof>
-            </Roofs>
-            <Floors>
-              <Floor>
-                <SystemIdentifier id='AtticFloor'/>
-                <AdjacentTo>living space</AdjacentTo>
-                <Area>1539.0</Area>
-                <Insulation>
-                  <SystemIdentifier id='AtticFloorInsulation'/>
-                  <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
-                </Insulation>
-              </Floor>
-            </Floors>
-            <Walls>
-              <Wall>
-                <SystemIdentifier id='AtticWall'/>
-                <AdjacentTo>outside</AdjacentTo>
-                <WallType>
-                  <WoodStud/>
-                </WallType>
-                <Area>121.5</Area>
-                <SolarAbsorptance>0.6</SolarAbsorptance>
-                <Emittance>0.9</Emittance>
-                <Insulation>
-                  <SystemIdentifier id='AtticWallInsulation'/>
-                  <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
-                </Insulation>
-              </Wall>
-            </Walls>
-          </Attic>
-        </Attics>
-        <Foundations>
-          <Foundation>
-            <SystemIdentifier id='Foundation'/>
-            <FoundationType>
-              <Basement>
-                <Conditioned>true</Conditioned>
-              </Basement>
-            </FoundationType>
-            <FoundationWall>
-              <SystemIdentifier id='FoundationWallsAll'/>
-              <Height>7.25</Height>
-              <Area>1218.0</Area>
-              <Azimuth>0</Azimuth>
-              <Thickness>6.0</Thickness>
-              <DepthBelowGrade>6.583</DepthBelowGrade>
-              <AdjacentTo>ground</AdjacentTo>
-              <InsulationHeight>7.25</InsulationHeight>
-              <Insulation>
-                <SystemIdentifier id='FoundationWallsAllInsulation'/>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>10.2</NominalRValue>
-                </Layer>
-              </Insulation>
-            </FoundationWall>
-            <Slab>
-              <SystemIdentifier id='FoundationSlab'/>
-              <Area>1539.0</Area>
-              <Thickness>4.0</Thickness>
-              <ExposedPerimeter>168.0</ExposedPerimeter>
-              <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
-              <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
-              <DepthBelowGrade>6.583</DepthBelowGrade>
-              <PerimeterInsulation>
-                <SystemIdentifier id='FoundationSlabPerimeterInsulation'/>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0.0</NominalRValue>
-                </Layer>
-              </PerimeterInsulation>
-              <UnderSlabInsulation>
-                <SystemIdentifier id='FoundationSlabUnderSlabInsulation'/>
-                <Layer>
-                  <InstallationType>continuous</InstallationType>
-                  <NominalRValue>0.0</NominalRValue>
-                </Layer>
-              </UnderSlabInsulation>
-              <extension>
-                <CarpetFraction>0.0</CarpetFraction>
-                <CarpetRValue>0.0</CarpetRValue>
-              </extension>
-            </Slab>
-          </Foundation>
-        </Foundations>
-        <RimJoists>
-          <RimJoist>
-            <SystemIdentifier id='RimJoist'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>126.0</Area>
+        <Roofs>
+          <Roof>
+            <SystemIdentifier id='AtticRoof'/>
+            <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
+            <Area>1622.2</Area>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
+            <Pitch>4.0</Pitch>
+            <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
-              <SystemIdentifier id='RimJoistInsulation'/>
-              <AssemblyEffectiveRValue>13.14</AssemblyEffectiveRValue>
+              <SystemIdentifier id='AtticRoofInsulation'/>
+              <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
             </Insulation>
-          </RimJoist>
-        </RimJoists>
+          </Roof>
+        </Roofs>
         <Walls>
           <Wall>
             <SystemIdentifier id='Wall'/>
@@ -192,7 +91,97 @@
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
+          <Wall>
+            <SystemIdentifier id='WallAtticGable'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
+            <WallType>
+              <WoodStud/>
+            </WallType>
+            <Area>121.5</Area>
+            <SolarAbsorptance>0.6</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='WallAtticGableInsulation'/>
+              <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
+            </Insulation>
+          </Wall>
         </Walls>
+        <RimJoists>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>126.0</Area>
+            <SolarAbsorptance>0.6</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='RimJoistInsulation'/>
+              <AssemblyEffectiveRValue>13.14</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+        </RimJoists>
+        <FoundationWalls>
+          <FoundationWall>
+            <SystemIdentifier id='FoundationWall'/>
+            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
+            <Height>7.25</Height>
+            <Area>1218.0</Area>
+            <Thickness>6.0</Thickness>
+            <DepthBelowGrade>6.583</DepthBelowGrade>
+            <InsulationHeight>7.25</InsulationHeight>
+            <Insulation>
+              <SystemIdentifier id='FoundationWallInsulation'/>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>10.2</NominalRValue>
+              </Layer>
+            </Insulation>
+          </FoundationWall>
+        </FoundationWalls>
+        <Floors>
+          <Floor>
+            <SystemIdentifier id='FloorUnderAttic'/>
+            <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>1539.0</Area>
+            <Insulation>
+              <SystemIdentifier id='FloorUnderAtticInsulation'/>
+              <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
+            </Insulation>
+          </Floor>
+        </Floors>
+        <Slabs>
+          <Slab>
+            <SystemIdentifier id='Slab'/>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
+            <Area>1539.0</Area>
+            <Thickness>4.0</Thickness>
+            <ExposedPerimeter>168.0</ExposedPerimeter>
+            <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
+            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+            <DepthBelowGrade>6.583</DepthBelowGrade>
+            <PerimeterInsulation>
+              <SystemIdentifier id='SlabPerimeterInsulation'/>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+              </Layer>
+            </PerimeterInsulation>
+            <UnderSlabInsulation>
+              <SystemIdentifier id='SlabUnderSlabInsulation'/>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+              </Layer>
+            </UnderSlabInsulation>
+            <extension>
+              <CarpetFraction>0.0</CarpetFraction>
+              <CarpetRValue>0.0</CarpetRValue>
+            </extension>
+          </Slab>
+        </Slabs>
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>
