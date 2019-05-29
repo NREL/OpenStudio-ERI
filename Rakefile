@@ -847,6 +847,8 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
     else
       foundation_walls_values[0][:interior_adjacent_to] = "basement - conditioned"
     end
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    foundation_walls_values[0][:interior_adjacent_to] = "basement - unconditioned"
   end
   return foundation_walls_values
 end
@@ -866,6 +868,9 @@ def get_hpxml_file_floors_values(hpxml_file, floors_values)
                        :interior_adjacent_to => "living space",
                        :area => 1539,
                        :insulation_assembly_r_value => 14.15 }]
+    if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+      floors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
+    end
   elsif ['RESNET_Tests/4.1_Standard_140/L120AC.xml',
          'RESNET_Tests/4.1_Standard_140/L120AL.xml'].include? hpxml_file
     # Well-Insulated Walls and Roof
@@ -876,15 +881,14 @@ def get_hpxml_file_floors_values(hpxml_file, floors_values)
     floors_values[0][:insulation_assembly_r_value] = 11.75
     floors_values[1][:insulation_assembly_r_value] = 4.24
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'NASEO_Technical_Exercises/NASEO-13.xml',
-         'NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
+         'NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
     # Uninsulated
     floors_values[1][:insulation_assembly_r_value] = 4.24
-    if ['NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
-      floors_values[1][:exterior_adjacent_to] = "crawlspace - unvented"
-    elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
-      floors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
-    end
+    floors_values[1][:exterior_adjacent_to] = "crawlspace - unvented"
+  elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
+    # Uninsulated
+    floors_values[1][:insulation_assembly_r_value] = 4.24
+    floors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Blown insulation = R-38, grade I; Framing fraction = 0.11
     floors_values[0][:insulation_assembly_r_value] = 39.3
@@ -1018,6 +1022,8 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
                       :under_slab_insulation_r_value => 5,
                       :carpet_fraction => 0,
                       :carpet_r_value => 2.5 }]
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    slabs_values[0][:interior_adjacent_to] = "basement - unconditioned"
   end
   return slabs_values
 end

@@ -1274,20 +1274,13 @@ class EnergyRatingIndexTest < Minitest::Test
       area += Float(XMLHelper.get_value(wall, "Area"))
       num += 1
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist[InteriorAdjacentTo='living space' and ExteriorAdjacentTo='outside']") do |rim_joist|
-      u_factor += 1.0 / Float(XMLHelper.get_value(rim_joist, "Insulation/AssemblyEffectiveRValue"))
-      solar_abs += Float(XMLHelper.get_value(rim_joist, "SolarAbsorptance"))
-      emittance += Float(XMLHelper.get_value(rim_joist, "Emittance"))
-      area += Float(XMLHelper.get_value(rim_joist, "Area"))
-      num += 1
-    end
     return u_factor / num, solar_abs / num, emittance / num, area
   end
 
   def _get_basement_walls(hpxml_doc)
     u_factor = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - conditioned']") do |fnd_wall|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - conditioned' and ExteriorAdjacentTo='ground']") do |fnd_wall|
       u_factor += 1.0 / Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
       num += 1
     end
@@ -1297,8 +1290,8 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_above_grade_floors(hpxml_doc)
     u_factor = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='living space' and ExteriorAdjacentTo='outside']") do |amb_ceil|
-      u_factor += 1.0 / Float(XMLHelper.get_value(amb_ceil, "Insulation/AssemblyEffectiveRValue"))
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='living space' and (ExteriorAdjacentTo='outside' or ExteriorAdjacentTo='crawlspace - vented')]") do |floor|
+      u_factor += 1.0 / Float(XMLHelper.get_value(floor, "Insulation/AssemblyEffectiveRValue"))
       num += 1
     end
     return u_factor / num
