@@ -144,12 +144,12 @@
           </Floor>
           <Floor>
             <SystemIdentifier id='FloorOverFoundation'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='FloorOverFoundationInsulation'/>
-              <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>28.1</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>

@@ -888,9 +888,15 @@ def get_hpxml_file_floors_values(hpxml_file, floors_values)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Blown insulation = R-38, grade I; Framing fraction = 0.11
     floors_values[0][:insulation_assembly_r_value] = 39.3
+    # Cavity insulation = R-30, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
+    floors_values[1][:insulation_assembly_r_value] = 28.1
+    floors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Blown insulation = R-49, grade I; Framing fraction = 0.11
     floors_values[0][:insulation_assembly_r_value] = 50.3
+    # Cavity insulation = R-19, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
+    floors_values[1][:insulation_assembly_r_value] = 20.4
+    floors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml',
          'RESNET_Tests/4.1_Standard_140/L322XC.xml',
          'RESNET_Tests/4.1_Standard_140/L324XC.xml',
@@ -898,12 +904,6 @@ def get_hpxml_file_floors_values(hpxml_file, floors_values)
          'NASEO_Technical_Exercises/NASEO-16.xml',
          'NASEO_Technical_Exercises/NASEO-17.xml'].include? hpxml_file
     floors_values.delete_at(1)
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # Cavity insulation = R-19, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    floors_values[1][:insulation_assembly_r_value] = 20.4
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Cavity insulation = R-30, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    floors_values[1][:insulation_assembly_r_value] = 28.1
   elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # R-13 crawlspace ceiling insulation
     floors_values[1][:exterior_adjacent_to] = "crawlspace - vented"

@@ -310,6 +310,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_summary_iad(orig_details, hpxml)
     site = orig_details.elements["BuildingSummary/Site"]
     site_values = HPXML.get_site_values(site: site)
+    construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
+    construction_values = HPXML.get_building_construction_values(building_construction: construction)
 
     # Global variables
     # Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
@@ -334,7 +336,8 @@ class EnergyRatingIndex301Ruleset
                                     number_of_bedrooms: @nbeds,
                                     conditioned_floor_area: @cfa,
                                     conditioned_building_volume: @cvolume,
-                                    vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
+                                    vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla(),
+                                    vented_attic_sla: construction_values[:vented_attic_sla])
   end
 
   def self.set_climate(orig_details, hpxml)
@@ -477,29 +480,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_rim_joists_iad(orig_details, hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
-    set_enclosure_rim_joists_rated(orig_details, hpxml)
-
-    rim_joists = orig_details.elements["Enclosure/RimJoists"]
-    return if rim_joists.nil?
-
-    walls = orig_details.elements["Enclosure/Walls"]
-
-    sum_wall_area = get_iad_sum_external_wall_area(walls, rim_joists)
-
-    hpxml.elements.each("Building/BuildingDetails/Enclosure/RimJoists/RimJoist") do |new_rim_joist|
-      new_rim_joist_values = HPXML.get_rim_joist_values(rim_joist: new_rim_joist)
-      # FIXME: Review: Should include unvented crawl too? Also check exterior_adjacent_to?
-      if ["basement - unconditioned", "basement - conditioned"].include? new_rim_joist_values[:interior_adjacent_to]
-        # Convert to vented crawlspace
-        new_rim_joist_values[:interior_adjacent_to] = "crawlspace - vented"
-        new_rim_joist.elements["InteriorAdjacentTo"].text = new_rim_joist_values[:interior_adjacent_to]
-      end
-      if is_external_thermal_boundary(new_rim_joist_values[:interior_adjacent_to], new_rim_joist_values[:exterior_adjacent_to])
-        rim_joist_area = new_rim_joist_values[:area]
-        new_rim_joist.elements["Area"].text = 2355.52 * rim_joist_area / sum_wall_area
-      end
-    end
+    # nop; included in above-grade walls
   end
 
   def self.set_enclosure_walls_reference(orig_details, hpxml)
@@ -534,7 +515,13 @@ class EnergyRatingIndex301Ruleset
     walls = orig_details.elements["Enclosure/Walls"]
     rim_joists = orig_details.elements["Enclosure/RimJoists"]
 
-    sum_wall_area = get_iad_sum_external_wall_area(walls, rim_joists)
+    sum_wall_area = 0.0
+    walls.elements.each("Wall") do |wall|
+      wall_values = HPXML.get_wall_values(wall: wall)
+      if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
+        sum_wall_area += wall_values[:area]
+      end
+    end
 
     hpxml.elements.each("Building/BuildingDetails/Enclosure/Walls/Wall") do |new_wall|
       new_wall_values = HPXML.get_wall_values(wall: new_wall)
@@ -546,7 +533,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_details, hpxml)
-    wall_ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
 
     # Table 4.2.2(1) - Conditioned basement walls
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
@@ -1713,34 +1700,6 @@ class EnergyRatingIndex301Ruleset
       end
     end
     return above_grade_height
-  end
-
-  def self.get_iad_sum_external_wall_area(walls, rim_joists)
-    # FUTURE: Review
-    sum_wall_area = 0.0
-
-    walls.elements.each("Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall)
-      if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
-        sum_wall_area += wall_values[:area]
-      end
-    end
-
-    if not rim_joists.nil?
-      rim_joists.elements.each("RimJoist") do |rim_joist|
-        rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-        # FIXME: Review: Should include unvented crawl too? Also check exterior_adjacent_to?
-        if ["basement - unconditioned", "basement - conditioned"].include? rim_joist_values[:interior_adjacent_to]
-          # IAD home has crawlspace
-          rim_joist_values[:interior_adjacent_to] = "crawlspace - vented"
-        end
-        if is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
-          sum_wall_area += rim_joist_values[:area]
-        end
-      end
-    end
-
-    return sum_wall_area
   end
 
   def self.delete_wall_subsurfaces(orig_details, surface_id)
