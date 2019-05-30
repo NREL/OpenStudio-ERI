@@ -83,7 +83,6 @@ garage
 other housing unit            Used to specify adiabatic surfaces.
 ============================  ===================================
 
-
 .. warning::
 
   It is the software tool's responsibility to provide the appropriate building surfaces. 
@@ -115,13 +114,13 @@ TODO
 Foundation Walls
 ****************
 
-Any wall that is in contact with the ground should be specified as a ``FoundationWall``. Other walls (e.g., wood framed walls) that are connected to a below-grade space but have no contact with the ground should be specified as ``Walls`` and not ``FoundationWalls``.
+Any wall that is in contact with the ground should be specified as an ``Enclosure/FoundationWalls/FoundationWall``. 
+Other walls (e.g., wood framed walls) that are connected to a below-grade space but have no contact with the ground should be specified as ``Walls`` and not ``FoundationWalls``.
 
 *Exterior* foundation walls (i.e., those that fall along the perimeter of the building's footprint) should use "ground" for ``ExteriorAdjacentTo`` and the appropriate space type (e.g., "basement - unconditioned") for ``InteriorAdjacentTo``.
 
-*Interior* foundation walls should be specified with two appropriate space types (e.g., "crawlspace - unvented" and "garage", or "basement - unconditioned" and "crawlspace - unvented") for ``InteriorAdjacentTo`` and ``ExteriorAdjacentTo``.
-Interior foundation walls should never use "ground" for ``ExteriorAdjacentTo`` even if the foundation wall has some contact with the ground due to the difference in below-grade depths of the two space types.
-The choice of space type assignment for interior vs exterior is arbitrary.
+*Interior* foundation walls should be specified with two appropriate space types (e.g., "crawlspace - vented" and "garage", or "basement - unconditioned" and "crawlspace - unvented") for ``InteriorAdjacentTo`` and ``ExteriorAdjacentTo``.
+Interior foundation walls should never use "ground" for ``ExteriorAdjacentTo`` even if the foundation wall has some contact with the ground due to the difference in below-grade depths of the two adjacent space types.
 
 Foundations must include a ``Height`` as well as a ``DepthBelowGrade``. 
 For exterior foundation walls, the depth below grade is relative to the ground plane.
@@ -137,7 +136,7 @@ When an insulation layer R-value is specified, it is modeled with a concrete wal
 
 Option 2. An ``AssemblyEffectiveRValue``. 
 When instead providing an assembly effective R-value, the R-value should include the concrete wall and an interior air film resistance. 
-The exterior air film resistance (for any above-grade exposure) or any soil thermal resistance should not be included.
+The exterior air film resistance (for any above-grade exposure) or any soil thermal resistance should **not** be included.
 
 Floors
 ******
@@ -147,7 +146,15 @@ TODO
 Slabs
 *****
 
-TODO
+Any space type that borders the ground should include an ``Enclosure/Slabs/Slab`` surface with the appropriate ``InteriorAdjacentTo``. 
+This includes basements, crawlspaces (even when there are dirt floors -- use zero for the ``Thickness``), garages, and slab-on-grade foundations.
+
+A primary input for a slab is its ``ExposedPerimeter``. The exposed perimeter should include any slab length that falls along the perimeter of the building's footprint (i.e., is exposed to ambient conditions).
+So, a basement slab edge adjacent to a garage or crawlspace, for example, should not be included.
+
+Vertical insulation adjacent to the slab can be described by a ``PerimeterInsulation/Layer/NominalRValue`` and a ``PerimeterInsulationDepth``.
+
+Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
 
 Windows/Skylights
 *****************
