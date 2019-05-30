@@ -19,7 +19,7 @@ The `HPXML Toolbox website <https://hpxml.nrel.gov/>`_ provides several resource
 HPXML for ERI
 -------------
 
-PXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included.
+HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included.
 Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML fields or enumeration choices required to run the workflow.
 
 The `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb>`_ is defined as a set of conditional XPath expressions.
