@@ -512,11 +512,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
     set_enclosure_walls_rated(orig_details, hpxml)
 
-    walls = orig_details.elements["Enclosure/Walls"]
-    rim_joists = orig_details.elements["Enclosure/RimJoists"]
-
     sum_wall_area = 0.0
-    walls.elements.each("Wall") do |wall|
+    orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
       if is_thermal_boundary(wall_values)
         sum_wall_area += wall_values[:area]
