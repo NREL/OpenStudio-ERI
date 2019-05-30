@@ -236,6 +236,36 @@ class EnclosureTest < MiniTest::Test
                                 180 => [108, 0.35, 0.40],
                                 90 => [108, 0.35, 0.40],
                                 270 => [108, 0.35, 0.40] })
+
+    hpxml_name = "base-enclosure-adiabatic-surfaces.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
+                                180 => [54, 0.33, 0.45],
+                                90 => [36, 0.33, 0.45],
+                                270 => [36, 0.33, 0.45] })
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_windows(hpxml_doc, { 0 => [60.8, 0.35, 0.40],
+                                180 => [60.8, 0.35, 0.40],
+                                90 => [60.8, 0.35, 0.40],
+                                270 => [60.8, 0.35, 0.40] })
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                180 => [108, 0.33, 0.45],
+                                90 => [108, 0.33, 0.45],
+                                270 => [108, 0.33, 0.45] })
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_windows(hpxml_doc, { 0 => [108, 0.35, 0.40],
+                                180 => [108, 0.35, 0.40],
+                                90 => [108, 0.35, 0.40],
+                                270 => [108, 0.35, 0.40] })
   end
 
   def test_enclosure_doors

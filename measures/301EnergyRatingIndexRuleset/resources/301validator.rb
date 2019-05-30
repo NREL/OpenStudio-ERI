@@ -53,7 +53,7 @@ class EnergyRatingIndex301Validator
         "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH' or UnitofMeasure='CFM']/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage]" => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
         "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume" => one,
 
-        "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof" => one_or_more, # See [Roof]
+        "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof" => zero_or_more, # See [Roof]
         "/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall" => one_or_more, # See [Wall]
         "/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist" => zero_or_more, # See [RimJoist]
         "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall" => zero_or_more, # See [FoundationWall]

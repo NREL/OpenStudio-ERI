@@ -420,7 +420,7 @@ class EnergyRatingIndex301Ruleset
       roof_values = HPXML.get_roof_values(roof: roof)
       roof_values[:solar_absorptance] = 0.75
       roof_values[:emittance] = 0.90
-      if is_external_thermal_boundary(roof_values[:interior_adjacent_to], roof_values[:exterior_adjacent_to])
+      if is_thermal_boundary(roof_values)
         roof_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
       end
       roof_values[:interior_adjacent_to].gsub!("unvented", "vented")
@@ -460,7 +460,7 @@ class EnergyRatingIndex301Ruleset
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
       rim_joist_values[:solar_absorptance] = 0.75
       rim_joist_values[:emittance] = 0.90
-      if is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
+      if is_thermal_boundary(rim_joist_values)
         rim_joist_values[:insulation_assembly_r_value] = 1.0 / ufactor
       end
       rim_joist_values[:interior_adjacent_to].gsub!("unvented", "vented")
@@ -491,7 +491,7 @@ class EnergyRatingIndex301Ruleset
       wall_values = HPXML.get_wall_values(wall: wall)
       wall_values[:solar_absorptance] = 0.75
       wall_values[:emittance] = 0.90
-      if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
+      if is_thermal_boundary(wall_values)
         wall_values[:insulation_assembly_r_value] = 1.0 / ufactor
       end
       wall_values[:interior_adjacent_to].gsub!("unvented", "vented")
@@ -518,14 +518,14 @@ class EnergyRatingIndex301Ruleset
     sum_wall_area = 0.0
     walls.elements.each("Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
-      if is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
+      if is_thermal_boundary(wall_values)
         sum_wall_area += wall_values[:area]
       end
     end
 
     hpxml.elements.each("Building/BuildingDetails/Enclosure/Walls/Wall") do |new_wall|
       new_wall_values = HPXML.get_wall_values(wall: new_wall)
-      if is_external_thermal_boundary(new_wall_values[:interior_adjacent_to], new_wall_values[:exterior_adjacent_to])
+      if is_thermal_boundary(new_wall_values)
         wall_area = new_wall_values[:area]
         new_wall.elements["Area"].text = 2355.52 * wall_area / sum_wall_area
       end
@@ -538,7 +538,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Conditioned basement walls
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-      if [fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to]].include? "basement - conditioned" and is_external_thermal_boundary(fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to])
+      if is_thermal_boundary(fwall_values)
         fwall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
       end
       fwall_values[:interior_adjacent_to].gsub!("unvented", "vented")
@@ -576,7 +576,7 @@ class EnergyRatingIndex301Ruleset
       next unless hpxml_floor_is_ceiling(floor_values[:interior_adjacent_to],
                                          floor_values[:exterior_adjacent_to])
 
-      if is_external_thermal_boundary(floor_values[:interior_adjacent_to], floor_values[:exterior_adjacent_to])
+      if is_thermal_boundary(floor_values)
         floor_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
       end
       floor_values[:interior_adjacent_to].gsub!("unvented", "vented")
@@ -626,7 +626,7 @@ class EnergyRatingIndex301Ruleset
       next if hpxml_floor_is_ceiling(floor_values[:interior_adjacent_to],
                                      floor_values[:exterior_adjacent_to])
 
-      if is_external_thermal_boundary(floor_values[:interior_adjacent_to], floor_values[:exterior_adjacent_to])
+      if is_thermal_boundary(floor_values)
         floor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
       end
       floor_values[:interior_adjacent_to].gsub!("unvented", "vented")
@@ -663,7 +663,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Foundations
     orig_details.elements.each("Enclosure/Slabs/Slab") do |slab|
       slab_values = HPXML.get_slab_values(slab: slab)
-      if slab_values[:interior_adjacent_to] == "living space" and is_external_thermal_boundary(slab_values[:interior_adjacent_to], slab_values[:exterior_adjacent_to])
+      if slab_values[:interior_adjacent_to] == "living space" and is_thermal_boundary(slab_values)
         slab_values[:perimeter_insulation_depth] = slab_perim_depth
         slab_values[:under_slab_insulation_width] = slab_under_width
         slab_values[:under_slab_insulation_spans_entire_slab] = nil
@@ -707,10 +707,10 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Glazing
     ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
 
-    ag_wall_area, bg_wall_area = self.calc_wall_area_ag_bg_for_windows(orig_details)
+    ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area = calc_wall_areas_for_windows(orig_details)
 
-    fa = ag_wall_area / (ag_wall_area + 0.5 * bg_wall_area)
-    f = 1.0 # TODO
+    fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
+    f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
     total_window_area = 0.18 * @cfa * fa * f
 
@@ -1655,37 +1655,41 @@ class EnergyRatingIndex301Ruleset
     return infilvolume
   end
 
-  def self.calc_wall_area_ag_bg_for_windows(orig_details)
-    ag_wall_area = 0.0
-    bg_wall_area = 0.0
+  def self.calc_wall_areas_for_windows(orig_details)
+    ag_bndry_wall_area = 0.0
+    bg_bndry_wall_area = 0.0
+    common_wall_area = 0.0 # Excludes foundation walls
 
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
-      next unless is_external_thermal_boundary(wall_values[:interior_adjacent_to], wall_values[:exterior_adjacent_to])
-
-      ag_wall_area += wall_values[:area]
+      if is_thermal_boundary(wall_values)
+        ag_bndry_wall_area += wall_values[:area]
+      elsif wall_values[:exterior_adjacent_to] == "other housing unit"
+        common_wall_area += wall_values[:area]
+      end
     end
 
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-      next unless is_external_thermal_boundary(rim_joist_values[:interior_adjacent_to], rim_joist_values[:exterior_adjacent_to])
-
-      ag_wall_area += rim_joist_values[:area]
+      if is_thermal_boundary(rim_joist_values)
+        ag_bndry_wall_area += rim_joist_values[:area]
+      elsif rim_joist_values[:exterior_adjacent_to] == "other housing unit"
+        common_wall_area += rim_joist_values[:area]
+      end
     end
 
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-      next unless [fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to]].include? "basement - conditioned"
-      next unless is_external_thermal_boundary(fwall_values[:interior_adjacent_to], fwall_values[:exterior_adjacent_to])
+      next unless is_thermal_boundary(fwall_values)
 
       height = fwall_values[:height]
       bg_depth = fwall_values[:depth_below_grade]
       area = fwall_values[:area]
-      ag_wall_area += (height - bg_depth) / height * area
-      bg_wall_area += bg_depth / height * area
+      ag_bndry_wall_area += (height - bg_depth) / height * area
+      bg_bndry_wall_area += bg_depth / height * area
     end
 
-    return ag_wall_area, bg_wall_area
+    return ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area
   end
 
   def self.get_ag_conditioned_basement_height(orig_details)
