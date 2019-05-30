@@ -63,92 +63,99 @@ Enclosure
 
 This section describes fields specified in HPXML's ``/HPXML/Building/BuildingDetails/Enclosure``.
 
-With the exception of interior surfaces between conditioned spaces, *all* surfaces of a building, not just those that make up the thermal boundary of the building, must be specified in the HPXML file.
-These surfaces are used by EnergyPlus to calculate the hourly air temperature in each unconditioned space.
-For example, the garage's temperature is influenced by its connections to the ground, the conditioned space, and the ambient environment.
-In turn, this temperature affects equipment (e.g., ducts, water heater, etc.) located in the garage as well as the heat transfer across any walls between the garage and conditioned space.
+All surfaces that bound different space types in the building (i.e., not just thermal boundary surfaces) must be specified in the HPXML file.
+For example, an attached garage would generally be defined by walls adjacent to conditioned space, walls adjacent to outdoors, a slab, and a roof or ceiling.
+For software tools that do not collect sufficient inputs for every required surface, the software developers will need to make assumptions about these surfaces or collect additional input.
 
-For software tools that do not collect inputs for every surface in the building, the software developers will need to make assumptions about these additional surfaces.
+The space types used in the HPXML building description are:
 
-For interzonal surfaces (e.g., a wall between a conditioned basement and an unconditioned basement), the wall can be associated with either HPXML element. 
-(It should not be specified in both.)
+============================  ===================================
+Space Type                    Notes
+============================  ===================================
+living space                  Above-grade conditioned floor area.
+attic - vented            
+attic - unvented          
+basement - conditioned        Below-grade conditioned floor area.
+basement - unconditioned  
+crawlspace - vented       
+crawlspace - unvented     
+garage                    
+other housing unit            Used to specify adiabatic surfaces.
+============================  ===================================
+
 
 .. warning::
 
-  It is the software tool's responsibility to provide all building surfaces. 
-  While some error-checking is included in the workflow, it is not possible to know whether certain surfaces have been left out.
+  It is the software tool's responsibility to provide the appropriate building surfaces. 
+  While some error-checking is in place, it is not possible to know whether some surfaces are incorrectly missing.
 
 Air Leakage
 ***********
 
-Building air leakage characterized by air changes per hour at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``. A value of "50" must be specified for ``AirInfiltrationMeasurement/HousePressure`` and a value of "ACH" must be specified for ``BuildingAirLeakage/UnitofMeasure``.
+Building air leakage characterized by air changes per hour at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``. 
+A value of "50" must be specified for ``AirInfiltrationMeasurement/HousePressure`` and a value of "ACH" must be specified for ``BuildingAirLeakage/UnitofMeasure``.
 
-In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume``. The definition of infiltration volume can be found in the ERI 301 Standard.
+In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume``.
 
-Attics/Roofs
-************
-
-One or more attics/roofs must be specified in ``Enclosure/Attics/Attic``.
-
-In the ``Attic/AtticType`` field, attics/roofs can be described as:
-
-#. Unvented (unconditioned)
-#. Vented (unconditioned)
-#. Conditioned
-#. Flat roof
-#. Cathedral ceiling (vaulted)
-
-See Surfaces............. FIXME
+Roofs
+*****
 
 TODO
 
-Foundations
-***********
-
-One or more foundations must be specified in ``Enclosure/Foundations/Foundation``.
-
-See Surfaces............. FIXME
+Walls
+*****
 
 TODO
 
-Surfaces
-********
-
-Surfaces described in HPXML include:
-
-=============================  ====================================================================================
-Surface Type                   Notes
-=============================  ====================================================================================
-``Attic/Roofs/Roof``           Required.
-``Attic/Walls/Wall``           Optional. Provide if, e.g., gable walls or knee walls present.
-``Attic/Floors/Floor``         Optional. Only required for unconditioned attics.
-``Foundation/FrameFloor``      Optional. Only required for unconditioned basements, crawlspaces, or ambient foundations.
-``Foundation/FoundationWall``  Optional. Only required for basements and crawlspaces.
-``Foundation/Slab``            Required for all foundation types except ambient.
-``RimJoists/RimJoist``         Optional. Provide if rim joists are present.
-``Walls/Wall``                 Required. Attic/foundation walls should be specified elsewhere.
-=============================  ====================================================================================
-
-Surfaces are primarily described by their ``Area`` and ``Insulation/AssemblyEffectiveRValue``.
-(The exception is ``Foundation/Slab``, where perimeter/under-slab insulation R-values and depths/widths are instead required.)
-
-Many surfaces have ``AdjacentTo`` fields. 
-For attics/foundations, the field specifies the boundary condition on the *other* side of the surface. 
-For example, "outside" (not "attic") would be the value for attic gable walls while "ground" (not "basement") would be the value for foundation walls.
-For other walls or rim joists, both ``InteriorAdjacentTo`` and ``ExteriorAdjacentTo`` fields are specified.
-
-A number of additional fields (e.g., ``SolarAbsorptance``, ``Emittance``, ``Pitch``, ``RadiantBarrier``, etc.) are required depending on the surface type.
-
-Roofs, wall, and rim joists also have a field for ``Azimuth``. 
-The azimuth is currently optional to accommodate software tools that, e.g., allow users to enter a single wall for the entire building.
-However, providing the azimuth for these surfaces is strongly encouraged and may become required in the future.
+Rim Joists
+**********
 
 TODO
 
-Sub-Surfaces
-************
+Foundation Walls
+****************
 
-Sub-surfaces described in HPXML include windows, doors, and skylights.
+Any wall that is in contact with the ground should be specified as a ``FoundationWall``. Other walls (e.g., wood framed walls) that are connected to a below-grade space but have no contact with the ground should be specified as ``Walls`` and not ``FoundationWalls``.
+
+*Exterior* foundation walls (i.e., those that fall along the perimeter of the building's footprint) should use "ground" for ``ExteriorAdjacentTo`` and the appropriate space type (e.g., "basement - unconditioned") for ``InteriorAdjacentTo``.
+
+*Interior* foundation walls should be specified with two appropriate space types (e.g., "crawlspace - unvented" and "garage", or "basement - unconditioned" and "crawlspace - unvented") for ``InteriorAdjacentTo`` and ``ExteriorAdjacentTo``.
+Interior foundation walls should never use "ground" for ``ExteriorAdjacentTo`` even if the foundation wall has some contact with the ground due to the difference in below-grade depths of the two space types.
+The choice of space type assignment for interior vs exterior is arbitrary.
+
+Foundations must include a ``Height`` as well as a ``DepthBelowGrade``. 
+For exterior foundation walls, the depth below grade is relative to the ground plane.
+For interior foundation walls, the depth below grade **should not** be thought of as relative to the ground plane, but rather as the depth of foundation wall in contact with the ground.
+For example, an interior foundation wall between an 8 ft conditioned basement and a 3 ft crawlspace has a height of 8 ft and a depth below grade of 5 ft.
+Alternatively, an interior foundation wall between an 8 ft conditioned basement and an 8 ft unconditioned basement has a height of 8 ft and a depth below grade of 0 ft.
+
+Foundation wall insulation can be described in two ways: 
+
+Option 1. A continuous insulation layer with ``NominalRValue`` and ``InsulationHeight``. 
+An insulation layer is useful for describing foundation wall insulation that doesn't span the entire height (e.g., 4 ft of insulation for an 8 ft conditioned basement). 
+When an insulation layer R-value is specified, it is modeled with a concrete wall (whose ``Thickness`` is provided) as well as air film resistances as appropriate.
+
+Option 2. An ``AssemblyEffectiveRValue``. 
+When instead providing an assembly effective R-value, the R-value should include the concrete wall and an interior air film resistance. 
+The exterior air film resistance (for any above-grade exposure) or any soil thermal resistance should not be included.
+
+Floors
+******
+
+TODO
+
+Slabs
+*****
+
+TODO
+
+Windows/Skylights
+*****************
+
+TODO
+
+Doors
+*****
 
 TODO
 
