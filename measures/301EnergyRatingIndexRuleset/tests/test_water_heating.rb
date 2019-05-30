@@ -70,7 +70,7 @@ class WaterHeatingTest < MiniTest::Test
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "basement - unconditioned", 40, 0.9172])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 83.5, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 88.5, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
