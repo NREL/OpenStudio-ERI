@@ -36,10 +36,15 @@ For example, a value of "2014AE" tells the workflow to use ANSI/RESNET/ICC© 301
 
   Valid choices for ERI version can be looked up in the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb>`_.
 
+Building Details
+~~~~~~~~~~~~~~~~
+
+The building description is entered in HPXML's ``/HPXML/Building/BuildingDetails``.
+
 Building Summary
 ~~~~~~~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``/HPXML/Building/BuildingDetails/BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, etc.
+This section describes fields specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, etc.
 
 The ``BuildingSummary/Site/FuelTypesAvailable`` field is used to determine whether the home has access to natural gas or fossil fuel delivery (specified by any value other than "electricity").
 This information may be used for determining the heating system, as specified by the ERI 301 Standard.
@@ -47,7 +52,7 @@ This information may be used for determining the heating system, as specified by
 Climate and Weather
 ~~~~~~~~~~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``/HPXML/Building/BuildingDetails/ClimateandRiskZones``.
+This section describes fields specified in HPXML's ``ClimateandRiskZones``.
 
 ``ClimateandRiskZones/ClimateZoneIECC`` specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
 
@@ -61,7 +66,7 @@ The ``WeatherStation/WMO`` must be one of the acceptable WMO station numbers fou
 Enclosure
 ~~~~~~~~~
 
-This section describes fields specified in HPXML's ``/HPXML/Building/BuildingDetails/Enclosure``.
+This section describes fields specified in HPXML's ``Enclosure``.
 
 All surfaces that bound different space types in the building (i.e., not just thermal boundary surfaces) must be specified in the HPXML file.
 For example, an attached garage would generally be defined by walls adjacent to conditioned space, walls adjacent to outdoors, a slab, and a roof or ceiling.
@@ -88,6 +93,10 @@ other housing unit            Used to specify adiabatic surfaces.
   It is the software tool's responsibility to provide the appropriate building surfaces. 
   While some error-checking is in place, it is not possible to know whether some surfaces are incorrectly missing.
 
+Also note that wall and roof surfaces do not require an azimuth to be specified. 
+Rather, only the windows/skylights themselves require an azimuth. 
+Thus, software tools can use a single wall (or roof) surface to represent multiple wall (or roof) surfaces for the entire building if all their other properties (construction type, interior/exterior adjacency, etc.) are identical.
+
 Air Leakage
 ***********
 
@@ -99,17 +108,25 @@ In addition, the building's volume associated with the air leakage measurement i
 Roofs
 *****
 
-TODO
+Pitched or flat roof surfaces that are exposed to ambient conditions should be specified as an ``Enclosure/Roofs/Roof``. 
+For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``Floor`` and not a ``Roof``.
+
+Beyond the specification of typical heat transfer properties (insulation R-value, solar absorptance, emittance, etc.), note that roofs can be defined as having a radiant barrier.
 
 Walls
 *****
 
-TODO
+Any wall that has no contact with the ground and bounds a space type should be specified as an ``Enclosure/Walls/Wall``. Interior walls (for example, walls solely within the conditioned space of the building) are not required.
+
+Walls are primarily defined by their ``Insulation/AssemblyEffectiveRValue``.
+The choice of ``WallType`` has a secondary effect on heat transfer in that it informs the assumption of wall thermal mass.
 
 Rim Joists
 **********
 
-TODO
+Rim joists, the perimeter of floor joists typically found between stories of a building or on top of a foundation wall, are specified as an ``Enclosure//RimJoists/RimJoist``.
+
+The ``InteriorAdjacentTo`` element should typically be "living space" for rim joists between stories of a building and "basement - conditioned", "basement - unconditioned", "crawlspace - vented", or "crawlspace - unvented" for rim joists on top of a foundation wall.
 
 Foundation Walls
 ****************
@@ -156,8 +173,21 @@ Vertical insulation adjacent to the slab can be described by a ``PerimeterInsula
 
 Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
 
-Windows/Skylights
-*****************
+Windows
+*******
+
+Any window or glass door area should be specified in an ``Enclosure/Windows/Window``.
+
+Windows are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as ``Area``.
+Windows must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
+Windows must also have an ``Azimuth`` specified, even if the attached wall does not.
+
+Overhangs can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
+Overhangs are defined by the vertical distance between the overhang and the top of the window (``DistanceToTopOfWindow``), and the vertical distance between the overhang and the bottom of the window (``DistanceToBottomOfWindow``).
+The difference between these two values equals the height of the window.
+
+Skylights
+*********
 
 TODO
 
