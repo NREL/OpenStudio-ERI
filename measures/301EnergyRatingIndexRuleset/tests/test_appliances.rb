@@ -7,14 +7,14 @@ require 'fileutils'
 
 class ApplianceTest < MiniTest::Test
   def test_appliances_electric
-    hpxml_name = "valid.xml"
+    hpxml_name = "base.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
     _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "living space")
     _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-    _check_refrigerator(hpxml_doc, 709.0, "living space")
+    _check_refrigerator(hpxml_doc, 691.0, "living space")
     _check_cooking_range(hpxml_doc, "electricity", false, false)
 
     # Rated Home
@@ -39,14 +39,14 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_dryer_cef
-    hpxml_name = "valid-appliances-dryer-cef.xml"
+    hpxml_name = "base-appliances-dryer-cef.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
     _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "living space")
     _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-    _check_refrigerator(hpxml_doc, 709.0, "living space")
+    _check_refrigerator(hpxml_doc, 691.0, "living space")
     _check_cooking_range(hpxml_doc, "electricity", false, false)
 
     # Rated Home
@@ -71,14 +71,14 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_washer_imef
-    hpxml_name = "valid-appliances-washer-imef.xml"
+    hpxml_name = "base-appliances-washer-imef.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
     _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "living space")
     _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-    _check_refrigerator(hpxml_doc, 709.0, "living space")
+    _check_refrigerator(hpxml_doc, 691.0, "living space")
     _check_cooking_range(hpxml_doc, "electricity", false, false)
 
     # Rated Home
@@ -103,14 +103,14 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_diwasher_ef
-    hpxml_name = "valid-appliances-dishwasher-ef.xml"
+    hpxml_name = "base-appliances-dishwasher-ef.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
     _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "living space")
     _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-    _check_refrigerator(hpxml_doc, 709.0, "living space")
+    _check_refrigerator(hpxml_doc, 691.0, "living space")
     _check_cooking_range(hpxml_doc, "electricity", false, false)
 
     # Rated Home
@@ -135,14 +135,14 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_gas
-    hpxml_name = "valid-appliances-gas.xml"
+    hpxml_name = "base-appliances-gas.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
     _check_clothes_dryer(hpxml_doc, "natural gas", 2.67, nil, "timer", "living space")
     _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-    _check_refrigerator(hpxml_doc, 709.0, "living space")
+    _check_refrigerator(hpxml_doc, 691.0, "living space")
     _check_cooking_range(hpxml_doc, "natural gas", false, false)
 
     # Rated Home
@@ -167,14 +167,14 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_in_basement
-    hpxml_name = "valid-foundation-unconditioned-basement.xml"
+    hpxml_name = "base-foundation-unconditioned-basement.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_clothes_washer(hpxml_doc, 0.817, nil, 704, 0.08, 0.58, 23, 2.874, "living space")
     _check_clothes_dryer(hpxml_doc, "electricity", 3.01, nil, "timer", "living space")
     _check_dishwasher(hpxml_doc, 0.46, nil, 12)
-    _check_refrigerator(hpxml_doc, 709.0, "living space")
+    _check_refrigerator(hpxml_doc, 691.0, "living space")
     _check_cooking_range(hpxml_doc, "electricity", false, false)
 
     # Rated Home

@@ -24,12 +24,10 @@ class EnergyRatingIndexTest < Minitest::Test
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
 
     # Run simulations
-    files = "valid*.xml"
+    files = "base*.xml"
     all_results = {}
     xmldir = "#{this_dir}/sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      next if File.basename(xml) == "valid-hvac-multiple.xml" # TODO: Remove when HVAC sizing has been updated
-
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
       all_results[File.basename(xml)] = _get_method_results(results_csv)
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
@@ -53,21 +51,21 @@ class EnergyRatingIndexTest < Minitest::Test
     # Cross-simulation tests
 
     # Verify that REUL Hot Water is identical across water heater types
-    base_results = all_results["valid.xml"]
-    compare_xmls = ["valid-dhw-tank-gas.xml",
-                    "valid-dhw-tank-oil.xml",
-                    "valid-dhw-tank-propane.xml",
-                    "valid-dhw-tank-heat-pump.xml",
-                    "valid-dhw-tankless-electric.xml",
-                    "valid-dhw-tankless-gas.xml",
-                    "valid-dhw-multiple.xml"]
+    base_results = all_results["base.xml"]
+    compare_xmls = ["base-dhw-tank-gas.xml",
+                    "base-dhw-tank-oil.xml",
+                    "base-dhw-tank-propane.xml",
+                    "base-dhw-tank-heat-pump.xml",
+                    "base-dhw-tankless-electric.xml",
+                    "base-dhw-tankless-gas.xml",
+                    "base-dhw-multiple.xml"]
     if not base_results.nil?
       base_reul_dhw = base_results["REUL Hot Water (MBtu)"]
       compare_xmls.each do |compare_xml|
         compare_results = all_results[compare_xml]
         next if compare_results.nil?
 
-        if compare_xml == "valid-dhw-multiple.xml"
+        if compare_xml == "base-dhw-multiple.xml"
           compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"].split(",").map(&:to_f).inject(0, :+) # sum values
         else
           compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"]
@@ -80,15 +78,16 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_invalid_xmls
-    expected_error_msgs = { 'invalid-bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
-                            'invalid-missing-elements.xml' => ["Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors",
-                                                               "Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"],
-                            'invalid-hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.",
-                                                                    "Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1."] }
+    expected_error_msgs = { 'bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
+                            'dhw-frac-load-served.xml' => ["Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15."],
+                            'missing-elements.xml' => ["Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors",
+                                                       "Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"],
+                            'hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.",
+                                                            "Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1."] }
 
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{this_dir}/sample_files/invalid_files"
-    Dir["#{xmldir}/invalid*.xml"].sort.each do |xml|
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
       run_eri_and_check(xml, this_dir, true, expected_error_msgs[File.basename(xml)])
     end
   end
@@ -1267,15 +1266,13 @@ class EnergyRatingIndexTest < Minitest::Test
     solar_abs = 0.0
     emittance = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall") do |wall|
+    area = 0.0
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall[InteriorAdjacentTo='living space' and ExteriorAdjacentTo='outside']") do |wall|
       u_factor += 1.0 / Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
       solar_abs += Float(XMLHelper.get_value(wall, "SolarAbsorptance"))
       emittance += Float(XMLHelper.get_value(wall, "Emittance"))
-      num += 1
-    end
-    area = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall | /HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist") do |wall|
       area += Float(XMLHelper.get_value(wall, "Area"))
+      num += 1
     end
     return u_factor / num, solar_abs / num, emittance / num, area
   end
@@ -1283,7 +1280,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_basement_walls(hpxml_doc)
     u_factor = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement]/FoundationWall") do |fnd_wall|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - conditioned' and ExteriorAdjacentTo='ground']") do |fnd_wall|
       u_factor += 1.0 / Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
       num += 1
     end
@@ -1293,8 +1290,8 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_above_grade_floors(hpxml_doc)
     u_factor = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Ambient|FoundationType/Crawlspace]/FrameFloor") do |amb_ceil|
-      u_factor += 1.0 / Float(XMLHelper.get_value(amb_ceil, "Insulation/AssemblyEffectiveRValue"))
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='living space' and (ExteriorAdjacentTo='outside' or ExteriorAdjacentTo='crawlspace - vented')]") do |floor|
+      u_factor += 1.0 / Float(XMLHelper.get_value(floor, "Insulation/AssemblyEffectiveRValue"))
       num += 1
     end
     return u_factor / num
@@ -1306,7 +1303,7 @@ class EnergyRatingIndexTest < Minitest::Test
     exp_area = 0.0
     carpet_num = 0
     r_num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/Slab") do |fnd_slab|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab") do |fnd_slab|
       exp_frac = 1.0 - Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
       exp_area += (Float(XMLHelper.get_value(fnd_slab, "Area")) * exp_frac)
       carpet_r_value += Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
@@ -1323,7 +1320,7 @@ class EnergyRatingIndexTest < Minitest::Test
     u_factor = 0.0
     area = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic/Floors/Floor") do |attc_floor|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
       u_factor += 1.0 / Float(XMLHelper.get_value(attc_floor, "Insulation/AssemblyEffectiveRValue"))
       area += Float(XMLHelper.get_value(attc_floor, "Area"))
       num += 1
@@ -1336,7 +1333,7 @@ class EnergyRatingIndexTest < Minitest::Test
     emittance = 0.0
     area = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic/Roofs/Roof") do |roof|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof") do |roof|
       solar_abs += Float(XMLHelper.get_value(roof, "SolarAbsorptance"))
       emittance += Float(XMLHelper.get_value(roof, "Emittance"))
       area += Float(XMLHelper.get_value(roof, "Area"))
@@ -1346,21 +1343,19 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_attic_vent_area(hpxml_doc)
+    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/AtticVentilationRate[UnitofMeasure='SLA']/Value").to_f
     area = 0.0
-    sla = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic") do |attc|
-      area = REXML::XPath.first(attc, "sum(Floors/Floor/Area/text())")
-      sla += XMLHelper.get_value(attc, "AtticType/Attic[Vented='true']/SpecificLeakageArea").to_f
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
+      area += Float(XMLHelper.get_value(attc_floor, "Area"))
     end
     return sla * area
   end
 
   def _get_crawl_vent_area(hpxml_doc)
+    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/FoundationVentilationRate[UnitofMeasure='SLA']/Value").to_f
     area = 0.0
-    sla = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation") do |foundation|
-      area = REXML::XPath.first(foundation, "sum(FrameFloor/Area/text())")
-      sla = XMLHelper.get_value(foundation, "FoundationType/Crawlspace[Vented='true']/SpecificLeakageArea").to_f
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='crawlspace - vented']") do |cs_floor|
+      area += Float(XMLHelper.get_value(cs_floor, "Area"))
     end
     return sla * area
   end
@@ -1410,7 +1405,7 @@ class EnergyRatingIndexTest < Minitest::Test
     nbeds = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
     cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
     eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
-    garage_present = Boolean(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/GaragePresent"))
+    gfa = Float(hpxml_doc.elements["sum(/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='garage']/Area/text())"])
 
     xml_pl_sens = 0.0
     xml_pl_lat = 0.0
@@ -1513,7 +1508,7 @@ class EnergyRatingIndexTest < Minitest::Test
       fFII_int = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']/FractionofUnitsInLocation"))
       fFII_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation"))
       fFII_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation"))
-      int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, garage_present, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+      int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
       xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, "kWh", "Btu")
     end
     s += "#{xml_ltg_sens}\n"
@@ -1582,7 +1577,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_dhw(hpxml_doc)
-    has_uncond_bsmnt = (not hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Foundations/FoundationType/Basement[Conditioned='false']"].nil?)
+    has_uncond_bsmnt = !hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='basement - unconditioned']"].nil?
     cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
     ncfl = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
     ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)

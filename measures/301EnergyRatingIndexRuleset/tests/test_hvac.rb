@@ -15,7 +15,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_none
-    hpxml_name = "valid-hvac-none.xml"
+    hpxml_name = "base-hvac-none.xml"
 
     # Reference Home, Rated Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -32,7 +32,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_none_with_no_fuel_access
-    hpxml_name = "valid-hvac-none-no-fuel-access.xml"
+    hpxml_name = "base-hvac-none-no-fuel-access.xml"
 
     # Reference Home, Rated Home IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -49,7 +49,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_boiler_elec
-    hpxml_name = "valid-hvac-boiler-elec-only.xml"
+    hpxml_name = "base-hvac-boiler-elec-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -73,7 +73,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_boiler_gas
-    hpxml_name = "valid-hvac-boiler-gas-only.xml"
+    hpxml_name = "base-hvac-boiler-gas-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -97,7 +97,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_furnace_elec
-    hpxml_name = "valid-hvac-furnace-elec-only.xml"
+    hpxml_name = "base-hvac-furnace-elec-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -121,7 +121,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_furnace_gas
-    hpxml_name = "valid-hvac-furnace-gas-only.xml"
+    hpxml_name = "base-hvac-furnace-gas-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -145,7 +145,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_stove_oil
-    hpxml_name = "valid-hvac-stove-oil-only.xml"
+    hpxml_name = "base-hvac-stove-oil-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -169,7 +169,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_wall_furnace_propane
-    hpxml_name = "valid-hvac-wall-furnace-propane-only.xml"
+    hpxml_name = "base-hvac-wall-furnace-propane-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -193,7 +193,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_elec_resistance
-    hpxml_name = "valid-hvac-elec-resistance-only.xml"
+    hpxml_name = "base-hvac-elec-resistance-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -217,7 +217,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_air_source_heat_pump
-    hpxml_name = "valid-hvac-air-to-air-heat-pump-1-speed.xml"
+    hpxml_name = "base-hvac-air-to-air-heat-pump-1-speed.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -241,7 +241,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_mini_split_heat_pump_ducted
-    hpxml_name = "valid-hvac-mini-split-heat-pump-ducted.xml"
+    hpxml_name = "base-hvac-mini-split-heat-pump-ducted.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -265,7 +265,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_mini_split_heat_pump_ductless
-    hpxml_name = "valid-hvac-mini-split-heat-pump-ductless.xml"
+    hpxml_name = "base-hvac-mini-split-heat-pump-ductless.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -289,7 +289,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_ground_source_heat_pump
-    hpxml_name = "valid-hvac-ground-to-air-heat-pump.xml"
+    hpxml_name = "base-hvac-ground-to-air-heat-pump.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -313,7 +313,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_central_air_conditioner
-    hpxml_name = "valid-hvac-central-ac-only-1-speed.xml"
+    hpxml_name = "base-hvac-central-ac-only-1-speed.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -337,7 +337,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_room_air_conditioner
-    hpxml_name = "valid-hvac-room-ac-only.xml"
+    hpxml_name = "base-hvac-room-ac-only.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -361,7 +361,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_furnace_gas_and_central_air_conditioner
-    hpxml_name = "valid.xml"
+    hpxml_name = "base.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -385,7 +385,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_furnace_gas_room_air_conditioner
-    hpxml_name = "valid-hvac-furnace-gas-room-ac.xml"
+    hpxml_name = "base-hvac-furnace-gas-room-ac.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -409,7 +409,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_multiple_hvac
-    hpxml_name = "valid-hvac-multiple.xml"
+    hpxml_name = "base-hvac-multiple.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -454,7 +454,7 @@ class HVACtest < MiniTest::Test
   end
 
   def test_programmable_thermostat
-    hpxml_name = "valid-hvac-programmable-thermostat.xml"
+    hpxml_name = "base-hvac-programmable-thermostat.xml"
 
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -468,6 +468,30 @@ class HVACtest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_thermostat(hpxml_doc, "programmable thermostat")
+  end
+
+  def test_dse
+    hpxml_name = "base-hvac-dse.xml"
+
+    # Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml_doc, ["central air conditioning", "electricity", 13, 1.0, _dse(calc_type)])
+      _check_heating_system(hpxml_doc, ["Furnace", "natural gas", 0.78, 1.0, _dse(calc_type)])
+      _check_heat_pump(hpxml_doc)
+      _check_thermostat(hpxml_doc, "manual thermostat")
+    end
+
+    # Rated Home
+    calc_type = Constants.CalcTypeERIRatedHome
+    hpxml_doc = _test_measure(hpxml_name, calc_type)
+    _check_cooling_system(hpxml_doc, ["central air conditioning", "electricity", nil, 1.0, 0.75])
+    _check_heating_system(hpxml_doc, ["Furnace", "natural gas", nil, 1.0, 0.75])
+    _check_heat_pump(hpxml_doc)
+    _check_thermostat(hpxml_doc, "manual thermostat")
   end
 
   def _test_measure(hpxml_name, calc_type)

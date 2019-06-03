@@ -9,7 +9,6 @@ require File.join(File.dirname(__FILE__), "design.rb")
 require_relative "../measures/HPXMLtoOpenStudio/measure"
 require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
 require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
-require_relative "../measures/HPXMLtoOpenStudio/resources/waterheater"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
@@ -135,7 +134,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:fuelAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design) + get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
 
   # Space Heating (by System)
-  map_tsv_data = CSV.read(File.join(designdir, "map_hvac_heating.tsv"), headers: false, col_sep: "\t")
+  map_tsv_data = CSV.read(File.join(designdir, "map_hvac.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHeatingBySystem] = {}
   design_output[:fuelHeatingBySystem] = {}
   design_output[:loadHeatingBySystem] = {}
@@ -154,10 +153,15 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Disaggregated Fan Energy Use
+    keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    fan_pump_output = get_sql_query_result(sqlFile, query)
+    design_output[:elecHeatingBySystem][sys_id] += fan_pump_output
+    design_output[:loadHeatingBySystem][sys_id] += fan_pump_output
   end
 
   # Space Cooling (by System)
-  map_tsv_data = CSV.read(File.join(designdir, "map_hvac_cooling.tsv"), headers: false, col_sep: "\t")
   design_output[:elecCoolingBySystem] = {}
   design_output[:loadCoolingBySystem] = {}
   design_output[:hpxml_cool_sys_ids].each do |sys_id|
@@ -169,17 +173,14 @@ def read_output(design, designdir, output_hpxml_path)
     design_output[:elecCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Load
     vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingLoad).join("','") + "'"
-    if vars.include? "Fan Electric Energy"
-      # Need to subtract out fan energy
-      vars.gsub!(",Fan Electric Energy", "")
-      fan_var = "'Fan Electric Energy'"
-      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{fan_var}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:loadCoolingBySystem][sys_id] = -1 * get_sql_query_result(sqlFile, query)
-    else
-      design_output[:loadCoolingBySystem][sys_id] = 0
-    end
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadCoolingBySystem][sys_id] += get_sql_query_result(sqlFile, query)
+    design_output[:loadCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Disaggregated Fan Energy Use
+    keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    fan_pump_output = get_sql_query_result(sqlFile, query)
+    design_output[:elecCoolingBySystem][sys_id] += fan_pump_output
+    design_output[:loadCoolingBySystem][sys_id] -= fan_pump_output
   end
 
   # Water Heating (by System)
@@ -226,11 +227,11 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecClothesWasher] = get_sql_query_result(sqlFile, query)
 
   # Clothes Dryer
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameClothesDryer}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecClothesDryer] = get_sql_query_result(sqlFile, query)
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameClothesDryer}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
   design_output[:fuelClothesDryer] = get_sql_query_result(sqlFile, query)
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameClothesDryer(nil)}%' AND ColumnName='Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameClothesDryer}%' AND ColumnName='Annual Value' AND Units='GJ'"
   design_output[:fuelClothesDryer] += get_sql_query_result(sqlFile, query)
 
   # MELS
@@ -240,11 +241,11 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecTV] = get_sql_query_result(sqlFile, query)
 
   # Range/Oven
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Electricity' AND RowName LIKE '#{Constants.ObjectNameCookingRange}%' AND ColumnName='Electricity Annual Value' AND Units='GJ'"
   design_output[:elecRangeOven] = get_sql_query_result(sqlFile, query)
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Gas' AND RowName LIKE '#{Constants.ObjectNameCookingRange}%' AND ColumnName='Gas Annual Value' AND Units='GJ'"
   design_output[:fuelRangeOven] = get_sql_query_result(sqlFile, query)
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameCookingRange(nil)}%' AND ColumnName='Annual Value' AND Units='GJ'"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName LIKE '#{Constants.ObjectNameCookingRange}%' AND ColumnName='Annual Value' AND Units='GJ'"
   design_output[:fuelRangeOven] += get_sql_query_result(sqlFile, query)
 
   # Ceiling Fans
@@ -503,12 +504,7 @@ def get_eec_dhws(hpxml_doc)
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
     wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
     if wh_type == "instantaneous water heater"
-      cycling_derate = XMLHelper.get_value(dhw_system, "TanklessCyclingDerate")
-      if cycling_derate.nil?
-        cycling_derate = Waterheater.get_tankless_cycling_derate()
-      else
-        cycling_derate = Float(cycling_derate)
-      end
+      cycling_derate = Float(XMLHelper.get_value(dhw_system, "PerformanceAdjustment"))
       value_adj = 1.0 - cycling_derate
     else
       value_adj = 1.0
@@ -531,6 +527,7 @@ def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design
     next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
 
     sys_id = system.elements["SystemIdentifier"].attributes["id"]
+    break
   end
 
   map_tsv_data.each do |tsv_line|
@@ -964,7 +961,7 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -s -x sample_files/valid.xml\n"
+  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -s -x sample_files/base.xml\n"
 
   opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
     options[:hpxml] = t
@@ -988,11 +985,30 @@ OptionParser.new do |opts|
     options[:skip_validation] = true
   end
 
+  options[:version] = false
+  opts.on('-v', '--version', 'Reports the workflow version') do |t|
+    options[:version] = true
+  end
+
   opts.on_tail('-h', '--help', 'Display help') do
     puts opts
     exit!
   end
 end.parse!
+
+# Check for correct versions of OS
+os_version = "2.8.0"
+if OpenStudio.openStudioVersion != os_version
+  fail "OpenStudio version #{os_version} is required."
+end
+
+if options[:version]
+  workflow_version = "0.1.0"
+  puts "OpenStudio-ERI v#{workflow_version}"
+  puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
+  puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
+  exit!
+end
 
 if options[:epws]
   download_epws
@@ -1007,12 +1023,6 @@ unless (Pathname.new options[:hpxml]).absolute?
 end
 unless File.exists?(options[:hpxml]) and options[:hpxml].downcase.end_with? ".xml"
   fail "'#{options[:hpxml]}' does not exist or is not an .xml file."
-end
-
-# Check for correct versions of OS
-os_version = "2.8.0"
-if OpenStudio.openStudioVersion != os_version
-  fail "OpenStudio version #{os_version} is required."
 end
 
 if options[:output_dir].nil?
