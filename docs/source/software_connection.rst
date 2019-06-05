@@ -105,6 +105,14 @@ A value of "50" must be specified for ``AirInfiltrationMeasurement/HousePressure
 
 In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume``.
 
+Vented Attics/Crawlspaces
+*************************
+
+The ventilation rate for vented attics (or crawlspaces) can be specified using an ``Attic`` (or ``Foundation``) element.
+First, define the ``AtticType`` as ``Attic[Vented='true']`` (or ``FoundationType`` as ``Crawlspace[Vented='true']``).
+Then use the ``VentilationRate[UnitofMeasure='SLA']/Value`` element to specify a specific leakage area (SLA).
+If these elements are not provided, the ERI 301 Standard Reference Home defaults will be used.
+
 Roofs
 *****
 
@@ -147,7 +155,7 @@ Alternatively, an interior foundation wall between an 8 ft conditioned basement 
 
 Foundation wall insulation can be described in two ways: 
 
-Option 1. A continuous insulation layer with ``NominalRValue`` and ``InsulationHeight``. 
+Option 1. A continuous insulation layer with ``NominalRValue`` and ``DistanceToBottomOfInsulation``. 
 An insulation layer is useful for describing foundation wall insulation that doesn't span the entire height (e.g., 4 ft of insulation for an 8 ft conditioned basement). 
 When an insulation layer R-value is specified, it is modeled with a concrete wall (whose ``Thickness`` is provided) as well as air film resistances as appropriate.
 
@@ -155,8 +163,8 @@ Option 2. An ``AssemblyEffectiveRValue``.
 When instead providing an assembly effective R-value, the R-value should include the concrete wall and an interior air film resistance. 
 The exterior air film resistance (for any above-grade exposure) or any soil thermal resistance should **not** be included.
 
-Floors
-******
+Frame Floors
+************
 
 TODO
 
@@ -199,10 +207,30 @@ TODO
 Systems
 ~~~~~~~
 
+This section describes fields specified in HPXML's ``Systems``.
+
+Heating Systems
+***************
+
 TODO
 
-HVAC
-****
+Cooling Systems
+***************
+
+TODO
+
+Heat Pumps
+**********
+
+TODO
+
+Thermostat
+**********
+
+TODO
+
+Ducts
+*****
 
 TODO
 
@@ -224,32 +252,44 @@ TODO
 Appliances
 ~~~~~~~~~~
 
-TODO
+This section describes fields specified in HPXML's ``Appliances``.
+Many of the appliances' inputs are derived from EnergyGuide labels.
+
+The ``Location`` for clothes washers, clothes dryers, and refrigerators can be provided, while dishwashers and cooking ranges are assumed to be in the living space.
 
 Clothes Washer
 **************
 
-TODO
+An ``Appliances/ClothesWasher`` element must be specified.
+The efficiency of the clothes washer can either be entered as a ``ModifiedEnergyFactor`` or an ``IntegratedModifiedEnergyFactor``.
+Several other inputs from the EnergyGuide label must be provided as well.
 
 Clothes Dryer
 *************
 
-TODO
+An ``Appliances/ClothesDryer`` element must be specified.
+The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
+The efficiency of the clothes dryer can either be entered as an ``EnergyFactor`` or ``CombinedEnergyFactor``.
+
 
 Dishwasher
 **********
 
-TODO
+An ``Appliances/Dishwasher`` element must be specified.
+The dishwasher's ``PlaceSettingCapacity`` must be provided.
+The efficiency of the dishwasher can either be entered as an ``EnergyFactor`` or ``RatedAnnualkWh``.
 
 Refrigerator
 ************
 
-TODO
+An ``Appliances/Refrigerator`` element must be specified.
+The efficiency of the refrigerator must be entered as ``RatedAnnualkWh``.
 
-Cooking Range
-*************
+Cooking Range/Oven
+******************
 
-TODO
+``Appliances/CookingRange`` and ``Appliances/Oven`` elements must be specified.
+The ``FuelType`` of the range and whether it ``IsInduction``, as well as whether the oven ``IsConvection``, must be provided.
 
 Lighting
 ~~~~~~~~
