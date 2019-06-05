@@ -32,10 +32,6 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
-          <AtticVentilationRate>
-            <UnitofMeasure>SLA</UnitofMeasure>
-            <Value>0.00333</Value>
-          </AtticVentilationRate>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -61,6 +57,20 @@
             <InfiltrationVolume>12312.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
+        <Attics>
+          <Attic>
+            <SystemIdentifier id='VentedAttic'/>
+            <AtticType>
+              <Attic>
+                <Vented>true</Vented>
+              </Attic>
+            </AtticType>
+            <VentilationRate>
+              <UnitofMeasure>SLA</UnitofMeasure>
+              <Value>0.00333</Value>
+            </VentilationRate>
+          </Attic>
+        </Attics>
         <Roofs>
           <Roof>
             <SystemIdentifier id='AtticRoof'/>
@@ -108,8 +118,8 @@
             </Insulation>
           </Wall>
         </Walls>
-        <Floors>
-          <Floor>
+        <FrameFloors>
+          <FrameFloor>
             <SystemIdentifier id='FloorUnderAttic'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
@@ -118,8 +128,8 @@
               <SystemIdentifier id='FloorUnderAtticInsulation'/>
               <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
             </Insulation>
-          </Floor>
-          <Floor>
+          </FrameFloor>
+          <FrameFloor>
             <SystemIdentifier id='FloorOverFoundation'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
@@ -128,8 +138,8 @@
               <SystemIdentifier id='FloorOverFoundationInsulation'/>
               <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
             </Insulation>
-          </Floor>
-        </Floors>
+          </FrameFloor>
+        </FrameFloors>
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>

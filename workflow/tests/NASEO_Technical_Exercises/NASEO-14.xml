@@ -32,14 +32,6 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
-          <FoundationVentilationRate>
-            <UnitofMeasure>SLA</UnitofMeasure>
-            <Value>0.00667</Value>
-          </FoundationVentilationRate>
-          <AtticVentilationRate>
-            <UnitofMeasure>SLA</UnitofMeasure>
-            <Value>0.00333</Value>
-          </AtticVentilationRate>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -64,6 +56,34 @@
             <InfiltrationVolume>12312.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
+        <Attics>
+          <Attic>
+            <SystemIdentifier id='VentedAttic'/>
+            <AtticType>
+              <Attic>
+                <Vented>true</Vented>
+              </Attic>
+            </AtticType>
+            <VentilationRate>
+              <UnitofMeasure>SLA</UnitofMeasure>
+              <Value>0.00333</Value>
+            </VentilationRate>
+          </Attic>
+        </Attics>
+        <Foundations>
+          <Foundation>
+            <SystemIdentifier id='VentedCrawlspace'/>
+            <FoundationType>
+              <Crawlspace>
+                <Vented>true</Vented>
+              </Crawlspace>
+            </FoundationType>
+            <VentilationRate>
+              <UnitofMeasure>SLA</UnitofMeasure>
+              <Value>0.00667</Value>
+            </VentilationRate>
+          </Foundation>
+        </Foundations>
         <Roofs>
           <Roof>
             <SystemIdentifier id='AtticRoof'/>
@@ -120,7 +140,7 @@
             <Area>672.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>3.0</DepthBelowGrade>
-            <InsulationHeight>0.0</InsulationHeight>
+            <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWallInsulation'/>
               <Layer>
@@ -130,8 +150,8 @@
             </Insulation>
           </FoundationWall>
         </FoundationWalls>
-        <Floors>
-          <Floor>
+        <FrameFloors>
+          <FrameFloor>
             <SystemIdentifier id='FloorUnderAttic'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
@@ -140,8 +160,8 @@
               <SystemIdentifier id='FloorUnderAtticInsulation'/>
               <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
             </Insulation>
-          </Floor>
-          <Floor>
+          </FrameFloor>
+          <FrameFloor>
             <SystemIdentifier id='FloorOverFoundation'/>
             <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
@@ -150,8 +170,8 @@
               <SystemIdentifier id='FloorOverFoundationInsulation'/>
               <AssemblyEffectiveRValue>15.6</AssemblyEffectiveRValue>
             </Insulation>
-          </Floor>
-        </Floors>
+          </FrameFloor>
+        </FrameFloors>
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab'/>
