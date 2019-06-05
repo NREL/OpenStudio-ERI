@@ -44,8 +44,6 @@ class EnergyRatingIndex301Validator
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms" => one,
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea" => one,
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume" => one,
-        "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/FoundationVentilationRate[UnitofMeasure='SLA']/Value" => zero_or_one, # Used for vented crawlspace if provided
-        "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/AtticVentilationRate[UnitofMeasure='SLA']/Value" => zero_or_one, # Used for vented attic if provided
 
         "/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2006']" => one, # See [ClimateZone]
         "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation" => one, # See [WeatherStation]
