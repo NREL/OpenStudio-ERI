@@ -591,7 +591,7 @@ class EnclosureTest < MiniTest::Test
   def _check_floors(hpxml_doc, area, rvalue)
     area_values = []
     rvalue_values = []
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor") do |floor|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor") do |floor|
       area_values << Float(floor.elements["Area"].text)
       rvalue_values << Float(floor.elements["Insulation/AssemblyEffectiveRValue"].text)
     end
