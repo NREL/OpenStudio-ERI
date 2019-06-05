@@ -89,7 +89,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Area>126.0</Area>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
