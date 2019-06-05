@@ -733,7 +733,7 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
     # Uninsulated ASHRAE Conditioned Basement
     rim_joists_values = [{ :id => "RimJoist",
                            :exterior_adjacent_to => "outside",
-                           :interior_adjacent_to => "living space",
+                           :interior_adjacent_to => "basement - conditioned",
                            :area => 126,
                            :azimuth => nil,
                            :solar_absorptance => 0.6,
