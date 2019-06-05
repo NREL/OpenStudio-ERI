@@ -38,10 +38,6 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>3078.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>24624.0</ConditionedBuildingVolume>
-          <AtticVentilationRate>
-            <UnitofMeasure>ACHnatural</UnitofMeasure>
-            <Value>2.4</Value>
-          </AtticVentilationRate>
           <extension>
             <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
           </extension>
@@ -68,6 +64,20 @@
             </extension>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
+        <Attics>
+          <Attic>
+            <SystemIdentifier id='VentedAttic'/>
+            <AtticType>
+              <Attic>
+                <Vented>true</Vented>
+              </Attic>
+            </AtticType>
+            <VentilationRate>
+              <UnitofMeasure>ACHnatural</UnitofMeasure>
+              <Value>2.4</Value>
+            </VentilationRate>
+          </Attic>
+        </Attics>
         <Roofs>
           <Roof>
             <SystemIdentifier id='AtticRoof'/>
@@ -87,7 +97,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Area>126.0</Area>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -138,7 +148,7 @@
             <Area>1218.0</Area>
             <Thickness>6.0</Thickness>
             <DepthBelowGrade>6.583</DepthBelowGrade>
-            <InsulationHeight>7.25</InsulationHeight>
+            <DistanceToBottomOfInsulation>7.25</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWallInsulation'/>
               <Layer>
@@ -148,8 +158,8 @@
             </Insulation>
           </FoundationWall>
         </FoundationWalls>
-        <Floors>
-          <Floor>
+        <FrameFloors>
+          <FrameFloor>
             <SystemIdentifier id='FloorUnderAttic'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
@@ -158,8 +168,8 @@
               <SystemIdentifier id='FloorUnderAtticInsulation'/>
               <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
             </Insulation>
-          </Floor>
-        </Floors>
+          </FrameFloor>
+        </FrameFloors>
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab'/>

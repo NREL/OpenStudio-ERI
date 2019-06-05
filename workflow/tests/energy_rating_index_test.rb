@@ -1290,7 +1290,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_above_grade_floors(hpxml_doc)
     u_factor = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='living space' and (ExteriorAdjacentTo='outside' or ExteriorAdjacentTo='crawlspace - vented')]") do |floor|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='living space' and (ExteriorAdjacentTo='outside' or ExteriorAdjacentTo='crawlspace - vented')]") do |floor|
       u_factor += 1.0 / Float(XMLHelper.get_value(floor, "Insulation/AssemblyEffectiveRValue"))
       num += 1
     end
@@ -1320,7 +1320,7 @@ class EnergyRatingIndexTest < Minitest::Test
     u_factor = 0.0
     area = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
       u_factor += 1.0 / Float(XMLHelper.get_value(attc_floor, "Insulation/AssemblyEffectiveRValue"))
       area += Float(XMLHelper.get_value(attc_floor, "Area"))
       num += 1
@@ -1343,16 +1343,16 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_attic_vent_area(hpxml_doc)
-    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/AtticVentilationRate[UnitofMeasure='SLA']/Value").to_f
+    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value").to_f
     area = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
       area += Float(XMLHelper.get_value(attc_floor, "Area"))
     end
     return sla * area
   end
 
   def _get_crawl_vent_area(hpxml_doc)
-    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/FoundationVentilationRate[UnitofMeasure='SLA']/Value").to_f
+    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value").to_f
     area = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='crawlspace - vented']") do |cs_floor|
       area += Float(XMLHelper.get_value(cs_floor, "Area"))

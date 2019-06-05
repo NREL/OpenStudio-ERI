@@ -285,11 +285,13 @@ def create_hpxmls
       building_construction_values = {}
       climate_and_risk_zones_values = {}
       air_infiltration_measurement_values = {}
+      attic_values = {}
+      foundation_values = {}
       roofs_values = []
       rim_joists_values = []
       walls_values = []
       foundation_walls_values = []
-      floors_values = []
+      framefloors_values = []
       slabs_values = []
       windows_values = []
       skylights_values = []
@@ -323,11 +325,13 @@ def create_hpxmls
         building_construction_values = get_hpxml_file_building_construction_values(hpxml_file, building_construction_values)
         climate_and_risk_zones_values = get_hpxml_file_climate_and_risk_zones_values(hpxml_file, climate_and_risk_zones_values)
         air_infiltration_measurement_values = get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltration_measurement_values, building_construction_values)
+        attic_values = get_hpxml_file_attic_values(hpxml_file, attic_values)
+        foundation_values = get_hpxml_file_foundation_values(hpxml_file, foundation_values)
         roofs_values = get_hpxml_file_roofs_values(hpxml_file, roofs_values)
         rim_joists_values = get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
         walls_values = get_hpxml_file_walls_values(hpxml_file, walls_values)
         foundation_walls_values = get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
-        floors_values = get_hpxml_file_floors_values(hpxml_file, floors_values)
+        framefloors_values = get_hpxml_file_framefloors_values(hpxml_file, framefloors_values)
         slabs_values = get_hpxml_file_slabs_values(hpxml_file, slabs_values)
         windows_values = get_hpxml_file_windows_values(hpxml_file, windows_values)
         skylights_values = get_hpxml_file_skylights_values(hpxml_file, skylights_values)
@@ -370,6 +374,8 @@ def create_hpxmls
       HPXML.add_building_construction(hpxml: hpxml, **building_construction_values)
       HPXML.add_climate_and_risk_zones(hpxml: hpxml, **climate_and_risk_zones_values)
       HPXML.add_air_infiltration_measurement(hpxml: hpxml, **air_infiltration_measurement_values)
+      HPXML.add_attic(hpxml: hpxml, **attic_values) unless attic_values.empty?
+      HPXML.add_foundation(hpxml: hpxml, **foundation_values) unless foundation_values.empty?
       roofs_values.each do |roof_values|
         HPXML.add_roof(hpxml: hpxml, **roof_values)
       end
@@ -382,8 +388,8 @@ def create_hpxmls
       foundation_walls_values.each do |foundation_wall_values|
         HPXML.add_foundation_wall(hpxml: hpxml, **foundation_wall_values)
       end
-      floors_values.each do |floor_values|
-        HPXML.add_floor(hpxml: hpxml, **floor_values)
+      framefloors_values.each do |framefloor_values|
+        HPXML.add_framefloor(hpxml: hpxml, **framefloor_values)
       end
       slabs_values.each do |slab_values|
         HPXML.add_slab(hpxml: hpxml, **slab_values)
@@ -572,22 +578,6 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:number_of_conditioned_floors] = 1
     building_construction_values[:conditioned_floor_area] = 1539
     building_construction_values[:conditioned_building_volume] = 12312
-  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-         'NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
-    # Vented crawlspace
-    building_construction_values[:vented_crawlspace_sla] = (1.0 / 150.0).round(5)
-  end
-  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
-     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
-     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
-    # Base configuration
-    building_construction_values[:vented_attic_constant_ach] = 2.4
-    building_construction_values[:vented_attic_sla] = nil
-  else
-    # Reference home
-    building_construction_values[:vented_attic_sla] = (1.0 / 300.0).round(5)
-    building_construction_values[:vented_attic_constant_ach] = nil
   end
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
     building_construction_values[:use_only_ideal_air_system] = true
@@ -680,6 +670,37 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
   return air_infiltration_measurement_values
 end
 
+def get_hpxml_file_attic_values(hpxml_file, attic_values)
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
+    # Base configuration
+    attic_values = { :id => "VentedAttic",
+                     :attic_type => "VentedAttic",
+                     :vented_attic_constant_ach => 2.4,
+                     :vented_attic_sla => nil }
+  else
+    # Reference home
+    attic_values = { :id => "VentedAttic",
+                     :attic_type => "VentedAttic",
+                     :vented_attic_constant_ach => nil,
+                     :vented_attic_sla => (1.0 / 300.0).round(5) }
+  end
+end
+
+def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
+  if ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
+      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
+      'NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
+    # Vented crawlspace
+    foundation_values = { :id => "VentedCrawlspace",
+                          :foundation_type => "VentedCrawlspace",
+                          :vented_crawlspace_sla => (1.0 / 150.0).round(5) }
+  else
+    foundation_values = {}
+  end
+end
+
 def get_hpxml_file_roofs_values(hpxml_file, roofs_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
@@ -712,7 +733,7 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
     # Uninsulated ASHRAE Conditioned Basement
     rim_joists_values = [{ :id => "RimJoist",
                            :exterior_adjacent_to => "outside",
-                           :interior_adjacent_to => "living space",
+                           :interior_adjacent_to => "basement - conditioned",
                            :area => 126,
                            :azimuth => nil,
                            :solar_absorptance => 0.6,
@@ -786,11 +807,11 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
                                  :azimuth => nil,
                                  :thickness => 6,
                                  :depth_below_grade => 6.583,
-                                 :insulation_height => 0,
+                                 :insulation_distance_to_bottom => 0,
                                  :insulation_r_value => 0 }]
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
     # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
-    foundation_walls_values[0][:insulation_height] = 7.25
+    foundation_walls_values[0][:insulation_distance_to_bottom] = 7.25
     foundation_walls_values[0][:insulation_r_value] = 10.2
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
@@ -803,7 +824,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
                                  :azimuth => nil,
                                  :thickness => 8,
                                  :depth_below_grade => 3,
-                                 :insulation_height => 4,
+                                 :insulation_distance_to_bottom => 4,
                                  :insulation_r_value => 7 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
@@ -816,7 +837,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
                                  :azimuth => nil,
                                  :thickness => 6,
                                  :depth_below_grade => 0,
-                                 :insulation_height => 0,
+                                 :insulation_distance_to_bottom => 0,
                                  :insulation_r_value => 0 }]
   elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # Vented crawlspace foundation with 4 ft height and uninsulated crawlspace wall insulation
@@ -828,7 +849,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
                                  :azimuth => nil,
                                  :thickness => 8,
                                  :depth_below_grade => 3,
-                                 :insulation_height => 0,
+                                 :insulation_distance_to_bottom => 0,
                                  :insulation_r_value => 0 }]
   elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
          'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
@@ -840,7 +861,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
                                  :azimuth => nil,
                                  :thickness => 8,
                                  :depth_below_grade => 7,
-                                 :insulation_height => 8,
+                                 :insulation_distance_to_bottom => 8,
                                  :insulation_r_value => 19 }]
     if ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
       foundation_walls_values[0][:interior_adjacent_to] = "basement - unconditioned"
@@ -853,67 +874,67 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
   return foundation_walls_values
 end
 
-def get_hpxml_file_floors_values(hpxml_file, floors_values)
+def get_hpxml_file_framefloors_values(hpxml_file, framefloors_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
-    floors_values = [{ :id => "FloorUnderAttic",
-                       :exterior_adjacent_to => "attic - vented",
-                       :interior_adjacent_to => "living space",
-                       :area => 1539,
-                       :insulation_assembly_r_value => 18.45 },
-                     { :id => "FloorOverFoundation",
-                       :exterior_adjacent_to => "outside",
-                       :interior_adjacent_to => "living space",
-                       :area => 1539,
-                       :insulation_assembly_r_value => 14.15 }]
+    framefloors_values = [{ :id => "FloorUnderAttic",
+                            :exterior_adjacent_to => "attic - vented",
+                            :interior_adjacent_to => "living space",
+                            :area => 1539,
+                            :insulation_assembly_r_value => 18.45 },
+                          { :id => "FloorOverFoundation",
+                            :exterior_adjacent_to => "outside",
+                            :interior_adjacent_to => "living space",
+                            :area => 1539,
+                            :insulation_assembly_r_value => 14.15 }]
     if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
-      floors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
+      framefloors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L120AC.xml',
          'RESNET_Tests/4.1_Standard_140/L120AL.xml'].include? hpxml_file
     # Well-Insulated Walls and Roof
-    floors_values[0][:insulation_assembly_r_value] = 57.49
+    framefloors_values[0][:insulation_assembly_r_value] = 57.49
   elsif ['RESNET_Tests/4.1_Standard_140/L200AC.xml',
          'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
     # Energy Inefficient
-    floors_values[0][:insulation_assembly_r_value] = 11.75
-    floors_values[1][:insulation_assembly_r_value] = 4.24
+    framefloors_values[0][:insulation_assembly_r_value] = 11.75
+    framefloors_values[1][:insulation_assembly_r_value] = 4.24
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
     # Uninsulated
-    floors_values[1][:insulation_assembly_r_value] = 4.24
-    floors_values[1][:exterior_adjacent_to] = "crawlspace - unvented"
+    framefloors_values[1][:insulation_assembly_r_value] = 4.24
+    framefloors_values[1][:exterior_adjacent_to] = "crawlspace - unvented"
   elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
     # Uninsulated
-    floors_values[1][:insulation_assembly_r_value] = 4.24
-    floors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
+    framefloors_values[1][:insulation_assembly_r_value] = 4.24
+    framefloors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Blown insulation = R-38, grade I; Framing fraction = 0.11
-    floors_values[0][:insulation_assembly_r_value] = 39.3
+    framefloors_values[0][:insulation_assembly_r_value] = 39.3
     # Cavity insulation = R-30, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    floors_values[1][:insulation_assembly_r_value] = 28.1
-    floors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
+    framefloors_values[1][:insulation_assembly_r_value] = 28.1
+    framefloors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Blown insulation = R-49, grade I; Framing fraction = 0.11
-    floors_values[0][:insulation_assembly_r_value] = 50.3
+    framefloors_values[0][:insulation_assembly_r_value] = 50.3
     # Cavity insulation = R-19, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    floors_values[1][:insulation_assembly_r_value] = 20.4
-    floors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
+    framefloors_values[1][:insulation_assembly_r_value] = 20.4
+    framefloors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml',
          'RESNET_Tests/4.1_Standard_140/L322XC.xml',
          'RESNET_Tests/4.1_Standard_140/L324XC.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'NASEO_Technical_Exercises/NASEO-16.xml',
          'NASEO_Technical_Exercises/NASEO-17.xml'].include? hpxml_file
-    floors_values.delete_at(1)
+    framefloors_values.delete_at(1)
   elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # R-13 crawlspace ceiling insulation
-    floors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
-    floors_values[1][:insulation_assembly_r_value] = 15.6
+    framefloors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
+    framefloors_values[1][:insulation_assembly_r_value] = 15.6
   end
-  return floors_values
+  return framefloors_values
 end
 
 def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
