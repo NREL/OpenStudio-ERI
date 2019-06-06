@@ -217,7 +217,7 @@ class EnclosureTest < MiniTest::Test
                                   270 => [108, 0.35, 0.40] })
     end
 
-    hpxml_names = ["base-foundation-pier-beam.xml",
+    hpxml_names = ["base-foundation-ambient.xml",
                    "base-foundation-slab.xml",
                    "base-foundation-unconditioned-basement.xml",
                    "base-foundation-unvented-crawlspace.xml",
