@@ -979,9 +979,8 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'NASEO_Technical_Exercises/NASEO-13.xml',
          'NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
-    # Un-vented crawlspace with R-7 crawlspace wall insulation
+    # Unvented/vented crawlspace
     slabs_values = [{ :id => "Slab",
-                      :interior_adjacent_to => "crawlspace - unvented",
                       :area => 1539,
                       :thickness => 0,
                       :exposed_perimeter => 168,
@@ -993,6 +992,11 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
                       :under_slab_insulation_r_value => 0,
                       :carpet_fraction => 0,
                       :carpet_r_value => 2.5 }]
+    if ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
+      slabs_values[0][:interior_adjacent_to] = "crawlspace - vented"
+    else
+      slabs_values[0][:interior_adjacent_to] = "crawlspace - unvented"
+    end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 2 ft. high crawlspace above grade

@@ -175,7 +175,7 @@
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab'/>
-            <InteriorAdjacentTo>crawlspace - unvented</InteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
             <Area>1539.0</Area>
             <Thickness>0.0</Thickness>
             <ExposedPerimeter>168.0</ExposedPerimeter>
