@@ -72,10 +72,9 @@
                 <Vented>true</Vented>
               </Attic>
             </AtticType>
-            <VentilationRate>
-              <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <Value>2.4</Value>
-            </VentilationRate>
+            <extension>
+              <ConstantACHnatural>2.4</ConstantACHnatural>
+            </extension>
           </Attic>
         </Attics>
         <Roofs>
