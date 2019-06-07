@@ -1595,6 +1595,7 @@ class EnergyRatingIndex301Ruleset
                                     heat_pump_type: "air-to-air",
                                     heat_pump_fuel: "electricity",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
+                                    backup_heating_fuel: "electricity",
                                     backup_heating_capacity: -1,
                                     backup_heating_efficiency_percent: 1.0,
                                     fraction_heat_load_served: load_frac,
