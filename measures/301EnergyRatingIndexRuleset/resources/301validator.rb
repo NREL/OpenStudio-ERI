@@ -275,7 +275,7 @@ class EnergyRatingIndex301Validator
         "ElectricAuxiliaryEnergy" => zero_or_one, # If not provided, uses 301 defaults for furnace/boiler and zero for other heating systems
       },
 
-      ## [CoolingSystem]
+      # [CoolingSystem]
       "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "../../HVACControl" => one, # See [HVACControl]
@@ -298,13 +298,14 @@ class EnergyRatingIndex301Validator
         "AnnualCoolingEfficiency[Units='EER']/Value" => one,
       },
 
-      ## [HeatPump]
+      # [HeatPump]
       "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "../../HVACControl" => one, # See [HVACControl]
         "[HeatPumpType='air-to-air' or HeatPumpType='mini-split' or HeatPumpType='ground-to-air']" => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
         "[HeatPumpFuel='electricity']" => one,
         "CoolingCapacity" => one,
+        "[BackupSystemFuel='electricity']" => zero_or_one, # See [HeatPumpBackup]
         "FractionHeatLoadServed" => one, # Must sum to 1 across all HeatPumps and HeatingSystems
         "FractionCoolLoadServed" => one, # Must sum to 1 across all HeatPumps and CoolingSystems
       },
@@ -331,6 +332,12 @@ class EnergyRatingIndex301Validator
         "DistributionSystem" => one,
         "AnnualCoolingEfficiency[Units='EER']/Value" => one,
         "AnnualHeatingEfficiency[Units='COP']/Value" => one,
+      },
+
+      ## [HeatPumpBackup]
+      "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[BackupSystemFuel]" => {
+        "BackupAnnualHeatingEfficiency[Units='Percent']/Value" => one,
+        "BackupHeatingCapacity" => one,
       },
 
       # [HVACControl]

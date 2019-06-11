@@ -1160,6 +1160,7 @@ class EnergyRatingIndex301Ruleset
         # Hot water equipment shall be located in conditioned space.
         wh_sys_values[:location] = "living space"
       end
+      wh_sys_values[:location].gsub!("unvented", "vented")
 
       # New water heater
       HPXML.add_water_heating_system(hpxml: hpxml, **wh_sys_values)
@@ -1592,6 +1593,9 @@ class EnergyRatingIndex301Ruleset
                                     heat_pump_type: "air-to-air",
                                     heat_pump_fuel: "electricity",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
+                                    backup_heating_fuel: "electricity",
+                                    backup_heating_capacity: -1,
+                                    backup_heating_efficiency_percent: 1.0,
                                     fraction_heat_load_served: load_frac,
                                     fraction_cool_load_served: 0.0,
                                     cooling_efficiency_seer: 13.0, # Arbitrary, not used
