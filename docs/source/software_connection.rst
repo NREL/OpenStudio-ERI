@@ -16,8 +16,8 @@ The `HPXML Toolbox website <https://hpxml.nrel.gov/>`_ provides several resource
 #. A data dictionary
 #. An implementation guide
 
-HPXML for ERI
--------------
+ERI Use Case for HPXML
+----------------------
 
 HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included.
 Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML fields or enumeration choices required to run the workflow.
@@ -100,10 +100,10 @@ Thus, software tools can use a single wall (or roof) surface to represent multip
 Air Leakage
 ***********
 
-Building air leakage characterized by air changes per hour at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``. 
-A value of "50" must be specified for ``AirInfiltrationMeasurement/HousePressure`` and a value of "ACH" must be specified for ``BuildingAirLeakage/UnitofMeasure``.
+Building air leakage characterized by air changes per hour or cfm at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``. 
+The ``Enclosure/AirInfiltration/AirInfiltrationMeasurement`` should be specified with ``HousePressure='50'`` and ``BuildingAirLeakage/UnitofMeasure='ACH'`` or ``BuildingAirLeakage/UnitofMeasure='CFM'``.
 
-In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume``.
+In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``AirInfiltrationMeasurement/InfiltrationVolume``.
 
 Vented Attics/Crawlspaces
 *************************
@@ -209,45 +209,172 @@ Systems
 
 This section describes fields specified in HPXML's ``Systems``.
 
+If any HVAC systems are entered that provide heating, the sum of all their ``FractionHeatLoadServed`` values must equal 1.
+The same holds true for ``FractionCoolLoadServeds`` for HVAC systems that provide cooling and ``FractionDHWLoadServed`` for water heating systems.
+
 Heating Systems
 ***************
 
-TODO
+Each heating system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/HeatingSystem``.
+Inputs including ``HeatingSystemType``, ``HeatingCapacity``, and ``FractionHeatLoadServed`` must be provided.
+
+Depending on the type of heating system specified, additional elements are required:
+
+==================  ===========================  =================  =======================
+HeatingSystemType   DistributionSystem           HeatingSystemFuel  AnnualHeatingEfficiency
+==================  ===========================  =================  =======================
+ElectricResistance                               electricity        Percent
+Furnace             AirDistribution or DSE       <any>              AFUE
+WallFurnace                                      <any>              AFUE
+Boiler              HydronicDistribution or DSE  <any>              AFUE
+Stove                                            <any>              Percent
+==================  ===========================  =================  =======================
+
+If a non-electric heating system is specified, the ``ElectricAuxiliaryEnergy`` element may be provided if available. 
 
 Cooling Systems
 ***************
 
-TODO
+Each cooling system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/CoolingSystem``.
+Inputs including ``CoolingSystemType``, ``CoolingCapacity``, and ``FractionCoolLoadServed`` must be provided.
+
+Depending on the type of cooling system specified, additional elements are required:
+
+========================  ======================  =================  =======================
+CoolingSystemType         DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency
+========================  ======================  =================  =======================
+central air conditioning  AirDistribution or DSE  electricity        SEER
+room air conditioner                              electricity        EER
+========================  ======================  =================  =======================
 
 Heat Pumps
 **********
 
-TODO
+Each heat pump should be entered as a ``Systems/HVAC/HVACPlant/HeatPump``.
+Inputs including ``HeatPumpType``, ``CoolingCapacity``, ``FractionHeatLoadServed``, and ``FractionCoolLoadServed`` must be provided.
+Note that heat pumps are allowed to provide only heating (FractionCoolLoadServed = 0) or cooling (FractionHeatLoadServed = 0) if appropriate.
+
+Depending on the type of heat pump specified, additional elements are required:
+
+=============  =================================  ============  =======================  =======================
+HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency
+=============  =================================  ============  =======================  =======================
+air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF
+mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF
+ground-to-air  AirDistribution or DSE             electricity   EER                      COP
+=============  =================================  ============  =======================  =======================
+
+If the heat pump has backup heating, it can be specified with ``BackupSystemFuel`` (currently only electricity is allowed), ``BackupAnnualHeatingEfficiency`` (percent), and ``BackupHeatingCapacity``.
 
 Thermostat
 **********
 
-TODO
+A ``Systems/HVAC/HVACControl`` must be provided if any HVAC systems are specified.
+Its ``ControlType`` specifies whether there is a manual or programmable thermostat.
 
-Ducts
-*****
+HVAC Distribution
+*****************
 
-TODO
+Each separate HVAC distribution system should be specified as a ``Systems/HVAC/HVACDistribution``.
+There should be at most one heating system and one cooling system attached to a distribution system.
+See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
+Also, note that some HVAC systems are not allowed to be attached to a distribution system.
+
+``AirDistribution`` systems are defined by:
+
+- Supply & return leakages in CFM25 to the outside (``DuctLeakageMeasurement/DuctLeakage/Value``)
+- One or more supply & return ducts (``Ducts``)
+
+For each duct, ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` must be provided.
+
+``HydronicDistribution`` systems do not require any additional inputs.
+
+``DSE`` systems are defined by a ``AnnualHeatingDistributionSystemEfficiency`` and ``AnnualCoolingDistributionSystemEfficiency`` elements.
 
 Mechanical Ventilation
 **********************
 
-TODO
+A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
+Inputs including ``FanType``, ``RatedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
 
-Water Heating
+Depending on the type of mechanical ventilation specified, additional elements are required:
+
+====================================  ==========================  =======================  ================================
+FanType                               SensibleRecoveryEfficiency  TotalRecoveryEfficiency  AttachedToHVACDistributionSystem
+====================================  ==========================  =======================  ================================
+energy recovery ventilator            required                    required
+heat recovery ventilator              required
+exhaust only
+supply only
+balanced
+central fan integrated supply (CFIS)                                                       required
+====================================  ==========================  =======================  ================================
+
+In many situations, the rated flow rate should be the value derived from actual testing of the system.
+For a CFIS system, the rated flow rate should equal the amount of outdoor air provided to the distribution system.
+
+Water Heaters
 *************
 
-TODO
+Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
+Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
+In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor``.
+
+Depending on the type of water heater specified, additional elements are required:
+
+==========================  ===========  ==========  ===============  ========================
+WaterHeaterType             FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency
+==========================  ===========  ==========  ===============  ========================
+storage water heater        <any>        required    required         required if non-electric
+instantaneous water heater  <any>
+heat pump water heater      electricity  required
+==========================  ===========  ==========  ===============  ========================
+
+Hot Water Distribution
+**********************
+
+A ``Systems/WaterHeating/HotWaterDistribution`` must be provided if any water heating systems are specified.
+Inputs including ``SystemType`` and ``PipeInsulation/PipeRValue`` must be provided.
+
+For a ``SystemType/Standard`` (non-recirculating) system, the following field is required:
+
+- ``PipingLength``: Measured length of hot water piping from the hot water heater to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
+
+For a ``SystemType/Recirculation`` system, the following fields are required:
+
+- ``ControlType``
+- ``RecirculationPipingLoopLength``: Measured recirculation loop length including both supply and return sides, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements
+- ``BranchPipingLoopLength``: Measured length of the branch hot water piping from the recirculation loop to the farthest hot water fixture from the recirculation loop, measured longitudinally from plans, assuming the branch hot water piping does not run diagonally
+- ``PumpPower``
+
+In addition, a ``HotWaterDistribution/DrainWaterHeatRecovery`` (DWHR) may be specified.
+The DWHR system is defined by:
+
+- ``FacilitiesConnected``: 'all' if all of the showers in the home are connected to DWHR units; 'one' if if there are 2 or more showers in the home and only 1 shower is connected to a DWHR unit
+- ``EqualFlow``: 'true' if the DWHR supplies pre-heated water to both the fixture cold water piping and the hot water heater potable supply piping
+- ``Efficiency``: As rated and labeled in accordance with CSA 55.1
+
+Water Fixtures
+**************
+
+Water fixtures should be entered as ``Systems/WaterHeating/WaterFixture`` elements.
+Each fixture must have ``WaterFixtureType`` and ``LowFlow`` elements provided.
+Fixtures should be specified as low flow if they are <= 2.0 gpm.
 
 Photovoltaics
 *************
 
-TODO
+Each solar electric (photovoltaic) system should be entered as a ``Systems/Photovoltaics/PVSystem``.
+The following fields, some adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_, are required for each PV system:
+
+- ``Location``: 'ground' or 'roof' mounted
+- ``ModuleType``: 'standard', 'premium', or 'thin film'
+- ``Tracking``: 'fixed' or '1-axis' or '1-axis backtracked' or '2-axis'
+- ``ArrayAzimuth``
+- ``ArrayTilt``
+- ``MaxPowerOutput``
+- ``InverterEfficiency``: Default is 0.96.
+- ``SystemLossesFraction``: Default is 0.14. System losses include soiling, shading, snow, mismatch, wiring, degradation, etc.
 
 Appliances
 ~~~~~~~~~~
@@ -294,12 +421,20 @@ The ``FuelType`` of the range and whether it ``IsInduction``, as well as whether
 Lighting
 ~~~~~~~~
 
-TODO
+The building's lighting is described by six ``Lighting/LightingGroup`` elements, each of which is the combination of:
+
+- ``LightingGroup/ThirdPartyCertification``: 'ERI Tier I' (fluorescent) and 'ERI Tier II' (LEDs, outdoor lamps controlled by photocells, or indoor lamps controlled by motion sensor)
+- ``LightingGroup/Location``: 'interior', 'garage', and 'exterior'
+
+The fraction of lamps of the given type in the given location are provided as the ``LightingGroup/FractionofUnitsInLocation``.
+The fractions for a given location cannot sum to greater than 1.
+Garage lighting values are ignored if the building has no garage.
 
 Ceiling Fans
 ~~~~~~~~~~~~
 
-TODO
+Each ceiling fan (or set of identical ceiling fans) should be entered as a ``Lighting/CeilingFan``.
+The ``Airflow/Efficiency`` (at medium speed) and ``Quantity`` must be provided.
 
 Validating & Debugging Errors
 -----------------------------
