@@ -14,6 +14,7 @@ OpenStudio-ERI documentation
    capabilities
    quick_start
    software_connection
+   testing_framework
 
 Indices and tables
 ==================

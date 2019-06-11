@@ -139,7 +139,7 @@ The ``InteriorAdjacentTo`` element should typically be "living space" for rim jo
 Foundation Walls
 ****************
 
-Any wall that is in contact with the ground should be specified as an ``Enclosure/FoundationWalls/FoundationWall``. 
+Any wall that is in contact with the ground should be specified as an ``Enclosure/FoundationWalls/FoundationWall``.
 Other walls (e.g., wood framed walls) that are connected to a below-grade space but have no contact with the ground should be specified as ``Walls`` and not ``FoundationWalls``.
 
 *Exterior* foundation walls (i.e., those that fall along the perimeter of the building's footprint) should use "ground" for ``ExteriorAdjacentTo`` and the appropriate space type (e.g., "basement - unconditioned") for ``InteriorAdjacentTo``.
@@ -166,7 +166,9 @@ The exterior air film resistance (for any above-grade exposure) or any soil ther
 Frame Floors
 ************
 
-TODO
+Any horizontal floor/ceiling surface that is not in contact with the ground (Slab) nor adjacent to ambient conditions above (Roof) should be specified as an ``Enclosure/FrameFloors/FrameFloor``.
+
+Frame floors are primarily defined by their ``Insulation/AssemblyEffectiveRValue``.
 
 Slabs
 *****
@@ -184,7 +186,7 @@ Horizontal insulation under the slab can be described by a ``UnderSlabInsulation
 Windows
 *******
 
-Any window or glass door area should be specified in an ``Enclosure/Windows/Window``.
+Any window or glass door area should be specified as an ``Enclosure/Windows/Window``.
 
 Windows are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as ``Area``.
 Windows must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
@@ -197,12 +199,20 @@ The difference between these two values equals the height of the window.
 Skylights
 *********
 
-TODO
+Any skylight should be specified as an ``Enclosure/Skylights/Skylight``.
+
+Skylights are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as ``Area``.
+Skylights must reference a HPXML ``Enclosures/Roofs/Roof`` element via the ``AttachedToRoof``.
+Skylights must also have an ``Azimuth`` specified, even if the attached roof does not.
 
 Doors
 *****
 
-TODO
+Any opaque doors should be specified as an ``Enclosure/Doors/Door``.
+
+Doors are defined by ``RValue`` and ``Area``.
+Doors must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
+Doors must also have an ``Azimuth`` specified, even if the attached wall does not.
 
 Systems
 ~~~~~~~
@@ -439,9 +449,24 @@ The ``Airflow/Efficiency`` (at medium speed) and ``Quantity`` must be provided.
 Validating & Debugging Errors
 -----------------------------
 
-TODO
+When running HPXML files, errors may occur because:
 
-Example Files
--------------
+#. An HPXML file provided is invalid (either relative to the HPXML schema or the ERI Use Case).
+#. An unexpected error occurred in the workflow (e.g., applying the ERI 301 ruleset).
+#. An unexpected EnergyPlus simulation error occurred.
 
-TODO
+If, for example, the Rated Home is unsuccessful, first look in the ERIRatedHome/run.log for details.
+If there are no errors in that log file, then the error may be in the EnergyPlus simulation -- see ERIRatedHome/eplusout.err.
+
+Contact us if you can't figure out the cause of an error.
+
+Sample Files
+------------
+
+Dozens of sample HPXML files are included in the workflow/sample_files directory.
+The sample files help to illustrate how different building components are described in HPXML.
+
+Each sample file generally makes one isolated change relative to the base HPXML (base.xml) building.
+For example, the base-dhw-dwhr.xml file adds a ``DrainWaterHeatRecovery`` element to the building.
+
+You may find it useful to search through the files for certain HPXML elements or compare (diff) a sample file to the base.xml file.
