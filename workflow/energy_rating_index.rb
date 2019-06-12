@@ -997,7 +997,7 @@ OptionParser.new do |opts|
 end.parse!
 
 # Check for correct versions of OS
-os_version = "2.8.0"
+os_version = "2.8.1"
 if OpenStudio.openStudioVersion != os_version
   fail "OpenStudio version #{os_version} is required."
 end

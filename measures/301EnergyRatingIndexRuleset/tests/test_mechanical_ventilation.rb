@@ -135,7 +135,7 @@ class MechVentTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, "central fan integrated supply", 111.0, 8, 300.0)
+    _check_mech_vent(hpxml_doc, "central fan integrated supply", 330.0, 8, 300.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)

@@ -3,107 +3,82 @@ Shadowing Combinations
 ..In the following, only the first 10 reference surfaces will be shown.
 ..But all surfaces are used in the calculations.
 ==================================
-Surface=FOUNDATION_WALL is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=FOUNDATION_SLAB is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=FOUNDATION_FLOOR is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=AGWALL-1 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=ATTIC-WALL-1 REVERSED is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=RIMJOIST-1 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=RIMJOIST-2 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=SURFACE DOOR_AGWALL-1 is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE DOOR_WALL is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=DOOR_AGWALL-1
+....Surface=DOOR_WALL
 ==================================
-Surface=DOOR_AGWALL-1 is not used as Receiving Surface in calculations.
+Surface=DOOR_WALL is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_AGWALL-1_EAST is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOW_WALL_EAST is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=WINDOW_AGWALL-1_EAST
+....Surface=WINDOW_WALL_EAST
 ==================================
-Surface=WINDOW_AGWALL-1_EAST is not used as Receiving Surface in calculations.
+Surface=WINDOW_WALL_EAST is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_AGWALL-1_NORTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOW_WALL_NORTH is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=WINDOW_AGWALL-1_NORTH
+....Surface=WINDOW_WALL_NORTH
 ==================================
-Surface=WINDOW_AGWALL-1_NORTH is not used as Receiving Surface in calculations.
+Surface=WINDOW_WALL_NORTH is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_AGWALL-1_SOUTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOW_WALL_SOUTH is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=WINDOW_AGWALL-1_SOUTH
+....Surface=WINDOW_WALL_SOUTH
 ==================================
-Surface=WINDOW_AGWALL-1_SOUTH is not used as Receiving Surface in calculations.
+Surface=WINDOW_WALL_SOUTH is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_AGWALL-1_WEST is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOW_WALL_WEST is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=WINDOW_AGWALL-1_WEST
+....Surface=WINDOW_WALL_WEST
 ==================================
-Surface=WINDOW_AGWALL-1_WEST is not used as Receiving Surface in calculations.
+Surface=WINDOW_WALL_WEST is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=FOUNDATION_FLOOR REVERSED is not used as Receiving Surface in calculations.
+Surface=WALL is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=INFERRED FINISHED FLOOR is not used as Receiving Surface in calculations.
+Surface=FLOORABOVECRAWLSPACE is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=ATTIC-FLOOR-1 REVERSED is not used as Receiving Surface in calculations.
+Surface=INFERRED CONDITIONED FLOOR is not used as Receiving Surface in calculations.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=FLOORBELOWATTIC is not used as Receiving Surface in calculations.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=FURNITURE MASS LIVING is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
@@ -113,22 +88,32 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=RES FURNITURE MASS LIVING is not used as Receiving Surface in calculations.
+Surface=WALLATTICGABLE is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=ATTIC-WALL-1 is not used as Receiving Surface in calculations.
+Surface=SURFACE 1 REVERSED is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=ATTIC-FLOOR-1 is not used as Receiving Surface in calculations.
+Surface=ROOF is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=ATTIC-ROOF-1 is used as Receiving Surface in calculations and is convex.
+Surface=FOUNDATIONWALL is not used as Receiving Surface in calculations.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=SLAB is not used as Receiving Surface in calculations.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=SURFACE 1 REVERSED 1 is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
