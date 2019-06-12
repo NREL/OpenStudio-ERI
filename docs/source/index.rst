@@ -12,7 +12,7 @@ OpenStudio-ERI documentation
 
    intro
    capabilities
-   quick_start
+   getting_started
    software_connection
    testing_framework
 

@@ -1,5 +1,5 @@
-Quick Start
-===========
+Getting Started
+===============
 
 Here is a brief overview on getting setup, running an ERI calculation, and obtaining outputs.
 
