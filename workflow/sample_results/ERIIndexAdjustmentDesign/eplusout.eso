@@ -1,34 +1,34 @@
-Program Version,EnergyPlus, Version 9.0.1-777fe647b7, YMD=2019.02.11 21:06
+Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.06.12 09:47
 1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
 2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
 3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Report Variables Requested
 4,2,Cumulative Days of Simulation[],Month[]  ! When Monthly Report Variables Requested
 5,1,Cumulative Days of Simulation[] ! When Run Period Report Variables Requested
 6,1,Calendar Year of Simulation[] ! When Annual Report Variables Requested
-515,11,RES AC CLG SUPPLY FAN,Fan Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-528,11,RES FUR GAS HTG SUPPLY FAN,Fan Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-543,11,RES AC COOLING COIL,Cooling Coil Total Cooling Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-556,11,RES AC COOLING COIL,Cooling Coil Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-569,11,RES FUR GAS HEATING COIL,Heating Coil Heating Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-582,11,RES FUR GAS HEATING COIL,Heating Coil Gas Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-886,11,WATER USE CONNECTIONS 1,Water Use Connections Plant Hot Water Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-936,11,RES WH,Water Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-973,11,RES WH,Water Heater Off Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-974,11,RES WH,Water Heater On Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1137,11,RES AC COOLING COIL,Cooling Coil Crankcase Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+263,11,EMS,central ac supply fan Cooling [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+264,11,EMS,furnace supply fan Heating [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+533,11,CENTRAL AC CLG COIL,Cooling Coil Total Cooling Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+546,11,CENTRAL AC CLG COIL,Cooling Coil Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+559,11,FURNACE HTG COIL,Heating Coil Heating Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+572,11,FURNACE HTG COIL,Heating Coil Gas Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+915,11,WATER USE CONNECTIONS 1,Water Use Connections Plant Hot Water Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+965,11,WATER HEATER,Water Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1002,11,WATER HEATER,Water Heater Off Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1003,11,WATER HEATER,Water Heater On Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1166,11,CENTRAL AC CLG COIL,Cooling Coil Crankcase Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 End of Data Dictionary
 1,RUN PERIOD 1,  39.83,-104.65,  -7.00,1650.00
 5,365
-515,504468562.48808398,0.0, 1, 1, 1,60,987855.9615922673, 6,26,17,60
-528,617947587.3391299,0.0, 1, 2,15,60,584047.687984214, 2, 9, 6,60
-543,9814936432.161492,0.0, 1, 1, 1,60,19712221.91568452, 8, 3,18,60
-556,2161504377.4211595,0.0, 1, 1, 1,60,5405701.343205481, 6,26,17,60
-569,23270677611.19083,0.0, 1, 2,15,60,21994074.797128679, 2, 9, 6,60
-582,29834202065.629285,0.0, 1, 2,15,60,28197531.791190614, 2, 9, 6,60
-886,10957975394.951064,202632.29724129948, 8,15, 1,60,2703305.4228724527, 2,13, 8,60
-936,12088799334.20481,0.0, 1, 1, 1,60,3941616.3095721874, 2, 8, 8,60
-973,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-974,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-1137,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+263,454543552.35925909,0.0, 1, 1, 1,60,987850.6697708293, 6,26,17,60
+264,648010014.8866115,0.0, 1, 2,15,60,572801.6449313749, 2, 9, 6,60
+533,8516162024.568605,0.0, 1, 1, 1,60,18831810.561560688, 8, 5,18,60
+546,1901895889.6089407,0.0, 1, 1, 1,60,5264724.149744217, 6,26,17,60
+559,24672128232.283975,0.0, 1, 2,15,60,21808668.555659433, 2, 9, 6,60
+572,31630933631.13339,0.0, 1, 2,15,60,27959831.481614658, 2, 9, 6,60
+915,10834164261.852026,0.0, 1, 1, 1,60,25102195.276474086, 1,12,11,60
+965,11969857616.885798,0.0, 1, 1, 1,60,19800000.0, 1,19,12,60
+1002,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+1003,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+1166,752040000.0,0.0, 1, 2,15,60,180000.0, 1, 1, 1,60
 End of Data
  Number of Records Written=          11

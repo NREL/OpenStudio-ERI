@@ -4,41 +4,41 @@ Coeff Cooling a,3.809
 Coeff Cooling b,0.0
 Coeff Hot Water a,0.92
 Coeff Hot Water b,0.0
-DSE_r Heating,0.646
-DSE_r Cooling,0.6376
-DSE_r Hot Water,1.0031
+DSE_r Heating,0.648
+DSE_r Cooling,0.4541
+DSE_r Hot Water,0.9873
 EEC_x Heating,1.087
 EEC_x Cooling,0.2625
 EEC_x Hot Water,1.0526
 EEC_r Heating,1.2821
 EEC_r Cooling,0.2625
 EEC_r Hot Water,1.0903
-nEC_x Heating,107.9632
-nEC_x Cooling,7.7412
-nEC_x Hot Water,12.5626
-nMEUL Heating,54.4006
-nMEUL Cooling,18.7995
-nMEUL Hot Water,11.5576
-IAF CFA,0.9197
-IAF NBR,1.0177
-IAF NS,1.0
-IAF RH,0.9361
-Total Loads TnML,127.599
-Total Loads TRL,130.8052
-Total Loads TRL*IAF,122.4413
-ERI,104.21
+nEC_x Heating,13.3014
+nEC_x Cooling,2.7879
+nEC_x Hot Water,10.6179
+nMEUL Heating,6.7234
+nMEUL Cooling,4.8225
+nMEUL Hot Water,9.6146
+IAF CFA,0.9915
+IAF NBR,1.0
+IAF NS,1.0201
+IAF RH,1.0114
+Total Loads TnML,43.5005
+Total Loads TRL,58.4116
+Total Loads TRL*IAF,59.0781
+ERI,73.63
 "",""
-Ref Home CFA,7000.0
-Ref Home Nbr,4.0
-Ref Home NS,2.0
-Ref L&A resMELs,21.71
-Ref L&A intLgt,20.66
-Ref L&A extLgt,1.54
-Ref L&A Fridg,2.42
-Ref L&A TVs,2.35
-Ref L&A R/O,1.66
-Ref L&A cDryer,3.86
-Ref L&A dWash,0.69
-Ref L&A cWash,0.27
+Ref Home CFA,2700.0
+Ref Home Nbr,3.0
+Ref Home NS,1.0
+Ref L&A resMELs,8.38
+Ref L&A intLgt,8.92
+Ref L&A extLgt,0.81
+Ref L&A Fridg,2.36
+Ref L&A TVs,2.11
+Ref L&A R/O,1.53
+Ref L&A cDryer,3.35
+Ref L&A dWash,0.58
+Ref L&A cWash,0.24
 Ref L&A mechV,0.0
-Ref L&A total,55.15
+Ref L&A total,28.26

@@ -27,7 +27,7 @@ task :generate_sample_outputs do
   FileUtils.mkdir_p("sample_results")
 
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" --no-ssl energy_rating_index.rb -x sample_files/valid.xml"
+  command = "\"#{cli_path}\" --no-ssl energy_rating_index.rb -x sample_files/base.xml"
   system(command)
 
   dirs = ["ERIRatedHome",
