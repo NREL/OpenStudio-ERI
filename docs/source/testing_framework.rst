@@ -17,12 +17,10 @@ The current set of tests include:
 - RESNET Duct distribution system efficiency tests
 - RESNET Hot water system performance tests
 
-For most of the RESNET 
-
 Test Results
 ------------
 
-Test results in CSV format can be found on the [CI machine](https://circleci.com/gh/NREL/OpenStudio-ERI) for any build under the "Artifacts" tab.
+Test results in CSV format can be found on the `CI machine <https://circleci.com/gh/NREL/OpenStudio-ERI>`_ for any build under the "Artifacts" tab.
 
 If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
 Note that EnergyPlus cannot currently pass the ANSI/ASHRAE Standard 140-2011 tests, for which test criteria were set by decades old simulation engines.
