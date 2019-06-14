@@ -61,6 +61,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_mechanical_ventilation_reference(orig_details, hpxml)
     set_systems_water_heater_reference(orig_details, hpxml)
     set_systems_water_heating_use_reference(orig_details, hpxml)
+    set_systems_solar_thermal_reference(hpxml)
     set_systems_photovoltaics_reference(hpxml)
 
     # Appliances
@@ -111,6 +112,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_mechanical_ventilation_rated(orig_details, hpxml)
     set_systems_water_heater_rated(orig_details, hpxml)
     set_systems_water_heating_use_rated(orig_details, hpxml)
+    set_systems_solar_thermal_rated(orig_details, hpxml)
     set_systems_photovoltaics_rated(orig_details, hpxml)
 
     # Appliances
@@ -163,6 +165,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_mechanical_ventilation_iad(orig_details, hpxml)
     set_systems_water_heater_iad(orig_details, hpxml)
     set_systems_water_heating_use_iad(orig_details, hpxml)
+    set_systems_solar_thermal_iad(hpxml)
     set_systems_photovoltaics_iad(hpxml)
 
     # Appliances
@@ -1269,6 +1272,21 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_water_heating_use_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
     set_systems_water_heating_use_reference(orig_details, hpxml)
+  end
+
+  def self.set_systems_solar_thermal_reference(hpxml)
+    # nop
+  end
+
+  def self.set_systems_solar_thermal_rated(orig_details, hpxml)
+    orig_details.elements.each("Systems/SolarThermal/SolarThermalSystem") do |sdhw|
+      sdhw_values = HPXML.get_solar_thermal_system_values(solar_thermal_system: sdhw)
+      HPXML.add_solar_thermal_system(hpxml: hpxml, **sdhw_values)
+    end
+  end
+
+  def self.set_systems_solar_thermal_iad(hpxml)
+    # nop
   end
 
   def self.set_systems_photovoltaics_reference(hpxml)

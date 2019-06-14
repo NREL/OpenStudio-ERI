@@ -73,6 +73,7 @@ class EnergyRatingIndex301Validator
         "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem" => zero_or_more, # See [WaterHeatingSystem]
         "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture" => zero_or_more, # See [WaterFixture]
         "/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution" => zero_or_one, # See [HotWaterDistribution]
+        "/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem" => zero_or_one, # See [SolarThermalSystem]
         "/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem" => zero_or_more, # See [PVSystem]
 
         "/HPXML/Building/BuildingDetails/Appliances/ClothesWasher" => one, # See [ClothesWasher]
@@ -465,6 +466,20 @@ class EnergyRatingIndex301Validator
         "SystemIdentifier" => one, # Required by HPXML schema
         "[WaterFixtureType='shower head' or WaterFixtureType='faucet']" => one, # Required by HPXML schema
         "LowFlow" => one,
+      },
+
+      # [SolarThermalSystem]
+      "/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem" => {
+        "SystemIdentifier" => one, # Required by HPXML schema
+        "[SystemType='hot water']" => one,
+        "CollectorArea" => one,
+        "[CollectorLoopType='liquid indirect']" => one,
+        "CollectorAzimuth" => one,
+        "CollectorTilt" => one,
+        "CollectorRatedOpticalEfficiency" => one, # FRTA (y-intercept); see Directory of SRCC Certified Solar Collector Ratings
+        "CollectorRatedThermalLosses" => one, # FRUL (slope); see Directory of SRCC Certified Solar Collector Ratings
+        "StorageVolume" => one,
+        "ConnectedTo" => one, # WaterHeatingSystem
       },
 
       # [PVSystem]
