@@ -2352,6 +2352,8 @@ def copy_sample_files
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
                   'base-appliances-none.xml',
+                  'base-dhw-tank-heat-pump-with-solar.xml',
+                  'base-dhw-tankless-gas-with-solar.xml',
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-multiple-slab.xml',
