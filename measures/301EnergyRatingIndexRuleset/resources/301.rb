@@ -1162,6 +1162,10 @@ class EnergyRatingIndex301Ruleset
       end
       wh_sys_values[:location].gsub!("unvented", "vented")
 
+      # Ensure no desuperheater
+      wh_sys_values[:has_desuperheater] = false
+      wh_sys_values[:related_hvac] = nil
+
       # New water heater
       HPXML.add_water_heating_system(hpxml: hpxml, **wh_sys_values)
     end

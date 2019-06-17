@@ -407,6 +407,7 @@ class EnergyRatingIndex301Validator
         "[Location='living space' or Location='basement - unconditioned' or Location='basement - conditioned' or Location='attic - unvented' or Location='attic - vented' or Location='garage' or Location='crawlspace - unvented' or Location='crawlspace - vented']" => one,
         "FractionDHWLoadServed" => one,
         "[EnergyFactor | UniformEnergyFactor]" => one,
+        "HasDesuperheater" => zero_or_one, # See [Desuperheater]
       },
 
       ## [WHType=Tank]
@@ -430,6 +431,11 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType='heat pump water heater']" => {
         "[FuelType='electricity']" => one,
         "TankVolume" => one,
+      },
+
+      ## [Desuperheater]
+      "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[HasDesuperheater='true']" => {
+        "RelatedHVACSystem" => one, # HeatPump (ground-to-air, air-to-air) or CoolingSystem (central air conditioner)
       },
 
       # [HotWaterDistribution]
