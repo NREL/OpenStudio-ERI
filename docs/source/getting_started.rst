@@ -8,7 +8,7 @@ Setup
 
 To get started:
 
-#. Either download OpenStudio 2.8.1-rc2 (`Windows <https://openstudio-builds.s3.amazonaws.com/2.8.1/OpenStudio-2.8.1-rc2.6914d4f590-Windows.exe>`_ | `Linux <https://openstudio-builds.s3.amazonaws.com/2.8.1/OpenStudio-2.8.1-rc2.6914d4f590-Linux.deb>`_ | `Mac <https://openstudio-builds.s3.amazonaws.com/2.8.1/OpenStudio-2.8.1-rc2.6914d4f590-Darwin.dmg>`_) and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
+#. Either download `OpenStudio 2.8.1 <https://github.com/NREL/OpenStudio/releases/tag/v2.8.1>`_) and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
 #. Clone or download the `OpenStudio-ERI GitHub repository <https://github.com/NREL/OpenStudio-ERI/>`_.
 #. To obtain all available weather files, run: ``openstudio workflow/energy_rating_index.rb --download-weather``
 
