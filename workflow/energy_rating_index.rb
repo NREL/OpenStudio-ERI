@@ -532,7 +532,7 @@ def get_dhw_solar_fraction(hpxml_doc, sys_id)
   solar_fraction = 0.0
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem") do |system|
     next unless sys_id == system.elements["ConnectedTo"].attributes["idref"]
-    
+
     solar_fraction = XMLHelper.get_value(system, "SolarFraction").to_f
   end
   return solar_fraction
