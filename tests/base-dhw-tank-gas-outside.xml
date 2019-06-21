@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-05-03T09:27:25-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-06-21T14:53:19-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -303,13 +303,14 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeater'/>
-            <FuelType>electricity</FuelType>
+            <FuelType>natural gas</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>living space</Location>
-            <TankVolume>40.0</TankVolume>
+            <Location>other exterior</Location>
+            <TankVolume>50.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
+            <HeatingCapacity>4500.0</HeatingCapacity>
+            <EnergyFactor>0.59</EnergyFactor>
+            <RecoveryEfficiency>0.76</RecoveryEfficiency>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDstribution'/>
@@ -333,19 +334,6 @@
             <LowFlow>false</LowFlow>
           </WaterFixture>
         </WaterHeating>
-        <Photovoltaics>
-          <PVSystem>
-            <SystemIdentifier id='PVSystem'/>
-            <Location>roof</Location>
-            <ModuleType>standard</ModuleType>
-            <Tracking>fixed</Tracking>
-            <ArrayAzimuth>180</ArrayAzimuth>
-            <ArrayTilt>20.0</ArrayTilt>
-            <MaxPowerOutput>4000.0</MaxPowerOutput>
-            <InverterEfficiency>0.96</InverterEfficiency>
-            <SystemLossesFraction>0.14</SystemLossesFraction>
-          </PVSystem>
-        </Photovoltaics>
       </Systems>
       <Appliances>
         <ClothesWasher>
