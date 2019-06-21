@@ -369,6 +369,28 @@ Water fixtures should be entered as ``Systems/WaterHeating/WaterFixture`` elemen
 Each fixture must have ``WaterFixtureType`` and ``LowFlow`` elements provided.
 Fixtures should be specified as low flow if they are <= 2.0 gpm.
 
+Solar Thermal
+*************
+
+A single solar thermal system used for domestic water heating can be entered as a ``Systems/SolarThermal/SolarThermalSystem`` element.
+The solar thermal system must have ``SystemType`` specified as 'hot water'.
+It also must reference a ``WaterHeatingSystem`` id via the ``ConnectedTo`` element.
+
+Solar thermal systems can be defined in terms of simple system-level performance inputs or detailed component-level inputs.
+
+For simple system-level performance inputs, define:
+
+- ``SolarFracton``: Available from the SRCC OG-300 Solar Water Heating System Certification directory.
+
+For detailed component-level inputs, define:
+
+- ``CollectorArea``
+- ``CollectorLoopType``: 'liquid indirect'
+- ``CollectorAzimuth`` and ``CollectorTilt``
+- ``CollectorRatedOpticalEfficiency``: Available from the SRCC OG-100 Solar Thermal Collector directory. Also known as FRTA or y-intercept.
+- ``CollectorRatedThermalLosses``: Available from the SRCC OG-100 Solar Thermal Collector directory. Also known as FRUL or slope.
+- ``StorageVolume``
+
 Photovoltaics
 *************
 
