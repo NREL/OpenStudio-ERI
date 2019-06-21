@@ -212,6 +212,9 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Apply solar fraction to load for simple solar water heating systems
+    solar_fraction = get_dhw_solar_fraction(hpxml_doc, sys_id)
+    design_output[:loadHotWaterBySystem][sys_id] /= (1.0 - solar_fraction)
   end
 
   # PV
@@ -523,6 +526,16 @@ def get_eec_dhws(hpxml_doc)
   end
 
   return eec_dhws
+end
+
+def get_dhw_solar_fraction(hpxml_doc, sys_id)
+  solar_fraction = 0.0
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem") do |system|
+    next unless sys_id == system.elements["ConnectedTo"].attributes["idref"]
+    
+    solar_fraction = XMLHelper.get_value(system, "SolarFraction").to_f
+  end
+  return solar_fraction
 end
 
 def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
