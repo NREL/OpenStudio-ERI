@@ -19,7 +19,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -48,7 +48,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, true, "all", true, 0.55)
 
@@ -77,7 +77,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "basement - unconditioned", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -106,7 +106,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, true)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -135,7 +135,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Recirculation", 3.0, nil, "presence sensor demand control", 30, 30, 50)
+    _check_hot_water_distribution(hpxml_doc, "Recirculation", 3.0, nil, "presence sensor demand control", 50, 50, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -164,7 +164,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "no control", 30, 30, 50)
+    _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "no control", 50, 50, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -193,7 +193,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "timer", 30, 30, 50)
+    _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "timer", 50, 50, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -222,7 +222,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "temperature", 30, 30, 50)
+    _check_hot_water_distribution(hpxml_doc, "Recirculation", 0.0, nil, "temperature", 50, 50, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -251,7 +251,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Recirculation", 3.0, nil, "manual demand control", 30, 30, 50)
+    _check_hot_water_distribution(hpxml_doc, "Recirculation", 3.0, nil, "manual demand control", 50, 50, 50)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -280,7 +280,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "natural gas", "living space", 50, 0.59])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -309,7 +309,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["heat pump water heater", "electricity", "living space", 80, 2.3])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -338,7 +338,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["instantaneous water heater", "electricity", "living space", nil, 0.99])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -367,7 +367,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["instantaneous water heater", "natural gas", "living space", nil, 0.82])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -404,7 +404,7 @@ class WaterHeatingTest < MiniTest::Test
                         ["heat pump water heater", "electricity", "living space", 80, 2.3],
                         ["instantaneous water heater", "electricity", "living space", nil, 0.99],
                         ["instantaneous water heater", "natural gas", "living space", nil, 0.82])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -463,7 +463,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
@@ -492,7 +492,7 @@ class WaterHeatingTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml_doc, ["storage water heater", "electricity", "living space", 40, 0.95])
-    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 30, nil, nil, nil, nil)
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
 
