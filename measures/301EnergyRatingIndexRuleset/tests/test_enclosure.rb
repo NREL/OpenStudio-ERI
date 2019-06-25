@@ -11,7 +11,9 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml_doc, 3.0)
+    # For residences, without Whole-House Mechanical Ventilation Systems, the measured
+    # infiltration rate but not less than 0.30 ach
+    _check_infiltration(hpxml_doc, 7.6)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -480,7 +482,7 @@ class EnclosureTest < MiniTest::Test
     result = runner.result
 
     # show the output
-    # show_output(result)
+    show_output(result) unless result.value.valueName == 'Success'
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)

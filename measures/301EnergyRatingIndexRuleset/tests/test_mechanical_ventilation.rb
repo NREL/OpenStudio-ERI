@@ -26,6 +26,47 @@ class MechVentTest < MiniTest::Test
     _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
   end
 
+  def test_mech_vent_below_ashrae_622
+    # Test Rated Home:
+    # For residences with Whole-House Mechanical Ventilation Systems, the measured infiltration rate
+    # combined with the time-averaged Whole-House Mechanical Ventilation System rate, which shall
+    # not be less than 0.03 x CFA + 7.5 x (Nbr+1) cfm
+
+    # Create derivative file for testing
+    hpxml_name = "base.xml"
+    root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
+    hpxml_path = File.join(root_path, "workflow", "sample_files", hpxml_name)
+    hpxml_doc = REXML::Document.new(File.read(hpxml_path))
+
+    # Remove mech vent
+    mech_vent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    mech_vent.parent.elements.delete mech_vent unless mech_vent.nil?
+
+    # Set mech vent
+    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
+                              id: "VentilationFan",
+                              fan_type: "exhaust only",
+                              rated_flow_rate: 1.0,
+                              hours_in_operation: 1,
+                              fan_power: 1.0)
+
+    # Save new file
+    hpxml_name = "base-test.xml"
+    hpxml_path = File.join(root_path, "workflow", "sample_files", hpxml_name)
+    XMLHelper.write_file(hpxml_doc, hpxml_path)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    File.delete(hpxml_path)
+
+    # Test that mech vent has been increased
+    mech_vent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    mech_vent_values = HPXML.get_ventilation_fan_values(ventilation_fan: mech_vent)
+    assert_in_epsilon(mech_vent_values[:rated_flow_rate], 76.2, 0.01)
+    assert_in_epsilon(mech_vent_values[:fan_power], 76.2, 0.01)
+    assert_equal(mech_vent_values[:hours_in_operation], 24)
+  end
+
   def test_mech_vent_exhaust
     hpxml_name = "base-mechvent-exhaust.xml"
 
@@ -180,7 +221,7 @@ class MechVentTest < MiniTest::Test
     result = runner.result
 
     # show the output
-    # show_output(result)
+    show_output(result) unless result.value.valueName == 'Success'
 
     # assert that it ran correctly
     assert_equal("Success", result.value.valueName)
