@@ -648,16 +648,12 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :unit_of_measure => "ACHnatural",
-                                            :air_leakage => 0.67 } # TODO: Review this
-  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
-    air_infiltration_measurement_values[:constant_ach_natural] = nil
-    air_infiltration_measurement_values[:house_pressure] = 50
-    air_infiltration_measurement_values[:unit_of_measure] = "ACH"
-    air_infiltration_measurement_values[:air_leakage] = 7.5 # TODO: Review this
+                                            :air_leakage => 0.67 }
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 3 ACH50
