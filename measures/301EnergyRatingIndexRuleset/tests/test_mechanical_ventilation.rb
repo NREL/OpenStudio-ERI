@@ -11,7 +11,7 @@ class MechVentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc)
+    _check_mech_vent(hpxml_doc, "exhaust only", 37.0, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)

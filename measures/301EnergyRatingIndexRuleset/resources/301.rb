@@ -1057,12 +1057,21 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_mechanical_ventilation_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
-    vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    return if vent_fan.nil?
+    # Check for eRatio workaround first
+    eratio_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension"]
+    if not eratio_fan.nil?
+      vent_fan = eratio_fan.elements["OverrideVentilationFan"]
+    else
+      vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    end
 
-    vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
-
-    fan_type = vent_fan_values[:fan_type]
+    fan_type = nil
+    sys_id = "MechanicalVentilation"
+    if not vent_fan.nil?
+      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+      fan_type = vent_fan_values[:fan_type]
+      sys_id = HPXML.get_id(vent_fan)
+    end
 
     q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
 
@@ -1074,40 +1083,52 @@ class EnergyRatingIndex301Ruleset
 
     # Calculate fan cfm for fan power using Rated Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
-    orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
-      air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+    if fan_type.nil?
+      fan_type = 'exhaust only'
+      fan_power_w = 0.0
+    else
+      air_infiltration_measurement_values = nil
+      # Check for eRatio workaround first
+      orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |air_infiltration_measurement|
+        air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+        break
+      end
+      if air_infiltration_measurement_values.nil?
+        orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
+          air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+          break
+        end
+      end
       if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
         nach = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
-        break
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         ach50 = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
-        break
       end
-    end
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
+      q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
 
-    # Treat CFIS like supply ventilation. Is this correct?
-    if fan_type == 'central fan integrated supply'
-      fan_type = 'supply only'
-    end
+      # Treat CFIS like supply ventilation. Is this correct?
+      if fan_type == 'central fan integrated supply'
+        fan_type = 'supply only'
+      end
 
-    fan_power_w = nil
-    if fan_type == 'supply only' or fan_type == 'exhaust only'
-      w_cfm = 0.35
-      fan_power_w = w_cfm * q_fan_power
-    elsif fan_type == 'balanced'
-      w_cfm = 0.70
-      fan_power_w = w_cfm * q_fan_power
-    elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
-      w_cfm = 1.00
-      fan_power_w = w_cfm * q_fan_power
-      fan_type = 'balanced'
+      fan_power_w = nil
+      if fan_type == 'supply only' or fan_type == 'exhaust only'
+        w_cfm = 0.35
+        fan_power_w = w_cfm * q_fan_power
+      elsif fan_type == 'balanced'
+        w_cfm = 0.70
+        fan_power_w = w_cfm * q_fan_power
+      elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
+        w_cfm = 1.00
+        fan_power_w = w_cfm * q_fan_power
+        fan_type = 'balanced'
+      end
     end
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
-                              id: HPXML.get_id(vent_fan),
+                              id: sys_id,
                               fan_type: fan_type,
                               rated_flow_rate: q_fan_airflow,
                               hours_in_operation: 24,
@@ -1561,7 +1582,7 @@ class EnergyRatingIndex301Ruleset
         re = 0.78
       end
     end
-    return ef, re
+    return ef.round(2), re
   end
 
   def self.has_fuel_access(orig_details)
