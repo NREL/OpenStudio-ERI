@@ -360,13 +360,17 @@ class EnergyRatingIndex301Ruleset
 
     whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
+    min_ach50 = 0.0
+    if whole_house_fan.nil?
+      min_nach = 0.30
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @ncfl, @weather)
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
+    end
+
     orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
       air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
       if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
         nach = air_infiltration_measurement_values[:air_leakage]
-        if whole_house_fan.nil? and nach < 0.30
-          nach = 0.30
-        end
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
         # Convert to ACH50
         air_infiltration_measurement_values[:air_leakage] = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
@@ -375,14 +379,20 @@ class EnergyRatingIndex301Ruleset
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         # nop
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
-        # nop
+        # Convert to ACH50
+        air_infiltration_measurement_values[:unit_of_measure] = "ACH"
+        air_infiltration_measurement_values[:air_leakage] *= 60.0 / @infilvolume
       else
         next
       end
 
+      if air_infiltration_measurement_values[:air_leakage] < min_ach50
+        air_infiltration_measurement_values[:air_leakage] = min_ach50
+      end
+
       # Air Infiltration
       HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                             id: "Infiltration_ACH50",
+                                             id: "AirInfiltrationMeasurement",
                                              house_pressure: air_infiltration_measurement_values[:house_pressure],
                                              unit_of_measure: air_infiltration_measurement_values[:unit_of_measure],
                                              air_leakage: air_infiltration_measurement_values[:air_leakage],
@@ -1130,6 +1140,33 @@ class EnergyRatingIndex301Ruleset
     vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     if not vent_fan.nil?
       vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+
+      # Calculate min airflow rate
+      min_q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+      sla = nil
+      hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
+        air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+        if air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
+          ach50 = air_infiltration_measurement_values[:air_leakage]
+          sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
+          break
+        end
+      end
+      vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
+      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vert_distance)
+
+      q_fan = vent_fan_values[:rated_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+      if q_fan < min_q_fan
+        # First try increasing operation to meet minimum
+        vent_fan_values[:hours_in_operation] = [min_q_fan / vent_fan_values[:rated_flow_rate], 24].min
+        q_fan = vent_fan_values[:rated_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+      end
+      if q_fan < min_q_fan
+        # Finally resort to increasing airflow rate and fan power
+        vent_fan_values[:rated_flow_rate] *= min_q_fan / q_fan
+        vent_fan_values[:fan_power] *= min_q_fan / q_fan
+      end
+
       HPXML.add_ventilation_fan(hpxml: hpxml, **vent_fan_values)
     end
   end
