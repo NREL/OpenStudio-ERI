@@ -248,12 +248,12 @@ Inputs including ``CoolingSystemType``, ``CoolingCapacity``, and ``FractionCoolL
 
 Depending on the type of cooling system specified, additional elements are required:
 
-========================  ======================  =================  =======================
-CoolingSystemType         DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency
-========================  ======================  =================  =======================
-central air conditioning  AirDistribution or DSE  electricity        SEER
-room air conditioner                              electricity        EER
-========================  ======================  =================  =======================
+=======================  ======================  =================  =======================
+CoolingSystemType        DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency
+=======================  ======================  =================  =======================
+central air conditioner  AirDistribution or DSE  electricity        SEER
+room air conditioner                             electricity        EER
+=======================  ======================  =================  =======================
 
 Heat Pumps
 **********

@@ -1330,10 +1330,10 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml'].include? hpxml_file
     cooling_systems_values = []
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
-    # Central air conditioning with SEER = 11.0
+    # central air conditioner with SEER = 11.0
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
-                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
                                 :cooling_capacity => 60000,
                                 :fraction_cool_load_served => 1,
@@ -1342,7 +1342,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     # Central air conditioner with SEER = 15.0
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
-                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
                                 :cooling_capacity => 60000,
                                 :fraction_cool_load_served => 1,
@@ -1358,7 +1358,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     # Cooling system – electric A/C with SEER = 10.0
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
-                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
                                 :cooling_capacity => 60000,
                                 :fraction_cool_load_served => 1,
@@ -1367,7 +1367,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
-                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
                                 :cooling_capacity => 38300,
                                 :fraction_cool_load_served => 1,
@@ -1379,7 +1379,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     # Air Conditioner; 38.4 kBtu/h; SEER 10
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
-                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
                                 :cooling_capacity => 38400,
                                 :fraction_cool_load_served => 1,
@@ -1397,7 +1397,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     # Cooling: Air conditioner SEER = 14
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
-                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
                                 :cooling_capacity => 60000,
                                 :fraction_cool_load_served => 1,
@@ -1406,7 +1406,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     # Cooling: Air conditioner SEER = 13
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
-                                :cooling_system_type => "central air conditioning",
+                                :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
                                 :cooling_capacity => 60000,
                                 :fraction_cool_load_served => 1,
@@ -2347,7 +2347,11 @@ def copy_sample_files
                   'invalid_files/unattached-window.xml',
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
+                  'invalid_files/two-repeating-idref-dhw-indirect.xml',
+                  'invalid_files/invalid-idref-dhw-indirect.xml',
                   'base-appliances-none.xml',
+                  'base-dhw-combi-tankless.xml',
+                  'base-dhw-indirect.xml',
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-multiple-slab.xml',
