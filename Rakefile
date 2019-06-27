@@ -1176,8 +1176,7 @@ def get_hpxml_file_doors_values(hpxml_file, doors_values)
 end
 
 def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
-  if ['RESNET_Tests/4.4_HVAC/HVAC2b.xml',
-      'RESNET_Tests/4.4_HVAC/HVAC2c.xml',
+  if ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
       'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml',
