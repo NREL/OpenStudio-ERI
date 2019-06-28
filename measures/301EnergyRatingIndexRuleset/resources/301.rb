@@ -1672,7 +1672,7 @@ class EnergyRatingIndex301Ruleset
     cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                         id: "CoolingSystem#{cnt + 1}",
                                         distribution_system_idref: "HVACDistribution_DSE_80",
-                                        cooling_system_type: "central air conditioning",
+                                        cooling_system_type: "central air conditioner",
                                         cooling_system_fuel: "electricity",
                                         cooling_capacity: -1, # Use Manual J auto-sizing
                                         fraction_cool_load_served: load_frac,
