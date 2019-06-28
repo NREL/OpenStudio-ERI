@@ -2352,6 +2352,7 @@ def copy_sample_files
                   'base-appliances-none.xml',
                   'base-dhw-combi-tankless.xml',
                   'base-dhw-indirect.xml',
+                  'base-dhw-multiple.xml', # FIXME: When this is removed, also update test_water_heating.rb
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-multiple-slab.xml',
