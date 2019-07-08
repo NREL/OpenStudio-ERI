@@ -2349,9 +2349,6 @@ def copy_sample_files
                   'invalid_files/two-repeating-idref-dhw-indirect.xml',
                   'invalid_files/invalid-idref-dhw-indirect.xml',
                   'base-appliances-none.xml',
-                  'base-dhw-combi-tankless.xml',
-                  'base-dhw-indirect.xml',
-                  'base-dhw-multiple.xml', # FIXME: When this is removed, also update test_water_heating.rb
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-multiple-slab.xml',
