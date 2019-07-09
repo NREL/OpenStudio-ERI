@@ -2350,8 +2350,13 @@ def copy_sample_files
                   'invalid_files/invalid-idref-dhw-indirect.xml',
                   'base-appliances-none.xml',
                   'base-dhw-combi-tankless.xml',
+                  'base-dhw-combi-tankless-outside.xml',
                   'base-dhw-indirect.xml',
+                  'base-dhw-indirect-outside.xml',
                   'base-dhw-multiple.xml', # FIXME: When this is removed, also update test_water_heating.rb
+                  'base-dhw-tank-gas-outside.xml',
+                  'base-dhw-tank-heat-pump-outside.xml',
+                  'base-dhw-tankless-electric-outside.xml',
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-multiple-slab.xml',
