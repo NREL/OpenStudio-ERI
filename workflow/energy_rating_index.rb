@@ -10,7 +10,6 @@ require_relative "../measures/HPXMLtoOpenStudio/measure"
 require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
 require_relative "../measures/HPXMLtoOpenStudio/resources/waterheater"
 require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/301"
 
 # TODO: Add error-checking
 # TODO: Add standardized reporting of errors
