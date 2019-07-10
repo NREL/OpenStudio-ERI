@@ -1209,13 +1209,16 @@ class EnergyRatingIndex301Ruleset
       if wh_sys_values[:water_heater_type] == 'instantaneous water heater' or wh_sys_values[:water_heater_type] == 'space-heating boiler with tankless coil'
         wh_sys_values[:tank_volume] = 40.0
       end
-	  # Set fuel type
-	  if wh_sys_values[:water_heater_type] == 'space-heating boiler with storage tank' or wh_sys_values[:water_heater_type] == 'space-heating boiler with tankless coil'
-	    orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
-		  next unless HPXML.get_id(heating_system) == wh_sys_values[:related_hvac]
-		  wh_sys_values[:fuel_type] = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
-		end
-	  end
+      # Set fuel type for combi systems
+      if Constants.CombiWaterHeaters.include? wh_sys_values[:water_heater_type]
+        orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+          next unless HPXML.get_id(heating_system) == wh_sys_values[:related_hvac]
+
+          wh_sys_values[:fuel_type] = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
+          break
+        end
+        wh_sys_values[:related_hvac] = nil
+      end
       wh_sys_values[:water_heater_type] = 'storage water heater'
 
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])

@@ -358,7 +358,16 @@ def get_dhw_fuels(hpxml_doc)
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
-    dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
+    if Constants.CombiWaterHeaters.include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
+      hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+        next unless heating_system.elements["SystemIdentifier"].attributes["id"] == dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
+
+        dhw_fuels[sys_id] = XMLHelper.get_value(heating_system, "HeatingSystemFuel")
+        break
+      end
+    else
+      dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
+    end
   end
 
   if dhw_fuels.empty?
