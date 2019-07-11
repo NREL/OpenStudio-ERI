@@ -2361,6 +2361,7 @@ def copy_sample_files
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-multiple-slab.xml',
                   'base-hvac-boiler-gas-only-no-eae.xml',
+                  'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
