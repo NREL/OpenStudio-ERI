@@ -175,7 +175,7 @@ class EnergyRatingIndexTest < Minitest::Test
       FileUtils.cp(hpxmls[:ref], xmldir)
       hpxmls[:ref] = "#{xmldir}/#{File.basename(hpxmls[:ref])}"
       _override_ref_ref_mech_vent_infil(hpxmls[:ref], xml)
-      hpxmls, results_csv, runtime = run_eri_and_check(hpxmls[:ref], this_dir)
+      hpxmls, results_csv, runtime = run_eri_and_check(hpxmls[:ref], this_dir, nil)
       eri = _get_eri(results_csv)
       all_results[File.basename(xml)]["e-Ratio"] = eri / 100.0
     end
@@ -525,7 +525,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Hot_Water")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir)
+      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
       all_results[xml] = _get_hot_water(results_csv)
       assert_operator(all_results[xml], :>, 0)
     end
@@ -739,13 +739,15 @@ class EnergyRatingIndexTest < Minitest::Test
       end
 
       # Copy files to separate directory to save them
-      ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
-        next unless File.exists? File.join(this_dir, design)
+      if not test_name.nil?
+        ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
+          next unless File.exists? File.join(this_dir, design)
 
-        FileUtils.mkdir_p File.join(@test_files_dir, test_name, File.basename(xml)) unless File.exists? File.join(@test_files_dir, test_name, File.basename(xml))
-        FileUtils.copy_entry File.join(this_dir, design), File.join(@test_files_dir, test_name, File.basename(xml), design)
+          FileUtils.mkdir_p File.join(@test_files_dir, test_name, File.basename(xml)) unless File.exists? File.join(@test_files_dir, test_name, File.basename(xml))
+          FileUtils.copy_entry File.join(this_dir, design), File.join(@test_files_dir, test_name, File.basename(xml), design)
+        end
+        FileUtils.copy_entry File.join(this_dir, "results"), File.join(@test_files_dir, test_name, File.basename(xml), "results")
       end
-      FileUtils.copy_entry File.join(this_dir, "results"), File.join(@test_files_dir, test_name, File.basename(xml), "results")
 
     end
 
