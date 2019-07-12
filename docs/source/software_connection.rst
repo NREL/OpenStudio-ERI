@@ -318,6 +318,8 @@ balanced
 central fan integrated supply (CFIS)                                                       required
 ====================================  ==========================  =======================  ================================
 
+Note that AdjustedSensibleRecoveryEfficiency and AdjustedTotalRecoveryEfficiency can be provided instead.
+
 In many situations, the rated flow rate should be the value derived from actual testing of the system.
 For a CFIS system, the rated flow rate should equal the amount of outdoor air provided to the distribution system.
 
