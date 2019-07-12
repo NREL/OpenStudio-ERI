@@ -1,13 +1,14 @@
 OpenStudio-ERI
 ==============
 
+[![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI.svg?style=shield)](https://circleci.com/gh/NREL/OpenStudio-ERI)
+[![Documentation Status](https://readthedocs.org/projects/openstudio-eri/badge/?version=latest)](https://openstudio-eri.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/NREL/OpenStudio-ERI/branch/master/graph/badge.svg)](https://codecov.io/gh/NREL/OpenStudio-ERI)
+
+
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
 
 For more information, please visit the [documentation](https://openstudio-eri.readthedocs.io/en/latest).
-
-**Unit Test Status:** [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master.svg?style=svg)](https://circleci.com/gh/NREL/OpenStudio-ERI/tree/master)
-
-**Code Coverage:** [![codecov](https://codecov.io/gh/NREL/OpenStudio-ERI/branch/master/graph/badge.svg?token=HpCKohTsLI)](https://codecov.io/gh/NREL/OpenStudio-ERI)
 
 ## License
 
