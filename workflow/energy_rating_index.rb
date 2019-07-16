@@ -90,6 +90,15 @@ def get_sql_result(sqlValue, design)
   fail "Could not find sql result."
 end
 
+def get_indirect_hvac_id(hpxml_doc, sys_id)
+  return XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[SystemIdentifier = '#{sys_id}']/RelatedHVACSystem")
+end
+
+def get_indirect_water_system_ec(hx_energy, htg_load, htg_energy)
+  indirect_frac = hx_energy / htg_load
+  return htg_energy * indirect_frac
+end 
+
 def read_output(design, designdir, output_hpxml_path)
   sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
@@ -189,6 +198,8 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecHotWaterBySystem] = {}
   design_output[:fuelHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
+  design_output[:indirectEnergyHotWaterBySystem] = {}
+  design_output[:indirectRelatedHVACBySystem] = {}
   design_output[:hpxml_dhw_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -209,6 +220,16 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+	# Indirect water system
+	design_output[:indirectRelatedHVACBySystem][sys_id] = get_indirect_hvac_id(hpxml_doc, sys_id)
+	if not design_output[:indirectRelatedHVACBySystem][sys_id].nil? # Not enough to recognize an indirect system (eg. desuperheater shares this element), but could skip this part for many other systems
+	  vars = "'" + get_all_var_keys(OutputVars.WaterHeatingHeatExchanger).join("','") + "'"
+	  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:indirectEnergyHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+	  vars = "'" + get_all_var_keys(OutputVars.WaterHeatingIndirectBoiler).join("','") + "'"
+	  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND  KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+	  design_output[:indirectBoilerLoadBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+	end 
   end
 
   # PV
@@ -746,6 +767,13 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
     ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:fuelHotWaterBySystem][s]
+	if not rated_output[:indirectEnergyHotWaterBySystem][s] == 0 and not rated_output[:indirectRelatedHVACBySystem][s].nil?
+	  hvac_id = rated_output[:indirectRelatedHVACBySystem][s]
+	  hx_load = rated_output[:indirectEnergyHotWaterBySystem][s]
+	  htg_load = rated_output[:indirectBoilerLoadBySystem][s]
+	  htg_ec = results[:ec_x_heat][hvac_id]
+	  ec_x_dhw += get_indirect_water_system_ec(hx_energy, htg_load, htg_energy)
+	end
     ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:fuelHotWaterBySystem][s]
 
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
