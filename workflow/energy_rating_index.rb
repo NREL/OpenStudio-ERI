@@ -106,8 +106,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  if [Constants.CalcTypeERIReferenceHome,
-      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
     design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design)
     design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, design)
   end
@@ -149,16 +148,20 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingFuel).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:fuelHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-    # Load
-    vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingLoad).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Disaggregated Fan Energy Use
-    keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     fan_pump_output = get_sql_query_result(sqlFile, query)
     design_output[:elecHeatingBySystem][sys_id] += fan_pump_output
-    design_output[:loadHeatingBySystem][sys_id] += fan_pump_output
+    # Reference Load
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+      # Only ever gas furnace, gas boiler, or electric ASHP (autosized)
+      vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingLoad).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:loadHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      design_output[:loadHeatingBySystem][sys_id] += fan_pump_output
+      design_output[:loadHeatingBySystem][sys_id] *= design_output[:hpxml_dse_heats][sys_id] # Remove effect of DSE on load
+    end
   end
 
   # Space Cooling (by System)
@@ -171,16 +174,20 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingElectricity).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:elecCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-    # Load
-    vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingLoad).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Disaggregated Fan Energy Use
-    keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     fan_pump_output = get_sql_query_result(sqlFile, query)
     design_output[:elecCoolingBySystem][sys_id] += fan_pump_output
-    design_output[:loadCoolingBySystem][sys_id] -= fan_pump_output
+    # Reference Load
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+      # Only ever central air conditioner (autosized)
+      vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingLoad).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:loadCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      design_output[:loadCoolingBySystem][sys_id] -= fan_pump_output
+      design_output[:loadCoolingBySystem][sys_id] *= design_output[:hpxml_dse_cools][sys_id] # Remove effect of DSE on load
+    end
   end
 
   # Water Heating (by System)
@@ -204,10 +211,13 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingFuel).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:fuelHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-    # Load
-    vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Reference Load
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+      # Only ever conventional storage tank water heater
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    end
   end
 
   # PV
@@ -585,7 +595,7 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_heat] = {}
 
   rated_output[:hpxml_heat_sys_ids].each do |s|
-    reul_heat = ref_output[:loadHeatingBySystem][s] * ref_output[:hpxml_dse_heats][s] # Loads include DSE, so we must remove the effect
+    reul_heat = ref_output[:loadHeatingBySystem][s]
 
     coeff_heat_a = nil
     coeff_heat_b = nil
@@ -646,7 +656,7 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_cool] = {}
 
   rated_output[:hpxml_cool_sys_ids].each do |s|
-    reul_cool = ref_output[:loadCoolingBySystem][s] * ref_output[:hpxml_dse_cools][s] # Loads include DSE, so we must remove the effect
+    reul_cool = ref_output[:loadCoolingBySystem][s]
 
     coeff_cool_a = 3.8090
     coeff_cool_b = 0.0
