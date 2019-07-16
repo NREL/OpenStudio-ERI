@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
-    <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-07-16T12:37:12-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -328,11 +328,12 @@
           <VentilationFans>
             <VentilationFan>
               <SystemIdentifier id='MechanicalVentilation'/>
-              <FanType>exhaust only</FanType>
-              <RatedFlowRate>58.7</RatedFlowRate>
-              <HoursInOperation>24.0</HoursInOperation>
+              <FanType>central fan integrated supply</FanType>
+              <RatedFlowRate>176.1</RatedFlowRate>
+              <HoursInOperation>8.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <FanPower>14.7</FanPower>
+              <AttachedToHVACDistributionSystem idref='HVACDistribution'/>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
@@ -351,15 +352,12 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDstribution'/>
             <SystemType>
-              <Recirculation>
-                <ControlType>no control</ControlType>
-                <RecirculationPipingLoopLength>156.92</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>10.0</BranchPipingLoopLength>
-                <PumpPower>50.0</PumpPower>
-              </Recirculation>
+              <Standard>
+                <PipingLength>88.46</PipingLength>
+              </Standard>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>3.0</PipeRValue>
+              <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>
