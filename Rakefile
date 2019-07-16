@@ -182,6 +182,7 @@ def create_hpxmls
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-12.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-13.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-14.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
+    'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-15.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-16.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-17.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-16.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-18.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
@@ -198,6 +199,7 @@ def create_hpxmls
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-12.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-13.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-14.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
+    'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-15.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-16.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-17.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-16.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-18.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
@@ -685,9 +687,8 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
 end
 
 def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
-  if ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-      'NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
+  if hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed' or
+     ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # Vented crawlspace
     foundation_values = { :id => "VentedCrawlspace",
                           :foundation_type => "VentedCrawlspace",
@@ -1817,6 +1818,14 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Change to exhaust mechanical ventilation = 66.2 cfm continuous with fan power = 16.6 watts
     ventilation_fans_values[0][:rated_flow_rate] = 66.2
     ventilation_fans_values[0][:fan_power] = 16.6
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-15.xml'].include? hpxml_file
+    # Change to CFIS system at flow rate of 176.1 cfm and 33.33% duty cycle (8 hours per day)
+    ventilation_fans_values = [{ :id => "MechanicalVentilation",
+                                 :fan_type => "central fan integrated supply",
+                                 :rated_flow_rate => 176.1,
+                                 :hours_in_operation => 8,
+                                 :fan_power => 14.7,
+                                 :distribution_system_idref => "HVACDistribution" }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Exhaust fan = 56.2 cfm, continuous; Fan power = 14.0 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
@@ -1832,6 +1841,14 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Change to exhaust mechanical ventilation = 63.7 cfm continuous with fan power = 15.9 watts
     ventilation_fans_values[0][:rated_flow_rate] = 63.7
     ventilation_fans_values[0][:fan_power] = 15.9
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-15.xml'].include? hpxml_file
+    # Change to CFIS system at flow rate of 168.6 cfm and 33.33% duty cycle (8 hours per day)
+    ventilation_fans_values = [{ :id => "MechanicalVentilation",
+                                 :fan_type => "central fan integrated supply",
+                                 :rated_flow_rate => 168.6,
+                                 :hours_in_operation => 8,
+                                 :fan_power => 14,
+                                 :distribution_system_idref => "HVACDistribution" }]
   elsif ['NASEO_Technical_Exercises/NASEO-04.xml'].include? hpxml_file
     # Exhaust mechanical ventilation system with 50 cfm and 15 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
