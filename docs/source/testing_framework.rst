@@ -37,6 +37,7 @@ Tests can also be run locally, as shown below. Individual tests (any method in w
 
 Test results in CSV format are created at workflow/tests/test_results. 
 For many RESNET tests, the Excel spreadsheet test criteria are also implemented in code to automate the process of checking for test failures.
+All simulation/HPXML/etc. files generated from running the tests can be found inside the workflow/tests/test_files directory.
 
 At the completion of the test, there will also be output that denotes the number of failures/errors like so:
 

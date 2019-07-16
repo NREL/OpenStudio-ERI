@@ -147,6 +147,26 @@ class MechVentTest < MiniTest::Test
     _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
   end
 
+  def test_mech_vent_erv_adjusted
+    hpxml_name = "base-mechvent-erv-atre-asre.xml"
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml_doc, "balanced", 37.0, 24, 76.2)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_mech_vent(hpxml_doc, "energy recovery ventilator", 111.0, 24, 60.0, nil, nil, 0.79, 0.526)
+
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_mech_vent(hpxml_doc, "balanced", 60.0, 24, 42.0)
+
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
+  end
+
   def test_mech_vent_hrv
     hpxml_name = "base-mechvent-hrv.xml"
 
@@ -157,6 +177,26 @@ class MechVentTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml_doc, "heat recovery ventilator", 111.0, 24, 60.0, 0.72)
+
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_mech_vent(hpxml_doc, "balanced", 60.0, 24, 42.0)
+
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
+  end
+
+  def test_mech_vent_hrv_adjusted
+    hpxml_name = "base-mechvent-hrv-asre.xml"
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml_doc, "balanced", 37.0, 24, 76.2)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_mech_vent(hpxml_doc, "heat recovery ventilator", 111.0, 24, 60.0, nil, nil, 0.79, nil)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -233,7 +273,7 @@ class MechVentTest < MiniTest::Test
     return hpxml_doc
   end
 
-  def _check_mech_vent(hpxml_doc, fantype = nil, flowrate = nil, hours = nil, power = nil, sre = nil, tre = nil)
+  def _check_mech_vent(hpxml_doc, fantype = nil, flowrate = nil, hours = nil, power = nil, sre = nil, tre = nil, asre = nil, atre = nil)
     mechvent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     if not fantype.nil?
       assert_equal(fantype, mechvent.elements["FanType"].text)
@@ -249,6 +289,16 @@ class MechVentTest < MiniTest::Test
         assert_nil(mechvent.elements["TotalRecoveryEfficiency"])
       else
         assert_equal(tre, Float(mechvent.elements["TotalRecoveryEfficiency"].text))
+      end
+      if asre.nil?
+        assert_nil(mechvent.elements["AdjustedSensibleRecoveryEfficiency"])
+      else
+        assert_equal(asre, Float(mechvent.elements["AdjustedSensibleRecoveryEfficiency"].text))
+      end
+      if atre.nil?
+        assert_nil(mechvent.elements["AdjustedTotalRecoveryEfficiency"])
+      else
+        assert_equal(atre, Float(mechvent.elements["AdjustedTotalRecoveryEfficiency"].text))
       end
     else
       assert_nil(mechvent)
