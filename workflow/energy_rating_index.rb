@@ -149,8 +149,8 @@ def read_output(design, designdir, output_hpxml_path)
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:fuelHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Disaggregated Fan Energy Use
-    keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     fan_pump_output = get_sql_query_result(sqlFile, query)
     design_output[:elecHeatingBySystem][sys_id] += fan_pump_output
     # Reference Load
@@ -175,8 +175,8 @@ def read_output(design, designdir, output_hpxml_path)
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:elecCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Disaggregated Fan Energy Use
-    keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     fan_pump_output = get_sql_query_result(sqlFile, query)
     design_output[:elecCoolingBySystem][sys_id] += fan_pump_output
     # Reference Load
