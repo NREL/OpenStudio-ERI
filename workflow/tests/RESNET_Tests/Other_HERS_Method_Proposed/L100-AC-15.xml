@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
-    <CreatedDateAndTime>2014-11-17T15:17:17.128-07:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-07-16T12:37:10-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -37,12 +37,12 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>3B</ClimateZone>
+          <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Las Vegas, NV</Name>
-          <WMO>723860</WMO>
+          <Name>Colorado Springs, CO</Name>
+          <WMO>724660</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -159,7 +159,7 @@
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='FloorUnderAtticInsulation'/>
-              <AssemblyEffectiveRValue>50.3</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
           <FrameFloor>
@@ -169,7 +169,7 @@
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='FloorOverFoundationInsulation'/>
-              <AssemblyEffectiveRValue>20.4</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>28.1</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
         </FrameFloors>
@@ -208,32 +208,32 @@
             <SystemIdentifier id='WindowNorth'/>
             <Area>90.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <UFactor>0.32</UFactor>
+            <SHGC>0.4</SHGC>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast'/>
             <Area>45.0</Area>
             <Azimuth>90</Azimuth>
-            <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <UFactor>0.32</UFactor>
+            <SHGC>0.4</SHGC>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth'/>
             <Area>90.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <UFactor>0.32</UFactor>
+            <SHGC>0.4</SHGC>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest'/>
             <Area>45.0</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <UFactor>0.32</UFactor>
+            <SHGC>0.4</SHGC>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
@@ -243,14 +243,14 @@
             <AttachedToWall idref='Wall'/>
             <Area>20.0</Area>
             <Azimuth>180</Azimuth>
-            <RValue>2.86</RValue>
+            <RValue>3.13</RValue>
           </Door>
           <Door>
             <SystemIdentifier id='DoorNorth'/>
             <AttachedToWall idref='Wall'/>
             <Area>20.0</Area>
             <Azimuth>0</Azimuth>
-            <RValue>2.86</RValue>
+            <RValue>3.13</RValue>
           </Door>
         </Doors>
       </Enclosure>
@@ -280,7 +280,7 @@
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>14.0</Value>
+                <Value>13.0</Value>
               </AnnualCoolingEfficiency>
             </CoolingSystem>
           </HVACPlant>
@@ -328,11 +328,12 @@
           <VentilationFans>
             <VentilationFan>
               <SystemIdentifier id='MechanicalVentilation'/>
-              <FanType>exhaust only</FanType>
-              <RatedFlowRate>58.7</RatedFlowRate>
-              <HoursInOperation>24.0</HoursInOperation>
+              <FanType>central fan integrated supply</FanType>
+              <RatedFlowRate>168.6</RatedFlowRate>
+              <HoursInOperation>8.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
-              <FanPower>14.7</FanPower>
+              <FanPower>14.0</FanPower>
+              <AttachedToHVACDistributionSystem idref='HVACDistribution'/>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
@@ -351,15 +352,12 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDstribution'/>
             <SystemType>
-              <Recirculation>
-                <ControlType>no control</ControlType>
-                <RecirculationPipingLoopLength>156.92</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>10.0</BranchPipingLoopLength>
-                <PumpPower>50.0</PumpPower>
-              </Recirculation>
+              <Standard>
+                <PipingLength>88.46</PipingLength>
+              </Standard>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>3.0</PipeRValue>
+              <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>

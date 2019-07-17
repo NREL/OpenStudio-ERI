@@ -338,12 +338,16 @@ class EnergyRatingIndexTest < Minitest::Test
     keys = all_results.values[0].keys
     CSV.open(test_results_csv, "w") do |csv|
       csv << ["Test Case"] + keys
-      all_results.each_with_index do |(xml, results), i|
-        csv_line = [File.basename(xml)]
-        keys.each do |key|
-          csv_line << results[key]
+      ["AC", "AL"].each do |test_type|
+        all_results.each_with_index do |(xml, results), i|
+          next unless xml.include? test_type
+
+          csv_line = [File.basename(xml)]
+          keys.each do |key|
+            csv_line << results[key]
+          end
+          csv << csv_line
         end
-        csv << csv_line
       end
     end
     puts "Wrote results to #{test_results_csv}."
