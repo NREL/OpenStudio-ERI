@@ -27,7 +27,7 @@ class LightingTest < MiniTest::Test
   end
 
   def test_lighting_pre_addendum_g
-    hpxml_name = "base-addenda-exclude-g.xml"
+    hpxml_name = "base-version-2014ae.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

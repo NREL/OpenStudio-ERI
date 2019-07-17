@@ -1049,11 +1049,11 @@ resultsdir = File.join(options[:output_dir], "results")
 rm_path(resultsdir)
 Dir.mkdir(resultsdir)
 
-# Run w/ Addendum E House Size Index Adjustment Factor?
+# Run w/ Index Adjustment Factor (IAF) designs?
 using_iaf = false
 File.open(options[:hpxml], 'r').each do |line|
   if line.strip.downcase.start_with? "<version>"
-    if line.include? '2014AE' or line.include? '2014AEG'
+    if line.include? '2014AE' or line.include? '2019' # 2014 w/ Addendum E or 2019
       using_iaf = true
     end
     break

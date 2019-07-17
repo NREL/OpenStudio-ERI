@@ -481,7 +481,7 @@ class WaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_pre_addendum_a
-    hpxml_name = "base-addenda-exclude-g-e-a.xml"
+    hpxml_name = "base-version-2014.xml"
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
