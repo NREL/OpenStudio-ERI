@@ -392,7 +392,8 @@ class WaterHeatingTest < MiniTest::Test
                         ["storage water heater", "natural gas", "living space", 50, 0.575],
                         ["storage water heater", "electricity", "living space", 80, 0.8644],
                         ["storage water heater", "electricity", "living space", 40, 0.9172],
-                        ["storage water heater", "natural gas", "living space", 40, 0.594])
+                        ["storage water heater", "natural gas", "living space", 40, 0.594],
+                        ["storage water heater", "natural gas", "living space", 50, 0.575])
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 93.5, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, false, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
@@ -403,7 +404,8 @@ class WaterHeatingTest < MiniTest::Test
                         ["storage water heater", "natural gas", "living space", 50, 0.59],
                         ["heat pump water heater", "electricity", "living space", 80, 2.3],
                         ["instantaneous water heater", "electricity", "living space", nil, 0.99],
-                        ["instantaneous water heater", "natural gas", "living space", nil, 0.82])
+                        ["instantaneous water heater", "natural gas", "living space", nil, 0.82],
+                        ["space-heating boiler with storage tank", nil, "living space", 50, nil])
     _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
     _check_water_fixtures(hpxml_doc, true, false)
     _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
