@@ -797,7 +797,7 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
     if not hvac_id.nil?
       hx_load = rated_output[:indirectEnergyHotWaterBySystem][s]
       htg_load = rated_output[:indirectBoilerLoadBySystem][s]
-      htg_ec = results[:ec_x_heat][hvac_id]
+      htg_ec = rated_output[:elecHeatingBySystem][hvac_id] + rated_output[:fuelHeatingBySystem][hvac_id]
       ec_x_dhw += get_indirect_water_system_ec(hx_load, htg_load, htg_ec)
     end
     ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:fuelHotWaterBySystem][s]
