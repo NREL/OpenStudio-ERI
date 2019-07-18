@@ -6,6 +6,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class EnclosureTest < MiniTest::Test
+  
   def test_enclosure_infiltration_without_mech_vent
     hpxml_name = "base.xml"
 
@@ -28,7 +29,47 @@ class EnclosureTest < MiniTest::Test
     _check_infiltration(hpxml_doc, 6.67)
   end
 
-  def test_enclosure_with_mech_vent_unmeasured
+  def test_enclosure_with_mech_vent
+    # Create derivative file for testing
+    hpxml_name = "base.xml"
+    root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
+    hpxml_path = File.join(root_path, "workflow", "sample_files", hpxml_name)
+    hpxml_doc = REXML::Document.new(File.read(hpxml_path))
+
+    # Add mech vent without flow rate
+    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
+                              id: "VentilationFan",
+                              fan_type: "exhaust only",
+                              tested_flow_rate: 300,
+                              hours_in_operation: 24,
+                              fan_power: 30.0)
+
+    # Save new file
+    hpxml_name = "base-test.xml"
+    hpxml_path = File.join(root_path, "workflow", "sample_files", hpxml_name)
+    XMLHelper.write_file(hpxml_doc, hpxml_path)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml_doc, 3.0)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml_doc, 7.09)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml_doc, 3.0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml_doc, 6.67)
+
+    # Cleanup
+    File.delete(hpxml_path)
+  end
+  
+  def test_enclosure_with_mech_vent_unmeasured_airflow_rate
     # Create derivative file for testing
     hpxml_name = "base.xml"
     root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
@@ -64,8 +105,11 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
-  end
 
+    # Cleanup
+    File.delete(hpxml_path)
+  end
+  
   def test_enclosure_roofs
     hpxml_name = "base.xml"
 

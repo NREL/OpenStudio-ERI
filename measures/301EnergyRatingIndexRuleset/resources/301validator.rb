@@ -379,7 +379,7 @@ class EnergyRatingIndex301Validator
         "TestedFlowRate" => zero_or_one,
         "HoursInOperation" => one,
         "UsedForWholeBuildingVentilation" => one,
-        "FanPower" => one,
+        "FanPower" => zero_or_one,
       },
 
       ## [MechVentType=HRV]

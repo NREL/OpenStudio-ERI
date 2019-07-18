@@ -1116,21 +1116,16 @@ class EnergyRatingIndex301Ruleset
       end
       q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
 
-      # Treat CFIS like supply ventilation. Is this correct?
+      # Treat CFIS like supply ventilation
       if fan_type == 'central fan integrated supply'
         fan_type = 'supply only'
       end
 
-      fan_power_w = nil
-      if fan_type == 'supply only' or fan_type == 'exhaust only'
-        w_cfm = 0.35
-        fan_power_w = w_cfm * q_fan_power
-      elsif fan_type == 'balanced'
-        w_cfm = 0.70
-        fan_power_w = w_cfm * q_fan_power
-      elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
-        w_cfm = 1.00
-        fan_power_w = w_cfm * q_fan_power
+      fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(fan_type)
+      fan_power_w = fan_w_per_cfm * q_fan_power
+      
+      # No heat recovery
+      if fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
         fan_type = 'balanced'
       end
     end
@@ -1162,17 +1157,22 @@ class EnergyRatingIndex301Ruleset
       end
       vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
       min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vert_distance)
-
-      q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
-      if q_fan < min_q_fan
-        # First try increasing operation to meet minimum
-        vent_fan_values[:hours_in_operation] = [min_q_fan / vent_fan_values[:tested_flow_rate], 24].min
+      
+      if vent_fan_values[:tested_flow_rate].nil?
+        # Set airflow rate to zero (infiltration bumped up instead)
+        vent_fan_values[:tested_flow_rate] = 0.0
+      else
         q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
-      end
-      if q_fan < min_q_fan
-        # Finally resort to increasing airflow rate and fan power
-        vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
-        vent_fan_values[:fan_power] *= min_q_fan / q_fan
+        if q_fan < min_q_fan
+          # First try increasing operation to meet minimum
+          vent_fan_values[:hours_in_operation] = [min_q_fan / vent_fan_values[:tested_flow_rate], 24].min
+          q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+        end
+        if q_fan < min_q_fan
+          # Finally resort to increasing airflow rate (and preserve fan W/cfm)
+          vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
+          vent_fan_values[:fan_power] *= min_q_fan / q_fan
+        end
       end
 
       HPXML.add_ventilation_fan(hpxml: hpxml, **vent_fan_values)

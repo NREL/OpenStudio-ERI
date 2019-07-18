@@ -2384,6 +2384,7 @@ def copy_sample_files
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-setpoints.xml',
                   'base-infiltration-ach-natural.xml',
+                  'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-mechvent-erv-asre.xml',
                   'base-mechvent-erv-atre.xml',
                   'base-misc-lighting-none.xml',
