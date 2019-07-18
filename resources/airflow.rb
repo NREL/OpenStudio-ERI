@@ -188,6 +188,19 @@ class Airflow
     return 1.0 / 150.0 # Table 4.2.2(1) - Crawlspaces
   end
 
+  def self.get_default_mech_vent_fan_power(fan_type)
+    # 301-2019: Table 4.2.2(1b)
+    if fan_type == 'supply only' or fan_type == 'exhaust only'
+      return 0.35 # W/cfm
+    elsif fan_type == 'balanced'
+      return 0.70 # W/cfm
+    elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
+      return 1.00 # W/cfm
+    elsif fan_type == 'central fan integrated supply'
+      return 0.50 # W/cfm
+    end
+  end
+
   private
 
   def self.process_wind_speed_correction(terrain, shelter_coef, min_neighbor_distance, building_height)
@@ -1867,22 +1880,15 @@ class Airflow
       end
     end
     if mech_vent.type != Constants.VentTypeCFIS
-      if mech_vent.fan_power_w != 0
-        infil_program.addLine("Set faneff_wh = #{UnitConversions.convert(300.0 / (mech_vent.fan_power_w / mech_vent.whole_house_cfm / mech_vent.num_fans), "cfm", "m^3/s")}")
+      if mech_vent.whole_house_cfm > 0
+        infil_program.addLine("Set #{whole_house_fan_actuator.name} = QWHV * #{mech_vent.fan_power_w} / #{UnitConversions.convert(mech_vent.whole_house_cfm, "cfm", "m^3/s")}")
       else
-        infil_program.addLine("Set faneff_wh = 1")
+        infil_program.addLine("Set #{whole_house_fan_actuator.name} = #{mech_vent.fan_power_w}")
       end
-      infil_program.addLine("Set #{whole_house_fan_actuator.name} = (QWHV*300)/faneff_wh*#{mech_vent.num_fans}")
     end
 
-    if mech_vent.spot_fan_w_per_cfm != 0
-      infil_program.addLine("Set faneff_sp = #{UnitConversions.convert(300.0 / mech_vent.spot_fan_w_per_cfm, "cfm", "m^3/s")}")
-    else
-      infil_program.addLine("Set faneff_sp = 1")
-    end
-
-    infil_program.addLine("Set #{range_hood_fan_actuator.name} = (Qrange*300)/faneff_sp")
-    infil_program.addLine("Set #{bath_exhaust_sch_fan_actuator.name} = (Qbath*300)/faneff_sp")
+    infil_program.addLine("Set #{range_hood_fan_actuator.name} = Qrange * #{mech_vent.spot_fan_w_per_cfm / UnitConversions.convert(1.0, "cfm", "m^3/s")}")
+    infil_program.addLine("Set #{bath_exhaust_sch_fan_actuator.name} = Qbath * #{mech_vent.spot_fan_w_per_cfm / UnitConversions.convert(1.0, "cfm", "m^3/s")}")
     infil_program.addLine("Set Q_acctd_for_elsewhere = QhpwhOut+QhpwhIn+QductsOut+QductsIn")
     infil_program.addLine("Set #{infil_flow_actuator.name} = (((Qu^2)+(Qn^2))^0.5)-Q_acctd_for_elsewhere")
     infil_program.addLine("Set #{infil_flow_actuator.name} = (@Max #{infil_flow_actuator.name} 0)")
