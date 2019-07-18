@@ -358,10 +358,18 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Air exchange rate
 
-    whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    vent_fan_unmeasured_airflow = false
+    if not vent_fan.nil?
+      # Check if no measured airflow
+      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+      if vent_fan_values[:tested_flow_rate].nil?
+        vent_fan_unmeasured_airflow = true
+      end
+    end
 
     min_ach50 = 0.0
-    if whole_house_fan.nil?
+    if vent_fan.nil? or vent_fan_unmeasured_airflow
       min_nach = 0.30
       min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @ncfl, @weather)
       min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
@@ -1155,15 +1163,15 @@ class EnergyRatingIndex301Ruleset
       vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
       min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vert_distance)
 
-      q_fan = vent_fan_values[:rated_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+      q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
       if q_fan < min_q_fan
         # First try increasing operation to meet minimum
-        vent_fan_values[:hours_in_operation] = [min_q_fan / vent_fan_values[:rated_flow_rate], 24].min
-        q_fan = vent_fan_values[:rated_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+        vent_fan_values[:hours_in_operation] = [min_q_fan / vent_fan_values[:tested_flow_rate], 24].min
+        q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
       end
       if q_fan < min_q_fan
         # Finally resort to increasing airflow rate and fan power
-        vent_fan_values[:rated_flow_rate] *= min_q_fan / q_fan
+        vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
         vent_fan_values[:fan_power] *= min_q_fan / q_fan
       end
 

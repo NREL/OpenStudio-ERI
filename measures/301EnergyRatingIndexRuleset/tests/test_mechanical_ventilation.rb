@@ -42,11 +42,11 @@ class MechVentTest < MiniTest::Test
     mech_vent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     mech_vent.parent.elements.delete mech_vent unless mech_vent.nil?
 
-    # Set mech vent
+    # Set mech vent with low airflow rate and fan power
     HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
                               id: "VentilationFan",
                               fan_type: "exhaust only",
-                              rated_flow_rate: 1.0,
+                              tested_flow_rate: 1.0,
                               hours_in_operation: 1,
                               fan_power: 1.0)
 
@@ -62,7 +62,7 @@ class MechVentTest < MiniTest::Test
     # Test that mech vent has been increased
     mech_vent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     mech_vent_values = HPXML.get_ventilation_fan_values(ventilation_fan: mech_vent)
-    assert_in_epsilon(mech_vent_values[:rated_flow_rate], 76.2, 0.01)
+    assert_in_epsilon(mech_vent_values[:tested_flow_rate], 76.2, 0.01)
     assert_in_epsilon(mech_vent_values[:fan_power], 76.2, 0.01)
     assert_equal(mech_vent_values[:hours_in_operation], 24)
   end
