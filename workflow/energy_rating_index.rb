@@ -1050,11 +1050,12 @@ rm_path(resultsdir)
 Dir.mkdir(resultsdir)
 
 # Run w/ Index Adjustment Factor (IAF) designs?
-using_iaf = false
+using_iaf = true
 File.open(options[:hpxml], 'r').each do |line|
-  if line.strip.downcase.start_with? "<version>"
-    if line.include? '2014AE' or line.include? '2019' # 2014 w/ Addendum E or 2019
-      using_iaf = true
+  line.strip!
+  if line.start_with? "<Version>"
+    if line == "<Version>2014</Version>" or line == "<Version>2014A</Version>" # 2014 w/o Addendum E
+      using_iaf = false
     end
     break
   end
