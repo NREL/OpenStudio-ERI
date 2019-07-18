@@ -32,13 +32,13 @@ class EnergyPlusValidator
         "/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy" => one, # Required by HPXML schema
         "/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime" => one, # Required by HPXML schema
         "/HPXML/XMLTransactionHeaderInformation/Transaction" => one, # Required by HPXML schema
-        "/HPXML/SoftwareInfo/extension/ERICalculation[Version='2014' or Version='2014A' or Version='2014AE' or Version='2014AEG']" => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
+        "/HPXML/SoftwareInfo/extension/ERICalculation[Version='2019' or Version='2014AEG' or Version='2014AE' or Version='2014A' or Version='2014']" => one, # Choose version of 301 standard and addenda
 
         "/HPXML/Building" => one,
         "/HPXML/Building/BuildingID" => one, # Required by HPXML schema
         "/HPXML/Building/ProjectStatus/EventType" => one, # Required by HPXML schema
 
-        "/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable[Fuel='electricity' or Fuel='natural gas' or Fuel='fuel oil' or Fuel='propane' or Fuel='kerosene' or Fuel='diesel' or Fuel='coal' or Fuel='coke' or Fuel='wood' or Fuel='wood pellets']" => one_or_more,
+        "/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable/Fuel" => one_or_more,
         "/HPXML/Building/BuildingDetails/BuildingSummary/Site/extension/ShelterCoefficient" => zero_or_one, # Uses ERI assumption if not provided
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy/NumberofResidents" => zero_or_one, # Uses ERI assumption if not provided
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors" => one,
