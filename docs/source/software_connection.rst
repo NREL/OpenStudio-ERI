@@ -360,7 +360,7 @@ For a ``SystemType/Recirculation`` system, the following fields are required:
 In addition, a ``HotWaterDistribution/DrainWaterHeatRecovery`` (DWHR) may be specified.
 The DWHR system is defined by:
 
-- ``FacilitiesConnected``: 'all' if all of the showers in the home are connected to DWHR units; 'one' if if there are 2 or more showers in the home and only 1 shower is connected to a DWHR unit
+- ``FacilitiesConnected``: 'one' if there are multiple showers and only one of them is connected to a DWHR; 'all' if there is one shower and it's connected to a DWHR or there are two or more showers connected to a DWHR
 - ``EqualFlow``: 'true' if the DWHR supplies pre-heated water to both the fixture cold water piping and the hot water heater potable supply piping
 - ``Efficiency``: As rated and labeled in accordance with CSA 55.1
 
