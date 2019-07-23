@@ -254,11 +254,11 @@ def read_output(design, designdir, output_hpxml_path)
       hx_load = design_output[:CombiWaterSystemLoadBySystem][sys_id]
       htg_load = design_output[:CombiBoilerTotalLoadBySystem][sys_id]
       htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
-      design_output[:elecHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec)
-      design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec)
+      design_output[:elecHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
+      design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
       htg_ec_fuel = design_output[:fuelHeatingBySystem][hvac_id]
-      design_output[:fuelHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel)
-      design_output[:fuelHotWaterBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel)
+      design_output[:fuelHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
+      design_output[:fuelHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
     end
   end
 
@@ -570,15 +570,15 @@ def get_eec_dhws(hpxml_doc)
 
     ## Combi system requires recalculating ef
     if value.nil?
-      combi_boiler_afue = 1.0
+      combi_boiler_afue = nil
       if wh_type == 'space-heating boiler with tankless coil'
-        type = Constants.WaterHeaterTypeTankless
+        combi_type = Constants.WaterHeaterTypeTankless
       elsif wh_type == 'space-heating boiler with storage tank'
         vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
         # Vol is useful in this version only used for calculating u(not used here), but vol would be used for calculating jacket insulation ua which might be available later
         ef_loss = Waterheater.get_indirect_assumed_ef_for_tank_losses()
         dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, Constants.FuelTypeElectric, ef_loss, 0.0, 0.0, Constants.WaterHeaterTypeTank, 0.0)
-        type = Constants.WaterHeaterTypeTank
+        combi_type = Constants.WaterHeaterTypeTank
       end
       hvac_idref = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
       hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
@@ -587,7 +587,7 @@ def get_eec_dhws(hpxml_doc)
         combi_boiler_afue = Float(XMLHelper.get_value(heating_system, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
         break
       end
-      value = Waterheater.calc_tank_EF(type, ua, combi_boiler_afue)
+      value = Waterheater.calc_tank_EF(combi_type, ua, combi_boiler_afue)
     end
 
     if not value.nil? and not value_adj.nil?
