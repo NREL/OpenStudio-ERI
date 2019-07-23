@@ -90,7 +90,7 @@ def get_sql_result(sqlValue, design)
   fail "Could not find sql result."
 end
 
-def get_indirect_hvac_id(hpxml_doc)
+def get_combi_hvac_id(hpxml_doc)
   hvac_idref = {}
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
@@ -102,9 +102,9 @@ def get_indirect_hvac_id(hpxml_doc)
   return hvac_idref
 end
 
-def get_indirect_water_system_ec(hx_load, htg_load, htg_energy)
-  indirect_frac = (hx_load) / htg_load
-  return htg_energy * indirect_frac
+def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
+  water_sys_frac = (hx_load) / htg_load
+  return htg_energy * water_sys_frac
 end
 
 def read_output(design, designdir, output_hpxml_path)
@@ -213,9 +213,9 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecHotWaterBySystem] = {}
   design_output[:fuelHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
-  design_output[:indirectEnergyHotWaterBySystem] = {}
-  design_output[:indirectRelatedHVACBySystem] = get_indirect_hvac_id(hpxml_doc)
-  design_output[:indirectBoilerLoadBySystem] = {}
+  design_output[:CombiWaterSystemLoadBySystem] = {}
+  design_output[:CombiRelatedHVACBySystem] = get_combi_hvac_id(hpxml_doc)
+  design_output[:CombiBoilerTotalLoadBySystem] = {}
   design_output[:hpxml_dhw_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -240,14 +240,25 @@ def read_output(design, designdir, output_hpxml_path)
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
       design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     end
-    # Indirect water system
-    if not design_output[:indirectRelatedHVACBySystem][sys_id].nil?
-      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingHeatExchanger).join("','") + "'"
+    # Combi boiler water system
+    hvac_id = design_output[:CombiRelatedHVACBySystem][sys_id]
+    if not hvac_id.nil?
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoilerHeatExchanger).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:indirectEnergyHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingIndirectBoiler).join("','") + "'"
+      design_output[:CombiWaterSystemLoadBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoiler).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND  KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:indirectBoilerLoadBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      design_output[:CombiBoilerTotalLoadBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+
+      # Split combi boiler system energy use by water system load fraction
+      hx_load = design_output[:CombiWaterSystemLoadBySystem][sys_id]
+      htg_load = design_output[:CombiBoilerTotalLoadBySystem][sys_id]
+      htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
+      design_output[:elecHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec)
+      design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec)
+      htg_ec_fuel = design_output[:fuelHeatingBySystem][hvac_id]
+      design_output[:fuelHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel)
+      design_output[:fuelHotWaterBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel)
     end
   end
 
@@ -565,7 +576,7 @@ def get_eec_dhws(hpxml_doc)
       elsif wh_type == 'space-heating boiler with storage tank'
         vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
         # Vol is useful in this version only used for calculating u(not used here), but vol would be used for calculating jacket insulation ua which might be available later
-        ef_loss = Waterheater.get_indirect_assumed_ef()
+        ef_loss = Waterheater.get_indirect_assumed_ef_for_tank_losses()
         dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, Constants.FuelTypeElectric, ef_loss, 0.0, 0.0, Constants.WaterHeaterTypeTank, 0.0)
         type = Constants.WaterHeaterTypeTank
       end
@@ -674,13 +685,6 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_r_heat = ref_output[:hpxml_eec_heats][s]
 
     ec_x_heat = rated_output[:elecHeatingBySystem][s] + rated_output[:fuelHeatingBySystem][s]
-    rated_output[:hpxml_dhw_sys_ids].each do |wh_id|
-      if rated_output[:indirectRelatedHVACBySystem][wh_id] == s
-        hx_load = rated_output[:indirectEnergyHotWaterBySystem][wh_id]
-        htg_load = rated_output[:indirectBoilerLoadBySystem][wh_id]
-        ec_x_heat -= get_indirect_water_system_ec(hx_load, htg_load, ec_x_heat)
-      end
-    end
     ec_r_heat = ref_output[:elecHeatingBySystem][s] + ref_output[:fuelHeatingBySystem][s]
 
     dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
@@ -793,13 +797,6 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
     ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:fuelHotWaterBySystem][s]
-    hvac_id = rated_output[:indirectRelatedHVACBySystem][s]
-    if not hvac_id.nil?
-      hx_load = rated_output[:indirectEnergyHotWaterBySystem][s]
-      htg_load = rated_output[:indirectBoilerLoadBySystem][s]
-      htg_ec = rated_output[:elecHeatingBySystem][hvac_id] + rated_output[:fuelHeatingBySystem][hvac_id]
-      ec_x_dhw += get_indirect_water_system_ec(hx_load, htg_load, htg_ec)
-    end
     ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:fuelHotWaterBySystem][s]
 
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
