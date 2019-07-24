@@ -1162,17 +1162,20 @@ class EnergyRatingIndex301Ruleset
         # Set airflow rate to zero (infiltration bumped up instead)
         vent_fan_values[:tested_flow_rate] = 0.0
       else
-        q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
-        if q_fan < min_q_fan
+        if vent_fan_values[:fan_power].nil?
+          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(vent_fan_values[:fan_type])
+        else
+          fan_w_per_cfm = vent_fan_values[:fan_power] / vent_fan_values[:tested_flow_rate]
+        end
+        if vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0 < min_q_fan
           # First try increasing operation to meet minimum
           vent_fan_values[:hours_in_operation] = [min_q_fan / vent_fan_values[:tested_flow_rate], 24].min
-          q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
         end
-        if q_fan < min_q_fan
-          # Finally resort to increasing airflow rate (and preserve fan W/cfm)
-          vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
-          vent_fan_values[:fan_power] *= min_q_fan / q_fan
+        if vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0 < min_q_fan
+          # Finally resort to increasing airflow rate
+          vent_fan_values[:tested_flow_rate] *= min_q_fan / (vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0)
         end
+        vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
       end
 
       HPXML.add_ventilation_fan(hpxml: hpxml, **vent_fan_values)
