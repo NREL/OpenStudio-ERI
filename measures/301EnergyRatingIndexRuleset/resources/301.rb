@@ -194,6 +194,8 @@ class EnergyRatingIndex301Ruleset
                                    building_id: hpxml_values[:building_id],
                                    event_type: hpxml_values[:event_type])
 
+    @eri_version = hpxml_values[:eri_calculation_version]
+
     return hpxml_doc
   end
 
@@ -1133,7 +1135,7 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: sys_id,
                               fan_type: fan_type,
-                              rated_flow_rate: q_fan_airflow,
+                              tested_flow_rate: q_fan_airflow,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
   end
@@ -1145,6 +1147,7 @@ class EnergyRatingIndex301Ruleset
       vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
 
       # Calculate min airflow rate
+
       min_q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
       sla = nil
       hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
@@ -1215,7 +1218,7 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: "VentilationFan",
                               fan_type: "balanced",
-                              rated_flow_rate: q_fan,
+                              tested_flow_rate: q_fan,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
   end

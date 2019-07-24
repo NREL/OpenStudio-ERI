@@ -1607,7 +1607,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hours = Float(XMLHelper.get_value(mv, "HoursInOperation"))
       fan_w = Float(XMLHelper.get_value(mv, "FanPower"))
       mv_kwh += fan_w * 8.76 * hours / 24.0
-      mv_cfm += Float(XMLHelper.get_value(mv, "RatedFlowRate"))
+      mv_cfm += Float(XMLHelper.get_value(mv, "TestedFlowRate"))
     end
     return mv_kwh, mv_cfm
   end
@@ -2004,7 +2004,7 @@ class EnergyRatingIndexTest < Minitest::Test
       sys_id = XMLHelper.add_element(ventilation_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", orig_mech_vent_values[:id])
       XMLHelper.add_element(ventilation_fan, "FanType", orig_mech_vent_values[:fan_type])
-      XMLHelper.add_element(ventilation_fan, "RatedFlowRate", Float(orig_mech_vent_values[:tested_flow_rate]))
+      XMLHelper.add_element(ventilation_fan, "TestedFlowRate", Float(orig_mech_vent_values[:tested_flow_rate]))
       XMLHelper.add_element(ventilation_fan, "HoursInOperation", Float(orig_mech_vent_values[:hours_in_operation]))
       XMLHelper.add_element(ventilation_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.add_element(ventilation_fan, "TotalRecoveryEfficiency", Float(orig_mech_vent_values[:total_recovery_efficiency])) unless orig_mech_vent_values[:total_recovery_efficiency].nil?
