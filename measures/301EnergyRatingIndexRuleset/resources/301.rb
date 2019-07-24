@@ -1083,13 +1083,13 @@ class EnergyRatingIndex301Ruleset
       sys_id = HPXML.get_id(vent_fan)
     end
 
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+    q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
     sla = 0.00036
     vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, vert_distance, fan_type)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
@@ -1116,7 +1116,7 @@ class EnergyRatingIndex301Ruleset
         ach50 = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
       end
-      q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
+      q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance, fan_type)
 
       # Treat CFIS like supply ventilation
       if fan_type == 'central fan integrated supply'
@@ -1148,7 +1148,7 @@ class EnergyRatingIndex301Ruleset
 
       # Calculate min airflow rate
 
-      min_q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+      min_q_tot = calc_mech_vent_q_tot()
       sla = nil
       hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
         air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
@@ -1159,7 +1159,7 @@ class EnergyRatingIndex301Ruleset
         end
       end
       vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
-      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vert_distance)
+      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vert_distance, vent_fan_values[:fan_type])
 
       if vent_fan_values[:tested_flow_rate].nil?
         # Set airflow rate to zero (infiltration bumped up instead)
@@ -1198,7 +1198,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
 
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+    q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm
     sla = nil
@@ -1210,14 +1210,15 @@ class EnergyRatingIndex301Ruleset
         break
       end
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, 17.0)
+    fan_type = "balanced"
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, 17.0, fan_type)
 
     w_cfm = 0.70
     fan_power_w = w_cfm * q_fan
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: "VentilationFan",
-                              fan_type: "balanced",
+                              fan_type: fan_type,
                               tested_flow_rate: q_fan,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
@@ -1617,14 +1618,28 @@ class EnergyRatingIndex301Ruleset
     return false
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla, vert_distance)
-    nl = 1000.0 * sla * (vert_distance / 8.2)**0.4 # Normalized leakage, eq. 4.4
-    q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-    if q_inf > 2.0 / 3.0 * q_tot
-      return q_tot - 2.0 / 3.0 * q_tot
-    end
+  def self.calc_mech_vent_q_tot()
+    return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+  end
 
-    return q_tot - q_inf
+  def self.calc_mech_vent_q_fan(q_tot, sla, vert_distance, fan_type)
+    nl = 1000.0 * sla * (vert_distance / 8.202)**0.4 # Normalized leakage, eq. 4.4
+    q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+    if not @eri_version.include? "2014" # 2019 or newer
+      a_ext = 1.0 # TODO: Update for attached/multifamily
+      if ['balanced', 'energy recovery ventilator', 'heat recovery ventilator'].include? fan_type
+        phi = 1.0
+      else
+        phi = q_inf / q_tot
+      end
+      return q_tot - phi * (q_inf * a_ext)
+    else
+      if q_inf > 2.0 / 3.0 * q_tot
+        return q_tot - 2.0 / 3.0 * q_tot
+      end
+
+      return q_tot - q_inf
+    end
   end
 
   def self.add_reference_heating_gas_furnace(hpxml, load_frac = 1.0, seed_id = nil)
