@@ -6,7 +6,6 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class EnclosureTest < MiniTest::Test
-  
   def test_enclosure_infiltration_without_mech_vent
     hpxml_name = "base.xml"
 
@@ -68,7 +67,7 @@ class EnclosureTest < MiniTest::Test
     # Cleanup
     File.delete(hpxml_path)
   end
-  
+
   def test_enclosure_with_mech_vent_unmeasured_airflow_rate
     # Create derivative file for testing
     hpxml_name = "base.xml"
@@ -109,7 +108,7 @@ class EnclosureTest < MiniTest::Test
     # Cleanup
     File.delete(hpxml_path)
   end
-  
+
   def test_enclosure_roofs
     hpxml_name = "base.xml"
 
