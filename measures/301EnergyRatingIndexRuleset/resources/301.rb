@@ -1632,14 +1632,15 @@ class EnergyRatingIndex301Ruleset
       else
         phi = q_inf / q_tot
       end
-      return q_tot - phi * (q_inf * a_ext)
+      q_fan = q_tot - phi * (q_inf * a_ext)
     else
       if q_inf > 2.0 / 3.0 * q_tot
-        return q_tot - 2.0 / 3.0 * q_tot
+        q_fan = q_tot - 2.0 / 3.0 * q_tot
+      else
+        q_fan = q_tot - q_inf
       end
-
-      return q_tot - q_inf
     end
+    return [q_fan, 0].max
   end
 
   def self.add_reference_heating_gas_furnace(hpxml, load_frac = 1.0, seed_id = nil)
