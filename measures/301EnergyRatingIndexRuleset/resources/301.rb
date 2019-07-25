@@ -1169,7 +1169,15 @@ class EnergyRatingIndex301Ruleset
         if vent_fan_values[:fan_power].nil?
           # Set fan power based on min_q_fan
           fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(vent_fan_values[:fan_type])
-          vent_fan_values[:fan_power] = fan_w_per_cfm * min_q_fan
+          if vent_fan_values[:fan_type] == 'central fan integrated supply'
+            # For CFIS systems, the cfm used to determine fan watts shall be the larger of
+            # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
+            htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_details, vent_fan_values[:distribution_system_idref])
+            q_fan = [400.0 * clg_cap / 12000.0, 240.0 * htg_cap / 12000.0].max
+            vent_fan_values[:fan_power] = fan_w_per_cfm * q_fan
+          else
+            vent_fan_values[:fan_power] = fan_w_per_cfm * min_q_fan
+          end
           vent_fan_values[:hours_in_operation] = 24
         end
       else
@@ -1753,6 +1761,25 @@ class EnergyRatingIndex301Ruleset
                                    heating_capacity: wh_cap,
                                    energy_factor: wh_ef,
                                    recovery_efficiency: wh_re)
+  end
+
+  def self.get_hvac_capacities_for_distribution_system(orig_details, dist_id)
+    htg_cap = 0.0
+    clg_cap = 0.0
+
+    orig_details.elements["Systems/HVAC/HVACPlant"].elements.each("HeatingSystem | CoolingSystem | HeatPump") do |hvac|
+      next unless HPXML.get_idref(hvac, "DistributionSystem") == dist_id
+
+      htg_cap_el = hvac.elements["HeatingCapacity"]
+      if not htg_cap_el.nil? and htg_cap_el.text.to_f > 0
+        htg_cap = htg_cap_el.text.to_f
+      end
+      clg_cap_el = hvac.elements["CoolingCapacity"]
+      if not clg_cap_el.nil? and clg_cap_el.text.to_f > 0
+        clg_cap = clg_cap_el.text.to_f
+      end
+    end
+    return htg_cap, clg_cap
   end
 
   def self.get_predominant_heating_fuel(orig_details)

@@ -172,6 +172,39 @@ class MechVentTest < MiniTest::Test
     _check_mech_vent(hpxml_doc, "balanced", 8.5, 24, 42.0)
   end
 
+  def test_mech_vent_unmeasured_airflow_rate_and_defaulted_fan_power_cfis
+    # Create derivative file for testing
+    hpxml_name = "base.xml"
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
+
+    # Add mech vent without flow rate or fan power
+    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
+                              id: "MechanicalVentilation",
+                              fan_type: "central fan integrated supply",
+                              hours_in_operation: 8,
+                              distribution_system_idref: "HVACDistribution")
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml_doc, "supply only", 56.5, 24, 35.4)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_mech_vent(hpxml_doc, "central fan integrated supply", 0.0, 24, 800.0) # Should have fan energy but not airflow
+
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_mech_vent(hpxml_doc, "balanced", 60.0, 24, 42.0)
+
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_mech_vent(hpxml_doc, "balanced", 8.5, 24, 42.0)
+  end
+
   def test_mech_vent_exhaust
     hpxml_name = "base-mechvent-exhaust.xml"
 
