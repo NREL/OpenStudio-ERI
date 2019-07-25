@@ -328,17 +328,19 @@ Water Heaters
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
 Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
-In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor``.
+In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor`` except for combined boiler water heating systems.
 
 Depending on the type of water heater specified, additional elements are required:
 
-==========================  ===========  ==========  ===============  ========================
-WaterHeaterType             FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency
-==========================  ===========  ==========  ===============  ========================
-storage water heater        <any>        required    required         required if non-electric
-instantaneous water heater  <any>
-heat pump water heater      electricity  required
-==========================  ===========  ==========  ===============  ========================
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================
+WaterHeaterType                           EnergyFactor or UniformEnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================
+storage water heater                      required                             <any>        required    required         required if non-electric
+instantaneous water heater                required                             <any>
+heat pump water heater                    required                             electricity  required
+space-heating boiler with storage tank                                                      required                                               required
+space-heating boiler with tankless coil                                                                                                            required
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================
 
 Hot Water Distribution
 **********************
