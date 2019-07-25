@@ -1088,8 +1088,7 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
     sla = 0.00036
-    vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, vert_distance, fan_type)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, fan_type)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
@@ -1116,7 +1115,7 @@ class EnergyRatingIndex301Ruleset
         ach50 = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
       end
-      q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance, fan_type)
+      q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type)
 
       # Treat CFIS like supply ventilation
       if fan_type == 'central fan integrated supply'
@@ -1158,8 +1157,7 @@ class EnergyRatingIndex301Ruleset
           break
         end
       end
-      vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
-      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vert_distance, vent_fan_values[:fan_type])
+      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vent_fan_values[:fan_type])
 
       if vent_fan_values[:tested_flow_rate].nil?
         # Set airflow rate to zero (infiltration bumped up instead)
@@ -1211,7 +1209,7 @@ class EnergyRatingIndex301Ruleset
       end
     end
     fan_type = "balanced"
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, 17.0, fan_type)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, fan_type)
 
     w_cfm = 0.70
     fan_power_w = w_cfm * q_fan
@@ -1622,7 +1620,8 @@ class EnergyRatingIndex301Ruleset
     return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla, vert_distance, fan_type)
+  def self.calc_mech_vent_q_fan(q_tot, sla, fan_type)
+    vert_distance = Float(@ncfl_ag) * @infilvolume / @cfa # vertical distance between lowest and highest above-grade points within the pressure boundary
     nl = 1000.0 * sla * (vert_distance / 8.202)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
     if not @eri_version.include? "2014" # 2019 or newer
@@ -1826,20 +1825,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     return ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area
-  end
-
-  def self.get_ag_conditioned_basement_height(orig_details)
-    above_grade_height = 0
-    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
-      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
-      next unless [fnd_wall_values[:interior_adjacent_to], fnd_wall_values[:exterior_adjacent_to]].include? "basement - conditioned"
-
-      ag_height = fnd_wall_values[:height] - fnd_wall_values[:depth_below_grade]
-      if ag_height > above_grade_height
-        above_grade_height = ag_height
-      end
-    end
-    return above_grade_height
   end
 
   def self.delete_wall_subsurfaces(orig_details, surface_id)
