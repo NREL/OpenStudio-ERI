@@ -90,16 +90,15 @@ def get_sql_result(sqlValue, design)
   fail "Could not find sql result."
 end
 
-def get_combi_hvac_id(hpxml_doc)
-  hvac_idref = {}
+def get_combi_hvac_id(hpxml_doc, sys_id)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
-    sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
-    if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
-      hvac_idref[sys_id] = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
-    end
+    next unless sys_id == dhw_system.elements["SystemIdentifier"].attributes["id"]
+    next unless ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
+
+    return dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
   end
 
-  return hvac_idref
+  return nil
 end
 
 def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
@@ -213,9 +212,6 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecHotWaterBySystem] = {}
   design_output[:fuelHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
-  design_output[:CombiWaterSystemLoadBySystem] = {}
-  design_output[:CombiRelatedHVACBySystem] = get_combi_hvac_id(hpxml_doc)
-  design_output[:CombiBoilerTotalLoadBySystem] = {}
   design_output[:hpxml_dhw_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -232,7 +228,6 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingFuel).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:fuelHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
       # Only ever conventional storage tank water heater
@@ -241,18 +236,16 @@ def read_output(design, designdir, output_hpxml_path)
       design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     end
     # Combi boiler water system
-    hvac_id = design_output[:CombiRelatedHVACBySystem][sys_id]
+    hvac_id = get_combi_hvac_id(hpxml_doc, sys_id)
     if not hvac_id.nil?
       vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoilerHeatExchanger).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:CombiWaterSystemLoadBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      hx_load = get_sql_query_result(sqlFile, query)
       vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoiler).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND  KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:CombiBoilerTotalLoadBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      htg_load = get_sql_query_result(sqlFile, query)
 
       # Split combi boiler system energy use by water system load fraction
-      hx_load = design_output[:CombiWaterSystemLoadBySystem][sys_id]
-      htg_load = design_output[:CombiBoilerTotalLoadBySystem][sys_id]
       htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
       design_output[:elecHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
       design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
@@ -570,16 +563,18 @@ def get_eec_dhws(hpxml_doc)
 
     ## Combi system requires recalculating ef
     if value.nil?
-      combi_boiler_afue = nil
       if wh_type == 'space-heating boiler with tankless coil'
         combi_type = Constants.WaterHeaterTypeTankless
+        ua = nil
       elsif wh_type == 'space-heating boiler with storage tank'
         vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
-        # Vol is useful in this version only used for calculating u(not used here), but vol would be used for calculating jacket insulation ua which might be available later
-        ef_loss = Waterheater.get_indirect_assumed_ef_for_tank_losses()
-        dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, Constants.FuelTypeElectric, ef_loss, 0.0, 0.0, Constants.WaterHeaterTypeTank, 0.0)
+        jacket_r = XMLHelper.get_value(dhw_system, "WaterHeaterInsulation/Jacket/JacketRValue").to_f # FIXME: Check this works when jacket R-value allowed
+        assumed_ef = Waterheater.get_indirect_assumed_ef_for_tank_losses()
+        assumed_fuel = Waterheater.get_indirect_assumed_fuel_for_tank_losses()
+        dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, assumed_fuel, assumed_ef, nil, nil, Constants.WaterHeaterTypeTank, 0.0, jacket_r)
         combi_type = Constants.WaterHeaterTypeTank
       end
+      combi_boiler_afue = nil
       hvac_idref = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
       hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
         next unless heating_system.elements["SystemIdentifier"].attributes["id"] == hvac_idref
