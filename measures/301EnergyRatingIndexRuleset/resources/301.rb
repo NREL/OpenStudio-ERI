@@ -597,6 +597,10 @@ class EnergyRatingIndex301Ruleset
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
       if is_thermal_boundary(fwall_values)
         fwall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
+      else
+        fwall_values[:insulation_assembly_r_value] = nil
+        fwall_values[:insulation_distance_to_bottom] = 0.0
+        fwall_values[:insulation_r_value] = 0.0
       end
       fwall_values[:interior_adjacent_to].gsub!("unvented", "vented")
       fwall_values[:exterior_adjacent_to].gsub!("unvented", "vented")
