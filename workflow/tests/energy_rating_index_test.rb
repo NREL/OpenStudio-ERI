@@ -64,10 +64,7 @@ class EnergyRatingIndexTest < Minitest::Test
                     "base-dhw-multiple.xml",
                     "base-dhw-combi-tankless.xml",
                     "base-dhw-indirect.xml",
-                    "base-dhw-jacket-electric.xml",
-                    "base-dhw-jacket-gas.xml",
-                    "base-dhw-jacket-indirect.xml",
-                    "base-dhw-jacket-hpwh.xml"]
+                    "base-dhw-jacket-gas.xml"]
     if not base_results.nil?
       base_reul_dhw = base_results["REUL Hot Water (MBtu)"]
       compare_xmls.each do |compare_xml|
