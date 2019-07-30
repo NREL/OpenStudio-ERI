@@ -1032,7 +1032,7 @@ def cache_weather
   puts "Creating *.cache for weather files..."
   Dir["#{weather_dir}/*.epw"].each do |epw|
     next if File.exists? epw.gsub(".epw", ".cache")
-    
+
     puts "Processing #{epw}..."
     model = OpenStudio::Model::Model.new
     epw_file = OpenStudio::EpwFile.new(epw)
@@ -1045,7 +1045,7 @@ def cache_weather
     File.open(epw.gsub(".epw", ".cache"), "wb") do |file|
       Marshal.dump(weather, file)
     end
-    
+
     # Also add file to data.csv
     weather_data = []
     weather_data << epw_file.wmoNumber            # wmo
@@ -1080,7 +1080,7 @@ OptionParser.new do |opts|
   opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
     options[:epws] = t
   end
-  
+
   opts.on('-c', '--cache-weather', 'Caches all weather files') do |t|
     options[:cache] = t
   end
