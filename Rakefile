@@ -40,38 +40,6 @@ task :generate_sample_outputs do
   end
 end
 
-desc 'process weather'
-task :process_weather do
-  require 'openstudio'
-  require_relative 'measures/HPXMLtoOpenStudio/resources/weather'
-
-  # Download all weather files
-  Dir.chdir('workflow')
-  cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" --no-ssl energy_rating_index.rb --download-weather"
-  system(command)
-  Dir.chdir('../weather')
-
-  # Process all epw files through weather.rb and serialize objects
-  # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-  Dir["*.epw"].each do |epw|
-    puts epw
-    model = OpenStudio::Model::Model.new
-    epw_file = OpenStudio::EpwFile.new(epw)
-    OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
-    weather = WeatherProcess.new(model, runner)
-    if weather.error? or weather.data.WSF.nil?
-      fail "Error."
-    end
-
-    File.open(epw.gsub(".epw", ".cache"), "wb") do |file|
-      Marshal.dump(weather, file)
-    end
-  end
-  puts "Done."
-end
-
 desc 'update all measures'
 task :update_measures do
   # Prevent NREL error regarding U: drive when not VPNed in
