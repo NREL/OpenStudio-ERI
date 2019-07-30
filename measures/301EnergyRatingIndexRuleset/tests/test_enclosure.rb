@@ -6,14 +6,57 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class EnclosureTest < MiniTest::Test
-  def test_enclosure_infiltration
+  def before_setup
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
+    @tmp_hpxml_path = File.join(@root_path, "workflow", "sample_files", "tmp.xml")
+  end
+
+  def after_teardown
+    File.delete(@tmp_hpxml_path) if File.exists? @tmp_hpxml_path
+  end
+
+  def test_enclosure_infiltration_without_mech_vent
     hpxml_name = "base.xml"
 
     # Rated Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     # For residences, without Whole-House Mechanical Ventilation Systems, the measured
-    # infiltration rate but not less than 0.30 ach
+    # infiltration rate but not less than 0.30 ACH
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_infiltration(hpxml_doc, 7.6)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml_doc, 7.09)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml_doc, 3.0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml_doc, 6.67)
+  end
+
+  def test_enclosure_with_mech_vent
+    # Create derivative file for testing
+    hpxml_name = "base.xml"
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
+
+    # Add mech vent without flow rate
+    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
+                              id: "VentilationFan",
+                              fan_type: "exhaust only",
+                              tested_flow_rate: 300,
+                              hours_in_operation: 24,
+                              fan_power: 30.0)
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml_doc, 3.0)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -449,10 +492,9 @@ class EnclosureTest < MiniTest::Test
   end
 
   def _test_measure(hpxml_name, calc_type)
-    root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
-    args_hash['hpxml_path'] = File.join(root_path, "workflow", "sample_files", hpxml_name)
-    args_hash['weather_dir'] = File.join(root_path, "weather")
+    args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
+    args_hash['weather_dir'] = File.join(@root_path, "weather")
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 

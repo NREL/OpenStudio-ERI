@@ -1785,21 +1785,21 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Exhaust-only whole-dwelling mechanical ventilation
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :fan_power => 14.7 }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "balanced",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :fan_power => 14.7 }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% heat recovery system
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "heat recovery ventilator",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :sensible_recovery_efficiency => 0.6,
                                  :fan_power => 14.7 }]
@@ -1807,22 +1807,22 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Exhaust fan = 58.7 cfm, continuous; Fan power = 14.7 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 58.7,
+                                 :tested_flow_rate => 58.7,
                                  :hours_in_operation => 24,
                                  :fan_power => 14.7 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 51.2 cfm continuous with fan power = 12.8 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 51.2
+    ventilation_fans_values[0][:tested_flow_rate] = 51.2
     ventilation_fans_values[0][:fan_power] = 12.8
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-10.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 66.2 cfm continuous with fan power = 16.6 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 66.2
+    ventilation_fans_values[0][:tested_flow_rate] = 66.2
     ventilation_fans_values[0][:fan_power] = 16.6
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-15.xml'].include? hpxml_file
     # Change to CFIS system at flow rate of 176.1 cfm and 33.33% duty cycle (8 hours per day)
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "central fan integrated supply",
-                                 :rated_flow_rate => 176.1,
+                                 :tested_flow_rate => 176.1,
                                  :hours_in_operation => 8,
                                  :fan_power => 14.7,
                                  :distribution_system_idref => "HVACDistribution" }]
@@ -1830,22 +1830,22 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Exhaust fan = 56.2 cfm, continuous; Fan power = 14.0 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :fan_power => 14 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 48.7 cfm continuous with fan power = 12.2 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 48.7
+    ventilation_fans_values[0][:tested_flow_rate] = 48.7
     ventilation_fans_values[0][:fan_power] = 12.2
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-10.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 63.7 cfm continuous with fan power = 15.9 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 63.7
+    ventilation_fans_values[0][:tested_flow_rate] = 63.7
     ventilation_fans_values[0][:fan_power] = 15.9
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-15.xml'].include? hpxml_file
     # Change to CFIS system at flow rate of 168.6 cfm and 33.33% duty cycle (8 hours per day)
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "central fan integrated supply",
-                                 :rated_flow_rate => 168.6,
+                                 :tested_flow_rate => 168.6,
                                  :hours_in_operation => 8,
                                  :fan_power => 14,
                                  :distribution_system_idref => "HVACDistribution" }]
@@ -1853,7 +1853,7 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Exhaust mechanical ventilation system with 50 cfm and 15 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 50,
+                                 :tested_flow_rate => 50,
                                  :hours_in_operation => 24,
                                  :fan_power => 15 }]
   end
@@ -2385,6 +2385,7 @@ def copy_sample_files
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-setpoints.xml',
                   'base-infiltration-ach-natural.xml',
+                  'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-mechvent-erv-asre.xml',
                   'base-mechvent-erv-atre.xml',
                   'base-misc-lighting-none.xml',
