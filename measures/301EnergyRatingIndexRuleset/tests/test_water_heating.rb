@@ -6,6 +6,10 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class WaterHeatingTest < MiniTest::Test
+  def before_setup
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
+  end
+
   def test_water_heating
     hpxml_name = "base.xml"
 
@@ -296,6 +300,35 @@ class WaterHeatingTest < MiniTest::Test
     end
   end
 
+  def test_water_heating_jacket_insulation
+    hpxml_name = "base-dhw-jacket-gas.xml"
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_water_heater(hpxml_doc, ["storage water heater", "natural gas", "living space", 50, 0.575])
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 93.5, nil, nil, nil, nil)
+    _check_water_fixtures(hpxml_doc, false, false)
+    _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_water_heater(hpxml_doc, ["storage water heater", "natural gas", "living space", 50, 0.59, 10])
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 90, nil, nil, nil, nil)
+    _check_water_fixtures(hpxml_doc, true, false)
+    _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
+
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_water_heater(hpxml_doc, ["storage water heater", "natural gas", "living space", 50, 0.575])
+      _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 89.28, nil, nil, nil, nil)
+      _check_water_fixtures(hpxml_doc, false, false)
+      _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
+    end
+  end
+
   def test_water_heating_tank_heat_pump
     hpxml_name = "base-dhw-tank-heat-pump.xml"
 
@@ -570,10 +603,9 @@ class WaterHeatingTest < MiniTest::Test
   end
 
   def _test_measure(hpxml_name, calc_type)
-    root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
-    args_hash['hpxml_path'] = File.join(root_path, "workflow", "sample_files", hpxml_name)
-    args_hash['weather_dir'] = File.join(root_path, "weather")
+    args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
+    args_hash['weather_dir'] = File.join(@root_path, "weather")
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 
@@ -618,7 +650,7 @@ class WaterHeatingTest < MiniTest::Test
   def _check_water_heater(hpxml_doc, *systems)
     assert_equal(systems.size, hpxml_doc.elements["count(/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem)"])
     hpxml_doc.elements.each_with_index("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |wh, idx|
-      whtype, fuel_type, location, tank_vol, ef = systems[idx]
+      whtype, fuel_type, location, tank_vol, ef, jacket_r = systems[idx]
       assert_equal(wh.elements["WaterHeaterType"].text, whtype)
       assert_equal(wh.elements["Location"].text, location)
       if fuel_type.nil?
@@ -635,6 +667,11 @@ class WaterHeatingTest < MiniTest::Test
         assert_nil(wh.elements["EnergyFactor"])
       else
         assert_in_epsilon(Float(wh.elements["EnergyFactor"].text), ef, 0.01)
+      end
+      if jacket_r.nil?
+        assert_nil(wh.elements["WaterHeaterInsulation/Jacket/JacketRValue"])
+      else
+        assert_in_epsilon(Float(wh.elements["WaterHeaterInsulation/Jacket/JacketRValue"].text), jacket_r, 0.01)
       end
     end
   end

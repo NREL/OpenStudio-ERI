@@ -308,7 +308,7 @@ Mechanical Ventilation
 **********************
 
 A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
-Inputs including ``FanType``, ``RatedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
+Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -337,15 +337,15 @@ In addition, the water heater efficiency should be provided as either an ``Energ
 
 Depending on the type of water heater specified, additional elements are required:
 
-========================================  ===================================  ===========  ==========  ===============  ========================  =====================
-WaterHeaterType                           EnergyFactor or UniformEnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem
-========================================  ===================================  ===========  ==========  ===============  ========================  =====================
-storage water heater                      required                             <any>        required    required         required if non-electric
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+WaterHeaterType                           EnergyFactor or UniformEnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem        WaterHeaterInsulation/Jacket/JacketRValue
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+storage water heater                      required                             <any>        required    required         required if non-electric                           <optional>
 instantaneous water heater                required                             <any>
-heat pump water heater                    required                             electricity  required
-space-heating boiler with storage tank                                                      required                                               required
-space-heating boiler with tankless coil                                                                                                            required
-========================================  ===================================  ===========  ==========  ===============  ========================  =====================
+heat pump water heater                    required                             electricity  required                                                                        <optional>
+space-heating boiler with storage tank                                                      required                                               required                 <optional>
+space-heating boiler with tankless coil                                                                                                            required                 
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
 
 Hot Water Distribution
 **********************
