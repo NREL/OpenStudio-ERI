@@ -1073,13 +1073,12 @@ class EnergyRatingIndex301Ruleset
       sys_id = HPXML.get_id(vent_fan)
     end
 
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+    q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
     sla = 0.00036
-    vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
@@ -1106,9 +1105,9 @@ class EnergyRatingIndex301Ruleset
         ach50 = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
       end
-      q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
+      q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
 
-      # Treat CFIS like supply ventilation. Is this correct?
+      # Treat CFIS like supply ventilation
       if fan_type == 'central fan integrated supply'
         fan_type = 'supply only'
       end
@@ -1130,7 +1129,7 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: sys_id,
                               fan_type: fan_type,
-                              rated_flow_rate: q_fan_airflow,
+                              tested_flow_rate: q_fan_airflow,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
   end
@@ -1142,7 +1141,7 @@ class EnergyRatingIndex301Ruleset
       vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
 
       # Calculate min airflow rate
-      min_q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+      min_q_tot = calc_mech_vent_q_tot()
       sla = nil
       hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
         air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
@@ -1152,20 +1151,20 @@ class EnergyRatingIndex301Ruleset
           break
         end
       end
-      vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
-      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla, vert_distance)
+      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla)
 
-      q_fan = vent_fan_values[:rated_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+      fan_w_per_cfm = vent_fan_values[:fan_power] / vent_fan_values[:tested_flow_rate]
+      q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
       if q_fan < min_q_fan
         # First try increasing operation to meet minimum
-        vent_fan_values[:hours_in_operation] = [min_q_fan / vent_fan_values[:rated_flow_rate], 24].min
-        q_fan = vent_fan_values[:rated_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+        vent_fan_values[:hours_in_operation] = [min_q_fan / q_fan * vent_fan_values[:hours_in_operation], 24].min
+        q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
       end
       if q_fan < min_q_fan
-        # Finally resort to increasing airflow rate and fan power
-        vent_fan_values[:rated_flow_rate] *= min_q_fan / q_fan
-        vent_fan_values[:fan_power] *= min_q_fan / q_fan
+        # Finally resort to increasing airflow rate
+        vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
       end
+      vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
 
       HPXML.add_ventilation_fan(hpxml: hpxml, **vent_fan_values)
     end
@@ -1175,7 +1174,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
 
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+    q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm
     sla = nil
@@ -1187,15 +1186,16 @@ class EnergyRatingIndex301Ruleset
         break
       end
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, 17.0)
+    fan_type = "balanced"
+    q_fan = calc_mech_vent_q_fan(q_tot, sla)
 
     w_cfm = 0.70
     fan_power_w = w_cfm * q_fan
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: "VentilationFan",
-                              fan_type: "balanced",
-                              rated_flow_rate: q_fan,
+                              fan_type: fan_type,
+                              tested_flow_rate: q_fan,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
   end
@@ -1601,14 +1601,21 @@ class EnergyRatingIndex301Ruleset
     return false
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla, vert_distance)
-    nl = 1000.0 * sla * (vert_distance / 8.2)**0.4 # Normalized leakage, eq. 4.4
+  def self.calc_mech_vent_q_tot()
+    return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+  end
+
+  def self.calc_mech_vent_q_fan(q_tot, sla)
+    vert_distance = Float(@ncfl_ag) * @infilvolume / @cfa # vertical distance between lowest and highest above-grade points within the pressure boundary
+    nl = 1000.0 * sla * (vert_distance / 8.202)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
     if q_inf > 2.0 / 3.0 * q_tot
-      return q_tot - 2.0 / 3.0 * q_tot
+      q_fan = q_tot - 2.0 / 3.0 * q_tot
+    else
+      q_fan = q_tot - q_inf
     end
 
-    return q_tot - q_inf
+    return [q_fan, 0].max
   end
 
   def self.add_reference_heating_gas_furnace(hpxml, load_frac = 1.0, seed_id = nil)
@@ -1794,20 +1801,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     return ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area
-  end
-
-  def self.get_ag_conditioned_basement_height(orig_details)
-    above_grade_height = 0
-    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
-      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
-      next unless [fnd_wall_values[:interior_adjacent_to], fnd_wall_values[:exterior_adjacent_to]].include? "basement - conditioned"
-
-      ag_height = fnd_wall_values[:height] - fnd_wall_values[:depth_below_grade]
-      if ag_height > above_grade_height
-        above_grade_height = ag_height
-      end
-    end
-    return above_grade_height
   end
 
   def self.delete_wall_subsurfaces(orig_details, surface_id)
