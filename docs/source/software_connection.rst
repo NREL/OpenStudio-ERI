@@ -303,7 +303,7 @@ Mechanical Ventilation
 **********************
 
 A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
-Inputs including ``FanType``, ``RatedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
+Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -328,17 +328,19 @@ Water Heaters
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
 Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
-In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor``.
+In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor`` except for combined boiler water heating systems.
 
 Depending on the type of water heater specified, additional elements are required:
 
-==========================  ===========  ==========  ===============  ========================
-WaterHeaterType             FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency
-==========================  ===========  ==========  ===============  ========================
-storage water heater        <any>        required    required         required if non-electric
-instantaneous water heater  <any>
-heat pump water heater      electricity  required
-==========================  ===========  ==========  ===============  ========================
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+WaterHeaterType                           EnergyFactor or UniformEnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem        WaterHeaterInsulation/Jacket/JacketRValue
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+storage water heater                      required                             <any>        required    required         required if non-electric                           <optional>
+instantaneous water heater                required                             <any>
+heat pump water heater                    required                             electricity  required                                                                        <optional>
+space-heating boiler with storage tank                                                      required                                               required                 <optional>
+space-heating boiler with tankless coil                                                                                                            required                 
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
 
 Hot Water Distribution
 **********************
@@ -360,7 +362,7 @@ For a ``SystemType/Recirculation`` system, the following fields are required:
 In addition, a ``HotWaterDistribution/DrainWaterHeatRecovery`` (DWHR) may be specified.
 The DWHR system is defined by:
 
-- ``FacilitiesConnected``: 'all' if all of the showers in the home are connected to DWHR units; 'one' if if there are 2 or more showers in the home and only 1 shower is connected to a DWHR unit
+- ``FacilitiesConnected``: 'one' if there are multiple showers and only one of them is connected to a DWHR; 'all' if there is one shower and it's connected to a DWHR or there are two or more showers connected to a DWHR
 - ``EqualFlow``: 'true' if the DWHR supplies pre-heated water to both the fixture cold water piping and the hot water heater potable supply piping
 - ``Efficiency``: As rated and labeled in accordance with CSA 55.1
 

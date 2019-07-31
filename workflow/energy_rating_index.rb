@@ -8,6 +8,7 @@ require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
 require_relative "../measures/HPXMLtoOpenStudio/measure"
 require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
+require_relative "../measures/HPXMLtoOpenStudio/resources/waterheater"
 require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
 
 # TODO: Add error-checking
@@ -87,6 +88,22 @@ def get_sql_result(sqlValue, design)
   end
 
   fail "Could not find sql result."
+end
+
+def get_combi_hvac_id(hpxml_doc, sys_id)
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+    next unless sys_id == dhw_system.elements["SystemIdentifier"].attributes["id"]
+    next unless ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
+
+    return dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
+  end
+
+  return nil
+end
+
+def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
+  water_sys_frac = (hx_load) / htg_load
+  return htg_energy * water_sys_frac
 end
 
 def read_output(design, designdir, output_hpxml_path)
@@ -217,6 +234,24 @@ def read_output(design, designdir, output_hpxml_path)
       vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
       design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    end
+    # Combi boiler water system
+    hvac_id = get_combi_hvac_id(hpxml_doc, sys_id)
+    if not hvac_id.nil?
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoilerHeatExchanger).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      hx_load = get_sql_query_result(sqlFile, query)
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoiler).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND  KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      htg_load = get_sql_query_result(sqlFile, query)
+
+      # Split combi boiler system energy use by water system load fraction
+      htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
+      design_output[:elecHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
+      design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
+      htg_ec_fuel = design_output[:fuelHeatingBySystem][hvac_id]
+      design_output[:fuelHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
+      design_output[:fuelHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
     end
   end
 
@@ -368,7 +403,13 @@ def get_dhw_fuels(hpxml_doc)
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
-    dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
+    if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
+      orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+      hvac_idref = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
+      dhw_fuels[sys_id] = Waterheater.get_combi_system_fuel(hvac_idref, orig_details)
+    else
+      dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
+    end
   end
 
   if dhw_fuels.empty?
@@ -519,6 +560,31 @@ def get_eec_dhws(hpxml_doc)
     else
       value_adj = 1.0
     end
+
+    ## Combi system requires recalculating ef
+    if value.nil?
+      if wh_type == 'space-heating boiler with tankless coil'
+        combi_type = Constants.WaterHeaterTypeTankless
+        ua = nil
+      elsif wh_type == 'space-heating boiler with storage tank'
+        vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
+        jacket_r = XMLHelper.get_value(dhw_system, "WaterHeaterInsulation/Jacket/JacketRValue").to_f
+        assumed_ef = Waterheater.get_indirect_assumed_ef_for_tank_losses()
+        assumed_fuel = Waterheater.get_indirect_assumed_fuel_for_tank_losses()
+        dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, assumed_fuel, assumed_ef, nil, nil, Constants.WaterHeaterTypeTank, 0.0, jacket_r)
+        combi_type = Constants.WaterHeaterTypeTank
+      end
+      combi_boiler_afue = nil
+      hvac_idref = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
+      hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+        next unless heating_system.elements["SystemIdentifier"].attributes["id"] == hvac_idref
+
+        combi_boiler_afue = Float(XMLHelper.get_value(heating_system, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
+        break
+      end
+      value = Waterheater.calc_tank_EF(combi_type, ua, combi_boiler_afue)
+    end
+
     if not value.nil? and not value_adj.nil?
       eec_dhws[sys_id] = get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end

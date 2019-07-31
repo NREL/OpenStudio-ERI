@@ -1150,7 +1150,6 @@ class EnergyRatingIndex301Ruleset
       vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
 
       # Calculate min airflow rate
-
       min_q_tot = calc_mech_vent_q_tot()
       sla = nil
       hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
@@ -1199,6 +1198,7 @@ class EnergyRatingIndex301Ruleset
         end
         vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
       end
+      vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
 
       HPXML.add_ventilation_fan(hpxml: hpxml, **vent_fan_values)
     end
@@ -1240,10 +1240,17 @@ class EnergyRatingIndex301Ruleset
     orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |wh_sys|
       wh_sys_values = HPXML.get_water_heating_system_values(water_heating_system: wh_sys)
 
-      if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
+      if ['space-heating boiler with tankless coil', 'instantaneous water heater'].include? wh_sys_values[:water_heater_type]
         wh_sys_values[:tank_volume] = 40.0
       end
+      # Set fuel type for combi systems
+      if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? wh_sys_values[:water_heater_type]
+        wh_sys_values[:fuel_type] = Waterheater.get_combi_system_fuel(wh_sys_values[:related_hvac], orig_details)
+        wh_sys_values[:related_hvac] = nil
+      end
+
       wh_sys_values[:water_heater_type] = 'storage water heater'
+      wh_sys_values[:jacket_r_value] = nil
 
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])
       wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds) * 1000.0 # Btuh
