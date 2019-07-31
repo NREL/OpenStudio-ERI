@@ -44,7 +44,7 @@ class EnclosureTest < MiniTest::Test
 
     # Add mech vent without flow rate
     HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
-                              id: "VentilationFan",
+                              id: "MechanicalVentilation",
                               fan_type: "exhaust only",
                               tested_flow_rate: 300,
                               hours_in_operation: 24,

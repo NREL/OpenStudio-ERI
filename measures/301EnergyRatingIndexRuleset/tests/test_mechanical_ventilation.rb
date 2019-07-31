@@ -43,9 +43,7 @@ class MechVentTest < MiniTest::Test
 
     # Create derivative file for testing
     hpxml_name = "base.xml"
-    root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
-    hpxml_path = File.join(root_path, "workflow", "sample_files", hpxml_name)
-    hpxml_doc = REXML::Document.new(File.read(hpxml_path))
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
 
     # Remove mech vent
     mech_vent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
@@ -60,9 +58,8 @@ class MechVentTest < MiniTest::Test
                               fan_power: 1.0)
 
     # Save new file
-    hpxml_name = "base-test.xml"
-    hpxml_path = File.join(root_path, "workflow", "sample_files", hpxml_name)
-    XMLHelper.write_file(hpxml_doc, hpxml_path)
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
