@@ -2369,7 +2369,6 @@ def copy_sample_files
                   'base-dhw-combi-tankless-outside.xml',
                   'base-dhw-indirect-outside.xml',
                   'base-dhw-jacket-electric.xml',
-                  'base-dhw-jacket-gas.xml',
                   'base-dhw-jacket-hpwh.xml',
                   'base-dhw-jacket-indirect.xml',
                   'base-dhw-tank-gas-outside.xml',

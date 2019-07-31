@@ -1216,6 +1216,7 @@ class EnergyRatingIndex301Ruleset
       end
 
       wh_sys_values[:water_heater_type] = 'storage water heater'
+      wh_sys_values[:jacket_r_value] = nil
 
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])
       wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds) * 1000.0 # Btuh
