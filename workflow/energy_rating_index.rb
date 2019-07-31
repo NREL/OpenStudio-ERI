@@ -981,23 +981,12 @@ end
 def download_epws
   weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
 
-  num_epws_expected = File.readlines(File.join(weather_dir, "data.csv")).size - 1
-  num_epws_actual = Dir[File.join(weather_dir, "*.epw")].count
-  num_cache_expcted = num_epws_expected
-  num_cache_actual = Dir[File.join(weather_dir, "*.cache")].count
-  if num_epws_actual == num_epws_expected and num_cache_actual == num_cache_expcted
-    puts "Weather directory is already up-to-date."
-    puts "#{num_epws_actual} weather files are available in the weather directory."
-    puts "Completed."
-    exit!
-  end
-
   require 'net/http'
   require 'tempfile'
 
   tmpfile = Tempfile.new("epw")
 
-  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/openstudio-eri-tmy3s-cache.zip")
+  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/tmy3s-cache.zip")
   http = Net::HTTP.new(url.host, url.port)
 
   params = { 'User-Agent' => 'curl/7.43.0', 'Accept-Encoding' => 'identity' }
@@ -1035,6 +1024,47 @@ def download_epws
   exit!
 end
 
+def cache_weather
+  # Process all epw files through weather.rb and serialize objects
+  # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
+  weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
+  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+  puts "Creating *.cache for weather files..."
+  Dir["#{weather_dir}/*.epw"].each do |epw|
+    next if File.exists? epw.gsub(".epw", ".cache")
+
+    puts "Processing #{epw}..."
+    model = OpenStudio::Model::Model.new
+    epw_file = OpenStudio::EpwFile.new(epw)
+    OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
+    weather = WeatherProcess.new(model, runner)
+    if weather.error? or weather.data.WSF.nil?
+      fail "Error."
+    end
+
+    File.open(epw.gsub(".epw", ".cache"), "wb") do |file|
+      Marshal.dump(weather, file)
+    end
+
+    # Also add file to data.csv
+    weather_data = []
+    weather_data << epw_file.wmoNumber            # wmo
+    weather_data << epw_file.city                 # station_name
+    weather_data << epw_file.stateProvinceRegion  # state
+    weather_data << epw_file.latitude             # latitude
+    weather_data << epw_file.longitude            # longitude
+    weather_data << epw_file.timeZone.to_i        # timezone
+    weather_data << epw_file.elevation.to_i       # elevation
+    weather_data << "???"                         # class
+    weather_data << File.basename(epw)            # filename
+    open(File.join(weather_dir, "data.csv"), 'a') do |f|
+      f << weather_data.join(",") + "\n"
+    end
+  end
+  puts "Completed."
+  exit!
+end
+
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -s -x sample_files/base.xml\n"
@@ -1049,6 +1079,10 @@ OptionParser.new do |opts|
 
   opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
     options[:epws] = t
+  end
+
+  opts.on('-c', '--cache-weather', 'Caches all weather files') do |t|
+    options[:cache] = t
   end
 
   options[:debug] = false
@@ -1088,6 +1122,10 @@ end
 
 if options[:epws]
   download_epws
+end
+
+if options[:cache]
+  cache_weather
 end
 
 if not options[:hpxml]
