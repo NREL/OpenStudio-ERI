@@ -2000,21 +2000,12 @@ def get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
     # Base configuration
     water_fixtures_values = []
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
-    # Low-flow
-    water_fixtures_values = [{ :id => "WaterFixture",
-                               :water_fixture_type => "shower head",
-                               :low_flow => true },
-                             { :id => "WaterFixture2",
-                               :water_fixture_type => "faucet",
-                               :low_flow => true }]
-  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # Standard
     water_fixtures_values = [{ :id => "WaterFixture",
                                :water_fixture_type => "shower head",
@@ -2022,6 +2013,15 @@ def get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
                              { :id => "WaterFixture2",
                                :water_fixture_type => "faucet",
                                :low_flow => false }]
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml'].include? hpxml_file
+    # Low-flow
+    water_fixtures_values = [{ :id => "WaterFixture",
+                               :water_fixture_type => "shower head",
+                               :low_flow => true },
+                             { :id => "WaterFixture2",
+                               :water_fixture_type => "faucet",
+                               :low_flow => true }]
   end
   return water_fixtures_values
 end
