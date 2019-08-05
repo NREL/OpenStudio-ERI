@@ -1248,6 +1248,10 @@ class EnergyRatingIndex301Ruleset
         wh_sys_values[:uniform_energy_factor] = nil
       end
 
+      if wh_sys_values[:water_heater_type] == 'storage water heater' and wh_sys_values[:heating_capacity].nil?
+        wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds) * 1000.0 # Btuh
+      end
+
       if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
         wh_sys_values[:performance_adjustment] = Waterheater.get_tankless_cycling_derate()
       end

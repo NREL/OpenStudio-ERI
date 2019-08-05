@@ -412,7 +412,7 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType='storage water heater']" => {
         "[FuelType='natural gas' or FuelType='fuel oil' or FuelType='propane' or FuelType='electricity']" => one, # If not electricity, see [WHType=FuelTank]
         "TankVolume" => one,
-        "HeatingCapacity" => one,
+        "HeatingCapacity" => zero_or_one,
         "[EnergyFactor | UniformEnergyFactor]" => one,
         "WaterHeaterInsulation/Jacket/JacketRValue" => zero_or_one, # Capable to model tank wrap insulation
       },
