@@ -275,12 +275,13 @@ class EnergyRatingIndexTest < Minitest::Test
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      _check_method_results(results, test_num, test_num == 2, false)
+      _check_method_results(results, test_num, test_num == 2, true)
     end
   end
 
-  def test_resnet_hers_method_iaf
-    test_name = "RESNET_Test_Other_HERS_Method_IAF"
+  def test_resnet_hers_method_pre_addendum_e
+    # Tests before Addendum E (IAF) was in place
+    test_name = "RESNET_Test_Other_HERS_Method_PreAddendumE"
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
@@ -288,7 +289,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_IAF")
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_PreAddendumE")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
       hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
@@ -313,7 +314,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      _check_method_results(results, test_num, test_num == 2, true)
+      _check_method_results(results, test_num, test_num == 2, false)
     end
   end
 

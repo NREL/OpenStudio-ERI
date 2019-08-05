@@ -136,11 +136,11 @@ def create_hpxmls
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-01.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-02.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-03.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-04.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-01.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-02.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-03.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-04.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-05.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-07.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-08.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
@@ -463,22 +463,21 @@ end
 def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
-    # Base configuration
+    # Base configuration w/ all Addenda
     hpxml_values = { :xml_type => "HPXML",
                      :xml_generated_by => "Rakefile",
                      :transaction => "create",
                      :software_program_used => nil,
                      :software_program_version => nil,
-                     :eri_calculation_version => "2014A",
+                     :eri_calculation_version => "2014AEG",
                      :building_id => "MyBuilding",
                      :event_type => "proposed workscope" }
-  elsif hpxml_file.include? 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home' or
-        hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_IAF'
-    # Addenda A & E
-    hpxml_values[:eri_calculation_version] = "2014AE"
   elsif hpxml_file.include? 'RESNET_Tests/Other_Hot_Water_PreAddendumA'
     # Pre-Addendum A
     hpxml_values[:eri_calculation_version] = "2014"
+  elsif hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_PreAddendumE'
+    # Pre-Addendum E
+    hpxml_values[:eri_calculation_version] = "2014A"
   end
   return hpxml_values
 end
@@ -524,9 +523,9 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:conditioned_floor_area] = 3078
     building_construction_values[:conditioned_building_volume] = 24624
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+         'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
@@ -2077,7 +2076,6 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
@@ -2180,7 +2178,6 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
