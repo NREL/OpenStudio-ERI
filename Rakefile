@@ -2055,7 +2055,7 @@ def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
     # Standard
     clothes_washer_values = { :id => "ClothesWasher",
                               :location => "living space",
-                              :modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_mef(),
+                              :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
                               :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
                               :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
                               :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
@@ -2089,7 +2089,7 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
                              :location => "living space",
                              :fuel_type => "natural gas",
                              :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             :energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_ef(Constants.FuelTypeGas) }
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(Constants.FuelTypeGas) }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2104,7 +2104,7 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
                              :location => "living space",
                              :fuel_type => "electricity",
                              :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             :energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_ef(Constants.FuelTypeElectric) }
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(Constants.FuelTypeElectric) }
   elsif ['NASEO_Technical_Exercises/NASEO-09.xml',
          'NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
     clothes_dryer_values = { :id => "ClothesDryer",
