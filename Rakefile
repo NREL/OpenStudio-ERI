@@ -476,7 +476,8 @@ def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
     # Pre-Addendum A
     hpxml_values[:eri_calculation_version] = "2014"
   elsif hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_PreAddendumE' or
-        hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed'
+        hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed' or
+        hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Task_Group'
     # Pre-Addendum E
     hpxml_values[:eri_calculation_version] = "2014A"
   end
