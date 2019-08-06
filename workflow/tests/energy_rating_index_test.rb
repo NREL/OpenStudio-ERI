@@ -76,7 +76,7 @@ class EnergyRatingIndexTest < Minitest::Test
         else
           compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"]
         end
-        assert_in_epsilon(base_reul_dhw, compare_reul_dhw, 0.01)
+        assert_in_epsilon(base_reul_dhw, compare_reul_dhw, 0.02)
       end
     end
 

@@ -1844,7 +1844,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 15355,
                                       :energy_factor => 0.88 }]
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
@@ -1865,7 +1864,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 40000,
                                       :energy_factor => 0.56,
                                       :recovery_efficiency => 0.78 }]
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-03.xml',
@@ -1879,7 +1877,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 40000,
                                       :energy_factor => 0.62,
                                       :recovery_efficiency => 0.78 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-08.xml',
@@ -1900,7 +1897,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 15355,
                                       :energy_factor => 0.95,
                                       :recovery_efficiency => 0.98 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-13.xml',
