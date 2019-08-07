@@ -1366,7 +1366,7 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_clothes_washer(hpxml: hpxml,
                              id: washer_values[:id],
                              location: "living space",
-                             modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_mef(),
+                             integrated_modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_imef(),
                              rated_annual_kwh: HotWaterAndAppliances.get_clothes_washer_reference_ler(),
                              label_electric_rate: HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
                              label_gas_rate: HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
@@ -1388,15 +1388,12 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
     dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_details.elements["Appliances/ClothesDryer"])
 
-    cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(to_beopt_fuel(dryer_values[:fuel_type]))
-    cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
-
     HPXML.add_clothes_dryer(hpxml: hpxml,
                             id: dryer_values[:id],
                             location: "living space",
                             fuel_type: dryer_values[:fuel_type],
-                            energy_factor: cd_ef,
-                            control_type: cd_control)
+                            combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(to_beopt_fuel(dryer_values[:fuel_type])),
+                            control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control())
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_details, hpxml)
