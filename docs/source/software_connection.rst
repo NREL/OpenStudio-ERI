@@ -333,19 +333,20 @@ Water Heaters
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
 Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
-In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor`` except for combined boiler water heating systems.
 
-Depending on the type of water heater specified, additional elements are required:
+Depending on the type of water heater specified, additional elements are required/available:
 
 ========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
-WaterHeaterType                           EnergyFactor or UniformEnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem        WaterHeaterInsulation/Jacket/JacketRValue
+WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem        WaterHeaterInsulation/Jacket/JacketRValue
 ========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
-storage water heater                      required                             <any>        required    required         required if non-electric                           <optional>
+storage water heater                      required                             <any>        required    <optional>       required if non-electric                           <optional>
 instantaneous water heater                required                             <any>
 heat pump water heater                    required                             electricity  required                                                                        <optional>
 space-heating boiler with storage tank                                                      required                                               required                 <optional>
 space-heating boiler with tankless coil                                                                                                            required                 
 ========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+
+For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
 
 Hot Water Distribution
 **********************

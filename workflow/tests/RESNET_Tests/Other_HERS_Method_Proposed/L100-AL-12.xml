@@ -344,7 +344,6 @@
             <Location>living space</Location>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>15355.0</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
             <RecoveryEfficiency>0.98</RecoveryEfficiency>
           </WaterHeatingSystem>
