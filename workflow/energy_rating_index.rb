@@ -231,6 +231,8 @@ def read_output(design, designdir, output_hpxml_path)
 
   # Water Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_water_heating.tsv"), headers: false, col_sep: "\t")
+  design_output[:elecHotWaterBySystemRaw] = {}
+  design_output[:fuelHotWaterBySystemRaw] = {}
   design_output[:elecHotWaterBySystem] = {}
   design_output[:fuelHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
@@ -240,16 +242,16 @@ def read_output(design, designdir, output_hpxml_path)
     # Electricity Use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricity).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:elecHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    design_output[:elecHotWaterBySystemRaw][sys_id] = get_sql_query_result(sqlFile, query)
     # Electricity Use - Recirc Pump
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricityRecircPump).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:elecHotWaterBySystem][sys_id] += get_sql_query_result(sqlFile, query)
+    design_output[:elecHotWaterBySystemRaw][sys_id] += get_sql_query_result(sqlFile, query)
     design_output[:elecAppliances] -= get_sql_query_result(sqlFile, query)
     # Fuel use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingFuel).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:fuelHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    design_output[:fuelHotWaterBySystemRaw][sys_id] = get_sql_query_result(sqlFile, query)
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
       # Only ever conventional storage tank water heater
@@ -269,11 +271,14 @@ def read_output(design, designdir, output_hpxml_path)
 
       # Split combi boiler system energy use by water system load fraction
       htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
-      design_output[:elecHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
+      design_output[:elecHotWaterBySystem][sys_id] = design_output[:elecHotWaterBySystemRaw][sys_id] + get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
       design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
       htg_ec_fuel = design_output[:fuelHeatingBySystem][hvac_id]
-      design_output[:fuelHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
+      design_output[:fuelHotWaterBySystem][sys_id] = design_output[:fuelHotWaterBySystemRaw][sys_id] + get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
       design_output[:fuelHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
+    else
+      design_output[:elecHotWaterBySystem][sys_id] = design_output[:elecHotWaterBySystemRaw][sys_id]
+      design_output[:fuelHotWaterBySystem][sys_id] = design_output[:fuelHotWaterBySystemRaw][sys_id]
     end
   end
 
@@ -333,7 +338,7 @@ def read_output(design, designdir, output_hpxml_path)
 
   sum_elec_categories = (design_output[:elecHeatingBySystemRaw].values.inject(0, :+) +
                          design_output[:elecCoolingBySystemRaw].values.inject(0, :+) +
-                         design_output[:elecHotWaterBySystem].values.inject(0, :+) +
+                         design_output[:elecHotWaterBySystemRaw].values.inject(0, :+) +
                          design_output[:elecIntLighting] +
                          design_output[:elecExtLighting] +
                          design_output[:elecAppliances])
@@ -342,7 +347,7 @@ def read_output(design, designdir, output_hpxml_path)
   end
 
   sum_fuel_categories = (design_output[:fuelHeatingBySystemRaw].values.inject(0, :+) +
-                         design_output[:fuelHotWaterBySystem].values.inject(0, :+) +
+                         design_output[:fuelHotWaterBySystemRaw].values.inject(0, :+) +
                          design_output[:fuelAppliances])
   if (design_output[:fuelTotal] - sum_fuel_categories).abs > tolerance
     fail "[#{design}] Fuel category end uses (#{sum_fuel_categories}) do not sum to total (#{design_output[:fuelTotal]}).\n#{design_output.to_s}"
@@ -369,6 +374,8 @@ def read_output(design, designdir, output_hpxml_path)
   design_output.delete(:elecHeatingBySystemRaw)
   design_output.delete(:fuelHeatingBySystemRaw)
   design_output.delete(:elecCoolingBySystemRaw)
+  design_output.delete(:elecHotWaterBySystemRaw)
+  design_output.delete(:fuelHotWaterBySystemRaw)
 
   return design_output
 end
