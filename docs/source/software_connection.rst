@@ -468,6 +468,25 @@ If there are no errors in that log file, then the error may be in the EnergyPlus
 
 Contact us if you can't figure out the cause of an error.
 
+.. _detailed-outputs:
+
+Detailed Outputs
+----------------
+
+Upon completion of the ERI calculation, multiple output files are available in the ``results`` directory:
+
+* Summary ``ERI_Results.csv`` and ``ERI_Worksheet.csv`` files
+* Summary annual energy consumption by fuel type and/or end use (e.g., ``ERIRatedHome.csv``)
+* HPXML files that describe the home's configuration (e.g., ``ERIRatedHome.xml``)
+
+In addition, raw EnergyPlus input/output files are available for each simulation (e.g., ``ERIRatedHome``, ``ERIReferenceHome``, etc. directories).
+
+.. warning:: 
+
+  It is highly discouraged for software tools to read the raw EnergyPlus output files. The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. If there are additional outputs of interest that are not available in our summary output files, please send us a request.
+
+See the `sample_results <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results>`_ directory for examples of these outputs.
+
 Sample Files
 ------------
 
