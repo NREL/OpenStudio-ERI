@@ -40,38 +40,6 @@ task :generate_sample_outputs do
   end
 end
 
-desc 'process weather'
-task :process_weather do
-  require 'openstudio'
-  require_relative 'measures/HPXMLtoOpenStudio/resources/weather'
-
-  # Download all weather files
-  Dir.chdir('workflow')
-  cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" --no-ssl energy_rating_index.rb --download-weather"
-  system(command)
-  Dir.chdir('../weather')
-
-  # Process all epw files through weather.rb and serialize objects
-  # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-  Dir["*.epw"].each do |epw|
-    puts epw
-    model = OpenStudio::Model::Model.new
-    epw_file = OpenStudio::EpwFile.new(epw)
-    OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
-    weather = WeatherProcess.new(model, runner)
-    if weather.error? or weather.data.WSF.nil?
-      fail "Error."
-    end
-
-    File.open(epw.gsub(".epw", ".cache"), "wb") do |file|
-      Marshal.dump(weather, file)
-    end
-  end
-  puts "Done."
-end
-
 desc 'update all measures'
 task :update_measures do
   # Prevent NREL error regarding U: drive when not VPNed in
@@ -168,11 +136,11 @@ def create_hpxmls
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-01.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-02.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-03.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-04.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
-    'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-01.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-02.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-03.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-04.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
+    'RESNET_Tests/Other_HERS_Method_PreAddendumE/L100A-05.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-07.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-08.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
@@ -182,6 +150,7 @@ def create_hpxmls
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-12.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-13.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-14.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
+    'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-15.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-16.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-17.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-16.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-18.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
@@ -198,6 +167,7 @@ def create_hpxmls
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-12.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-13.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-14.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
+    'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-15.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-16.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-17.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-16.xml',
     'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-18.xml' => 'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
@@ -493,22 +463,23 @@ end
 def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
-    # Base configuration
+    # Base configuration w/ all Addenda
     hpxml_values = { :xml_type => "HPXML",
                      :xml_generated_by => "Rakefile",
                      :transaction => "create",
                      :software_program_used => nil,
                      :software_program_version => nil,
-                     :eri_calculation_version => "2014A",
+                     :eri_calculation_version => "2014AEG",
                      :building_id => "MyBuilding",
                      :event_type => "proposed workscope" }
-  elsif hpxml_file.include? 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home' or
-        hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_IAF'
-    # Addenda A & E
-    hpxml_values[:eri_calculation_version] = "2014AE"
   elsif hpxml_file.include? 'RESNET_Tests/Other_Hot_Water_PreAddendumA'
     # Pre-Addendum A
     hpxml_values[:eri_calculation_version] = "2014"
+  elsif hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_PreAddendumE' or
+        hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed' or
+        hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Task_Group'
+    # Pre-Addendum E
+    hpxml_values[:eri_calculation_version] = "2014A"
   end
   return hpxml_values
 end
@@ -554,9 +525,9 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:conditioned_floor_area] = 3078
     building_construction_values[:conditioned_building_volume] = 24624
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+         'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
@@ -685,9 +656,8 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
 end
 
 def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
-  if ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
-      'NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
+  if hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed' or
+     ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # Vented crawlspace
     foundation_values = { :id => "VentedCrawlspace",
                           :foundation_type => "VentedCrawlspace",
@@ -1784,21 +1754,21 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Exhaust-only whole-dwelling mechanical ventilation
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :fan_power => 14.7 }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "balanced",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :fan_power => 14.7 }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% heat recovery system
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "heat recovery ventilator",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :sensible_recovery_efficiency => 0.6,
                                  :fan_power => 14.7 }]
@@ -1806,37 +1776,53 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
     # Exhaust fan = 58.7 cfm, continuous; Fan power = 14.7 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 58.7,
+                                 :tested_flow_rate => 58.7,
                                  :hours_in_operation => 24,
                                  :fan_power => 14.7 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 51.2 cfm continuous with fan power = 12.8 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 51.2
+    ventilation_fans_values[0][:tested_flow_rate] = 51.2
     ventilation_fans_values[0][:fan_power] = 12.8
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-10.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 66.2 cfm continuous with fan power = 16.6 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 66.2
+    ventilation_fans_values[0][:tested_flow_rate] = 66.2
     ventilation_fans_values[0][:fan_power] = 16.6
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-15.xml'].include? hpxml_file
+    # Change to CFIS system at flow rate of 176.1 cfm and 33.33% duty cycle (8 hours per day)
+    ventilation_fans_values = [{ :id => "MechanicalVentilation",
+                                 :fan_type => "central fan integrated supply",
+                                 :tested_flow_rate => 176.1,
+                                 :hours_in_operation => 8,
+                                 :fan_power => 14.7,
+                                 :distribution_system_idref => "HVACDistribution" }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Exhaust fan = 56.2 cfm, continuous; Fan power = 14.0 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 56.2,
+                                 :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :fan_power => 14 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 48.7 cfm continuous with fan power = 12.2 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 48.7
+    ventilation_fans_values[0][:tested_flow_rate] = 48.7
     ventilation_fans_values[0][:fan_power] = 12.2
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-10.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 63.7 cfm continuous with fan power = 15.9 watts
-    ventilation_fans_values[0][:rated_flow_rate] = 63.7
+    ventilation_fans_values[0][:tested_flow_rate] = 63.7
     ventilation_fans_values[0][:fan_power] = 15.9
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-15.xml'].include? hpxml_file
+    # Change to CFIS system at flow rate of 168.6 cfm and 33.33% duty cycle (8 hours per day)
+    ventilation_fans_values = [{ :id => "MechanicalVentilation",
+                                 :fan_type => "central fan integrated supply",
+                                 :tested_flow_rate => 168.6,
+                                 :hours_in_operation => 8,
+                                 :fan_power => 14,
+                                 :distribution_system_idref => "HVACDistribution" }]
   elsif ['NASEO_Technical_Exercises/NASEO-04.xml'].include? hpxml_file
     # Exhaust mechanical ventilation system with 50 cfm and 15 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
-                                 :rated_flow_rate => 50,
+                                 :tested_flow_rate => 50,
                                  :hours_in_operation => 24,
                                  :fan_power => 15 }]
   end
@@ -1859,7 +1845,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 15355,
                                       :energy_factor => 0.88 }]
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
@@ -1880,7 +1865,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 40000,
                                       :energy_factor => 0.56,
                                       :recovery_efficiency => 0.78 }]
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-03.xml',
@@ -1894,7 +1878,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 40000,
                                       :energy_factor => 0.62,
                                       :recovery_efficiency => 0.78 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-08.xml',
@@ -1915,7 +1898,6 @@ def get_hpxml_file_water_heating_system_values(hpxml_file, water_heating_systems
                                       :location => "living space",
                                       :tank_volume => 40,
                                       :fraction_dhw_load_served => 1,
-                                      :heating_capacity => 15355,
                                       :energy_factor => 0.95,
                                       :recovery_efficiency => 0.98 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-13.xml',
@@ -2016,21 +1998,12 @@ def get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
     # Base configuration
     water_fixtures_values = []
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
-    # Low-flow
-    water_fixtures_values = [{ :id => "WaterFixture",
-                               :water_fixture_type => "shower head",
-                               :low_flow => true },
-                             { :id => "WaterFixture2",
-                               :water_fixture_type => "faucet",
-                               :low_flow => true }]
-  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
-         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # Standard
     water_fixtures_values = [{ :id => "WaterFixture",
                                :water_fixture_type => "shower head",
@@ -2038,6 +2011,15 @@ def get_hpxml_file_water_fixtures_values(hpxml_file, water_fixtures_values)
                              { :id => "WaterFixture2",
                                :water_fixture_type => "faucet",
                                :low_flow => false }]
+  elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml',
+         'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml'].include? hpxml_file
+    # Low-flow
+    water_fixtures_values = [{ :id => "WaterFixture",
+                               :water_fixture_type => "shower head",
+                               :low_flow => true },
+                             { :id => "WaterFixture2",
+                               :water_fixture_type => "faucet",
+                               :low_flow => true }]
   end
   return water_fixtures_values
 end
@@ -2071,7 +2053,7 @@ def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
     # Standard
     clothes_washer_values = { :id => "ClothesWasher",
                               :location => "living space",
-                              :modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_mef(),
+                              :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
                               :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
                               :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
                               :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
@@ -2092,7 +2074,6 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
@@ -2106,7 +2087,7 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
                              :location => "living space",
                              :fuel_type => "natural gas",
                              :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             :energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_ef(Constants.FuelTypeGas) }
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(Constants.FuelTypeGas) }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2121,7 +2102,7 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
                              :location => "living space",
                              :fuel_type => "electricity",
                              :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             :energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_ef(Constants.FuelTypeElectric) }
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(Constants.FuelTypeElectric) }
   elsif ['NASEO_Technical_Exercises/NASEO-09.xml',
          'NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
     clothes_dryer_values = { :id => "ClothesDryer",
@@ -2195,7 +2176,6 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_IAF/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-11.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-11.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
@@ -2349,11 +2329,11 @@ def copy_sample_files
                   'invalid_files/two-repeating-idref-dhw-indirect.xml',
                   'invalid_files/invalid-idref-dhw-indirect.xml',
                   'base-appliances-none.xml',
-                  'base-dhw-combi-tankless.xml',
                   'base-dhw-combi-tankless-outside.xml',
-                  'base-dhw-indirect.xml',
                   'base-dhw-indirect-outside.xml',
-                  'base-dhw-multiple.xml', # FIXME: When this is removed, also update test_water_heating.rb
+                  'base-dhw-jacket-electric.xml',
+                  'base-dhw-jacket-hpwh.xml',
+                  'base-dhw-jacket-indirect.xml',
                   'base-dhw-tank-gas-outside.xml',
                   'base-dhw-tank-heat-pump-outside.xml',
                   'base-dhw-tankless-electric-outside.xml',
@@ -2367,6 +2347,7 @@ def copy_sample_files
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-setpoints.xml',
                   'base-infiltration-ach-natural.xml',
+                  'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-mechvent-erv-asre.xml',
                   'base-mechvent-erv-atre.xml',
                   'base-misc-lighting-none.xml',

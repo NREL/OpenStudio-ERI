@@ -6,6 +6,10 @@ require_relative '../measure.rb'
 require 'fileutils'
 
 class HVACtest < MiniTest::Test
+  def before_setup
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
+  end
+
   def _dse(calc_type)
     if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
       dse = 1.0
@@ -488,18 +492,16 @@ class HVACtest < MiniTest::Test
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml_doc, ["central air conditioner", "electricity", nil, 1.0, 0.75])
-    _check_heating_system(hpxml_doc, ["Furnace", "natural gas", nil, 1.0, 0.75])
+    _check_cooling_system(hpxml_doc, ["central air conditioner", "electricity", nil, 1.0, 0.7])
+    _check_heating_system(hpxml_doc, ["Furnace", "natural gas", nil, 1.0, 0.8])
     _check_heat_pump(hpxml_doc)
     _check_thermostat(hpxml_doc, "manual thermostat")
   end
 
   def _test_measure(hpxml_name, calc_type)
-    root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     args_hash = {}
-    args_hash['hpxml_path'] = File.join(root_path, "workflow", "sample_files", hpxml_name)
-    args_hash['schemas_dir'] = File.join(root_path, "measures", "HPXMLtoOpenStudio", "hpxml_schemas")
-    args_hash['weather_dir'] = File.join(root_path, "weather")
+    args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
+    args_hash['weather_dir'] = File.join(@root_path, "weather")
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 
@@ -551,7 +553,7 @@ class HVACtest < MiniTest::Test
         assert_equal(Float(sys.elements["AnnualHeatingEfficiency[Units='AFUE']/Value"].text), afue)
       end
       assert_equal(Float(sys.elements["FractionHeatLoadServed"].text), frac_load)
-      _check_dse(hpxml_doc, sys, dse)
+      _check_dse_heat(hpxml_doc, sys, dse)
     end
   end
 
@@ -569,7 +571,8 @@ class HVACtest < MiniTest::Test
       end
       assert_equal(Float(sys.elements["FractionHeatLoadServed"].text), frac_load_heat)
       assert_equal(Float(sys.elements["FractionCoolLoadServed"].text), frac_load_cool)
-      _check_dse(hpxml_doc, sys, dse)
+      _check_dse_heat(hpxml_doc, sys, dse)
+      _check_dse_cool(hpxml_doc, sys, dse)
     end
   end
 
@@ -583,7 +586,7 @@ class HVACtest < MiniTest::Test
         assert_equal(Float(sys.elements["AnnualCoolingEfficiency[Units='SEER']/Value"].text), seer)
       end
       assert_equal(Float(sys.elements["FractionCoolLoadServed"].text), frac_load)
-      _check_dse(hpxml_doc, sys, dse)
+      _check_dse_cool(hpxml_doc, sys, dse)
     end
   end
 
@@ -592,21 +595,33 @@ class HVACtest < MiniTest::Test
     assert_equal(tstat.elements["ControlType"].text, tstattype)
   end
 
-  def _check_dse(hpxml_doc, sys, dse)
-    actual_dse_heat, actual_dse_cool = nil, nil
+  def _check_dse_heat(hpxml_doc, sys, dse)
+    actual_dse = nil
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution[DistributionSystemType[Other='DSE']]") do |dist_dse|
       next if sys.elements["DistributionSystem"].nil?
       next unless dist_dse.elements["SystemIdentifier"].attributes["id"] == sys.elements["DistributionSystem"].attributes["idref"]
 
-      actual_dse_heat = Float(dist_dse.elements["AnnualHeatingDistributionSystemEfficiency"].text)
-      actual_dse_cool = Float(dist_dse.elements["AnnualCoolingDistributionSystemEfficiency"].text)
+      actual_dse = Float(dist_dse.elements["AnnualHeatingDistributionSystemEfficiency"].text)
     end
     if dse.nil?
-      assert_nil(actual_dse_heat)
-      assert_nil(actual_dse_cool)
+      assert_nil(actual_dse)
     else
-      assert_equal(dse, actual_dse_heat)
-      assert_equal(dse, actual_dse_cool)
+      assert_equal(dse, actual_dse)
+    end
+  end
+
+  def _check_dse_cool(hpxml_doc, sys, dse)
+    actual_dse = nil
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution[DistributionSystemType[Other='DSE']]") do |dist_dse|
+      next if sys.elements["DistributionSystem"].nil?
+      next unless dist_dse.elements["SystemIdentifier"].attributes["id"] == sys.elements["DistributionSystem"].attributes["idref"]
+
+      actual_dse = Float(dist_dse.elements["AnnualCoolingDistributionSystemEfficiency"].text)
+    end
+    if dse.nil?
+      assert_nil(actual_dse)
+    else
+      assert_equal(dse, actual_dse)
     end
   end
 end

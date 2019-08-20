@@ -52,14 +52,19 @@ Climate and Weather
 
 This section describes fields specified in HPXML's ``ClimateandRiskZones``.
 
-``ClimateandRiskZones/ClimateZoneIECC`` specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
+The ``ClimateandRiskZones/ClimateZoneIECC`` element specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
 
-``ClimateandRiskZones/WeatherStation`` specifies the EnergyPlus weather file (EPW) to be used in the simulation. 
-The ``WeatherStation/WMO`` must be one of the acceptable WMO station numbers found in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
+The ``ClimateandRiskZones/WeatherStation`` element specifies the EnergyPlus weather file (EPW) to be used in the simulation. 
+The ``WeatherStation/WMO`` must be one of the acceptable TMY3 WMO station numbers found in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
+
+In addition to using the TMY3 weather files that are provided, custom weather files can be used if they are in EPW file format.
+To use custom weather files, first ensure that all weather files have a unique WMO station number (as provided in the first header line of the EPW file).
+Then place them in the ``weather`` directory and call ``openstudio energy_rating_index.rb --cache-weather``.
+After processing is complete, each EPW file will have a corresponding \*.cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
 
 .. note:: 
 
-  In the future, we hope to provide an automated lookup capability based on a building's address/zipcode or similar information. But for now, each software tool is responsible for providing this information.
+  In the future, we hope to provide an automated weather file selector based on a building's address/zipcode or similar information. But for now, each software tool is responsible for providing this information.
 
 Enclosure
 ~~~~~~~~~
@@ -303,7 +308,7 @@ Mechanical Ventilation
 **********************
 
 A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
-Inputs including ``FanType``, ``RatedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
+Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -328,17 +333,20 @@ Water Heaters
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
 Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
-In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor``.
 
-Depending on the type of water heater specified, additional elements are required:
+Depending on the type of water heater specified, additional elements are required/available:
 
-==========================  ===========  ==========  ===============  ========================
-WaterHeaterType             FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency
-==========================  ===========  ==========  ===============  ========================
-storage water heater        <any>        required    required         required if non-electric
-instantaneous water heater  <any>
-heat pump water heater      electricity  required
-==========================  ===========  ==========  ===============  ========================
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem        WaterHeaterInsulation/Jacket/JacketRValue
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+storage water heater                      required                             <any>        required    <optional>       required if non-electric                           <optional>
+instantaneous water heater                required                             <any>
+heat pump water heater                    required                             electricity  required                                                                        <optional>
+space-heating boiler with storage tank                                                      required                                               required                 <optional>
+space-heating boiler with tankless coil                                                                                                            required                 
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+
+For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
 
 Hot Water Distribution
 **********************
@@ -360,7 +368,7 @@ For a ``SystemType/Recirculation`` system, the following fields are required:
 In addition, a ``HotWaterDistribution/DrainWaterHeatRecovery`` (DWHR) may be specified.
 The DWHR system is defined by:
 
-- ``FacilitiesConnected``: 'all' if all of the showers in the home are connected to DWHR units; 'one' if if there are 2 or more showers in the home and only 1 shower is connected to a DWHR unit
+- ``FacilitiesConnected``: 'one' if there are multiple showers and only one of them is connected to a DWHR; 'all' if there is one shower and it's connected to a DWHR or there are two or more showers connected to a DWHR
 - ``EqualFlow``: 'true' if the DWHR supplies pre-heated water to both the fixture cold water piping and the hot water heater potable supply piping
 - ``Efficiency``: As rated and labeled in accordance with CSA 55.1
 
@@ -459,6 +467,25 @@ If, for example, the Rated Home is unsuccessful, first look in the ERIRatedHome/
 If there are no errors in that log file, then the error may be in the EnergyPlus simulation -- see ERIRatedHome/eplusout.err.
 
 Contact us if you can't figure out the cause of an error.
+
+.. _detailed-outputs:
+
+Detailed Outputs
+----------------
+
+Upon completion of the ERI calculation, multiple output files are available in the ``results`` directory:
+
+* Summary ``ERI_Results.csv`` and ``ERI_Worksheet.csv`` files
+* Summary annual energy consumption by fuel type and/or end use (e.g., ``ERIRatedHome.csv``)
+* HPXML files that describe the home's configuration (e.g., ``ERIRatedHome.xml``)
+
+In addition, raw EnergyPlus input/output files are available for each simulation (e.g., ``ERIRatedHome``, ``ERIReferenceHome``, etc. directories).
+
+.. warning:: 
+
+  It is highly discouraged for software tools to read the raw EnergyPlus output files. The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. If there are additional outputs of interest that are not available in our summary output files, please send us a request.
+
+See the `sample_results <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results>`_ directory for examples of these outputs.
 
 Sample Files
 ------------

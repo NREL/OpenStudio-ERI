@@ -71,6 +71,20 @@
             </VentilationRate>
           </Attic>
         </Attics>
+        <Foundations>
+          <Foundation>
+            <SystemIdentifier id='VentedCrawlspace'/>
+            <FoundationType>
+              <Crawlspace>
+                <Vented>true</Vented>
+              </Crawlspace>
+            </FoundationType>
+            <VentilationRate>
+              <UnitofMeasure>SLA</UnitofMeasure>
+              <Value>0.00667</Value>
+            </VentilationRate>
+          </Foundation>
+        </Foundations>
         <Roofs>
           <Roof>
             <SystemIdentifier id='AtticRoof'/>
@@ -315,7 +329,7 @@
             <VentilationFan>
               <SystemIdentifier id='MechanicalVentilation'/>
               <FanType>exhaust only</FanType>
-              <RatedFlowRate>58.7</RatedFlowRate>
+              <TestedFlowRate>58.7</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <FanPower>14.7</FanPower>
@@ -330,7 +344,6 @@
             <Location>living space</Location>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>40000.0</HeatingCapacity>
             <EnergyFactor>0.62</EnergyFactor>
             <RecoveryEfficiency>0.78</RecoveryEfficiency>
           </WaterHeatingSystem>
@@ -348,12 +361,12 @@
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
             <WaterFixtureType>shower head</WaterFixtureType>
-            <LowFlow>true</LowFlow>
+            <LowFlow>false</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture2'/>
             <WaterFixtureType>faucet</WaterFixtureType>
-            <LowFlow>true</LowFlow>
+            <LowFlow>false</LowFlow>
           </WaterFixture>
         </WaterHeating>
       </Systems>
@@ -361,9 +374,9 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
-          <ModifiedEnergyFactor>0.817</ModifiedEnergyFactor>
+          <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>704.0</RatedAnnualkWh>
-          <LabelElectricRate>0.08</LabelElectricRate>
+          <LabelElectricRate>0.0803</LabelElectricRate>
           <LabelGasRate>0.58</LabelGasRate>
           <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
           <Capacity>2.874</Capacity>
@@ -372,7 +385,7 @@
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
-          <EnergyFactor>2.67</EnergyFactor>
+          <CombinedEnergyFactor>2.32</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>

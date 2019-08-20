@@ -31,8 +31,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{this_dir}/sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[File.basename(xml)] = _get_method_results(results_csv)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
     assert(all_results.size > 0)
@@ -149,7 +149,7 @@ class EnergyRatingIndexTest < Minitest::Test
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next if xml.end_with? "ERIReferenceHome.xml"
 
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_reference_home_components(hpxmls[:ref], test_num)
 
@@ -157,9 +157,9 @@ class EnergyRatingIndexTest < Minitest::Test
       FileUtils.cp(hpxmls[:ref], xmldir)
       hpxmls[:ref] = "#{xmldir}/#{File.basename(hpxmls[:ref])}"
       _override_ref_ref_mech_vent_infil(hpxmls[:ref], xml)
-      hpxmls, results_csv, runtime = run_eri_and_check(hpxmls[:ref], this_dir, nil)
-      eri = _get_eri(results_csv)
-      all_results[File.basename(xml)]["e-Ratio"] = eri / 100.0
+      hpxmls, csvs, runtime = run_eri_and_check(hpxmls[:ref], this_dir, nil)
+      worksheet_results = _get_csv_results(csvs[:worksheet])
+      all_results[File.basename(xml)]["e-Ratio"] = worksheet_results["Total Loads TnML"] / worksheet_results["Total Loads TRL"]
     end
     assert(all_results.size > 0)
 
@@ -194,7 +194,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_AutoGen_IAD_Home")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_iad_home_components(hpxmls[:iad], test_num)
     end
@@ -232,46 +232,8 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_HERS_Method")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[xml] = _get_method_results(results_csv)
-    end
-    assert(all_results.size > 0)
-
-    # Write results to csv
-    keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case"] + keys
-      all_results.each_with_index do |(xml, results), i|
-        csv_line = [File.basename(xml)]
-        keys.each do |key|
-          csv_line << results[key]
-        end
-        csv << csv_line
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-
-    # Check results
-    all_results.each do |xml, results|
-      test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      _check_method_results(results, test_num, test_num == 2, false)
-    end
-  end
-
-  def test_resnet_hers_method_iaf
-    test_name = "RESNET_Test_Other_HERS_Method_IAF"
-    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
-
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
-    # Run simulations
-    all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_IAF")
-    Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[xml] = _get_method_results(results_csv)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[xml] = _get_csv_results(csvs[:results])
     end
     assert(all_results.size > 0)
 
@@ -296,9 +258,9 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
-  def test_resnet_hers_method_proposed
-    # Proposed New Method Test Suite (Approved by RESNET Board of Directors June 16, 2016)
-    test_name = "RESNET_Test_Other_HERS_Method_Proposed"
+  def test_resnet_hers_method_pre_addendum_e
+    # Tests before Addendum E (IAF) was in place
+    test_name = "RESNET_Test_Other_HERS_Method_PreAddendumE"
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
@@ -306,11 +268,11 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run simulations
     all_results = {}
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_Proposed")
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_PreAddendumE")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[xml] = _get_method_results(results_csv)
+      test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[xml] = _get_csv_results(csvs[:results])
     end
     assert(all_results.size > 0)
 
@@ -324,6 +286,49 @@ class EnergyRatingIndexTest < Minitest::Test
           csv_line << results[key]
         end
         csv << csv_line
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    all_results.each do |xml, results|
+      test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
+      _check_method_results(results, test_num, test_num == 2, false)
+    end
+  end
+
+  def test_resnet_hers_method_proposed
+    # Proposed New Method Test Suite (Approved by RESNET Board of Directors June 16, 2016)
+    test_name = "RESNET_Test_Other_HERS_Method_Proposed"
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
+    File.delete(test_results_csv) if File.exists? test_results_csv
+
+    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+
+    # Run simulations
+    all_results = {}
+    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
+    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_Proposed")
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[xml] = _get_csv_results(csvs[:results])
+    end
+    assert(all_results.size > 0)
+
+    # Write results to csv
+    keys = all_results.values[0].keys
+    CSV.open(test_results_csv, "w") do |csv|
+      csv << ["Test Case"] + keys
+      ["AC", "AL"].each do |test_type|
+        all_results.each_with_index do |(xml, results), i|
+          next unless xml.include? test_type
+
+          csv_line = [File.basename(xml)]
+          keys.each do |key|
+            csv_line << results[key]
+          end
+          csv << csv_line
+        end
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -352,8 +357,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_Task_Group")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[File.basename(xml)] = _get_method_results(results_csv)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
     end
     assert(all_results.size > 0)
 
@@ -507,8 +512,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Hot_Water")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[xml] = _get_hot_water(results_csv)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[xml] = _get_hot_water(csvs[:results])
       assert_operator(all_results[xml], :>, 0)
     end
     assert(all_results.size > 0)
@@ -561,8 +566,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_Hot_Water_PreAddendumA")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[xml] = _get_hot_water(results_csv)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[xml] = _get_hot_water(csvs[:results])
       assert_operator(all_results[xml], :>, 0)
     end
     assert(all_results.size > 0)
@@ -619,8 +624,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{this_dir}/tests/NASEO_Technical_Exercises"
     Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
-      hpxmls, results_csv, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[File.basename(xml)] = _get_method_results(results_csv)
+      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
     assert(all_results.size > 0)
@@ -676,13 +681,14 @@ class EnergyRatingIndexTest < Minitest::Test
     hpxmls = {}
     hpxmls[:ref] = File.join(this_dir, "results", "ERIReferenceHome.xml")
     hpxmls[:rated] = File.join(this_dir, "results", "ERIRatedHome.xml")
-    results_csv = File.join(this_dir, "results", "ERI_Results.csv")
-    worksheet_csv = File.join(this_dir, "results", "ERI_Worksheet.csv")
+    csvs = {}
+    csvs[:results] = File.join(this_dir, "results", "ERI_Results.csv")
+    csvs[:worksheet] = File.join(this_dir, "results", "ERI_Worksheet.csv")
     if expect_error
       assert(!File.exists?(hpxmls[:ref]))
       assert(!File.exists?(hpxmls[:rated]))
-      assert(!File.exists?(results_csv))
-      assert(!File.exists?(worksheet_csv))
+      assert(!File.exists?(csvs[:results]))
+      assert(!File.exists?(csvs[:worksheet]))
 
       if not expect_error_msgs.nil?
         run_log = File.readlines(File.join(this_dir, "ERIRatedHome", "run.log")).map(&:strip)
@@ -702,8 +708,8 @@ class EnergyRatingIndexTest < Minitest::Test
       # Check all output files exist
       assert(File.exists?(hpxmls[:ref]))
       assert(File.exists?(hpxmls[:rated]))
-      assert(File.exists?(results_csv))
-      assert(File.exists?(worksheet_csv))
+      assert(File.exists?(csvs[:results]))
+      assert(File.exists?(csvs[:worksheet]))
       if using_iaf
         hpxmls[:iad] = File.join(this_dir, "results", "ERIIndexAdjustmentDesign.xml")
         assert(File.exists?(hpxmls[:iad]))
@@ -733,7 +739,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     end
 
-    return hpxmls, results_csv, runtime
+    return hpxmls, csvs, runtime
   end
 
   def run_straight_sim(xml, this_dir, test_name)
@@ -1502,11 +1508,23 @@ class EnergyRatingIndexTest < Minitest::Test
     # Appliances: ClothesDryer
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
       cd_fuel = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
-      cd_ef = Float(XMLHelper.get_value(appl, "EnergyFactor"))
+      cd_ef = XMLHelper.get_value(appl, "EnergyFactor")
+      if cd_ef.nil?
+        cd_cef = Float(XMLHelper.get_value(appl, "CombinedEnergyFactor"))
+        cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(cd_cef)
+      else
+        cd_ef = Float(cd_ef)
+      end
       cd_control = XMLHelper.get_value(appl, "ControlType")
       cw_ler = Float(XMLHelper.get_value(appl, "../ClothesWasher/RatedAnnualkWh"))
       cw_cap = Float(XMLHelper.get_value(appl, "../ClothesWasher/Capacity"))
-      cw_mef = Float(XMLHelper.get_value(appl, "../ClothesWasher/ModifiedEnergyFactor"))
+      cw_mef = XMLHelper.get_value(appl, "../ClothesWasher/ModifiedEnergyFactor")
+      if cw_mef.nil?
+        cw_imef = Float(XMLHelper.get_value(appl, "../ClothesWasher/IntegratedModifiedEnergyFactor"))
+        cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(cw_imef)
+      else
+        cw_mef = Float(cw_mef)
+      end
       cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nbeds, cd_fuel, cd_ef, cd_control, cw_ler, cw_cap, cw_mef)
       btu = UnitConversions.convert(cd_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cd_annual_therm, "therm", "Btu")
       xml_appl_sens += (cd_frac_sens * btu)
@@ -1603,7 +1621,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hours = Float(XMLHelper.get_value(mv, "HoursInOperation"))
       fan_w = Float(XMLHelper.get_value(mv, "FanPower"))
       mv_kwh += fan_w * 8.76 * hours / 24.0
-      mv_cfm += Float(XMLHelper.get_value(mv, "RatedFlowRate"))
+      mv_cfm += Float(XMLHelper.get_value(mv, "TestedFlowRate"))
     end
     return mv_kwh, mv_cfm
   end
@@ -1617,17 +1635,11 @@ class EnergyRatingIndexTest < Minitest::Test
     return ref_pipe_l, ref_loop_l
   end
 
-  def _get_eri(results_csv)
-    CSV.foreach(results_csv) do |row|
-      next if row[0] != "ERI"
-
-      return Float(row[1])
-    end
-  end
-
-  def _get_method_results(results_csv)
+  def _get_csv_results(csv)
     results = {}
-    CSV.foreach(results_csv) do |row|
+    CSV.foreach(csv) do |row|
+      next if row[1].strip.size == 0
+
       if row[1].include? "," # Occurs if, e.g., multiple HVAC
         results[row[0]] = row[1]
       else
@@ -2000,7 +2012,7 @@ class EnergyRatingIndexTest < Minitest::Test
       sys_id = XMLHelper.add_element(ventilation_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", orig_mech_vent_values[:id])
       XMLHelper.add_element(ventilation_fan, "FanType", orig_mech_vent_values[:fan_type])
-      XMLHelper.add_element(ventilation_fan, "RatedFlowRate", Float(orig_mech_vent_values[:rated_flow_rate]))
+      XMLHelper.add_element(ventilation_fan, "TestedFlowRate", Float(orig_mech_vent_values[:tested_flow_rate]))
       XMLHelper.add_element(ventilation_fan, "HoursInOperation", Float(orig_mech_vent_values[:hours_in_operation]))
       XMLHelper.add_element(ventilation_fan, "UsedForWholeBuildingVentilation", true)
       XMLHelper.add_element(ventilation_fan, "TotalRecoveryEfficiency", Float(orig_mech_vent_values[:total_recovery_efficiency])) unless orig_mech_vent_values[:total_recovery_efficiency].nil?

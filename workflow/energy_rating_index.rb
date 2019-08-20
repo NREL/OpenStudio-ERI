@@ -8,6 +8,7 @@ require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
 require_relative "../measures/HPXMLtoOpenStudio/measure"
 require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
+require_relative "../measures/HPXMLtoOpenStudio/resources/waterheater"
 require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
 
 # TODO: Add error-checking
@@ -89,6 +90,22 @@ def get_sql_result(sqlValue, design)
   fail "Could not find sql result."
 end
 
+def get_combi_hvac_id(hpxml_doc, sys_id)
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+    next unless sys_id == dhw_system.elements["SystemIdentifier"].attributes["id"]
+    next unless ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
+
+    return dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
+  end
+
+  return nil
+end
+
+def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
+  water_sys_frac = (hx_load) / htg_load
+  return htg_energy * water_sys_frac
+end
+
 def read_output(design, designdir, output_hpxml_path)
   sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
@@ -106,8 +123,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  if [Constants.CalcTypeERIReferenceHome,
-      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
     design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design)
     design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, design)
   end
@@ -149,16 +165,20 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingFuel).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:fuelHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-    # Load
-    vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingLoad).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Disaggregated Fan Energy Use
-    keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     fan_pump_output = get_sql_query_result(sqlFile, query)
     design_output[:elecHeatingBySystem][sys_id] += fan_pump_output
-    design_output[:loadHeatingBySystem][sys_id] += fan_pump_output
+    # Reference Load
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+      # Only ever gas furnace, gas boiler, or electric ASHP (autosized)
+      vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingLoad).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:loadHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      design_output[:loadHeatingBySystem][sys_id] += fan_pump_output
+      design_output[:loadHeatingBySystem][sys_id] *= design_output[:hpxml_dse_heats][sys_id] # Remove effect of DSE on load
+    end
   end
 
   # Space Cooling (by System)
@@ -171,16 +191,20 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingElectricity).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:elecCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-    # Load
-    vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingLoad).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
     # Disaggregated Fan Energy Use
-    keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     fan_pump_output = get_sql_query_result(sqlFile, query)
     design_output[:elecCoolingBySystem][sys_id] += fan_pump_output
-    design_output[:loadCoolingBySystem][sys_id] -= fan_pump_output
+    # Reference Load
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+      # Only ever central air conditioner (autosized)
+      vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingLoad).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:loadCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+      design_output[:loadCoolingBySystem][sys_id] -= fan_pump_output
+      design_output[:loadCoolingBySystem][sys_id] *= design_output[:hpxml_dse_cools][sys_id] # Remove effect of DSE on load
+    end
   end
 
   # Water Heating (by System)
@@ -204,10 +228,31 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingFuel).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:fuelHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-    # Load
-    vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    # Reference Load
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+      # Only ever conventional storage tank water heater
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    end
+    # Combi boiler water system
+    hvac_id = get_combi_hvac_id(hpxml_doc, sys_id)
+    if not hvac_id.nil?
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoilerHeatExchanger).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      hx_load = get_sql_query_result(sqlFile, query)
+      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoiler).join("','") + "'"
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND  KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      htg_load = get_sql_query_result(sqlFile, query)
+
+      # Split combi boiler system energy use by water system load fraction
+      htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
+      design_output[:elecHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
+      design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
+      htg_ec_fuel = design_output[:fuelHeatingBySystem][hvac_id]
+      design_output[:fuelHotWaterBySystem][sys_id] += get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
+      design_output[:fuelHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
+    end
   end
 
   # PV
@@ -358,7 +403,13 @@ def get_dhw_fuels(hpxml_doc)
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
-    dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
+    if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
+      orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+      hvac_idref = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
+      dhw_fuels[sys_id] = Waterheater.get_combi_system_fuel(hvac_idref, orig_details)
+    else
+      dhw_fuels[sys_id] = XMLHelper.get_value(dhw_system, "FuelType")
+    end
   end
 
   if dhw_fuels.empty?
@@ -509,6 +560,31 @@ def get_eec_dhws(hpxml_doc)
     else
       value_adj = 1.0
     end
+
+    ## Combi system requires recalculating ef
+    if value.nil?
+      if wh_type == 'space-heating boiler with tankless coil'
+        combi_type = Constants.WaterHeaterTypeTankless
+        ua = nil
+      elsif wh_type == 'space-heating boiler with storage tank'
+        vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
+        jacket_r = XMLHelper.get_value(dhw_system, "WaterHeaterInsulation/Jacket/JacketRValue").to_f
+        assumed_ef = Waterheater.get_indirect_assumed_ef_for_tank_losses()
+        assumed_fuel = Waterheater.get_indirect_assumed_fuel_for_tank_losses()
+        dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, assumed_fuel, assumed_ef, nil, nil, Constants.WaterHeaterTypeTank, 0.0, jacket_r)
+        combi_type = Constants.WaterHeaterTypeTank
+      end
+      combi_boiler_afue = nil
+      hvac_idref = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
+      hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |heating_system|
+        next unless heating_system.elements["SystemIdentifier"].attributes["id"] == hvac_idref
+
+        combi_boiler_afue = Float(XMLHelper.get_value(heating_system, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
+        break
+      end
+      value = Waterheater.calc_tank_EF(combi_type, ua, combi_boiler_afue)
+    end
+
     if not value.nil? and not value_adj.nil?
       eec_dhws[sys_id] = get_eec_value_numerator('EF') / (Float(value) * Float(value_adj))
     end
@@ -585,7 +661,7 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_heat] = {}
 
   rated_output[:hpxml_heat_sys_ids].each do |s|
-    reul_heat = ref_output[:loadHeatingBySystem][s] * ref_output[:hpxml_dse_heats][s] # Loads include DSE, so we must remove the effect
+    reul_heat = ref_output[:loadHeatingBySystem][s]
 
     coeff_heat_a = nil
     coeff_heat_b = nil
@@ -646,7 +722,7 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_cool] = {}
 
   rated_output[:hpxml_cool_sys_ids].each do |s|
-    reul_cool = ref_output[:loadCoolingBySystem][s] * ref_output[:hpxml_dse_cools][s] # Loads include DSE, so we must remove the effect
+    reul_cool = ref_output[:loadCoolingBySystem][s]
 
     coeff_cool_a = 3.8090
     coeff_cool_b = 0.0
@@ -905,23 +981,12 @@ end
 def download_epws
   weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
 
-  num_epws_expected = File.readlines(File.join(weather_dir, "data.csv")).size - 1
-  num_epws_actual = Dir[File.join(weather_dir, "*.epw")].count
-  num_cache_expcted = num_epws_expected
-  num_cache_actual = Dir[File.join(weather_dir, "*.cache")].count
-  if num_epws_actual == num_epws_expected and num_cache_actual == num_cache_expcted
-    puts "Weather directory is already up-to-date."
-    puts "#{num_epws_actual} weather files are available in the weather directory."
-    puts "Completed."
-    exit!
-  end
-
   require 'net/http'
   require 'tempfile'
 
   tmpfile = Tempfile.new("epw")
 
-  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/openstudio-eri-tmy3s-cache.zip")
+  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/tmy3s-cache.zip")
   http = Net::HTTP.new(url.host, url.port)
 
   params = { 'User-Agent' => 'curl/7.43.0', 'Accept-Encoding' => 'identity' }
@@ -959,6 +1024,47 @@ def download_epws
   exit!
 end
 
+def cache_weather
+  # Process all epw files through weather.rb and serialize objects
+  # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
+  weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
+  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+  puts "Creating *.cache for weather files..."
+  Dir["#{weather_dir}/*.epw"].each do |epw|
+    next if File.exists? epw.gsub(".epw", ".cache")
+
+    puts "Processing #{epw}..."
+    model = OpenStudio::Model::Model.new
+    epw_file = OpenStudio::EpwFile.new(epw)
+    OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
+    weather = WeatherProcess.new(model, runner)
+    if weather.error? or weather.data.WSF.nil?
+      fail "Error."
+    end
+
+    File.open(epw.gsub(".epw", ".cache"), "wb") do |file|
+      Marshal.dump(weather, file)
+    end
+
+    # Also add file to data.csv
+    weather_data = []
+    weather_data << epw_file.wmoNumber            # wmo
+    weather_data << epw_file.city                 # station_name
+    weather_data << epw_file.stateProvinceRegion  # state
+    weather_data << epw_file.latitude             # latitude
+    weather_data << epw_file.longitude            # longitude
+    weather_data << epw_file.timeZone.to_i        # timezone
+    weather_data << epw_file.elevation.to_i       # elevation
+    weather_data << "???"                         # class
+    weather_data << File.basename(epw)            # filename
+    open(File.join(weather_dir, "data.csv"), 'a') do |f|
+      f << weather_data.join(",") + "\n"
+    end
+  end
+  puts "Completed."
+  exit!
+end
+
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -s -x sample_files/base.xml\n"
@@ -973,6 +1079,10 @@ OptionParser.new do |opts|
 
   opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
     options[:epws] = t
+  end
+
+  opts.on('-c', '--cache-weather', 'Caches all weather files') do |t|
+    options[:cache] = t
   end
 
   options[:debug] = false
@@ -1012,6 +1122,10 @@ end
 
 if options[:epws]
   download_epws
+end
+
+if options[:cache]
+  cache_weather
 end
 
 if not options[:hpxml]
