@@ -154,6 +154,14 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecHeatingBySystem] = {}
   design_output[:fuelHeatingBySystem] = {}
   design_output[:loadHeatingBySystem] = {}
+  # Reference Load
+  design_output[:loadHeatingBldg] = {}
+  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+    # Only ever gas furnace, gas boiler, or electric ASHP (autosized)
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "htg load" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
+  end
   design_output[:hpxml_heat_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -185,11 +193,7 @@ def read_output(design, designdir, output_hpxml_path)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      # Only ever gas furnace, gas boiler, or electric ASHP (autosized)
-      vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingLoad).join("','") + "'"
-      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:loadHeatingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-      design_output[:loadHeatingBySystem][sys_id] += fan_pump_output
+      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc)
     end
   end
 
@@ -197,6 +201,14 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:elecCoolingBySystemRaw] = {}
   design_output[:elecCoolingBySystem] = {}
   design_output[:loadCoolingBySystem] = {}
+  # Reference Load
+  design_output[:loadCoolingBldg] = {}
+  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+    # Only ever central air conditioner (autosized)
+    ems_keys = "'" + ep_output_names.select { |name| name.include? "clg load" }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
+  end
   design_output[:hpxml_cool_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -221,11 +233,7 @@ def read_output(design, designdir, output_hpxml_path)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      # Only ever central air conditioner (autosized)
-      vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingLoad).join("','") + "'"
-      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:loadCoolingBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-      design_output[:loadCoolingBySystem][sys_id] -= fan_pump_output
+      design_output[:loadCoolingBySystem][sys_id] = split_clg_load_to_system_by_fraction(sys_id, design_output[:loadCoolingBldg], hpxml_doc)
     end
   end
 
@@ -378,6 +386,22 @@ def read_output(design, designdir, output_hpxml_path)
   design_output.delete(:fuelHotWaterBySystemRaw)
 
   return design_output
+end
+
+def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc)
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+    next unless htg_system.elements["SystemIdentifier"].attributes["id"] == sys_id
+
+    return bldg_load * Float(XMLHelper.get_value(htg_system, "FractionHeatLoadServed"))
+  end
+end
+
+def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc)
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+    next unless clg_system.elements["SystemIdentifier"].attributes["id"] == sys_id
+
+    return bldg_load * Float(XMLHelper.get_value(clg_system, "FractionCoolLoadServed"))
+  end
 end
 
 def get_all_var_keys(var)
