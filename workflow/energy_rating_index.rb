@@ -158,7 +158,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:loadHeatingBldg] = {}
   if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
     # Only ever gas furnace, gas boiler, or electric ASHP (autosized)
-    ems_keys = "'" + ep_output_names.select { |name| name.include? "htg load" }.join("','") + "'"
+	ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
   end
@@ -205,7 +205,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:loadCoolingBldg] = {}
   if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
     # Only ever central air conditioner (autosized)
-    ems_keys = "'" + ep_output_names.select { |name| name.include? "clg load" }.join("','") + "'"
+    ems_keys = "'" + Constants.EMSOutputNameCoolingLoad + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
   end
