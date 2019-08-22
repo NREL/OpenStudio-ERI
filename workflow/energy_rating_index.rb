@@ -193,7 +193,7 @@ def read_output(design, designdir, output_hpxml_path)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc)
+      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc, design)
     end
   end
 
@@ -233,7 +233,7 @@ def read_output(design, designdir, output_hpxml_path)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      design_output[:loadCoolingBySystem][sys_id] = split_clg_load_to_system_by_fraction(sys_id, design_output[:loadCoolingBldg], hpxml_doc)
+      design_output[:loadCoolingBySystem][sys_id] = split_clg_load_to_system_by_fraction(sys_id, design_output[:loadCoolingBldg], hpxml_doc, design)
     end
   end
 
@@ -388,19 +388,29 @@ def read_output(design, designdir, output_hpxml_path)
   return design_output
 end
 
-def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc)
+def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
-    next unless htg_system.elements["SystemIdentifier"].attributes["id"] == sys_id or XMLHelper.get_value(htg_system, "extension/SeedId") == sys_id
+    next unless get_system_or_seed_id(htg_system, design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(htg_system, "FractionHeatLoadServed"))
   end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    next unless get_system_or_seed_id(heat_pump, design) == sys_id
+
+    return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed"))
+  end
 end
 
-def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc)
+def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
-    next unless clg_system.elements["SystemIdentifier"].attributes["id"] == sys_id or XMLHelper.get_value(clg_system, "extension/SeedId") == sys_id
+    next unless get_system_or_seed_id(clg_system, design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(clg_system, "FractionCoolLoadServed"))
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+    next unless get_system_or_seed_id(heat_pump, design) == sys_id
+
+    return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionCoolLoadServed"))
   end
 end
 
