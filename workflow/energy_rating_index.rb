@@ -158,7 +158,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:loadHeatingBldg] = {}
   if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
     # Only ever gas furnace, gas boiler, or electric ASHP (autosized)
-	ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
+    ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
   end
@@ -390,7 +390,7 @@ end
 
 def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
-    next unless htg_system.elements["SystemIdentifier"].attributes["id"] == sys_id
+    next unless htg_system.elements["SystemIdentifier"].attributes["id"] == sys_id or XMLHelper.get_value(htg_system, "extension/SeedId") == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(htg_system, "FractionHeatLoadServed"))
   end
@@ -398,7 +398,7 @@ end
 
 def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
-    next unless clg_system.elements["SystemIdentifier"].attributes["id"] == sys_id
+    next unless clg_system.elements["SystemIdentifier"].attributes["id"] == sys_id or XMLHelper.get_value(clg_system, "extension/SeedId") == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(clg_system, "FractionCoolLoadServed"))
   end
