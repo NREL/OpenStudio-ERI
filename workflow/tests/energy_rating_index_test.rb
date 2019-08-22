@@ -813,6 +813,7 @@ class EnergyRatingIndexTest < Minitest::Test
     base_reul = base_results[result_name]
     all_results.each do |compare_xml, compare_results|
       next unless compare_xml.include? files_include
+      next if compare_xml.include? "multiple"
 
       if compare_results[result_name].to_s.include? ","
         compare_reul = compare_results[result_name].split(",").map(&:to_f).inject(0, :+) # sum values
