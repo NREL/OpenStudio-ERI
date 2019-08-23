@@ -743,7 +743,6 @@ class EnergyRatingIndex301Ruleset
                    perimeter_insulation_depth: 0,
                    under_slab_insulation_width: 0,
                    under_slab_insulation_spans_entire_slab: nil,
-                   depth_below_grade: 0,
                    carpet_fraction: 0,
                    carpet_r_value: 0,
                    perimeter_insulation_r_value: 0,
