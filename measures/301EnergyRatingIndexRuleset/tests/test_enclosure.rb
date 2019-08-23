@@ -194,19 +194,19 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_slabs(hpxml_doc, 1350, 150, 0, 0, 0, 0, 7)
+    _check_slabs(hpxml_doc, 1350, 150, 0, 0, 0, 0, nil)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_slabs(hpxml_doc, 1350, 150, 0, 0, 0, 0, 7)
+    _check_slabs(hpxml_doc, 1350, 150, 0, 0, 0, 0, nil)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, 0)
+    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, nil)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, 0)
+    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, nil)
 
     hpxml_name = "base-foundation-slab.xml"
 
@@ -220,11 +220,11 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, 0)
+    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, nil)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, 0)
+    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, nil)
   end
 
   def test_enclosure_windows
@@ -663,7 +663,7 @@ class EnclosureTest < MiniTest::Test
         under_ins_width_values << 999
       end
       under_ins_r_values << Float(slab.elements["UnderSlabInsulation/Layer/NominalRValue"].text)
-      depth_bg_values << Float(slab.elements["DepthBelowGrade"].text)
+      depth_bg_values << Float(slab.elements["DepthBelowGrade"].text) unless slab.elements["DepthBelowGrade"].nil?
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.001)
@@ -672,7 +672,11 @@ class EnclosureTest < MiniTest::Test
     assert_in_epsilon(perim_ins_r, perim_ins_r_values.inject(:+) / perim_ins_r_values.size, 0.001)
     assert_in_epsilon(under_ins_width, under_ins_width_values.inject(:+) / under_ins_width_values.size, 0.001)
     assert_in_epsilon(under_ins_r, under_ins_r_values.inject(:+) / under_ins_r_values.size, 0.001)
-    assert_in_epsilon(depth_below_grade, depth_bg_values.inject(:+) / depth_bg_values.size, 0.001)
+    if depth_below_grade.nil?
+      assert(depth_bg_values.empty?)
+    else
+      assert_in_epsilon(depth_below_grade, depth_bg_values.inject(:+) / depth_bg_values.size, 0.001)
+    end
   end
 
   def _check_windows(hpxml_doc, azimuth_values = {})
