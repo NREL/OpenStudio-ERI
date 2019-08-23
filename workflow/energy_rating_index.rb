@@ -179,8 +179,7 @@ def read_output(design, designdir, output_hpxml_path)
     # Disaggregated Fan Energy Use
     ems_keys = "'" + ep_output_names.select { |name| name.include? "Heating" }.join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    fan_pump_output = get_sql_query_result(sqlFile, query)
-    design_output[:elecHeatingBySystemRaw][sys_id] += fan_pump_output
+    design_output[:elecHeatingBySystemRaw][sys_id] += get_sql_query_result(sqlFile, query)
 
     # apply dse to scale up energy use excluding no distribution systems
     if design_output[:hpxml_dse_heats][sys_id].nil?
@@ -221,8 +220,7 @@ def read_output(design, designdir, output_hpxml_path)
     # Disaggregated Fan Energy Use
     ems_keys = "'" + ep_output_names.select { |name| name.include? "Cooling" }.join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    fan_pump_output = get_sql_query_result(sqlFile, query)
-    design_output[:elecCoolingBySystemRaw][sys_id] += fan_pump_output
+    design_output[:elecCoolingBySystemRaw][sys_id] += get_sql_query_result(sqlFile, query)
 
     # apply dse to scale up electricity energy use excluding no distribution systems
     if design_output[:hpxml_dse_cools][sys_id].nil?
@@ -384,6 +382,19 @@ def read_output(design, designdir, output_hpxml_path)
   design_output.delete(:elecCoolingBySystemRaw)
   design_output.delete(:elecHotWaterBySystemRaw)
   design_output.delete(:fuelHotWaterBySystemRaw)
+
+  # REUL check: system cooling/heating sum to total bldg load
+  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+    sum_sys_htg_load = design_output[:loadHeatingBySystem].values.inject(0) { |sum, value| sum + value }
+    if (sum_sys_htg_load - design_output[:loadHeatingBldg]).abs > tolerance
+      fail "[#{design}] system heating load not sum to total building heating load"
+    end
+
+    sum_sys_clg_load = design_output[:loadCoolingBySystem].values.inject(0) { |sum, value| sum + value }
+    if (sum_sys_clg_load - design_output[:loadCoolingBldg]).abs > tolerance
+      fail "[#{design}] system cooling load not sum to total building cooling load"
+    end
+  end
 
   return design_output
 end

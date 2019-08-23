@@ -57,7 +57,6 @@ class EnergyRatingIndexTest < Minitest::Test
     _test_reul(all_results, "base-dhw", "REUL Hot Water (MBtu)")
 
     # Verify that REUL Heating/Cooling are identical across HVAC types
-    # FIXME: Uncomment below
     _test_reul(all_results, "base-hvac", "REUL Heating (MBtu)")
     _test_reul(all_results, "base-hvac", "REUL Cooling (MBtu)")
   end
