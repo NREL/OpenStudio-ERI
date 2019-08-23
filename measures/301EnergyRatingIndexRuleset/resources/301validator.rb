@@ -178,7 +178,7 @@ class EnergyRatingIndex301Validator
         "ExposedPerimeter" => one,
         "PerimeterInsulationDepth" => one,
         "[UnderSlabInsulationWidth | [UnderSlabInsulationSpansEntireSlab='true']]" => one,
-        "DepthBelowGrade" => one,
+        "[DepthBelowGrade | [InteriorAdjacentTo!='living space']]" => one_or_more, # DepthBelowGrade only required when InteriorAdjacentTo='living space'
         "PerimeterInsulation/SystemIdentifier" => one, # Required by HPXML schema
         "PerimeterInsulation/Layer[InstallationType='continuous']/NominalRValue" => one,
         "UnderSlabInsulation/SystemIdentifier" => one, # Required by HPXML schema
@@ -564,8 +564,6 @@ class EnergyRatingIndex301Validator
 
     }
 
-    # TODO: Make common across all validators
-    # TODO: Profile code for runtime improvements
     errors = []
     requirements.each do |parent, requirement|
       if parent.nil? # Unconditional
