@@ -270,10 +270,10 @@ def read_output(design, designdir, output_hpxml_path)
       htg_load = get_sql_query_result(sqlFile, query)
 
       # Split combi boiler system energy use by water system load fraction
-      htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
+      htg_ec_elec = design_output[:elecHeatingBySystemRaw][hvac_id]
       design_output[:elecHotWaterBySystem][sys_id] = design_output[:elecHotWaterBySystemRaw][sys_id] + get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
       design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
-      htg_ec_fuel = design_output[:fuelHeatingBySystem][hvac_id]
+      htg_ec_fuel = design_output[:fuelHeatingBySystemRaw][hvac_id]
       design_output[:fuelHotWaterBySystem][sys_id] = design_output[:fuelHotWaterBySystemRaw][sys_id] + get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
       design_output[:fuelHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_fuel) unless htg_ec_fuel.nil?
     else
