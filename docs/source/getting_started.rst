@@ -34,4 +34,4 @@ Output
 ------
 
 Upon completion, ERI is provided in the console (stdout) as well as available in some of the summary output files.
-See :ref:`detailed-outputs` for a description of all available outputs.
+See the :ref:`outputs` section for a description of all available outputs.

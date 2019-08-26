@@ -1012,9 +1012,9 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Other Fuel: Clothes Dryer (MBtu)", design_output[:otherClothesDryer]]
   results_out << ["Other Fuel: Range/Oven (MBtu)", design_output[:otherRangeOven]]
   results_out << ["", ""] # line break
-  results_out << ["Delivered Energy: Heating (MBtu)", design_output[:loadHeatingBldg]]
-  results_out << ["Delivered Energy: Cooling (MBtu)", design_output[:loadCoolingBldg]]
-  results_out << ["Delivered Energy: Hot Water (MBtu)", design_output[:loadHotWaterBldg]]
+  results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
+  results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
+  results_out << ["Load: Hot Water (MBtu)", design_output[:loadHotWaterBldg]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
