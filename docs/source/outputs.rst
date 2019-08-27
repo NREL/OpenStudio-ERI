@@ -35,8 +35,8 @@ Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Lighting``, ``Me
 
 The final section in the CSV includes the heating, cooling, and hot water loads.
 Heating and cooling loads include duct losses; hot water loads exclude tank losses.
-Note that the heating and cooling loads are calculated using the difference between the home's setpoint temperature and living space temperature for each hour.
-Thus a heating or cooling system that is undersized will not maintain the living space temperature at setpoint and will result in erroneously reported values.
+Note that the heating and cooling loads are calculated using the predicted sensible load required to meet the living space's thermostat setpoint.
+A heating or cooling system that is undersized and does not maintain the living space temperature at setpoint will result in erroneously reported values.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
