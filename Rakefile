@@ -2344,6 +2344,7 @@ def copy_sample_files
                   'base-hvac-boiler-gas-only-no-eae.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
+                  'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-setpoints.xml',
