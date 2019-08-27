@@ -54,33 +54,11 @@ class EnergyRatingIndexTest < Minitest::Test
     # Cross-simulation tests
 
     # Verify that REUL Hot Water is identical across water heater types
-    base_results = all_results["base.xml"]
-    compare_xmls = ["base-dhw-tank-gas.xml",
-                    "base-dhw-tank-oil.xml",
-                    "base-dhw-tank-propane.xml",
-                    "base-dhw-tank-heat-pump.xml",
-                    "base-dhw-tankless-electric.xml",
-                    "base-dhw-tankless-gas.xml",
-                    "base-dhw-multiple.xml",
-                    "base-dhw-combi-tankless.xml",
-                    "base-dhw-indirect.xml",
-                    "base-dhw-jacket-gas.xml"]
-    if not base_results.nil?
-      base_reul_dhw = base_results["REUL Hot Water (MBtu)"]
-      compare_xmls.each do |compare_xml|
-        compare_results = all_results[compare_xml]
-        next if compare_results.nil?
+    _test_reul(all_results, "base-dhw", "REUL Hot Water (MBtu)")
 
-        if compare_xml == "base-dhw-multiple.xml"
-          compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"].split(",").map(&:to_f).inject(0, :+) # sum values
-        else
-          compare_reul_dhw = compare_results["REUL Hot Water (MBtu)"]
-        end
-        assert_in_epsilon(base_reul_dhw, compare_reul_dhw, 0.02)
-      end
-    end
-
-    # TODO: Verify that REUL Heating & REUL Cooling are identical across HVAC types
+    # Verify that REUL Heating/Cooling are identical across HVAC types
+    _test_reul(all_results, "base-hvac", "REUL Heating (MBtu)")
+    _test_reul(all_results, "base-hvac", "REUL Cooling (MBtu)")
   end
 
   def test_invalid_xmls
@@ -825,6 +803,25 @@ class EnergyRatingIndexTest < Minitest::Test
     FileUtils.copy_entry rundir, File.join(@test_files_dir, test_name, File.basename(xml))
 
     return sql_path, sim_time
+  end
+
+  def _test_reul(all_results, files_include, result_name)
+    base_results = all_results["base.xml"]
+    return if base_results.nil?
+
+    base_reul = base_results[result_name]
+    all_results.each do |compare_xml, compare_results|
+      next unless compare_xml.include? files_include
+      next if compare_xml.include? "multiple"
+
+      if compare_results[result_name].to_s.include? ","
+        compare_reul = compare_results[result_name].split(",").map(&:to_f).inject(0, :+) # sum values
+      else
+        compare_reul = compare_results[result_name]
+      end
+
+      assert_in_epsilon(base_reul, compare_reul, 0.01)
+    end
   end
 
   def _get_simulation_load_results(sql_path)
