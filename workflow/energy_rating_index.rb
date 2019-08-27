@@ -146,20 +146,22 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:gasAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design)
   design_output[:otherAppliances] = get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
 
+  # Building Space Heating Load (Delivered Energy)
+  ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
+  
+  # Building Space Cooling Load (Delivered Energy)
+  ems_keys = "'" + Constants.EMSOutputNameCoolingLoad + "'"
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
+  
   # Space Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_hvac.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHeatingBySystem] = {}
   design_output[:gasHeatingBySystem] = {}
   design_output[:otherHeatingBySystem] = {}
   design_output[:loadHeatingBySystem] = {}
-  # Reference Load
-  design_output[:loadHeatingBldg] = {}
-  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-    # Only ever gas furnace, gas boiler, or electric ASHP (autosized)
-    ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
-  end
   design_output[:hpxml_heat_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -211,14 +213,6 @@ def read_output(design, designdir, output_hpxml_path)
   # Space Cooling (by System)
   design_output[:elecCoolingBySystem] = {}
   design_output[:loadCoolingBySystem] = {}
-  # Reference Load
-  design_output[:loadCoolingBldg] = {}
-  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-    # Only ever central air conditioner (autosized)
-    ems_keys = "'" + Constants.EMSOutputNameCoolingLoad + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
-  end
   design_output[:hpxml_cool_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -280,13 +274,10 @@ def read_output(design, designdir, output_hpxml_path)
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     otherHotWaterBySystemRaw = get_sql_query_result(sqlFile, query)
 
-    # Reference Load
-    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      # Only ever conventional storage tank water heater
-      vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
-      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
-    end
+    # Building Hot Water Load (Delivered Energy)
+    vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
 
     # Combi boiler water system
     hvac_id = get_combi_hvac_id(hpxml_doc, sys_id)
@@ -327,6 +318,7 @@ def read_output(design, designdir, output_hpxml_path)
       design_output[:otherHotWaterBySystem][sys_id] = otherHotWaterBySystemRaw
     end
   end
+  design_output[:loadHotWaterBldg] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
 
   # PV
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
@@ -1005,39 +997,43 @@ end
 def write_results_annual_output(resultsdir, design, design_output)
   out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}.csv")
 
-  results_out = {}
-  results_out["Electricity: Total (MBtu)"] = design_output[:elecTotal]
-  results_out["Electricity: Net (MBtu)"] = design_output[:elecTotal] - design_output[:elecPV]
-  results_out["Natural Gas: Total (MBtu)"] = design_output[:gasTotal]
-  results_out["Other Fuel: Total (MBtu)"] = design_output[:otherTotal]
-  results_out[""] = "" # line break
-  results_out["Electricity: Heating (MBtu)"] = design_output[:elecHeatingBySystem].values.inject(0, :+)
-  results_out["Electricity: Cooling (MBtu)"] = design_output[:elecCoolingBySystem].values.inject(0, :+)
-  results_out["Electricity: Hot Water (MBtu)"] = design_output[:elecHotWaterBySystem].values.inject(0, :+)
-  results_out["Electricity: Lighting (MBtu)"] = design_output[:elecIntLighting] + design_output[:elecExtLighting]
-  results_out["Electricity: Mech Vent (MBtu)"] = design_output[:elecMechVent]
-  results_out["Electricity: Refrigerator (MBtu)"] = design_output[:elecFridge]
-  results_out["Electricity: Dishwasher (MBtu)"] = design_output[:elecDishwasher]
-  results_out["Electricity: Clothes Washer (MBtu)"] = design_output[:elecClothesWasher]
-  results_out["Electricity: Clothes Dryer (MBtu)"] = design_output[:elecClothesDryer]
-  results_out["Electricity: Range/Oven (MBtu)"] = design_output[:elecRangeOven]
-  results_out["Electricity: Ceiling Fan (MBtu)"] = design_output[:elecCeilingFan]
-  results_out["Electricity: Plug Loads (MBtu)"] = design_output[:elecMELs] + design_output[:elecTV]
-  results_out["Electricity: PV (MBtu)"] = -1.0 * design_output[:elecPV]
-  results_out["Natural Gas: Heating (MBtu)"] = design_output[:gasHeatingBySystem].values.inject(0, :+)
-  results_out["Natural Gas: Hot Water (MBtu)"] = design_output[:gasHotWaterBySystem].values.inject(0, :+)
-  results_out["Natural Gas: Clothes Dryer (MBtu)"] = design_output[:gasClothesDryer]
-  results_out["Natural Gas: Range/Oven (MBtu)"] = design_output[:gasRangeOven]
-  results_out["Other Fuel: Heating (MBtu)"] = design_output[:otherHeatingBySystem].values.inject(0, :+)
-  results_out["Other Fuel: Hot Water (MBtu)"] = design_output[:otherHotWaterBySystem].values.inject(0, :+)
-  results_out["Other Fuel: Clothes Dryer (MBtu)"] = design_output[:otherClothesDryer]
-  results_out["Other Fuel: Range/Oven (MBtu)"] = design_output[:otherRangeOven]
+  results_out = []
+  results_out << ["Electricity: Total (MBtu)", design_output[:elecTotal]]
+  results_out << ["Electricity: Net (MBtu)", design_output[:elecTotal] - design_output[:elecPV]]
+  results_out << ["Natural Gas: Total (MBtu)", design_output[:gasTotal]]
+  results_out << ["Other Fuel: Total (MBtu)", design_output[:otherTotal]]
+  results_out << ["", ""] # line break
+  results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+)]
+  results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+)]
+  results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+)]
+  results_out << ["Electricity: Lighting (MBtu)", design_output[:elecIntLighting] + design_output[:elecExtLighting]]
+  results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent]]
+  results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge]]
+  results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher]]
+  results_out << ["Electricity: Clothes Washer (MBtu)", design_output[:elecClothesWasher]]
+  results_out << ["Electricity: Clothes Dryer (MBtu)", design_output[:elecClothesDryer]]
+  results_out << ["Electricity: Range/Oven (MBtu)", design_output[:elecRangeOven]]
+  results_out << ["Electricity: Ceiling Fan (MBtu)", design_output[:elecCeilingFan]]
+  results_out << ["Electricity: Plug Loads (MBtu)", design_output[:elecMELs] + design_output[:elecTV]]
+  results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV]]
+  results_out << ["Natural Gas: Heating (MBtu)", design_output[:gasHeatingBySystem].values.inject(0, :+)]
+  results_out << ["Natural Gas: Hot Water (MBtu)", design_output[:gasHotWaterBySystem].values.inject(0, :+)]
+  results_out << ["Natural Gas: Clothes Dryer (MBtu)", design_output[:gasClothesDryer]]
+  results_out << ["Natural Gas: Range/Oven (MBtu)", design_output[:gasRangeOven]]
+  results_out << ["Other Fuel: Heating (MBtu)", design_output[:otherHeatingBySystem].values.inject(0, :+)]
+  results_out << ["Other Fuel: Hot Water (MBtu)", design_output[:otherHotWaterBySystem].values.inject(0, :+)]
+  results_out << ["Other Fuel: Clothes Dryer (MBtu)", design_output[:otherClothesDryer]]
+  results_out << ["Other Fuel: Range/Oven (MBtu)", design_output[:otherRangeOven]]
+  results_out << ["", ""] # line break
+  results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
+  results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
+  results_out << ["Load: Hot Water (MBtu)", design_output[:loadHotWaterBldg]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
-  total_results = { "Electricity" => results_out["Electricity: Net (MBtu)"],
-                    "Natural Gas" => results_out["Natural Gas: Total (MBtu)"],
-                    "Other Fuel" => results_out["Other Fuel: Total (MBtu)"] }
+  total_results = { "Electricity" => design_output[:elecTotal] - design_output[:elecPV],
+                    "Natural Gas" => design_output[:gasTotal],
+                    "Other Fuel" => design_output[:otherTotal] }
   sum_end_use_results = {}
   results_out.each do |key, value|
     next if key.strip.size == 0
@@ -1060,77 +1056,77 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
 
   # Results file
   results_csv = File.join(resultsdir, "ERI_Results.csv")
-  results_out = {}
-  results_out["ERI"] = results[:eri].round(2)
-  results_out["REUL Heating (MBtu)"] = results[:reul_heat].values.map { |x| x.round(2) }.join(",")
-  results_out["REUL Cooling (MBtu)"] = results[:reul_cool].values.map { |x| x.round(2) }.join(",")
-  results_out["REUL Hot Water (MBtu)"] = results[:reul_dhw].values.map { |x| x.round(2) }.join(",")
-  results_out["EC_r Heating (MBtu)"] = results[:ec_r_heat].values.map { |x| x.round(2) }.join(",")
-  results_out["EC_r Cooling (MBtu)"] = results[:ec_r_cool].values.map { |x| x.round(2) }.join(",")
-  results_out["EC_r Hot Water (MBtu)"] = results[:ec_r_dhw].values.map { |x| x.round(2) }.join(",")
-  results_out["EC_x Heating (MBtu)"] = results[:ec_x_heat].values.map { |x| x.round(2) }.join(",")
-  results_out["EC_x Cooling (MBtu)"] = results[:ec_x_cool].values.map { |x| x.round(2) }.join(",")
-  results_out["EC_x Hot Water (MBtu)"] = results[:ec_x_dhw].values.map { |x| x.round(2) }.join(",")
-  results_out["EC_x L&A (MBtu)"] = results[:eul_la].round(2)
+  results_out = []
+  results_out << ["ERI", results[:eri].round(2)]
+  results_out << ["REUL Heating (MBtu)", results[:reul_heat].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["REUL Cooling (MBtu)", results[:reul_cool].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["REUL Hot Water (MBtu)", results[:reul_dhw].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_r Heating (MBtu)", results[:ec_r_heat].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_r Cooling (MBtu)", results[:ec_r_cool].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_r Hot Water (MBtu)", results[:ec_r_dhw].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_x Heating (MBtu)", results[:ec_x_heat].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_x Cooling (MBtu)", results[:ec_x_cool].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_x Hot Water (MBtu)", results[:ec_x_dhw].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_x L&A (MBtu)", results[:eul_la].round(2)]
   if using_iaf
-    results_out["IAD_Save (%)"] = results[:iad_save].round(5)
+    results_out << ["IAD_Save (%)", results[:iad_save].round(5)]
   end
   # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
   CSV.open(results_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Worksheet file
   worksheet_csv = File.join(resultsdir, "ERI_Worksheet.csv")
-  worksheet_out = {}
-  worksheet_out["Coeff Heating a"] = results[:coeff_heat_a].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["Coeff Heating b"] = results[:coeff_heat_b].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["Coeff Cooling a"] = results[:coeff_cool_a].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["Coeff Cooling b"] = results[:coeff_cool_b].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["Coeff Hot Water a"] = results[:coeff_dhw_a].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["Coeff Hot Water b"] = results[:coeff_dhw_b].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["DSE_r Heating"] = results[:dse_r_heat].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["DSE_r Cooling"] = results[:dse_r_cool].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["DSE_r Hot Water"] = results[:dse_r_dhw].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["EEC_x Heating"] = results[:eec_x_heat].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["EEC_x Cooling"] = results[:eec_x_cool].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["EEC_x Hot Water"] = results[:eec_x_dhw].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["EEC_r Heating"] = results[:eec_r_heat].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["EEC_r Cooling"] = results[:eec_r_cool].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["EEC_r Hot Water"] = results[:eec_r_dhw].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["nEC_x Heating"] = results[:nec_x_heat].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["nEC_x Cooling"] = results[:nec_x_cool].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["nEC_x Hot Water"] = results[:nec_x_dhw].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["nMEUL Heating"] = results[:nmeul_heat].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["nMEUL Cooling"] = results[:nmeul_cool].values.map { |x| x.round(4) }.join(",")
-  worksheet_out["nMEUL Hot Water"] = results[:nmeul_dhw].values.map { |x| x.round(4) }.join(",")
+  worksheet_out = []
+  worksheet_out << ["Coeff Heating a", results[:coeff_heat_a].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Heating b", results[:coeff_heat_b].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Cooling a", results[:coeff_cool_a].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Cooling b", results[:coeff_cool_b].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Hot Water a", results[:coeff_dhw_a].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Hot Water b", results[:coeff_dhw_b].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["DSE_r Heating", results[:dse_r_heat].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["DSE_r Cooling", results[:dse_r_cool].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["DSE_r Hot Water", results[:dse_r_dhw].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_x Heating", results[:eec_x_heat].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_x Cooling", results[:eec_x_cool].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_x Hot Water", results[:eec_x_dhw].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_r Heating", results[:eec_r_heat].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_r Cooling", results[:eec_r_cool].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_r Hot Water", results[:eec_r_dhw].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nEC_x Heating", results[:nec_x_heat].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nEC_x Cooling", results[:nec_x_cool].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nEC_x Hot Water", results[:nec_x_dhw].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nMEUL Heating", results[:nmeul_heat].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nMEUL Cooling", results[:nmeul_cool].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nMEUL Hot Water", results[:nmeul_dhw].values.map { |x| x.round(4) }.join(",")]
   if using_iaf
-    worksheet_out["IAF CFA"] = results[:iaf_cfa].round(4)
-    worksheet_out["IAF NBR"] = results[:iaf_nbr].round(4)
-    worksheet_out["IAF NS"] = results[:iaf_ns].round(4)
-    worksheet_out["IAF RH"] = results[:iaf_rh].round(4)
+    worksheet_out << ["IAF CFA", results[:iaf_cfa].round(4)]
+    worksheet_out << ["IAF NBR", results[:iaf_nbr].round(4)]
+    worksheet_out << ["IAF NS", results[:iaf_ns].round(4)]
+    worksheet_out << ["IAF RH", results[:iaf_rh].round(4)]
   end
-  worksheet_out["Total Loads TnML"] = results[:tnml].round(4)
-  worksheet_out["Total Loads TRL"] = results[:trl].round(4)
+  worksheet_out << ["Total Loads TnML", results[:tnml].round(4)]
+  worksheet_out << ["Total Loads TRL", results[:trl].round(4)]
   if using_iaf
-    worksheet_out["Total Loads TRL*IAF"] = (results[:trl] * results[:iaf_rh]).round(4)
+    worksheet_out << ["Total Loads TRL*IAF", (results[:trl] * results[:iaf_rh]).round(4)]
   end
-  worksheet_out["ERI"] = results[:eri].round(2)
-  worksheet_out[""] = "" # line break
-  worksheet_out["Ref Home CFA"] = ref_output[:hpxml_cfa]
-  worksheet_out["Ref Home Nbr"] = ref_output[:hpxml_nbr]
+  worksheet_out << ["ERI", results[:eri].round(2)]
+  worksheet_out << ["", ""] # line break
+  worksheet_out << ["Ref Home CFA", ref_output[:hpxml_cfa]]
+  worksheet_out << ["Ref Home Nbr", ref_output[:hpxml_nbr]]
   if using_iaf
-    worksheet_out["Ref Home NS"] = ref_output[:hpxml_nst]
+    worksheet_out << ["Ref Home NS", ref_output[:hpxml_nst]]
   end
-  worksheet_out["Ref L&A resMELs"] = ref_output[:elecMELs].round(2)
-  worksheet_out["Ref L&A intLgt"] = ref_output[:elecIntLighting].round(2)
-  worksheet_out["Ref L&A extLgt"] = ref_output[:elecExtLighting].round(2)
-  worksheet_out["Ref L&A Fridg"] = ref_output[:elecFridge].round(2)
-  worksheet_out["Ref L&A TVs"] = ref_output[:elecTV].round(2)
-  worksheet_out["Ref L&A R/O"] = (ref_output[:elecRangeOven] + ref_output[:gasRangeOven] + ref_output[:otherRangeOven]).round(2)
-  worksheet_out["Ref L&A cDryer"] = (ref_output[:elecClothesDryer] + ref_output[:gasClothesDryer] + ref_output[:otherClothesDryer]).round(2)
-  worksheet_out["Ref L&A dWash"] = ref_output[:elecDishwasher].round(2)
-  worksheet_out["Ref L&A cWash"] = ref_output[:elecClothesWasher].round(2)
-  worksheet_out["Ref L&A mechV"] = ref_output[:elecMechVent].round(2)
-  worksheet_out["Ref L&A total"] = results[:reul_la].round(2)
+  worksheet_out << ["Ref L&A resMELs", ref_output[:elecMELs].round(2)]
+  worksheet_out << ["Ref L&A intLgt", ref_output[:elecIntLighting].round(2)]
+  worksheet_out << ["Ref L&A extLgt", ref_output[:elecExtLighting].round(2)]
+  worksheet_out << ["Ref L&A Fridg", ref_output[:elecFridge].round(2)]
+  worksheet_out << ["Ref L&A TVs", ref_output[:elecTV].round(2)]
+  worksheet_out << ["Ref L&A R/O", (ref_output[:elecRangeOven] + ref_output[:gasRangeOven] + ref_output[:otherRangeOven]).round(2)]
+  worksheet_out << ["Ref L&A cDryer", (ref_output[:elecClothesDryer] + ref_output[:gasClothesDryer] + ref_output[:otherClothesDryer]).round(2)]
+  worksheet_out << ["Ref L&A dWash", ref_output[:elecDishwasher].round(2)]
+  worksheet_out << ["Ref L&A cWash", ref_output[:elecClothesWasher].round(2)]
+  worksheet_out << ["Ref L&A mechV", ref_output[:elecMechVent].round(2)]
+  worksheet_out << ["Ref L&A total", results[:reul_la].round(2)]
   CSV.open(worksheet_csv, "wb") { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
 end
 
