@@ -150,12 +150,12 @@ def read_output(design, designdir, output_hpxml_path)
   ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
-  
+
   # Building Space Cooling Load (Delivered Energy)
   ems_keys = "'" + Constants.EMSOutputNameCoolingLoad + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
-  
+
   # Space Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_hvac.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHeatingBySystem] = {}
