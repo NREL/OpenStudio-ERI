@@ -819,7 +819,7 @@ class EnergyRatingIndexTest < Minitest::Test
         compare_reul = compare_results[result_name]
       end
 
-      assert_in_delta(base_reul, compare_reul, 0.1)
+      assert_in_delta(base_reul, compare_reul, 0.15)
     end
   end
 
