@@ -523,10 +523,6 @@ class Constants
     return __method__.to_s
   end
 
-  def self.SizingInfoHVACOtherZoneObject # Link between zonal equipment in control zone and slave zones
-    return __method__.to_s
-  end
-
   def self.SizingInfoHVACFracHeatLoadServed
     return __method__.to_s
   end
@@ -693,10 +689,6 @@ class Constants
 
   def self.SpaceTypeUnventedCrawl
     return 'unvented crawlspace'
-  end
-
-  def self.SpaceTypeConditionedBasement
-    return 'conditioned basement'
   end
 
   def self.SpaceTypeGarage
