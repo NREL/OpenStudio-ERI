@@ -300,14 +300,27 @@ def read_output(design, designdir, output_hpxml_path)
 
       # Split combi boiler system energy use by water system load fraction
       htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
-      design_output[:elecHotWaterBySystem][sys_id] = elecHotWaterBySystemRaw + get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
-      design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) unless htg_ec_elec.nil?
       htg_ec_gas = design_output[:gasHeatingBySystem][hvac_id]
-      design_output[:gasHotWaterBySystem][sys_id] = gasHotWaterBySystemRaw + get_combi_water_system_ec(hx_load, htg_load, htg_ec_gas) unless htg_ec_gas.nil?
-      design_output[:gasHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_gas) unless htg_ec_gas.nil?
       htg_ec_other = design_output[:otherHeatingBySystem][hvac_id]
-      design_output[:otherHotWaterBySystem][sys_id] = otherHotWaterBySystemRaw + get_combi_water_system_ec(hx_load, htg_load, htg_ec_other) unless htg_ec_other.nil?
-      design_output[:otherHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_other) unless htg_ec_other.nil?
+
+      if not htg_ec_elec.nil?
+        design_output[:elecHotWaterBySystem][sys_id] = elecHotWaterBySystemRaw + get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) * design_output[:hpxml_dse_heats][hvac_id] # revert dse for hot water results
+        design_output[:elecHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec)
+        design_output[:elecTotal] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) * (1.0 - design_output[:hpxml_dse_heats][hvac_id])
+        design_output[:allTotal] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_elec) * (1.0 - design_output[:hpxml_dse_heats][hvac_id])
+      end
+      if not htg_ec_gas.nil?
+        design_output[:gasHotWaterBySystem][sys_id] = gasHotWaterBySystemRaw + get_combi_water_system_ec(hx_load, htg_load, htg_ec_gas) * design_output[:hpxml_dse_heats][hvac_id] # revert dse for hot water results
+        design_output[:gasHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_gas)
+        design_output[:gasTotal] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_gas) * (1.0 - design_output[:hpxml_dse_heats][hvac_id])
+        design_output[:allTotal] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_gas) * (1.0 - design_output[:hpxml_dse_heats][hvac_id])
+      end
+      if not htg_ec_other.nil?
+        design_output[:otherHotWaterBySystem][sys_id] = otherHotWaterBySystemRaw + get_combi_water_system_ec(hx_load, htg_load, htg_ec_other) * design_output[:hpxml_dse_heats][hvac_id] # revert dse for hot water results
+        design_output[:otherHeatingBySystem][hvac_id] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_other)
+        design_output[:otherTotal] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_other) * (1.0 - design_output[:hpxml_dse_heats][hvac_id])
+        design_output[:allTotal] -= get_combi_water_system_ec(hx_load, htg_load, htg_ec_other) * (1.0 - design_output[:hpxml_dse_heats][hvac_id])
+      end
     else
       design_output[:elecHotWaterBySystem][sys_id] = elecHotWaterBySystemRaw
       design_output[:gasHotWaterBySystem][sys_id] = gasHotWaterBySystemRaw
