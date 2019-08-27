@@ -10,7 +10,7 @@ ERI_Results.csv
 ---------------
 
 The ``ERI_Results.csv`` file includes the ERI result as well as the high-level components (e.g., REUL, EC_r, EC_x, IAD_Save) that comprise the ERI calculation.
-The file reflects the inputs found in the Results tab of the HERS Method Test spreadsheet.
+The file reflects the format of the Results tab of the HERS Method Test spreadsheet.
 
 See the `example ERI_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Results.csv>`_.
 
@@ -18,7 +18,7 @@ ERI_Worksheet.csv
 -----------------
 
 The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
-The file reflects the inputs found in the Worksheet tab of the HERS Method Test spreadsheet.
+The file reflects the formate of the Worksheet tab of the HERS Method Test spreadsheet.
 
 See the `example ERI_Worksheet.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Worksheet.csv>`_.
 
@@ -26,9 +26,14 @@ ERI______Home.csv
 -----------------
 
 A CSV file is written for each of the homes simulated (e.g., ``ERIRatedHome.csv`` for the Rated home, ``ERIReferenceHome.csv`` for the Reference home, etc.).
-Each file includes annual energy consumption values disaggregated by fuel type and/or end use.
 
-Each CSV file also includes the heating, cooling, and hot water loads.
+At the top of the file are total annual consumption values for each fuel type as well as an ``Electricity: Net`` field that incorporates any renewable generation.
+
+The next section includes annual energy consumption values disaggregated by fuel type and end use.
+Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
+Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Lighting``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
+
+The final section in the CSV includes the heating, cooling, and hot water loads.
 Heating and cooling loads include duct losses; hot water loads exclude tank losses.
 Note that the heating and cooling loads are calculated using the difference between the home's setpoint temperature and living space temperature for each hour.
 Thus a heating or cooling system that is undersized will not maintain the living space temperature at setpoint and will result in erroneously reported values.
