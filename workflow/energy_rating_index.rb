@@ -150,12 +150,22 @@ def read_output(design, designdir, output_hpxml_path)
   ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
-  
+
   # Building Space Cooling Load (Delivered Energy)
   ems_keys = "'" + Constants.EMSOutputNameCoolingLoad + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
-  
+
+  # Heating setpoint not met degree hour metric
+  ems_keys = "'" + Constants.EMSOutputNameHeatingUnmetDegreeHour + "'"
+  query = "SELECT SUM(ABS(VariableValue)) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period')"
+  design_output[:degreehourHeatingSetpointUnmet] = sqlFile.execAndReturnFirstDouble(query).get
+
+  # Cooling setpoint not met degree hour metric
+  ems_keys = "'" + Constants.EMSOutputNameCoolingUnmetDegreeHour + "'"
+  query = "SELECT SUM(ABS(VariableValue)) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period')"
+  design_output[:degreehourCoolingSetpointUnmet] = sqlFile.execAndReturnFirstDouble(query).get
+
   # Space Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_hvac.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHeatingBySystem] = {}
@@ -1027,6 +1037,8 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["", ""] # line break
   results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
   results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
+  results_out << ["Loads Not Met: Heating (deg-hours)", design_output[:degreehourHeatingSetpointUnmet]]
+  results_out << ["Loads Not Met: Cooling (deg-hours)", design_output[:degreehourCoolingSetpointUnmet]]
   results_out << ["Load: Hot Water (MBtu)", design_output[:loadHotWaterBldg]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
