@@ -34,8 +34,7 @@ Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil
 Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Lighting``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
 
 The final section in the CSV includes the heating, cooling, and hot water loads.
-Heating and cooling loads include duct losses.
-Hot water loads exclude tank losses but include the effects of upstream technologies like a desuperheater or solar water heating system.
+Heating and cooling loads include duct losses; hot water loads exclude tank losses.
 Note that the heating and cooling loads are calculated using the predicted sensible load required to meet the living space's thermostat setpoint.
 A heating or cooling system that is undersized and does not maintain the living space temperature at setpoint will result in erroneously reported values.
 
