@@ -275,21 +275,6 @@ def read_output(design, designdir, output_hpxml_path)
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     otherHotWaterBySystemRaw = get_sql_query_result(sqlFile, query)
 
-    # EC_adj
-    ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameWaterHeaterAdjustment(nil) }.join("','") + "'"
-    query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    ec_adj = get_sql_query_result(sqlFile, query)
-    if gasHotWaterBySystemRaw > 0
-      gasHotWaterBySystemRaw += ec_adj
-      design_output[:gasAppliances] -= ec_adj
-    elsif otherHotWaterBySystemRaw > 0
-      otherHotWaterBySystemRaw += ec_adj
-      design_output[:otherAppliances] -= ec_adj
-    else
-      elecHotWaterBySystemRaw += ec_adj
-      design_output[:elecAppliances] -= ec_adj
-    end
-
     # Building Hot Water Load (Delivered Energy)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
@@ -332,6 +317,21 @@ def read_output(design, designdir, output_hpxml_path)
       design_output[:elecHotWaterBySystem][sys_id] = elecHotWaterBySystemRaw
       design_output[:gasHotWaterBySystem][sys_id] = gasHotWaterBySystemRaw
       design_output[:otherHotWaterBySystem][sys_id] = otherHotWaterBySystemRaw
+    end
+
+    # EC_adj
+    ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameWaterHeaterAdjustment(nil) }.join("','") + "'"
+    query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ec_adj = get_sql_query_result(sqlFile, query)
+    if design_output[:gasHotWaterBySystem][sys_id] > 0
+      design_output[:gasHotWaterBySystem][sys_id] += ec_adj
+      design_output[:gasAppliances] -= ec_adj
+    elsif design_output[:otherHotWaterBySystem][sys_id] > 0
+      design_output[:otherHotWaterBySystem][sys_id] += ec_adj
+      design_output[:otherAppliances] -= ec_adj
+    else
+      design_output[:elecHotWaterBySystem][sys_id] += ec_adj
+      design_output[:elecAppliances] -= ec_adj
     end
   end
   design_output[:loadHotWaterBldg] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
