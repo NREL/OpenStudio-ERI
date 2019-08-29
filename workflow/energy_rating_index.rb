@@ -150,12 +150,12 @@ def read_output(design, designdir, output_hpxml_path)
   ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
-  
+
   # Building Space Cooling Load (Delivered Energy)
   ems_keys = "'" + Constants.EMSOutputNameCoolingLoad + "'"
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
-  
+
   # Space Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_hvac.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHeatingBySystem] = {}
@@ -261,8 +261,9 @@ def read_output(design, designdir, output_hpxml_path)
     # Electricity Use - Recirc Pump
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricityRecircPump).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elecHotWaterBySystemRaw += get_sql_query_result(sqlFile, query)
-    design_output[:elecAppliances] -= get_sql_query_result(sqlFile, query)
+    recirc_pump = get_sql_query_result(sqlFile, query)
+    elecHotWaterBySystemRaw += recirc_pump
+    design_output[:elecAppliances] -= recirc_pump
 
     # Natural Gas use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingNaturalGas).join("','") + "'"
@@ -316,6 +317,21 @@ def read_output(design, designdir, output_hpxml_path)
       design_output[:elecHotWaterBySystem][sys_id] = elecHotWaterBySystemRaw
       design_output[:gasHotWaterBySystem][sys_id] = gasHotWaterBySystemRaw
       design_output[:otherHotWaterBySystem][sys_id] = otherHotWaterBySystemRaw
+    end
+
+    # EC_adj
+    ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameWaterHeaterAdjustment(nil) }.join("','") + "'"
+    query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ec_adj = get_sql_query_result(sqlFile, query)
+    if design_output[:gasHotWaterBySystem][sys_id] > 0
+      design_output[:gasHotWaterBySystem][sys_id] += ec_adj
+      design_output[:gasAppliances] -= ec_adj
+    elsif design_output[:otherHotWaterBySystem][sys_id] > 0
+      design_output[:otherHotWaterBySystem][sys_id] += ec_adj
+      design_output[:otherAppliances] -= ec_adj
+    else
+      design_output[:elecHotWaterBySystem][sys_id] += ec_adj
+      design_output[:elecAppliances] -= ec_adj
     end
   end
   design_output[:loadHotWaterBldg] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
@@ -692,7 +708,7 @@ def get_eec_dhws(hpxml_doc)
         jacket_r = XMLHelper.get_value(dhw_system, "WaterHeaterInsulation/Jacket/JacketRValue").to_f
         assumed_ef = Waterheater.get_indirect_assumed_ef_for_tank_losses()
         assumed_fuel = Waterheater.get_indirect_assumed_fuel_for_tank_losses()
-        dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, assumed_fuel, assumed_ef, nil, nil, Constants.WaterHeaterTypeTank, 0.0, jacket_r)
+        dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, assumed_fuel, assumed_ef, nil, nil, Constants.WaterHeaterTypeTank, 0.0, jacket_r, nil)
         combi_type = Constants.WaterHeaterTypeTank
       end
       combi_boiler_afue = nil
