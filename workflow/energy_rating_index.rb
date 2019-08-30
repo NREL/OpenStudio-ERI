@@ -131,8 +131,8 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
 
-  # Total site energy
-  design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design)
+  # Total site energy (subtract out any ideal air system energy)
+  design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design) - get_sql_result(sqlFile.districtCoolingCooling, design) - get_sql_result(sqlFile.districtHeatingHeating, design)
 
   # Electricity categories
   design_output[:elecTotal] = get_sql_result(sqlFile.electricityTotalEndUses, design)
@@ -147,13 +147,11 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:otherAppliances] = get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
 
   # Building Space Heating Load (Delivered Energy)
-  ems_keys = "'" + Constants.EMSOutputNameHeatingLoad + "'"
-  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
   design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
 
   # Building Space Cooling Load (Delivered Energy)
-  ems_keys = "'" + Constants.EMSOutputNameCoolingLoad + "'"
-  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
   design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
 
   # Space Heating (by System)
