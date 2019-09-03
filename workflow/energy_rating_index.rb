@@ -1225,8 +1225,14 @@ def cache_weather
     weather_data << epw_file.elevation.to_i       # elevation
     weather_data << "???"                         # class
     weather_data << File.basename(epw)            # filename
-    open(File.join(weather_dir, "data.csv"), 'a') do |f|
-      f << weather_data.join(",") + "\n"
+    # Write entire file again (rather than just appending new data) to prevent
+    # inconsistent line endings.
+    csv_data = CSV.read(File.join(weather_dir, "data.csv"))
+    csv_data << weather_data
+    CSV.open(File.join(weather_dir, "data.csv"), "w") do |csv|
+      csv_data.each do |data|
+        csv << data
+      end
     end
   end
   puts "Completed."
