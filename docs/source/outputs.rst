@@ -37,11 +37,12 @@ The next section includes annual energy consumption values disaggregated by fuel
 Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
 Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Lighting``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
 
-The final section in the CSV includes the heating, cooling, and hot water loads.
-Heating and cooling loads include duct losses.
-Hot water loads exclude tank losses but include the effects of upstream technologies like a desuperheater or solar water heating system.
-Note that the heating and cooling loads are calculated using the predicted sensible load required to meet the living space's thermostat setpoint.
-A heating or cooling system that is undersized and does not maintain the living space temperature at setpoint will result in erroneously reported values.
+The third section in the CSV includes the heating, cooling, and hot water loads.
+Heating and cooling loads include duct losses while hot water loads exclude tank losses.
+
+The final section in the CSV includes `unmet` heating and cooling loads.
+These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating that the HVAC system is undersized.
+An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
