@@ -12,6 +12,8 @@ ERI_Results.csv
 The ``ERI_Results.csv`` file includes the ERI result as well as the high-level components (e.g., REUL, EC_r, EC_x, IAD_Save) that comprise the ERI calculation.
 The file reflects the format of the Results tab of the HERS Method Test spreadsheet.
 
+Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
+
 See the `example ERI_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Results.csv>`_.
 
 ERI_Worksheet.csv
@@ -19,6 +21,8 @@ ERI_Worksheet.csv
 
 The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
 The file reflects the formate of the Worksheet tab of the HERS Method Test spreadsheet.
+
+Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
 
 See the `example ERI_Worksheet.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Worksheet.csv>`_.
 

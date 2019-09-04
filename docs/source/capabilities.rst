@@ -67,6 +67,8 @@ The following building features/technologies are available for modeling:
     - Storage Tank
     - Instantaneous Tankless
     - Heat Pump Water Heater
+    - Indirect Water Heater (Combination Boiler)
+    - Tankless Coil (Combination Boiler)
     
   - Hot Water Distribution
   
@@ -103,7 +105,8 @@ The EnergyPlus simulation engine is like a Swiss army knife.
 There are often multiple models available for the same building technology with varying tradeoffs between accuracy and speed.
 This workflow standardizes the use of EnergyPlus (e.g., the choice of models appropriate for residential buildings) to provide a fast and easy to use solution.
 
-The workflow is continuously being evaluated for ways to reduce runtime. A number of enhancements have been made to date.
+The workflow is continuously being evaluated for ways to reduce runtime without significant impact on accuracy.
+A number of such enhancements have been made to date.
 
 There are additional ways that software developers using this workflow can reduce runtime:
 
