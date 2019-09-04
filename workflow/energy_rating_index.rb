@@ -131,8 +131,18 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
 
+  # Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
+  design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
+  design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
+
+  # Building Unmet Space Heating/Cooling Load (heating/cooling energy delivered by backup ideal air system)
+  design_output[:unmetLoadHeatingBldg] = get_sql_result(sqlFile.districtHeatingHeating, design)
+  design_output[:unmetLoadCoolingBldg] = get_sql_result(sqlFile.districtCoolingCooling, design)
+
   # Total site energy (subtract out any ideal air system energy)
-  design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design) - get_sql_result(sqlFile.districtCoolingCooling, design) - get_sql_result(sqlFile.districtHeatingHeating, design)
+  design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design) - design_output[:unmetLoadHeatingBldg] - design_output[:unmetLoadCoolingBldg]
 
   # Electricity categories
   design_output[:elecTotal] = get_sql_result(sqlFile.electricityTotalEndUses, design)
@@ -145,14 +155,6 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:otherTotal] = get_sql_result(sqlFile.otherFuelTotalEndUses, design)
   design_output[:gasAppliances] = get_sql_result(sqlFile.naturalGasInteriorEquipment, design)
   design_output[:otherAppliances] = get_sql_result(sqlFile.otherFuelInteriorEquipment, design)
-
-  # Building Space Heating Load (Delivered Energy)
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-  design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
-
-  # Building Space Cooling Load (Delivered Energy)
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-  design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
 
   # Space Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_hvac.tsv"), headers: false, col_sep: "\t")
@@ -1042,6 +1044,9 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
   results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
   results_out << ["Load: Hot Water (MBtu)", design_output[:loadHotWaterBldg]]
+  results_out << ["", ""] # line break
+  results_out << ["Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
+  results_out << ["Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
