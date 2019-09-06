@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.06.12 09:47
+Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56
 ! <Version>, Version ID
  Version, 9.1
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -63,80 +63,68 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
 ! <Shading Summary>, Number of Fixed Detached Shades, Number of Building Detached Shades, Number of Attached Shades
  Shading Summary,0,0,0
 ! <Zone Summary>, Number of Zones, Number of Zone Surfaces, Number of SubSurfaces
- Zone Summary,3,24,5
+ Zone Summary,2,21,5
 ! <Zone Information>,Zone Name,North Axis {deg},Origin X-Coordinate {m},Origin Y-Coordinate {m},Origin Z-Coordinate {m},Centroid X-Coordinate {m},Centroid Y-Coordinate {m},Centroid Z-Coordinate {m},Type,Zone Multiplier,Zone List Multiplier,Minimum X {m},Maximum X {m},Minimum Y {m},Maximum Y {m},Minimum Z {m},Maximum Z {m},Ceiling Height {m},Volume {m3},Zone Inside Convection Algorithm {Simple-Detailed-CeilingDiffuser-TrombeWall},Zone Outside Convection Algorithm {Simple-Detailed-Tarp-MoWitt-DOE-2-BLAST}, Floor Area {m2},Exterior Gross Wall Area {m2},Exterior Net Wall Area {m2},Exterior Window Area {m2}, Number of Surfaces, Number of SubSurfaces, Number of Shading SubSurfaces,  Part of Total Building Area
- Zone Information, CONDITIONED BASEMENT,0.0,0.00,0.00,0.00,15.84,24.52,-0.87,1,1,1,-7.17,74.84,-5.60,74.84,-2.13,0.61,2.44,344.05,TARP,DOE-2,125.42,10.78,10.78,0.00,4,0,0,Yes
- Zone Information, LIVING,0.0,0.00,0.00,0.00,-12.08,16.16,1.47,1,1,1,-74.84,74.84,-74.84,74.84,0.30,2.74,2.44,267.59,TARP,DOE-2,125.42,111.53,74.57,33.25,8,5,0,Yes
+ Zone Information, LIVING,0.0,0.00,0.00,0.00,2.51,24.60,0.27,1,1,1,-74.84,74.84,-74.84,74.84,-2.13,2.74,3.66,611.64,TARP,DOE-2,250.84,122.30,85.34,33.25,11,5,0,Yes
  Zone Information, VENTED ATTIC,0.0,0.00,0.00,0.00,-13.02,40.23,3.90,1,1,1,-73.91,5.60,-5.60,74.84,0.30,8.04,2.65,117.05,TARP,DOE-2,125.42,26.94,26.94,0.00,3,0,0,Yes
 ! <Zone Internal Gains Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
- Zone Internal Gains Nominal, CONDITIONED BASEMENT,125.42,1.5,83.613,1.196E-002,3.139,2.996,0.000,0.000,0.000,0.000,6.135,No
- Zone Internal Gains Nominal, LIVING,125.42,1.5,83.613,1.196E-002,3.139,251.306,0.000,1.257,0.000,0.000,255.702,No
+ Zone Internal Gains Nominal, LIVING,250.84,3.0,83.613,1.196E-002,3.139,126.869,0.000,0.331,0.000,0.000,130.338,No
  Zone Internal Gains Nominal, VENTED ATTIC,125.42,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
 ! <People Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Number of People {},People/Floor Area {person/m2},Floor Area per person {m2/person},Fraction Radiant,Fraction Convected,Sensible Fraction Calculation,Activity level,ASHRAE 55 Warnings,Carbon Dioxide Generation Rate,Nominal Minimum Number of People,Nominal Maximum Number of People
- People Internal Gains Nominal, OCCUPANTS|CONDITIONED BASEMENT,OCCUPANTS SCHEDULE,CONDITIONED BASEMENT,125.42,1.5,1.5,1.196E-002,83.613,0.314,0.686,0.563,SCHEDULE RULESET 1,No,0.0000,0,2
- People Internal Gains Nominal, OCCUPANTS|LIVING,OCCUPANTS SCHEDULE,LIVING,125.42,1.5,1.5,1.196E-002,83.613,0.314,0.686,0.563,SCHEDULE RULESET 1,No,0.0000,0,2
+ People Internal Gains Nominal, OCCUPANTS|LIVING,OCCUPANTS SCHEDULE,LIVING,250.84,3.0,3.0,1.196E-002,83.613,0.314,0.686,0.563,SCHEDULE RULESET 1,No,0.0000,0,3
 ! <Lights Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Lighting Level {W},Lights/Floor Area {W/m2},Lights per person {W/person},Fraction Return Air,Fraction Radiant,Fraction Short Wave,Fraction Convected,Fraction Replaceable,End-Use Category,Nominal Minimum Lighting Level {W},Nominal Maximum Lighting Level {W}
- Lights Internal Gains Nominal, LIGHTING CONDITIONED BASEMENT,LIGHTING SCHEDULE,CONDITIONED BASEMENT,125.42,1.5,393.657,3.139,262.438,0.000,0.600,0.200,0.200,1.000,General,0.000,393.657
- Lights Internal Gains Nominal, LIGHTING LIVING,LIGHTING SCHEDULE,LIVING,125.42,1.5,393.657,3.139,262.438,0.000,0.600,0.200,0.200,1.000,General,0.000,393.657
+ Lights Internal Gains Nominal, LIGHTING,LIGHTING SCHEDULE,LIVING,250.84,3.0,787.315,3.139,262.438,0.000,0.600,0.200,0.200,1.000,General,0.000,787.315
 ! <ElectricEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,End-Use SubCategory,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
- ElectricEquipment Internal Gains Nominal, MISC PLUG LOADS|CONDITIONED BASEMENT,MISC PLUG LOADS SCHEDULE,CONDITIONED BASEMENT,125.42,1.5,300.058,2.392,200.039,4.467E-002,0.513,0.101,0.342,misc plug loads,0.000,300.058
- ElectricEquipment Internal Gains Nominal, MISC TV|CONDITIONED BASEMENT,MISC PLUG LOADS SCHEDULE,CONDITIONED BASEMENT,125.42,1.5,75.717,0.604,50.478,0.000,0.600,0.000,0.400,misc tv,0.000,75.717
- ElectricEquipment Internal Gains Nominal, CLOTHES DRYER,CLOTHES DRYER,LIVING,125.42,1.5,217.672,1.736,145.115,1.485E-002,8.024E-002,0.851,5.349E-002,clothes dryer,0.000,217.672
- ElectricEquipment Internal Gains Nominal, CLOTHES WASHER,CLOTHES WASHER SCHEDULE,LIVING,125.42,1.5,12656.028,100.910,8437.352,3.071E-002,0.159,0.704,0.106,clothes washer,0.000,383.115
- ElectricEquipment Internal Gains Nominal, COOKING RANGE,COOKING RANGE,LIVING,125.42,1.5,201.331,1.605,134.220,7.999E-002,0.432,0.200,0.288,cooking range,0.000,201.331
- ElectricEquipment Internal Gains Nominal, DISHWASHER,DISHWASHER SCHEDULE,LIVING,125.42,1.5,17964.185,143.233,11976.123,0.301,0.180,0.398,0.120,dishwasher,0.000,1014.889
- ElectricEquipment Internal Gains Nominal, FRIDGE,FRIDGE,LIVING,125.42,1.5,103.632,0.826,69.088,0.000,0.600,0.000,0.400,fridge,0.000,103.632
- ElectricEquipment Internal Gains Nominal, MECH VENT BATH FAN,ALWAYS ON DISCRETE,LIVING,125.42,1.5,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent bath fan,0.000,0.000
- ElectricEquipment Internal Gains Nominal, MECH VENT HOUSE FAN,ALWAYS ON DISCRETE,LIVING,125.42,1.5,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent house fan,0.000,0.000
- ElectricEquipment Internal Gains Nominal, MECH VENT RANGE FAN,ALWAYS ON DISCRETE,LIVING,125.42,1.5,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent range fan,0.000,0.000
- ElectricEquipment Internal Gains Nominal, MISC PLUG LOADS|LIVING,MISC PLUG LOADS SCHEDULE,LIVING,125.42,1.5,300.058,2.392,200.039,4.467E-002,0.513,0.101,0.342,misc plug loads,0.000,300.058
- ElectricEquipment Internal Gains Nominal, MISC TV|LIVING,MISC PLUG LOADS SCHEDULE,LIVING,125.42,1.5,75.717,0.604,50.478,0.000,0.600,0.000,0.400,misc tv,0.000,75.717
+ ElectricEquipment Internal Gains Nominal, CLOTHES DRYER,CLOTHES DRYER,LIVING,250.84,3.0,217.211,0.866,72.404,1.488E-002,8.041E-002,0.851,5.361E-002,clothes dryer,0.000,217.211
+ ElectricEquipment Internal Gains Nominal, CLOTHES WASHER,CLOTHES WASHER SCHEDULE,LIVING,250.84,3.0,12585.606,50.174,4195.202,3.088E-002,0.160,0.702,0.107,clothes washer,0.000,380.984
+ ElectricEquipment Internal Gains Nominal, COOKING RANGE,COOKING RANGE,LIVING,250.84,3.0,201.331,0.803,67.110,7.999E-002,0.432,0.200,0.288,cooking range,0.000,201.331
+ ElectricEquipment Internal Gains Nominal, DISHWASHER,DISHWASHER SCHEDULE,LIVING,250.84,3.0,17964.185,71.617,5988.062,0.301,0.180,0.398,0.120,dishwasher,0.000,1014.889
+ ElectricEquipment Internal Gains Nominal, FRIDGE,FRIDGE,LIVING,250.84,3.0,103.632,0.413,34.544,0.000,0.600,0.000,0.400,fridge,0.000,103.632
+ ElectricEquipment Internal Gains Nominal, MECH VENT BATH FAN,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent bath fan,0.000,0.000
+ ElectricEquipment Internal Gains Nominal, MECH VENT HOUSE FAN,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent house fan,0.000,0.000
+ ElectricEquipment Internal Gains Nominal, MECH VENT RANGE FAN,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent range fan,0.000,0.000
+ ElectricEquipment Internal Gains Nominal, MISC PLUG LOADS,MISC PLUG LOADS SCHEDULE,LIVING,250.84,3.0,600.117,2.392,200.039,4.467E-002,0.513,0.101,0.342,misc plug loads,0.000,600.117
+ ElectricEquipment Internal Gains Nominal, MISC TV,MISC PLUG LOADS SCHEDULE,LIVING,250.84,3.0,151.434,0.604,50.478,0.000,0.600,0.000,0.400,misc tv,0.000,151.434
 ! <OtherEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
- OtherEquipment Internal Gains Nominal, RES BATHS LATENT,RES BATHS SCHEDULE,LIVING,125.42,1.5,5328.952,42.489,3552.635,1.000,0.000,0.000,0.000,0.000,475.802
- OtherEquipment Internal Gains Nominal, RES BATHS SENSIBLE,RES BATHS SCHEDULE,LIVING,125.42,1.5,-5251.907,-41.875,-3501.271,0.000,0.600,0.000,0.400,0.000,-468.923
- OtherEquipment Internal Gains Nominal, RES SHOWERS LATENT,RES SHOWERS SCHEDULE,LIVING,125.42,1.5,3091.477,24.649,2060.985,1.000,0.000,0.000,0.000,0.000,323.230
- OtherEquipment Internal Gains Nominal, RES SHOWERS SENSIBLE,RES SHOWERS SCHEDULE,LIVING,125.42,1.5,-3046.781,-24.293,-2031.188,0.000,0.600,0.000,0.400,0.000,-318.556
- OtherEquipment Internal Gains Nominal, RES SINKS LATENT,RES SINKS SCHEDULE,LIVING,125.42,1.5,2481.291,19.784,1654.194,1.000,0.000,0.000,0.000,0.000,170.559
- OtherEquipment Internal Gains Nominal, RES SINKS SENSIBLE,RES SINKS SCHEDULE,LIVING,125.42,1.5,-2445.417,-19.498,-1630.278,0.000,0.600,0.000,0.400,0.000,-168.094
+ OtherEquipment Internal Gains Nominal, DHW FIXTURES LATENT,DHW FIXTURES SCHEDULE,LIVING,250.84,3.0,5740.214,22.884,1913.405,1.000,0.000,0.000,0.000,0.000,641.762
+ OtherEquipment Internal Gains Nominal, DHW FIXTURES SENSIBLE,DHW FIXTURES SCHEDULE,LIVING,250.84,3.0,-5657.223,-22.553,-1885.741,0.000,0.600,0.000,0.400,0.000,-632.484
+ OtherEquipment Internal Gains Nominal, WATER HEATER EC ADJUSTMENT,ALWAYS ON DISCRETE,LIVING,250.84,3.0,1.000E-002,3.987E-005,3.333E-003,0.000,0.000,1.000,0.000,1.000E-002,1.000E-002
 ! <Shadowing/Sun Position Calculations Annual Simulations>, Calculation Method, Value {days}, Allowable Number Figures in Shadow Overlap {}, Polygon Clipping Algorithm, Sky Diffuse Modeling Algorithm, External Shading Calculation Method, Output External Shading Calculation Results, Disable Self-Shading Within Shading Zone Groups, Disable Self-Shading From Shading Zone Groups to Other Zones
 Shadowing/Sun Position Calculations Annual Simulations,AverageOverDaysInFrequency,20,200,SutherlandHodgman,SimpleSkyDiffuseModeling,InternalCalculation,No,No,No
 ! <ZoneInfiltration Airflow Stats Nominal>,Name,Schedule Name,Zone Name, Zone Floor Area {m2}, # Zone Occupants,Design Volume Flow Rate {m3/s},Volume Flow Rate/Floor Area {m3/s-m2},Volume Flow Rate/Exterior Surface Area {m3/s-m2},ACH - Air Changes per Hour,Equation A - Constant Term Coefficient {},Equation B - Temperature Term Coefficient {1/C},Equation C - Velocity Term Coefficient {s/m}, Equation D - Velocity Squared Term Coefficient {s2/m2}
- ZoneInfiltration Airflow Stats Nominal, INFIL FLOW,ALWAYS ON DISCRETE,LIVING,125.42,1.5,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
- ZoneInfiltration Airflow Stats Nominal, NATURAL VENT FLOW,ALWAYS ON DISCRETE,LIVING,125.42,1.5,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
+ ZoneInfiltration Airflow Stats Nominal, INFIL FLOW,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
+ ZoneInfiltration Airflow Stats Nominal, NATURAL VENT FLOW,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
  ZoneInfiltration Airflow Stats Nominal, INFIL|VENTED ATTIC,ALWAYS ON DISCRETE,VENTED ATTIC,125.42,0.0,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000
 ! <AirFlow Model>, Simple
  AirFlow Model, Simple
 ! <RoomAir Model>, Zone Name, Mixing/Mundt/UCSDDV/UCSDCV/UCSDUFI/UCSDUFE/User Defined
-RoomAir Model,CONDITIONED BASEMENT,Mixing/Well-Stirred
 RoomAir Model,LIVING,Mixing/Well-Stirred
 RoomAir Model,VENTED ATTIC,Mixing/Well-Stirred
 ! <AirflowNetwork Model:Control>, No Multizone or Distribution/Multizone with Distribution/Multizone without Distribution/Multizone with Distribution only during Fan Operation
 AirflowNetwork Model:Control,NoMultizoneOrDistribution
 ! <Component Sizing Information>, Component Type, Component Name, Input Field Description, Value
- Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, CENTRAL AC CONDITIONED BASEMENT TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 5.96292E-002
- Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, FURNACE CONDITIONED BASEMENT TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 5.02111E-002
- Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, CENTRAL AC LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.23221
- Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, FURNACE LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.19554
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.29184
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.29184
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 4358.20328
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 0.79568
- Component Sizing Information, Fan:OnOff, CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.29185
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Rated Air Flow Rate [m3/s], 0.22581
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 4358.20328
+ Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, CENTRAL AC LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.11772
+ Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, FURNACE LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.14336
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.11772
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.11772
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 1757.94636
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
+ Component Sizing Information, Fan:OnOff, CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.11772
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Rated Air Flow Rate [m3/s], 9.10846E-002
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 1757.94636
  Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Sensible Heat Ratio, 0.74040
 ! <DX Cooling Coil Standard Rating Information>, Component Type, Component Name, Standard Rating (Net) Cooling Capacity {W}, Standard Rated Net COP {W/W}, EER {Btu/W-h}, SEER {Btu/W-h}, IEER {Btu/W-h}
- DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, 4156.4, 2.70, 9.21, 10.94, 10.29
- Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.24575
- Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.24575
- Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 6911.55614
+ DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, 1676.6, 3.28, 11.19, 13.25, 12.20
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.14336
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.14336
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 4031.96346
  Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Maximum Supply Air Temperature [C], 48.88889
- Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 0.79568
- Component Sizing Information, Fan:OnOff, FURNACE SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.24575
- Component Sizing Information, Coil:Heating:Fuel, FURNACE HTG COIL, User-Specified Nominal Capacity [W], 6911.55614
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
+ Component Sizing Information, Fan:OnOff, FURNACE SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.14337
+ Component Sizing Information, Coil:Heating:Fuel, FURNACE HTG COIL, User-Specified Nominal Capacity [W], 4031.96346
 ! <Water Heater Information>,Type,Name,Volume {m3},Maximum Capacity {W},Standard Rated Recovery Efficiency, Standard Rated Energy Factor
-Water Heater Information,WaterHeater:Mixed,WATER HEATER,0.1362,5500.0,4.094,0.9477
- Component Sizing Information, WaterHeater:Mixed, WATER HEATER, Use Side Design Flow Rate [m3/s], 1.39537E-003
+Water Heater Information,WaterHeater:Mixed,WATER HEATER,0.1362,4500.0,3.571,0.9447
+ Component Sizing Information, WaterHeater:Mixed, WATER HEATER, Use Side Design Flow Rate [m3/s], 9.46974E-004
 ! <Environment>,Environment Name,Environment Type, Start Date, End Date, Start DayOfWeek, Duration {#days}, Source:Start DayOfWeek,  Use Daylight Saving, Use Holidays, Apply Weekend Holiday Rule,  Use Rain Values, Use Snow Values
 ! <Environment:Special Days>, Special Day Name, Special Day Type, Source, Start Date, Duration {#days}
 ! <Environment:Daylight Saving>, Daylight Saving Indicator, Source, Start Date, End Date
@@ -145,9 +133,8 @@ Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01/2007,12/31/2007,Monday,365,U
 Environment:Daylight Saving,No,RunPeriod Object
 Environment:WarmupDays,  6
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,CONDITIONED BASEMENT,RunPeriod: RUN PERIOD 1,0.1123461463,9.2342771382E-002,Pass,Pass,0.1852155062,0.2092189284,Pass,Pass
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,8.8077693287E-014,9.7321981189E-014,Pass,Pass,0.1914662366,0.2179712773,Pass,Pass
- Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7542892159,1.7508818687,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,6.2822900456E-002,0.2406085218,Pass,Pass,0.3148984339,0.4717733020,Pass,Pass
+ Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7460991239,1.7699612758,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

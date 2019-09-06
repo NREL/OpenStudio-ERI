@@ -13,26 +13,6 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SLAB is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=INFERRED CONDITIONED BASEMENT CEILING is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=CONDITIONED BASEMENT PARTITION is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=FURNITURE MASS CONDITIONED BASEMENT is not used as Receiving Surface in calculations.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
 Surface=SURFACE DOOR_WALL is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
@@ -94,6 +74,11 @@ Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
 Surface=INFERRED CONDITIONED FLOOR is not used as Receiving Surface in calculations.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=SLAB is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0

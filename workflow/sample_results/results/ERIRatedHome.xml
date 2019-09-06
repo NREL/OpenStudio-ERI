@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-06-12T09:47:20-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-09-06T17:56:04-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -54,11 +54,11 @@
       <Enclosure>
         <AirInfiltration>
           <AirInfiltrationMeasurement>
-            <SystemIdentifier id='Infiltration_ACH50'/>
+            <SystemIdentifier id='AirInfiltrationMeasurement'/>
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>3.0</AirLeakage>
+              <AirLeakage>7.5857875308696805</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>21600.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
@@ -164,7 +164,6 @@
             <ExposedPerimeter>150.0</ExposedPerimeter>
             <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
             <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
-            <DepthBelowGrade>7.0</DepthBelowGrade>
             <PerimeterInsulation>
               <SystemIdentifier id='SlabPerimeterInsulation'/>
               <Layer>
@@ -192,11 +191,9 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth'/>
@@ -204,11 +201,9 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast'/>
@@ -216,11 +211,9 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest'/>
@@ -228,11 +221,9 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            </extension>
           </Window>
         </Windows>
         <Doors>
@@ -272,7 +263,7 @@
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
               <DistributionSystem idref='HVACDistribution'/>
-              <CoolingSystemType>central air conditioning</CoolingSystemType>
+              <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>48000.0</CoolingCapacity>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
@@ -337,7 +328,7 @@
             <SystemIdentifier id='HotWaterDstribution'/>
             <SystemType>
               <Standard>
-                <PipingLength>30.0</PipingLength>
+                <PipingLength>50.0</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>
@@ -360,38 +351,38 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
-          <ModifiedEnergyFactor>1.2</ModifiedEnergyFactor>
-          <RatedAnnualkWh>387.0</RatedAnnualkWh>
-          <LabelElectricRate>0.127</LabelElectricRate>
-          <LabelGasRate>1.003</LabelGasRate>
-          <LabelAnnualGasCost>24.0</LabelAnnualGasCost>
-          <Capacity>3.5</Capacity>
+          <ModifiedEnergyFactor>0.8</ModifiedEnergyFactor>
+          <RatedAnnualkWh>700.0</RatedAnnualkWh>
+          <LabelElectricRate>0.1</LabelElectricRate>
+          <LabelGasRate>0.6</LabelGasRate>
+          <LabelAnnualGasCost>25.0</LabelAnnualGasCost>
+          <Capacity>3.0</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
-          <EnergyFactor>3.01</EnergyFactor>
+          <EnergyFactor>2.95</EnergyFactor>
           <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
-          <RatedAnnualkWh>100.0</RatedAnnualkWh>
+          <RatedAnnualkWh>450.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
           <Location>living space</Location>
-          <RatedAnnualkWh>609.0</RatedAnnualkWh>
+          <RatedAnnualkWh>650.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range'/>
           <FuelType>electricity</FuelType>
-          <IsInduction>true</IsInduction>
+          <IsInduction>false</IsInduction>
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven'/>
-          <IsConvection>true</IsConvection>
+          <IsConvection>false</IsConvection>
         </Oven>
       </Appliances>
       <Lighting>
