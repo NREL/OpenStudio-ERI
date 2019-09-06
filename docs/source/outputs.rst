@@ -3,11 +3,16 @@
 Outputs
 =======
 
-Upon completion of the ERI calculation, multiple output files are available in the ``results`` directory.
+Upon completion of the ERI calculation, summary output files and simulation files are available.
 See the `sample_results <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results>`_ directory for examples of these outputs.
 
+Summary Files
+-------------
+
+Several summary files described below are found in the ``results`` directory.
+
 ERI_Results.csv
----------------
+~~~~~~~~~~~~~~~
 
 The ``ERI_Results.csv`` file includes the ERI result as well as the high-level components (e.g., REUL, EC_r, EC_x, IAD_Save) that comprise the ERI calculation.
 The file reflects the format of the Results tab of the HERS Method Test spreadsheet.
@@ -17,7 +22,7 @@ Note that multiple comma-separated values will be reported for many of these out
 See the `example ERI_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Results.csv>`_.
 
 ERI_Worksheet.csv
------------------
+~~~~~~~~~~~~~~~~~
 
 The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
 The file reflects the formate of the Worksheet tab of the HERS Method Test spreadsheet.
@@ -27,7 +32,7 @@ Note that multiple comma-separated values will be reported for many of these out
 See the `example ERI_Worksheet.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Worksheet.csv>`_.
 
 ERI______Home.csv
------------------
+~~~~~~~~~~~~~~~~~
 
 A CSV file is written for each of the homes simulated (e.g., ``ERIRatedHome.csv`` for the Rated home, ``ERIReferenceHome.csv`` for the Reference home, etc.).
 
@@ -37,15 +42,17 @@ The next section includes annual energy consumption values disaggregated by fuel
 Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
 Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Lighting``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
 
-The final section in the CSV includes the heating, cooling, and hot water loads.
-Heating and cooling loads include duct losses; hot water loads exclude tank losses.
-Note that the heating and cooling loads are calculated using the predicted sensible load required to meet the living space's thermostat setpoint.
-A heating or cooling system that is undersized and does not maintain the living space temperature at setpoint will result in erroneously reported values.
+The third section in the CSV includes the heating, cooling, and hot water loads.
+Heating and cooling loads include duct losses while hot water loads exclude tank losses.
+
+The final section in the CSV includes `unmet` heating and cooling loads.
+These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
+An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
 ERI______Home.xml
------------------
+~~~~~~~~~~~~~~~~~
 
 A HPXML file is written for each of the homes simulated (e.g., ``ERIRatedHome.xml`` for the Rated home, ``ERIReferenceHome.xml`` for the Reference home, etc.).
 The file reflects the configuration of the home after applying the ERI 301 ruleset.
