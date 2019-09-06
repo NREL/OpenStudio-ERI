@@ -1420,8 +1420,8 @@ class EnergyRatingIndexTest < Minitest::Test
       areas[azimuth] += Float(XMLHelper.get_value(win, "Area"))
       u_factor += Float(XMLHelper.get_value(win, "UFactor"))
       shgc = Float(XMLHelper.get_value(win, "SHGC"))
-      shading_winter = Float(XMLHelper.get_value(win, "extension/InteriorShadingFactorWinter"))
-      shading_summer = Float(XMLHelper.get_value(win, "extension/InteriorShadingFactorSummer"))
+      shading_winter = Float(XMLHelper.get_value(win, "InteriorShadingFactorWinter"))
+      shading_summer = Float(XMLHelper.get_value(win, "InteriorShadingFactorSummer"))
       shgc_htg += (shgc * shading_winter)
       shgc_clg += (shgc * shading_summer)
       num += 1
