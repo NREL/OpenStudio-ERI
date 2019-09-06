@@ -3,11 +3,16 @@
 Outputs
 =======
 
-Upon completion of the ERI calculation, multiple output files are available in the ``results`` directory.
+Upon completion of the ERI calculation, summary output files and simulation files are available.
 See the `sample_results <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results>`_ directory for examples of these outputs.
 
+Summary Files
+-------------
+
+Several summary files described below are found in the ``results`` directory.
+
 ERI_Results.csv
----------------
+~~~~~~~~~~~~~~~
 
 The ``ERI_Results.csv`` file includes the ERI result as well as the high-level components (e.g., REUL, EC_r, EC_x, IAD_Save) that comprise the ERI calculation.
 The file reflects the format of the Results tab of the HERS Method Test spreadsheet.
@@ -17,7 +22,7 @@ Note that multiple comma-separated values will be reported for many of these out
 See the `example ERI_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Results.csv>`_.
 
 ERI_Worksheet.csv
------------------
+~~~~~~~~~~~~~~~~~
 
 The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
 The file reflects the formate of the Worksheet tab of the HERS Method Test spreadsheet.
@@ -27,7 +32,7 @@ Note that multiple comma-separated values will be reported for many of these out
 See the `example ERI_Worksheet.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Worksheet.csv>`_.
 
 ERI______Home.csv
------------------
+~~~~~~~~~~~~~~~~~
 
 A CSV file is written for each of the homes simulated (e.g., ``ERIRatedHome.csv`` for the Rated home, ``ERIReferenceHome.csv`` for the Reference home, etc.).
 
@@ -47,7 +52,7 @@ An HVAC system with sufficient capacity to perfectly maintain the thermostat set
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
 ERI______Home.xml
------------------
+~~~~~~~~~~~~~~~~~
 
 A HPXML file is written for each of the homes simulated (e.g., ``ERIRatedHome.xml`` for the Rated home, ``ERIReferenceHome.xml`` for the Reference home, etc.).
 The file reflects the configuration of the home after applying the ERI 301 ruleset.
