@@ -812,7 +812,6 @@ class EnergyRatingIndexTest < Minitest::Test
     base_reul = base_results[result_name]
     all_results.each do |compare_xml, compare_results|
       next unless compare_xml.include? files_include
-      next if compare_xml.include? "multiple"
 
       if compare_results[result_name].to_s.include? ","
         compare_reul = compare_results[result_name].split(",").map(&:to_f).inject(0, :+) # sum values
@@ -820,7 +819,7 @@ class EnergyRatingIndexTest < Minitest::Test
         compare_reul = compare_results[result_name]
       end
 
-      assert_in_epsilon(base_reul, compare_reul, 0.01)
+      assert_in_delta(base_reul, compare_reul, 0.15)
     end
   end
 
@@ -1421,8 +1420,8 @@ class EnergyRatingIndexTest < Minitest::Test
       areas[azimuth] += Float(XMLHelper.get_value(win, "Area"))
       u_factor += Float(XMLHelper.get_value(win, "UFactor"))
       shgc = Float(XMLHelper.get_value(win, "SHGC"))
-      shading_winter = Float(XMLHelper.get_value(win, "extension/InteriorShadingFactorWinter"))
-      shading_summer = Float(XMLHelper.get_value(win, "extension/InteriorShadingFactorSummer"))
+      shading_winter = Float(XMLHelper.get_value(win, "InteriorShadingFactorWinter"))
+      shading_summer = Float(XMLHelper.get_value(win, "InteriorShadingFactorSummer"))
       shgc_htg += (shgc * shading_winter)
       shgc_clg += (shgc * shading_summer)
       num += 1

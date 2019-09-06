@@ -46,7 +46,7 @@ The third section in the CSV includes the heating, cooling, and hot water loads.
 Heating and cooling loads include duct losses while hot water loads exclude tank losses.
 
 The final section in the CSV includes `unmet` heating and cooling loads.
-These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating that the HVAC system is undersized.
+These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
 An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
