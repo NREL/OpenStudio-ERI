@@ -759,7 +759,6 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
 end
 
 def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
-  # TODO: Allow multiple foundation walls
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     foundation_walls_values = []
@@ -904,7 +903,6 @@ def get_hpxml_file_framefloors_values(hpxml_file, framefloors_values)
 end
 
 def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
-  # TODO: Review carpet values
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     slabs_values = []
@@ -1159,7 +1157,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :heating_system_type => "Furnace",
                                 :heating_system_fuel => "natural gas",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.82,
                                 :fraction_heat_load_served => 1 }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
@@ -1168,7 +1166,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
     heating_systems_values = [{ :id => "HeatingSystem",
                                 :heating_system_type => "ElectricResistance",
                                 :heating_system_fuel => "electricity",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_percent => 1,
                                 :fraction_heat_load_served => 1 }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
@@ -1177,7 +1175,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :heating_system_type => "Furnace",
                                 :heating_system_fuel => "natural gas",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.95,
                                 :fraction_heat_load_served => 1 }]
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
@@ -1188,7 +1186,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :heating_system_type => "Furnace",
                                 :heating_system_fuel => "natural gas",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.78,
                                 :fraction_heat_load_served => 1 }]
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
@@ -1199,7 +1197,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :heating_system_type => "Furnace",
                                 :heating_system_fuel => "natural gas",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.96,
                                 :fraction_heat_load_served => 1 }]
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
@@ -1256,7 +1254,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :heating_system_type => "Furnace",
                                 :heating_system_fuel => "natural gas",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.8,
                                 :fraction_heat_load_served => 1 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-07.xml',
@@ -1269,7 +1267,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :heating_system_type => "Boiler",
                                 :heating_system_fuel => "fuel oil",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.8,
                                 :fraction_heat_load_served => 1 }]
   elsif ['NASEO_Technical_Exercises/NASEO-20.xml'].include? hpxml_file
@@ -1277,7 +1275,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
     heating_systems_values = [{ :id => "HeatingSystem",
                                 :heating_system_type => "WallFurnace",
                                 :heating_system_fuel => "propane",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.8,
                                 :fraction_heat_load_served => 1 }]
   elsif ['NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
@@ -1285,7 +1283,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
     heating_systems_values = [{ :id => "HeatingSystem",
                                 :heating_system_type => "Stove",
                                 :heating_system_fuel => "natural gas",
-                                :heating_capacity => 60000,
+                                :heating_capacity => -1,
                                 :heating_efficiency_percent => 0.6,
                                 :fraction_heat_load_served => 1 }]
   end
@@ -1304,7 +1302,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
-                                :cooling_capacity => 60000,
+                                :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 11 }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
@@ -1313,7 +1311,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
-                                :cooling_capacity => 60000,
+                                :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 15 }]
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
@@ -1329,7 +1327,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
-                                :cooling_capacity => 60000,
+                                :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 10 }]
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
@@ -1368,7 +1366,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
-                                :cooling_capacity => 60000,
+                                :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 14 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
@@ -1377,7 +1375,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :distribution_system_idref => "HVACDistribution",
                                 :cooling_system_type => "central air conditioner",
                                 :cooling_system_fuel => "electricity",
-                                :cooling_capacity => 60000,
+                                :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 13 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-14.xml',
@@ -1406,9 +1404,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
+                           :cooling_capacity => -1,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 100000,
+                           :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1417,16 +1415,15 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
-    # TODO: Update this to be HP + AC
     # Heating system – electric HP with HSPF = 6.8
     # Cooling system – electric A/C with SEER
     heat_pumps_values = [{ :id => "HeatPump",
                            :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
+                           :cooling_capacity => -1,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 100000,
+                           :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1435,7 +1432,6 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-04.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-04.xml'].include? hpxml_file
-    # TODO: Update this to be HP + AC
     # Change to a high efficiency HP with HSPF = 9.85
     heat_pumps_values[0][:heating_efficiency_hspf] = 9.85
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml'].include? hpxml_file
@@ -1445,7 +1441,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => 56100,
-                           :backup_heating_fuel => nil,
+                           :backup_heating_fuel => "electricity",
+                           :backup_heating_capacity => -1,
+                           :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 0,
                            :heating_efficiency_hspf => 6.8,
@@ -1457,7 +1455,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => 56100,
-                           :backup_heating_fuel => nil,
+                           :backup_heating_fuel => "electricity",
+                           :backup_heating_capacity => -1,
+                           :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 0,
                            :heating_efficiency_hspf => 9.85,
@@ -1468,8 +1468,10 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
-                           :backup_heating_fuel => nil,
+                           :cooling_capacity => -1,
+                           :backup_heating_fuel => "electricity",
+                           :backup_heating_capacity => -1,
+                           :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 8.2,
@@ -1480,9 +1482,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
+                           :cooling_capacity => -1,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 100000,
+                           :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1494,9 +1496,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
+                           :cooling_capacity => -1,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 100000,
+                           :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1508,9 +1510,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
+                           :cooling_capacity => -1,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 100000,
+                           :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1522,9 +1524,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :distribution_system_idref => "HVACDistribution",
                            :heat_pump_type => "ground-to-air",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
+                           :cooling_capacity => -1,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 100000,
+                           :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1535,9 +1537,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
     heat_pumps_values = [{ :id => "HeatPump",
                            :heat_pump_type => "mini-split",
                            :heat_pump_fuel => "electricity",
-                           :cooling_capacity => 60000,
+                           :cooling_capacity => -1,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 100000,
+                           :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
