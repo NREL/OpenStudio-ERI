@@ -2349,6 +2349,7 @@ def copy_sample_files
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
                   'base-appliances-none.xml',
+                  'base-appliances-refrigerator-adjusted.xml',
                   'base-dhw-combi-tankless-outside.xml',
                   'base-dhw-indirect-outside.xml',
                   'base-dhw-jacket-electric.xml',

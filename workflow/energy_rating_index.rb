@@ -146,9 +146,12 @@ def read_output(design, designdir, output_hpxml_path)
 
   # Electricity categories
   design_output[:elecTotal] = get_sql_result(sqlFile.electricityTotalEndUses, design)
-  design_output[:elecIntLighting] = get_sql_result(sqlFile.electricityInteriorLighting, design)
   design_output[:elecExtLighting] = get_sql_result(sqlFile.electricityExteriorLighting, design)
   design_output[:elecAppliances] = get_sql_result(sqlFile.electricityInteriorEquipment, design)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='LightingSummary' AND ReportForString='Entire Facility' AND TableName='Interior Lighting' AND RowName='#{Constants.ObjectNameInteriorLighting.upcase}' AND ColumnName='Consumption' AND Units='GJ'"
+  design_output[:elecIntLighting] = get_sql_query_result(sqlFile, query)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='LightingSummary' AND ReportForString='Entire Facility' AND TableName='Interior Lighting' AND RowName='#{Constants.ObjectNameGarageLighting.upcase}' AND ColumnName='Consumption' AND Units='GJ'"
+  design_output[:elecGrgLighting] = get_sql_query_result(sqlFile, query)
 
   # Fuel categories
   design_output[:gasTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design)
@@ -395,6 +398,7 @@ def read_output(design, designdir, output_hpxml_path)
                          design_output[:elecHotWaterBySystem].values.inject(0, :+) +
                          design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+) +
                          design_output[:elecIntLighting] +
+                         design_output[:elecGrgLighting] +
                          design_output[:elecExtLighting] +
                          design_output[:elecAppliances])
   if (design_output[:elecTotal] - sum_elec_categories).abs > tolerance
@@ -969,12 +973,12 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   end
 
   results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
-                      rated_output[:elecAppliances] + rated_output[:gasAppliances] +
-                      rated_output[:otherAppliances])
+                      rated_output[:elecGrgLighting] + rated_output[:elecAppliances] +
+                      rated_output[:gasAppliances] + rated_output[:otherAppliances])
 
   results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
-                       ref_output[:elecAppliances] + ref_output[:gasAppliances] +
-                       ref_output[:otherAppliances])
+                       ref_output[:elecGrgLighting] + ref_output[:elecAppliances] +
+                       ref_output[:gasAppliances] + ref_output[:otherAppliances])
 
   # === #
   # ERI #
@@ -1024,7 +1028,9 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Lighting (MBtu)", design_output[:elecIntLighting] + design_output[:elecExtLighting]]
+  results_out << ["Electricity: Lighting Interior (MBtu)", design_output[:elecIntLighting]]
+  results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting]]
+  results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting]]
   results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent]]
   results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge]]
   results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher]]
@@ -1138,7 +1144,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
     worksheet_out << ["Ref Home NS", ref_output[:hpxml_nst]]
   end
   worksheet_out << ["Ref L&A resMELs", ref_output[:elecMELs].round(2)]
-  worksheet_out << ["Ref L&A intLgt", ref_output[:elecIntLighting].round(2)]
+  worksheet_out << ["Ref L&A intLgt", (ref_output[:elecIntLighting] + ref_output[:elecGrgLighting]).round(2)]
   worksheet_out << ["Ref L&A extLgt", ref_output[:elecExtLighting].round(2)]
   worksheet_out << ["Ref L&A Fridg", ref_output[:elecFridge].round(2)]
   worksheet_out << ["Ref L&A TVs", ref_output[:elecTV].round(2)]
