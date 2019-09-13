@@ -42,9 +42,9 @@ end
 
 desc 'update version'
 task :update_version do
-  eri_version_change = { :from => "0.3.0", 
+  eri_version_change = { :from => "0.3.0",
                          :to => "0.3.0" }
-  
+
   file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
 
   file_names.each do |file_name|
@@ -52,9 +52,9 @@ task :update_version do
     new_contents = text.gsub(eri_version_change[:from], eri_version_change[:to])
 
     # To write changes to the file, use:
-    File.open(file_name, "w") {|file| file.puts new_contents }
+    File.open(file_name, "w") { |file| file.puts new_contents }
   end
-  
+
   puts "Done. Now check all changed files before committing."
 end
 
@@ -2349,6 +2349,7 @@ def copy_sample_files
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
                   'base-appliances-none.xml',
+                  'base-appliances-refrigerator-adjusted.xml',
                   'base-dhw-combi-tankless-outside.xml',
                   'base-dhw-indirect-outside.xml',
                   'base-dhw-jacket-electric.xml',
