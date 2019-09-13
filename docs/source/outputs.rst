@@ -43,7 +43,7 @@ Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil
 Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Hot Water Recirc Pump``, ``Lighting Interior``, ``Lighting Garage``, ``Lighting Exterior``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
 
 The third section in the CSV includes the heating, cooling, and hot water loads.
-Heating and cooling loads include duct losses while hot water loads exclude tank losses.
+Heating and cooling loads include duct losses, while hot water loads are available with and without tank losses.
 
 The final section in the CSV includes `unmet` heating and cooling loads.
 These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.

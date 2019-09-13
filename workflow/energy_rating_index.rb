@@ -339,6 +339,11 @@ def read_output(design, designdir, output_hpxml_path)
   end
   design_output[:loadHotWaterBldg] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
 
+  # Water Heating Load w/ Tank Losses
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND VariableName='Water Heater Heat Loss Energy' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  design_output[:loadHotWaterWithTankLossesBldg] = design_output[:loadHotWaterBldg]
+  design_output[:loadHotWaterWithTankLossesBldg] += get_sql_query_result(sqlFile, query)
+
   # PV
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
   design_output[:elecPV] = get_sql_query_result(sqlFile, query)
@@ -1051,7 +1056,8 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["", ""] # line break
   results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
   results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
-  results_out << ["Load: Hot Water (MBtu)", design_output[:loadHotWaterBldg]]
+  results_out << ["Load: Hot Water w/o Tank Losses (MBtu)", design_output[:loadHotWaterBldg]]
+  results_out << ["Load: Hot Water w/ Tank Losses (MBtu)", design_output[:loadHotWaterWithTankLossesBldg]]
   results_out << ["", ""] # line break
   results_out << ["Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
   results_out << ["Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
