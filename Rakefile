@@ -40,6 +40,24 @@ task :generate_sample_outputs do
   end
 end
 
+desc 'update version'
+task :update_version do
+  eri_version_change = { :from => "0.3.0", 
+                         :to => "0.3.0" }
+  
+  file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
+
+  file_names.each do |file_name|
+    text = File.read(file_name)
+    new_contents = text.gsub(eri_version_change[:from], eri_version_change[:to])
+
+    # To write changes to the file, use:
+    File.open(file_name, "w") {|file| file.puts new_contents }
+  end
+  
+  puts "Done. Now check all changed files before committing."
+end
+
 desc 'update all measures'
 task :update_measures do
   # Prevent NREL error regarding U: drive when not VPNed in
