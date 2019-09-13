@@ -246,6 +246,7 @@ def read_output(design, designdir, output_hpxml_path)
   # Water Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_water_heating.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHotWaterBySystem] = {}
+  design_output[:elecHotWaterRecircPumpBySystem] = {}
   design_output[:gasHotWaterBySystem] = {}
   design_output[:otherHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
@@ -261,9 +262,8 @@ def read_output(design, designdir, output_hpxml_path)
     # Electricity Use - Recirc Pump
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricityRecircPump).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    recirc_pump = get_sql_query_result(sqlFile, query)
-    elecHotWaterBySystemRaw += recirc_pump
-    design_output[:elecAppliances] -= recirc_pump
+    design_output[:elecHotWaterRecircPumpBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    design_output[:elecAppliances] -= design_output[:elecHotWaterRecircPumpBySystem][sys_id]
 
     # Natural Gas use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingNaturalGas).join("','") + "'"
@@ -393,6 +393,7 @@ def read_output(design, designdir, output_hpxml_path)
   sum_elec_categories = (design_output[:elecHeatingBySystem].values.inject(0, :+) +
                          design_output[:elecCoolingBySystem].values.inject(0, :+) +
                          design_output[:elecHotWaterBySystem].values.inject(0, :+) +
+                         design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+) +
                          design_output[:elecIntLighting] +
                          design_output[:elecExtLighting] +
                          design_output[:elecAppliances])
@@ -928,8 +929,8 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
     eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
-    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:otherHotWaterBySystem][s]
-    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:otherHotWaterBySystem][s]
+    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:otherHotWaterBySystem][s] + rated_output[:elecHotWaterRecircPumpBySystem][s]
+    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:otherHotWaterBySystem][s] + ref_output[:elecHotWaterRecircPumpBySystem][s]
 
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
 
@@ -1022,6 +1023,7 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+)]
+  results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Lighting (MBtu)", design_output[:elecIntLighting] + design_output[:elecExtLighting]]
   results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent]]
   results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge]]

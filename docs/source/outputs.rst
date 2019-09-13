@@ -40,7 +40,7 @@ At the top of the file are total annual consumption values for each fuel type as
 
 The next section includes annual energy consumption values disaggregated by fuel type and end use.
 Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
-Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Lighting``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
+Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Hot Water Recirc Pump``, ``Lighting``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
 
 The third section in the CSV includes the heating, cooling, and hot water loads.
 Heating and cooling loads include duct losses while hot water loads exclude tank losses.
