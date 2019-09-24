@@ -1034,7 +1034,7 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Electricity: Net (MBtu)", design_output[:elecTotal] - design_output[:elecPV]]
   results_out << ["Natural Gas: Total (MBtu)", design_output[:gasTotal]]
   results_out << ["Other Fuel: Total (MBtu)", design_output[:otherTotal]]
-  results_out << ["", ""] # line break
+  results_out << [nil] # line break
   results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+)]
@@ -1063,15 +1063,15 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Other Fuel: Hot Water (MBtu)", design_output[:otherHotWaterBySystem].values.inject(0, :+)]
   results_out << ["Other Fuel: Clothes Dryer (MBtu)", design_output[:otherClothesDryer]]
   results_out << ["Other Fuel: Range/Oven (MBtu)", design_output[:otherRangeOven]]
-  results_out << ["", ""] # line break
+  results_out << [nil] # line break
   results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
   results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
   results_out << ["Load: Hot Water w/o Tank Losses (MBtu)", design_output[:loadHotWaterBldg]]
   results_out << ["Load: Hot Water w/ Tank Losses (MBtu)", design_output[:loadHotWaterWithTankLossesBldg]]
-  results_out << ["", ""] # line break
+  results_out << [nil] # line break
   results_out << ["Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
   results_out << ["Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
-  results_out << ["", ""] # line break
+  results_out << [nil] # line break
   results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
   results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
@@ -1081,10 +1081,10 @@ def write_results_annual_output(resultsdir, design, design_output)
                     "Natural Gas" => design_output[:gasTotal],
                     "Other Fuel" => design_output[:otherTotal] }
   sum_end_use_results = {}
-  results_out.each do |key, value|
-    next if key.strip.size == 0
+  results_out.each do |var, value|
+    next if var.nil?
 
-    fuel, enduse = key.split(": ")
+    fuel, enduse = var.split(": ")
     next if enduse.start_with? "Total " or enduse.start_with? "Net "
 
     sum_end_use_results[fuel] = 0.0 if sum_end_use_results[fuel].nil?
@@ -1156,7 +1156,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
     worksheet_out << ["Total Loads TRL*IAF", (results[:trl] * results[:iaf_rh]).round(4)]
   end
   worksheet_out << ["ERI", results[:eri].round(2)]
-  worksheet_out << ["", ""] # line break
+  worksheet_out << [nil] # line break
   worksheet_out << ["Ref Home CFA", ref_output[:hpxml_cfa]]
   worksheet_out << ["Ref Home Nbr", ref_output[:hpxml_nbr]]
   if using_iaf
