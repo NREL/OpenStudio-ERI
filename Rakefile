@@ -2368,6 +2368,7 @@ def copy_sample_files
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
+                  'base-hvac-portable-heater-electric-only.xml',
                   'base-hvac-setpoints.xml',
                   'base-hvac-stove-oil-only-no-eae.xml',
                   'base-hvac-wall-furnace-propane-only-no-eae.xml',
