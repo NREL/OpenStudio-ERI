@@ -241,7 +241,7 @@ def create_hpxmls
     'NASEO_Technical_Exercises/NASEO-14.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
     'NASEO_Technical_Exercises/NASEO-15.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
     'NASEO_Technical_Exercises/NASEO-16.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-17.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
+    'NASEO_Technical_Exercises/NASEO-17.xml.skip' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
     'NASEO_Technical_Exercises/NASEO-18.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
     'NASEO_Technical_Exercises/NASEO-19.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
     'NASEO_Technical_Exercises/NASEO-20.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -910,7 +910,7 @@ def get_hpxml_file_framefloors_values(hpxml_file, framefloors_values)
          'RESNET_Tests/4.1_Standard_140/L324XC.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'NASEO_Technical_Exercises/NASEO-16.xml',
-         'NASEO_Technical_Exercises/NASEO-17.xml'].include? hpxml_file
+         'NASEO_Technical_Exercises/NASEO-17.xml.skip'].include? hpxml_file
     framefloors_values.delete_at(1)
   elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
     # R-13 crawlspace ceiling insulation
@@ -1014,7 +1014,7 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
     elsif ['NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
       slabs_values[0][:interior_adjacent_to] = "basement - conditioned"
     end
-  elsif ['NASEO_Technical_Exercises/NASEO-17.xml'].include? hpxml_file
+  elsif ['NASEO_Technical_Exercises/NASEO-17.xml.skip'].include? hpxml_file
     # Slab-on-grade foundation with 4 ft of R-5 horizontal under-slab insulation
     slabs_values = [{ :id => "Slab",
                       :interior_adjacent_to => "living space",
