@@ -43,10 +43,10 @@ The CSV file includes multiple sections with different outputs.
    Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
    Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Hot Water Recirc Pump``, ``Lighting Interior``, ``Lighting Garage``, ``Lighting Exterior``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
 
-3. The third section in the CSV includes the **heating, cooling, and hot water loads**.
+3. The third section in the CSV includes the **annual heating, cooling, and hot water loads**.
    Heating and cooling loads include duct losses, while hot water loads are available with and without tank losses.
 
-4. The fourth section in the CSV includes **unmet heating and cooling loads**.
+4. The fourth section in the CSV includes **unmet annual heating and cooling loads**.
    These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
    An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
 

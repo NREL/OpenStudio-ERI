@@ -1064,13 +1064,13 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Other Fuel: Clothes Dryer (MBtu)", design_output[:otherClothesDryer]]
   results_out << ["Other Fuel: Range/Oven (MBtu)", design_output[:otherRangeOven]]
   results_out << [nil] # line break
-  results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
-  results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
-  results_out << ["Load: Hot Water w/o Tank Losses (MBtu)", design_output[:loadHotWaterBldg]]
-  results_out << ["Load: Hot Water w/ Tank Losses (MBtu)", design_output[:loadHotWaterWithTankLossesBldg]]
+  results_out << ["Annual Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
+  results_out << ["Annual Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
+  results_out << ["Annual Load: Hot Water w/o Tank Losses (MBtu)", design_output[:loadHotWaterBldg]]
+  results_out << ["Annual Load: Hot Water w/ Tank Losses (MBtu)", design_output[:loadHotWaterWithTankLossesBldg]]
   results_out << [nil] # line break
-  results_out << ["Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
-  results_out << ["Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
+  results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
+  results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
   results_out << [nil] # line break
   results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
   results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal]]
