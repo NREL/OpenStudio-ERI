@@ -3987,19 +3987,7 @@ SurfaceProperty:ExposedFoundationPerimeter,
   1;                                      !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 2,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
+  Surface 5,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -4011,13 +3999,25 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 4,                              !- Surface Name
+  Surface 1,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 5,                              !- Surface Name
+  Surface 2,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 3,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 4,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -18203,6 +18203,34 @@ Curve:Biquadratic,
   -100,                                   !- Minimum Value of y {BasedOnField A3}
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
+Output:Meter:MeterFileOnly,
+  Electricity:Facility,                   !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Gas:Facility,                           !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Electric Energy,           !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Propane Energy,            !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater FuelOil#1 Energy,          !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  Water Use Connections 1,                !- Key Value
+  Water Use Connections Plant Hot Water Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
 Output:Variable,
   *,                                      !- Key Value
   central ac and furnace supply fan Heating, !- Variable Name
@@ -18215,27 +18243,72 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan Heating, !- Variable Name
+  water heater EC adjustment,             !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan Cooling, !- Variable Name
+  Zone Mean Air Temperature,              !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Heating Coil Propane Energy,            !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Heating Coil FuelOil#1 Energy,          !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Baseboard Propane Energy,               !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Baseboard FuelOil#1 Energy,             !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Boiler Propane Energy,                  !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Boiler FuelOil#1 Energy,                !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Water Heater Propane Energy,            !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Water Heater FuelOil#1 Energy,          !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Other Equipment Propane Energy,         !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Other Equipment FuelOil#1 Energy,       !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   furnace htg coil,                       !- Key Value
   Heating Coil Gas Energy,                !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Heating, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Cooling, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -18246,31 +18319,6 @@ Output:Variable,
 Output:Variable,
   furnace htg coil,                       !- Key Value
   Heating Coil FuelOil#1 Energy,          !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Heating, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Cooling, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Cooling, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Heating, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Cooling, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -18289,93 +18337,8 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
   water heater,                           !- Key Value
   Water Heater Gas Energy,                !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Heating, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater Propane Energy,            !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater FuelOil#1 Energy,          !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  Water Use Connections 1,                !- Key Value
-  Water Use Connections Plant Hot Water Energy, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Cooling, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Heating, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Cooling, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Electric Energy,           !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan Heating, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,

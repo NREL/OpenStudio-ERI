@@ -28,6 +28,9 @@ This will generate output as shown below:
 
 .. image:: https://user-images.githubusercontent.com/5861765/63288138-3e167000-c279-11e9-9a18-b0a2327ed89d.png
 
+You can also request generation of hourly output CSV files as part of the calculation by running:
+``openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly-output``
+
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 
 Output

@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
+Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.26 13:40,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Constant="ALWAYS ON CONTINUOUS", Blank Schedule Type Limits Name input -- will not be validated.
@@ -76,11 +76,21 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
    **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
+   ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
+   ************* Key=*, VarName=HEATING COIL PROPANE ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=BASEBOARD PROPANE ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=BASEBOARD FUELOIL#1 ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=BOILER PROPANE ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=BOILER FUELOIL#1 ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=WATER HEATER PROPANE ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=OTHER EQUIPMENT PROPANE ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=OTHER EQUIPMENT FUELOIL#1 ENERGY, Frequency=Hourly
    ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
    ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER GAS ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
    ************* There are 4 unused schedules in input.
    ************* There are 67 unused week schedules in input.
    ************* There are 40 unused day schedules in input.
@@ -105,4 +115,4 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 22726 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.25sec
+   ************* EnergyPlus Completed Successfully-- 22726 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  6.36sec
