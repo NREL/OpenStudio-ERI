@@ -660,9 +660,15 @@ class EnergyRatingIndexTest < Minitest::Test
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
+    # Run sample files with hourly output turned on to test hourly results against annual results
+    hourly = ""
+    if xml.include? "sample_files"
+      hourly = " --hourly-output"
+    end
+
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}#{hourly}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)

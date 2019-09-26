@@ -70,18 +70,26 @@ def process_design_output(design, designdir, resultsdir, output_hpxml_path, hour
   return design_output
 end
 
-def get_sql_query_result(sqlFile, query)
+def get_sql_query_result(sqlFile, query, convert_to_mbtu = true)
   result = sqlFile.execAndReturnFirstDouble(query)
   if result.is_initialized
-    return result.get * 0.9478171203133172 # GJ => MBtu
+    if convert_to_mbtu
+      return result.get * 0.9478171203133172 # GJ => MBtu
+    else
+      return result.get # GJ
+    end
   end
 
   return 0
 end
 
-def get_sql_result(sqlValue, design)
+def get_sql_result(sqlValue, design, convert_to_mbtu = true)
   if sqlValue.is_initialized
-    return sqlValue.get * 0.9478171203133172 # GJ => MBtu
+    if convert_to_mbtu
+      return sqlValue.get * 0.9478171203133172 # GJ => MBtu
+    else
+      return sqlValue.get # GJ
+    end
   end
 
   fail "Could not find sql result."
@@ -452,7 +460,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
   design_hourly_output = []
   if hourly_output
-    # Generate CSV file
+    # Generate CSV file with hourly output
 
     # Get zone names (excluding duct zone/return plenum)
     zone_names = []
@@ -517,6 +525,25 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
       temperatures.each_with_index do |temperature, i|
         design_hourly_output[i + 1] << temperature.round(2)
       end
+    end
+
+    # Error Checking
+    elec_sum_hourly_gj = (elec_use.inject(0, :+) / j_to_kwh) / 1000000000.0
+    elec_annual_gj = get_sql_result(sqlFile.electricityTotalEndUses, design, false)
+    if (elec_annual_gj - elec_sum_hourly_gj).abs > tolerance
+      fail "[#{design}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
+    end
+
+    gas_sum_hourly_gj = (gas_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
+    gas_annual_gj = get_sql_result(sqlFile.naturalGasTotalEndUses, design, false)
+    if (gas_annual_gj - gas_sum_hourly_gj).abs > tolerance
+      fail "[#{design}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
+    end
+
+    other_sum_hourly_gj = ((propane_use.inject(0, :+) + oil_use.inject(0, :+)) / j_to_kbtu) / 1000000000.0
+    other_annual_gj = get_sql_result(sqlFile.otherFuelTotalEndUses, design, false)
+    if (other_annual_gj - other_sum_hourly_gj).abs > tolerance
+      fail "[#{design}] Hourly propane+oil fuel results (#{other_sum_hourly_gj}) do not sum to annual (#{other_annual_gj}).\n#{design_output.to_s}"
     end
 
   end
