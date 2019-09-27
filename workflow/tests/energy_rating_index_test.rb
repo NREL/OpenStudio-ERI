@@ -61,7 +61,8 @@ class EnergyRatingIndexTest < Minitest::Test
     _test_reul(all_results, "base-hvac", "REUL Cooling (MBtu)")
   end
 
-  def test_invalid_xmls
+  def test_invalid_files
+    test_name = "invalid_files"
     expected_error_msgs = { 'bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
                             'dhw-frac-load-served.xml' => ["Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15."],
                             'missing-elements.xml' => ["Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors",
@@ -72,7 +73,7 @@ class EnergyRatingIndexTest < Minitest::Test
     this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = "#{this_dir}/sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      run_eri_and_check(xml, this_dir, true, expected_error_msgs[File.basename(xml)])
+      run_eri_and_check(xml, this_dir, test_name, true, expected_error_msgs[File.basename(xml)])
     end
   end
 
@@ -146,19 +147,21 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_HERS_AutoGen_Reference_Home")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next if xml.end_with? "ERIReferenceHome.xml"
+      next if xml.end_with? "ERIReferenceHome.xml" or xml.end_with? "_Ref.xml"
 
       hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_reference_home_components(hpxmls[:ref], test_num)
 
       # Re-simulate reference HPXML file
-      FileUtils.cp(hpxmls[:ref], xmldir)
-      hpxmls[:ref] = "#{xmldir}/#{File.basename(hpxmls[:ref])}"
+      new_name = "#{xmldir}/#{File.basename(xml).gsub('.xml', '_Ref.xml')}"
+      FileUtils.cp(hpxmls[:ref], new_name)
+      hpxmls[:ref] = new_name
       _override_ref_ref_mech_vent_infil(hpxmls[:ref], xml)
-      hpxmls, csvs, runtime = run_eri_and_check(hpxmls[:ref], this_dir, nil)
+      hpxmls, csvs, runtime = run_eri_and_check(hpxmls[:ref], this_dir, test_name)
       worksheet_results = _get_csv_results(csvs[:worksheet])
       all_results[File.basename(xml)]["e-Ratio"] = worksheet_results["Total Loads TnML"] / worksheet_results["Total Loads TRL"]
+      File.delete(new_name)
     end
     assert(all_results.size > 0)
 
@@ -660,9 +663,11 @@ class EnergyRatingIndexTest < Minitest::Test
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
+    rundir = File.join(this_dir, "tests", test_name)
+
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml} -o #{rundir}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
@@ -678,11 +683,11 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     hpxmls = {}
-    hpxmls[:ref] = File.join(this_dir, "results", "ERIReferenceHome.xml")
-    hpxmls[:rated] = File.join(this_dir, "results", "ERIRatedHome.xml")
+    hpxmls[:ref] = File.join(rundir, "results", "ERIReferenceHome.xml")
+    hpxmls[:rated] = File.join(rundir, "results", "ERIRatedHome.xml")
     csvs = {}
-    csvs[:results] = File.join(this_dir, "results", "ERI_Results.csv")
-    csvs[:worksheet] = File.join(this_dir, "results", "ERI_Worksheet.csv")
+    csvs[:results] = File.join(rundir, "results", "ERI_Results.csv")
+    csvs[:worksheet] = File.join(rundir, "results", "ERI_Worksheet.csv")
     if expect_error
       assert(!File.exists?(hpxmls[:ref]))
       assert(!File.exists?(hpxmls[:rated]))
@@ -690,7 +695,7 @@ class EnergyRatingIndexTest < Minitest::Test
       assert(!File.exists?(csvs[:worksheet]))
 
       if not expect_error_msgs.nil?
-        run_log = File.readlines(File.join(this_dir, "ERIRatedHome", "run.log")).map(&:strip)
+        run_log = File.readlines(File.join(rundir, "ERIRatedHome", "run.log")).map(&:strip)
         expect_error_msgs.each do |error_msg|
           found_error_msg = false
           run_log.each do |run_line|
@@ -710,33 +715,40 @@ class EnergyRatingIndexTest < Minitest::Test
       assert(File.exists?(csvs[:results]))
       assert(File.exists?(csvs[:worksheet]))
       if using_iaf
-        hpxmls[:iad] = File.join(this_dir, "results", "ERIIndexAdjustmentDesign.xml")
+        hpxmls[:iad] = File.join(rundir, "results", "ERIIndexAdjustmentDesign.xml")
         assert(File.exists?(hpxmls[:iad]))
-        hpxmls[:iadref] = File.join(this_dir, "results", "ERIIndexAdjustmentReferenceHome.xml")
+        hpxmls[:iadref] = File.join(rundir, "results", "ERIIndexAdjustmentReferenceHome.xml")
         assert(File.exists?(hpxmls[:iadref]))
       end
 
       # Check HPXMLs are valid
-      _test_schema_validation(this_dir, xml)
-      _test_schema_validation(this_dir, hpxmls[:ref])
-      _test_schema_validation(this_dir, hpxmls[:rated])
+      _test_schema_validation(rundir, xml)
+      _test_schema_validation(rundir, hpxmls[:ref])
+      _test_schema_validation(rundir, hpxmls[:rated])
       if using_iaf
-        _test_schema_validation(this_dir, hpxmls[:iad])
-        _test_schema_validation(this_dir, hpxmls[:iadref])
+        _test_schema_validation(rundir, hpxmls[:iad])
+        _test_schema_validation(rundir, hpxmls[:iadref])
       end
 
       # Copy files to separate directory to save them
-      if not test_name.nil?
-        ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
-          next unless File.exists? File.join(this_dir, design)
+      test_dir = File.join(@test_files_dir, test_name, File.basename(xml))
+      ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
+        next unless File.exists? File.join(rundir, design)
 
-          FileUtils.mkdir_p File.join(@test_files_dir, test_name, File.basename(xml)) unless File.exists? File.join(@test_files_dir, test_name, File.basename(xml))
-          FileUtils.copy_entry File.join(this_dir, design), File.join(@test_files_dir, test_name, File.basename(xml), design)
-        end
-        FileUtils.copy_entry File.join(this_dir, "results"), File.join(@test_files_dir, test_name, File.basename(xml), "results")
+        FileUtils.mkdir_p test_dir unless File.exists? test_dir
+        FileUtils.copy_entry File.join(rundir, design), File.join(test_dir, design)
       end
-
+      FileUtils.copy_entry File.join(rundir, "results"), File.join(test_dir, "results")
+      hpxmls.keys.each do |k|
+        hpxmls[k] = hpxmls[k].gsub(rundir, test_dir)
+      end
+      csvs.keys.each do |k|
+        csvs[k] = csvs[k].gsub(rundir, test_dir)
+      end
     end
+
+    # Clean up
+    _rm_path(rundir)
 
     return hpxmls, csvs, runtime
   end
@@ -748,7 +760,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     xml = File.absolute_path(xml)
 
-    rundir = File.join(this_dir, "SimulationHome")
+    rundir = File.join(this_dir, "tests", test_name)
     _rm_path(rundir)
     Dir.mkdir(rundir)
 
@@ -795,12 +807,16 @@ class EnergyRatingIndexTest < Minitest::Test
     sim_time = (Time.now - start_time).round(1)
     puts "Completed #{File.basename(args['hpxml_path'])} simulation in #{sim_time}s."
 
-    sql_path = File.join(rundir, "eplusout.sql")
+    # Copy files to separate directory to save them
+    test_dir = File.join(@test_files_dir, test_name, File.basename(xml))
+    FileUtils.mkdir_p File.join(@test_files_dir, test_name) unless File.exists? File.join(@test_files_dir, test_name)
+    FileUtils.copy_entry rundir, test_dir
+
+    sql_path = File.join(test_dir, "eplusout.sql")
     assert(File.exists?(sql_path))
 
-    # Copy files to separate directory to save them
-    FileUtils.mkdir_p File.join(@test_files_dir, test_name) unless File.exists? File.join(@test_files_dir, test_name)
-    FileUtils.copy_entry rundir, File.join(@test_files_dir, test_name, File.basename(xml))
+    # Clean up
+    _rm_path(rundir)
 
     return sql_path, sim_time
   end
