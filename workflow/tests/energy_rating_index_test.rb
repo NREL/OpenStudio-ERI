@@ -1644,7 +1644,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_csv_results(csv)
     results = {}
     CSV.foreach(csv) do |row|
-      next if row[1].strip.size == 0
+      next if row.nil? or row.size < 2
 
       if row[1].include? "," # Occurs if, e.g., multiple HVAC
         results[row[0]] = row[1]
