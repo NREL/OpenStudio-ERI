@@ -722,7 +722,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
 
       # Check HPXMLs are valid
-      _test_schema_validation(rundir, xml)
+      _test_schema_validation(this_dir, xml)
       _test_schema_validation(rundir, hpxmls[:ref])
       _test_schema_validation(rundir, hpxmls[:rated])
       if using_iaf
