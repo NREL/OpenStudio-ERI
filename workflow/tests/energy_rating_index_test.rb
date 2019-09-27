@@ -723,11 +723,11 @@ class EnergyRatingIndexTest < Minitest::Test
 
       # Check HPXMLs are valid
       _test_schema_validation(this_dir, xml)
-      _test_schema_validation(rundir, hpxmls[:ref])
-      _test_schema_validation(rundir, hpxmls[:rated])
+      _test_schema_validation(this_dir, hpxmls[:ref])
+      _test_schema_validation(this_dir, hpxmls[:rated])
       if using_iaf
-        _test_schema_validation(rundir, hpxmls[:iad])
-        _test_schema_validation(rundir, hpxmls[:iadref])
+        _test_schema_validation(this_dir, hpxmls[:iad])
+        _test_schema_validation(this_dir, hpxmls[:iadref])
       end
 
       # Copy files to separate directory to save them
