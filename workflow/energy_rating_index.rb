@@ -137,15 +137,21 @@ def read_output(design, designdir, output_hpxml_path)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
   design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
 
+  # Peak Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
+  design_output[:peakLoadHeatingBldg] = sqlFile.execAndReturnFirstDouble(query).get
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
+  design_output[:peakLoadCoolingBldg] = sqlFile.execAndReturnFirstDouble(query).get
+
   # Building Unmet Space Heating/Cooling Load (heating/cooling energy delivered by backup ideal air system)
   design_output[:unmetLoadHeatingBldg] = get_sql_result(sqlFile.districtHeatingHeating, design)
   design_output[:unmetLoadCoolingBldg] = get_sql_result(sqlFile.districtCoolingCooling, design)
 
   # Peak Electricity Consumption
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY SUMMER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
-  design_output[:peakElecSummerTotal] = get_sql_query_result(sqlFile, query)
+  design_output[:peakElecSummerTotal] = sqlFile.execAndReturnFirstDouble(query).get
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY WINTER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
-  design_output[:peakElecWinterTotal] = get_sql_query_result(sqlFile, query)
+  design_output[:peakElecWinterTotal] = sqlFile.execAndReturnFirstDouble(query).get
 
   # Total site energy (subtract out any ideal air system energy)
   design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design) - design_output[:unmetLoadHeatingBldg] - design_output[:unmetLoadCoolingBldg]
@@ -1071,8 +1077,11 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
   results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
   results_out << [nil] # line break
-  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
   results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal]]
+  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
+  results_out << [nil] # line break
+  results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg]]
+  results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
