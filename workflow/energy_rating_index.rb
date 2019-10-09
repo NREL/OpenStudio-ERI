@@ -137,18 +137,33 @@ def read_output(design, designdir, output_hpxml_path)
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
   design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
 
+  # Peak Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
+  design_output[:peakLoadHeatingBldg] = sqlFile.execAndReturnFirstDouble(query).get
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
+  design_output[:peakLoadCoolingBldg] = sqlFile.execAndReturnFirstDouble(query).get
+
   # Building Unmet Space Heating/Cooling Load (heating/cooling energy delivered by backup ideal air system)
   design_output[:unmetLoadHeatingBldg] = get_sql_result(sqlFile.districtHeatingHeating, design)
   design_output[:unmetLoadCoolingBldg] = get_sql_result(sqlFile.districtCoolingCooling, design)
+
+  # Peak Electricity Consumption
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY SUMMER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
+  design_output[:peakElecSummerTotal] = sqlFile.execAndReturnFirstDouble(query).get
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY WINTER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
+  design_output[:peakElecWinterTotal] = sqlFile.execAndReturnFirstDouble(query).get
 
   # Total site energy (subtract out any ideal air system energy)
   design_output[:allTotal] = get_sql_result(sqlFile.totalSiteEnergy, design) - design_output[:unmetLoadHeatingBldg] - design_output[:unmetLoadCoolingBldg]
 
   # Electricity categories
   design_output[:elecTotal] = get_sql_result(sqlFile.electricityTotalEndUses, design)
-  design_output[:elecIntLighting] = get_sql_result(sqlFile.electricityInteriorLighting, design)
   design_output[:elecExtLighting] = get_sql_result(sqlFile.electricityExteriorLighting, design)
   design_output[:elecAppliances] = get_sql_result(sqlFile.electricityInteriorEquipment, design)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='LightingSummary' AND ReportForString='Entire Facility' AND TableName='Interior Lighting' AND RowName='#{Constants.ObjectNameInteriorLighting.upcase}' AND ColumnName='Consumption' AND Units='GJ'"
+  design_output[:elecIntLighting] = get_sql_query_result(sqlFile, query)
+  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='LightingSummary' AND ReportForString='Entire Facility' AND TableName='Interior Lighting' AND RowName='#{Constants.ObjectNameGarageLighting.upcase}' AND ColumnName='Consumption' AND Units='GJ'"
+  design_output[:elecGrgLighting] = get_sql_query_result(sqlFile, query)
 
   # Fuel categories
   design_output[:gasTotal] = get_sql_result(sqlFile.naturalGasTotalEndUses, design)
@@ -246,6 +261,7 @@ def read_output(design, designdir, output_hpxml_path)
   # Water Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_water_heating.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHotWaterBySystem] = {}
+  design_output[:elecHotWaterRecircPumpBySystem] = {}
   design_output[:gasHotWaterBySystem] = {}
   design_output[:otherHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
@@ -261,9 +277,8 @@ def read_output(design, designdir, output_hpxml_path)
     # Electricity Use - Recirc Pump
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricityRecircPump).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    recirc_pump = get_sql_query_result(sqlFile, query)
-    elecHotWaterBySystemRaw += recirc_pump
-    design_output[:elecAppliances] -= recirc_pump
+    design_output[:elecHotWaterRecircPumpBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    design_output[:elecAppliances] -= design_output[:elecHotWaterRecircPumpBySystem][sys_id]
 
     # Natural Gas use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingNaturalGas).join("','") + "'"
@@ -334,7 +349,11 @@ def read_output(design, designdir, output_hpxml_path)
       design_output[:elecAppliances] -= ec_adj
     end
   end
-  design_output[:loadHotWaterBldg] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
+  design_output[:loadHotWaterDelivered] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
+
+  # Water Heating Load w/ Tank Losses
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND VariableName='Water Heater Heat Loss Energy' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  design_output[:loadHotWaterTankLosses] = get_sql_query_result(sqlFile, query)
 
   # PV
   query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND ReportForString='Entire Facility' AND TableName='Electric Loads Satisfied' AND RowName='Total On-Site Electric Sources' AND ColumnName='Electricity' AND Units='GJ'"
@@ -393,7 +412,9 @@ def read_output(design, designdir, output_hpxml_path)
   sum_elec_categories = (design_output[:elecHeatingBySystem].values.inject(0, :+) +
                          design_output[:elecCoolingBySystem].values.inject(0, :+) +
                          design_output[:elecHotWaterBySystem].values.inject(0, :+) +
+                         design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+) +
                          design_output[:elecIntLighting] +
+                         design_output[:elecGrgLighting] +
                          design_output[:elecExtLighting] +
                          design_output[:elecAppliances])
   if (design_output[:elecTotal] - sum_elec_categories).abs > tolerance
@@ -928,8 +949,8 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
     eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
-    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:otherHotWaterBySystem][s]
-    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:otherHotWaterBySystem][s]
+    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:otherHotWaterBySystem][s] + rated_output[:elecHotWaterRecircPumpBySystem][s]
+    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:otherHotWaterBySystem][s] + ref_output[:elecHotWaterRecircPumpBySystem][s]
 
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
 
@@ -968,12 +989,12 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   end
 
   results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
-                      rated_output[:elecAppliances] + rated_output[:gasAppliances] +
-                      rated_output[:otherAppliances])
+                      rated_output[:elecGrgLighting] + rated_output[:elecAppliances] +
+                      rated_output[:gasAppliances] + rated_output[:otherAppliances])
 
   results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
-                       ref_output[:elecAppliances] + ref_output[:gasAppliances] +
-                       ref_output[:otherAppliances])
+                       ref_output[:elecGrgLighting] + ref_output[:elecAppliances] +
+                       ref_output[:gasAppliances] + ref_output[:otherAppliances])
 
   # === #
   # ERI #
@@ -1018,11 +1039,14 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Electricity: Net (MBtu)", design_output[:elecTotal] - design_output[:elecPV]]
   results_out << ["Natural Gas: Total (MBtu)", design_output[:gasTotal]]
   results_out << ["Other Fuel: Total (MBtu)", design_output[:otherTotal]]
-  results_out << ["", ""] # line break
+  results_out << [nil] # line break
   results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+)]
   results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Lighting (MBtu)", design_output[:elecIntLighting] + design_output[:elecExtLighting]]
+  results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+)]
+  results_out << ["Electricity: Lighting Interior (MBtu)", design_output[:elecIntLighting]]
+  results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting]]
+  results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting]]
   results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent]]
   results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge]]
   results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher]]
@@ -1031,7 +1055,11 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Electricity: Range/Oven (MBtu)", design_output[:elecRangeOven]]
   results_out << ["Electricity: Ceiling Fan (MBtu)", design_output[:elecCeilingFan]]
   results_out << ["Electricity: Plug Loads (MBtu)", design_output[:elecMELs] + design_output[:elecTV]]
-  results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV]]
+  if design_output[:elecPV] > 0
+    results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV]]
+  else
+    results_out << ["Electricity: PV (MBtu)", 0.0]
+  end
   results_out << ["Natural Gas: Heating (MBtu)", design_output[:gasHeatingBySystem].values.inject(0, :+)]
   results_out << ["Natural Gas: Hot Water (MBtu)", design_output[:gasHotWaterBySystem].values.inject(0, :+)]
   results_out << ["Natural Gas: Clothes Dryer (MBtu)", design_output[:gasClothesDryer]]
@@ -1040,13 +1068,20 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Other Fuel: Hot Water (MBtu)", design_output[:otherHotWaterBySystem].values.inject(0, :+)]
   results_out << ["Other Fuel: Clothes Dryer (MBtu)", design_output[:otherClothesDryer]]
   results_out << ["Other Fuel: Range/Oven (MBtu)", design_output[:otherRangeOven]]
-  results_out << ["", ""] # line break
-  results_out << ["Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
-  results_out << ["Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
-  results_out << ["Load: Hot Water (MBtu)", design_output[:loadHotWaterBldg]]
-  results_out << ["", ""] # line break
-  results_out << ["Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
-  results_out << ["Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
+  results_out << [nil] # line break
+  results_out << ["Annual Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
+  results_out << ["Annual Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
+  results_out << ["Annual Load: Hot Water: Delivered (MBtu)", design_output[:loadHotWaterDelivered]]
+  results_out << ["Annual Load: Hot Water: Tank Losses (MBtu)", design_output[:loadHotWaterTankLosses]]
+  results_out << [nil] # line break
+  results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
+  results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
+  results_out << [nil] # line break
+  results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal]]
+  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
+  results_out << [nil] # line break
+  results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg]]
+  results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
@@ -1054,10 +1089,10 @@ def write_results_annual_output(resultsdir, design, design_output)
                     "Natural Gas" => design_output[:gasTotal],
                     "Other Fuel" => design_output[:otherTotal] }
   sum_end_use_results = {}
-  results_out.each do |key, value|
-    next if key.strip.size == 0
+  results_out.each do |var, value|
+    next if var.nil?
 
-    fuel, enduse = key.split(": ")
+    fuel, enduse = var.split(": ")
     next if enduse.start_with? "Total " or enduse.start_with? "Net "
 
     sum_end_use_results[fuel] = 0.0 if sum_end_use_results[fuel].nil?
@@ -1129,14 +1164,14 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
     worksheet_out << ["Total Loads TRL*IAF", (results[:trl] * results[:iaf_rh]).round(4)]
   end
   worksheet_out << ["ERI", results[:eri].round(2)]
-  worksheet_out << ["", ""] # line break
+  worksheet_out << [nil] # line break
   worksheet_out << ["Ref Home CFA", ref_output[:hpxml_cfa]]
   worksheet_out << ["Ref Home Nbr", ref_output[:hpxml_nbr]]
   if using_iaf
     worksheet_out << ["Ref Home NS", ref_output[:hpxml_nst]]
   end
   worksheet_out << ["Ref L&A resMELs", ref_output[:elecMELs].round(2)]
-  worksheet_out << ["Ref L&A intLgt", ref_output[:elecIntLighting].round(2)]
+  worksheet_out << ["Ref L&A intLgt", (ref_output[:elecIntLighting] + ref_output[:elecGrgLighting]).round(2)]
   worksheet_out << ["Ref L&A extLgt", ref_output[:elecExtLighting].round(2)]
   worksheet_out << ["Ref L&A Fridg", ref_output[:elecFridge].round(2)]
   worksheet_out << ["Ref L&A TVs", ref_output[:elecTV].round(2)]

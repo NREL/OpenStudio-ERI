@@ -35,19 +35,27 @@ ERI______Home.csv
 ~~~~~~~~~~~~~~~~~
 
 A CSV file is written for each of the homes simulated (e.g., ``ERIRatedHome.csv`` for the Rated home, ``ERIReferenceHome.csv`` for the Reference home, etc.).
+The CSV file includes multiple sections with different outputs.
 
-At the top of the file are total annual consumption values for each fuel type as well as an ``Electricity: Net`` field that incorporates any renewable generation.
+1. At the top of the file are **total annual consumption values for each fuel type** as well as an ``Electricity: Net`` field that incorporates any renewable generation.
 
-The next section includes annual energy consumption values disaggregated by fuel type and end use.
-Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
-Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Lighting``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
+2. The next section includes **annual energy consumption values for each fuel type and end use**.
+   Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
+   Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Hot Water Recirc Pump``, ``Lighting Interior``, ``Lighting Garage``, ``Lighting Exterior``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
 
-The third section in the CSV includes the heating, cooling, and hot water loads.
-Heating and cooling loads include duct losses while hot water loads exclude tank losses.
+3. The third section in the CSV includes the **annual building loads** for heating, cooling, and hot water.
+   Heating and cooling loads include duct losses.
+   Hot water loads are disaggregated into 1) Delivered (i.e., the load associated with the delivered hot water by the water heater) and 2) Tank Losses.
 
-The final section in the CSV includes `unmet` heating and cooling loads.
-These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
-An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
+4. The fourth section in the CSV includes **unmet annual building loads** for heating and cooling.
+   These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
+   An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
+
+5. The fifth section in the CSV includes **total building peak electricity** in Watts for the summer and winter seasons.
+   The summer season is defined by the hours of the year when the cooling system is operating, and the winter season is defined by the hours of the year when the heating system is operating.
+
+6. The sixth section in the CSV includes **total building peak loads* in Watts for heating and cooling.
+   Heating and cooling peak loads include duct losses.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 

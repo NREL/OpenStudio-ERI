@@ -86,9 +86,30 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
     return output_hpxml_path, nil
   end
 
-  # Write model to IDF
+  # Translate model
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
+
+  # Add Output:Table:Monthly objects for peak electricity outputs
+  monthly_array = ['Output:Table:Monthly',
+                   'Peak Electricity Winter Total',
+                   '2',
+                   'Heating:EnergyTransfer:Zone:LIVING',
+                   'HoursPositive',
+                   'Electricity:Facility',
+                   'MaximumDuringHoursShown']
+  model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
+
+  monthly_array = ['Output:Table:Monthly',
+                   'Peak Electricity Summer Total',
+                   '2',
+                   'Cooling:EnergyTransfer:Zone:LIVING',
+                   'HoursPositive',
+                   'Electricity:Facility',
+                   'MaximumDuringHoursShown']
+  model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
+
+  # Write model to IDF
   File.open(File.join(designdir, "in.idf"), 'w') { |f| f << model_idf.to_s }
 
   return output_hpxml_path, designdir
