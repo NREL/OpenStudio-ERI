@@ -506,7 +506,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
                              "Propane Use [kBtu]",
                              "Fuel Oil Use [kBtu]"]]
     zone_names.each do |zone_name|
-      design_hourly_output[0] << "#{zone_name.capitalize} Temperature [F]"
+      design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
     end
 
     # Electricity

@@ -457,7 +457,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(this_dir, xml)
-      sql_path, sim_time = run_straight_sim(xml, this_dir, test_name)
+      sql_path, sim_time = run_straight_sim(xml, this_dir, test_name, true)
 
       is_heat = false
       if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
@@ -766,7 +766,7 @@ class EnergyRatingIndexTest < Minitest::Test
     return hpxmls, csvs, runtime
   end
 
-  def run_straight_sim(xml, this_dir, test_name)
+  def run_straight_sim(xml, this_dir, test_name, hourly_output = false)
     require_relative '../../measures/HPXMLtoOpenStudio/resources/meta_measure'
 
     puts "Running #{xml}..."
@@ -807,6 +807,16 @@ class EnergyRatingIndexTest < Minitest::Test
     end
     assert(success)
 
+    if hourly_output
+      # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
+      #       based on EnergyPlus hourly outputs.
+
+      # Thermal zone temperatures:
+      output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
+      output_var.setReportingFrequency('hourly')
+      output_var.setKeyValue('*')
+    end
+
     # Write model to IDF
     forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
     model_idf = forward_translator.translateModel(model)
@@ -827,6 +837,49 @@ class EnergyRatingIndexTest < Minitest::Test
 
     sql_path = File.join(test_dir, "eplusout.sql")
     assert(File.exists?(sql_path))
+
+    if hourly_output
+      # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
+      #       based on EnergyPlus hourly outputs.
+
+      sqlFile = OpenStudio::SqlFile.new(sql_path, false)
+      design_hourly_output = []
+
+      # Get zone names (excluding duct zone/return plenum)
+      zone_names = []
+      query = "SELECT KeyValue FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature'"
+      sqlFile.execAndReturnVectorOfString(query).get.each do |zone_name|
+        query = "SELECT FloorArea FROM Zones WHERE ZoneName='#{zone_name}'"
+        floor_area = sqlFile.execAndReturnFirstDouble(query).get
+        next unless floor_area > 1.0
+
+        zone_names << zone_name
+      end
+      zone_names.sort!
+
+      # Header
+      design_hourly_output = [["Hour"]]
+      zone_names.each do |zone_name|
+        design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
+      end
+      for i in 1..8760
+        design_hourly_output << [i]
+      end
+
+      # Space temperatures
+      zone_names.each do |zone_name|
+        query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+        temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
+        fail "Unexpected result" if temperatures.size != 8760
+
+        temperatures.each_with_index do |temperature, i|
+          design_hourly_output[i + 1] << temperature.round(2)
+        end
+      end
+
+      out_csv = File.join(test_dir, "hourly.csv")
+      CSV.open(out_csv, "wb") { |csv| design_hourly_output.to_a.each { |elem| csv << elem } }
+    end
 
     # Clean up
     _rm_path(rundir)
