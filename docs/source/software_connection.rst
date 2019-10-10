@@ -353,6 +353,8 @@ space-heating boiler with tankless coil                                         
 
 For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
 
+For water heaters that are connected to a desuperheater, ``UsesDesuperheater`` must be set and the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
+
 Hot Water Distribution
 **********************
 

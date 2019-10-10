@@ -439,19 +439,19 @@ class EnergyRatingIndex301Validator
 
       ## [WHType=Indirect]
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType='space-heating boiler with storage tank']" => {
-        "RelatedHVACSystem" => one, # Expect HeatingSystem (boiler)
+        "RelatedHVACSystem" => one, # HeatingSystem (boiler)
         "TankVolume" => one,
         "WaterHeaterInsulation/Jacket/JacketRValue" => zero_or_one, # Capable to model tank wrap insulation
       },
 
       ## [WHType=CombiTankless]
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType='space-heating boiler with tankless coil']" => {
-        "RelatedHVACSystem" => one, # Expect HeatingSystem (boiler)
+        "RelatedHVACSystem" => one, # HeatingSystem (boiler)
       },
 
       ## [Desuperheater]
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[UsesDesuperheater='true']" => {
-        "RelatedHVACSystem" => one, # HeatPump (ground-to-air, air-to-air) or CoolingSystem (central air conditioner)
+        "RelatedHVACSystem" => one, # HeatPump or CoolingSystem
       },
 
       # [HotWaterDistribution]
