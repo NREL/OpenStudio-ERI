@@ -66,7 +66,7 @@ If the ``--hourly-output`` argument is provided when running the workflow, a CSV
 
 The hourly output CSV files currently include:
 
-- Average space temperatures (in deg-F) for each space modeled (e.g., living space, vented attic, garages, unconditioned basement, crawlspace, etc.).
+- Average space temperatures (in deg-F) for each space modeled (e.g., living space, vented attic, garage, unconditioned basement, crawlspace, etc.).
 - Whole-building site energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
 
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
