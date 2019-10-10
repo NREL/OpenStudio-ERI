@@ -1,4 +1,4 @@
-! Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
+! Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.10 16:24,
 ! Output:Meter Objects (applicable to this run)
 Output:Meter,Electricity:Facility,hourly; !- [J]
 Output:Meter:Cumulative,Electricity:Facility,hourly; !- [J]
@@ -14,8 +14,8 @@ Output:Meter,InteriorLights:Electricity,hourly; !- [J]
 Output:Meter:Cumulative,InteriorLights:Electricity,hourly; !- [J]
 Output:Meter,InteriorLights:Electricity:Zone:LIVING,hourly; !- [J]
 Output:Meter:Cumulative,InteriorLights:Electricity:Zone:LIVING,hourly; !- [J]
-Output:Meter,General:InteriorLights:Electricity,hourly; !- [J]
-Output:Meter:Cumulative,General:InteriorLights:Electricity,hourly; !- [J]
+Output:Meter,interior lighting:InteriorLights:Electricity,hourly; !- [J]
+Output:Meter:Cumulative,interior lighting:InteriorLights:Electricity,hourly; !- [J]
 Output:Meter,InteriorEquipment:Electricity,hourly; !- [J]
 Output:Meter:Cumulative,InteriorEquipment:Electricity,hourly; !- [J]
 Output:Meter,InteriorEquipment:Electricity:Zone:LIVING,hourly; !- [J]

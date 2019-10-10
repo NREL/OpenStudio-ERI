@@ -45,7 +45,7 @@ The CSV file includes multiple sections with different outputs.
 
 3. The third section in the CSV includes the **annual building loads** for heating, cooling, and hot water.
    Heating and cooling loads include duct losses.
-   Hot water loads are disaggregated into 1) Delivered (i.e., the load associated with the delivered hot water by the water heater) and 2) Tank Losses.
+   Hot water loads are disaggregated into 1) Delivered (i.e., the load associated with the delivered hot water by the water heater), 2) Tank Losses, and 3) Desuperheater.
 
 4. The fourth section in the CSV includes **unmet annual building loads** for heating and cooling.
    These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
@@ -54,7 +54,7 @@ The CSV file includes multiple sections with different outputs.
 5. The fifth section in the CSV includes **total building peak electricity** in Watts for the summer and winter seasons.
    The summer season is defined by the hours of the year when the cooling system is operating, and the winter season is defined by the hours of the year when the heating system is operating.
 
-6. The sixth section in the CSV includes **total building peak loads* in Watts for heating and cooling.
+6. The sixth section in the CSV includes **total building peak loads** in Watts for heating and cooling.
    Heating and cooling peak loads include duct losses.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
