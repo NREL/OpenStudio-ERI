@@ -52,14 +52,19 @@ Climate and Weather
 
 This section describes fields specified in HPXML's ``ClimateandRiskZones``.
 
-``ClimateandRiskZones/ClimateZoneIECC`` specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
+The ``ClimateandRiskZones/ClimateZoneIECC`` element specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
 
-``ClimateandRiskZones/WeatherStation`` specifies the EnergyPlus weather file (EPW) to be used in the simulation. 
-The ``WeatherStation/WMO`` must be one of the acceptable WMO station numbers found in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
+The ``ClimateandRiskZones/WeatherStation`` element specifies the EnergyPlus weather file (EPW) to be used in the simulation. 
+The ``WeatherStation/WMO`` must be one of the acceptable TMY3 WMO station numbers found in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
+
+In addition to using the TMY3 weather files that are provided, custom weather files can be used if they are in EPW file format.
+To use custom weather files, first ensure that all weather files have a unique WMO station number (as provided in the first header line of the EPW file).
+Then place them in the ``weather`` directory and call ``openstudio energy_rating_index.rb --cache-weather``.
+After processing is complete, each EPW file will have a corresponding \*.cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
 
 .. note:: 
 
-  In the future, we hope to provide an automated lookup capability based on a building's address/zipcode or similar information. But for now, each software tool is responsible for providing this information.
+  In the future, we hope to provide an automated weather file selector based on a building's address/zipcode or similar information. But for now, each software tool is responsible for providing this information.
 
 Enclosure
 ~~~~~~~~~
@@ -174,12 +179,17 @@ Slabs
 Any space type that borders the ground should include an ``Enclosure/Slabs/Slab`` surface with the appropriate ``InteriorAdjacentTo``. 
 This includes basements, crawlspaces (even when there are dirt floors -- use zero for the ``Thickness``), garages, and slab-on-grade foundations.
 
-A primary input for a slab is its ``ExposedPerimeter``. The exposed perimeter should include any slab length that falls along the perimeter of the building's footprint (i.e., is exposed to ambient conditions).
+A primary input for a slab is its ``ExposedPerimeter``. 
+The exposed perimeter should include any slab length that falls along the perimeter of the building's footprint (i.e., is exposed to ambient conditions).
 So, a basement slab edge adjacent to a garage or crawlspace, for example, should not be included.
 
 Vertical insulation adjacent to the slab can be described by a ``PerimeterInsulation/Layer/NominalRValue`` and a ``PerimeterInsulationDepth``.
 
-Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
+Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. 
+The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
+
+For foundation types without walls, the ``DepthBelowGrade`` field must be provided.
+For foundation types with walls, the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` values.
 
 Windows
 *******
@@ -248,12 +258,12 @@ Inputs including ``CoolingSystemType``, ``CoolingCapacity``, and ``FractionCoolL
 
 Depending on the type of cooling system specified, additional elements are required:
 
-========================  ======================  =================  =======================
-CoolingSystemType         DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency
-========================  ======================  =================  =======================
-central air conditioning  AirDistribution or DSE  electricity        SEER
-room air conditioner                              electricity        EER
-========================  ======================  =================  =======================
+=======================  ======================  =================  =======================
+CoolingSystemType        DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency
+=======================  ======================  =================  =======================
+central air conditioner  AirDistribution or DSE  electricity        SEER
+room air conditioner                             electricity        EER
+=======================  ======================  =================  =======================
 
 Heat Pumps
 **********
@@ -303,7 +313,7 @@ Mechanical Ventilation
 **********************
 
 A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
-Inputs including ``FanType``, ``RatedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
+Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -318,6 +328,8 @@ balanced
 central fan integrated supply (CFIS)                                                       required
 ====================================  ==========================  =======================  ================================
 
+Note that AdjustedSensibleRecoveryEfficiency and AdjustedTotalRecoveryEfficiency can be provided instead.
+
 In many situations, the rated flow rate should be the value derived from actual testing of the system.
 For a CFIS system, the rated flow rate should equal the amount of outdoor air provided to the distribution system.
 
@@ -326,17 +338,20 @@ Water Heaters
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
 Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
-In addition, the water heater efficiency should be provided as either an ``EnergyFactor`` or ``UniformEnergyFactor``.
 
-Depending on the type of water heater specified, additional elements are required:
+Depending on the type of water heater specified, additional elements are required/available:
 
-==========================  ===========  ==========  ===============  ========================
-WaterHeaterType             FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency
-==========================  ===========  ==========  ===============  ========================
-storage water heater        <any>        required    required         required if non-electric
-instantaneous water heater  <any>
-heat pump water heater      electricity  required
-==========================  ===========  ==========  ===============  ========================
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem        WaterHeaterInsulation/Jacket/JacketRValue
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+storage water heater                      required                             <any>        required    <optional>       required if non-electric                           <optional>
+instantaneous water heater                required                             <any>
+heat pump water heater                    required                             electricity  required                                                                        <optional>
+space-heating boiler with storage tank                                                      required                                               required                 <optional>
+space-heating boiler with tankless coil                                                                                                            required                 
+========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+
+For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
 
 Hot Water Distribution
 **********************
@@ -358,7 +373,7 @@ For a ``SystemType/Recirculation`` system, the following fields are required:
 In addition, a ``HotWaterDistribution/DrainWaterHeatRecovery`` (DWHR) may be specified.
 The DWHR system is defined by:
 
-- ``FacilitiesConnected``: 'all' if all of the showers in the home are connected to DWHR units; 'one' if if there are 2 or more showers in the home and only 1 shower is connected to a DWHR unit
+- ``FacilitiesConnected``: 'one' if there are multiple showers and only one of them is connected to a DWHR; 'all' if there is one shower and it's connected to a DWHR or there are two or more showers connected to a DWHR
 - ``EqualFlow``: 'true' if the DWHR supplies pre-heated water to both the fixture cold water piping and the hot water heater potable supply piping
 - ``Efficiency``: As rated and labeled in accordance with CSA 55.1
 

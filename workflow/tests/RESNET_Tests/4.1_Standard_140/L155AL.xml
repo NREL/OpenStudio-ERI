@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014A</Version>
+        <Version>2014AEG</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -153,16 +153,14 @@
             <Azimuth>180</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
+            <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             <Overhangs>
               <Depth>2.5</Depth>
               <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
             </Overhangs>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
-            </extension>
           </Window>
         </Windows>
         <Doors>

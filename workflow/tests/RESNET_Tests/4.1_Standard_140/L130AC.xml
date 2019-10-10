@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014A</Version>
+        <Version>2014AEG</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -153,11 +153,9 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
+            <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast'/>
@@ -165,11 +163,9 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
+            <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth'/>
@@ -177,11 +173,9 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
+            <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
-            </extension>
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest'/>
@@ -189,11 +183,9 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.3</UFactor>
             <SHGC>0.335</SHGC>
+            <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
+            <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
             <AttachedToWall idref='Wall'/>
-            <extension>
-              <InteriorShadingFactorSummer>1.0</InteriorShadingFactorSummer>
-              <InteriorShadingFactorWinter>1.0</InteriorShadingFactorWinter>
-            </extension>
           </Window>
         </Windows>
         <Doors>

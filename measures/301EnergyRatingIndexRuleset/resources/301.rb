@@ -360,13 +360,17 @@ class EnergyRatingIndex301Ruleset
 
     whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
 
+    min_ach50 = 0.0
+    if whole_house_fan.nil?
+      min_nach = 0.30
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @ncfl, @weather)
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
+    end
+
     orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
       air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
       if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
         nach = air_infiltration_measurement_values[:air_leakage]
-        if whole_house_fan.nil? and nach < 0.30
-          nach = 0.30
-        end
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
         # Convert to ACH50
         air_infiltration_measurement_values[:air_leakage] = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
@@ -375,14 +379,20 @@ class EnergyRatingIndex301Ruleset
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         # nop
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
-        # nop
+        # Convert to ACH50
+        air_infiltration_measurement_values[:unit_of_measure] = "ACH"
+        air_infiltration_measurement_values[:air_leakage] *= 60.0 / @infilvolume
       else
         next
       end
 
+      if air_infiltration_measurement_values[:air_leakage] < min_ach50
+        air_infiltration_measurement_values[:air_leakage] = min_ach50
+      end
+
       # Air Infiltration
       HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                             id: "Infiltration_ACH50",
+                                             id: "AirInfiltrationMeasurement",
                                              house_pressure: air_infiltration_measurement_values[:house_pressure],
                                              unit_of_measure: air_infiltration_measurement_values[:unit_of_measure],
                                              air_leakage: air_infiltration_measurement_values[:air_leakage],
@@ -733,7 +743,6 @@ class EnergyRatingIndex301Ruleset
                    perimeter_insulation_depth: 0,
                    under_slab_insulation_width: 0,
                    under_slab_insulation_spans_entire_slab: nil,
-                   depth_below_grade: 0,
                    carpet_fraction: 0,
                    carpet_r_value: 0,
                    perimeter_insulation_r_value: 0,
@@ -1047,59 +1056,79 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_mechanical_ventilation_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
-    vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    return if vent_fan.nil?
+    # Check for eRatio workaround first
+    eratio_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension"]
+    if not eratio_fan.nil?
+      vent_fan = eratio_fan.elements["OverrideVentilationFan"]
+    else
+      vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    end
 
-    vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+    fan_type = nil
+    sys_id = "MechanicalVentilation"
+    if not vent_fan.nil?
+      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+      fan_type = vent_fan_values[:fan_type]
+      sys_id = HPXML.get_id(vent_fan)
+    end
 
-    fan_type = vent_fan_values[:fan_type]
-
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+    q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
     sla = 0.00036
-    vert_distance = @ncfl_ag * 8.2 + get_ag_conditioned_basement_height(orig_details)
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
-    orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
-      air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+    if fan_type.nil?
+      fan_type = 'exhaust only'
+      fan_power_w = 0.0
+    else
+      air_infiltration_measurement_values = nil
+      # Check for eRatio workaround first
+      orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |air_infiltration_measurement|
+        air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+        break
+      end
+      if air_infiltration_measurement_values.nil?
+        orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
+          air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+          break
+        end
+      end
       if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
         nach = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
-        break
       elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
         ach50 = air_infiltration_measurement_values[:air_leakage]
         sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
-        break
       end
-    end
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, vert_distance)
+      q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
 
-    # Treat CFIS like supply ventilation. Is this correct?
-    if fan_type == 'central fan integrated supply'
-      fan_type = 'supply only'
-    end
+      # Treat CFIS like supply ventilation
+      if fan_type == 'central fan integrated supply'
+        fan_type = 'supply only'
+      end
 
-    fan_power_w = nil
-    if fan_type == 'supply only' or fan_type == 'exhaust only'
-      w_cfm = 0.35
-      fan_power_w = w_cfm * q_fan_power
-    elsif fan_type == 'balanced'
-      w_cfm = 0.70
-      fan_power_w = w_cfm * q_fan_power
-    elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
-      w_cfm = 1.00
-      fan_power_w = w_cfm * q_fan_power
-      fan_type = 'balanced'
+      fan_power_w = nil
+      if fan_type == 'supply only' or fan_type == 'exhaust only'
+        w_cfm = 0.35
+        fan_power_w = w_cfm * q_fan_power
+      elsif fan_type == 'balanced'
+        w_cfm = 0.70
+        fan_power_w = w_cfm * q_fan_power
+      elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
+        w_cfm = 1.00
+        fan_power_w = w_cfm * q_fan_power
+        fan_type = 'balanced'
+      end
     end
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
-                              id: HPXML.get_id(vent_fan),
+                              id: sys_id,
                               fan_type: fan_type,
-                              rated_flow_rate: q_fan_airflow,
+                              tested_flow_rate: q_fan_airflow,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
   end
@@ -1109,6 +1138,33 @@ class EnergyRatingIndex301Ruleset
     vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     if not vent_fan.nil?
       vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+
+      # Calculate min airflow rate
+      min_q_tot = calc_mech_vent_q_tot()
+      sla = nil
+      hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
+        air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+        if air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
+          ach50 = air_infiltration_measurement_values[:air_leakage]
+          sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
+          break
+        end
+      end
+      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla)
+
+      fan_w_per_cfm = vent_fan_values[:fan_power] / vent_fan_values[:tested_flow_rate]
+      q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+      if q_fan < min_q_fan
+        # First try increasing operation to meet minimum
+        vent_fan_values[:hours_in_operation] = [min_q_fan / q_fan * vent_fan_values[:hours_in_operation], 24].min
+        q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+      end
+      if q_fan < min_q_fan
+        # Finally resort to increasing airflow rate
+        vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
+      end
+      vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
+
       HPXML.add_ventilation_fan(hpxml: hpxml, **vent_fan_values)
     end
   end
@@ -1117,7 +1173,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
 
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+    q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm
     sla = nil
@@ -1129,15 +1185,16 @@ class EnergyRatingIndex301Ruleset
         break
       end
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, 17.0)
+    fan_type = "balanced"
+    q_fan = calc_mech_vent_q_fan(q_tot, sla)
 
     w_cfm = 0.70
     fan_power_w = w_cfm * q_fan
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: "VentilationFan",
-                              fan_type: "balanced",
-                              rated_flow_rate: q_fan,
+                              fan_type: fan_type,
+                              tested_flow_rate: q_fan,
                               hours_in_operation: 24,
                               fan_power: fan_power_w)
   end
@@ -1148,13 +1205,22 @@ class EnergyRatingIndex301Ruleset
     orig_details.elements.each("Systems/WaterHeating/WaterHeatingSystem") do |wh_sys|
       wh_sys_values = HPXML.get_water_heating_system_values(water_heating_system: wh_sys)
 
-      if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
+      if ['space-heating boiler with tankless coil', 'instantaneous water heater'].include? wh_sys_values[:water_heater_type]
         wh_sys_values[:tank_volume] = 40.0
       end
+      # Set fuel type for combi systems
+      if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? wh_sys_values[:water_heater_type]
+        wh_sys_values[:fuel_type] = Waterheater.get_combi_system_fuel(wh_sys_values[:related_hvac], orig_details)
+        wh_sys_values[:related_hvac] = nil
+      end
+
       wh_sys_values[:water_heater_type] = 'storage water heater'
+      wh_sys_values[:jacket_r_value] = nil
 
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])
-      wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds) * 1000.0 # Btuh
+
+      num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
+      wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds, num_water_heaters) * 1000.0 # Btuh
 
       if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Hot water equipment shall be located in conditioned space.
@@ -1163,7 +1229,7 @@ class EnergyRatingIndex301Ruleset
       wh_sys_values[:location].gsub!("unvented", "vented")
 
       # Ensure no desuperheater
-      wh_sys_values[:has_desuperheater] = false
+      wh_sys_values[:uses_desuperheater] = false
       wh_sys_values[:related_hvac] = nil
 
       # New water heater
@@ -1185,6 +1251,11 @@ class EnergyRatingIndex301Ruleset
         wh_uef = wh_sys_values[:uniform_energy_factor]
         wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_sys_values[:water_heater_type]), to_beopt_fuel(wh_sys_values[:fuel_type]))
         wh_sys_values[:uniform_energy_factor] = nil
+      end
+
+      if wh_sys_values[:water_heater_type] == 'storage water heater' and wh_sys_values[:heating_capacity].nil?
+        num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
+        wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds, num_water_heaters) * 1000.0 # Btuh
       end
 
       if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
@@ -1298,7 +1369,7 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_clothes_washer(hpxml: hpxml,
                              id: washer_values[:id],
                              location: "living space",
-                             modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_mef(),
+                             integrated_modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_imef(),
                              rated_annual_kwh: HotWaterAndAppliances.get_clothes_washer_reference_ler(),
                              label_electric_rate: HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
                              label_gas_rate: HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
@@ -1320,15 +1391,12 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
     dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_details.elements["Appliances/ClothesDryer"])
 
-    cd_ef = HotWaterAndAppliances.get_clothes_dryer_reference_ef(to_beopt_fuel(dryer_values[:fuel_type]))
-    cd_control = HotWaterAndAppliances.get_clothes_dryer_reference_control()
-
     HPXML.add_clothes_dryer(hpxml: hpxml,
                             id: dryer_values[:id],
                             location: "living space",
                             fuel_type: dryer_values[:fuel_type],
-                            energy_factor: cd_ef,
-                            control_type: cd_control)
+                            combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(to_beopt_fuel(dryer_values[:fuel_type])),
+                            control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control())
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_details, hpxml)
@@ -1528,7 +1596,7 @@ class EnergyRatingIndex301Ruleset
         re = 0.78
       end
     end
-    return ef, re
+    return ef.round(2), re
   end
 
   def self.has_fuel_access(orig_details)
@@ -1540,14 +1608,21 @@ class EnergyRatingIndex301Ruleset
     return false
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla, vert_distance)
-    nl = 1000.0 * sla * (vert_distance / 8.2)**0.4 # Normalized leakage, eq. 4.4
+  def self.calc_mech_vent_q_tot()
+    return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
+  end
+
+  def self.calc_mech_vent_q_fan(q_tot, sla)
+    vert_distance = Float(@ncfl_ag) * @infilvolume / @cfa # vertical distance between lowest and highest above-grade points within the pressure boundary
+    nl = 1000.0 * sla * (vert_distance / 8.202)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
     if q_inf > 2.0 / 3.0 * q_tot
-      return q_tot - 2.0 / 3.0 * q_tot
+      q_fan = q_tot - 2.0 / 3.0 * q_tot
+    else
+      q_fan = q_tot - q_inf
     end
 
-    return q_tot - q_inf
+    return [q_fan, 0].max
   end
 
   def self.add_reference_heating_gas_furnace(hpxml, load_frac = 1.0, seed_id = nil)
@@ -1618,7 +1693,7 @@ class EnergyRatingIndex301Ruleset
     cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                         id: "CoolingSystem#{cnt + 1}",
                                         distribution_system_idref: "HVACDistribution_DSE_80",
-                                        cooling_system_type: "central air conditioning",
+                                        cooling_system_type: "central air conditioner",
                                         cooling_system_fuel: "electricity",
                                         cooling_capacity: -1, # Use Manual J auto-sizing
                                         fraction_cool_load_served: load_frac,
@@ -1645,7 +1720,7 @@ class EnergyRatingIndex301Ruleset
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds) * 1000.0 # Btuh
+    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds, 1) * 1000.0 # Btuh
 
     HPXML.add_water_heating_system(hpxml: hpxml,
                                    id: 'WaterHeatingSystem',
@@ -1733,20 +1808,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     return ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area
-  end
-
-  def self.get_ag_conditioned_basement_height(orig_details)
-    above_grade_height = 0
-    orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
-      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
-      next unless [fnd_wall_values[:interior_adjacent_to], fnd_wall_values[:exterior_adjacent_to]].include? "basement - conditioned"
-
-      ag_height = fnd_wall_values[:height] - fnd_wall_values[:depth_below_grade]
-      if ag_height > above_grade_height
-        above_grade_height = ag_height
-      end
-    end
-    return above_grade_height
   end
 
   def self.delete_wall_subsurfaces(orig_details, surface_id)
