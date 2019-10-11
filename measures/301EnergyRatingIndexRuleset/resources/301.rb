@@ -135,7 +135,7 @@ class EnergyRatingIndex301Ruleset
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
-    remove_garage_and_adiabatic_from_iad(orig_details)
+    remove_surfaces_from_iad(orig_details)
 
     # BuildingSummary
     set_summary_iad(orig_details, hpxml)
@@ -197,15 +197,13 @@ class EnergyRatingIndex301Ruleset
     return hpxml_doc
   end
 
-  def self.remove_garage_and_adiabatic_from_iad(orig_details)
-    # Remove garage/adiabatic enclosure elements.
-
-    adjacents = ["garage", "other housing unit"]
+  def self.remove_surfaces_from_iad(orig_details)
+    # Remove garage surfaces and adiabatic walls.
 
     # Roof
     orig_details.elements.each("Enclosure/Roofs/Roof") do |roof|
       roof_values = HPXML.get_roof_values(roof: roof)
-      if adjacents.include? roof_values[:interior_adjacent_to] or adjacents.include? roof_values[:exterior_adjacent_to]
+      if ["garage"].include? roof_values[:interior_adjacent_to]
         roof.parent.elements.delete roof
         delete_roof_subsurfaces(orig_details, roof_values[:id])
       end
@@ -214,7 +212,8 @@ class EnergyRatingIndex301Ruleset
     # Rim Joist
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-      if adjacents.include? rim_joist_values[:interior_adjacent_to] or adjacents.include? rim_joist_values[:exterior_adjacent_to]
+      if ["garage", "other housing unit"].include? rim_joist_values[:interior_adjacent_to] or
+         ["garage", "other housing unit"].include? rim_joist_values[:exterior_adjacent_to]
         rim_joist.parent.elements.delete rim_joist
       end
     end
@@ -222,7 +221,8 @@ class EnergyRatingIndex301Ruleset
     # Wall
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
-      if adjacents.include? wall_values[:interior_adjacent_to] or adjacents.include? wall_values[:exterior_adjacent_to]
+      if ["garage", "other housing unit"].include? wall_values[:interior_adjacent_to] or
+         ["garage", "other housing unit"].include? wall_values[:exterior_adjacent_to]
         wall.parent.elements.delete wall
         delete_wall_subsurfaces(orig_details, wall_values[:id])
       end
@@ -231,7 +231,8 @@ class EnergyRatingIndex301Ruleset
     # FoundationWall
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
       fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
-      if adjacents.include? fnd_wall_values[:interior_adjacent_to] or adjacents.include? fnd_wall_values[:exterior_adjacent_to]
+      if ["garage", "other housing unit"].include? fnd_wall_values[:interior_adjacent_to] or
+         ["garage", "other housing unit"].include? fnd_wall_values[:exterior_adjacent_to]
         fnd_wall.parent.elements.delete fnd_wall
         delete_wall_subsurfaces(orig_details, fnd_wall_values[:id])
       end
@@ -240,7 +241,8 @@ class EnergyRatingIndex301Ruleset
     # FrameFloor
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      if adjacents.include? framefloor_values[:interior_adjacent_to] or adjacents.include? framefloor_values[:exterior_adjacent_to]
+      if ["garage"].include? framefloor_values[:interior_adjacent_to] or
+         ["garage"].include? framefloor_values[:exterior_adjacent_to]
         framefloor.parent.elements.delete framefloor
       end
     end
@@ -248,7 +250,7 @@ class EnergyRatingIndex301Ruleset
     # Slab
     orig_details.elements.each("Enclosure/Slabs/Slab") do |slab|
       slab_values = HPXML.get_slab_values(slab: slab)
-      if adjacents.include? slab_values[:interior_adjacent_to] or adjacents.include? slab_values[:exterior_adjacent_to]
+      if ["garage"].include? slab_values[:interior_adjacent_to]
         slab.parent.elements.delete slab
       end
     end
