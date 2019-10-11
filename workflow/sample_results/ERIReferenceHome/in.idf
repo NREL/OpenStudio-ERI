@@ -1,6 +1,6 @@
 
 Version,
-  9.1;                                    !- Version Identifier
+  9.2;                                    !- Version Identifier
 
 Timestep,
   1;                                      !- Number of Timesteps per Hour
@@ -478,13 +478,13 @@ BuildingSurface:Detailed,
 InternalMass,
   furniture mass living,                  !- Name
   furniture construction living,          !- Construction Name
-  living,                                 !- Zone Name
+  living,                                 !- Zone or ZoneList Name
   250.838208;                             !- Surface Area {m2}
 
 InternalMass,
   living Partition,                       !- Name
   PartitionWallConstruction,              !- Construction Name
-  living,                                 !- Zone Name
+  living,                                 !- Zone or ZoneList Name
   250.838208;                             !- Surface Area {m2}
 
 People,
@@ -503,7 +503,7 @@ People,
   ZoneAveraged;                           !- Mean Radiant Temperature Calculation Type
 
 Lights,
-  lighting,                               !- Name
+  interior lighting,                      !- Name
   living,                                 !- Zone or ZoneList Name
   lighting schedule,                      !- Schedule Name
   LightingLevel,                          !- Design Level Calculation Method
@@ -514,7 +514,7 @@ Lights,
   0.6,                                    !- Fraction Radiant
   0.2,                                    !- Fraction Visible
   1,                                      !- Fraction Replaceable
-  General;                                !- End-Use Subcategory
+  interior lighting;                      !- End-Use Subcategory
 
 ScheduleTypeLimits,
   Fractional,                             !- Name
@@ -1792,8 +1792,8 @@ ZoneControl:Thermostat,
   living Thermostat,                      !- Name
   living,                                 !- Zone or ZoneList Name
   living Thermostat Schedule,             !- Control Type Schedule Name
-  ThermostatSetpoint:DualSetpoint,        !- Control Object Type 1
-  living temperature setpoint;            !- Control Name 1
+  ThermostatSetpoint:DualSetpoint,        !- Control 1 Object Type
+  living temperature setpoint;            !- Control 1 Name
 
 Schedule:Compact,
   living Thermostat Schedule,             !- Name
@@ -2976,20 +2976,20 @@ ZoneHVAC:EquipmentList,
   ADU central ac living terminal,         !- Zone Equipment Name 1
   1,                                      !- Zone Equipment Cooling Sequence 1
   1,                                      !- Zone Equipment Heating or No-Load Sequence 1
-  1,                                      !- Zone Equipment Sequential Cooling Fraction 1
-  0,                                      !- Zone Equipment Sequential Heating Fraction 1
+  Sequential Fraction Schedule,           !- Zone Equipment Sequential Cooling Fraction Schedule Name 1
+  Sequential Fraction Schedule 1,         !- Zone Equipment Sequential Heating Fraction Schedule Name 1
   ZoneHVAC:AirDistributionUnit,           !- Zone Equipment Object Type 2
   ADU furnace living terminal,            !- Zone Equipment Name 2
   2,                                      !- Zone Equipment Cooling Sequence 2
   2,                                      !- Zone Equipment Heating or No-Load Sequence 2
-  0,                                      !- Zone Equipment Sequential Cooling Fraction 2
-  1,                                      !- Zone Equipment Sequential Heating Fraction 2
+  Sequential Fraction Schedule 3,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 2
+  Sequential Fraction Schedule 2,         !- Zone Equipment Sequential Heating Fraction Schedule Name 2
   ZoneHVAC:IdealLoadsAirSystem,           !- Zone Equipment Object Type 3
   ideal,                                  !- Zone Equipment Name 3
   3,                                      !- Zone Equipment Cooling Sequence 3
   3,                                      !- Zone Equipment Heating or No-Load Sequence 3
-  1,                                      !- Zone Equipment Sequential Cooling Fraction 3
-  1;                                      !- Zone Equipment Sequential Heating Fraction 3
+  Sequential Fraction Schedule 4,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 3
+  Sequential Fraction Schedule 5;         !- Zone Equipment Sequential Heating Fraction Schedule Name 3
 
 Zone,
   vented attic,                           !- Name
@@ -3074,7 +3074,9 @@ ConvergenceLimits,
 ShadowCalculation,
   AverageOverDaysInFrequency,             !- Calculation Method
   20,                                     !- Calculation Frequency
-  200;                                    !- Maximum Figures in Shadow Overlap Calculations
+  200,                                    !- Maximum Figures in Shadow Overlap Calculations
+  SutherlandHodgman,                      !- Polygon Clipping Algorithm
+  SimpleSkyDiffuseModeling;               !- Sky Diffuse Modeling Algorithm
 
 SurfaceConvectionAlgorithm:Inside,
   TARP;                                   !- Algorithm
@@ -3524,7 +3526,7 @@ WindowShadingControl,
   ,                                       !- Construction with Shading Name
   OnIfScheduleAllows,                     !- Shading Control Type
   Window shading schedule,                !- Schedule Name
-  ,                                       !- Setpoint {BasedOnField A5}
+  ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
   CoolingShade,                           !- Shading Device Material Name
@@ -3543,7 +3545,7 @@ WindowShadingControl,
   ,                                       !- Construction with Shading Name
   OnIfScheduleAllows,                     !- Shading Control Type
   Window shading schedule 1,              !- Schedule Name
-  ,                                       !- Setpoint {BasedOnField A5}
+  ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
   CoolingShade 1,                         !- Shading Device Material Name
@@ -3562,7 +3564,7 @@ WindowShadingControl,
   ,                                       !- Construction with Shading Name
   OnIfScheduleAllows,                     !- Shading Control Type
   Window shading schedule 2,              !- Schedule Name
-  ,                                       !- Setpoint {BasedOnField A5}
+  ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
   CoolingShade 2,                         !- Shading Device Material Name
@@ -3581,7 +3583,7 @@ WindowShadingControl,
   ,                                       !- Construction with Shading Name
   OnIfScheduleAllows,                     !- Shading Control Type
   Window shading schedule 3,              !- Schedule Name
-  ,                                       !- Setpoint {BasedOnField A5}
+  ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
   CoolingShade 3,                         !- Shading Device Material Name
@@ -3703,7 +3705,7 @@ SurfaceProperty:ExposedFoundationPerimeter,
   Slab,                                   !- Surface Name
   TotalExposedPerimeter,                  !- Exposed Perimeter Calculation Method
   45.72,                                  !- Total Exposed Perimeter {m}
-  1;                                      !- Exposed Perimeter Fraction {dimensionless}
+  ;                                       !- Exposed Perimeter Fraction {dimensionless}
 
 ScheduleTypeLimits,
   ActivityLevel,                          !- Name
@@ -3745,6 +3747,36 @@ Schedule:Constant,
   Schedule Constant 1,                    !- Name
   Temperature,                            !- Schedule Type Limits Name
   40.5555555555556;                       !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule,           !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  1;                                      !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule 1,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  0;                                      !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule 2,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  1;                                      !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule 3,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  0;                                      !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule 4,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  1;                                      !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule 5,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  1;                                      !- Hourly Value
 
 Schedule:Constant,
   WH Setpoint Temp,                       !- Name
@@ -17755,16 +17787,16 @@ Pump:VariableSpeed,
   ,                                       !- Pump Curve Name
   ,                                       !- Impeller Diameter {m}
   ,                                       !- VFD Control Type
-  ,                                       !- Pump rpm Schedule Name
+  ,                                       !- Pump RPM Schedule Name
   ,                                       !- Minimum Pressure Schedule {Pa}
   ,                                       !- Maximum Pressure Schedule {Pa}
-  ,                                       !- Minimum RPM Schedule {Rotations Per Minute}
-  ,                                       !- Maximum RPM Schedule {Rotations Per Minute}
+  ,                                       !- Minimum RPM Schedule {rev/min}
+  ,                                       !- Maximum RPM Schedule {rev/min}
   ,                                       !- Zone Name
   0.5,                                    !- Skin Loss Radiative Fraction
   PowerPerFlowPerPressure,                !- Design Power Sizing Method
   348701.1,                               !- Design Electric Power per Unit Flow Rate {W/(m3/s)}
-  1.282051282,                            !- Design Shaft Power per Unit Flow Rate per Unit Head
+  1.282051282,                            !- Design Shaft Power per Unit Flow Rate per Unit Head {W/((m3/s)-Pa)}
   0,                                      !- Design Minimum Flow Rate Fraction
   General;                                !- End-Use Subcategory
 
@@ -18007,21 +18039,19 @@ Site:WaterMainsTemperature,
 
 Foundation:Kiva,
   Foundation Kiva 1,                      !- Name
+  ,                                       !- Initial Indoor Air Temperature {C}
   ,                                       !- Interior Horizontal Insulation Material Name
-  0,                                      !- Interior Horizontal Insulation Depth {m}
+  ,                                       !- Interior Horizontal Insulation Depth {m}
   ,                                       !- Interior Horizontal Insulation Width {m}
   ,                                       !- Interior Vertical Insulation Material Name
   ,                                       !- Interior Vertical Insulation Depth {m}
   ,                                       !- Exterior Horizontal Insulation Material Name
   ,                                       !- Exterior Horizontal Insulation Depth {m}
-  0,                                      !- Exterior Horizontal Insulation Width {m}
+  ,                                       !- Exterior Horizontal Insulation Width {m}
   FoundationExtVertIns,                   !- Exterior Vertical Insulation Material Name
   2.4384,                                 !- Exterior Vertical Insulation Depth {m}
   0.3048,                                 !- Wall Height Above Grade {m}
-  0.2032,                                 !- Wall Depth Below Slab {m}
-  ,                                       !- Footing Wall Construction Name
-  ,                                       !- Footing Material Name
-  0.3;                                    !- Footing Depth {m}
+  0.2032;                                 !- Wall Depth Below Slab {m}
 
 Foundation:Kiva:Settings,
   1.731,                                  !- Soil Conductivity {W/m-K}
@@ -18038,7 +18068,7 @@ Foundation:Kiva:Settings,
   Hourly;                                 !- Simulation Timestep
 
 Exterior:Lights,
-  lighting exterior,                      !- Name
+  exterior lighting,                      !- Name
   lighting schedule,                      !- Schedule Name
   70.752970966336,                        !- Design Level {W}
   ,                                       !- Control Option
@@ -18058,8 +18088,53 @@ Curve:Biquadratic,
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
 Output:Variable,
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Electric Energy,           !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Propane Energy,            !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater FuelOil#1 Energy,          !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Heat Loss Energy,          !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  Water Use Connections 1,                !- Key Value
+  Water Use Connections Plant Hot Water Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
   *,                                      !- Key Value
   central ac supply fan Cooling,          !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  furnace supply fan Heating,             !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  water heater EC adjustment,             !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace htg coil,                       !- Key Value
+  Heating Coil Gas Energy,                !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -18070,16 +18145,6 @@ Output:Variable,
 Output:Variable,
   furnace htg coil,                       !- Key Value
   Heating Coil FuelOil#1 Energy,          !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  furnace supply fan Heating,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  furnace supply fan Heating,             !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -18098,98 +18163,8 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac supply fan Cooling,          !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
   water heater,                           !- Key Value
   Water Heater Gas Energy,                !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater Propane Energy,            !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater FuelOil#1 Energy,          !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  Water Use Connections 1,                !- Key Value
-  Water Use Connections Plant Hot Water Energy, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac supply fan Cooling,          !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Electric Energy,           !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac supply fan Cooling,          !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  furnace supply fan Heating,             !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  furnace htg coil,                       !- Key Value
-  Heating Coil Gas Energy,                !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  furnace supply fan Heating,             !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,
@@ -18274,14 +18249,14 @@ EnergyManagementSystem:Sensor,
   Schedule Value;                         !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  natural_vent_wt_s,                      !- Name
-  ,                                       !- Output:Variable or Output:Meter Index Key Name
-  Site Outdoor Air Humidity Ratio;        !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
   out_pb_s,                               !- Name
   ,                                       !- Output:Variable or Output:Meter Index Key Name
   Site Outdoor Air Barometric Pressure;   !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  out_wt_s,                               !- Name
+  ,                                       !- Output:Variable or Output:Meter Index Key Name
+  Site Outdoor Air Humidity Ratio;        !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   site_vw_s,                              !- Name
@@ -18398,7 +18373,7 @@ EnergyManagementSystem:Program,
   natural_vent_program,                   !- Name
   Set Tin = airflow_tin_s,                !- Program Line 1
   Set Tout = airflow_tt_s,                !- Program Line 2
-  Set Wout = natural_vent_wt_s,           !- Program Line 3
+  Set Wout = out_wt_s,                    !- Program Line 3
   Set Pbar = out_pb_s,                    !- Program Line 4
   Set Tdiff = Tin-Tout,                   !- Program Line 5
   Set dT = (@Abs Tdiff),                  !- Program Line 6
@@ -18491,4 +18466,20 @@ LifeCycleCost:NonrecurringCost,
   Construction,                           !- Category
   0,                                      !- Cost
   ServicePeriod;                          !- Start of Costs
+
+Output:Table:Monthly,
+  Peak Electricity Winter Total,          !- Name
+  2,                                      !- Digits After Decimal
+  Heating:EnergyTransfer:Zone:LIVING,     !- Variable or Meter Name 1
+  HoursPositive,                          !- Aggregation Type for Variable or Meter 1
+  Electricity:Facility,                   !- Variable or Meter Name 2
+  MaximumDuringHoursShown;                !- Aggregation Type for Variable or Meter 2
+
+Output:Table:Monthly,
+  Peak Electricity Summer Total,          !- Name
+  2,                                      !- Digits After Decimal
+  Cooling:EnergyTransfer:Zone:LIVING,     !- Variable or Meter Name 1
+  HoursPositive,                          !- Aggregation Type for Variable or Meter 1
+  Electricity:Facility,                   !- Variable or Meter Name 2
+  MaximumDuringHoursShown;                !- Aggregation Type for Variable or Meter 2
 

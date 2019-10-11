@@ -1,6 +1,6 @@
-Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.10 16:24
 ! <Version>, Version ID
- Version, 9.1
+ Version, 9.2
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
  Timesteps per Hour,  1, 60
 ! <System Convergence Limits>, Minimum System TimeStep {minutes}, Max HVAC Iterations, Minimum Plant Iterations, Maximum Plant Iterations
@@ -73,7 +73,7 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
 ! <People Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Number of People {},People/Floor Area {person/m2},Floor Area per person {m2/person},Fraction Radiant,Fraction Convected,Sensible Fraction Calculation,Activity level,ASHRAE 55 Warnings,Carbon Dioxide Generation Rate,Nominal Minimum Number of People,Nominal Maximum Number of People
  People Internal Gains Nominal, OCCUPANTS|LIVING,OCCUPANTS SCHEDULE,LIVING,250.84,3.0,3.0,1.196E-002,83.613,0.314,0.686,0.563,SCHEDULE RULESET 1,No,0.0000,0,3
 ! <Lights Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Lighting Level {W},Lights/Floor Area {W/m2},Lights per person {W/person},Fraction Return Air,Fraction Radiant,Fraction Short Wave,Fraction Convected,Fraction Replaceable,End-Use Category,Nominal Minimum Lighting Level {W},Nominal Maximum Lighting Level {W}
- Lights Internal Gains Nominal, LIGHTING,LIGHTING SCHEDULE,LIVING,250.84,3.0,787.315,3.139,262.438,0.000,0.600,0.200,0.200,1.000,General,0.000,787.315
+ Lights Internal Gains Nominal, INTERIOR LIGHTING,LIGHTING SCHEDULE,LIVING,250.84,3.0,787.315,3.139,262.438,0.000,0.600,0.200,0.200,1.000,interior lighting,0.000,787.315
 ! <ElectricEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,End-Use SubCategory,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
  ElectricEquipment Internal Gains Nominal, CLOTHES DRYER,CLOTHES DRYER,LIVING,250.84,3.0,217.211,0.866,72.404,1.488E-002,8.041E-002,0.851,5.361E-002,clothes dryer,0.000,217.211
  ElectricEquipment Internal Gains Nominal, CLOTHES WASHER,CLOTHES WASHER SCHEDULE,LIVING,250.84,3.0,12585.606,50.174,4195.202,3.088E-002,0.160,0.702,0.107,clothes washer,0.000,380.984
@@ -132,9 +132,11 @@ Water Heater Information,WaterHeater:Mixed,WATER HEATER,0.1362,4500.0,3.571,0.94
 Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01/2007,12/31/2007,Monday,365,Use RunPeriod Specified Day,No,No,No,Yes,Yes
 Environment:Daylight Saving,No,RunPeriod Object
 Environment:WarmupDays,  6
+! <Tabular Report>,Style,Unit Conversion
+Tabular Report,HTML,None
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,6.2822900456E-002,0.2406085218,Pass,Pass,0.3148984339,0.4717733020,Pass,Pass
- Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7460991239,1.7699612758,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,6.2857386071E-002,0.2409801250,Pass,Pass,0.3151586000,0.4719500958,Pass,Pass
+ Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7460970869,1.7699705374,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

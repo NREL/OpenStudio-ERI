@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.10 16:24
 1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
 2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
 3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Report Variables Requested
@@ -11,22 +11,24 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56
 582,11,FURNACE HTG COIL,Heating Coil Gas Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 646,11,CENTRAL AC CLG COIL,Cooling Coil Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 873,11,WATER USE CONNECTIONS 1,Water Use Connections Plant Hot Water Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-924,11,WATER HEATER,Water Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-962,11,WATER HEATER,Water Heater Off Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-964,11,WATER HEATER,Water Heater On Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1127,11,CENTRAL AC CLG COIL,Cooling Coil Crankcase Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+910,11,WATER HEATER,Water Heater Heat Loss Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+925,11,WATER HEATER,Water Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+963,11,WATER HEATER,Water Heater Off Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+965,11,WATER HEATER,Water Heater On Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1128,11,CENTRAL AC CLG COIL,Cooling Coil Crankcase Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 End of Data Dictionary
 1,RUN PERIOD 1,  39.83,-104.65,  -7.00,1650.00
 5,365
-276,118501621.36628193,0.0, 1, 1, 1,60,328271.6297551555, 8, 5,18,60
-277,419781056.91154667,0.0, 1, 1, 1,60,354337.57210163728, 2, 9, 6,60
-278,-746643196.0905544,-1376947.9320440537,12,21,12,60,0.0, 1, 1, 1,60
-582,22025837070.988538,0.0, 1, 1, 1,60,18592029.113130753, 2, 9, 6,60
-646,656466059.4941683,0.0, 1, 1, 1,60,2201455.3910288785, 6,26,18,60
-873,10036946836.280585,0.0, 1, 1, 1,60,26984602.4594645, 2, 9,11,60
-924,10701039188.23305,0.0, 1, 1, 1,60,19734692.364588106,12,21,11,60
-962,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-964,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-1127,752040000.0,0.0, 1, 2,15,60,180000.0, 1, 1, 1,60
+276,118580770.12020016,0.0, 1, 1, 1,60,328293.0685105344, 8, 5,18,60
+277,419744822.7455856,0.0, 1, 1, 1,60,354355.00392218815, 2, 9, 6,60
+278,-746642925.2179434,-1376947.932390817,12,21,12,60,0.0, 1, 1, 1,60
+582,22023935870.77295,0.0, 1, 1, 1,60,18592943.757641224, 2, 9, 6,60
+646,656891397.5522467,0.0, 1, 1, 1,60,2201072.043290284, 6,26,18,60
+873,10036946845.953366,0.0, 1, 1, 1,60,26984602.45946478, 2, 9,11,60
+910,-661646053.1364169,-82631.5127243853, 2,25,11,60,-59550.16814905181, 2, 9,11,60
+925,10701035306.032786,0.0, 1, 1, 1,60,19734692.369557986,12,21,11,60
+963,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+965,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+1128,752040000.0,0.0, 1, 2,15,60,180000.0, 1, 1, 1,60
 End of Data
- Number of Records Written=          10
+ Number of Records Written=          11

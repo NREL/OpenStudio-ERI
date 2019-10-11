@@ -1,21 +1,20 @@
-Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.10 16:24,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Constant="ALWAYS ON CONTINUOUS", Blank Schedule Type Limits Name input -- will not be validated.
-   ** Warning ** Foundation:Kiva="FOUNDATION KIVA 1", no Interior Horizontal Insulation Material Name defined
-   **   ~~~   ** Interior Horizontal Insulation Depth will not be used.
-   ** Warning ** Foundation:Kiva="FOUNDATION KIVA 1", no Exterior Horizontal Insulation Material Name defined
-   **   ~~~   ** Exterior Horizontal Insulation Width will not be used.
-   ** Warning ** Foundation:Kiva="FOUNDATION KIVA 1", no Footing Material Name defined
-   **   ~~~   ** Footing Depth will not be used.
-   ** Warning ** SurfaceProperty:ExposedFoundationPerimeter: SLAB, TOTALEXPOSEDPERIMETER set as calculation method, but a value has been set for Exposed Perimeter Fraction. This value will be ignored.
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
    ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
    **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
    ** Warning ** CalculateZoneVolume: 2 zones are not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
    ** Warning ** CheckUsedConstructions: There are 1 nominally unused constructions in input.
    **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
-   ** Warning ** Surfaces in Zone="VENTED ATTIC" do not define an enclosure.
+   ** Warning ** Surfaces in Zone/Enclosure="VENTED ATTIC" do not define an enclosure.
+   **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
+   **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
+   **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
+   **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
+   **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
+   ** Warning ** Surfaces in Zone/Enclosure="VENTED ATTIC" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
@@ -51,11 +50,7 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/26 11:00 - 12:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/28 20:00 - 21:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 05/02 11:00 - 12:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 05/05 23:00 - 24:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.905E-005 m3/s/W.
    **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/01 16:00 - 17:00
@@ -65,6 +60,10 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/15 07:00 - 08:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/18 05:00 - 06:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/29 01:00 - 02:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 11/10 12:00 - 13:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-ELECTRICITY" has no energy cost. 
    **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
@@ -80,11 +79,11 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
    **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
+   ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
    ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
    ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER GAS ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
    ************* There are 4 unused schedules in input.
    ************* There are 67 unused week schedules in input.
    ************* There are 40 unused day schedules in input.
@@ -97,10 +96,10 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
    *************  **   ~~~   **   This error occurred 16016 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=6.948340E-005  Min=6.759051E-005
+   *************  **   ~~~   **   Max=6.948339E-005  Min=6.759050E-005
    *************
    *************  ** Warning ** SimHVAC: Exceeding Maximum iterations for all HVAC loops, during RUN PERIOD 1 continues
-   *************  **   ~~~   **   This error occurred 5 total times;
+   *************  **   ~~~   **   This error occurred 3 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
    *************
@@ -114,4 +113,4 @@ Program Version,EnergyPlus, Version 9.1.0-fafb9d5652, YMD=2019.09.06 17:56,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 16053 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  8.50sec
+   ************* EnergyPlus Completed Successfully-- 16048 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.52sec
