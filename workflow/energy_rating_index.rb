@@ -265,6 +265,7 @@ def read_output(design, designdir, output_hpxml_path)
   design_output[:gasHotWaterBySystem] = {}
   design_output[:otherHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
+  design_output[:loadHotWaterDesuperheater] = 0
   design_output[:hpxml_dhw_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -294,6 +295,11 @@ def read_output(design, designdir, output_hpxml_path)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+
+    # Hot Water Load - Desuperheater
+    vars = "'" + get_all_var_keys(OutputVars.WaterHeaterLoadDesuperheater).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadHotWaterDesuperheater] += get_sql_query_result(sqlFile, query)
 
     # Combi boiler water system
     hvac_id = get_combi_hvac_id(hpxml_doc, sys_id)
@@ -351,7 +357,7 @@ def read_output(design, designdir, output_hpxml_path)
   end
   design_output[:loadHotWaterDelivered] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
 
-  # Water Heating Load w/ Tank Losses
+  # Hot Water Load - Tank Losses
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND VariableName='Water Heater Heat Loss Energy' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHotWaterTankLosses] = get_sql_query_result(sqlFile, query)
 
@@ -1073,6 +1079,7 @@ def write_results_annual_output(resultsdir, design, design_output)
   results_out << ["Annual Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
   results_out << ["Annual Load: Hot Water: Delivered (MBtu)", design_output[:loadHotWaterDelivered]]
   results_out << ["Annual Load: Hot Water: Tank Losses (MBtu)", design_output[:loadHotWaterTankLosses]]
+  results_out << ["Annual Load: Hot Water: Desuperheater (MBtu)", design_output[:loadHotWaterDesuperheater]]
   results_out << [nil] # line break
   results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
   results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]

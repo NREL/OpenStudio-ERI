@@ -1,16 +1,16 @@
 
- Meters for 10,LIGHTING EXTERIOR:Exterior Lights Electric Energy [J]
+ Meters for 10,EXTERIOR LIGHTING:Exterior Lights Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=ExteriorLights:Electricity [J]
   OnMeter=General:ExteriorLights:Electricity [J]
 
- Meters for 48,LIGHTING:Lights Electric Energy [J]
+ Meters for 48,INTERIOR LIGHTING:Lights Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING [J]
   OnMeter=InteriorLights:Electricity [J]
   OnMeter=InteriorLights:Electricity:Zone:LIVING [J]
-  OnMeter=General:InteriorLights:Electricity [J]
+  OnMeter=interior lighting:InteriorLights:Electricity [J]
 
  Meters for 109,CLOTHES DRYER:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
@@ -244,83 +244,83 @@
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 871,WATER HEATER:Water Heater Source Side Heat Transfer Energy [J]
+ Meters for 872,WATER HEATER:Water Heater Source Side Heat Transfer Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
   OnMeter=General:WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 885,WATER HEATER:Water Heater Electric Energy [J]
+ Meters for 886,WATER HEATER:Water Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 923,WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy [J]
+ Meters for 924,WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 925,WATER HEATER:Water Heater On Cycle Parasitic Electric Energy [J]
+ Meters for 926,WATER HEATER:Water Heater On Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 926,WATER HEATER:Water Heater Water Volume [m3]
+ Meters for 927,WATER HEATER:Water Heater Water Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=General:WaterSystems:Water [m3]
 
- Meters for 939,WATER HEATER:Water Heater Mains Water Volume [m3]
+ Meters for 940,WATER HEATER:Water Heater Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=General:WaterSystems:MainsWater [m3]
 
- Meters for 952,Whole Building:Facility Total Purchased Electric Energy [J]
+ Meters for 953,Whole Building:Facility Total Purchased Electric Energy [J]
   OnMeter=ElectricityPurchased:Facility [J]
   OnMeter=ElectricityPurchased:Plant [J]
   OnMeter=Cogeneration:ElectricityPurchased [J]
 
- Meters for 989,Whole Building:Facility Total Surplus Electric Energy [J]
+ Meters for 990,Whole Building:Facility Total Surplus Electric Energy [J]
   OnMeter=ElectricitySurplusSold:Facility [J]
   OnMeter=ElectricitySurplusSold:Plant [J]
   OnMeter=Cogeneration:ElectricitySurplusSold [J]
 
- Meters for 1026,Whole Building:Facility Net Purchased Electric Energy [J]
+ Meters for 1027,Whole Building:Facility Net Purchased Electric Energy [J]
   OnMeter=ElectricityNet:Facility [J]
   OnMeter=ElectricityNet:Plant [J]
   OnMeter=Cogeneration:ElectricityNet [J]
 
- Meters for 1063,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
+ Meters for 1064,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Pumps:Electricity [J]
   OnMeter=General:Pumps:Electricity [J]
 
- Meters for 1088,CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy [J]
+ Meters for 1089,CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Cooling:Electricity [J]
 
- Meters for 1094,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+ Meters for 1095,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1119,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1120,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1120,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1121,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
  For Meter=Electricity:Facility [J], ResourceType=Electricity, contents are:
-  LIGHTING EXTERIOR:Exterior Lights Electric Energy
-  LIGHTING:Lights Electric Energy
+  EXTERIOR LIGHTING:Exterior Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
   CLOTHES DRYER:Electric Equipment Electric Energy
   CLOTHES WASHER:Electric Equipment Electric Energy
   COOKING RANGE:Electric Equipment Electric Energy
@@ -344,13 +344,13 @@
   CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy
 
  For Meter=ExteriorLights:Electricity [J], ResourceType=Electricity, EndUse=ExteriorLights, contents are:
-  LIGHTING EXTERIOR:Exterior Lights Electric Energy
+  EXTERIOR LIGHTING:Exterior Lights Electric Energy
 
  For Meter=General:ExteriorLights:Electricity [J], ResourceType=Electricity, EndUse=ExteriorLights, contents are:
-  LIGHTING EXTERIOR:Exterior Lights Electric Energy
+  EXTERIOR LIGHTING:Exterior Lights Electric Energy
 
  For Meter=Electricity:Building [J], ResourceType=Electricity, Group=Building, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
   CLOTHES DRYER:Electric Equipment Electric Energy
   CLOTHES WASHER:Electric Equipment Electric Energy
   COOKING RANGE:Electric Equipment Electric Energy
@@ -364,7 +364,7 @@
   WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy
 
  For Meter=Electricity:Zone:LIVING [J], ResourceType=Electricity, Group=Zone, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
   CLOTHES DRYER:Electric Equipment Electric Energy
   CLOTHES WASHER:Electric Equipment Electric Energy
   COOKING RANGE:Electric Equipment Electric Energy
@@ -378,13 +378,13 @@
   WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy
 
  For Meter=InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
 
  For Meter=InteriorLights:Electricity:Zone:LIVING [J], ResourceType=Electricity, EndUse=InteriorLights, Group=Zone, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
 
- For Meter=General:InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
-  LIGHTING:Lights Electric Energy
+ For Meter=interior lighting:InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
+  INTERIOR LIGHTING:Lights Electric Energy
 
  For Meter=InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
   CLOTHES DRYER:Electric Equipment Electric Energy

@@ -1,12 +1,15 @@
-Electricity: Total (MBtu),43.534431639030515
-Electricity: Net (MBtu),43.534431639030515
-Natural Gas: Total (MBtu),55.73166821645338
+Electricity: Total (MBtu),43.53458012509962
+Electricity: Net (MBtu),43.53458012509962
+Natural Gas: Total (MBtu),55.72054199137978
 Other Fuel: Total (MBtu),0.0
-"",""
-Electricity: Heating (MBtu),1.0943500884085804
-Electricity: Cooling (MBtu),3.3663468922632576
-Electricity: Hot Water (MBtu),11.369994208602307
-Electricity: Lighting (MBtu),8.852611903726384
+
+Electricity: Heating (MBtu),1.094188282278596
+Electricity: Cooling (MBtu),3.36725112873877
+Electricity: Hot Water (MBtu),11.369984195715197
+Electricity: Hot Water Recirc Pump (MBtu),0.0
+Electricity: Lighting Interior (MBtu),8.103836378678864
+Electricity: Lighting Garage (MBtu),0
+Electricity: Lighting Exterior (MBtu),0.7487755250475207
 Electricity: Mech Vent (MBtu),1.251118598813579
 Electricity: Refrigerator (MBtu),2.36006462958016
 Electricity: Dishwasher (MBtu),0.5781684433911235
@@ -15,8 +18,8 @@ Electricity: Clothes Dryer (MBtu),3.3363162635028765
 Electricity: Range/Oven (MBtu),1.5259855637044408
 Electricity: Ceiling Fan (MBtu),0
 Electricity: Plug Loads (MBtu),9.553996572758237
-Electricity: PV (MBtu),-0.0
-Natural Gas: Heating (MBtu),55.731754384574685
+Electricity: PV (MBtu),0.0
+Natural Gas: Heating (MBtu),55.7235141152224
 Natural Gas: Hot Water (MBtu),0.0
 Natural Gas: Clothes Dryer (MBtu),0
 Natural Gas: Range/Oven (MBtu),0
@@ -24,10 +27,18 @@ Other Fuel: Heating (MBtu),0.0
 Other Fuel: Hot Water (MBtu),0.0
 Other Fuel: Clothes Dryer (MBtu),0
 Other Fuel: Range/Oven (MBtu),0
-"",""
-Load: Heating (MBtu),35.65688006618699
-Load: Cooling (MBtu),6.312462021286692
-Load: Hot Water (MBtu),10.329375228775733
-"",""
-Unmet Load: Heating (MBtu),0.0
-Unmet Load: Cooling (MBtu),0.009478171203133172
+
+Annual Load: Heating (MBtu),35.64740189498386
+Annual Load: Cooling (MBtu),6.312462021286692
+Annual Load: Hot Water: Delivered (MBtu),10.329376213162295
+Annual Load: Hot Water: Tank Losses (MBtu),1.0373016698469062
+Annual Load: Hot Water: Desuperheater (MBtu),0.0
+
+Annual Unmet Load: Heating (MBtu),0.0
+Annual Unmet Load: Cooling (MBtu),0.009478171203133172
+
+Peak Electricity: Winter Total (W),7055.74
+Peak Electricity: Summer Total (W),6757.82
+
+Peak Load: Heating (W),8398.14
+Peak Load: Cooling (W),5250.34
