@@ -515,8 +515,8 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Hot_Water")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[xml] = _get_hot_water(csvs[:rated_results])
-      assert_operator(all_results[xml][0], :>, 0)
+      all_results[File.basename(xml)] = _get_hot_water(csvs[:rated_results])
+      assert_operator(all_results[File.basename(xml)][0], :>, 0)
     end
     assert(all_results.size > 0)
 
@@ -525,7 +525,7 @@ class EnergyRatingIndexTest < Minitest::Test
       csv << ["Test Case", "DHW Energy (therms)", "Recirc Pump (kWh)"]
       all_results.each_with_index do |(xml, result), i|
         rated_dhw, rated_recirc = result
-        csv << [File.basename(xml), (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2)]
+        csv << [xml, (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2)]
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -537,18 +537,23 @@ class EnergyRatingIndexTest < Minitest::Test
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results[1]
+        base_val = all_results["L100AD-HW-01.xml"].inject(:+)
+        fail "Missing value" if base_val.nil?
       elsif [4, 5, 6, 7].include? test_num
-        base_val = all_results[2]
+        base_val = all_results["L100AD-HW-02.xml"].inject(:+)
+        fail "Missing value" if base_val.nil?
       elsif [9, 10].include? test_num
-        base_val = all_results[8]
+        base_val = all_results["L100AM-HW-01.xml"].inject(:+)
+        fail "Missing value" if base_val.nil?
       elsif [11, 12, 13, 14].include? test_num
-        base_val = all_results[9]
+        base_val = all_results["L100AM-HW-02.xml"].inject(:+)
+        fail "Missing value" if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 8
-        mn_val = all_results[test_num - 7]
+        mn_val = all_results[xml.gsub("AM", "AD")].inject(:+)
+        fail "Missing value" if mn_val.nil?
       end
 
       _check_hot_water(test_num, rated_dhw + rated_recirc, base_val, mn_val)
@@ -570,8 +575,8 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_Hot_Water_PreAddendumA")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
-      all_results[xml] = _get_hot_water(csvs[:rated_results])
-      assert_operator(all_results[xml][0], :>, 0)
+      all_results[File.basename(xml)] = _get_hot_water(csvs[:rated_results])
+      assert_operator(all_results[File.basename(xml)][0], :>, 0)
     end
     assert(all_results.size > 0)
 
@@ -580,7 +585,7 @@ class EnergyRatingIndexTest < Minitest::Test
       csv << ["Test Case", "DHW Energy (therms)"]
       all_results.each_with_index do |(xml, result), i|
         rated_dhw, rated_recirc = result
-        csv << [File.basename(xml), (rated_dhw * 10.0).round(1)]
+        csv << [xml, (rated_dhw * 10.0).round(2)]
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -592,14 +597,17 @@ class EnergyRatingIndexTest < Minitest::Test
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results[1]
+        base_val = all_results["L100AD-HW-01.xml"].inject(:+)
+        fail "Missing value" if base_val.nil?
       elsif [5, 6].include? test_num
-        base_val = all_results[4]
+        base_val = all_results["L100AM-HW-01.xml"].inject(:+)
+        fail "Missing value" if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 4
-        mn_val = all_results[test_num - 3]
+        mn_val = all_results[xml.gsub("AM", "AD")].inject(:+)
+        fail "Missing value" if mn_val.nil?
       end
 
       _check_hot_water_pre_addendum_a(test_num, rated_dhw + rated_recirc, base_val, mn_val)
@@ -1948,15 +1956,15 @@ class EnergyRatingIndexTest < Minitest::Test
       mn_delta_percent = (mn_val - curr_val) / mn_val * 100.0 # %
     end
 
-    assert_operator(curr_val, :>=, min_max_abs[0])
-    assert_operator(curr_val, :<=, min_max_abs[1])
+    assert_operator(curr_val, :>, min_max_abs[0])
+    assert_operator(curr_val, :<, min_max_abs[1])
     if not base_delta_percent.nil?
-      assert_operator(base_delta_percent, :>=, min_max_base_delta_percent[0])
-      assert_operator(base_delta_percent, :<=, min_max_base_delta_percent[1])
+      assert_operator(base_delta_percent, :>, min_max_base_delta_percent[0])
+      assert_operator(base_delta_percent, :<, min_max_base_delta_percent[1])
     end
     if not mn_delta_percent.nil?
-      assert_operator(mn_delta_percent, :>=, min_max_mn_delta_percent[0])
-      assert_operator(mn_delta_percent, :<=, min_max_mn_delta_percent[1])
+      assert_operator(mn_delta_percent, :>, min_max_mn_delta_percent[0])
+      assert_operator(mn_delta_percent, :<, min_max_mn_delta_percent[1])
     end
   end
 
@@ -1998,20 +2006,20 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     if not min_max_abs.nil?
-      assert_operator(curr_val, :>=, min_max_abs[0])
-      assert_operator(curr_val, :<=, min_max_abs[1])
+      assert_operator(curr_val, :>, min_max_abs[0])
+      assert_operator(curr_val, :<, min_max_abs[1])
     end
     if not base_delta.nil?
-      assert_operator(base_delta, :>=, min_max_base_delta_percent[0])
-      assert_operator(base_delta, :<=, min_max_base_delta_percent[1])
+      assert_operator(base_delta, :>, min_max_base_delta_percent[0])
+      assert_operator(base_delta, :<, min_max_base_delta_percent[1])
     end
     if not fl_delta.nil?
-      assert_operator(fl_delta, :>=, min_max_fl_delta_abs[0])
-      assert_operator(fl_delta, :<=, min_max_fl_delta_abs[1])
+      assert_operator(fl_delta, :>, min_max_fl_delta_abs[0])
+      assert_operator(fl_delta, :<, min_max_fl_delta_abs[1])
     end
     if not fl_delta_percent.nil?
-      assert_operator(fl_delta_percent, :>=, min_max_fl_delta_percent[0])
-      assert_operator(fl_delta_percent, :<=, min_max_fl_delta_percent[1])
+      assert_operator(fl_delta_percent, :>, min_max_fl_delta_percent[0])
+      assert_operator(fl_delta_percent, :<, min_max_fl_delta_percent[1])
     end
   end
 
