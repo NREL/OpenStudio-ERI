@@ -68,6 +68,23 @@ class WaterHeatingTest < MiniTest::Test
     end
   end
 
+  def test_desuperheater
+    hpxml_name = "base-dhw-desuperheater.xml"
+
+    # Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_desuperheater(hpxml_doc, false)
+    end
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_desuperheater(hpxml_doc, true)
+  end
+
   def test_water_heating_location_basement
     hpxml_name = "base-foundation-unconditioned-basement.xml"
 
@@ -730,6 +747,15 @@ class WaterHeatingTest < MiniTest::Test
       assert_nil(dist.elements["DrainWaterHeatRecovery/Efficiency"])
     else
       assert_equal(Float(dist.elements["DrainWaterHeatRecovery/Efficiency"].text), efficiency)
+    end
+  end
+
+  def _check_desuperheater(hpxml_doc, present)
+    whs = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem"]
+    if present
+      assert(Boolean(whs.elements["UsesDesuperheater"].text))
+    else
+      assert((whs.elements["UsesDesuperheater"].nil? or not Boolean(whs.elements["UsesDesuperheater"].text)))
     end
   end
 end
