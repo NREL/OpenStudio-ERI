@@ -624,6 +624,9 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     # Base configuration
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :constant_ach_natural => 0.67 }
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
+                                            :constant_ach_natural => 0.335 }
   elsif ['RESNET_Tests/4.1_Standard_140/L110AC.xml',
          'RESNET_Tests/4.1_Standard_140/L110AL.xml',
          'RESNET_Tests/4.1_Standard_140/L200AC.xml',

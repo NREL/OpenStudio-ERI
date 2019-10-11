@@ -60,7 +60,7 @@
             <SystemIdentifier id='InfiltrationMeasurement'/>
             <InfiltrationVolume>24624.0</InfiltrationVolume>
             <extension>
-              <ConstantACHnatural>0.67</ConstantACHnatural>
+              <ConstantACHnatural>0.335</ConstantACHnatural>
             </extension>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
