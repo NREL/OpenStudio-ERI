@@ -620,7 +620,8 @@ end
 
 def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltration_measurement_values, building_construction_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
-      'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
+      'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+      'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :constant_ach_natural => 0.67 }
@@ -637,7 +638,6 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml',
@@ -646,6 +646,10 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :unit_of_measure => "ACHnatural",
                                             :air_leakage => 0.67 }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
+                                            :unit_of_measure => "ACHnatural",
+                                            :air_leakage => 0.335 }
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 3 ACH50
