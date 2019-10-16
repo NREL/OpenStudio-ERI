@@ -734,7 +734,7 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
     # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
     rim_joists_values[0][:insulation_assembly_r_value] = 13.14
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
-    rim_joists_values = []
+    rim_joists_values[0][:interior_adjacent_to] = "basement - unconditioned"
   end
   return rim_joists_values
 end
