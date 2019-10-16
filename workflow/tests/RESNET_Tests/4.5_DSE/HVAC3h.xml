@@ -205,6 +205,20 @@
       <Systems>
         <HVAC>
           <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem'/>
+              <DistributionSystem idref='HVACDistribution'/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>46600.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.78</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+            </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
               <DistributionSystem idref='HVACDistribution'/>

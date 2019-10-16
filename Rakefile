@@ -1250,7 +1250,8 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :heating_capacity => 56100,
                                 :heating_efficiency_afue => 1,
                                 :fraction_heat_load_served => 1 }]
-  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Gas Furnace; 46.6 kBtu/h
     heating_systems_values = [{ :id => "HeatingSystem",
                                 :distribution_system_idref => "HVACDistribution",
@@ -1363,7 +1364,8 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     # Change to SEER = 13
     cooling_systems_values[0][:cooling_efficiency_seer] = 13
-  elsif ['RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3e.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Air Conditioner; 38.4 kBtu/h; SEER 10
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
