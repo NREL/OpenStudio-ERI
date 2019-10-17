@@ -872,7 +872,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
-    # Obtain heating/cooling loads
+    # Obtain heating/cooling energy values
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
 
     if not is_heat
@@ -881,7 +881,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
 
       # Cool Fan
-      query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Fans' AND ColumnName='Electricity' AND Units='GJ'"
+      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%fan Cooling' AND VariableUnits='J')"
       hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
     else
       # Heat
@@ -894,11 +894,14 @@ class EnergyRatingIndexTest < Minitest::Test
       end
 
       # Heat Fan
-      query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Fans' AND ColumnName='Electricity' AND Units='GJ'"
+      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%fan Heating' AND VariableUnits='J')"
       hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
     end
 
     sqlFile.close
+
+    assert_operator(hvac, :>, 0)
+    assert_operator(hvac_fan, :>, 0)
 
     return hvac.round(2), hvac_fan.round(2)
   end
