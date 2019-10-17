@@ -265,22 +265,26 @@ central air conditioner  AirDistribution or DSE  electricity        SEER
 room air conditioner                             electricity        EER
 =======================  ======================  =================  =======================
 
+If the cooling system's sensible heat ratio (SHR) is known, it can be specified with ``SensibleHeatFraction``.
+
 Heat Pumps
 **********
 
 Each heat pump should be entered as a ``Systems/HVAC/HVACPlant/HeatPump``.
-Inputs including ``HeatPumpType``, ``CoolingCapacity``, ``FractionHeatLoadServed``, and ``FractionCoolLoadServed`` must be provided.
+Inputs including ``HeatPumpType``, ``CoolingCapacity``, ``HeatingCapacity``, ``FractionHeatLoadServed``, and ``FractionCoolLoadServed`` must be provided.
 Note that heat pumps are allowed to provide only heating (FractionCoolLoadServed = 0) or cooling (FractionHeatLoadServed = 0) if appropriate.
 
-Depending on the type of heat pump specified, additional elements are required:
+Depending on the type of heat pump specified, additional elements are required/available:
 
-=============  =================================  ============  =======================  =======================
-HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency
-=============  =================================  ============  =======================  =======================
-air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF
-mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF
-ground-to-air  AirDistribution or DSE             electricity   EER                      COP
-=============  =================================  ============  =======================  =======================
+=============  =================================  ============  =======================  ======================= ==================
+HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency HeatingCapacity17F
+=============  =================================  ============  =======================  ======================= ==================
+air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF                    optional
+mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                    optional
+ground-to-air  AirDistribution or DSE             electricity   EER                      COP                     
+=============  =================================  ============  =======================  ======================= ==================
+
+If the heat pump's sensible heat ratio (SHR) is known, it can be specified with ``CoolingSensibleHeatFraction``.
 
 If the heat pump has backup heating, it can be specified with ``BackupSystemFuel`` (currently only electricity is allowed), ``BackupAnnualHeatingEfficiency`` (percent), and ``BackupHeatingCapacity``.
 
