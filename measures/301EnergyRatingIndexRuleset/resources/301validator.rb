@@ -231,6 +231,7 @@ class EnergyRatingIndex301Validator
         "HeatingSystemType[ElectricResistance | Furnace | WallFurnace | Boiler | Stove]" => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Stove]
         "HeatingCapacity" => one,
         "FractionHeatLoadServed" => one, # Must sum to 1 across all HeatingSystems and HeatPumps
+        "ElectricAuxiliaryEnergy" => zero_or_one, # If not provided, uses 301 defaults for fuel furnace/boiler and zero otherwise
       },
 
       ## [HeatingType=Resistance]
@@ -268,11 +269,6 @@ class EnergyRatingIndex301Validator
         "DistributionSystem" => zero,
         "[HeatingSystemFuel='natural gas' or HeatingSystemFuel='fuel oil' or HeatingSystemFuel='propane' or HeatingSystemFuel='electricity']" => one, # See [HeatingType=FuelEquipment] if not electricity
         "AnnualHeatingEfficiency[Units='Percent']/Value" => one,
-      },
-
-      ## [HeatingType=FuelEquipment]
-      "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemFuel='natural gas' or HeatingSystemFuel='fuel oil' or HeatingSystemFuel='propane']" => {
-        "ElectricAuxiliaryEnergy" => zero_or_one, # If not provided, uses 301 defaults for furnace/boiler and zero for other heating systems
       },
 
       # [CoolingSystem]
