@@ -1351,6 +1351,9 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 10 }]
+    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-08.xml'
+      cooling_systems_values[0][:distribution_system_idref] = "HVACDistribution2"
+    end
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
     cooling_systems_values = [{ :id => "CoolingSystem",
