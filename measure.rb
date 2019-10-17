@@ -635,27 +635,44 @@ class OSModel
     # Check every thermal zone has:
     # 1. At least one floor surface
     # 2. At least one roofceiling surface
-    # 3. At least one surface adjacent to outside/ground
+    # 3. At least one wall surface (except for attics)
+    # 4. At least one surface adjacent to outside/ground/adiabatic
     model.getThermalZones.each do |zone|
-      n_floorsroofsceilings = 0
+      n_floors = 0
+      n_roofceilings = 0
+      n_walls = 0
       n_exteriors = 0
       zone.spaces.each do |space|
         space.surfaces.each do |surface|
-          if ["outdoors", "foundation"].include? surface.outsideBoundaryCondition.downcase
+          if ["outdoors", "foundation", "adiabatic"].include? surface.outsideBoundaryCondition.downcase
             n_exteriors += 1
           end
-          if ["floor", "roofceiling"].include? surface.surfaceType.downcase
-            n_floorsroofsceilings += 1
+          if surface.surfaceType.downcase == "floor"
+            n_floors += 1
+          end
+          if surface.surfaceType.downcase == "wall"
+            n_walls += 1
+          end
+          if surface.surfaceType.downcase == "roofceiling"
+            n_roofceilings += 1
           end
         end
       end
 
-      if n_floorsroofsceilings < 1
-        runner.registerError("Thermal zone '#{zone.name}' must have at least two floor/roof/ceiling surfaces.")
+      if n_floors == 0
+        runner.registerError("'#{zone.name}' must have at least one floor surface.")
+        return false
+      end
+      if n_roofceilings == 0
+        runner.registerError("'#{zone.name}' must have at least one roof/ceiling surface.")
+        return false
+      end
+      if n_walls == 0 and not [Constants.SpaceTypeUnventedAttic, Constants.SpaceTypeVentedAttic].include? zone.name.to_s
+        runner.registerError("'#{zone.name}' must have at least one wall surface.")
         return false
       end
       if n_exteriors == 0
-        runner.registerError("Thermal zone '#{zone.name}' must have at least one surface adjacent to outside/ground.")
+        runner.registerError("'#{zone.name}' must have at least one surface adjacent to outside/ground.")
         return false
       end
     end
@@ -1093,7 +1110,7 @@ class OSModel
         z_origin = @foundation_top
       end
 
-      if framefloor_values[:exterior_adjacent_to].include? "attic"
+      if hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to], framefloor_values[:exterior_adjacent_to])
         surface = OpenStudio::Model::Surface.new(add_ceiling_polygon(length, width, z_origin), model)
       else
         surface = OpenStudio::Model::Surface.new(add_floor_polygon(length, width, z_origin), model)
@@ -1471,8 +1488,6 @@ class OSModel
     addtl_cfa = cfa - model_cfa
     return true unless addtl_cfa > 0
 
-    runner.registerWarning("Adding adiabatic conditioned floor with #{addtl_cfa.to_s} ft^2 to preserve building total conditioned floor area.")
-
     conditioned_floor_width = Math::sqrt(addtl_cfa)
     conditioned_floor_length = addtl_cfa / conditioned_floor_width
     z_origin = @foundation_top + 8.0 * (@ncfl_ag - 1)
@@ -1515,19 +1530,19 @@ class OSModel
 
   def self.add_neighbors(runner, model, building, length)
     # Get the max z-value of any model surface
-    height = -9e99
+    default_height = -9e99
     model.getSpaces.each do |space|
       z_origin = space.zOrigin
       space.surfaces.each do |surface|
         surface.vertices.each do |vertex|
           surface_z = vertex.z + z_origin
-          next if surface_z < height
+          next if surface_z < default_height
 
-          height = surface_z
+          default_height = surface_z
         end
       end
     end
-    height = UnitConversions.convert(height, "m", "ft")
+    default_height = UnitConversions.convert(default_height, "m", "ft")
     z_origin = 0 # shading surface always starts at grade
 
     shading_surfaces = []
@@ -1535,6 +1550,7 @@ class OSModel
       neighbor_building_values = HPXML.get_neighbor_building_values(neighbor_building: neighbor_building)
       azimuth = neighbor_building_values[:azimuth]
       distance = neighbor_building_values[:distance]
+      height = neighbor_building_values[:height].nil? ? default_height : neighbor_building_values[:height]
 
       shading_surface = OpenStudio::Model::ShadingSurface.new(add_wall_polygon(length, height, z_origin, azimuth), model)
       shading_surface.additionalProperties.setFeature("Azimuth", azimuth)
@@ -2896,12 +2912,14 @@ class OSModel
 
       # Connect AirLoopHVACs to ducts
       dist_id = hvac_distribution_values[:id]
+      num_attached = 0
       heating_systems_attached = []
       cooling_systems_attached = []
       ['HeatingSystem', 'CoolingSystem', 'HeatPump'].each do |hpxml_sys|
         building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/#{hpxml_sys}") do |sys|
           next if sys.elements["DistributionSystem"].nil? or dist_id != sys.elements["DistributionSystem"].attributes["idref"]
 
+          num_attached += 1
           sys_id = sys.elements["SystemIdentifier"].attributes["id"]
           heating_systems_attached << sys_id if ['HeatingSystem', 'HeatPump'].include? hpxml_sys and Float(XMLHelper.get_value(sys, "FractionHeatLoadServed")) > 0
           cooling_systems_attached << sys_id if ['CoolingSystem', 'HeatPump'].include? hpxml_sys and Float(XMLHelper.get_value(sys, "FractionCoolLoadServed")) > 0
@@ -2923,6 +2941,7 @@ class OSModel
 
       fail "Multiple cooling systems found attached to distribution system '#{dist_id}'." if cooling_systems_attached.size > 1
       fail "Multiple heating systems found attached to distribution system '#{dist_id}'." if heating_systems_attached.size > 1
+      fail "Distribution system '#{dist_id}' found but no HVAC system attached to it." if num_attached == 0
     end
 
     window_area = 0.0
@@ -2959,8 +2978,8 @@ class OSModel
     end
 
     # Duct location, Rvalue, Area
-    total_duct_area = { Constants.DuctSideSupply => 0.0,
-                        Constants.DuctSideReturn => 0.0 }
+    total_unconditioned_duct_area = { Constants.DuctSideSupply => 0.0,
+                                      Constants.DuctSideReturn => 0.0 }
     air_distribution.elements.each("Ducts") do |ducts|
       ducts_values = HPXML.get_ducts_values(ducts: ducts)
       next if ['living space', 'basement - conditioned'].include? ducts_values[:duct_location]
@@ -2969,9 +2988,10 @@ class OSModel
       duct_side = side_map[ducts_values[:duct_type]]
       next if duct_side.nil?
 
-      total_duct_area[duct_side] += ducts_values[:duct_surface_area]
+      total_unconditioned_duct_area[duct_side] += ducts_values[:duct_surface_area]
     end
 
+    # Create duct objects
     air_distribution.elements.each("Ducts") do |ducts|
       ducts_values = HPXML.get_ducts_values(ducts: ducts)
       next if ['living space', 'basement - conditioned'].include? ducts_values[:duct_location]
@@ -2982,10 +3002,21 @@ class OSModel
       duct_area = ducts_values[:duct_surface_area]
       duct_space = get_space_from_location(ducts_values[:duct_location], "Duct", model, spaces)
       # Apportion leakage to individual ducts by surface area
-      duct_leakage_cfm = (leakage_to_outside_cfm25[duct_side] *
-                          duct_area / total_duct_area[duct_side])
+      duct_leakage_cfm = (leakage_to_outside_cfm25[duct_side] * duct_area / total_unconditioned_duct_area[duct_side])
 
       air_ducts << Duct.new(duct_side, duct_space, nil, duct_leakage_cfm, duct_area, ducts_values[:duct_insulation_r_value])
+    end
+
+    # If all ducts are in conditioned space, model leakage as going to outside
+    [Constants.DuctSideSupply, Constants.DuctSideReturn].each do |duct_side|
+      next unless leakage_to_outside_cfm25[duct_side] > 0 and total_unconditioned_duct_area[duct_side] == 0
+
+      duct_area = 0.0
+      duct_rvalue = 0.0
+      duct_space = nil # outside
+      duct_leakage_cfm = leakage_to_outside_cfm25[duct_side]
+
+      air_ducts << Duct.new(duct_side, duct_space, nil, duct_leakage_cfm, duct_area, duct_rvalue)
     end
 
     return air_ducts
@@ -3923,9 +3954,11 @@ def is_adjacent_to_conditioned(adjacent_to)
 end
 
 def hpxml_floor_is_ceiling(floor_interior_adjacent_to, floor_exterior_adjacent_to)
-  if floor_interior_adjacent_to.include? "attic"
+  if ["attic - vented", "attic - unvented"].include? floor_interior_adjacent_to
     return true
-  elsif floor_exterior_adjacent_to.include? "attic"
+  elsif ["attic - vented", "attic - unvented", "other housing unit"].include? floor_exterior_adjacent_to
+    # Note: There's no way to know if other housing unit is a floor below this unit
+    #       or a ceiling above this unit; we assume the latter.
     return true
   end
 
