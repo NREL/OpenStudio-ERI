@@ -209,7 +209,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
-              <DistributionSystem idref='HVACDistribution'/>
+              <DistributionSystem idref='HVACDistribution2'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>-1.0</CoolingCapacity>
