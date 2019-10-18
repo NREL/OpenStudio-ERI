@@ -210,13 +210,14 @@
               <DistributionSystem idref='HVACDistribution'/>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
+              <HeatingCapacity>56100.0</HeatingCapacity>
               <CoolingCapacity>56100.0</CoolingCapacity>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
                 <Units>Percent</Units>
                 <Value>1.0</Value>
               </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>-1.0</BackupHeatingCapacity>
+              <BackupHeatingCapacity>100000.0</BackupHeatingCapacity>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>

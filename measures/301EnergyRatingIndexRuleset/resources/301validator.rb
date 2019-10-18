@@ -279,6 +279,7 @@ class EnergyRatingIndex301Validator
         "[CoolingSystemFuel='electricity']" => one,
         "CoolingCapacity" => one,
         "FractionCoolLoadServed" => one, # Must sum to 1 across all CoolingSystems and HeatPumps
+        "SensibleHeatFraction" => zero_or_one,
       },
 
       ## [CoolingType=CentralAC]
@@ -300,7 +301,9 @@ class EnergyRatingIndex301Validator
         "../../HVACControl" => one, # See [HVACControl]
         "[HeatPumpType='air-to-air' or HeatPumpType='mini-split' or HeatPumpType='ground-to-air']" => one, # See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP]
         "[HeatPumpFuel='electricity']" => one,
+        "HeatingCapacity" => one,
         "CoolingCapacity" => one,
+        "CoolingSensibleHeatFraction" => zero_or_one,
         "[BackupSystemFuel='electricity']" => zero_or_one, # See [HeatPumpBackup]
         "FractionHeatLoadServed" => one, # Must sum to 1 across all HeatPumps and HeatingSystems
         "FractionCoolLoadServed" => one, # Must sum to 1 across all HeatPumps and CoolingSystems
@@ -312,6 +315,7 @@ class EnergyRatingIndex301Validator
         "DistributionSystem" => one,
         "AnnualCoolingEfficiency[Units='SEER']/Value" => one,
         "AnnualHeatingEfficiency[Units='HSPF']/Value" => one,
+        "HeatingCapacity17F" => zero_or_one
       },
 
       ## [HeatPumpType=MSHP]
@@ -320,6 +324,7 @@ class EnergyRatingIndex301Validator
         "DistributionSystem" => zero_or_one,
         "AnnualCoolingEfficiency[Units='SEER']/Value" => one,
         "AnnualHeatingEfficiency[Units='HSPF']/Value" => one,
+        "HeatingCapacity17F" => zero_or_one
       },
 
       ## [HeatPumpType=GSHP]
