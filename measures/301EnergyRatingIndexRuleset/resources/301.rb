@@ -622,8 +622,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Ceilings
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next unless hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                         framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                              framefloor_values[:exterior_adjacent_to])
 
       if is_thermal_boundary(framefloor_values)
         framefloor_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
@@ -637,8 +637,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_ceilings_rated(orig_details, hpxml)
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next unless hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                         framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                              framefloor_values[:exterior_adjacent_to])
 
       HPXML.add_framefloor(hpxml: hpxml, **framefloor_values)
     end
@@ -652,15 +652,15 @@ class EnergyRatingIndex301Ruleset
     sum_ceiling_area = 0.0
     new_enclosure.elements.each("FrameFloors/FrameFloor") do |new_framefloor|
       new_framefloor_values = HPXML.get_framefloor_values(framefloor: new_framefloor)
-      next unless hpxml_floor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
-                                         new_framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
+                                              new_framefloor_values[:exterior_adjacent_to])
 
       sum_ceiling_area += new_framefloor_values[:area]
     end
     new_enclosure.elements.each("FrameFloors/FrameFloor") do |new_framefloor|
       new_framefloor_values = HPXML.get_framefloor_values(framefloor: new_framefloor)
-      next unless hpxml_floor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
-                                         new_framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
+                                              new_framefloor_values[:exterior_adjacent_to])
 
       new_framefloor.elements["Area"].text = 1200.0 * new_framefloor_values[:area] / sum_ceiling_area
     end
@@ -672,8 +672,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next if hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                     framefloor_values[:exterior_adjacent_to])
+      next if hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                          framefloor_values[:exterior_adjacent_to])
 
       if is_thermal_boundary(framefloor_values)
         framefloor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
@@ -687,8 +687,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_floors_rated(orig_details, hpxml)
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next if hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                     framefloor_values[:exterior_adjacent_to])
+      next if hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                          framefloor_values[:exterior_adjacent_to])
 
       HPXML.add_framefloor(hpxml: hpxml, **framefloor_values)
     end
