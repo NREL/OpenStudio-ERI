@@ -1,16 +1,16 @@
 
- Meters for 10,LIGHTING EXTERIOR:Exterior Lights Electric Energy [J]
+ Meters for 10,EXTERIOR LIGHTING:Exterior Lights Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=ExteriorLights:Electricity [J]
   OnMeter=General:ExteriorLights:Electricity [J]
 
- Meters for 48,LIGHTING:Lights Electric Energy [J]
+ Meters for 48,INTERIOR LIGHTING:Lights Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING [J]
   OnMeter=InteriorLights:Electricity [J]
   OnMeter=InteriorLights:Electricity:Zone:LIVING [J]
-  OnMeter=General:InteriorLights:Electricity [J]
+  OnMeter=interior lighting:InteriorLights:Electricity [J]
 
  Meters for 109,CLOTHES DRYER:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
@@ -319,8 +319,8 @@
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
  For Meter=Electricity:Facility [J], ResourceType=Electricity, contents are:
-  LIGHTING EXTERIOR:Exterior Lights Electric Energy
-  LIGHTING:Lights Electric Energy
+  EXTERIOR LIGHTING:Exterior Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
   CLOTHES DRYER:Electric Equipment Electric Energy
   CLOTHES WASHER:Electric Equipment Electric Energy
   COOKING RANGE:Electric Equipment Electric Energy
@@ -344,13 +344,13 @@
   CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy
 
  For Meter=ExteriorLights:Electricity [J], ResourceType=Electricity, EndUse=ExteriorLights, contents are:
-  LIGHTING EXTERIOR:Exterior Lights Electric Energy
+  EXTERIOR LIGHTING:Exterior Lights Electric Energy
 
  For Meter=General:ExteriorLights:Electricity [J], ResourceType=Electricity, EndUse=ExteriorLights, contents are:
-  LIGHTING EXTERIOR:Exterior Lights Electric Energy
+  EXTERIOR LIGHTING:Exterior Lights Electric Energy
 
  For Meter=Electricity:Building [J], ResourceType=Electricity, Group=Building, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
   CLOTHES DRYER:Electric Equipment Electric Energy
   CLOTHES WASHER:Electric Equipment Electric Energy
   COOKING RANGE:Electric Equipment Electric Energy
@@ -364,7 +364,7 @@
   WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy
 
  For Meter=Electricity:Zone:LIVING [J], ResourceType=Electricity, Group=Zone, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
   CLOTHES DRYER:Electric Equipment Electric Energy
   CLOTHES WASHER:Electric Equipment Electric Energy
   COOKING RANGE:Electric Equipment Electric Energy
@@ -378,13 +378,13 @@
   WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy
 
  For Meter=InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
 
  For Meter=InteriorLights:Electricity:Zone:LIVING [J], ResourceType=Electricity, EndUse=InteriorLights, Group=Zone, contents are:
-  LIGHTING:Lights Electric Energy
+  INTERIOR LIGHTING:Lights Electric Energy
 
- For Meter=General:InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
-  LIGHTING:Lights Electric Energy
+ For Meter=interior lighting:InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
+  INTERIOR LIGHTING:Lights Electric Energy
 
  For Meter=InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
   CLOTHES DRYER:Electric Equipment Electric Energy

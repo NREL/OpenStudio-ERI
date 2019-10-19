@@ -256,33 +256,33 @@ Cooling Systems
 Each cooling system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/CoolingSystem``.
 Inputs including ``CoolingSystemType``, ``CoolingCapacity``, and ``FractionCoolLoadServed`` must be provided.
 
-Depending on the type of cooling system specified, additional elements are required:
+Depending on the type of cooling system specified, additional elements are required/available:
 
-=======================  ======================  =================  =======================
-CoolingSystemType        DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency
-=======================  ======================  =================  =======================
-central air conditioner  AirDistribution or DSE  electricity        SEER
-room air conditioner                             electricity        EER
-=======================  ======================  =================  =======================
+=======================  ======================  =================  ======================= ====================
+CoolingSystemType        DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency SensibleHeatFraction
+=======================  ======================  =================  ======================= ====================
+central air conditioner  AirDistribution or DSE  electricity        SEER                    optional
+room air conditioner                             electricity        EER                     optional
+=======================  ======================  =================  ======================= ====================
 
 Heat Pumps
 **********
 
 Each heat pump should be entered as a ``Systems/HVAC/HVACPlant/HeatPump``.
-Inputs including ``HeatPumpType``, ``CoolingCapacity``, ``FractionHeatLoadServed``, and ``FractionCoolLoadServed`` must be provided.
-Note that heat pumps are allowed to provide only heating (FractionCoolLoadServed = 0) or cooling (FractionHeatLoadServed = 0) if appropriate.
+Inputs including ``HeatPumpType``, ``CoolingCapacity``, ``HeatingCapacity``, ``FractionHeatLoadServed``, and ``FractionCoolLoadServed`` must be provided.
+Note that heat pumps are allowed to provide only heating (``FractionCoolLoadServed`` = 0) or cooling (``FractionHeatLoadServed`` = 0) if appropriate.
 
-Depending on the type of heat pump specified, additional elements are required:
+Depending on the type of heat pump specified, additional elements are required/available:
 
-=============  =================================  ============  =======================  =======================
-HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency
-=============  =================================  ============  =======================  =======================
-air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF
-mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF
-ground-to-air  AirDistribution or DSE             electricity   EER                      COP
-=============  =================================  ============  =======================  =======================
+=============  =================================  ============  =======================  ======================= =========================== ==================
+HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency CoolingSensibleHeatFraction HeatingCapacity17F
+=============  =================================  ============  =======================  ======================= =========================== ==================
+air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF                    optional                    optional
+mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                    optional                    optional
+ground-to-air  AirDistribution or DSE             electricity   EER                      COP                     optional
+=============  =================================  ============  =======================  ======================= =========================== ==================
 
-If the heat pump has backup heating, it can be specified with ``BackupSystemFuel`` (currently only electricity is allowed), ``BackupAnnualHeatingEfficiency`` (percent), and ``BackupHeatingCapacity``.
+If the heat pump has integrated backup heating, it can be specified with ``BackupSystemFuel`` (currently only "electricity" is allowed), ``BackupAnnualHeatingEfficiency`` (percent), and ``BackupHeatingCapacity``.
 
 Thermostat
 **********
@@ -352,6 +352,8 @@ space-heating boiler with tankless coil                                         
 ========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
 
 For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
+
+For water heaters that are connected to a desuperheater, ``UsesDesuperheater`` must be set and the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
 
 Hot Water Distribution
 **********************

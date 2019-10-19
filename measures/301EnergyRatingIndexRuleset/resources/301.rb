@@ -135,7 +135,7 @@ class EnergyRatingIndex301Ruleset
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
-    remove_garage_and_adiabatic_from_iad(orig_details)
+    remove_surfaces_from_iad(orig_details)
 
     # BuildingSummary
     set_summary_iad(orig_details, hpxml)
@@ -197,15 +197,13 @@ class EnergyRatingIndex301Ruleset
     return hpxml_doc
   end
 
-  def self.remove_garage_and_adiabatic_from_iad(orig_details)
-    # Remove garage/adiabatic enclosure elements.
-
-    adjacents = ["garage", "other housing unit"]
+  def self.remove_surfaces_from_iad(orig_details)
+    # Remove garage surfaces and adiabatic walls.
 
     # Roof
     orig_details.elements.each("Enclosure/Roofs/Roof") do |roof|
       roof_values = HPXML.get_roof_values(roof: roof)
-      if adjacents.include? roof_values[:interior_adjacent_to] or adjacents.include? roof_values[:exterior_adjacent_to]
+      if ["garage"].include? roof_values[:interior_adjacent_to]
         roof.parent.elements.delete roof
         delete_roof_subsurfaces(orig_details, roof_values[:id])
       end
@@ -214,7 +212,8 @@ class EnergyRatingIndex301Ruleset
     # Rim Joist
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-      if adjacents.include? rim_joist_values[:interior_adjacent_to] or adjacents.include? rim_joist_values[:exterior_adjacent_to]
+      if ["garage", "other housing unit"].include? rim_joist_values[:interior_adjacent_to] or
+         ["garage", "other housing unit"].include? rim_joist_values[:exterior_adjacent_to]
         rim_joist.parent.elements.delete rim_joist
       end
     end
@@ -222,7 +221,8 @@ class EnergyRatingIndex301Ruleset
     # Wall
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
-      if adjacents.include? wall_values[:interior_adjacent_to] or adjacents.include? wall_values[:exterior_adjacent_to]
+      if ["garage", "other housing unit"].include? wall_values[:interior_adjacent_to] or
+         ["garage", "other housing unit"].include? wall_values[:exterior_adjacent_to]
         wall.parent.elements.delete wall
         delete_wall_subsurfaces(orig_details, wall_values[:id])
       end
@@ -231,7 +231,8 @@ class EnergyRatingIndex301Ruleset
     # FoundationWall
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
       fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
-      if adjacents.include? fnd_wall_values[:interior_adjacent_to] or adjacents.include? fnd_wall_values[:exterior_adjacent_to]
+      if ["garage", "other housing unit"].include? fnd_wall_values[:interior_adjacent_to] or
+         ["garage", "other housing unit"].include? fnd_wall_values[:exterior_adjacent_to]
         fnd_wall.parent.elements.delete fnd_wall
         delete_wall_subsurfaces(orig_details, fnd_wall_values[:id])
       end
@@ -240,7 +241,8 @@ class EnergyRatingIndex301Ruleset
     # FrameFloor
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      if adjacents.include? framefloor_values[:interior_adjacent_to] or adjacents.include? framefloor_values[:exterior_adjacent_to]
+      if ["garage"].include? framefloor_values[:interior_adjacent_to] or
+         ["garage"].include? framefloor_values[:exterior_adjacent_to]
         framefloor.parent.elements.delete framefloor
       end
     end
@@ -248,7 +250,7 @@ class EnergyRatingIndex301Ruleset
     # Slab
     orig_details.elements.each("Enclosure/Slabs/Slab") do |slab|
       slab_values = HPXML.get_slab_values(slab: slab)
-      if adjacents.include? slab_values[:interior_adjacent_to] or adjacents.include? slab_values[:exterior_adjacent_to]
+      if ["garage"].include? slab_values[:interior_adjacent_to]
         slab.parent.elements.delete slab
       end
     end
@@ -620,8 +622,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Ceilings
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next unless hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                         framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                              framefloor_values[:exterior_adjacent_to])
 
       if is_thermal_boundary(framefloor_values)
         framefloor_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
@@ -635,8 +637,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_ceilings_rated(orig_details, hpxml)
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next unless hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                         framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                              framefloor_values[:exterior_adjacent_to])
 
       HPXML.add_framefloor(hpxml: hpxml, **framefloor_values)
     end
@@ -650,15 +652,15 @@ class EnergyRatingIndex301Ruleset
     sum_ceiling_area = 0.0
     new_enclosure.elements.each("FrameFloors/FrameFloor") do |new_framefloor|
       new_framefloor_values = HPXML.get_framefloor_values(framefloor: new_framefloor)
-      next unless hpxml_floor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
-                                         new_framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
+                                              new_framefloor_values[:exterior_adjacent_to])
 
       sum_ceiling_area += new_framefloor_values[:area]
     end
     new_enclosure.elements.each("FrameFloors/FrameFloor") do |new_framefloor|
       new_framefloor_values = HPXML.get_framefloor_values(framefloor: new_framefloor)
-      next unless hpxml_floor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
-                                         new_framefloor_values[:exterior_adjacent_to])
+      next unless hpxml_framefloor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
+                                              new_framefloor_values[:exterior_adjacent_to])
 
       new_framefloor.elements["Area"].text = 1200.0 * new_framefloor_values[:area] / sum_ceiling_area
     end
@@ -670,8 +672,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next if hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                     framefloor_values[:exterior_adjacent_to])
+      next if hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                          framefloor_values[:exterior_adjacent_to])
 
       if is_thermal_boundary(framefloor_values)
         framefloor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
@@ -685,8 +687,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_floors_rated(orig_details, hpxml)
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
       framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
-      next if hpxml_floor_is_ceiling(framefloor_values[:interior_adjacent_to],
-                                     framefloor_values[:exterior_adjacent_to])
+      next if hpxml_framefloor_is_ceiling(framefloor_values[:interior_adjacent_to],
+                                          framefloor_values[:exterior_adjacent_to])
 
       HPXML.add_framefloor(hpxml: hpxml, **framefloor_values)
     end
@@ -1228,6 +1230,10 @@ class EnergyRatingIndex301Ruleset
       end
       wh_sys_values[:location].gsub!("unvented", "vented")
 
+      # Ensure no desuperheater
+      wh_sys_values[:uses_desuperheater] = false
+      wh_sys_values[:related_hvac] = nil
+
       # New water heater
       HPXML.add_water_heating_system(hpxml: hpxml, **wh_sys_values)
     end
@@ -1668,6 +1674,7 @@ class EnergyRatingIndex301Ruleset
                                     heat_pump_type: "air-to-air",
                                     heat_pump_fuel: "electricity",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
+                                    heating_capacity: -1, # Use Manual J auto-sizing
                                     backup_heating_fuel: "electricity",
                                     backup_heating_capacity: -1,
                                     backup_heating_efficiency_percent: 1.0,

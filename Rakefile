@@ -620,10 +620,14 @@ end
 
 def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltration_measurement_values, building_construction_values)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
-      'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
+      'RESNET_Tests/4.1_Standard_140/L100AL.xml',
+      'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :constant_ach_natural => 0.67 }
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
+    air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
+                                            :constant_ach_natural => 0.335 }
   elsif ['RESNET_Tests/4.1_Standard_140/L110AC.xml',
          'RESNET_Tests/4.1_Standard_140/L110AL.xml',
          'RESNET_Tests/4.1_Standard_140/L200AC.xml',
@@ -634,7 +638,6 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml',
@@ -643,6 +646,10 @@ def get_hpxml_file_air_infiltration_measurement_values(hpxml_file, air_infiltrat
     air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
                                             :unit_of_measure => "ACHnatural",
                                             :air_leakage => 0.67 }
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    air_infiltration_measurement_values = { :id => "InfiltrationMeasurement",
+                                            :unit_of_measure => "ACHnatural",
+                                            :air_leakage => 0.335 }
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 3 ACH50
@@ -727,7 +734,7 @@ def get_hpxml_file_rim_joists_values(hpxml_file, rim_joists_values)
     # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
     rim_joists_values[0][:insulation_assembly_r_value] = 13.14
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
-    rim_joists_values = []
+    rim_joists_values[0][:interior_adjacent_to] = "basement - unconditioned"
   end
   return rim_joists_values
 end
@@ -1344,6 +1351,9 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 10 }]
+    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-08.xml'
+      cooling_systems_values[0][:distribution_system_idref] = "HVACDistribution2"
+    end
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
     cooling_systems_values = [{ :id => "CoolingSystem",
@@ -1419,6 +1429,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -1436,6 +1447,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -1455,8 +1467,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => 56100,
+                           :heating_capacity => 56100,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => -1,
+                           :backup_heating_capacity => 100000,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 0,
@@ -1469,8 +1482,9 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => 56100,
+                           :heating_capacity => 56100,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => -1,
+                           :backup_heating_capacity => 100000,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 0,
@@ -1483,6 +1497,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -1497,6 +1512,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -1511,6 +1527,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -1525,6 +1542,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "air-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -1539,6 +1557,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "ground-to-air",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -1552,6 +1571,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heat_pump_type => "mini-split",
                            :heat_pump_fuel => "electricity",
                            :cooling_capacity => -1,
+                           :heating_capacity => -1,
                            :backup_heating_fuel => "electricity",
                            :backup_heating_capacity => -1,
                            :backup_heating_efficiency_percent => 1.0,
@@ -2328,15 +2348,22 @@ def copy_sample_files
                   'invalid_files/clothes-dryer-location-other.xml',
                   'invalid_files/duct-location.xml',
                   'invalid_files/duct-location-other.xml',
+                  'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities.xml',
+                  'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities2.xml',
+                  'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities3.xml',
+                  'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities4.xml',
                   'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
                   'invalid_files/hvac-distribution-multiple-attached-heating.xml',
-                  'invalid_files/invalid-idref-dhw-indirect.xml',
+                  'invalid_files/invalid-relatedhvac-desuperheater.xml',
+                  'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/missing-surfaces.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
+                  'invalid_files/orphaned-hvac-distribution.xml',
                   'invalid_files/refrigerator-location.xml',
                   'invalid_files/refrigerator-location-other.xml',
-                  'invalid_files/two-repeating-idref-dhw-indirect.xml',
+                  'invalid_files/repeated-relatedhvac-desuperheater.xml',
+                  'invalid_files/repeated-relatedhvac-dhw-indirect.xml',
                   'invalid_files/unattached-cfis.xml',
                   'invalid_files/unattached-door.xml',
                   'invalid_files/unattached-hvac-distribution.xml',
@@ -2346,28 +2373,52 @@ def copy_sample_files
                   'invalid_files/water-heater-location-other.xml',
                   'base-appliances-none.xml',
                   'base-appliances-refrigerator-adjusted.xml',
+                  'base-appliances-wood.xml',
                   'base-dhw-combi-tankless-outside.xml',
+                  'base-dhw-desuperheater-var-speed.xml',
+                  'base-dhw-desuperheater-2-speed.xml',
+                  'base-dhw-desuperheater-gshp.xml',
+                  'base-dhw-desuperheater-tankless.xml',
                   'base-dhw-indirect-outside.xml',
                   'base-dhw-jacket-electric.xml',
                   'base-dhw-jacket-hpwh.xml',
                   'base-dhw-jacket-indirect.xml',
                   'base-dhw-tank-gas-outside.xml',
                   'base-dhw-tank-heat-pump-outside.xml',
+                  'base-dhw-tank-wood.xml',
                   'base-dhw-tankless-electric-outside.xml',
+                  'base-dhw-tankless-wood.xml',
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-complex.xml',
                   'base-foundation-unconditioned-basement-assembly-r.xml',
+                  'base-hvac-air-to-air-heat-pump-1-speed-17F.xml',
+                  'base-hvac-air-to-air-heat-pump-1-speed-shr.xml',
+                  'base-hvac-air-to-air-heat-pump-2-speed-17F.xml',
+                  'base-hvac-air-to-air-heat-pump-2-speed-shr.xml',
+                  'base-hvac-air-to-air-heat-pump-var-speed-17F.xml',
+                  'base-hvac-air-to-air-heat-pump-var-speed-shr.xml',
                   'base-hvac-boiler-gas-only-no-eae.xml',
+                  'base-hvac-boiler-wood-only.xml',
+                  'base-hvac-central-ac-only-1-speed-shr.xml',
+                  'base-hvac-central-ac-only-2-speed-shr.xml',
+                  'base-hvac-central-ac-only-var-speed-shr.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',
+                  'base-hvac-furnace-wood-only.xml',
+                  'base-hvac-ground-to-air-heat-pump-shr.xml',
                   'base-hvac-ideal-air.xml',
+                  'base-hvac-mini-split-heat-pump-ducted-17F.xml',
+                  'base-hvac-mini-split-heat-pump-ducted-shr.xml',
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-portable-heater-electric-only.xml',
+                  'base-hvac-room-ac-only-shr.xml',
                   'base-hvac-setpoints.xml',
                   'base-hvac-stove-oil-only-no-eae.xml',
+                  'base-hvac-stove-wood-only.xml',
                   'base-hvac-wall-furnace-propane-only-no-eae.xml',
+                  'base-hvac-wall-furnace-wood-only.xml',
                   'base-infiltration-ach-natural.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-mechvent-erv-asre.xml',
