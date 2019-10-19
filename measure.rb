@@ -261,8 +261,8 @@ class OSModel
     @has_vented_attic = !enclosure.elements["*/*[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']"].nil?
     @has_vented_crawl = !enclosure.elements["*/*[InteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - vented']"].nil?
     @subsurface_areas_by_surface = calc_subsurface_areas_by_surface(building)
-    @default_azimuth = get_default_azimuth(building)
     @min_neighbor_distance = get_min_neighbor_distance(building)
+    @default_azimuths = get_default_azimuths(building)
 
     @hvac_map = {} # mapping between HPXML HVAC systems and model objects
     @dhw_map = {}  # mapping between HPXML Water Heating systems and model objects
@@ -887,11 +887,33 @@ class OSModel
     return subsurface_areas
   end
 
-  def self.get_default_azimuth(building)
+  def self.get_default_azimuths(building)
+    azimuth_counts = {}
     building.elements.each("BuildingDetails/Enclosure//Azimuth") do |azimuth|
-      return Integer(azimuth.text)
+      az = Integer(azimuth.text)
+      azimuth_counts[az] = 0 if azimuth_counts[az].nil?
+      azimuth_counts[az] += 1
     end
-    return 90
+    if azimuth_counts.empty?
+      default_azimuth = 0
+    else
+      default_azimuth = azimuth_counts.max_by { |k, v| v }[0]
+    end
+    return [default_azimuth,
+            sanitize_azimuth(default_azimuth + 90),
+            sanitize_azimuth(default_azimuth + 180),
+            sanitize_azimuth(default_azimuth + 270)]
+  end
+
+  def self.sanitize_azimuth(azimuth)
+    # Ensure 0 <= orientation < 360
+    while azimuth < 0
+      azimuth += 360
+    end
+    while azimuth >= 360
+      azimuth -= 360
+    end
+    return azimuth
   end
 
   def self.create_or_get_space(model, spaces, spacetype)
@@ -905,73 +927,81 @@ class OSModel
     building.elements.each("BuildingDetails/Enclosure/Roofs/Roof") do |roof|
       roof_values = HPXML.get_roof_values(roof: roof)
 
-      net_area = net_surface_area(roof_values[:area], roof_values[:id], "Roof")
-      next if net_area < 0.1
-
-      width = Math::sqrt(net_area)
-      length = net_area / width
-      tilt = roof_values[:pitch] / 12.0
-      z_origin = @walls_top + 0.5 * Math.sin(Math.atan(tilt)) * width
-      azimuth = @default_azimuth
-      if not roof_values[:azimuth].nil?
-        azimuth = roof_values[:azimuth]
-      end
-
-      surface = OpenStudio::Model::Surface.new(add_roof_polygon(length, width, z_origin, azimuth, tilt), model)
-      surface.additionalProperties.setFeature("Length", length)
-      surface.additionalProperties.setFeature("Width", width)
-      surface.additionalProperties.setFeature("Azimuth", azimuth)
-      surface.additionalProperties.setFeature("Tilt", tilt)
-      surface.setName(roof_values[:id])
-      surface.setSurfaceType("RoofCeiling")
-      surface.setOutsideBoundaryCondition("Outdoors")
-      set_surface_interior(model, spaces, surface, roof_values[:id], roof_values[:interior_adjacent_to])
-
-      # Apply construction
-      if is_thermal_boundary(roof_values)
-        drywall_thick_in = 0.5
+      if roof_values[:azimuth].nil?
+        azimuths = @default_azimuths
       else
-        drywall_thick_in = 0.0
-      end
-      film_r = Material.AirFilmOutside.rvalue + Material.AirFilmRoof(Geometry.get_roof_pitch([surface])).rvalue
-      solar_abs = roof_values[:solar_absorptance]
-      emitt = roof_values[:emittance]
-      has_radiant_barrier = roof_values[:radiant_barrier]
-      if solar_abs >= 0.875
-        mat_roofing = Material.RoofingAsphaltShinglesDark
-      elsif solar_abs >= 0.75
-        mat_roofing = Material.RoofingAsphaltShinglesMed
-      elsif solar_abs >= 0.6
-        mat_roofing = Material.RoofingAsphaltShinglesLight
-      else
-        mat_roofing = Material.RoofingAsphaltShinglesWhiteCool
+        azimuths = [roof_values[:azimuth]]
       end
 
-      assembly_r = roof_values[:insulation_assembly_r_value]
-      constr_sets = [
-        WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 10.0, 0.75, drywall_thick_in, mat_roofing), # 2x8, 24" o.c. + R10
-        WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 5.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c. + R5
-        WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 0.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c.
-        WoodStudConstructionSet.new(Material.Stud2x6, 0.07, 0.0, 0.75, drywall_thick_in, mat_roofing),      # 2x6, 24" o.c.
-        WoodStudConstructionSet.new(Material.Stud2x4, 0.07, 0.0, 0.5, drywall_thick_in, mat_roofing),       # 2x4, 16" o.c.
-        WoodStudConstructionSet.new(Material.Stud2x4, 0.01, 0.0, 0.0, 0.0, mat_roofing),                    # Fallback
-      ]
-      match, constr_set, cavity_r = pick_wood_stud_construction_set(assembly_r, constr_sets, film_r, roof_values[:id])
+      azimuths.each do |azimuth|
+        net_area = net_surface_area(roof_values[:area], roof_values[:id], "Roof")
+        next if net_area < 0.1
 
-      install_grade = 1
+        width = Math::sqrt(net_area)
+        length = (net_area / width) / azimuths.size
+        tilt = roof_values[:pitch] / 12.0
+        z_origin = @walls_top + 0.5 * Math.sin(Math.atan(tilt)) * width
 
-      success = Constructions.apply_closed_cavity_roof(runner, model, [surface], "#{roof_values[:id]} construction",
-                                                       cavity_r, install_grade,
-                                                       constr_set.stud.thick_in,
-                                                       true, constr_set.framing_factor,
-                                                       constr_set.drywall_thick_in,
-                                                       constr_set.osb_thick_in, constr_set.rigid_r,
-                                                       constr_set.exterior_material)
-      return false if not success
+        surface = OpenStudio::Model::Surface.new(add_roof_polygon(length, width, z_origin, azimuth, tilt), model)
+        surface.additionalProperties.setFeature("Length", length)
+        surface.additionalProperties.setFeature("Width", width)
+        surface.additionalProperties.setFeature("Azimuth", azimuth)
+        surface.additionalProperties.setFeature("Tilt", tilt)
+        if azimuths.size > 1
+          surface.setName("#{roof_values[:id]}:#{azimuth}")
+        else
+          surface.setName(roof_values[:id])
+        end
+        surface.setSurfaceType("RoofCeiling")
+        surface.setOutsideBoundaryCondition("Outdoors")
+        set_surface_interior(model, spaces, surface, roof_values[:id], roof_values[:interior_adjacent_to])
 
-      check_surface_assembly_rvalue(runner, surface, film_r, assembly_r, match)
+        # Apply construction
+        if is_thermal_boundary(roof_values)
+          drywall_thick_in = 0.5
+        else
+          drywall_thick_in = 0.0
+        end
+        film_r = Material.AirFilmOutside.rvalue + Material.AirFilmRoof(Geometry.get_roof_pitch([surface])).rvalue
+        solar_abs = roof_values[:solar_absorptance]
+        emitt = roof_values[:emittance]
+        has_radiant_barrier = roof_values[:radiant_barrier]
+        if solar_abs >= 0.875
+          mat_roofing = Material.RoofingAsphaltShinglesDark
+        elsif solar_abs >= 0.75
+          mat_roofing = Material.RoofingAsphaltShinglesMed
+        elsif solar_abs >= 0.6
+          mat_roofing = Material.RoofingAsphaltShinglesLight
+        else
+          mat_roofing = Material.RoofingAsphaltShinglesWhiteCool
+        end
 
-      apply_solar_abs_emittance_to_construction(surface, solar_abs, emitt)
+        assembly_r = roof_values[:insulation_assembly_r_value]
+        constr_sets = [
+          WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 10.0, 0.75, drywall_thick_in, mat_roofing), # 2x8, 24" o.c. + R10
+          WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 5.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c. + R5
+          WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 0.0, 0.75, drywall_thick_in, mat_roofing),  # 2x8, 24" o.c.
+          WoodStudConstructionSet.new(Material.Stud2x6, 0.07, 0.0, 0.75, drywall_thick_in, mat_roofing),      # 2x6, 24" o.c.
+          WoodStudConstructionSet.new(Material.Stud2x4, 0.07, 0.0, 0.5, drywall_thick_in, mat_roofing),       # 2x4, 16" o.c.
+          WoodStudConstructionSet.new(Material.Stud2x4, 0.01, 0.0, 0.0, 0.0, mat_roofing),                    # Fallback
+        ]
+        match, constr_set, cavity_r = pick_wood_stud_construction_set(assembly_r, constr_sets, film_r, roof_values[:id])
+
+        install_grade = 1
+
+        success = Constructions.apply_closed_cavity_roof(runner, model, [surface], "#{roof_values[:id]} construction",
+                                                         cavity_r, install_grade,
+                                                         constr_set.stud.thick_in,
+                                                         true, constr_set.framing_factor,
+                                                         constr_set.drywall_thick_in,
+                                                         constr_set.osb_thick_in, constr_set.rigid_r,
+                                                         constr_set.exterior_material)
+        return false if not success
+
+        check_surface_assembly_rvalue(runner, surface, film_r, assembly_r, match)
+
+        apply_solar_abs_emittance_to_construction(surface, solar_abs, emitt)
+      end
     end
 
     return true
@@ -981,50 +1011,58 @@ class OSModel
     building.elements.each("BuildingDetails/Enclosure/Walls/Wall") do |wall|
       wall_values = HPXML.get_wall_values(wall: wall)
 
-      net_area = net_surface_area(wall_values[:area], wall_values[:id], "Wall")
-      next if net_area < 0.1
-
-      height = 8.0 * @ncfl_ag
-      length = net_area / height
-      z_origin = @foundation_top
-      azimuth = @default_azimuth
-      if not wall_values[:azimuth].nil?
-        azimuth = wall_values[:azimuth]
-      end
-
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(length, height, z_origin, azimuth), model)
-      surface.additionalProperties.setFeature("Length", length)
-      surface.additionalProperties.setFeature("Azimuth", azimuth)
-      surface.additionalProperties.setFeature("Tilt", 90.0)
-      surface.setName(wall_values[:id])
-      surface.setSurfaceType("Wall")
-      set_surface_interior(model, spaces, surface, wall_values[:id], wall_values[:interior_adjacent_to])
-      set_surface_exterior(model, spaces, surface, wall_values[:id], wall_values[:exterior_adjacent_to])
-      if wall_values[:exterior_adjacent_to] != "outside"
-        surface.setSunExposure("NoSun")
-        surface.setWindExposure("NoWind")
-      end
-
-      # Apply construction
-      # The code below constructs a reasonable wall construction based on the
-      # wall type while ensuring the correct assembly R-value.
-
-      if is_thermal_boundary(wall_values)
-        drywall_thick_in = 0.5
+      if wall_values[:azimuth].nil?
+        azimuths = @default_azimuths
       else
-        drywall_thick_in = 0.0
-      end
-      if wall_values[:exterior_adjacent_to] == "outside"
-        film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
-        mat_ext_finish = Material.ExtFinishWoodLight
-      else
-        film_r = 2.0 * Material.AirFilmVertical.rvalue
-        mat_ext_finish = nil
+        azimuths = [wall_values[:azimuth]]
       end
 
-      success = apply_wall_construction(runner, model, surface, wall_values[:id], wall_values[:wall_type], wall_values[:insulation_assembly_r_value],
-                                        drywall_thick_in, film_r, mat_ext_finish, wall_values[:solar_absorptance], wall_values[:emittance])
-      return false if not success
+      azimuths.each do |azimuth|
+        net_area = net_surface_area(wall_values[:area], wall_values[:id], "Wall")
+        next if net_area < 0.1
+
+        height = 8.0 * @ncfl_ag
+        length = (net_area / height) / azimuths.size
+        z_origin = @foundation_top
+
+        surface = OpenStudio::Model::Surface.new(add_wall_polygon(length, height, z_origin, azimuth), model)
+        surface.additionalProperties.setFeature("Length", length)
+        surface.additionalProperties.setFeature("Azimuth", azimuth)
+        surface.additionalProperties.setFeature("Tilt", 90.0)
+        if azimuths.size > 1
+          surface.setName("#{wall_values[:id]}:#{azimuth}")
+        else
+          surface.setName(wall_values[:id])
+        end
+        surface.setSurfaceType("Wall")
+        set_surface_interior(model, spaces, surface, wall_values[:id], wall_values[:interior_adjacent_to])
+        set_surface_exterior(model, spaces, surface, wall_values[:id], wall_values[:exterior_adjacent_to])
+        if wall_values[:exterior_adjacent_to] != "outside"
+          surface.setSunExposure("NoSun")
+          surface.setWindExposure("NoWind")
+        end
+
+        # Apply construction
+        # The code below constructs a reasonable wall construction based on the
+        # wall type while ensuring the correct assembly R-value.
+
+        if is_thermal_boundary(wall_values)
+          drywall_thick_in = 0.5
+        else
+          drywall_thick_in = 0.0
+        end
+        if wall_values[:exterior_adjacent_to] == "outside"
+          film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
+          mat_ext_finish = Material.ExtFinishWoodLight
+        else
+          film_r = 2.0 * Material.AirFilmVertical.rvalue
+          mat_ext_finish = nil
+        end
+
+        success = apply_wall_construction(runner, model, surface, wall_values[:id], wall_values[:wall_type], wall_values[:insulation_assembly_r_value],
+                                          drywall_thick_in, film_r, mat_ext_finish, wall_values[:solar_absorptance], wall_values[:emittance])
+        return false if not success
+      end
     end
 
     return true
@@ -1034,64 +1072,72 @@ class OSModel
     building.elements.each("BuildingDetails/Enclosure/RimJoists/RimJoist") do |rim_joist|
       rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
 
-      height = 1.0
-      length = rim_joist_values[:area] / height
-      z_origin = @foundation_top
-      azimuth = @default_azimuth
-      if not rim_joist_values[:azimuth].nil?
-        azimuth = rim_joist_values[:azimuth]
-      end
-
-      surface = OpenStudio::Model::Surface.new(add_wall_polygon(length, height, z_origin, azimuth), model)
-      surface.additionalProperties.setFeature("Length", length)
-      surface.additionalProperties.setFeature("Azimuth", azimuth)
-      surface.additionalProperties.setFeature("Tilt", 90.0)
-      surface.setName(rim_joist_values[:id])
-      surface.setSurfaceType("Wall")
-      set_surface_interior(model, spaces, surface, rim_joist_values[:id], rim_joist_values[:interior_adjacent_to])
-      set_surface_exterior(model, spaces, surface, rim_joist_values[:id], rim_joist_values[:exterior_adjacent_to])
-      if rim_joist_values[:exterior_adjacent_to] != "outside"
-        surface.setSunExposure("NoSun")
-        surface.setWindExposure("NoWind")
-      end
-
-      # Apply construction
-
-      if is_thermal_boundary(rim_joist_values)
-        drywall_thick_in = 0.5
+      if rim_joist_values[:azimuth].nil?
+        azimuths = @default_azimuths
       else
-        drywall_thick_in = 0.0
+        azimuths = [rim_joist_values[:azimuth]]
       end
-      if rim_joist_values[:exterior_adjacent_to] == "outside"
-        film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
-        mat_ext_finish = Material.ExtFinishWoodLight
-      else
-        film_r = 2.0 * Material.AirFilmVertical.rvalue
-        mat_ext_finish = nil
+
+      azimuths.each do |azimuth|
+        height = 1.0
+        length = (rim_joist_values[:area] / height) / azimuths.size
+        z_origin = @foundation_top
+
+        surface = OpenStudio::Model::Surface.new(add_wall_polygon(length, height, z_origin, azimuth), model)
+        surface.additionalProperties.setFeature("Length", length)
+        surface.additionalProperties.setFeature("Azimuth", azimuth)
+        surface.additionalProperties.setFeature("Tilt", 90.0)
+        if azimuths.size > 1
+          surface.setName("#{rim_joist_values[:id]}:#{azimuth}")
+        else
+          surface.setName(rim_joist_values[:id])
+        end
+        surface.setSurfaceType("Wall")
+        set_surface_interior(model, spaces, surface, rim_joist_values[:id], rim_joist_values[:interior_adjacent_to])
+        set_surface_exterior(model, spaces, surface, rim_joist_values[:id], rim_joist_values[:exterior_adjacent_to])
+        if rim_joist_values[:exterior_adjacent_to] != "outside"
+          surface.setSunExposure("NoSun")
+          surface.setWindExposure("NoWind")
+        end
+
+        # Apply construction
+
+        if is_thermal_boundary(rim_joist_values)
+          drywall_thick_in = 0.5
+        else
+          drywall_thick_in = 0.0
+        end
+        if rim_joist_values[:exterior_adjacent_to] == "outside"
+          film_r = Material.AirFilmVertical.rvalue + Material.AirFilmOutside.rvalue
+          mat_ext_finish = Material.ExtFinishWoodLight
+        else
+          film_r = 2.0 * Material.AirFilmVertical.rvalue
+          mat_ext_finish = nil
+        end
+        solar_abs = rim_joist_values[:solar_absorptance]
+        emitt = rim_joist_values[:emittance]
+
+        assembly_r = rim_joist_values[:insulation_assembly_r_value]
+
+        constr_sets = [
+          WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 10.0, 2.0, drywall_thick_in, mat_ext_finish),  # 2x4 + R10
+          WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 5.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4 + R5
+          WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 0.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4
+          WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.01, 0.0, 0.0, 0.0, nil),                           # Fallback
+        ]
+        match, constr_set, cavity_r = pick_wood_stud_construction_set(assembly_r, constr_sets, film_r, rim_joist_values[:id])
+        install_grade = 1
+
+        success = Constructions.apply_rim_joist(runner, model, [surface], "#{rim_joist_values[:id]} construction",
+                                                cavity_r, install_grade, constr_set.framing_factor,
+                                                constr_set.drywall_thick_in, constr_set.osb_thick_in,
+                                                constr_set.rigid_r, constr_set.exterior_material)
+        return false if not success
+
+        check_surface_assembly_rvalue(runner, surface, film_r, assembly_r, match)
+
+        apply_solar_abs_emittance_to_construction(surface, solar_abs, emitt)
       end
-      solar_abs = rim_joist_values[:solar_absorptance]
-      emitt = rim_joist_values[:emittance]
-
-      assembly_r = rim_joist_values[:insulation_assembly_r_value]
-
-      constr_sets = [
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 10.0, 2.0, drywall_thick_in, mat_ext_finish),  # 2x4 + R10
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 5.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4 + R5
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 0.0, 2.0, drywall_thick_in, mat_ext_finish),   # 2x4
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.01, 0.0, 0.0, 0.0, nil),                           # Fallback
-      ]
-      match, constr_set, cavity_r = pick_wood_stud_construction_set(assembly_r, constr_sets, film_r, rim_joist_values[:id])
-      install_grade = 1
-
-      success = Constructions.apply_rim_joist(runner, model, [surface], "#{rim_joist_values[:id]} construction",
-                                              cavity_r, install_grade, constr_set.framing_factor,
-                                              constr_set.drywall_thick_in, constr_set.osb_thick_in,
-                                              constr_set.rigid_r, constr_set.exterior_material)
-      return false if not success
-
-      check_surface_assembly_rvalue(runner, surface, film_r, assembly_r, match)
-
-      apply_solar_abs_emittance_to_construction(surface, solar_abs, emitt)
     end
 
     return true
@@ -1282,8 +1328,9 @@ class OSModel
 
         length = ag_net_area / ag_height
         z_origin = -1 * ag_height
-        azimuth = @default_azimuth
-        if not fnd_wall_values[:azimuth].nil?
+        if fnd_wall_values[:azimuth].nil?
+          azimuth = @default_azimuths[0] # Arbitrary; solar incidence in Kiva is applied as an orientation average (to the above grade portion of the wall)
+        else
           azimuth = fnd_wall_values[:azimuth]
         end
 
@@ -1330,15 +1377,15 @@ class OSModel
     height_ag = height - fnd_wall_values[:depth_below_grade]
     z_origin = -1 * fnd_wall_values[:depth_below_grade]
     length = combined_wall_gross_area / height
+    if fnd_wall_values[:azimuth].nil?
+      azimuth = @default_azimuths[0] # Arbitrary; solar incidence in Kiva is applied as an orientation average (to the above grade portion of the wall)
+    else
+      azimuth = fnd_wall_values[:azimuth]
+    end
 
     if total_fnd_wall_length > total_slab_exp_perim
       # Calculate exposed section of wall based on slab's total exposed perimeter.
       length *= total_slab_exp_perim / total_fnd_wall_length
-    end
-
-    azimuth = @default_azimuth
-    if not fnd_wall_values[:azimuth].nil?
-      azimuth = fnd_wall_values[:azimuth]
     end
 
     if combined_wall_gross_area > combined_wall_net_area
@@ -3873,9 +3920,10 @@ class OSModel
         next if kiva_fnd_walls.flatten.include? fnd_wall2 # Skip if already processed
 
         fnd_wall_values2 = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall2)
+        # Note: Azimuth is intentionally excluded. For Kiva, azimuth does not influence results, so we combine
+        # foundation walls of different azimuths to reduce runtime.
         next unless fnd_wall_values2[:exterior_adjacent_to] == fnd_wall_values[:exterior_adjacent_to]
         next unless fnd_wall_values2[:height] == fnd_wall_values[:height]
-        next unless fnd_wall_values2[:azimuth] == fnd_wall_values[:azimuth]
         next unless fnd_wall_values2[:thickness] == fnd_wall_values[:thickness]
         next unless fnd_wall_values2[:depth_below_grade] == fnd_wall_values[:depth_below_grade]
         next unless fnd_wall_values2[:insulation_distance_to_bottom] == fnd_wall_values[:insulation_distance_to_bottom]
@@ -3888,6 +3936,7 @@ class OSModel
     if kiva_fnd_walls.empty? # Handle slab foundation type
       kiva_fnd_walls << []
     end
+
     kiva_slabs = []
     slabs.each_with_index do |slab, slab_idx|
       slab_values = HPXML.get_slab_values(slab: slab)
