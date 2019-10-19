@@ -24,20 +24,20 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run)
+def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run, hourly_output)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_designdir(output_dir, design)
   rm_path(designdir)
 
   if run
-    output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
+    output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
   end
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run)
+def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run, hourly_output)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -48,40 +48,48 @@ def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip
 
   if run
     cli_path = OpenStudio.getOpenStudioCLI
-    system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation}")
+    system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation} #{hourly_output}")
   end
 
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
   return output_hpxml_path, designdir
 end
 
-def process_design_output(design, designdir, resultsdir, output_hpxml_path)
+def process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output)
   return nil if output_hpxml_path.nil?
 
   print "[#{design}] Processing output...\n"
 
-  design_output = read_output(design, designdir, output_hpxml_path)
+  design_output, design_hourly_output = read_output(design, designdir, output_hpxml_path, hourly_output)
   return if design_output.nil?
 
-  write_results_annual_output(resultsdir, design, design_output)
+  write_output_results(resultsdir, design, design_output, design_hourly_output)
 
   print "[#{design}] Done.\n"
 
   return design_output
 end
 
-def get_sql_query_result(sqlFile, query)
+def get_sql_query_result(sqlFile, query, convert_to_mbtu = true)
   result = sqlFile.execAndReturnFirstDouble(query)
   if result.is_initialized
-    return result.get * 0.9478171203133172 # GJ => MBtu
+    if convert_to_mbtu
+      return result.get * 0.9478171203133172 # GJ => MBtu
+    else
+      return result.get # GJ
+    end
   end
 
   return 0
 end
 
-def get_sql_result(sqlValue, design)
+def get_sql_result(sqlValue, design, convert_to_mbtu = true)
   if sqlValue.is_initialized
-    return sqlValue.get * 0.9478171203133172 # GJ => MBtu
+    if convert_to_mbtu
+      return sqlValue.get * 0.9478171203133172 # GJ => MBtu
+    else
+      return sqlValue.get # GJ
+    end
   end
 
   fail "Could not find sql result."
@@ -103,7 +111,7 @@ def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
   return htg_energy * water_sys_frac
 end
 
-def read_output(design, designdir, output_hpxml_path)
+def read_output(design, designdir, output_hpxml_path, hourly_output)
   sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
     puts "[#{design}] Processing output unsuccessful."
@@ -477,7 +485,97 @@ def read_output(design, designdir, output_hpxml_path)
     end
   end
 
-  return design_output
+  design_hourly_output = []
+  if hourly_output
+    # Generate CSV file with hourly output
+
+    # Get zone names (excluding duct zone/return plenum)
+    zone_names = []
+    query = "SELECT KeyValue FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature'"
+    sqlFile.execAndReturnVectorOfString(query).get.each do |zone_name|
+      query = "SELECT FloorArea FROM Zones WHERE ZoneName='#{zone_name}'"
+      floor_area = sqlFile.execAndReturnFirstDouble(query).get
+      next unless floor_area > 1.0
+
+      zone_names << zone_name
+    end
+    zone_names.sort!
+
+    # Unit conversions
+    j_to_kwh = UnitConversions.convert(1.0, "j", "kwh")
+    j_to_kbtu = UnitConversions.convert(1.0, "j", "kbtu")
+
+    # Header
+    design_hourly_output = [["Hour",
+                             "Electricity Use [kWh]",
+                             "Natural Gas Use [kBtu]",
+                             "Propane Use [kBtu]",
+                             "Fuel Oil Use [kBtu]"]]
+    zone_names.each do |zone_name|
+      design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
+    end
+
+    # Electricity
+    query = "SELECT VariableValue*#{j_to_kwh} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    elec_use = sqlFile.execAndReturnVectorOfDouble(query).get
+    elec_use += [0.0] * 8760 if elec_use.size == 0
+    fail "Unexpected result" if elec_use.size != 8760
+
+    # Natural Gas
+    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    gas_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
+    gas_use += [0.0] * 8760 if gas_use.size == 0
+    fail "Unexpected result" if gas_use.size != 8760
+
+    # Fuel Oil
+    query = "SELECT SUM(VariableValue)*#{j_to_kbtu} FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName LIKE '%FuelOil#1 Energy' AND ReportingFrequency='Hourly') GROUP BY TimeIndex ORDER BY TimeIndex"
+    oil_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
+    oil_use += [0.0] * 8760 if oil_use.size == 0
+    fail "Unexpected result" if oil_use.size != 8760
+
+    # Propane
+    query = "SELECT SUM(VariableValue)*#{j_to_kbtu} FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName LIKE '%Propane Energy' AND ReportingFrequency='Hourly') GROUP BY TimeIndex ORDER BY TimeIndex"
+    propane_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
+    propane_use += [0.0] * 8760 if propane_use.size == 0
+    fail "Unexpected result" if propane_use.size != 8760
+
+    elec_use.zip(gas_use, oil_use, propane_use).each_with_index do |(elec, gas, oil, propane), i|
+      design_hourly_output << [i + 1, elec.round(2), gas.round(2), oil.round(2), propane.round(2)]
+    end
+
+    # Space temperatures
+    zone_names.each do |zone_name|
+      query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
+      fail "Unexpected result" if temperatures.size != 8760
+
+      temperatures.each_with_index do |temperature, i|
+        design_hourly_output[i + 1] << temperature.round(2)
+      end
+    end
+
+    # Error Checking
+    elec_sum_hourly_gj = (elec_use.inject(0, :+) / j_to_kwh) / 1000000000.0
+    elec_annual_gj = get_sql_result(sqlFile.electricityTotalEndUses, design, false)
+    if (elec_annual_gj - elec_sum_hourly_gj).abs > tolerance
+      fail "[#{design}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
+    end
+
+    gas_sum_hourly_gj = (gas_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
+    gas_annual_gj = get_sql_result(sqlFile.naturalGasTotalEndUses, design, false)
+    if (gas_annual_gj - gas_sum_hourly_gj).abs > tolerance
+      fail "[#{design}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
+    end
+
+    other_sum_hourly_gj = ((propane_use.inject(0, :+) + oil_use.inject(0, :+)) / j_to_kbtu) / 1000000000.0
+    other_annual_gj = get_sql_result(sqlFile.otherFuelTotalEndUses, design, false)
+    if (other_annual_gj - other_sum_hourly_gj).abs > tolerance
+      fail "[#{design}] Hourly propane+oil fuel results (#{other_sum_hourly_gj}) do not sum to annual (#{other_annual_gj}).\n#{design_output.to_s}"
+    end
+
+  end
+
+  return design_output, design_hourly_output
 end
 
 def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design)
@@ -1037,7 +1135,7 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   return results
 end
 
-def write_results_annual_output(resultsdir, design, design_output)
+def write_output_results(resultsdir, design, design_output, design_hourly_output)
   out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}.csv")
 
   results_out = []
@@ -1109,6 +1207,11 @@ def write_results_annual_output(resultsdir, design, design_output)
     if (total_results[fuel] - sum_end_use_results[fuel]).abs > 0.1
       fail "[#{design}] End uses (#{sum_end_use_results[fuel].round(1)}) do not sum to #{fuel} total (#{total_results[fuel].round(1)}))."
     end
+  end
+
+  if not design_hourly_output.nil? and design_hourly_output.size > 0
+    out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}_Hourly.csv")
+    CSV.open(out_csv, "wb") { |csv| design_hourly_output.to_a.each { |elem| csv << elem } }
   end
 end
 
@@ -1296,6 +1399,11 @@ OptionParser.new do |opts|
     options[:output_dir] = t
   end
 
+  options[:hourly_output] = false
+  opts.on('', '--hourly-output', 'Request hourly output') do |t|
+    options[:hourly_output] = true
+  end
+
   opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
     options[:epws] = t
   end
@@ -1405,10 +1513,10 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   end
 
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run, options[:hourly_output])
     next unless File.exists? File.join(designdir, "in.idf")
 
-    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
     next if design_output.nil?
 
     writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
@@ -1432,10 +1540,10 @@ else # e.g., Windows
   # multiple processors.
 
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run)
+    output_hpxml_path, designdir = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run, options[:hourly_output])
     next unless File.exists? File.join(designdir, "in.idf")
 
-    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path)
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
     next if design_output.nil?
 
     design_outputs[design] = design_output

@@ -102,7 +102,7 @@ Accuracy vs Speed
 -----------------
 
 The EnergyPlus simulation engine is like a Swiss army knife.
-There are often multiple models available for the same building technology with varying tradeoffs between accuracy and speed.
+There are often multiple models available for the same building technology with varying trade-offs between accuracy and speed.
 This workflow standardizes the use of EnergyPlus (e.g., the choice of models appropriate for residential buildings) to provide a fast and easy to use solution.
 
 The workflow is continuously being evaluated for ways to reduce runtime without significant impact on accuracy.
@@ -111,6 +111,7 @@ A number of such enhancements have been made to date.
 There are additional ways that software developers using this workflow can reduce runtime:
 
 - Run on Linux/Mac platform, which is significantly faster by taking advantage of the POSIX fork call.
-- Use the --no-ssl flag to prevent SSL initialization in OpenStudio.
-- Use the -s flag to skip HPXML validation.
+- Use the ``--no-ssl`` flag to prevent SSL initialization in OpenStudio.
+- Use the ``-s`` flag to skip HPXML validation.
+- Do not use the ``--hourly-output`` flag unless hourly output is required.
 - Run on computing environments with 1) fast CPUs, 2) sufficient memory, and 3) enough processors to allow all simulations to run in parallel.

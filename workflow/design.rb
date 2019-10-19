@@ -11,10 +11,10 @@ def get_output_hpxml_path(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
+def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design}] Creating input...\n"
-  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation)
+  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation, hourly_output)
 
   if not designdir.nil?
     print "[#{design}] Running simulation...\n"
@@ -24,7 +24,7 @@ def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_valid
   return output_hpxml_path
 end
 
-def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation)
+def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation, hourly_output)
   designdir = get_designdir(output_dir, design)
   Dir.mkdir(designdir)
 
@@ -86,6 +86,40 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
     return output_hpxml_path, nil
   end
 
+  # Add hourly output requests
+  if hourly_output
+    # Thermal zone temperatures:
+    output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
+    output_var.setReportingFrequency('hourly')
+    output_var.setKeyValue('*')
+
+    # Energy use by fuel:
+
+    # Electricity and Natural Gas can be retrieved from meters
+    ['Electricity:Facility', 'Gas:Facility'].each do |meter_fuel|
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName(meter_fuel)
+      output_meter.setReportingFrequency('hourly')
+    end
+
+    # Other fuels need to be rolled up
+    other_fuels = ['Heating Coil Propane Energy',
+                   'Heating Coil FuelOil#1 Energy',
+                   'Baseboard Propane Energy',
+                   'Baseboard FuelOil#1 Energy',
+                   'Boiler Propane Energy',
+                   'Boiler FuelOil#1 Energy',
+                   'Water Heater Propane Energy',
+                   'Water Heater FuelOil#1 Energy',
+                   'Other Equipment Propane Energy',
+                   'Other Equipment FuelOil#1 Energy']
+    other_fuels.each do |var_fuel|
+      output_var = OpenStudio::Model::OutputVariable.new(var_fuel, model)
+      output_var.setReportingFrequency('hourly')
+      output_var.setKeyValue('*')
+    end
+  end
+
   # Translate model
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
@@ -122,7 +156,7 @@ def run_energyplus(design, designdir)
   system(command, :err => File::NULL)
 end
 
-if ARGV.size == 7
+if ARGV.size == 8
   basedir = ARGV[0]
   output_dir = ARGV[1]
   design = ARGV[2]
@@ -130,5 +164,6 @@ if ARGV.size == 7
   hpxml = ARGV[4]
   debug = (ARGV[5].downcase.to_s == "true")
   skip_validation = (ARGV[6].downcase.to_s == "true")
-  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
+  hourly_output = (ARGV[7].downcase.to_s == "true")
+  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
 end
