@@ -1,11 +1,11 @@
   Processing Schedule Input -- Start
   Processing Schedule Input -- Complete
- MonthlyInputCount=           0
- sizeMonthlyInput=           0
- MonthlyFieldSetInputCount=           0
- sizeMonthlyFieldSetInput=           0
- MonthlyTablesCount=           0
- MonthlyColumnsCount=           0
+ MonthlyInputCount=           2
+ sizeMonthlyInput=          25
+ MonthlyFieldSetInputCount=           4
+ sizeMonthlyFieldSetInput=          50
+ MonthlyTablesCount=           2
+ MonthlyColumnsCount=           4
  sizeReportName=         100
  numReportName=          13
  sizeSubTable=         100
@@ -16,10 +16,10 @@
  numTableEntry=        1600
  sizeCompSizeTableEntry=         100
  numCompSizeTableEntry=          18
- NumOfRVariable=        3599
- NumOfRVariable(Total)=        3599
- NumOfRVariable(Actual)=          74
- NumOfRVariable(Summed)=          57
+ NumOfRVariable=        3625
+ NumOfRVariable(Total)=        3627
+ NumOfRVariable(Actual)=          77
+ NumOfRVariable(Summed)=          58
  NumOfRVariable(Meter)=          54
  NumOfIVariable=         176
  NumOfIVariable(Total)=         176
@@ -36,11 +36,11 @@
  NumReportList=         500
  InstMeterCacheSize=        1000
  ClippingAlgorithm=SutherlandHodgman
- MonthlyFieldSetInputCount=           0
- NumConsideredOutputVariables=          49
+ MonthlyFieldSetInputCount=           4
+ NumConsideredOutputVariables=          56
  MaxConsideredOutputVariables=       10000
  numActuatorsUsed=           6
- numEMSActuatorsAvailable=         675
+ numEMSActuatorsAvailable=         681
  maxEMSActuatorsAvailable=        1000
  numInternalVariablesUsed=           2
  numEMSInternalVarsAvailable=          43
