@@ -71,6 +71,8 @@ def create_hpxmls
     'base-appliances-gas.xml' => 'base.xml',
     'base-appliances-wood.xml' => 'base.xml',
     'base-appliances-none.xml' => 'base.xml',
+    'base-appliances-oil.xml' => 'base.xml',
+    'base-appliances-propane.xml' => 'base.xml',
     'base-appliances-refrigerator-adjusted.xml' => 'base.xml',
     'base-appliances-washer-imef.xml' => 'base.xml',
     'base-atticroof-cathedral.xml' => 'base.xml',
@@ -172,7 +174,9 @@ def create_hpxmls
     'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml' => 'base-hvac-central-ac-only-1-speed.xml',
     'base-hvac-dse.xml' => 'base.xml',
     'base-hvac-ducts-in-conditioned-space.xml' => 'base.xml',
+    'base-hvac-ducts-multiple.xml' => 'base.xml',
     'base-hvac-ducts-outside.xml' => 'base.xml',
+    'base-hvac-ducts-locations.xml' => 'base-foundation-vented-crawlspace.xml',
     'base-hvac-elec-resistance-only.xml' => 'base.xml',
     'base-hvac-furnace-elec-only.xml' => 'base.xml',
     'base-hvac-furnace-gas-central-ac-2-speed.xml' => 'base.xml',
@@ -193,7 +197,6 @@ def create_hpxmls
     'base-hvac-mini-split-heat-pump-ductless.xml' => 'base-hvac-mini-split-heat-pump-ducted.xml',
     'base-hvac-mini-split-heat-pump-ductless-no-backup.xml' => 'base-hvac-mini-split-heat-pump-ductless.xml',
     'base-hvac-multiple.xml' => 'base.xml',
-    'base-hvac-ducts-multiple.xml' => 'base.xml',
     'base-hvac-none.xml' => 'base.xml',
     'base-hvac-none-no-fuel-access.xml' => 'base-hvac-none.xml',
     'base-hvac-portable-heater-electric-only.xml' => 'base.xml',
@@ -1720,6 +1723,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
     heating_systems_values[0][:heating_capacity] = -1
   elsif hpxml_file.include? '-zero-heat.xml' and not heating_systems_values.nil? and heating_systems_values.size > 0
     heating_systems_values[0][:fraction_heat_load_served] = 0
+    heating_systems_values[0][:heating_capacity] = 0
   elsif hpxml_file.include? 'hvac_multiple' and not heating_systems_values.nil? and heating_systems_values.size > 0
     heating_systems_values[0][:heating_capacity] /= 3.0
     heating_systems_values[0][:fraction_heat_load_served] = 0.333
@@ -1809,6 +1813,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     cooling_systems_values[0][:cooling_capacity] = -1
   elsif hpxml_file.include? '-zero-cool.xml' and not cooling_systems_values.nil? and cooling_systems_values.size > 0
     cooling_systems_values[0][:fraction_cool_load_served] = 0
+    cooling_systems_values[0][:cooling_capacity] = 0
   elsif hpxml_file.include? 'hvac_multiple' and not cooling_systems_values.nil? and cooling_systems_values.size > 0
     cooling_systems_values[0][:cooling_capacity] /= 3.0
     cooling_systems_values[0][:fraction_cool_load_served] = 0.333
@@ -1835,7 +1840,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 42000,
                            :cooling_capacity => 48000,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 120000,
+                           :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1852,7 +1857,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 42000,
                            :cooling_capacity => 48000,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 120000,
+                           :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1866,7 +1871,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 42000,
                            :cooling_capacity => 48000,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 120000,
+                           :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1880,7 +1885,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 42000,
                            :cooling_capacity => 48000,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 120000,
+                           :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1894,7 +1899,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 52000,
                            :cooling_capacity => 48000,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 120000,
+                           :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
                            :fraction_cool_load_served => 1,
@@ -1937,7 +1942,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 4800,
                            :cooling_capacity => 4800,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 12000,
+                           :backup_heating_capacity => 3412,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 0.1,
                            :fraction_cool_load_served => 0.2,
@@ -1950,7 +1955,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 4800,
                            :cooling_capacity => 4800,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 12000,
+                           :backup_heating_capacity => 3412,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 0.1,
                            :fraction_cool_load_served => 0.2,
@@ -1962,7 +1967,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :heating_capacity => 4800,
                            :cooling_capacity => 4800,
                            :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => 12000,
+                           :backup_heating_capacity => 3412,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 0.1,
                            :fraction_cool_load_served => 0.2,
@@ -1979,10 +1984,16 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
   elsif hpxml_file.include? '-zero-heat-cool.xml' and not heat_pumps_values.nil? and heat_pumps_values.size > 0
     heat_pumps_values[0][:fraction_heat_load_served] = 0
     heat_pumps_values[0][:fraction_cool_load_served] = 0
+    heat_pumps_values[0][:heating_capacity] = 0
+    heat_pumps_values[0][:backup_heating_capacity] = 0
+    heat_pumps_values[0][:cooling_capacity] = 0
   elsif hpxml_file.include? '-zero-heat.xml' and not heat_pumps_values.nil? and heat_pumps_values.size > 0
     heat_pumps_values[0][:fraction_heat_load_served] = 0
+    heat_pumps_values[0][:heating_capacity] = 0
+    heat_pumps_values[0][:backup_heating_capacity] = 0
   elsif hpxml_file.include? '-zero-cool.xml' and not heat_pumps_values.nil? and heat_pumps_values.size > 0
     heat_pumps_values[0][:fraction_cool_load_served] = 0
+    heat_pumps_values[0][:cooling_capacity] = 0
   elsif hpxml_file.include? 'hvac_multiple' and not heat_pumps_values.nil? and heat_pumps_values.size > 0
     heat_pumps_values[0][:cooling_capacity] /= 3.0
     heat_pumps_values[0][:heating_capacity] /= 3.0
@@ -2240,6 +2251,8 @@ def get_hpxml_file_ducts_values(hpxml_file, ducts_values)
                        :duct_insulation_r_value => 0,
                        :duct_location => "attic - unvented",
                        :duct_surface_area => 50 }]
+  elsif ['base-hvac-ducts-locations.xml'].include? hpxml_file
+    ducts_values[0][1][:duct_location] = "attic - unvented"
   elsif ['base-hvac-ducts-multiple.xml'].include? hpxml_file
     ducts_values[0] << { :duct_type => "supply",
                          :duct_insulation_r_value => 8,
@@ -2811,12 +2824,20 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
                              :fuel_type => "electricity",
                              :combined_energy_factor => 2.62,
                              :control_type => "moisture" }
-  elsif ['base-appliances-gas.xml'].include? hpxml_file
+  elsif ['base-appliances-gas.xml',
+         'base-appliances-propane.xml',
+         'base-appliances-oil.xml'].include? hpxml_file
     clothes_dryer_values = { :id => "ClothesDryer",
                              :location => "living space",
-                             :fuel_type => "natural gas",
                              :energy_factor => 2.67,
                              :control_type => "moisture" }
+    if hpxml_file == 'base-appliances-gas.xml'
+      clothes_dryer_values[:fuel_type] = "natural gas"
+    elsif hpxml_file == 'base-appliances-propane.xml'
+      clothes_dryer_values[:fuel_type] = "propane"
+    elsif hpxml_file == 'base-appliances-oil.xml'
+      clothes_dryer_values[:fuel_type] = "fuel oil"
+    end
   elsif ['base-appliances-wood.xml'].include? hpxml_file
     clothes_dryer_values = { :id => "ClothesDryer",
                              :location => "living space",
@@ -2883,6 +2904,11 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
   elsif ['base-appliances-gas.xml'].include? hpxml_file
     cooking_range_values[:fuel_type] = "natural gas"
     cooking_range_values[:is_induction] = false
+  elsif ['base-appliances-propane.xml'].include? hpxml_file
+    cooking_range_values[:fuel_type] = "propane"
+    cooking_range_values[:is_induction] = false
+  elsif ['base-appliances-oil.xml'].include? hpxml_file
+    cooking_range_values[:fuel_type] = "fuel oil"
   elsif ['base-appliances-wood.xml'].include? hpxml_file
     cooking_range_values[:fuel_type] = "wood"
     cooking_range_values[:is_induction] = false
