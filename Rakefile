@@ -2404,6 +2404,7 @@ def copy_sample_files
                   'base-hvac-central-ac-only-2-speed-shr.xml',
                   'base-hvac-central-ac-only-var-speed-shr.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
+                  'base-hvac-ducts-locations.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-furnace-wood-only.xml',
