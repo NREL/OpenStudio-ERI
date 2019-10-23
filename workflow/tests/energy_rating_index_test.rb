@@ -940,7 +940,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
 
       # Cool Fan
-      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%fan Cooling' AND VariableUnits='J')"
+      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%#{Constants.ObjectNameFanPumpDisaggregate(true)}' AND VariableUnits='J')"
       hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
     else
       # Heat
@@ -953,7 +953,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
 
       # Heat Fan
-      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%fan Heating' AND VariableUnits='J')"
+      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%#{Constants.ObjectNameFanPumpDisaggregate(false)}' AND VariableUnits='J')"
       hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
     end
 
