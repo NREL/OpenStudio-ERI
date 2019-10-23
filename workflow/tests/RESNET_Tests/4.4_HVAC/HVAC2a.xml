@@ -301,6 +301,18 @@
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <ElectricAuxiliaryEnergy>1040.0</ElectricAuxiliaryEnergy>
             </HeatingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='CoolingSystem'/>
+              <DistributionSystem idref='HVACDistribution'/>
+              <CoolingSystemType>central air conditioner</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>38300.0</CoolingCapacity>
+              <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>10.0</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
