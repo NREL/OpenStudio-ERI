@@ -3446,7 +3446,7 @@ Material:NoMass,
   0.7;                                    !- Visible Absorptance
 
 WindowMaterial:Shade,
-  CoolingShade,                           !- Name
+  WindowCoolingShade,                     !- Name
   0.822705882352941,                      !- Solar Transmittance {dimensionless}
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
@@ -3463,7 +3463,7 @@ WindowMaterial:Shade,
   0;                                      !- Airflow Permeability {dimensionless}
 
 WindowMaterial:Shade,
-  CoolingShade 1,                         !- Name
+  WindowCoolingShade 1,                   !- Name
   0.822705882352941,                      !- Solar Transmittance {dimensionless}
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
@@ -3480,7 +3480,7 @@ WindowMaterial:Shade,
   0;                                      !- Airflow Permeability {dimensionless}
 
 WindowMaterial:Shade,
-  CoolingShade 2,                         !- Name
+  WindowCoolingShade 2,                   !- Name
   0.822705882352941,                      !- Solar Transmittance {dimensionless}
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
@@ -3497,7 +3497,7 @@ WindowMaterial:Shade,
   0;                                      !- Airflow Permeability {dimensionless}
 
 WindowMaterial:Shade,
-  CoolingShade 3,                         !- Name
+  WindowCoolingShade 3,                   !- Name
   0.822705882352941,                      !- Solar Transmittance {dimensionless}
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
@@ -3529,7 +3529,7 @@ WindowShadingControl,
   ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
-  CoolingShade,                           !- Shading Device Material Name
+  WindowCoolingShade,                     !- Shading Device Material Name
   ,                                       !- Type of Slat Angle Control for Blinds
   ,                                       !- Slat Angle Schedule Name
   ,                                       !- Setpoint 2 {BasedOnField A5}
@@ -3548,7 +3548,7 @@ WindowShadingControl,
   ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
-  CoolingShade 1,                         !- Shading Device Material Name
+  WindowCoolingShade 1,                   !- Shading Device Material Name
   ,                                       !- Type of Slat Angle Control for Blinds
   ,                                       !- Slat Angle Schedule Name
   ,                                       !- Setpoint 2 {BasedOnField A5}
@@ -3567,7 +3567,7 @@ WindowShadingControl,
   ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
-  CoolingShade 2,                         !- Shading Device Material Name
+  WindowCoolingShade 2,                   !- Shading Device Material Name
   ,                                       !- Type of Slat Angle Control for Blinds
   ,                                       !- Slat Angle Schedule Name
   ,                                       !- Setpoint 2 {BasedOnField A5}
@@ -3586,7 +3586,7 @@ WindowShadingControl,
   ,                                       !- Setpoint {W/m2, W or deg C}
   Yes,                                    !- Shading Control Is Scheduled
   No,                                     !- Glare Control Is Active
-  CoolingShade 3,                         !- Shading Device Material Name
+  WindowCoolingShade 3,                   !- Shading Device Material Name
   ,                                       !- Type of Slat Angle Control for Blinds
   ,                                       !- Slat Angle Schedule Name
   ,                                       !- Setpoint 2 {BasedOnField A5}
@@ -18087,9 +18087,27 @@ Curve:Biquadratic,
   -100,                                   !- Minimum Value of y {BasedOnField A3}
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
+Output:Meter:MeterFileOnly,
+  Electricity:Facility,                   !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Gas:Facility,                           !- Key Name
+  hourly;                                 !- Reporting Frequency
+
 Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Electric Energy,           !- Variable Name
+  *,                                      !- Key Value
+  central ac supply fan cool disaggregate, !- Variable Name
+  monthly;                                !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater On Cycle Parasitic Electric Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Gas Energy,                !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -18114,17 +18132,82 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac supply fan Cooling,          !- Variable Name
+  central ac supply fan cool disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  furnace supply fan Heating,             !- Variable Name
+  furnace supply fan heat disaggregate,   !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
   water heater EC adjustment,             !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Zone Mean Air Temperature,              !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  furnace supply fan heat disaggregate,   !- Variable Name
+  monthly;                                !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Heating Coil Propane Energy,            !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Heating Coil FuelOil#1 Energy,          !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Baseboard Propane Energy,               !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Baseboard FuelOil#1 Energy,             !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Boiler Propane Energy,                  !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Boiler FuelOil#1 Energy,                !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Water Heater Propane Energy,            !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Water Heater FuelOil#1 Energy,          !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Other Equipment Propane Energy,         !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Other Equipment FuelOil#1 Energy,       !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Electric Energy,           !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -18155,16 +18238,6 @@ Output:Variable,
 Output:Variable,
   water heater,                           !- Key Value
   Water Heater Off Cycle Parasitic Electric Energy, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater On Cycle Parasitic Electric Energy, !- Variable Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater Gas Energy,                !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,
@@ -18425,7 +18498,7 @@ EnergyManagementSystem:ProgramCallingManager,
   water_heater_EC_adj;                    !- Program Name 1
 
 EnergyManagementSystem:OutputVariable,
-  central ac supply fan Cooling,          !- Name
+  central ac supply fan cool disaggregate, !- Name
   central_ac_supply_fan_cool,             !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
@@ -18433,7 +18506,7 @@ EnergyManagementSystem:OutputVariable,
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
-  furnace supply fan Heating,             !- Name
+  furnace supply fan heat disaggregate,   !- Name
   furnace_supply_fan_heat,                !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
