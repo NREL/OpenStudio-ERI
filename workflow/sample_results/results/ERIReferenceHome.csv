@@ -1,11 +1,11 @@
-Electricity: Total (MBtu),42.28310054556153
-Electricity: Net (MBtu),42.28310054556153
-Natural Gas: Total (MBtu),28.576024506345856
+Electricity: Total (MBtu),43.10296211608534
+Electricity: Net (MBtu),43.10296211608534
+Natural Gas: Total (MBtu),31.408556918043523
 Other Fuel: Total (MBtu),0.0
 
-Electricity: Heating (MBtu),0.7725501182261727
-Electricity: Cooling (MBtu),1.886231860573374
-Electricity: Hot Water (MBtu),11.37049912287178
+Electricity: Heating (MBtu),0.8492851184638257
+Electricity: Cooling (MBtu),2.638835647873791
+Electricity: Hot Water (MBtu),11.362678584511029
 Electricity: Hot Water Recirc Pump (MBtu),0.0
 Electricity: Lighting Interior (MBtu),8.918959102148316
 Electricity: Lighting Garage (MBtu),0
@@ -19,7 +19,7 @@ Electricity: Range/Oven (MBtu),1.5259855637044408
 Electricity: Ceiling Fan (MBtu),0
 Electricity: Plug Loads (MBtu),10.492335521868421
 Electricity: PV (MBtu),0.0
-Natural Gas: Heating (MBtu),28.573377821943215
+Natural Gas: Heating (MBtu),31.40962529268742
 Natural Gas: Hot Water (MBtu),0.0
 Natural Gas: Clothes Dryer (MBtu),0
 Natural Gas: Range/Oven (MBtu),0
@@ -28,17 +28,17 @@ Other Fuel: Hot Water (MBtu),0.0
 Other Fuel: Clothes Dryer (MBtu),0
 Other Fuel: Range/Oven (MBtu),0
 
-Annual Load: Heating (MBtu),18.46347750370342
-Annual Load: Cooling (MBtu),2.6064970808616224
-Annual Load: Hot Water: Delivered (MBtu),10.329060366603288
-Annual Load: Hot Water: Tank Losses (MBtu),1.0379834691081982
+Annual Load: Heating (MBtu),20.444415285158254
+Annual Load: Cooling (MBtu),5.933335173161366
+Annual Load: Hot Water: Delivered (MBtu),10.329587764332189
+Annual Load: Hot Water: Tank Losses (MBtu),1.0298131743708918
 Annual Load: Hot Water: Desuperheater (MBtu),0.0
 
-Annual Unmet Load: Heating (MBtu),0.009478171203133172
-Annual Unmet Load: Cooling (MBtu),0.08530354082819855
+Annual Unmet Load: Heating (MBtu),0.16112891045326394
+Annual Unmet Load: Cooling (MBtu),1.3743348244543099
 
-Peak Electricity: Winter Total (W),7119.14
-Peak Electricity: Summer Total (W),6549.46
+Peak Electricity: Winter Total (W),7113.45
+Peak Electricity: Summer Total (W),6734.25
 
-Peak Load: Heating (W),4688.29
-Peak Load: Cooling (W),2634.68
+Peak Load: Heating (W),5721.09
+Peak Load: Cooling (W),4278.82
