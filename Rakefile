@@ -2601,6 +2601,8 @@ def copy_sample_files
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities4.xml',
                   'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
                   'invalid_files/hvac-distribution-multiple-attached-heating.xml',
+                  'invalid_files/hvac-dse-multiple-attached-cooling.xml',
+                  'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/missing-surfaces.xml',
