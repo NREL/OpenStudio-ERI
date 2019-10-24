@@ -1462,7 +1462,8 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.96,
                                 :fraction_heat_load_served => 1 }]
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml',
+         'RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 78%; 0.0005 kW/cfm
     heating_systems_values = [{ :id => "HeatingSystem",
                                 :distribution_system_idref => "HVACDistribution",
@@ -1491,7 +1492,8 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :heating_capacity => 56100,
                                 :heating_efficiency_afue => 1,
                                 :fraction_heat_load_served => 1 }]
-  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Gas Furnace; 46.6 kBtu/h
     heating_systems_values = [{ :id => "HeatingSystem",
                                 :distribution_system_idref => "HVACDistribution",
@@ -1553,7 +1555,9 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
 end
 
 def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
-  if ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml',
+  if ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
+      'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
+      'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml'].include? hpxml_file
@@ -1595,7 +1599,8 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
     if hpxml_file == 'NASEO_Technical_Exercises/NASEO-08.xml'
       cooling_systems_values[0][:distribution_system_idref] = "HVACDistribution2"
     end
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
+         'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
@@ -1607,7 +1612,8 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     # Change to SEER = 13
     cooling_systems_values[0][:cooling_efficiency_seer] = 13
-  elsif ['RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3e.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Air Conditioner; 38.4 kBtu/h; SEER 10
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
@@ -2595,6 +2601,8 @@ def copy_sample_files
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities4.xml',
                   'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
                   'invalid_files/hvac-distribution-multiple-attached-heating.xml',
+                  'invalid_files/hvac-dse-multiple-attached-cooling.xml',
+                  'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/missing-surfaces.xml',

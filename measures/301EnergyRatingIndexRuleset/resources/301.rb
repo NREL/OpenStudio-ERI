@@ -903,6 +903,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Cooling systems
 
     has_fuel = has_fuel_access(orig_details)
+    ref_hvacdist_ids = []
 
     # Heating
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating|
@@ -910,28 +911,28 @@ class EnergyRatingIndex301Ruleset
       next unless heating_values[:heating_system_fuel] != "electricity"
 
       if heating_values[:heating_system_type] == "Boiler"
-        add_reference_heating_gas_boiler(hpxml, heating_values[:fraction_heat_load_served], heating_values[:id])
+        add_reference_heating_gas_boiler(hpxml, ref_hvacdist_ids, heating_values[:fraction_heat_load_served], heating_values[:id])
       else
-        add_reference_heating_gas_furnace(hpxml, heating_values[:fraction_heat_load_served], heating_values[:id])
+        add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, heating_values[:fraction_heat_load_served], heating_values[:id])
       end
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
       if has_fuel
-        add_reference_heating_gas_furnace(hpxml)
+        add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids)
       end
     end
 
     # Cooling
     orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |cooling|
       cooling_values = HPXML.get_cooling_system_values(cooling_system: cooling)
-      add_reference_cooling_air_conditioner(hpxml, cooling_values[:fraction_cool_load_served], cooling_values[:id])
+      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, cooling_values[:fraction_cool_load_served], cooling_values[:id])
     end
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |hp|
       hp_values = HPXML.get_heat_pump_values(heat_pump: hp)
-      add_reference_cooling_air_conditioner(hpxml, hp_values[:fraction_cool_load_served], hp_values[:id])
+      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, hp_values[:fraction_cool_load_served], hp_values[:id])
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]"].nil?
-      add_reference_cooling_air_conditioner(hpxml)
+      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids)
     end
 
     # HeatPump
@@ -939,15 +940,15 @@ class EnergyRatingIndex301Ruleset
       heating_values = HPXML.get_heating_system_values(heating_system: heating)
       next unless heating_values[:heating_system_fuel] == "electricity"
 
-      add_reference_heating_heat_pump(hpxml, heating_values[:fraction_heat_load_served], heating_values[:id])
+      add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, heating_values[:fraction_heat_load_served], heating_values[:id])
     end
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |hp|
       hp_values = HPXML.get_heat_pump_values(heat_pump: hp)
-      add_reference_heating_heat_pump(hpxml, hp_values[:fraction_heat_load_served], hp_values[:id])
+      add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, hp_values[:fraction_heat_load_served], hp_values[:id])
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
       if not has_fuel
-        add_reference_heating_heat_pump(hpxml)
+        add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids)
       end
     end
 
@@ -957,7 +958,7 @@ class EnergyRatingIndex301Ruleset
                            control_type: "manual thermostat")
 
     # Distribution system
-    add_reference_distribution_system(hpxml)
+    add_reference_distribution_system(hpxml, ref_hvacdist_ids)
   end
 
   def self.set_systems_hvac_rated(orig_details, hpxml)
@@ -968,8 +969,9 @@ class EnergyRatingIndex301Ruleset
     heat_pump = orig_details.elements["Systems/HVAC/HVACPlant/HeatPump"]
     cooling_system = orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"]
 
+    ref_hvacdist_ids = []
+
     # Heating
-    added_reference_heating = false
     if not heating_system.nil?
       # Retain heating system(s)
       orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating|
@@ -978,12 +980,10 @@ class EnergyRatingIndex301Ruleset
       end
     end
     if heating_system.nil? and heat_pump.nil? and has_fuel_access(orig_details)
-      add_reference_heating_gas_furnace(hpxml)
-      added_reference_heating = true
+      add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids)
     end
 
     # Cooling
-    added_reference_cooling = false
     if not cooling_system.nil?
       # Retain cooling system(s)
       orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |cooling|
@@ -992,8 +992,7 @@ class EnergyRatingIndex301Ruleset
       end
     end
     if cooling_system.nil? and heat_pump.nil?
-      add_reference_cooling_air_conditioner(hpxml)
-      added_reference_cooling = true
+      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids)
     end
 
     # HeatPump
@@ -1005,8 +1004,7 @@ class EnergyRatingIndex301Ruleset
       end
     end
     if heating_system.nil? and heat_pump.nil? and not has_fuel_access(orig_details)
-      add_reference_heating_heat_pump(hpxml)
-      added_reference_heating = true
+      add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids)
     end
 
     # Table 303.4.1(1) - Thermostat
@@ -1036,10 +1034,9 @@ class EnergyRatingIndex301Ruleset
         end
       end
     end
-    if added_reference_heating or added_reference_cooling
-      # Add DSE distribution for these systems
-      add_reference_distribution_system(hpxml)
-    end
+
+    # Add DSE distribution for these systems
+    add_reference_distribution_system(hpxml, ref_hvacdist_ids)
   end
 
   def self.set_systems_hvac_iad(orig_details, hpxml)
@@ -1050,9 +1047,10 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Thermal distribution systems
     # Change DSE to 1.0
-    new_hvac_dist = hpxml.elements["Building/BuildingDetails/Systems/HVAC/HVACDistribution"]
-    new_hvac_dist.elements["AnnualHeatingDistributionSystemEfficiency"].text = 1.0
-    new_hvac_dist.elements["AnnualCoolingDistributionSystemEfficiency"].text = 1.0
+    hpxml.elements.each("Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |new_hvac_dist|
+      new_hvac_dist.elements["AnnualHeatingDistributionSystemEfficiency"].text = 1.0
+      new_hvac_dist.elements["AnnualCoolingDistributionSystemEfficiency"].text = 1.0
+    end
   end
 
   def self.set_systems_mechanical_ventilation_reference(orig_details, hpxml)
@@ -1627,12 +1625,13 @@ class EnergyRatingIndex301Ruleset
     return [q_fan, 0].max
   end
 
-  def self.add_reference_heating_gas_furnace(hpxml, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
     # 78% AFUE gas furnace
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem)")
+    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
-                                        distribution_system_idref: "HVACDistribution_DSE_80",
+                                        distribution_system_idref: ref_hvacdist_ids[-1],
                                         heating_system_type: "Furnace",
                                         heating_system_fuel: "natural gas",
                                         heating_capacity: -1, # Use Manual J auto-sizing
@@ -1646,12 +1645,13 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_heating_gas_boiler(hpxml, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_gas_boiler(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
     # 80% AFUE gas boiler
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem)")
+    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
                                         id: "HeatingSystem#{cnt + 1}",
-                                        distribution_system_idref: "HVACDistribution_DSE_80",
+                                        distribution_system_idref: ref_hvacdist_ids[-1],
                                         heating_system_type: "Boiler",
                                         heating_system_fuel: "natural gas",
                                         heating_capacity: -1, # Use Manual J auto-sizing
@@ -1665,12 +1665,13 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_heating_heat_pump(hpxml, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
     # 7.7 HSPF air source heat pump
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump)")
+    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
                                     id: "HeatPump#{cnt + 1}",
-                                    distribution_system_idref: "HVACDistribution_DSE_80",
+                                    distribution_system_idref: ref_hvacdist_ids[-1],
                                     heat_pump_type: "air-to-air",
                                     heat_pump_fuel: "electricity",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
@@ -1690,12 +1691,13 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_cooling_air_conditioner(hpxml, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
     # 13 SEER electric air conditioner
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem)")
+    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
                                         id: "CoolingSystem#{cnt + 1}",
-                                        distribution_system_idref: "HVACDistribution_DSE_80",
+                                        distribution_system_idref: ref_hvacdist_ids[-1],
                                         cooling_system_type: "central air conditioner",
                                         cooling_system_fuel: "electricity",
                                         cooling_capacity: -1, # Use Manual J auto-sizing
@@ -1709,13 +1711,15 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_distribution_system(hpxml)
+  def self.add_reference_distribution_system(hpxml, ref_hvacdist_ids)
     # Table 4.2.2(1) - Thermal distribution systems
-    HPXML.add_hvac_distribution(hpxml: hpxml,
-                                id: "HVACDistribution_DSE_80",
-                                distribution_system_type: "DSE",
-                                annual_heating_dse: 0.8,
-                                annual_cooling_dse: 0.8)
+    ref_hvacdist_ids.each do |ref_hvacdist_id|
+      HPXML.add_hvac_distribution(hpxml: hpxml,
+                                  id: ref_hvacdist_id,
+                                  distribution_system_type: "DSE",
+                                  annual_heating_dse: 0.8,
+                                  annual_cooling_dse: 0.8)
+    end
   end
 
   def self.add_reference_water_heater(orig_details, hpxml)

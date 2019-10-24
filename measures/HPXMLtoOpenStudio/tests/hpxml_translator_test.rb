@@ -91,6 +91,8 @@ class HPXMLTranslatorTest < MiniTest::Test
                             'heat-pump-mixed-fixed-and-autosize-capacities4.xml' => ["HeatPump 'HeatPump' BackupHeatingCapacity and HeatingCapacity must either both be auto-sized or fixed-sized."],
                             'hvac-distribution-multiple-attached-cooling.xml' => ["Multiple cooling systems found attached to distribution system 'HVACDistribution4'."],
                             'hvac-distribution-multiple-attached-heating.xml' => ["Multiple heating systems found attached to distribution system 'HVACDistribution3'."],
+                            'hvac-dse-multiple-attached-cooling.xml' => ["Multiple cooling systems found attached to distribution system 'HVACDistribution'."],
+                            'hvac-dse-multiple-attached-heating.xml' => ["Multiple heating systems found attached to distribution system 'HVACDistribution'."],
                             'hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.",
                                                             "Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1."],
                             'invalid-relatedhvac-dhw-indirect.xml' => ["RelatedHVACSystem 'HeatingSystem_bad' not found for water heating system 'WaterHeater'"],
@@ -1242,7 +1244,7 @@ class HPXMLTranslatorTest < MiniTest::Test
         next if result_33 == 0.0 and result_100 == 0.0
 
         _display_result_epsilon(xml, result_33, result_100 / 3.0, k)
-        if result_100 > 1.0
+        if result_33 > 1.0
           assert_in_epsilon(result_33, result_100 / 3.0, 0.05)
         else
           assert_in_delta(result_33, result_100 / 3.0, 0.1)

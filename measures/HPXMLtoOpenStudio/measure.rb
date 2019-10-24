@@ -411,6 +411,9 @@ class OSModel
     success = modify_cond_basement_surface_properties(runner, model)
     return false if not success
 
+    success = assign_view_factor(runner, model)
+    return false if not success
+
     success = check_for_errors(runner, model)
     return false if not success
 
@@ -717,6 +720,131 @@ class OSModel
       innermost_material.setVisibleAbsorptance(0.0)
     end
     return true
+  end
+
+  def self.assign_view_factor(runner, model)
+    # zero out view factors between conditioned basement surfaces and living zone surfaces
+    all_surfaces = [] # all surfaces in single conditioned space
+    lv_surfaces = []  # surfaces in living
+    cond_base_surfaces = [] # surfaces in conditioned basement
+
+    @living_space.surfaces.each do |surface|
+      surface.subSurfaces.each do |sub_surface|
+        all_surfaces << sub_surface
+      end
+      all_surfaces << surface
+    end
+    @living_space.internalMass.each do |im|
+      all_surfaces << im
+    end
+
+    all_surfaces.each do |surface|
+      if @cond_bsmnt_surfaces.include? surface or
+         ((@cond_bsmnt_surfaces.include? surface.internalMassDefinition) if surface.is_a? OpenStudio::Model::InternalMass)
+        cond_base_surfaces << surface
+      else
+        lv_surfaces << surface
+      end
+    end
+    # calculate view factors separately for living and conditioned basement
+    vf_map_lv = calc_approximate_view_factor(runner, model, lv_surfaces)
+    vf_map_cb = calc_approximate_view_factor(runner, model, cond_base_surfaces)
+
+    all_surfaces.each do |from_surface|
+      all_surfaces.each do |to_surface|
+        next if (vf_map_lv[from_surface].nil? or vf_map_lv[from_surface][to_surface].nil?) and
+                (vf_map_cb[from_surface].nil? or vf_map_cb[from_surface][to_surface].nil?)
+
+        if lv_surfaces.include? from_surface
+          vf = vf_map_lv[from_surface][to_surface]
+        else
+          vf = vf_map_cb[from_surface][to_surface]
+        end
+
+        os_vf = OpenStudio::Model::ViewFactor.new(from_surface, to_surface, vf)
+        zone_prop = @living_zone.getZonePropertyUserViewFactorsBySurfaceName
+        zone_prop.addViewFactor(os_vf)
+      end
+    end
+
+    return true
+  end
+
+  def self.calc_approximate_view_factor(runner, model, all_surfaces)
+    # calculate approximate view factor using E+ approach
+    # used for recalculating single thermal zone view factor matrix
+    same_ang_limit = 10.0
+    vf_map = {}
+    all_surfaces.each do |surface| # surface, subsurface, and internalmass
+      if surface.is_a? OpenStudio::Model::InternalMass
+        # Assumed values consistent with EnergyPlus source code
+        s_azimuth = 0.0
+        s_tilt = 90.0
+      else
+        s_azimuth = UnitConversions.convert(surface.azimuth, "rad", "deg")
+        s_tilt = UnitConversions.convert(surface.tilt, "rad", "deg")
+        if surface.is_a? OpenStudio::Model::SubSurface
+          s_type = surface.surface.get.surfaceType.downcase
+        else
+          s_type = surface.surfaceType.downcase
+        end
+      end
+      zone_seen_area = 0.0
+      surface_vf_map = {}
+
+      # sum all the surface area that could be seen by surface1 up
+      all_surfaces.each do |surface2|
+        next if surface2 == surface
+        next if surface2.is_a? OpenStudio::Model::SubSurface
+
+        if surface2.is_a? OpenStudio::Model::InternalMass
+          # all surfaces see internal mass
+          zone_seen_area += surface2.surfaceArea.get
+        else
+          s2_azimuth = UnitConversions.convert(surface2.azimuth, "rad", "deg")
+          s2_tilt = UnitConversions.convert(surface2.tilt, "rad", "deg")
+          surface_type = surface2.surfaceType.downcase
+          if (surface_type == "floor") or
+             (s_type == "floor" and surface_type == "roofceiling") or
+             (s_azimuth - s2_azimuth).abs > same_ang_limit or
+             (s_tilt - s2_tilt).abs > same_ang_limit
+            zone_seen_area += surface2.grossArea # include subsurface area
+          end
+        end
+      end
+
+      all_surfaces.each do |surface2|
+        next if surface2 == surface
+        next if surface2.is_a? OpenStudio::Model::SubSurface # handled together with its parent surface
+
+        if surface2.is_a? OpenStudio::Model::InternalMass
+          surface_vf_map[surface2] = surface2.surfaceArea.get / zone_seen_area
+        else # surfaces
+          s2_azimuth = UnitConversions.convert(surface2.azimuth, "rad", "deg")
+          s2_tilt = UnitConversions.convert(surface2.tilt, "rad", "deg")
+          surface_type = surface2.surfaceType.downcase
+          if (surface_type == "floor") or
+             (s_type == "floor" and surface_type == "roofceiling") or
+             (s_azimuth - s2_azimuth).abs > same_ang_limit or
+             (s_tilt - s2_tilt).abs > same_ang_limit
+            if surface2.subSurfaces.size != 0
+              # calculate surface and its sub surfaces view factors
+              parent_surface_a = surface2.netArea
+              if parent_surface_a > 0.01 # base surface of a sub surface: window/door etc.
+                surface_vf_map[surface2] = parent_surface_a / zone_seen_area
+              end
+              surface2.subSurfaces.each do |sub_surface|
+                surface_vf_map[sub_surface] = sub_surface.grossArea / zone_seen_area
+              end
+            else # no subsurface
+              surface_vf_map[surface2] = surface2.grossArea / zone_seen_area
+            end
+          end
+        end
+      end
+      vf_map[surface] = surface_vf_map
+    end
+    return vf_map
   end
 
   def self.create_space_and_zone(model, spaces, space_type)
@@ -1616,7 +1744,7 @@ class OSModel
     ceiling_surface.setOutsideBoundaryCondition("Adiabatic")
 
     if not @cond_bsmnt_surfaces.empty?
-      # assumming added ceiling is in conditioned basement
+      # assuming added ceiling is in conditioned basement
       @cond_bsmnt_surfaces << ceiling_surface
     end
 
@@ -2944,6 +3072,94 @@ class OSModel
     infil = Infiltration.new(living_ach50, living_constant_ach, shelter_coef, garage_ach50, vented_crawl_sla, unvented_crawl_sla,
                              vented_attic_sla, unvented_attic_sla, vented_attic_const_ach, unconditioned_basement_ach, has_flue_chimney, terrain)
 
+    # Natural Ventilation
+    site_values = HPXML.get_site_values(site: building.elements["BuildingDetails/BuildingSummary/Site"])
+    disable_nat_vent = site_values[:disable_natural_ventilation]
+    if not disable_nat_vent.nil? and disable_nat_vent
+      nat_vent_htg_offset = 0
+      nat_vent_clg_offset = 0
+      nat_vent_ovlp_offset = 0
+      nat_vent_htg_season = false
+      nat_vent_clg_season = false
+      nat_vent_ovlp_season = false
+      nat_vent_num_weekdays = 0
+      nat_vent_num_weekends = 0
+      nat_vent_frac_windows_open = 0
+      nat_vent_frac_window_area_openable = 0
+      nat_vent_max_oa_hr = 0.0115
+      nat_vent_max_oa_rh = 0.7
+    else
+      nat_vent_htg_offset = 1.0
+      nat_vent_clg_offset = 1.0
+      nat_vent_ovlp_offset = 1.0
+      nat_vent_htg_season = true
+      nat_vent_clg_season = true
+      nat_vent_ovlp_season = true
+      nat_vent_num_weekdays = 5
+      nat_vent_num_weekends = 2
+      # According to 2010 BA Benchmark, 33% of the windows will be open
+      # at any given time and can only be opened to 20% of their area.
+      nat_vent_frac_windows_open = 0.33
+      nat_vent_frac_window_area_openable = 0.2
+      nat_vent_max_oa_hr = 0.0115
+      nat_vent_max_oa_rh = 0.7
+    end
+    nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season,
+                                      nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays,
+                                      nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable,
+                                      nat_vent_max_oa_hr, nat_vent_max_oa_rh)
+
+    # Ducts
+    duct_systems = {}
+    building.elements.each("BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_distribution|
+      hvac_distribution_values = HPXML.get_hvac_distribution_values(hvac_distribution: hvac_distribution)
+
+      # Check for errors
+      dist_id = hvac_distribution_values[:id]
+      num_attached = 0
+      num_heating_attached = 0
+      num_cooling_attached = 0
+      ['HeatingSystem', 'CoolingSystem', 'HeatPump'].each do |hpxml_sys|
+        building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/#{hpxml_sys}") do |sys|
+          next if sys.elements["DistributionSystem"].nil? or dist_id != sys.elements["DistributionSystem"].attributes["idref"]
+
+          num_attached += 1
+          num_heating_attached += 1 if ['HeatingSystem', 'HeatPump'].include? hpxml_sys and Float(XMLHelper.get_value(sys, "FractionHeatLoadServed")) > 0
+          num_cooling_attached += 1 if ['CoolingSystem', 'HeatPump'].include? hpxml_sys and Float(XMLHelper.get_value(sys, "FractionCoolLoadServed")) > 0
+        end
+      end
+
+      fail "Multiple cooling systems found attached to distribution system '#{dist_id}'." if num_cooling_attached > 1
+      fail "Multiple heating systems found attached to distribution system '#{dist_id}'." if num_heating_attached > 1
+      fail "Distribution system '#{dist_id}' found but no HVAC system attached to it." if num_attached == 0
+
+      air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
+      next if air_distribution.nil?
+
+      air_ducts = self.create_ducts(air_distribution, model, spaces)
+
+      # Connect AirLoopHVACs to ducts
+      ['HeatingSystem', 'CoolingSystem', 'HeatPump'].each do |hpxml_sys|
+        building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/#{hpxml_sys}") do |sys|
+          next if sys.elements["DistributionSystem"].nil? or dist_id != sys.elements["DistributionSystem"].attributes["idref"]
+
+          sys_id = sys.elements["SystemIdentifier"].attributes["id"]
+          @hvac_map[sys_id].each do |loop|
+            next unless loop.is_a? OpenStudio::Model::AirLoopHVAC
+
+            if duct_systems[air_ducts].nil?
+              duct_systems[air_ducts] = loop
+            elsif duct_systems[air_ducts] != loop
+              # Multiple air loops associated with this duct system, treat
+              # as separate duct systems.
+              air_ducts2 = self.create_ducts(air_distribution, model, spaces)
+              duct_systems[air_ducts2] = loop
+            end
+          end
+        end
+      end
+    end
+
     # Mechanical Ventilation
     whole_house_fan = building.elements["BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     whole_house_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: whole_house_fan)
@@ -3056,86 +3272,6 @@ class OSModel
                                           clothes_dryer_exhaust, range_exhaust,
                                           range_exhaust_hour, bathroom_exhaust, bathroom_exhaust_hour,
                                           cfis_open_time, cfis_airflow_frac, cfis_airloop)
-
-    # Natural Ventilation
-    site_values = HPXML.get_site_values(site: building.elements["BuildingDetails/BuildingSummary/Site"])
-    disable_nat_vent = site_values[:disable_natural_ventilation]
-    if not disable_nat_vent.nil? and disable_nat_vent
-      nat_vent_htg_offset = 0
-      nat_vent_clg_offset = 0
-      nat_vent_ovlp_offset = 0
-      nat_vent_htg_season = false
-      nat_vent_clg_season = false
-      nat_vent_ovlp_season = false
-      nat_vent_num_weekdays = 0
-      nat_vent_num_weekends = 0
-      nat_vent_frac_windows_open = 0
-      nat_vent_frac_window_area_openable = 0
-      nat_vent_max_oa_hr = 0.0115
-      nat_vent_max_oa_rh = 0.7
-    else
-      nat_vent_htg_offset = 1.0
-      nat_vent_clg_offset = 1.0
-      nat_vent_ovlp_offset = 1.0
-      nat_vent_htg_season = true
-      nat_vent_clg_season = true
-      nat_vent_ovlp_season = true
-      nat_vent_num_weekdays = 5
-      nat_vent_num_weekends = 2
-      # According to 2010 BA Benchmark, 33% of the windows will be open
-      # at any given time and can only be opened to 20% of their area.
-      nat_vent_frac_windows_open = 0.33
-      nat_vent_frac_window_area_openable = 0.2
-      nat_vent_max_oa_hr = 0.0115
-      nat_vent_max_oa_rh = 0.7
-    end
-    nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season,
-                                      nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays,
-                                      nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable,
-                                      nat_vent_max_oa_hr, nat_vent_max_oa_rh)
-
-    # Ducts
-    duct_systems = {}
-    building.elements.each("BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_distribution|
-      hvac_distribution_values = HPXML.get_hvac_distribution_values(hvac_distribution: hvac_distribution)
-      air_distribution = hvac_distribution.elements["DistributionSystemType/AirDistribution"]
-      next if air_distribution.nil?
-
-      air_ducts = self.create_ducts(air_distribution, model, spaces)
-
-      # Connect AirLoopHVACs to ducts
-      dist_id = hvac_distribution_values[:id]
-      num_attached = 0
-      heating_systems_attached = []
-      cooling_systems_attached = []
-      ['HeatingSystem', 'CoolingSystem', 'HeatPump'].each do |hpxml_sys|
-        building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/#{hpxml_sys}") do |sys|
-          next if sys.elements["DistributionSystem"].nil? or dist_id != sys.elements["DistributionSystem"].attributes["idref"]
-
-          num_attached += 1
-          sys_id = sys.elements["SystemIdentifier"].attributes["id"]
-          heating_systems_attached << sys_id if ['HeatingSystem', 'HeatPump'].include? hpxml_sys and Float(XMLHelper.get_value(sys, "FractionHeatLoadServed")) > 0
-          cooling_systems_attached << sys_id if ['CoolingSystem', 'HeatPump'].include? hpxml_sys and Float(XMLHelper.get_value(sys, "FractionCoolLoadServed")) > 0
-
-          @hvac_map[sys_id].each do |loop|
-            next unless loop.is_a? OpenStudio::Model::AirLoopHVAC
-
-            if duct_systems[air_ducts].nil?
-              duct_systems[air_ducts] = loop
-            elsif duct_systems[air_ducts] != loop
-              # Multiple air loops associated with this duct system, treat
-              # as separate duct systems.
-              air_ducts2 = self.create_ducts(air_distribution, model, spaces)
-              duct_systems[air_ducts2] = loop
-            end
-          end
-        end
-      end
-
-      fail "Multiple cooling systems found attached to distribution system '#{dist_id}'." if cooling_systems_attached.size > 1
-      fail "Multiple heating systems found attached to distribution system '#{dist_id}'." if heating_systems_attached.size > 1
-      fail "Distribution system '#{dist_id}' found but no HVAC system attached to it." if num_attached == 0
-    end
 
     window_area = 0.0
     building.elements.each("BuildingDetails/Enclosure/Windows/Window") do |window|
@@ -3794,17 +3930,6 @@ class OSModel
     building.elements.each("BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clg_sys|
       attached_system_values = HPXML.get_cooling_system_values(cooling_system: clg_sys)
       next unless system_values[:distribution_system_idref] == attached_system_values[:distribution_system_idref]
-
-      # Check that it's an AirDistribution (not DSE)
-      is_air_distribution = false
-      building.elements.each("BuildingDetails/Systems/HVAC/HVACDistribution") do |dist|
-        hvac_distribution_values = HPXML.get_hvac_distribution_values(hvac_distribution: dist)
-        next unless hvac_distribution_values[:id] == system_values[:distribution_system_idref]
-        next unless hvac_distribution_values[:distribution_system_type] == "AirDistribution"
-
-        is_air_distribution = true
-      end
-      next unless is_air_distribution
 
       @hvac_map[attached_system_values[:id]].each do |hvac_object|
         next unless hvac_object.is_a? OpenStudio::Model::AirLoopHVACUnitarySystem
