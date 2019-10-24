@@ -257,6 +257,22 @@ BuildingSurface:Detailed,
   -5.27929086146994, -5.27929086146994, 5.4864; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
+  inferred conditioned ceiling,           !- Name
+  Ceiling,                                !- Surface Type
+  AdiabaticFloorConstruction,             !- Construction Name
+  living,                                 !- Zone Name
+  Adiabatic,                              !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  NoSun,                                  !- Sun Exposure
+  NoWind,                                 !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -5.27929086146994, 5.27929086146994, 3.048, !- X,Y,Z Vertex 1 {m}
+  -5.27929086146994, -5.27929086146994, 3.048, !- X,Y,Z Vertex 2 {m}
+  5.27929086146994, -5.27929086146994, 3.048, !- X,Y,Z Vertex 3 {m}
+  5.27929086146994, 5.27929086146994, 3.048; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
   inferred conditioned floor,             !- Name
   Floor,                                  !- Surface Type
   AdiabaticFloorConstruction,             !- Construction Name
@@ -283,10 +299,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -1.32276725805, 54.673045576343, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -1.32276725805, 54.673045576343, 2.643616, !- X,Y,Z Vertex 2 {m}
-  -0.406824229564246, 54.673045576343, 2.643616, !- X,Y,Z Vertex 3 {m}
-  -0.406824229564246, 54.673045576343, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -12.7287056501947, 35.0248165539418, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -12.7287056501947, 35.0248165539418, 2.643616, !- X,Y,Z Vertex 2 {m}
+  -11.8127626217089, 35.0248165539418, 2.643616, !- X,Y,Z Vertex 3 {m}
+  -11.8127626217089, 35.0248165539418, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   DoorNorth,                              !- Name
@@ -298,10 +314,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -1.32176725805, 54.673045576343, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -1.32176725805, 54.673045576343, 2.642616, !- X,Y,Z Vertex 2 {m}
-  -0.407824229564246, 54.673045576343, 2.642616, !- X,Y,Z Vertex 3 {m}
-  -0.407824229564246, 54.673045576343, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -12.7277056501947, 35.0248165539418, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -12.7277056501947, 35.0248165539418, 2.642616, !- X,Y,Z Vertex 2 {m}
+  -11.8137626217089, 35.0248165539418, 2.642616, !- X,Y,Z Vertex 3 {m}
+  -11.8137626217089, 35.0248165539418, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface DoorSouth,                      !- Name
@@ -314,10 +330,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -53.7581003698896, -54.6730477468715, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -53.7581003698896, -54.6730477468715, 2.643616, !- X,Y,Z Vertex 2 {m}
-  -54.6740433983754, -54.6730477713256, 2.643616, !- X,Y,Z Vertex 3 {m}
-  -54.6740433983754, -54.6730477713256, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -30.433411814704, -35.024817942637, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -30.433411814704, -35.024817942637, 2.643616, !- X,Y,Z Vertex 2 {m}
+  -31.3493548431898, -35.0248179670911, 2.643616, !- X,Y,Z Vertex 3 {m}
+  -31.3493548431898, -35.0248179670911, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   DoorSouth,                              !- Name
@@ -329,10 +345,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -53.7591003698896, -54.6730477468982, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -53.7591003698896, -54.6730477468982, 2.642616, !- X,Y,Z Vertex 2 {m}
-  -54.6730433983754, -54.6730477712989, 2.642616, !- X,Y,Z Vertex 3 {m}
-  -54.6730433983754, -54.6730477712989, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -30.434411814704, -35.0248179426637, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -30.434411814704, -35.0248179426637, 2.642616, !- X,Y,Z Vertex 2 {m}
+  -31.3483548431898, -35.0248179670644, 2.642616, !- X,Y,Z Vertex 3 {m}
+  -31.3483548431898, -35.0248179670644, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface Window_Wall_east,               !- Name
@@ -345,10 +361,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  54.6730468827616, -46.4424441282127, 0.6096, !- X,Y,Z Vertex 1 {m}
-  54.6730468827616, -46.4424441282127, 1.8298, !- X,Y,Z Vertex 2 {m}
-  54.6730469926462, -54.6740441282127, 1.8298, !- X,Y,Z Vertex 3 {m}
-  54.6730469926462, -54.6740441282127, 0.6096; !- X,Y,Z Vertex 4 {m}
+  35.0248173898913, -23.1177553107405, 0.6096, !- X,Y,Z Vertex 1 {m}
+  35.0248173898913, -23.1177553107405, 1.8298, !- X,Y,Z Vertex 2 {m}
+  35.0248174997759, -31.3493553107405, 1.8298, !- X,Y,Z Vertex 3 {m}
+  35.0248174997759, -31.3493553107405, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   Window_Wall_east,                       !- Name
@@ -360,10 +376,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  54.6730468827749, -46.4434441282127, 0.6106, !- X,Y,Z Vertex 1 {m}
-  54.6730468827749, -46.4434441282127, 1.8298, !- X,Y,Z Vertex 2 {m}
-  54.6730469926329, -54.6730441282127, 1.8298, !- X,Y,Z Vertex 3 {m}
-  54.6730469926329, -54.6730441282127, 0.6106; !- X,Y,Z Vertex 4 {m}
+  35.0248173899046, -23.1187553107405, 0.6106, !- X,Y,Z Vertex 1 {m}
+  35.0248173899046, -23.1187553107405, 1.8298, !- X,Y,Z Vertex 2 {m}
+  35.0248174997626, -31.3483553107405, 1.8298, !- X,Y,Z Vertex 3 {m}
+  35.0248174997626, -31.3483553107405, 0.6106; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface Window_Wall_north,              !- Name
@@ -376,10 +392,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -10.48139765805, 54.6730455029121, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -10.48139765805, 54.6730455029121, 1.8298, !- X,Y,Z Vertex 2 {m}
-  -2.24979765805, 54.6730455029121, 1.8298, !- X,Y,Z Vertex 3 {m}
-  -2.24979765805, 54.6730455029121, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -21.8873360501947, 35.0248164805109, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -21.8873360501947, 35.0248164805109, 1.8298, !- X,Y,Z Vertex 2 {m}
+  -13.6557360501947, 35.0248164805109, 1.8298, !- X,Y,Z Vertex 3 {m}
+  -13.6557360501947, 35.0248164805109, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   Window_Wall_north,                      !- Name
@@ -391,10 +407,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -10.48039765805, 54.6730455029121, 0.6106, !- X,Y,Z Vertex 1 {m}
-  -10.48039765805, 54.6730455029121, 1.8298, !- X,Y,Z Vertex 2 {m}
-  -2.25079765805, 54.6730455029121, 1.8298, !- X,Y,Z Vertex 3 {m}
-  -2.25079765805, 54.6730455029121, 0.6106; !- X,Y,Z Vertex 4 {m}
+  -21.8863360501947, 35.0248164805109, 0.6106, !- X,Y,Z Vertex 1 {m}
+  -21.8863360501947, 35.0248164805109, 1.8298, !- X,Y,Z Vertex 2 {m}
+  -13.6567360501947, 35.0248164805109, 1.8298, !- X,Y,Z Vertex 3 {m}
+  -13.6567360501947, 35.0248164805109, 0.6106; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface Window_Wall_south,              !- Name
@@ -407,10 +423,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -44.5994699698896, -54.6730474289213, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -44.5994699698896, -54.6730474289213, 1.8298, !- X,Y,Z Vertex 2 {m}
-  -52.8310699698896, -54.6730476486906, 1.8298, !- X,Y,Z Vertex 3 {m}
-  -52.8310699698896, -54.6730476486906, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -21.274781414704, -35.0248176246867, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -21.274781414704, -35.0248176246867, 1.8298, !- X,Y,Z Vertex 2 {m}
+  -29.506381414704, -35.0248178444561, 1.8298, !- X,Y,Z Vertex 3 {m}
+  -29.506381414704, -35.0248178444561, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   Window_Wall_south,                      !- Name
@@ -422,10 +438,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -44.6004699698896, -54.673047428948, 0.6106, !- X,Y,Z Vertex 1 {m}
-  -44.6004699698896, -54.673047428948, 1.8298, !- X,Y,Z Vertex 2 {m}
-  -52.8300699698896, -54.6730476486639, 1.8298, !- X,Y,Z Vertex 3 {m}
-  -52.8300699698896, -54.6730476486639, 0.6106; !- X,Y,Z Vertex 4 {m}
+  -21.275781414704, -35.0248176247134, 0.6106, !- X,Y,Z Vertex 1 {m}
+  -21.275781414704, -35.0248176247134, 1.8298, !- X,Y,Z Vertex 2 {m}
+  -29.505381414704, -35.0248178444294, 1.8298, !- X,Y,Z Vertex 3 {m}
+  -29.505381414704, -35.0248178444294, 0.6106; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface Window_Wall_west,               !- Name
@@ -438,10 +454,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -54.6730481226935, 46.442442668538, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -54.6730481226935, 46.442442668538, 1.8298, !- X,Y,Z Vertex 2 {m}
-  -54.6730484523474, 54.674042668538, 1.8298, !- X,Y,Z Vertex 3 {m}
-  -54.6730484523474, 54.674042668538, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -35.0248180070948, 23.1177543756391, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -35.0248180070948, 23.1177543756391, 1.8298, !- X,Y,Z Vertex 2 {m}
+  -35.0248183367488, 31.3493543756391, 1.8298, !- X,Y,Z Vertex 3 {m}
+  -35.0248183367488, 31.3493543756391, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   Window_Wall_west,                       !- Name
@@ -453,13 +469,13 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -54.6730481227335, 46.443442668538, 0.6106, !- X,Y,Z Vertex 1 {m}
-  -54.6730481227335, 46.443442668538, 1.8298, !- X,Y,Z Vertex 2 {m}
-  -54.6730484523074, 54.673042668538, 1.8298, !- X,Y,Z Vertex 3 {m}
-  -54.6730484523074, 54.673042668538, 0.6106; !- X,Y,Z Vertex 4 {m}
+  -35.0248180071348, 23.1187543756391, 0.6106, !- X,Y,Z Vertex 1 {m}
+  -35.0248180071348, 23.1187543756391, 1.8298, !- X,Y,Z Vertex 2 {m}
+  -35.0248183367087, 31.3483543756391, 1.8298, !- X,Y,Z Vertex 3 {m}
+  -35.0248183367087, 31.3483543756391, 0.6106; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  Wall,                                   !- Name
+  Wall:0,                                 !- Name
   Wall,                                   !- Surface Type
   Wall construction,                      !- Construction Name
   living,                                 !- Zone Name
@@ -469,25 +485,73 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -47.29048405805, 54.6730451960911, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -47.29048405805, 54.6730451960911, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -11.40942805805, 54.6730451960911, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -11.40942805805, 54.6730451960911, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -31.7856304501947, 35.0248163533076, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -31.7856304501947, 35.0248163533076, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -22.8153664501947, 35.0248163533076, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -22.8153664501947, 35.0248163533076, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  Wall:180,                               !- Name
+  Wall,                                   !- Surface Type
+  Wall construction,                      !- Construction Name
+  living,                                 !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -11.3764870147041, -35.0248172332163, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -11.3764870147041, -35.0248172332163, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -20.3467510147041, -35.0248174727067, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -20.3467510147041, -35.0248174727067, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  Wall:270,                               !- Name
+  Wall,                                   !- Surface Type
+  Wall construction,                      !- Construction Name
+  living,                                 !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -35.0248174834908, 13.2194599756392, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -35.0248174834908, 13.2194599756392, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -35.0248178427263, 22.1897239756392, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -35.0248178427263, 22.1897239756392, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  Wall:90,                                !- Name
+  Wall,                                   !- Surface Type
+  Wall construction,                      !- Construction Name
+  living,                                 !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  35.0248171305544, -13.2194609107405, 0.6096, !- X,Y,Z Vertex 1 {m}
+  35.0248171305544, -13.2194609107405, 5.4864, !- X,Y,Z Vertex 2 {m}
+  35.0248172502995, -22.1897249107405, 5.4864, !- X,Y,Z Vertex 3 {m}
+  35.0248172502995, -22.1897249107405, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 InternalMass,
-  furniture mass living,                  !- Name
+  furniture mass living living,           !- Name
   furniture construction living,          !- Construction Name
   living,                                 !- Zone or ZoneList Name
   222.967296;                             !- Surface Area {m2}
 
 InternalMass,
-  living Partition,                       !- Name
+  living Living Partition,                !- Name
   PartitionWallConstruction,              !- Construction Name
   living,                                 !- Zone or ZoneList Name
   222.967296;                             !- Surface Area {m2}
 
 People,
-  occupants|living,                       !- Name
+  occupants,                              !- Name
   living,                                 !- Zone or ZoneList Name
   occupants schedule,                     !- Number of People Schedule Name
   People,                                 !- Number of People Calculation Method
@@ -713,7 +777,7 @@ Schedule:Day:Interval,
   21:00,                                  !- Time 20 {hh:mm}
   0.928337141860708,                      !- Value Until Time 20
   22:00,                                  !- Time 21 {hh:mm}
-  0.807461954396616,                      !- Value Until Time 21
+  0.807461954396615,                      !- Value Until Time 21
   23:00,                                  !- Time 22 {hh:mm}
   0.499769410655845,                      !- Value Until Time 22
   24:00,                                  !- Time 23 {hh:mm}
@@ -842,7 +906,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 11 {hh:mm}
   0.364038790657523,                      !- Value Until Time 11
   13:00,                                  !- Time 12 {hh:mm}
-  0.352108135865495,                      !- Value Until Time 12
+  0.352108135865494,                      !- Value Until Time 12
   14:00,                                  !- Time 13 {hh:mm}
   0.348597365709478,                      !- Value Until Time 13
   15:00,                                  !- Time 14 {hh:mm}
@@ -2918,7 +2982,7 @@ AirTerminal:SingleDuct:ConstantVolume:NoReheat,
   Always On Discrete,                     !- Availability Schedule Name
   Node 10,                                !- Air Inlet Node Name
   Node 8,                                 !- Air Outlet Node Name
-  0.338152454483514;                      !- Maximum Air Flow Rate {m3/s}
+  0.346196432892015;                      !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
   ADU central ac living terminal,         !- Name
@@ -2999,13 +3063,13 @@ Zone,
   ,                                       !- Type
   ,                                       !- Multiplier
   ,                                       !- Ceiling Height {m}
-  98.0924340149553,                       !- Volume {m3}
+  98.0924340149554,                       !- Volume {m3}
   ,                                       !- Floor Area {m2}
   ,                                       !- Zone Inside Convection Algorithm
   ;                                       !- Zone Outside Convection Algorithm
 
 BuildingSurface:Detailed,
-  Roof,                                   !- Name
+  Roof:0,                                 !- Name
   Roof,                                   !- Surface Type
   Roof construction,                      !- Construction Name
   unvented attic,                         !- Zone Name
@@ -3015,10 +3079,58 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  0.521206301651033, 54.6730458148996, 5.4864, !- X,Y,Z Vertex 1 {m}
-  0.521206039220473, 44.8435411681741, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
-  11.5109263268347, 44.8435408747678, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
-  11.5109265892653, 54.6730455214933, 5.4864; !- X,Y,Z Vertex 4 {m}
+  -10.8847320904936, 35.0248166274574, 5.4864, !- X,Y,Z Vertex 1 {m}
+  -10.8847323529242, 25.1953119807318, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  -8.13730228102063, 25.1953119073802, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  -8.13730201859007, 35.0248165541058, 5.4864; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  Roof:180,                               !- Name
+  Roof,                                   !- Surface Type
+  Roof construction,                      !- Construction Name
+  unvented attic,                         !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -32.2773853744051, -35.0248180653835, 5.4864, !- X,Y,Z Vertex 1 {m}
+  -32.2773853744051, -25.1953134186579, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  -35.0248154463086, -25.1953134186579, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  -35.0248154463086, -35.0248180653835, 5.4864; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  Roof:270,                               !- Name
+  Roof,                                   !- Surface Type
+  Roof construction,                      !- Construction Name
+  unvented attic,                         !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -35.0248184962584, 32.2773849068544, 5.4864, !- X,Y,Z Vertex 1 {m}
+  -25.1953138495328, 32.2773850380697, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  -25.1953138862086, 35.0248151099733, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  -35.0248185329342, 35.024814978758, 5.4864; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  Roof:90,                                !- Name
+  Roof,                                   !- Surface Type
+  Roof construction,                      !- Construction Name
+  unvented attic,                         !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  35.0248176345087, -32.2773858419557, 5.4864, !- X,Y,Z Vertex 1 {m}
+  25.1953129877831, -32.2773857107405, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  25.1953129511073, -35.024815782644, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  35.0248175978329, -35.0248159138593, 5.4864; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Surface 1 Reversed,                     !- Name
@@ -3037,7 +3149,7 @@ BuildingSurface:Detailed,
   5.27929086146994, -5.27929086146994, 5.4864; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  WallAtticGable,                         !- Name
+  WallAtticGable:0,                       !- Name
   Wall,                                   !- Surface Type
   WallAtticGable construction,            !- Construction Name
   unvented attic,                         !- Zone Name
@@ -3047,10 +3159,58 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -53.74401445805, 54.6730449073254, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -53.74401445805, 54.6730449073254, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -48.21951445805, 54.6730449073254, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -48.21951445805, 54.6730449073254, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -34.0957858501947, 35.0248162718148, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -34.0957858501947, 35.0248162718148, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -32.7146608501947, 35.0248162718148, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -32.7146608501947, 35.0248162718148, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  WallAtticGable:180,                     !- Name
+  Wall,                                   !- Surface Type
+  WallAtticGable construction,            !- Construction Name
+  unvented attic,                         !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -9.06633161470406, -35.0248170900465, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -9.06633161470406, -35.0248170900465, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -10.4474566147041, -35.0248171269201, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -10.4474566147041, -35.0248171269201, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  WallAtticGable:270,                     !- Name
+  Wall,                                   !- Surface Type
+  WallAtticGable construction,            !- Construction Name
+  unvented attic,                         !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  -35.0248173094825, 10.9093045756392, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -35.0248173094825, 10.9093045756392, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -35.0248173647929, 12.2904295756392, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -35.0248173647929, 12.2904295756392, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+BuildingSurface:Detailed,
+  WallAtticGable:90,                      !- Name
+  Wall,                                   !- Surface Type
+  WallAtticGable construction,            !- Construction Name
+  unvented attic,                         !- Zone Name
+  Outdoors,                               !- Outside Boundary Condition
+  ,                                       !- Outside Boundary Condition Object
+  SunExposed,                             !- Sun Exposure
+  WindExposed,                            !- Wind Exposure
+  ,                                       !- View Factor to Ground
+  ,                                       !- Number of Vertices
+  35.0248170182231, -10.9093055107405, 0.6096, !- X,Y,Z Vertex 1 {m}
+  35.0248170182231, -10.9093055107405, 5.4864, !- X,Y,Z Vertex 2 {m}
+  35.0248170366599, -12.2904305107405, 5.4864, !- X,Y,Z Vertex 3 {m}
+  35.0248170366599, -12.2904305107405, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 Zone,
   vented crawlspace,                      !- Name
@@ -3061,7 +3221,7 @@ Zone,
   ,                                       !- Type
   ,                                       !- Multiplier
   ,                                       !- Ceiling Height {m}
-  67.9604318208,                          !- Volume {m3}
+  67.9604318208001,                       !- Volume {m3}
   ,                                       !- Floor Area {m2}
   ,                                       !- Zone Inside Convection Algorithm
   ;                                       !- Zone Outside Convection Algorithm
@@ -3077,10 +3237,10 @@ BuildingSurface:Detailed,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  12.43995685805, 54.6730460358372, 0,    !- X,Y,Z Vertex 1 {m}
-  12.43995685805, 54.6730460358372, 0.6096, !- X,Y,Z Vertex 2 {m}
-  54.67304485805, 54.6730460358372, 0.6096, !- X,Y,Z Vertex 3 {m}
-  54.67304485805, 54.6730460358372, 0;    !- X,Y,Z Vertex 4 {m}
+  -7.20827174980536, 35.0248169034086, 0, !- X,Y,Z Vertex 1 {m}
+  -7.20827174980536, 35.0248169034086, 0.6096, !- X,Y,Z Vertex 2 {m}
+  35.0248162501947, 35.0248169034086, 0.6096, !- X,Y,Z Vertex 3 {m}
+  35.0248162501947, 35.0248169034086, 0;  !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Slab,                                   !- Name
@@ -3188,7 +3348,7 @@ GlobalGeometryRules,
 Material,
   Asphalt Shingles&#44 Light,             !- Name
   Rough,                                  !- Roughness
-  0.009525,                               !- Thickness {m}
+  0.00952500000000001,                    !- Thickness {m}
   0.162714,                               !- Conductivity {W/m-K}
   1121.4,                                 !- Density {kg/m3}
   1465.45,                                !- Specific Heat {J/kg-K}
@@ -3449,17 +3609,6 @@ Material,
   0.7,                                    !- Solar Absorptance
   0.7;                                    !- Visible Absorptance
 
-Material,
-  Wood&#44 Light 1,                       !- Name
-  Rough,                                  !- Roughness
-  0.0254,                                 !- Thickness {m}
-  0.1024175,                              !- Conductivity {W/m-K}
-  544.68,                                 !- Density {kg/m3}
-  1172.36,                                !- Specific Heat {J/kg-K}
-  0.92,                                   !- Thermal Absorptance
-  0.7,                                    !- Solar Absorptance
-  0.7;                                    !- Visible Absorptance
-
 Material:NoMass,
   Adiabatic,                              !- Name
   Rough,                                  !- Roughness
@@ -3474,7 +3623,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3491,7 +3640,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3508,7 +3657,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3525,7 +3674,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3712,7 +3861,7 @@ Construction,
 
 Construction,
   WallAtticGable construction,            !- Name
-  Wood&#44 Light 1,                       !- Layer 1
+  Wood&#44 Light,                         !- Layer 1
   RoofSheathing,                          !- Layer 2
   WallStudAndCavity 1;                    !- Layer 3
 
@@ -4987,7 +5136,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707992,                      !- Value Until Time 19
+  0.190580370707991,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5036,7 +5185,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707992,                      !- Value Until Time 19
+  0.190580370707991,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5358,7 +5507,7 @@ Schedule:Day:Interval,
   14:00,                                  !- Time 9 {hh:mm}
   0.000281317833333333,                   !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  7.69215e-005,                           !- Value Until Time 10
+  7.69215e-05,                            !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0,                                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -5518,7 +5667,7 @@ Schedule:Day:Interval,
   05:00,                                  !- Time 3 {hh:mm}
   0.0526825224,                           !- Value Until Time 3
   06:00,                                  !- Time 4 {hh:mm}
-  7.25196e-005,                           !- Value Until Time 4
+  7.25196e-05,                            !- Value Until Time 4
   07:00,                                  !- Time 5 {hh:mm}
   0.02433412225,                          !- Value Until Time 5
   08:00,                                  !- Time 6 {hh:mm}
@@ -5681,7 +5830,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 9 {hh:mm}
   0.67956204379562,                       !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  0.713540145985402,                      !- Value Until Time 10
+  0.713540145985401,                      !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0.696551094890511,                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -6700,7 +6849,7 @@ Schedule:Day:Interval,
   07:00,                                  !- Time 6 {hh:mm}
   0.605633802816901,                      !- Value Until Time 6
   08:00,                                  !- Time 7 {hh:mm}
-  0.661971830985916,                      !- Value Until Time 7
+  0.661971830985915,                      !- Value Until Time 7
   09:00,                                  !- Time 8 {hh:mm}
   0.47887323943662,                       !- Value Until Time 8
   10:00,                                  !- Time 9 {hh:mm}
@@ -7828,7 +7977,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7849,7 +7998,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7870,7 +8019,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7891,7 +8040,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7912,7 +8061,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7933,7 +8082,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7954,7 +8103,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7975,7 +8124,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -7996,7 +8145,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8017,7 +8166,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8038,7 +8187,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8059,7 +8208,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -17271,7 +17420,7 @@ AirLoopHVAC,
   central ac airloop,                     !- Name
   ,                                       !- Controller List Name
   central ac airloopAvailability Manager List, !- Availability Manager List Name
-  0.338152454483514,                      !- Design Supply Air Flow Rate {m3/s}
+  0.346196432892015,                      !- Design Supply Air Flow Rate {m3/s}
   central ac airloop Supply Branches,     !- Branch List Name
   ,                                       !- Connector List Name
   Node 4,                                 !- Supply Side Inlet Node Name
@@ -17307,13 +17456,13 @@ Sizing:System,
   0,                                      !- Cooling Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-005,                         !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
   DesignDay,                              !- Heating Supply Air Flow Rate Method
   0,                                      !- Heating Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-005,                         !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
   ZoneSum,                                !- System Outdoor Air Method
   1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
   CoolingDesignCapacity,                  !- Cooling Design Capacity Method
@@ -17370,7 +17519,7 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0.338152454483514,                      !- Cooling Supply Air Flow Rate {m3/s}
+  0.346196432892015,                      !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -17401,7 +17550,7 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
   580.04340090045,                        !- Pressure Rise {Pa}
-  0.338157173957946,                      !- Maximum Flow Rate {m3/s}
+  0.346201152366447,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 4,                                 !- Air Inlet Node Name
@@ -17433,7 +17582,7 @@ Curve:Biquadratic,
   -0.0750500892,                          !- Coefficient2 x
   0.00309713544,                          !- Coefficient3 x**2
   0.00240111,                             !- Coefficient4 y
-  -5.0544e-005,                           !- Coefficient5 y**2
+  -5.0544e-05,                            !- Coefficient5 y**2
   -0.00042728148,                         !- Coefficient6 x*y
   13.88,                                  !- Minimum Value of x {BasedOnField A2}
   23.88,                                  !- Maximum Value of x {BasedOnField A2}
@@ -17452,7 +17601,7 @@ Curve:Quadratic,
 
 Curve:Biquadratic,
   Cool-EIR-fT1,                           !- Name
-  -0.304282997000001,                     !- Coefficient1 Constant
+  -0.304282997,                           !- Coefficient1 Constant
   0.1180477062,                           !- Coefficient2 x
   -0.00342466704,                         !- Coefficient3 x**2
   -0.0062619138,                          !- Coefficient4 y
@@ -17486,10 +17635,10 @@ Curve:Quadratic,
 Coil:Cooling:DX:SingleSpeed,
   central ac clg coil,                    !- Name
   Always On Discrete,                     !- Availability Schedule Name
-  5049.78115286027,                       !- Gross Rated Total Cooling Capacity {W}
+  5169.90546372267,                       !- Gross Rated Total Cooling Capacity {W}
   0.740402528813699,                      !- Gross Rated Sensible Heat Ratio
   3.99990781858502,                       !- Gross Rated Cooling COP {W/W}
-  0.261644614581332,                      !- Rated Air Flow Rate {m3/s}
+  0.267868622724663,                      !- Rated Air Flow Rate {m3/s}
   773.3912012006,                         !- Rated Evaporator Fan Power Per Volume Flow Rate {W/(m3/s)}
   central ac unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
   Node 5,                                 !- Air Outlet Node Name
@@ -17577,13 +17726,13 @@ Sizing:System,
   0,                                      !- Cooling Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-005,                         !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
   DesignDay,                              !- Heating Supply Air Flow Rate Method
   0,                                      !- Heating Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-005,                         !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
   ZoneSum,                                !- System Outdoor Air Method
   1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
   CoolingDesignCapacity,                  !- Cooling Design Capacity Method
@@ -17670,7 +17819,7 @@ Fan:OnOff,
   furnace supply fan,                     !- Name
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
-  575.216638346153,                       !- Pressure Rise {Pa}
+  575.216638346154,                       !- Pressure Rise {Pa}
   0.245544840896546,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
@@ -17702,7 +17851,7 @@ Coil:Heating:Fuel,
   Always On Discrete,                     !- Availability Schedule Name
   NaturalGas,                             !- Fuel Type
   0.78,                                   !- Burner Efficiency
-  6905.72666960735,                       !- Nominal Capacity {W}
+  6905.72666960736,                       !- Nominal Capacity {W}
   furnace unitary system Fan - Heating Coil Node, !- Air Inlet Node Name
   Node 12,                                !- Air Outlet Node Name
   ,                                       !- Temperature Setpoint Node Name
@@ -18098,6 +18247,1107 @@ Foundation:Kiva:Settings,
   1.5,                                    !- Maximum Cell Growth Coefficient {dimensionless}
   Hourly;                                 !- Simulation Timestep
 
+ZoneProperty:UserViewFactors:bySurfaceName,
+  living,                                 !- Zone or ZoneList Name
+  DoorSouth,                              !- From Surface 1
+  FloorBelowAttic,                        !- To Surface 1
+  0.105661351239647,                      !- View Factor 1
+  DoorSouth,                              !- From Surface 2
+  DoorNorth,                              !- To Surface 2
+  0.00176102252066078,                    !- View Factor 2
+  DoorSouth,                              !- From Surface 3
+  Window_Wall_west,                       !- To Surface 3
+  0.00950952161156822,                    !- View Factor 3
+  DoorSouth,                              !- From Surface 4
+  surface Window_Wall_west,               !- To Surface 4
+  1.01127531970189e-05,                   !- View Factor 4
+  DoorSouth,                              !- From Surface 5
+  Window_Wall_north,                      !- To Surface 5
+  0.00950952161156821,                    !- View Factor 5
+  DoorSouth,                              !- From Surface 6
+  surface Window_Wall_north,              !- To Surface 6
+  1.01127531970189e-05,                   !- View Factor 6
+  DoorSouth,                              !- From Surface 7
+  Wall:270,                               !- To Surface 7
+  0.0414615142264375,                     !- View Factor 7
+  DoorSouth,                              !- From Surface 8
+  FloorAboveCrawlspace,                   !- To Surface 8
+  0.105661351239647,                      !- View Factor 8
+  DoorSouth,                              !- From Surface 9
+  Wall:90,                                !- To Surface 9
+  0.0414615142264374,                     !- View Factor 9
+  DoorSouth,                              !- From Surface 10
+  Window_Wall_east,                       !- To Surface 10
+  0.00950952161156821,                    !- View Factor 10
+  DoorSouth,                              !- From Surface 11
+  surface Window_Wall_east,               !- To Surface 11
+  1.01127531970189e-05,                   !- View Factor 11
+  DoorSouth,                              !- From Surface 12
+  inferred conditioned floor,             !- To Surface 12
+  0.105661351239647,                      !- View Factor 12
+  DoorSouth,                              !- From Surface 13
+  Wall:0,                                 !- To Surface 13
+  0.0414615142264374,                     !- View Factor 13
+  DoorSouth,                              !- From Surface 14
+  inferred conditioned ceiling,           !- To Surface 14
+  0.105661351239647,                      !- View Factor 14
+  DoorSouth,                              !- From Surface 15
+  living Living Partition,                !- To Surface 15
+  0.211322702479294,                      !- View Factor 15
+  DoorSouth,                              !- From Surface 16
+  furniture mass living living,           !- To Surface 16
+  0.211322702479294,                      !- View Factor 16
+  surface DoorSouth,                      !- From Surface 17
+  FloorBelowAttic,                        !- To Surface 17
+  0.105661351239647,                      !- View Factor 17
+  surface DoorSouth,                      !- From Surface 18
+  DoorNorth,                              !- To Surface 18
+  0.00176102252066078,                    !- View Factor 18
+  surface DoorSouth,                      !- From Surface 19
+  Window_Wall_west,                       !- To Surface 19
+  0.00950952161156822,                    !- View Factor 19
+  surface DoorSouth,                      !- From Surface 20
+  surface Window_Wall_west,               !- To Surface 20
+  1.01127531970189e-05,                   !- View Factor 20
+  surface DoorSouth,                      !- From Surface 21
+  Window_Wall_north,                      !- To Surface 21
+  0.00950952161156821,                    !- View Factor 21
+  surface DoorSouth,                      !- From Surface 22
+  surface Window_Wall_north,              !- To Surface 22
+  1.01127531970189e-05,                   !- View Factor 22
+  surface DoorSouth,                      !- From Surface 23
+  Wall:270,                               !- To Surface 23
+  0.0414615142264375,                     !- View Factor 23
+  surface DoorSouth,                      !- From Surface 24
+  FloorAboveCrawlspace,                   !- To Surface 24
+  0.105661351239647,                      !- View Factor 24
+  surface DoorSouth,                      !- From Surface 25
+  Wall:90,                                !- To Surface 25
+  0.0414615142264374,                     !- View Factor 25
+  surface DoorSouth,                      !- From Surface 26
+  Window_Wall_east,                       !- To Surface 26
+  0.00950952161156821,                    !- View Factor 26
+  surface DoorSouth,                      !- From Surface 27
+  surface Window_Wall_east,               !- To Surface 27
+  1.01127531970189e-05,                   !- View Factor 27
+  surface DoorSouth,                      !- From Surface 28
+  inferred conditioned floor,             !- To Surface 28
+  0.105661351239647,                      !- View Factor 28
+  surface DoorSouth,                      !- From Surface 29
+  Wall:0,                                 !- To Surface 29
+  0.0414615142264374,                     !- View Factor 29
+  surface DoorSouth,                      !- From Surface 30
+  inferred conditioned ceiling,           !- To Surface 30
+  0.105661351239647,                      !- View Factor 30
+  surface DoorSouth,                      !- From Surface 31
+  living Living Partition,                !- To Surface 31
+  0.211322702479294,                      !- View Factor 31
+  surface DoorSouth,                      !- From Surface 32
+  furniture mass living living,           !- To Surface 32
+  0.211322702479294,                      !- View Factor 32
+  FloorBelowAttic,                        !- From Surface 33
+  DoorSouth,                              !- To Surface 33
+  0.00209290693173369,                    !- View Factor 33
+  FloorBelowAttic,                        !- From Surface 34
+  DoorNorth,                              !- To Surface 34
+  0.00209290693173369,                    !- View Factor 34
+  FloorBelowAttic,                        !- From Surface 35
+  Window_Wall_west,                       !- To Surface 35
+  0.0113016974313619,                     !- View Factor 35
+  FloorBelowAttic,                        !- From Surface 36
+  surface Window_Wall_west,               !- To Surface 36
+  1.2018614763093e-05,                    !- View Factor 36
+  FloorBelowAttic,                        !- From Surface 37
+  Window_Wall_north,                      !- To Surface 37
+  0.0113016974313619,                     !- View Factor 37
+  FloorBelowAttic,                        !- From Surface 38
+  surface Window_Wall_north,              !- To Surface 38
+  1.2018614763093e-05,                    !- View Factor 38
+  FloorBelowAttic,                        !- From Surface 39
+  Wall:270,                               !- To Surface 39
+  0.049275400800738,                      !- View Factor 39
+  FloorBelowAttic,                        !- From Surface 40
+  FloorAboveCrawlspace,                   !- To Surface 40
+  0.125574415904021,                      !- View Factor 40
+  FloorBelowAttic,                        !- From Surface 41
+  Wall:90,                                !- To Surface 41
+  0.0492754008007379,                     !- View Factor 41
+  FloorBelowAttic,                        !- From Surface 42
+  Window_Wall_east,                       !- To Surface 42
+  0.0113016974313619,                     !- View Factor 42
+  FloorBelowAttic,                        !- From Surface 43
+  surface Window_Wall_east,               !- To Surface 43
+  1.2018614763093e-05,                    !- View Factor 43
+  FloorBelowAttic,                        !- From Surface 44
+  Wall:180,                               !- To Surface 44
+  0.049275400800738,                      !- View Factor 44
+  FloorBelowAttic,                        !- From Surface 45
+  Window_Wall_south,                      !- To Surface 45
+  0.0113016974313619,                     !- View Factor 45
+  FloorBelowAttic,                        !- From Surface 46
+  surface Window_Wall_south,              !- To Surface 46
+  1.2018614763093e-05,                    !- View Factor 46
+  FloorBelowAttic,                        !- From Surface 47
+  inferred conditioned floor,             !- To Surface 47
+  0.125574415904021,                      !- View Factor 47
+  FloorBelowAttic,                        !- From Surface 48
+  Wall:0,                                 !- To Surface 48
+  0.0492754008007379,                     !- View Factor 48
+  FloorBelowAttic,                        !- From Surface 49
+  living Living Partition,                !- To Surface 49
+  0.251148831808042,                      !- View Factor 49
+  FloorBelowAttic,                        !- From Surface 50
+  furniture mass living living,           !- To Surface 50
+  0.251148831808042,                      !- View Factor 50
+  DoorNorth,                              !- From Surface 51
+  DoorSouth,                              !- To Surface 51
+  0.00176102252066078,                    !- View Factor 51
+  DoorNorth,                              !- From Surface 52
+  FloorBelowAttic,                        !- To Surface 52
+  0.105661351239647,                      !- View Factor 52
+  DoorNorth,                              !- From Surface 53
+  Window_Wall_west,                       !- To Surface 53
+  0.00950952161156822,                    !- View Factor 53
+  DoorNorth,                              !- From Surface 54
+  surface Window_Wall_west,               !- To Surface 54
+  1.01127531970189e-05,                   !- View Factor 54
+  DoorNorth,                              !- From Surface 55
+  Wall:270,                               !- To Surface 55
+  0.0414615142264375,                     !- View Factor 55
+  DoorNorth,                              !- From Surface 56
+  FloorAboveCrawlspace,                   !- To Surface 56
+  0.105661351239647,                      !- View Factor 56
+  DoorNorth,                              !- From Surface 57
+  Wall:90,                                !- To Surface 57
+  0.0414615142264374,                     !- View Factor 57
+  DoorNorth,                              !- From Surface 58
+  Window_Wall_east,                       !- To Surface 58
+  0.00950952161156821,                    !- View Factor 58
+  DoorNorth,                              !- From Surface 59
+  surface Window_Wall_east,               !- To Surface 59
+  1.01127531970189e-05,                   !- View Factor 59
+  DoorNorth,                              !- From Surface 60
+  Wall:180,                               !- To Surface 60
+  0.0414615142264374,                     !- View Factor 60
+  DoorNorth,                              !- From Surface 61
+  Window_Wall_south,                      !- To Surface 61
+  0.00950952161156822,                    !- View Factor 61
+  DoorNorth,                              !- From Surface 62
+  surface Window_Wall_south,              !- To Surface 62
+  1.01127531970189e-05,                   !- View Factor 62
+  DoorNorth,                              !- From Surface 63
+  inferred conditioned floor,             !- To Surface 63
+  0.105661351239647,                      !- View Factor 63
+  DoorNorth,                              !- From Surface 64
+  inferred conditioned ceiling,           !- To Surface 64
+  0.105661351239647,                      !- View Factor 64
+  DoorNorth,                              !- From Surface 65
+  living Living Partition,                !- To Surface 65
+  0.211322702479294,                      !- View Factor 65
+  DoorNorth,                              !- From Surface 66
+  furniture mass living living,           !- To Surface 66
+  0.211322702479294,                      !- View Factor 66
+  surface DoorNorth,                      !- From Surface 67
+  DoorSouth,                              !- To Surface 67
+  0.00176102252066078,                    !- View Factor 67
+  surface DoorNorth,                      !- From Surface 68
+  FloorBelowAttic,                        !- To Surface 68
+  0.105661351239647,                      !- View Factor 68
+  surface DoorNorth,                      !- From Surface 69
+  Window_Wall_west,                       !- To Surface 69
+  0.00950952161156822,                    !- View Factor 69
+  surface DoorNorth,                      !- From Surface 70
+  surface Window_Wall_west,               !- To Surface 70
+  1.01127531970189e-05,                   !- View Factor 70
+  surface DoorNorth,                      !- From Surface 71
+  Wall:270,                               !- To Surface 71
+  0.0414615142264375,                     !- View Factor 71
+  surface DoorNorth,                      !- From Surface 72
+  FloorAboveCrawlspace,                   !- To Surface 72
+  0.105661351239647,                      !- View Factor 72
+  surface DoorNorth,                      !- From Surface 73
+  Wall:90,                                !- To Surface 73
+  0.0414615142264374,                     !- View Factor 73
+  surface DoorNorth,                      !- From Surface 74
+  Window_Wall_east,                       !- To Surface 74
+  0.00950952161156821,                    !- View Factor 74
+  surface DoorNorth,                      !- From Surface 75
+  surface Window_Wall_east,               !- To Surface 75
+  1.01127531970189e-05,                   !- View Factor 75
+  surface DoorNorth,                      !- From Surface 76
+  Wall:180,                               !- To Surface 76
+  0.0414615142264374,                     !- View Factor 76
+  surface DoorNorth,                      !- From Surface 77
+  Window_Wall_south,                      !- To Surface 77
+  0.00950952161156822,                    !- View Factor 77
+  surface DoorNorth,                      !- From Surface 78
+  surface Window_Wall_south,              !- To Surface 78
+  1.01127531970189e-05,                   !- View Factor 78
+  surface DoorNorth,                      !- From Surface 79
+  inferred conditioned floor,             !- To Surface 79
+  0.105661351239647,                      !- View Factor 79
+  surface DoorNorth,                      !- From Surface 80
+  inferred conditioned ceiling,           !- To Surface 80
+  0.105661351239647,                      !- View Factor 80
+  surface DoorNorth,                      !- From Surface 81
+  living Living Partition,                !- To Surface 81
+  0.211322702479294,                      !- View Factor 81
+  surface DoorNorth,                      !- From Surface 82
+  furniture mass living living,           !- To Surface 82
+  0.211322702479294,                      !- View Factor 82
+  Window_Wall_west,                       !- From Surface 83
+  DoorSouth,                              !- To Surface 83
+  0.00175791848609788,                    !- View Factor 83
+  Window_Wall_west,                       !- From Surface 84
+  FloorBelowAttic,                        !- To Surface 84
+  0.105475109165873,                      !- View Factor 84
+  Window_Wall_west,                       !- From Surface 85
+  DoorNorth,                              !- To Surface 85
+  0.00175791848609789,                    !- View Factor 85
+  Window_Wall_west,                       !- From Surface 86
+  Window_Wall_north,                      !- To Surface 86
+  0.00949275982492858,                    !- View Factor 86
+  Window_Wall_west,                       !- From Surface 87
+  surface Window_Wall_north,              !- To Surface 87
+  1.00949281351124e-05,                   !- View Factor 87
+  Window_Wall_west,                       !- From Surface 88
+  FloorAboveCrawlspace,                   !- To Surface 88
+  0.105475109165873,                      !- View Factor 88
+  Window_Wall_west,                       !- From Surface 89
+  Wall:90,                                !- To Surface 89
+  0.0413884328366886,                     !- View Factor 89
+  Window_Wall_west,                       !- From Surface 90
+  Window_Wall_east,                       !- To Surface 90
+  0.00949275982492858,                    !- View Factor 90
+  Window_Wall_west,                       !- From Surface 91
+  surface Window_Wall_east,               !- To Surface 91
+  1.00949281351124e-05,                   !- View Factor 91
+  Window_Wall_west,                       !- From Surface 92
+  Wall:180,                               !- To Surface 92
+  0.0413884328366887,                     !- View Factor 92
+  Window_Wall_west,                       !- From Surface 93
+  Window_Wall_south,                      !- To Surface 93
+  0.00949275982492859,                    !- View Factor 93
+  Window_Wall_west,                       !- From Surface 94
+  surface Window_Wall_south,              !- To Surface 94
+  1.00949281351124e-05,                   !- View Factor 94
+  Window_Wall_west,                       !- From Surface 95
+  inferred conditioned floor,             !- To Surface 95
+  0.105475109165873,                      !- View Factor 95
+  Window_Wall_west,                       !- From Surface 96
+  Wall:0,                                 !- To Surface 96
+  0.0413884328366886,                     !- View Factor 96
+  Window_Wall_west,                       !- From Surface 97
+  inferred conditioned ceiling,           !- To Surface 97
+  0.105475109165873,                      !- View Factor 97
+  Window_Wall_west,                       !- From Surface 98
+  living Living Partition,                !- To Surface 98
+  0.210950218331746,                      !- View Factor 98
+  Window_Wall_west,                       !- From Surface 99
+  furniture mass living living,           !- To Surface 99
+  0.210950218331746,                      !- View Factor 99
+  surface Window_Wall_west,               !- From Surface 100
+  DoorSouth,                              !- To Surface 100
+  0.00175791848609788,                    !- View Factor 100
+  surface Window_Wall_west,               !- From Surface 101
+  FloorBelowAttic,                        !- To Surface 101
+  0.105475109165873,                      !- View Factor 101
+  surface Window_Wall_west,               !- From Surface 102
+  DoorNorth,                              !- To Surface 102
+  0.00175791848609789,                    !- View Factor 102
+  surface Window_Wall_west,               !- From Surface 103
+  Window_Wall_north,                      !- To Surface 103
+  0.00949275982492858,                    !- View Factor 103
+  surface Window_Wall_west,               !- From Surface 104
+  surface Window_Wall_north,              !- To Surface 104
+  1.00949281351124e-05,                   !- View Factor 104
+  surface Window_Wall_west,               !- From Surface 105
+  FloorAboveCrawlspace,                   !- To Surface 105
+  0.105475109165873,                      !- View Factor 105
+  surface Window_Wall_west,               !- From Surface 106
+  Wall:90,                                !- To Surface 106
+  0.0413884328366886,                     !- View Factor 106
+  surface Window_Wall_west,               !- From Surface 107
+  Window_Wall_east,                       !- To Surface 107
+  0.00949275982492858,                    !- View Factor 107
+  surface Window_Wall_west,               !- From Surface 108
+  surface Window_Wall_east,               !- To Surface 108
+  1.00949281351124e-05,                   !- View Factor 108
+  surface Window_Wall_west,               !- From Surface 109
+  Wall:180,                               !- To Surface 109
+  0.0413884328366887,                     !- View Factor 109
+  surface Window_Wall_west,               !- From Surface 110
+  Window_Wall_south,                      !- To Surface 110
+  0.00949275982492859,                    !- View Factor 110
+  surface Window_Wall_west,               !- From Surface 111
+  surface Window_Wall_south,              !- To Surface 111
+  1.00949281351124e-05,                   !- View Factor 111
+  surface Window_Wall_west,               !- From Surface 112
+  inferred conditioned floor,             !- To Surface 112
+  0.105475109165873,                      !- View Factor 112
+  surface Window_Wall_west,               !- From Surface 113
+  Wall:0,                                 !- To Surface 113
+  0.0413884328366886,                     !- View Factor 113
+  surface Window_Wall_west,               !- From Surface 114
+  inferred conditioned ceiling,           !- To Surface 114
+  0.105475109165873,                      !- View Factor 114
+  surface Window_Wall_west,               !- From Surface 115
+  living Living Partition,                !- To Surface 115
+  0.210950218331746,                      !- View Factor 115
+  surface Window_Wall_west,               !- From Surface 116
+  furniture mass living living,           !- To Surface 116
+  0.210950218331746,                      !- View Factor 116
+  Window_Wall_north,                      !- From Surface 117
+  DoorSouth,                              !- To Surface 117
+  0.00176102252066078,                    !- View Factor 117
+  Window_Wall_north,                      !- From Surface 118
+  FloorBelowAttic,                        !- To Surface 118
+  0.105661351239647,                      !- View Factor 118
+  Window_Wall_north,                      !- From Surface 119
+  Window_Wall_west,                       !- To Surface 119
+  0.00950952161156822,                    !- View Factor 119
+  Window_Wall_north,                      !- From Surface 120
+  surface Window_Wall_west,               !- To Surface 120
+  1.01127531970189e-05,                   !- View Factor 120
+  Window_Wall_north,                      !- From Surface 121
+  Wall:270,                               !- To Surface 121
+  0.0414615142264375,                     !- View Factor 121
+  Window_Wall_north,                      !- From Surface 122
+  FloorAboveCrawlspace,                   !- To Surface 122
+  0.105661351239647,                      !- View Factor 122
+  Window_Wall_north,                      !- From Surface 123
+  Wall:90,                                !- To Surface 123
+  0.0414615142264374,                     !- View Factor 123
+  Window_Wall_north,                      !- From Surface 124
+  Window_Wall_east,                       !- To Surface 124
+  0.00950952161156821,                    !- View Factor 124
+  Window_Wall_north,                      !- From Surface 125
+  surface Window_Wall_east,               !- To Surface 125
+  1.01127531970189e-05,                   !- View Factor 125
+  Window_Wall_north,                      !- From Surface 126
+  Wall:180,                               !- To Surface 126
+  0.0414615142264374,                     !- View Factor 126
+  Window_Wall_north,                      !- From Surface 127
+  Window_Wall_south,                      !- To Surface 127
+  0.00950952161156822,                    !- View Factor 127
+  Window_Wall_north,                      !- From Surface 128
+  surface Window_Wall_south,              !- To Surface 128
+  1.01127531970189e-05,                   !- View Factor 128
+  Window_Wall_north,                      !- From Surface 129
+  inferred conditioned floor,             !- To Surface 129
+  0.105661351239647,                      !- View Factor 129
+  Window_Wall_north,                      !- From Surface 130
+  inferred conditioned ceiling,           !- To Surface 130
+  0.105661351239647,                      !- View Factor 130
+  Window_Wall_north,                      !- From Surface 131
+  living Living Partition,                !- To Surface 131
+  0.211322702479294,                      !- View Factor 131
+  Window_Wall_north,                      !- From Surface 132
+  furniture mass living living,           !- To Surface 132
+  0.211322702479294,                      !- View Factor 132
+  surface Window_Wall_north,              !- From Surface 133
+  DoorSouth,                              !- To Surface 133
+  0.00176102252066078,                    !- View Factor 133
+  surface Window_Wall_north,              !- From Surface 134
+  FloorBelowAttic,                        !- To Surface 134
+  0.105661351239647,                      !- View Factor 134
+  surface Window_Wall_north,              !- From Surface 135
+  Window_Wall_west,                       !- To Surface 135
+  0.00950952161156822,                    !- View Factor 135
+  surface Window_Wall_north,              !- From Surface 136
+  surface Window_Wall_west,               !- To Surface 136
+  1.01127531970189e-05,                   !- View Factor 136
+  surface Window_Wall_north,              !- From Surface 137
+  Wall:270,                               !- To Surface 137
+  0.0414615142264375,                     !- View Factor 137
+  surface Window_Wall_north,              !- From Surface 138
+  FloorAboveCrawlspace,                   !- To Surface 138
+  0.105661351239647,                      !- View Factor 138
+  surface Window_Wall_north,              !- From Surface 139
+  Wall:90,                                !- To Surface 139
+  0.0414615142264374,                     !- View Factor 139
+  surface Window_Wall_north,              !- From Surface 140
+  Window_Wall_east,                       !- To Surface 140
+  0.00950952161156821,                    !- View Factor 140
+  surface Window_Wall_north,              !- From Surface 141
+  surface Window_Wall_east,               !- To Surface 141
+  1.01127531970189e-05,                   !- View Factor 141
+  surface Window_Wall_north,              !- From Surface 142
+  Wall:180,                               !- To Surface 142
+  0.0414615142264374,                     !- View Factor 142
+  surface Window_Wall_north,              !- From Surface 143
+  Window_Wall_south,                      !- To Surface 143
+  0.00950952161156822,                    !- View Factor 143
+  surface Window_Wall_north,              !- From Surface 144
+  surface Window_Wall_south,              !- To Surface 144
+  1.01127531970189e-05,                   !- View Factor 144
+  surface Window_Wall_north,              !- From Surface 145
+  inferred conditioned floor,             !- To Surface 145
+  0.105661351239647,                      !- View Factor 145
+  surface Window_Wall_north,              !- From Surface 146
+  inferred conditioned ceiling,           !- To Surface 146
+  0.105661351239647,                      !- View Factor 146
+  surface Window_Wall_north,              !- From Surface 147
+  living Living Partition,                !- To Surface 147
+  0.211322702479294,                      !- View Factor 147
+  surface Window_Wall_north,              !- From Surface 148
+  furniture mass living living,           !- To Surface 148
+  0.211322702479294,                      !- View Factor 148
+  Wall:270,                               !- From Surface 149
+  DoorSouth,                              !- To Surface 149
+  0.00175791848609788,                    !- View Factor 149
+  Wall:270,                               !- From Surface 150
+  FloorBelowAttic,                        !- To Surface 150
+  0.105475109165873,                      !- View Factor 150
+  Wall:270,                               !- From Surface 151
+  DoorNorth,                              !- To Surface 151
+  0.00175791848609789,                    !- View Factor 151
+  Wall:270,                               !- From Surface 152
+  Window_Wall_north,                      !- To Surface 152
+  0.00949275982492858,                    !- View Factor 152
+  Wall:270,                               !- From Surface 153
+  surface Window_Wall_north,              !- To Surface 153
+  1.00949281351124e-05,                   !- View Factor 153
+  Wall:270,                               !- From Surface 154
+  FloorAboveCrawlspace,                   !- To Surface 154
+  0.105475109165873,                      !- View Factor 154
+  Wall:270,                               !- From Surface 155
+  Wall:90,                                !- To Surface 155
+  0.0413884328366886,                     !- View Factor 155
+  Wall:270,                               !- From Surface 156
+  Window_Wall_east,                       !- To Surface 156
+  0.00949275982492858,                    !- View Factor 156
+  Wall:270,                               !- From Surface 157
+  surface Window_Wall_east,               !- To Surface 157
+  1.00949281351124e-05,                   !- View Factor 157
+  Wall:270,                               !- From Surface 158
+  Wall:180,                               !- To Surface 158
+  0.0413884328366887,                     !- View Factor 158
+  Wall:270,                               !- From Surface 159
+  Window_Wall_south,                      !- To Surface 159
+  0.00949275982492859,                    !- View Factor 159
+  Wall:270,                               !- From Surface 160
+  surface Window_Wall_south,              !- To Surface 160
+  1.00949281351124e-05,                   !- View Factor 160
+  Wall:270,                               !- From Surface 161
+  inferred conditioned floor,             !- To Surface 161
+  0.105475109165873,                      !- View Factor 161
+  Wall:270,                               !- From Surface 162
+  Wall:0,                                 !- To Surface 162
+  0.0413884328366886,                     !- View Factor 162
+  Wall:270,                               !- From Surface 163
+  inferred conditioned ceiling,           !- To Surface 163
+  0.105475109165873,                      !- View Factor 163
+  Wall:270,                               !- From Surface 164
+  living Living Partition,                !- To Surface 164
+  0.210950218331746,                      !- View Factor 164
+  Wall:270,                               !- From Surface 165
+  furniture mass living living,           !- To Surface 165
+  0.210950218331746,                      !- View Factor 165
+  FloorAboveCrawlspace,                   !- From Surface 166
+  DoorSouth,                              !- To Surface 166
+  0.00185941231620189,                    !- View Factor 166
+  FloorAboveCrawlspace,                   !- From Surface 167
+  FloorBelowAttic,                        !- To Surface 167
+  0.111564738972114,                      !- View Factor 167
+  FloorAboveCrawlspace,                   !- From Surface 168
+  DoorNorth,                              !- To Surface 168
+  0.00185941231620189,                    !- View Factor 168
+  FloorAboveCrawlspace,                   !- From Surface 169
+  Window_Wall_west,                       !- To Surface 169
+  0.0100408265074902,                     !- View Factor 169
+  FloorAboveCrawlspace,                   !- From Surface 170
+  surface Window_Wall_west,               !- To Surface 170
+  1.06777611442421e-05,                   !- View Factor 170
+  FloorAboveCrawlspace,                   !- From Surface 171
+  Window_Wall_north,                      !- To Surface 171
+  0.0100408265074902,                     !- View Factor 171
+  FloorAboveCrawlspace,                   !- From Surface 172
+  surface Window_Wall_north,              !- To Surface 172
+  1.06777611442421e-05,                   !- View Factor 172
+  FloorAboveCrawlspace,                   !- From Surface 173
+  Wall:270,                               !- To Surface 173
+  0.0437780035726574,                     !- View Factor 173
+  FloorAboveCrawlspace,                   !- From Surface 174
+  Wall:90,                                !- To Surface 174
+  0.0437780035726573,                     !- View Factor 174
+  FloorAboveCrawlspace,                   !- From Surface 175
+  Window_Wall_east,                       !- To Surface 175
+  0.0100408265074902,                     !- View Factor 175
+  FloorAboveCrawlspace,                   !- From Surface 176
+  surface Window_Wall_east,               !- To Surface 176
+  1.06777611442421e-05,                   !- View Factor 176
+  FloorAboveCrawlspace,                   !- From Surface 177
+  Wall:180,                               !- To Surface 177
+  0.0437780035726574,                     !- View Factor 177
+  FloorAboveCrawlspace,                   !- From Surface 178
+  Window_Wall_south,                      !- To Surface 178
+  0.0100408265074902,                     !- View Factor 178
+  FloorAboveCrawlspace,                   !- From Surface 179
+  surface Window_Wall_south,              !- To Surface 179
+  1.06777611442421e-05,                   !- View Factor 179
+  FloorAboveCrawlspace,                   !- From Surface 180
+  inferred conditioned floor,             !- To Surface 180
+  0.111564738972114,                      !- View Factor 180
+  FloorAboveCrawlspace,                   !- From Surface 181
+  Wall:0,                                 !- To Surface 181
+  0.0437780035726573,                     !- View Factor 181
+  FloorAboveCrawlspace,                   !- From Surface 182
+  inferred conditioned ceiling,           !- To Surface 182
+  0.111564738972114,                      !- View Factor 182
+  FloorAboveCrawlspace,                   !- From Surface 183
+  living Living Partition,                !- To Surface 183
+  0.223129477944227,                      !- View Factor 183
+  FloorAboveCrawlspace,                   !- From Surface 184
+  furniture mass living living,           !- To Surface 184
+  0.223129477944227,                      !- View Factor 184
+  Wall:90,                                !- From Surface 185
+  DoorSouth,                              !- To Surface 185
+  0.00175791848609788,                    !- View Factor 185
+  Wall:90,                                !- From Surface 186
+  FloorBelowAttic,                        !- To Surface 186
+  0.105475109165873,                      !- View Factor 186
+  Wall:90,                                !- From Surface 187
+  DoorNorth,                              !- To Surface 187
+  0.00175791848609789,                    !- View Factor 187
+  Wall:90,                                !- From Surface 188
+  Window_Wall_west,                       !- To Surface 188
+  0.00949275982492859,                    !- View Factor 188
+  Wall:90,                                !- From Surface 189
+  surface Window_Wall_west,               !- To Surface 189
+  1.00949281351124e-05,                   !- View Factor 189
+  Wall:90,                                !- From Surface 190
+  Window_Wall_north,                      !- To Surface 190
+  0.00949275982492858,                    !- View Factor 190
+  Wall:90,                                !- From Surface 191
+  surface Window_Wall_north,              !- To Surface 191
+  1.00949281351124e-05,                   !- View Factor 191
+  Wall:90,                                !- From Surface 192
+  Wall:270,                               !- To Surface 192
+  0.0413884328366887,                     !- View Factor 192
+  Wall:90,                                !- From Surface 193
+  FloorAboveCrawlspace,                   !- To Surface 193
+  0.105475109165873,                      !- View Factor 193
+  Wall:90,                                !- From Surface 194
+  Wall:180,                               !- To Surface 194
+  0.0413884328366887,                     !- View Factor 194
+  Wall:90,                                !- From Surface 195
+  Window_Wall_south,                      !- To Surface 195
+  0.00949275982492859,                    !- View Factor 195
+  Wall:90,                                !- From Surface 196
+  surface Window_Wall_south,              !- To Surface 196
+  1.00949281351124e-05,                   !- View Factor 196
+  Wall:90,                                !- From Surface 197
+  inferred conditioned floor,             !- To Surface 197
+  0.105475109165873,                      !- View Factor 197
+  Wall:90,                                !- From Surface 198
+  Wall:0,                                 !- To Surface 198
+  0.0413884328366886,                     !- View Factor 198
+  Wall:90,                                !- From Surface 199
+  inferred conditioned ceiling,           !- To Surface 199
+  0.105475109165873,                      !- View Factor 199
+  Wall:90,                                !- From Surface 200
+  living Living Partition,                !- To Surface 200
+  0.210950218331746,                      !- View Factor 200
+  Wall:90,                                !- From Surface 201
+  furniture mass living living,           !- To Surface 201
+  0.210950218331746,                      !- View Factor 201
+  Window_Wall_east,                       !- From Surface 202
+  DoorSouth,                              !- To Surface 202
+  0.00175791848609788,                    !- View Factor 202
+  Window_Wall_east,                       !- From Surface 203
+  FloorBelowAttic,                        !- To Surface 203
+  0.105475109165873,                      !- View Factor 203
+  Window_Wall_east,                       !- From Surface 204
+  DoorNorth,                              !- To Surface 204
+  0.00175791848609789,                    !- View Factor 204
+  Window_Wall_east,                       !- From Surface 205
+  Window_Wall_west,                       !- To Surface 205
+  0.00949275982492859,                    !- View Factor 205
+  Window_Wall_east,                       !- From Surface 206
+  surface Window_Wall_west,               !- To Surface 206
+  1.00949281351124e-05,                   !- View Factor 206
+  Window_Wall_east,                       !- From Surface 207
+  Window_Wall_north,                      !- To Surface 207
+  0.00949275982492858,                    !- View Factor 207
+  Window_Wall_east,                       !- From Surface 208
+  surface Window_Wall_north,              !- To Surface 208
+  1.00949281351124e-05,                   !- View Factor 208
+  Window_Wall_east,                       !- From Surface 209
+  Wall:270,                               !- To Surface 209
+  0.0413884328366887,                     !- View Factor 209
+  Window_Wall_east,                       !- From Surface 210
+  FloorAboveCrawlspace,                   !- To Surface 210
+  0.105475109165873,                      !- View Factor 210
+  Window_Wall_east,                       !- From Surface 211
+  Wall:180,                               !- To Surface 211
+  0.0413884328366887,                     !- View Factor 211
+  Window_Wall_east,                       !- From Surface 212
+  Window_Wall_south,                      !- To Surface 212
+  0.00949275982492859,                    !- View Factor 212
+  Window_Wall_east,                       !- From Surface 213
+  surface Window_Wall_south,              !- To Surface 213
+  1.00949281351124e-05,                   !- View Factor 213
+  Window_Wall_east,                       !- From Surface 214
+  inferred conditioned floor,             !- To Surface 214
+  0.105475109165873,                      !- View Factor 214
+  Window_Wall_east,                       !- From Surface 215
+  Wall:0,                                 !- To Surface 215
+  0.0413884328366886,                     !- View Factor 215
+  Window_Wall_east,                       !- From Surface 216
+  inferred conditioned ceiling,           !- To Surface 216
+  0.105475109165873,                      !- View Factor 216
+  Window_Wall_east,                       !- From Surface 217
+  living Living Partition,                !- To Surface 217
+  0.210950218331746,                      !- View Factor 217
+  Window_Wall_east,                       !- From Surface 218
+  furniture mass living living,           !- To Surface 218
+  0.210950218331746,                      !- View Factor 218
+  surface Window_Wall_east,               !- From Surface 219
+  DoorSouth,                              !- To Surface 219
+  0.00175791848609788,                    !- View Factor 219
+  surface Window_Wall_east,               !- From Surface 220
+  FloorBelowAttic,                        !- To Surface 220
+  0.105475109165873,                      !- View Factor 220
+  surface Window_Wall_east,               !- From Surface 221
+  DoorNorth,                              !- To Surface 221
+  0.00175791848609789,                    !- View Factor 221
+  surface Window_Wall_east,               !- From Surface 222
+  Window_Wall_west,                       !- To Surface 222
+  0.00949275982492859,                    !- View Factor 222
+  surface Window_Wall_east,               !- From Surface 223
+  surface Window_Wall_west,               !- To Surface 223
+  1.00949281351124e-05,                   !- View Factor 223
+  surface Window_Wall_east,               !- From Surface 224
+  Window_Wall_north,                      !- To Surface 224
+  0.00949275982492858,                    !- View Factor 224
+  surface Window_Wall_east,               !- From Surface 225
+  surface Window_Wall_north,              !- To Surface 225
+  1.00949281351124e-05,                   !- View Factor 225
+  surface Window_Wall_east,               !- From Surface 226
+  Wall:270,                               !- To Surface 226
+  0.0413884328366887,                     !- View Factor 226
+  surface Window_Wall_east,               !- From Surface 227
+  FloorAboveCrawlspace,                   !- To Surface 227
+  0.105475109165873,                      !- View Factor 227
+  surface Window_Wall_east,               !- From Surface 228
+  Wall:180,                               !- To Surface 228
+  0.0413884328366887,                     !- View Factor 228
+  surface Window_Wall_east,               !- From Surface 229
+  Window_Wall_south,                      !- To Surface 229
+  0.00949275982492859,                    !- View Factor 229
+  surface Window_Wall_east,               !- From Surface 230
+  surface Window_Wall_south,              !- To Surface 230
+  1.00949281351124e-05,                   !- View Factor 230
+  surface Window_Wall_east,               !- From Surface 231
+  inferred conditioned floor,             !- To Surface 231
+  0.105475109165873,                      !- View Factor 231
+  surface Window_Wall_east,               !- From Surface 232
+  Wall:0,                                 !- To Surface 232
+  0.0413884328366886,                     !- View Factor 232
+  surface Window_Wall_east,               !- From Surface 233
+  inferred conditioned ceiling,           !- To Surface 233
+  0.105475109165873,                      !- View Factor 233
+  surface Window_Wall_east,               !- From Surface 234
+  living Living Partition,                !- To Surface 234
+  0.210950218331746,                      !- View Factor 234
+  surface Window_Wall_east,               !- From Surface 235
+  furniture mass living living,           !- To Surface 235
+  0.210950218331746,                      !- View Factor 235
+  Wall:180,                               !- From Surface 236
+  FloorBelowAttic,                        !- To Surface 236
+  0.105661351239647,                      !- View Factor 236
+  Wall:180,                               !- From Surface 237
+  DoorNorth,                              !- To Surface 237
+  0.00176102252066078,                    !- View Factor 237
+  Wall:180,                               !- From Surface 238
+  Window_Wall_west,                       !- To Surface 238
+  0.00950952161156822,                    !- View Factor 238
+  Wall:180,                               !- From Surface 239
+  surface Window_Wall_west,               !- To Surface 239
+  1.01127531970189e-05,                   !- View Factor 239
+  Wall:180,                               !- From Surface 240
+  Window_Wall_north,                      !- To Surface 240
+  0.00950952161156821,                    !- View Factor 240
+  Wall:180,                               !- From Surface 241
+  surface Window_Wall_north,              !- To Surface 241
+  1.01127531970189e-05,                   !- View Factor 241
+  Wall:180,                               !- From Surface 242
+  Wall:270,                               !- To Surface 242
+  0.0414615142264375,                     !- View Factor 242
+  Wall:180,                               !- From Surface 243
+  FloorAboveCrawlspace,                   !- To Surface 243
+  0.105661351239647,                      !- View Factor 243
+  Wall:180,                               !- From Surface 244
+  Wall:90,                                !- To Surface 244
+  0.0414615142264374,                     !- View Factor 244
+  Wall:180,                               !- From Surface 245
+  Window_Wall_east,                       !- To Surface 245
+  0.00950952161156821,                    !- View Factor 245
+  Wall:180,                               !- From Surface 246
+  surface Window_Wall_east,               !- To Surface 246
+  1.01127531970189e-05,                   !- View Factor 246
+  Wall:180,                               !- From Surface 247
+  inferred conditioned floor,             !- To Surface 247
+  0.105661351239647,                      !- View Factor 247
+  Wall:180,                               !- From Surface 248
+  Wall:0,                                 !- To Surface 248
+  0.0414615142264374,                     !- View Factor 248
+  Wall:180,                               !- From Surface 249
+  inferred conditioned ceiling,           !- To Surface 249
+  0.105661351239647,                      !- View Factor 249
+  Wall:180,                               !- From Surface 250
+  living Living Partition,                !- To Surface 250
+  0.211322702479294,                      !- View Factor 250
+  Wall:180,                               !- From Surface 251
+  furniture mass living living,           !- To Surface 251
+  0.211322702479294,                      !- View Factor 251
+  Window_Wall_south,                      !- From Surface 252
+  FloorBelowAttic,                        !- To Surface 252
+  0.105661351239647,                      !- View Factor 252
+  Window_Wall_south,                      !- From Surface 253
+  DoorNorth,                              !- To Surface 253
+  0.00176102252066078,                    !- View Factor 253
+  Window_Wall_south,                      !- From Surface 254
+  Window_Wall_west,                       !- To Surface 254
+  0.00950952161156822,                    !- View Factor 254
+  Window_Wall_south,                      !- From Surface 255
+  surface Window_Wall_west,               !- To Surface 255
+  1.01127531970189e-05,                   !- View Factor 255
+  Window_Wall_south,                      !- From Surface 256
+  Window_Wall_north,                      !- To Surface 256
+  0.00950952161156821,                    !- View Factor 256
+  Window_Wall_south,                      !- From Surface 257
+  surface Window_Wall_north,              !- To Surface 257
+  1.01127531970189e-05,                   !- View Factor 257
+  Window_Wall_south,                      !- From Surface 258
+  Wall:270,                               !- To Surface 258
+  0.0414615142264375,                     !- View Factor 258
+  Window_Wall_south,                      !- From Surface 259
+  FloorAboveCrawlspace,                   !- To Surface 259
+  0.105661351239647,                      !- View Factor 259
+  Window_Wall_south,                      !- From Surface 260
+  Wall:90,                                !- To Surface 260
+  0.0414615142264374,                     !- View Factor 260
+  Window_Wall_south,                      !- From Surface 261
+  Window_Wall_east,                       !- To Surface 261
+  0.00950952161156821,                    !- View Factor 261
+  Window_Wall_south,                      !- From Surface 262
+  surface Window_Wall_east,               !- To Surface 262
+  1.01127531970189e-05,                   !- View Factor 262
+  Window_Wall_south,                      !- From Surface 263
+  inferred conditioned floor,             !- To Surface 263
+  0.105661351239647,                      !- View Factor 263
+  Window_Wall_south,                      !- From Surface 264
+  Wall:0,                                 !- To Surface 264
+  0.0414615142264374,                     !- View Factor 264
+  Window_Wall_south,                      !- From Surface 265
+  inferred conditioned ceiling,           !- To Surface 265
+  0.105661351239647,                      !- View Factor 265
+  Window_Wall_south,                      !- From Surface 266
+  living Living Partition,                !- To Surface 266
+  0.211322702479294,                      !- View Factor 266
+  Window_Wall_south,                      !- From Surface 267
+  furniture mass living living,           !- To Surface 267
+  0.211322702479294,                      !- View Factor 267
+  surface Window_Wall_south,              !- From Surface 268
+  FloorBelowAttic,                        !- To Surface 268
+  0.105661351239647,                      !- View Factor 268
+  surface Window_Wall_south,              !- From Surface 269
+  DoorNorth,                              !- To Surface 269
+  0.00176102252066078,                    !- View Factor 269
+  surface Window_Wall_south,              !- From Surface 270
+  Window_Wall_west,                       !- To Surface 270
+  0.00950952161156822,                    !- View Factor 270
+  surface Window_Wall_south,              !- From Surface 271
+  surface Window_Wall_west,               !- To Surface 271
+  1.01127531970189e-05,                   !- View Factor 271
+  surface Window_Wall_south,              !- From Surface 272
+  Window_Wall_north,                      !- To Surface 272
+  0.00950952161156821,                    !- View Factor 272
+  surface Window_Wall_south,              !- From Surface 273
+  surface Window_Wall_north,              !- To Surface 273
+  1.01127531970189e-05,                   !- View Factor 273
+  surface Window_Wall_south,              !- From Surface 274
+  Wall:270,                               !- To Surface 274
+  0.0414615142264375,                     !- View Factor 274
+  surface Window_Wall_south,              !- From Surface 275
+  FloorAboveCrawlspace,                   !- To Surface 275
+  0.105661351239647,                      !- View Factor 275
+  surface Window_Wall_south,              !- From Surface 276
+  Wall:90,                                !- To Surface 276
+  0.0414615142264374,                     !- View Factor 276
+  surface Window_Wall_south,              !- From Surface 277
+  Window_Wall_east,                       !- To Surface 277
+  0.00950952161156821,                    !- View Factor 277
+  surface Window_Wall_south,              !- From Surface 278
+  surface Window_Wall_east,               !- To Surface 278
+  1.01127531970189e-05,                   !- View Factor 278
+  surface Window_Wall_south,              !- From Surface 279
+  inferred conditioned floor,             !- To Surface 279
+  0.105661351239647,                      !- View Factor 279
+  surface Window_Wall_south,              !- From Surface 280
+  Wall:0,                                 !- To Surface 280
+  0.0414615142264374,                     !- View Factor 280
+  surface Window_Wall_south,              !- From Surface 281
+  inferred conditioned ceiling,           !- To Surface 281
+  0.105661351239647,                      !- View Factor 281
+  surface Window_Wall_south,              !- From Surface 282
+  living Living Partition,                !- To Surface 282
+  0.211322702479294,                      !- View Factor 282
+  surface Window_Wall_south,              !- From Surface 283
+  furniture mass living living,           !- To Surface 283
+  0.211322702479294,                      !- View Factor 283
+  inferred conditioned floor,             !- From Surface 284
+  DoorSouth,                              !- To Surface 284
+  0.00185941231620189,                    !- View Factor 284
+  inferred conditioned floor,             !- From Surface 285
+  FloorBelowAttic,                        !- To Surface 285
+  0.111564738972114,                      !- View Factor 285
+  inferred conditioned floor,             !- From Surface 286
+  DoorNorth,                              !- To Surface 286
+  0.00185941231620189,                    !- View Factor 286
+  inferred conditioned floor,             !- From Surface 287
+  Window_Wall_west,                       !- To Surface 287
+  0.0100408265074902,                     !- View Factor 287
+  inferred conditioned floor,             !- From Surface 288
+  surface Window_Wall_west,               !- To Surface 288
+  1.06777611442421e-05,                   !- View Factor 288
+  inferred conditioned floor,             !- From Surface 289
+  Window_Wall_north,                      !- To Surface 289
+  0.0100408265074902,                     !- View Factor 289
+  inferred conditioned floor,             !- From Surface 290
+  surface Window_Wall_north,              !- To Surface 290
+  1.06777611442421e-05,                   !- View Factor 290
+  inferred conditioned floor,             !- From Surface 291
+  Wall:270,                               !- To Surface 291
+  0.0437780035726574,                     !- View Factor 291
+  inferred conditioned floor,             !- From Surface 292
+  FloorAboveCrawlspace,                   !- To Surface 292
+  0.111564738972114,                      !- View Factor 292
+  inferred conditioned floor,             !- From Surface 293
+  Wall:90,                                !- To Surface 293
+  0.0437780035726573,                     !- View Factor 293
+  inferred conditioned floor,             !- From Surface 294
+  Window_Wall_east,                       !- To Surface 294
+  0.0100408265074902,                     !- View Factor 294
+  inferred conditioned floor,             !- From Surface 295
+  surface Window_Wall_east,               !- To Surface 295
+  1.06777611442421e-05,                   !- View Factor 295
+  inferred conditioned floor,             !- From Surface 296
+  Wall:180,                               !- To Surface 296
+  0.0437780035726574,                     !- View Factor 296
+  inferred conditioned floor,             !- From Surface 297
+  Window_Wall_south,                      !- To Surface 297
+  0.0100408265074902,                     !- View Factor 297
+  inferred conditioned floor,             !- From Surface 298
+  surface Window_Wall_south,              !- To Surface 298
+  1.06777611442421e-05,                   !- View Factor 298
+  inferred conditioned floor,             !- From Surface 299
+  Wall:0,                                 !- To Surface 299
+  0.0437780035726573,                     !- View Factor 299
+  inferred conditioned floor,             !- From Surface 300
+  inferred conditioned ceiling,           !- To Surface 300
+  0.111564738972114,                      !- View Factor 300
+  inferred conditioned floor,             !- From Surface 301
+  living Living Partition,                !- To Surface 301
+  0.223129477944227,                      !- View Factor 301
+  inferred conditioned floor,             !- From Surface 302
+  furniture mass living living,           !- To Surface 302
+  0.223129477944227,                      !- View Factor 302
+  Wall:0,                                 !- From Surface 303
+  DoorSouth,                              !- To Surface 303
+  0.00176102252066078,                    !- View Factor 303
+  Wall:0,                                 !- From Surface 304
+  FloorBelowAttic,                        !- To Surface 304
+  0.105661351239647,                      !- View Factor 304
+  Wall:0,                                 !- From Surface 305
+  Window_Wall_west,                       !- To Surface 305
+  0.00950952161156822,                    !- View Factor 305
+  Wall:0,                                 !- From Surface 306
+  surface Window_Wall_west,               !- To Surface 306
+  1.01127531970189e-05,                   !- View Factor 306
+  Wall:0,                                 !- From Surface 307
+  Wall:270,                               !- To Surface 307
+  0.0414615142264375,                     !- View Factor 307
+  Wall:0,                                 !- From Surface 308
+  FloorAboveCrawlspace,                   !- To Surface 308
+  0.105661351239647,                      !- View Factor 308
+  Wall:0,                                 !- From Surface 309
+  Wall:90,                                !- To Surface 309
+  0.0414615142264374,                     !- View Factor 309
+  Wall:0,                                 !- From Surface 310
+  Window_Wall_east,                       !- To Surface 310
+  0.00950952161156821,                    !- View Factor 310
+  Wall:0,                                 !- From Surface 311
+  surface Window_Wall_east,               !- To Surface 311
+  1.01127531970189e-05,                   !- View Factor 311
+  Wall:0,                                 !- From Surface 312
+  Wall:180,                               !- To Surface 312
+  0.0414615142264374,                     !- View Factor 312
+  Wall:0,                                 !- From Surface 313
+  Window_Wall_south,                      !- To Surface 313
+  0.00950952161156822,                    !- View Factor 313
+  Wall:0,                                 !- From Surface 314
+  surface Window_Wall_south,              !- To Surface 314
+  1.01127531970189e-05,                   !- View Factor 314
+  Wall:0,                                 !- From Surface 315
+  inferred conditioned floor,             !- To Surface 315
+  0.105661351239647,                      !- View Factor 315
+  Wall:0,                                 !- From Surface 316
+  inferred conditioned ceiling,           !- To Surface 316
+  0.105661351239647,                      !- View Factor 316
+  Wall:0,                                 !- From Surface 317
+  living Living Partition,                !- To Surface 317
+  0.211322702479294,                      !- View Factor 317
+  Wall:0,                                 !- From Surface 318
+  furniture mass living living,           !- To Surface 318
+  0.211322702479294,                      !- View Factor 318
+  inferred conditioned ceiling,           !- From Surface 319
+  DoorSouth,                              !- To Surface 319
+  0.00209290693173369,                    !- View Factor 319
+  inferred conditioned ceiling,           !- From Surface 320
+  DoorNorth,                              !- To Surface 320
+  0.00209290693173369,                    !- View Factor 320
+  inferred conditioned ceiling,           !- From Surface 321
+  Window_Wall_west,                       !- To Surface 321
+  0.0113016974313619,                     !- View Factor 321
+  inferred conditioned ceiling,           !- From Surface 322
+  surface Window_Wall_west,               !- To Surface 322
+  1.2018614763093e-05,                    !- View Factor 322
+  inferred conditioned ceiling,           !- From Surface 323
+  Window_Wall_north,                      !- To Surface 323
+  0.0113016974313619,                     !- View Factor 323
+  inferred conditioned ceiling,           !- From Surface 324
+  surface Window_Wall_north,              !- To Surface 324
+  1.2018614763093e-05,                    !- View Factor 324
+  inferred conditioned ceiling,           !- From Surface 325
+  Wall:270,                               !- To Surface 325
+  0.049275400800738,                      !- View Factor 325
+  inferred conditioned ceiling,           !- From Surface 326
+  FloorAboveCrawlspace,                   !- To Surface 326
+  0.125574415904021,                      !- View Factor 326
+  inferred conditioned ceiling,           !- From Surface 327
+  Wall:90,                                !- To Surface 327
+  0.0492754008007379,                     !- View Factor 327
+  inferred conditioned ceiling,           !- From Surface 328
+  Window_Wall_east,                       !- To Surface 328
+  0.0113016974313619,                     !- View Factor 328
+  inferred conditioned ceiling,           !- From Surface 329
+  surface Window_Wall_east,               !- To Surface 329
+  1.2018614763093e-05,                    !- View Factor 329
+  inferred conditioned ceiling,           !- From Surface 330
+  Wall:180,                               !- To Surface 330
+  0.049275400800738,                      !- View Factor 330
+  inferred conditioned ceiling,           !- From Surface 331
+  Window_Wall_south,                      !- To Surface 331
+  0.0113016974313619,                     !- View Factor 331
+  inferred conditioned ceiling,           !- From Surface 332
+  surface Window_Wall_south,              !- To Surface 332
+  1.2018614763093e-05,                    !- View Factor 332
+  inferred conditioned ceiling,           !- From Surface 333
+  inferred conditioned floor,             !- To Surface 333
+  0.125574415904021,                      !- View Factor 333
+  inferred conditioned ceiling,           !- From Surface 334
+  Wall:0,                                 !- To Surface 334
+  0.0492754008007379,                     !- View Factor 334
+  inferred conditioned ceiling,           !- From Surface 335
+  living Living Partition,                !- To Surface 335
+  0.251148831808042,                      !- View Factor 335
+  inferred conditioned ceiling,           !- From Surface 336
+  furniture mass living living,           !- To Surface 336
+  0.251148831808042,                      !- View Factor 336
+  living Living Partition,                !- From Surface 337
+  DoorSouth,                              !- To Surface 337
+  0.00223288095929317,                    !- View Factor 337
+  living Living Partition,                !- From Surface 338
+  FloorBelowAttic,                        !- To Surface 338
+  0.13397285755759,                       !- View Factor 338
+  living Living Partition,                !- From Surface 339
+  Window_Wall_west,                       !- To Surface 339
+  0.0120575571801831,                     !- View Factor 339
+  living Living Partition,                !- From Surface 340
+  surface Window_Wall_west,               !- To Surface 340
+  1.28224220841775e-05,                   !- View Factor 340
+  living Living Partition,                !- From Surface 341
+  Wall:270,                               !- To Surface 341
+  0.0525709493055985,                     !- View Factor 341
+  living Living Partition,                !- From Surface 342
+  FloorAboveCrawlspace,                   !- To Surface 342
+  0.13397285755759,                       !- View Factor 342
+  living Living Partition,                !- From Surface 343
+  Wall:90,                                !- To Surface 343
+  0.0525709493055984,                     !- View Factor 343
+  living Living Partition,                !- From Surface 344
+  Window_Wall_east,                       !- To Surface 344
+  0.0120575571801831,                     !- View Factor 344
+  living Living Partition,                !- From Surface 345
+  surface Window_Wall_east,               !- To Surface 345
+  1.28224220841775e-05,                   !- View Factor 345
+  living Living Partition,                !- From Surface 346
+  Wall:180,                               !- To Surface 346
+  0.0525709493055985,                     !- View Factor 346
+  living Living Partition,                !- From Surface 347
+  Window_Wall_south,                      !- To Surface 347
+  0.0120575571801831,                     !- View Factor 347
+  living Living Partition,                !- From Surface 348
+  surface Window_Wall_south,              !- To Surface 348
+  1.28224220841775e-05,                   !- View Factor 348
+  living Living Partition,                !- From Surface 349
+  inferred conditioned floor,             !- To Surface 349
+  0.13397285755759,                       !- View Factor 349
+  living Living Partition,                !- From Surface 350
+  inferred conditioned ceiling,           !- To Surface 350
+  0.13397285755759,                       !- View Factor 350
+  living Living Partition,                !- From Surface 351
+  furniture mass living living,           !- To Surface 351
+  0.26794571511518,                       !- View Factor 351
+  furniture mass living living,           !- From Surface 352
+  DoorSouth,                              !- To Surface 352
+  0.00223288095929317,                    !- View Factor 352
+  furniture mass living living,           !- From Surface 353
+  FloorBelowAttic,                        !- To Surface 353
+  0.13397285755759,                       !- View Factor 353
+  furniture mass living living,           !- From Surface 354
+  Window_Wall_west,                       !- To Surface 354
+  0.0120575571801831,                     !- View Factor 354
+  furniture mass living living,           !- From Surface 355
+  surface Window_Wall_west,               !- To Surface 355
+  1.28224220841775e-05,                   !- View Factor 355
+  furniture mass living living,           !- From Surface 356
+  Wall:270,                               !- To Surface 356
+  0.0525709493055985,                     !- View Factor 356
+  furniture mass living living,           !- From Surface 357
+  FloorAboveCrawlspace,                   !- To Surface 357
+  0.13397285755759,                       !- View Factor 357
+  furniture mass living living,           !- From Surface 358
+  Wall:90,                                !- To Surface 358
+  0.0525709493055984,                     !- View Factor 358
+  furniture mass living living,           !- From Surface 359
+  Window_Wall_east,                       !- To Surface 359
+  0.0120575571801831,                     !- View Factor 359
+  furniture mass living living,           !- From Surface 360
+  surface Window_Wall_east,               !- To Surface 360
+  1.28224220841775e-05,                   !- View Factor 360
+  furniture mass living living,           !- From Surface 361
+  Wall:180,                               !- To Surface 361
+  0.0525709493055985,                     !- View Factor 361
+  furniture mass living living,           !- From Surface 362
+  Window_Wall_south,                      !- To Surface 362
+  0.0120575571801831,                     !- View Factor 362
+  furniture mass living living,           !- From Surface 363
+  surface Window_Wall_south,              !- To Surface 363
+  1.28224220841775e-05,                   !- View Factor 363
+  furniture mass living living,           !- From Surface 364
+  inferred conditioned floor,             !- To Surface 364
+  0.13397285755759,                       !- View Factor 364
+  furniture mass living living,           !- From Surface 365
+  inferred conditioned ceiling,           !- To Surface 365
+  0.13397285755759,                       !- View Factor 365
+  furniture mass living living,           !- From Surface 366
+  living Living Partition,                !- To Surface 366
+  0.26794571511518;                       !- View Factor 366
+
 Exterior:Lights,
   exterior lighting,                      !- Name
   lighting schedule,                      !- Schedule Name
@@ -18119,11 +19369,11 @@ Curve:Biquadratic,
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
 Output:Meter:MeterFileOnly,
-  Gas:Facility,                           !- Key Name
+  Electricity:Facility,                   !- Key Name
   hourly;                                 !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Electricity:Facility,                   !- Key Name
+  Gas:Facility,                           !- Key Name
   hourly;                                 !- Reporting Frequency
 
 Output:Variable,

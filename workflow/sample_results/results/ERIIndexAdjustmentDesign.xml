@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-10-18T18:59:40-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-10-24T09:57:27-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -258,7 +258,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem1'/>
-              <DistributionSystem idref='HVACDistribution_DSE_80'/>
+              <DistributionSystem idref='HVACDistribution_DSE1'/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
@@ -272,7 +272,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
-              <DistributionSystem idref='HVACDistribution_DSE_80'/>
+              <DistributionSystem idref='HVACDistribution_DSE2'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>-1.0</CoolingCapacity>
@@ -288,7 +288,15 @@
             <ControlType>manual thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
-            <SystemIdentifier id='HVACDistribution_DSE_80'/>
+            <SystemIdentifier id='HVACDistribution_DSE1'/>
+            <DistributionSystemType>
+              <Other>DSE</Other>
+            </DistributionSystemType>
+            <AnnualHeatingDistributionSystemEfficiency>1.0</AnnualHeatingDistributionSystemEfficiency>
+            <AnnualCoolingDistributionSystemEfficiency>1.0</AnnualCoolingDistributionSystemEfficiency>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution_DSE2'/>
             <DistributionSystemType>
               <Other>DSE</Other>
             </DistributionSystemType>

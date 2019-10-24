@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.18 18:59,
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.24 09:57,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Constant="ALWAYS ON CONTINUOUS", Blank Schedule Type Limits Name input -- will not be validated.
@@ -8,24 +8,16 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.18 18:59,
    ** Warning ** CalculateZoneVolume: 3 zones are not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
    ** Warning ** CheckUsedConstructions: There are 1 nominally unused constructions in input.
    **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
-   ** Warning ** Surfaces in Zone/Enclosure="UNVENTED ATTIC" do not define an enclosure.
-   **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
-   **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
-   **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
-   **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
-   **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
+   ** Warning ** GetInputViewFactors: ComplexFenestrationProperty:SolarAbsorbedLayers="LIVING", not enough values.
+   **   ~~~   ** ...Number of input values [366] is less than the required number=[484] Missing surface pairs will have a zero view factor.
    ** Warning ** Surfaces in Zone/Enclosure="VENTED CRAWLSPACE" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
-   ** Warning ** Surfaces in Zone/Enclosure="UNVENTED ATTIC" do not define an enclosure.
-   **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
-   **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
-   **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
-   **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
-   **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
+   ** Warning ** GetInputViewFactors: Output:DaylightFactors="LIVING", not enough values.
+   **   ~~~   ** ...Number of input values [366] is less than the required number=[484] Missing surface pairs will have a zero view factor.
    ** Warning ** Surfaces in Zone/Enclosure="VENTED CRAWLSPACE" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
@@ -43,25 +35,37 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.18 18:59,
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 01/18 20:00 - 21:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 02/13 19:00 - 20:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on each max iteration exceeded.
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 01/23 10:00 - 11:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 03/28 08:00 - 09:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 03/23 09:00 - 10:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 03/28 22:00 - 23:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.808E-005 m3/s/W.
+   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.813E-005 m3/s/W.
    **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=04/19 15:00 - 16:00
    **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
    **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/10 00:00 - 01:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/24 15:00 - 16:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 11/07 21:00 - 22:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 05/16 09:00 - 10:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 12/16 11:00 - 12:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 06/20 02:00 - 03:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 07/16 02:00 - 03:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/08 21:00 - 22:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/10 02:00 - 03:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/28 12:00 - 13:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 11/07 00:00 - 01:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 11/30 16:00 - 17:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 12/02 00:00 - 01:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 12/10 13:00 - 14:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-ELECTRICITY" has no energy cost. 
    **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
@@ -101,10 +105,10 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.18 18:59,
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 23958 total times;
+   *************  **   ~~~   **   This error occurred 27136 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.010434E-005  Min=6.738505E-005
+   *************  **   ~~~   **   Max=7.010363E-005  Min=6.742762E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -116,4 +120,4 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.18 18:59,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 23982 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  6.58sec
+   ************* EnergyPlus Completed Successfully-- 27166 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.54sec

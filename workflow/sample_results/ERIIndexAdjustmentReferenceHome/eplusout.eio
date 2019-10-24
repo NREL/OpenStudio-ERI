@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.18 18:59
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.10.24 09:57
 ! <Version>, Version ID
  Version, 9.2
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -63,17 +63,17 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
 ! <Shading Summary>, Number of Fixed Detached Shades, Number of Building Detached Shades, Number of Attached Shades
  Shading Summary,0,0,0
 ! <Zone Summary>, Number of Zones, Number of Zone Surfaces, Number of SubSurfaces
- Zone Summary,3,22,5
+ Zone Summary,3,32,5
 ! <Zone Information>,Zone Name,North Axis {deg},Origin X-Coordinate {m},Origin Y-Coordinate {m},Origin Z-Coordinate {m},Centroid X-Coordinate {m},Centroid Y-Coordinate {m},Centroid Z-Coordinate {m},Type,Zone Multiplier,Zone List Multiplier,Minimum X {m},Maximum X {m},Minimum Y {m},Maximum Y {m},Minimum Z {m},Maximum Z {m},Ceiling Height {m},Volume {m3},Zone Inside Convection Algorithm {Simple-Detailed-CeilingDiffuser-TrombeWall},Zone Outside Convection Algorithm {Simple-Detailed-Tarp-MoWitt-DOE-2-BLAST}, Floor Area {m2},Exterior Gross Wall Area {m2},Exterior Net Wall Area {m2},Exterior Window Area {m2}, Number of Surfaces, Number of SubSurfaces, Number of Shading SubSurfaces,  Part of Total Building Area
- Zone Information, LIVING,0.0,0.00,0.00,0.00,-10.48,17.80,2.91,1,1,1,-55.13,55.13,-55.13,55.13,0.61,5.49,3.66,577.66,TARP,DOE-2,222.97,218.88,175.03,40.13,9,5,0,Yes
- Zone Information, VENTED ATTIC,0.0,0.00,0.00,0.00,-2.33,29.13,6.38,1,1,1,-54.20,11.97,-5.28,55.13,0.61,10.40,2.46,98.09,TARP,DOE-2,111.48,26.94,26.94,0.00,3,0,0,Yes
- Zone Information, VENTED CRAWLSPACE,0.0,0.00,0.00,0.00,3.52,5.71,0.30,1,1,1,-5.28,55.13,-5.28,55.13,0.00,0.61,0.61,67.96,TARP,DOE-2,111.48,0.00,0.00,0.00,3,0,0,Yes
+ Zone Information, LIVING,0.0,0.00,0.00,0.00,-3.78,0.20,2.93,1,1,1,-35.48,35.48,-35.48,35.48,0.61,5.49,2.44,577.66,TARP,DOE-2,222.97,218.88,175.03,40.13,13,5,0,Yes
+ Zone Information, VENTED ATTIC,0.0,0.00,0.00,0.00,-6.22,-3.17E-007,6.38,1,1,1,-35.48,35.48,-35.48,35.48,0.61,10.40,2.46,98.09,TARP,DOE-2,111.48,26.94,26.94,0.00,9,0,0,Yes
+ Zone Information, VENTED CRAWLSPACE,0.0,0.00,0.00,0.00,1.49,3.67,0.30,1,1,1,-6.75,35.48,-5.28,35.48,0.00,0.61,0.61,67.96,TARP,DOE-2,111.48,0.00,0.00,0.00,3,0,0,Yes
 ! <Zone Internal Gains Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
  Zone Internal Gains Nominal, LIVING,222.97,3.0,74.322,1.345E-002,3.207,142.428,0.000,0.372,0.000,0.000,146.007,No
  Zone Internal Gains Nominal, VENTED ATTIC,111.48,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
  Zone Internal Gains Nominal, VENTED CRAWLSPACE,111.48,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
 ! <People Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Number of People {},People/Floor Area {person/m2},Floor Area per person {m2/person},Fraction Radiant,Fraction Convected,Sensible Fraction Calculation,Activity level,ASHRAE 55 Warnings,Carbon Dioxide Generation Rate,Nominal Minimum Number of People,Nominal Maximum Number of People
- People Internal Gains Nominal, OCCUPANTS|LIVING,OCCUPANTS SCHEDULE,LIVING,222.97,3.0,3.0,1.345E-002,74.322,0.314,0.686,0.563,SCHEDULE RULESET 1,No,0.0000,0,3
+ People Internal Gains Nominal, OCCUPANTS,OCCUPANTS SCHEDULE,LIVING,222.97,3.0,3.0,1.345E-002,74.322,0.314,0.686,0.563,SCHEDULE RULESET 1,No,0.0000,0,3
 ! <Lights Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Lighting Level {W},Lights/Floor Area {W/m2},Lights per person {W/person},Fraction Return Air,Fraction Radiant,Fraction Short Wave,Fraction Convected,Fraction Replaceable,End-Use Category,Nominal Minimum Lighting Level {W},Nominal Maximum Lighting Level {W}
  Lights Internal Gains Nominal, INTERIOR LIGHTING,LIGHTING SCHEDULE,LIVING,222.97,3.0,715.057,3.207,238.352,0.000,0.600,0.200,0.200,1.000,interior lighting,0.000,715.057
 ! <ElectricEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,End-Use SubCategory,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
@@ -107,18 +107,18 @@ RoomAir Model,VENTED CRAWLSPACE,Mixing/Well-Stirred
 ! <AirflowNetwork Model:Control>, No Multizone or Distribution/Multizone with Distribution/Multizone without Distribution/Multizone with Distribution only during Fan Operation
 AirflowNetwork Model:Control,NoMultizoneOrDistribution
 ! <Component Sizing Information>, Component Type, Component Name, Input Field Description, Value
- Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, CENTRAL AC LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.33308
+ Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, CENTRAL AC LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.35179
  Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, FURNACE LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.30770
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.33308
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.33308
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 4973.99635
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.35179
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.35179
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 5253.46801
  Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
- Component Sizing Information, Fan:OnOff, CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.33308
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Rated Air Flow Rate [m3/s], 0.25772
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 4973.99635
+ Component Sizing Information, Fan:OnOff, CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.35180
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Rated Air Flow Rate [m3/s], 0.27220
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 5253.46801
  Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Sensible Heat Ratio, 0.74040
 ! <DX Cooling Coil Standard Rating Information>, Component Type, Component Name, Standard Rating (Net) Cooling Capacity {W}, Standard Rated Net COP {W/W}, EER {Btu/W-h}, SEER {Btu/W-h}, IEER {Btu/W-h}
- DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, 4743.7, 3.28, 11.19, 13.25, 12.20
+ DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, 5010.3, 3.28, 11.19, 13.25, 12.20
  Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.30770
  Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.30770
  Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 8653.89887
@@ -139,9 +139,9 @@ Environment:WarmupDays,  6
 ! <Tabular Report>,Style,Unit Conversion
 Tabular Report,HTML,None
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.0006810195E-013,1.1165014701E-013,Pass,Pass,0.1287621875,0.1371283825,Pass,Pass
- Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7442630918,1.8056740853,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
- Warmup Convergence Information,VENTED CRAWLSPACE,RunPeriod: RUN PERIOD 1,0.4129498371,0.3717054960,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.0080825064E-013,6.8035568467E-014,Pass,Pass,0.1424442424,0.1448143098,Pass,Pass
+ Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7705553475,1.8069118852,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,VENTED CRAWLSPACE,RunPeriod: RUN PERIOD 1,0.4128839137,0.3717886581,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

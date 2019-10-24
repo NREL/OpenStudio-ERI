@@ -69,7 +69,22 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=WALL is used as Receiving Surface in calculations and is convex.
+Surface=WALL:0 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=WALL:180 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=WALL:270 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=WALL:90 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
@@ -89,17 +104,37 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=FURNITURE MASS LIVING is not used as Receiving Surface in calculations.
+Surface=INFERRED CONDITIONED CEILING is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=LIVING PARTITION is not used as Receiving Surface in calculations.
+Surface=FURNITURE MASS LIVING LIVING is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=WALLATTICGABLE is used as Receiving Surface in calculations and is convex.
+Surface=LIVING LIVING PARTITION is not used as Receiving Surface in calculations.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=WALLATTICGABLE:0 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=WALLATTICGABLE:180 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=WALLATTICGABLE:270 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=WALLATTICGABLE:90 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
@@ -109,7 +144,22 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=ROOF is used as Receiving Surface in calculations and is convex.
+Surface=ROOF:0 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=ROOF:180 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=ROOF:270 is used as Receiving Surface in calculations and is convex.
+Number of general casting surfaces=0
+Number of back surfaces=0
+Number of receiving sub surfaces=0
+==================================
+Surface=ROOF:90 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
