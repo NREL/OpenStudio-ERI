@@ -32,6 +32,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.apply_reference_home_ruleset(hpxml_doc)
     orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+    HPXML.collapse_enclosure(orig_details.elements["Enclosure"])
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
@@ -82,6 +83,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.apply_rated_home_ruleset(hpxml_doc)
     orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+    HPXML.collapse_enclosure(orig_details.elements["Enclosure"])
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
@@ -132,6 +134,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.apply_index_adjustment_design_ruleset(hpxml_doc)
     orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
+    HPXML.collapse_enclosure(orig_details.elements["Enclosure"])
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
