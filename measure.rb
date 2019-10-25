@@ -223,10 +223,6 @@ end
 
 class OSModel
   def self.create(hpxml_doc, runner, model, weather, map_tsv_dir)
-    # Simulation parameters
-    success = add_simulation_params(runner, model)
-    return false if not success
-
     hpxml = hpxml_doc.elements["HPXML"]
     hpxml_values = HPXML.get_hpxml_values(hpxml: hpxml)
     building = hpxml_doc.elements["/HPXML/Building"]
@@ -234,6 +230,8 @@ class OSModel
 
     @eri_version = hpxml_values[:eri_calculation_version]
     fail "Could not find ERI Version" if @eri_version.nil?
+
+    HPXML.collapse_enclosure(enclosure)
 
     # Global variables
     construction_values = HPXML.get_building_construction_values(building_construction: building.elements["BuildingDetails/BuildingSummary/BuildingConstruction"])
@@ -272,6 +270,11 @@ class OSModel
     if not construction_values[:use_only_ideal_air_system].nil?
       @use_only_ideal_air = construction_values[:use_only_ideal_air_system]
     end
+
+    # Simulation parameters
+
+    success = add_simulation_params(runner, model)
+    return false if not success
 
     # Geometry/Envelope
 
@@ -1406,19 +1409,15 @@ class OSModel
       end
 
       # Calculate combinations of slabs/walls for each Kiva instance
-      kiva_instances, kiva_slabs = get_kiva_instances(fnd_walls, slabs)
+      kiva_instances = get_kiva_instances(fnd_walls, slabs)
 
       # Obtain some wall/slab information
-      fnd_wall_gross_areas = {}
-      fnd_wall_net_areas = {}
       fnd_wall_lengths = {}
       fnd_walls.each_with_index do |fnd_wall, fnd_wall_idx|
         fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
         next unless fnd_wall_values[:exterior_adjacent_to] == "ground"
 
-        fnd_wall_gross_areas[fnd_wall] = fnd_wall_values[:area]
-        fnd_wall_net_areas[fnd_wall] = net_surface_area(fnd_wall_values[:area], fnd_wall_values[:id], "Wall")
-        fnd_wall_lengths[fnd_wall] = fnd_wall_gross_areas[fnd_wall] / fnd_wall_values[:height]
+        fnd_wall_lengths[fnd_wall] = fnd_wall_values[:area] / fnd_wall_values[:height]
       end
       slab_exp_perims = {}
       slab_areas = {}
@@ -1433,72 +1432,61 @@ class OSModel
 
       no_wall_slab_exp_perim = {}
 
-      kiva_instances.each do |fnd_walls_list, kiva_slabs_list|
+      kiva_instances.each do |fnd_wall, slab|
         kiva_foundation = nil
 
         # Apportion referenced walls/slabs for this Kiva instance
-        kiva_slab_exp_perim = kiva_slabs_list.flatten.map { |e| slab_exp_perims[e] }.inject(0, :+)
-        kiva_slab_area = kiva_slabs_list.flatten.map { |e| slab_areas[e] }.inject(0, :+)
-        kiva_fnd_wall_length = fnd_walls_list.flatten.map { |e| fnd_wall_lengths[e] }.inject(0, :+)
-        kiva_fnd_wall_net_area = fnd_walls_list.flatten.map { |e| fnd_wall_net_areas[e] }.inject(0, :+)
-        kiva_fnd_wall_gross_area = fnd_walls_list.flatten.map { |e| fnd_wall_gross_areas[e] }.inject(0, :+)
-        slab_frac = kiva_slab_exp_perim / total_slab_exp_perim
+        slab_frac = slab_exp_perims[slab] / total_slab_exp_perim
         if total_fnd_wall_length > 0
-          fnd_wall_frac = kiva_fnd_wall_length / total_fnd_wall_length
+          fnd_wall_frac = fnd_wall_lengths[fnd_wall] / total_fnd_wall_length
         else
           fnd_wall_frac = 1.0 # Handle slab foundation type
         end
 
-        if not fnd_walls_list.empty?
-          # Add single combined exterior foundation wall surface (for similar surfaces)
-          fnd_wall = fnd_walls_list[0]
+        if not fnd_wall.nil?
+          # Add exterior foundation wall surface
           fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
-          combined_wall_net_area = kiva_fnd_wall_net_area * slab_frac
-          combined_wall_gross_area = kiva_fnd_wall_gross_area * slab_frac
-          kiva_foundation = add_foundation_wall(runner, model, spaces, fnd_wall_values, combined_wall_net_area, combined_wall_gross_area,
+          kiva_foundation = add_foundation_wall(runner, model, spaces, fnd_wall_values, slab_frac,
                                                 total_fnd_wall_length, total_slab_exp_perim, kiva_foundation)
           return false if kiva_foundation.nil?
         end
 
         # Add single combined foundation slab surface (for similar surfaces)
-        slab = kiva_slabs_list[0]
         slab_values = HPXML.get_slab_values(slab: slab)
-        combined_slab_exp_perim = kiva_slab_exp_perim * fnd_wall_frac
-        combined_slab_area = kiva_slab_area * fnd_wall_frac
+        slab_exp_perim = slab_exp_perims[slab] * fnd_wall_frac
+        slab_area = slab_areas[slab] * fnd_wall_frac
         no_wall_slab_exp_perim[slab] = 0.0 if no_wall_slab_exp_perim[slab].nil?
-        if not fnd_walls_list.empty? and combined_slab_exp_perim > kiva_fnd_wall_length * slab_frac
+        if not fnd_wall.nil? and slab_exp_perim > fnd_wall_lengths[fnd_wall] * slab_frac
           # Keep track of no-wall slab exposed perimeter
-          no_wall_slab_exp_perim[slab] += (combined_slab_exp_perim - kiva_fnd_wall_length * slab_frac)
+          no_wall_slab_exp_perim[slab] += (slab_exp_perim - fnd_wall_lengths[fnd_wall] * slab_frac)
 
           # Reduce this slab's exposed perimeter so that EnergyPlus does not automatically
           # create a second no-wall Kiva instance for each of our Kiva instances.
           # Instead, we will later create our own Kiva instance to account for it.
           # This reduces the number of Kiva instances we end up with.
-          exp_perim_frac = (kiva_fnd_wall_length * slab_frac) / combined_slab_exp_perim
-          combined_slab_exp_perim *= exp_perim_frac
-          combined_slab_area *= exp_perim_frac
+          exp_perim_frac = (fnd_wall_lengths[fnd_wall] * slab_frac) / slab_exp_perim
+          slab_exp_perim *= exp_perim_frac
+          slab_area *= exp_perim_frac
         end
-        if not fnd_walls_list.empty?
+        if not fnd_wall.nil?
           z_origin = -1 * fnd_wall_values[:depth_below_grade] # Position based on adjacent foundation walls
         else
           z_origin = -1 * slab_values[:depth_below_grade]
         end
-        kiva_foundation = add_foundation_slab(runner, model, spaces, slab_values, combined_slab_exp_perim,
-                                              combined_slab_area, z_origin, kiva_foundation)
+        kiva_foundation = add_foundation_slab(runner, model, spaces, slab_values, slab_exp_perim,
+                                              slab_area, z_origin, kiva_foundation)
         return false if kiva_foundation.nil?
       end
 
-      # For each slab list, create a no-wall Kiva slab instance if needed.
-      kiva_slabs.each do |kiva_slabs_list|
-        # Single combined foundation slab surface
-        slab = kiva_slabs_list[0]
+      # For each slab, create a no-wall Kiva slab instance if needed.
+      slabs.each do |slab|
         next unless no_wall_slab_exp_perim[slab] > 0.1
 
         slab_values = HPXML.get_slab_values(slab: slab)
         z_origin = 0
-        combined_slab_area = total_slab_area * no_wall_slab_exp_perim[slab] / total_slab_exp_perim
+        slab_area = total_slab_area * no_wall_slab_exp_perim[slab] / total_slab_exp_perim
         kiva_foundation = add_foundation_slab(runner, model, spaces, slab_values, no_wall_slab_exp_perim[slab],
-                                              combined_slab_area, z_origin, nil)
+                                              slab_area, z_origin, nil)
         return false if kiva_foundation.nil?
       end
 
@@ -1556,13 +1544,15 @@ class OSModel
     end
   end
 
-  def self.add_foundation_wall(runner, model, spaces, fnd_wall_values, combined_wall_net_area, combined_wall_gross_area,
+  def self.add_foundation_wall(runner, model, spaces, fnd_wall_values, slab_frac,
                                total_fnd_wall_length, total_slab_exp_perim, kiva_foundation)
 
+    net_area = net_surface_area(fnd_wall_values[:area], fnd_wall_values[:id], "Wall") * slab_frac
+    gross_area = fnd_wall_values[:area] * slab_frac
     height = fnd_wall_values[:height]
     height_ag = height - fnd_wall_values[:depth_below_grade]
     z_origin = -1 * fnd_wall_values[:depth_below_grade]
-    length = combined_wall_gross_area / height
+    length = gross_area / height
     if fnd_wall_values[:azimuth].nil?
       azimuth = @default_azimuths[0] # Arbitrary; solar incidence in Kiva is applied as an orientation average (to the above grade portion of the wall)
     else
@@ -1574,10 +1564,10 @@ class OSModel
       length *= total_slab_exp_perim / total_fnd_wall_length
     end
 
-    if combined_wall_gross_area > combined_wall_net_area
+    if gross_area > net_area
       # Create a "notch" in the wall to account for the subsurfaces. This ensures that
       # we preserve the appropriate wall height, length, and area for Kiva.
-      subsurface_area = combined_wall_gross_area - combined_wall_net_area
+      subsurface_area = gross_area - net_area
     else
       subsurface_area = 0
     end
@@ -1637,15 +1627,15 @@ class OSModel
   end
 
   def self.add_foundation_slab(runner, model, spaces, slab_values, slab_exp_perim,
-                               combined_slab_area, z_origin, kiva_foundation)
+                               slab_area, z_origin, kiva_foundation)
 
     slab_tot_perim = slab_exp_perim
-    if slab_tot_perim**2 - 16.0 * combined_slab_area <= 0
+    if slab_tot_perim**2 - 16.0 * slab_area <= 0
       # Cannot construct rectangle with this perimeter/area. Some of the
       # perimeter is presumably not exposed, so bump up perimeter value.
-      slab_tot_perim = Math.sqrt(16.0 * combined_slab_area)
+      slab_tot_perim = Math.sqrt(16.0 * slab_area)
     end
-    sqrt_term = [slab_tot_perim**2 - 16.0 * combined_slab_area, 0.0].max
+    sqrt_term = [slab_tot_perim**2 - 16.0 * slab_area, 0.0].max
     slab_length = slab_tot_perim / 4.0 + Math.sqrt(sqrt_term) / 4.0
     slab_width = slab_tot_perim / 4.0 - Math.sqrt(sqrt_term) / 4.0
 
@@ -3293,20 +3283,20 @@ class OSModel
     side_map = { 'supply' => Constants.DuctSideSupply,
                  'return' => Constants.DuctSideReturn }
 
-    # Duct leakage
-    leakage_to_outside_cfm25 = { Constants.DuctSideSupply => 0.0,
-                                 Constants.DuctSideReturn => 0.0 }
+    # Duct leakage (supply/return => [value, units])
+    leakage_to_outside = { Constants.DuctSideSupply => [0.0, nil],
+                           Constants.DuctSideReturn => [0.0, nil] }
     air_distribution.elements.each("DuctLeakageMeasurement") do |duct_leakage_measurement|
       duct_leakage_values = HPXML.get_duct_leakage_measurement_values(duct_leakage_measurement: duct_leakage_measurement)
-      next unless duct_leakage_values[:duct_leakage_units] == "CFM25" and duct_leakage_values[:duct_leakage_total_or_to_outside] == "to outside"
+      next unless ['CFM25', 'Percent'].include? duct_leakage_values[:duct_leakage_units] and duct_leakage_values[:duct_leakage_total_or_to_outside] == "to outside"
 
       duct_side = side_map[duct_leakage_values[:duct_type]]
       next if duct_side.nil?
 
-      leakage_to_outside_cfm25[duct_side] = duct_leakage_values[:duct_leakage_value]
+      leakage_to_outside[duct_side] = [duct_leakage_values[:duct_leakage_value], duct_leakage_values[:duct_leakage_units]]
     end
 
-    # Duct location, Rvalue, Area
+    # Duct location, R-value, Area
     total_unconditioned_duct_area = { Constants.DuctSideSupply => 0.0,
                                       Constants.DuctSideReturn => 0.0 }
     air_distribution.elements.each("Ducts") do |ducts|
@@ -3331,21 +3321,39 @@ class OSModel
       duct_area = ducts_values[:duct_surface_area]
       duct_space = get_space_from_location(ducts_values[:duct_location], "Duct", model, spaces)
       # Apportion leakage to individual ducts by surface area
-      duct_leakage_cfm = (leakage_to_outside_cfm25[duct_side] * duct_area / total_unconditioned_duct_area[duct_side])
+      duct_leakage_value = leakage_to_outside[duct_side][0] * duct_area / total_unconditioned_duct_area[duct_side]
+      duct_leakage_units = leakage_to_outside[duct_side][1]
 
-      air_ducts << Duct.new(duct_side, duct_space, nil, duct_leakage_cfm, duct_area, ducts_values[:duct_insulation_r_value])
+      duct_leakage_cfm = nil
+      duct_leakage_frac = nil
+      if duct_leakage_units == 'CFM25'
+        duct_leakage_cfm = duct_leakage_value
+      elsif duct_leakage_units == 'Percent'
+        duct_leakage_frac = duct_leakage_value
+      end
+
+      air_ducts << Duct.new(duct_side, duct_space, duct_leakage_frac, duct_leakage_cfm, duct_area, ducts_values[:duct_insulation_r_value])
     end
 
     # If all ducts are in conditioned space, model leakage as going to outside
     [Constants.DuctSideSupply, Constants.DuctSideReturn].each do |duct_side|
-      next unless leakage_to_outside_cfm25[duct_side] > 0 and total_unconditioned_duct_area[duct_side] == 0
+      next unless leakage_to_outside[duct_side][0] > 0 and total_unconditioned_duct_area[duct_side] == 0
 
       duct_area = 0.0
       duct_rvalue = 0.0
       duct_space = nil # outside
-      duct_leakage_cfm = leakage_to_outside_cfm25[duct_side]
+      duct_leakage_value = leakage_to_outside[duct_side][0]
+      duct_leakage_units = leakage_to_outside[duct_side][1]
 
-      air_ducts << Duct.new(duct_side, duct_space, nil, duct_leakage_cfm, duct_area, duct_rvalue)
+      duct_leakage_cfm = nil
+      duct_leakage_frac = nil
+      if duct_leakage_units == 'CFM25'
+        duct_leakage_cfm = duct_leakage_value
+      elsif duct_leakage_units == 'Percent'
+        duct_leakage_frac = duct_leakage_value
+      end
+
+      air_ducts << Duct.new(duct_side, duct_space, duct_leakage_frac, duct_leakage_cfm, duct_area, duct_rvalue)
     end
 
     return air_ducts
@@ -4106,62 +4114,23 @@ class OSModel
 
   def self.get_kiva_instances(fnd_walls, slabs)
     # Identify unique Kiva foundations that are required.
-    # Some foundation walls or slabs with similar properties can share a Kiva foundation instance.
     kiva_fnd_walls = []
     fnd_walls.each_with_index do |fnd_wall, fnd_wall_idx|
       fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
       next unless fnd_wall_values[:exterior_adjacent_to] == "ground"
-      next if kiva_fnd_walls.flatten.include? fnd_wall # Skip if already processed
 
-      kiva_fnd_walls << [fnd_wall]
-
-      # Identify any other foundation walls that can share the Kiva foundation.
-      fnd_walls[fnd_wall_idx + 1..-1].each do |fnd_wall2|
-        next if kiva_fnd_walls.flatten.include? fnd_wall2 # Skip if already processed
-
-        fnd_wall_values2 = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall2)
-        # Note: Azimuth is intentionally excluded. For Kiva, azimuth does not influence results, so we combine
-        # foundation walls of different azimuths to reduce runtime.
-        next unless fnd_wall_values2[:exterior_adjacent_to] == fnd_wall_values[:exterior_adjacent_to]
-        next unless fnd_wall_values2[:height] == fnd_wall_values[:height]
-        next unless fnd_wall_values2[:thickness] == fnd_wall_values[:thickness]
-        next unless fnd_wall_values2[:depth_below_grade] == fnd_wall_values[:depth_below_grade]
-        next unless fnd_wall_values2[:insulation_distance_to_bottom] == fnd_wall_values[:insulation_distance_to_bottom]
-        next unless fnd_wall_values2[:insulation_r_value] == fnd_wall_values[:insulation_r_value]
-        next unless fnd_wall_values2[:insulation_assembly_r_value] == fnd_wall_values[:insulation_assembly_r_value]
-
-        kiva_fnd_walls[-1] << fnd_wall2
-      end
+      kiva_fnd_walls << fnd_wall
     end
     if kiva_fnd_walls.empty? # Handle slab foundation type
-      kiva_fnd_walls << []
+      kiva_fnd_walls << nil
     end
 
     kiva_slabs = []
     slabs.each_with_index do |slab, slab_idx|
       slab_values = HPXML.get_slab_values(slab: slab)
-      next if kiva_slabs.flatten.include? slab # Skip if already processed
-
-      kiva_slabs << [slab]
-
-      # Identify any other foundation slabs that can share the Kiva foundation.
-      slabs[slab_idx + 1..-1].each do |slab2|
-        next if kiva_slabs.flatten.include? slab2 # Skip if already processed
-
-        slab_values2 = HPXML.get_slab_values(slab: slab2)
-        next unless slab_values2[:thickness] == slab_values[:thickness]
-        next unless slab_values2[:perimeter_insulation_depth] == slab_values[:perimeter_insulation_depth]
-        next unless slab_values2[:under_slab_insulation_width] == slab_values[:under_slab_insulation_width]
-        next unless slab_values2[:under_slab_insulation_spans_entire_slab] == slab_values[:under_slab_insulation_spans_entire_slab]
-        next unless slab_values2[:carpet_fraction] == slab_values[:carpet_fraction]
-        next unless slab_values2[:carpet_r_value] == slab_values[:carpet_r_value]
-        next unless slab_values2[:perimeter_insulation_r_value] == slab_values[:perimeter_insulation_r_value]
-        next unless slab_values2[:under_slab_insulation_r_value] == slab_values[:under_slab_insulation_r_value]
-
-        kiva_slabs[-1] << slab2
-      end
+      kiva_slabs << slab
     end
-    return kiva_fnd_walls.product(kiva_slabs), kiva_slabs
+    return kiva_fnd_walls.product(kiva_slabs)
   end
 end
 
