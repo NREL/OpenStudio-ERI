@@ -16,6 +16,7 @@ class EnergyRatingIndex301Ruleset
     @calc_type = calc_type
 
     # Update HPXML object based on calculation type
+    HPXML.collapse_enclosure(hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure"])
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml_doc = apply_reference_home_ruleset(hpxml_doc)
     elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -32,7 +33,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.apply_reference_home_ruleset(hpxml_doc)
     orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
-    HPXML.collapse_enclosure(orig_details.elements["Enclosure"])
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
@@ -83,7 +83,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.apply_rated_home_ruleset(hpxml_doc)
     orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
-    HPXML.collapse_enclosure(orig_details.elements["Enclosure"])
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
@@ -134,7 +133,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.apply_index_adjustment_design_ruleset(hpxml_doc)
     orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
-    HPXML.collapse_enclosure(orig_details.elements["Enclosure"])
     hpxml_doc = create_new_doc(hpxml_doc)
     hpxml = hpxml_doc.elements["HPXML"]
 
@@ -469,15 +467,41 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_roofs_reference(orig_details, hpxml)
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
     # Table 4.2.2(1) - Roofs
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+
+    roofs_values = {}
     orig_details.elements.each("Enclosure/Roofs/Roof") do |roof|
-      roof_values = HPXML.get_roof_values(roof: roof)
-      roof_values[:solar_absorptance] = 0.75
-      roof_values[:emittance] = 0.90
-      if is_thermal_boundary(roof_values)
-        roof_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
-      end
+      roofs_values[roof] = HPXML.get_roof_values(roof: roof)
+    end
+
+    sum_gross_area = calc_sum_of_thermal_boundary_values(roofs_values.values)
+    avg_pitch = calc_area_weighted_sum_of_thermal_boundary_values(roofs_values.values, :pitch)
+    solar_abs = 0.75
+    emittance = 0.90
+
+    # Create thermal boundary roofs in each direction
+    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
+      next unless sum_gross_area > 0
+
+      HPXML.add_roof(hpxml: hpxml,
+                     id: "RoofsArea#{orientation}",
+                     interior_adjacent_to: "living space",
+                     area: sum_gross_area * 0.25,
+                     azimuth: azimuth,
+                     solar_absorptance: solar_abs,
+                     emittance: emittance,
+                     pitch: avg_pitch,
+                     radiant_barrier: false,
+                     insulation_assembly_r_value: 1.0 / ceiling_ufactor)
+    end
+
+    # Preserve non-thermal boundary roofs
+    roofs_values.each do |roof, roof_values|
+      next if is_thermal_boundary(roof_values)
+
+      roof_values[:solar_absorptance] = solar_abs
+      roof_values[:emittance] = emittance
       roof_values[:interior_adjacent_to].gsub!("unvented", "vented")
       HPXML.add_roof(hpxml: hpxml, **roof_values)
     end
@@ -494,16 +518,18 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_roofs_rated(orig_details, hpxml)
     new_enclosure = hpxml.elements["Building/BuildingDetails/Enclosure"]
 
+    roofs_values = {}
+    new_enclosure.elements.each("Roofs/Roof") do |new_roof|
+      roofs_values[new_roof] = HPXML.get_roof_values(roof: new_roof)
+    end
+
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Roofs
     sum_roof_area = 0.0
-    new_enclosure.elements.each("Roofs/Roof") do |new_roof|
-      new_roof_values = HPXML.get_roof_values(roof: new_roof)
+    roofs_values.each do |new_roof, new_roof_values|
       sum_roof_area += new_roof_values[:area]
     end
-    new_enclosure.elements.each("Roofs/Roof") do |new_roof|
-      new_roof_values = HPXML.get_roof_values(roof: new_roof)
-      roof_area = new_roof_values[:area]
-      new_roof.elements["Area"].text = 1300.0 * roof_area / sum_roof_area
+    roofs_values.each do |new_roof, new_roof_values|
+      new_roof.elements["Area"].text = 1300.0 * new_roof_values[:area] / sum_roof_area
     end
   end
 
@@ -511,13 +537,36 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Above-grade walls
     ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
+    rim_joists_values = {}
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
-      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
-      rim_joist_values[:solar_absorptance] = 0.75
-      rim_joist_values[:emittance] = 0.90
-      if is_thermal_boundary(rim_joist_values)
-        rim_joist_values[:insulation_assembly_r_value] = 1.0 / ufactor
-      end
+      rim_joists_values[rim_joist] = HPXML.get_rim_joist_values(rim_joist: rim_joist)
+    end
+
+    sum_gross_area = calc_sum_of_thermal_boundary_values(rim_joists_values.values)
+    solar_abs = 0.75
+    emittance = 0.90
+
+    # Create thermal boundary rim joists in each direction
+    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
+      next unless sum_gross_area > 0
+
+      HPXML.add_rim_joist(hpxml: hpxml,
+                          id: "RimJoistsArea#{orientation}",
+                          exterior_adjacent_to: "outside",
+                          interior_adjacent_to: "living space",
+                          area: sum_gross_area * 0.25,
+                          azimuth: azimuth,
+                          solar_absorptance: solar_abs,
+                          emittance: emittance,
+                          insulation_assembly_r_value: 1.0 / ufactor)
+    end
+
+    # Preserve non-thermal boundary rim joists
+    rim_joists_values.each do |rim_joist, rim_joist_values|
+      next if is_thermal_boundary(rim_joist_values)
+
+      rim_joist_values[:solar_absorptance] = solar_abs
+      rim_joist_values[:emittance] = emittance
       rim_joist_values[:interior_adjacent_to].gsub!("unvented", "vented")
       rim_joist_values[:exterior_adjacent_to].gsub!("unvented", "vented")
       HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
@@ -542,13 +591,37 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Above-grade walls
     ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
+    walls_values = {}
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall)
-      wall_values[:solar_absorptance] = 0.75
-      wall_values[:emittance] = 0.90
-      if is_thermal_boundary(wall_values)
-        wall_values[:insulation_assembly_r_value] = 1.0 / ufactor
-      end
+      walls_values[wall] = HPXML.get_wall_values(wall: wall)
+    end
+
+    sum_gross_area = calc_sum_of_thermal_boundary_values(walls_values.values)
+    solar_abs = 0.75
+    emittance = 0.90
+
+    # Create thermal boundary walls in each direction
+    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
+      next unless sum_gross_area > 0
+
+      HPXML.add_wall(hpxml: hpxml,
+                     id: "WallsArea#{orientation}",
+                     exterior_adjacent_to: "outside",
+                     interior_adjacent_to: "living space",
+                     wall_type: "WoodStud",
+                     area: sum_gross_area * 0.25,
+                     azimuth: azimuth,
+                     solar_absorptance: solar_abs,
+                     emittance: emittance,
+                     insulation_assembly_r_value: 1.0 / ufactor)
+    end
+
+    # Preserve non-thermal boundary walls
+    walls_values.each do |wall, wall_values|
+      next if is_thermal_boundary(wall_values)
+
+      wall_values[:solar_absorptance] = solar_abs
+      wall_values[:emittance] = emittance
       wall_values[:interior_adjacent_to].gsub!("unvented", "vented")
       wall_values[:exterior_adjacent_to].gsub!("unvented", "vented")
       HPXML.add_wall(hpxml: hpxml, **wall_values)
@@ -565,22 +638,27 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_walls_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
-    set_enclosure_walls_rated(orig_details, hpxml)
-
-    sum_wall_area = 0.0
+    walls_values = {}
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall)
-      if is_thermal_boundary(wall_values)
-        sum_wall_area += wall_values[:area]
-      end
+      walls_values[wall] = HPXML.get_wall_values(wall: wall)
     end
 
-    hpxml.elements.each("Building/BuildingDetails/Enclosure/Walls/Wall") do |new_wall|
-      new_wall_values = HPXML.get_wall_values(wall: new_wall)
-      if is_thermal_boundary(new_wall_values)
-        wall_area = new_wall_values[:area]
-        new_wall.elements["Area"].text = 2355.52 * wall_area / sum_wall_area
-      end
+    avg_solar_abs = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :solar_absorptance)
+    avg_emittance = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :emittance)
+    avg_r_value = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :insulation_assembly_r_value, true)
+
+    # Create thermal boundary walls in each direction
+    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
+      HPXML.add_wall(hpxml: hpxml,
+                     id: "WallsArea#{orientation}",
+                     exterior_adjacent_to: "outside",
+                     interior_adjacent_to: "living space",
+                     wall_type: "WoodStud",
+                     area: 2355.52 * 0.25,
+                     azimuth: azimuth,
+                     solar_absorptance: avg_solar_abs,
+                     emittance: avg_emittance,
+                     insulation_assembly_r_value: avg_r_value)
     end
   end
 
@@ -651,17 +729,20 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_ceilings_rated(orig_details, hpxml)
     new_enclosure = hpxml.elements["Building/BuildingDetails/Enclosure"]
 
+    framefloors_values = {}
+    new_enclosure.elements.each("FrameFloors/FrameFloor") do |new_framefloor|
+      framefloors_values[new_framefloor] = HPXML.get_framefloor_values(framefloor: new_framefloor)
+    end
+
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Ceilings
     sum_ceiling_area = 0.0
-    new_enclosure.elements.each("FrameFloors/FrameFloor") do |new_framefloor|
-      new_framefloor_values = HPXML.get_framefloor_values(framefloor: new_framefloor)
+    framefloors_values.each do |new_framefloor, new_framefloor_values|
       next unless hpxml_framefloor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
                                               new_framefloor_values[:exterior_adjacent_to])
 
       sum_ceiling_area += new_framefloor_values[:area]
     end
-    new_enclosure.elements.each("FrameFloors/FrameFloor") do |new_framefloor|
-      new_framefloor_values = HPXML.get_framefloor_values(framefloor: new_framefloor)
+    framefloors_values.each do |new_framefloor, new_framefloor_values|
       next unless hpxml_framefloor_is_ceiling(new_framefloor_values[:interior_adjacent_to],
                                               new_framefloor_values[:exterior_adjacent_to])
 
@@ -765,26 +846,19 @@ class EnergyRatingIndex301Ruleset
 
     total_window_area = 0.18 * @cfa * fa * f
 
-    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
-
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    # Create new windows
-    for orientation, azimuth in { "north" => 0, "south" => 180, "east" => 90, "west" => 270 }
-      window_area = 0.25 * total_window_area # Equal distribution to N/S/E/W
-      # Distribute this orientation's window area proportionally across all exterior walls
-      wall_area_fracs.each do |wall, wall_area_frac|
-        wall_id = HPXML.get_id(wall)
-        HPXML.add_window(hpxml: hpxml,
-                         id: "Window_#{wall_id}_#{orientation}",
-                         area: window_area * wall_area_frac,
-                         azimuth: azimuth,
-                         ufactor: ufactor,
-                         shgc: shgc,
-                         wall_idref: wall_id,
-                         interior_shading_factor_summer: shade_summer,
-                         interior_shading_factor_winter: shade_winter)
-      end
+    # Create windows
+    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
+      HPXML.add_window(hpxml: hpxml,
+                       id: "WindowsArea#{orientation}",
+                       area: total_window_area * 0.25,
+                       azimuth: azimuth,
+                       ufactor: ufactor,
+                       shgc: shgc,
+                       wall_idref: "WallsArea#{orientation}",
+                       interior_shading_factor_summer: shade_summer,
+                       interior_shading_factor_winter: shade_winter)
     end
   end
 
@@ -803,40 +877,27 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Glazing
     total_window_area = 0.18 * @cfa
 
-    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
-
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    # Calculate area-weighted averages
-    sum_u_a = 0.0
-    sum_shgc_a = 0.0
-    sum_a = 0.0
-    orig_details.elements.each("Enclosure/Windows/Window") do |new_window|
-      new_window_values = HPXML.get_window_values(window: new_window)
-      window_area = new_window_values[:area]
-      sum_a += window_area
-      sum_u_a += (window_area * new_window_values[:ufactor])
-      sum_shgc_a += (window_area * new_window_values[:shgc])
+    windows_values = {}
+    orig_details.elements.each("Enclosure/Windows/Window") do |window|
+      windows_values[window] = HPXML.get_window_values(window: window)
     end
-    avg_u = sum_u_a / sum_a
-    avg_shgc = sum_shgc_a / sum_a
 
-    # Create new windows
-    for orientation, azimuth in { "north" => 0, "south" => 180, "east" => 90, "west" => 270 }
-      window_area = 0.25 * total_window_area # Equal distribution to N/S/E/W
-      # Distribute this orientation's window area proportionally across all exterior walls
-      wall_area_fracs.each do |wall, wall_area_frac|
-        wall_id = HPXML.get_id(wall)
-        HPXML.add_window(hpxml: hpxml,
-                         id: "Window_#{wall_id}_#{orientation}",
-                         area: window_area * wall_area_frac,
-                         azimuth: azimuth,
-                         ufactor: avg_u,
-                         shgc: avg_shgc,
-                         wall_idref: wall_id,
-                         interior_shading_factor_summer: shade_summer,
-                         interior_shading_factor_winter: shade_winter)
-      end
+    avg_ufactor = calc_area_weighted_sum_of_thermal_boundary_values(windows_values.values, :ufactor)
+    avg_shgc = calc_area_weighted_sum_of_thermal_boundary_values(windows_values.values, :shgc)
+
+    # Create windows
+    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
+      HPXML.add_window(hpxml: hpxml,
+                       id: "WindowsArea#{orientation}",
+                       area: total_window_area * 0.25,
+                       azimuth: azimuth,
+                       ufactor: avg_ufactor,
+                       shgc: avg_shgc,
+                       wall_idref: "WallsArea#{orientation}",
+                       interior_shading_factor_summer: shade_summer,
+                       interior_shading_factor_winter: shade_winter)
     end
   end
 
@@ -863,20 +924,13 @@ class EnergyRatingIndex301Ruleset
     ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
     door_area = Constructions.get_default_door_area()
 
-    wall_area_fracs = get_exterior_wall_area_fracs(orig_details)
-
-    # Create new doors
-    # Distribute door area proportionally across all exterior walls
-    wall_area_fracs.each do |wall, wall_area_frac|
-      wall_id = HPXML.get_id(wall)
-
-      HPXML.add_door(hpxml: hpxml,
-                     id: "Door_#{wall_id}",
-                     wall_idref: wall_id,
-                     area: door_area * wall_area_frac,
-                     azimuth: 0,
-                     r_value: 1.0 / ufactor)
-    end
+    # Create new door
+    HPXML.add_door(hpxml: hpxml,
+                   id: "DoorsAreaNorth",
+                   wall_idref: "WallsAreaNorth",
+                   area: door_area,
+                   azimuth: 0,
+                   r_value: 1.0 / ufactor)
   end
 
   def self.set_enclosure_doors_rated(orig_details, hpxml)
@@ -889,16 +943,23 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
-
-    # Area is incorrect in table: should be “Area: Same as Energy Rating Reference Home”
     door_area = Constructions.get_default_door_area()
-    sum_door_area = Float(orig_details.elements["sum(Enclosure/Doors/Door/Area/text())"])
 
+    doors_values = {}
     orig_details.elements.each("Enclosure/Doors/Door") do |door|
-      door_values = HPXML.get_door_values(door: door)
-      door_values[:area] *= door_area / sum_door_area # Scale
-      HPXML.add_door(hpxml: hpxml, **door_values)
+      doors_values[door] = HPXML.get_door_values(door: door)
     end
+
+    avg_r_value = calc_area_weighted_sum_of_thermal_boundary_values(doors_values.values, :r_value, true)
+
+    # Create new door (since it's impossible to preserve door orientation from the Rated Home)
+    # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
+    HPXML.add_door(hpxml: hpxml,
+                   id: "DoorsAreaNorth",
+                   wall_idref: "WallsAreaNorth",
+                   area: door_area,
+                   azimuth: 0,
+                   r_value: avg_r_value)
   end
 
   def self.set_systems_hvac_reference(orig_details, hpxml)
@@ -1837,24 +1898,35 @@ class EnergyRatingIndex301Ruleset
   end
 end
 
-def get_exterior_wall_area_fracs(orig_details)
-  # FIXME: Review
-  # Get individual exterior wall areas and sum
-  wall_areas = {}
-  orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-    wall_values = HPXML.get_wall_values(wall: wall)
-    next if wall_values[:exterior_adjacent_to] != "outside"
-    next if wall_values[:interior_adjacent_to] != "living space"
+def calc_area_weighted_sum_of_thermal_boundary_values(surfaces_values, key, use_inverse = false)
+  sum_area = 0
+  sum_val_times_area = 0
+  surfaces_values.each do |surface_values|
+    next unless is_thermal_boundary(surface_values) or (surface_values[:interior_adjacent_to].nil? and surface_values[:exterior_adjacent_to].nil?)
 
-    wall_areas[wall] = wall_values[:area]
+    sum_area += surface_values[:area]
+    if use_inverse
+      sum_val_times_area += (1.0 / surface_values[key] * surface_values[:area])
+    else
+      sum_val_times_area += (surface_values[key] * surface_values[:area])
+    end
   end
-  wall_area_sum = wall_areas.values.inject { |sum, n| sum + n }
-
-  # Convert to fractions
-  wall_area_fracs = {}
-  wall_areas.each do |wall, wall_area|
-    wall_area_fracs[wall] = wall_areas[wall] / wall_area_sum
+  if sum_area > 0
+    if use_inverse
+      return 1.0 / (sum_val_times_area / sum_area)
+    else
+      return sum_val_times_area / sum_area
+    end
   end
+  return 0
+end
 
-  return wall_area_fracs
+def calc_sum_of_thermal_boundary_values(surfaces_values)
+  sum_val = 0
+  surfaces_values.each do |surface_values|
+    next unless is_thermal_boundary(surface_values) or (surface_values[:interior_adjacent_to].nil? and surface_values[:exterior_adjacent_to].nil?)
+
+    sum_val += surface_values[:area]
+  end
+  return sum_val
 end

@@ -114,19 +114,19 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml_doc, 1200 + 290, (23.0 + 4.0) / 2.0, 0.7, 0.92)
+    _check_walls(hpxml_doc, 1200, 23.0, 0.7, 0.92)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml_doc, 1200 + 290, (16.67 + 4.0) / 2.0, 0.75, 0.9)
+    _check_walls(hpxml_doc, 1200, 16.67, 0.75, 0.9)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml_doc, 2355.52 + 290, (23.0 + 4.0) / 2.0, 0.7, 0.92)
+    _check_walls(hpxml_doc, 2355.52, 23.0, 0.7, 0.92)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml_doc, 2355.52 + 290, (16.67 + 4.0) / 2.0, 0.75, 0.9)
+    _check_walls(hpxml_doc, 2355.52, 16.67, 0.75, 0.9)
   end
 
   def test_enclosure_rim_joists
@@ -483,8 +483,7 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_doors(hpxml_doc, { 0 => [20, 4.4],
-                              180 => [20, 4.4] })
+    _check_doors(hpxml_doc, { 0 => [40, 4.4] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -563,7 +562,7 @@ class EnclosureTest < MiniTest::Test
     rvalue_values = []
     sabs_values = []
     emit_values = []
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall") do |wall|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall[InteriorAdjacentTo='living space' and ExteriorAdjacentTo='outside']") do |wall|
       area_values << Float(wall.elements["Area"].text)
       rvalue_values << Float(wall.elements["Insulation/AssemblyEffectiveRValue"].text)
       sabs_values << Float(wall.elements["SolarAbsorptance"].text)
@@ -581,7 +580,7 @@ class EnclosureTest < MiniTest::Test
     rvalue_values = []
     sabs_values = []
     emit_values = []
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist") do |rim_joist|
+    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist[InteriorAdjacentTo='living space' or InteriorAdjacentTo='basement - conditioned'][ExteriorAdjacentTo='outside']") do |rim_joist|
       area_values << Float(rim_joist.elements["Area"].text)
       rvalue_values << Float(rim_joist.elements["Insulation/AssemblyEffectiveRValue"].text)
       sabs_values << Float(rim_joist.elements["SolarAbsorptance"].text)
@@ -589,22 +588,22 @@ class EnclosureTest < MiniTest::Test
     end
 
     if area.nil?
-      assert_equal(0, area_values.size)
+      assert(area_values.empty?)
     else
       assert_in_epsilon(area, area_values.inject(:+), 0.001)
     end
     if rvalue.nil?
-      assert_equal(0, rvalue_values.size)
+      assert(rvalue_values.empty?)
     else
       assert_in_epsilon(rvalue, rvalue_values.inject(:+) / rvalue_values.size, 0.001)
     end
     if sabs.nil?
-      assert_equal(0, sabs_values.size)
+      assert(sabs_values.empty?)
     else
       assert_in_epsilon(sabs, sabs_values.inject(:+) / sabs_values.size, 0.001)
     end
     if emit.nil?
-      assert_equal(0, emit_values.size)
+      assert(emit_values.empty?)
     else
       assert_in_epsilon(emit, emit_values.inject(:+) / emit_values.size, 0.001)
     end
