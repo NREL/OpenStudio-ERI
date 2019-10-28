@@ -1514,10 +1514,10 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
 
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
     output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run, options[:hourly_output])
-    next unless File.exists? File.join(designdir, "in.idf")
+    raise Parallel::Kill unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
-    next if design_output.nil?
+    raise Parallel::Kill if design_output.nil?
 
     writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
   end
@@ -1541,10 +1541,10 @@ else # e.g., Windows
 
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
     output_hpxml_path, designdir = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run, options[:hourly_output])
-    next unless File.exists? File.join(designdir, "in.idf")
+    raise Parallel::Kill unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
-    next if design_output.nil?
+    raise Parallel::Kill if design_output.nil?
 
     design_outputs[design] = design_output
   end
