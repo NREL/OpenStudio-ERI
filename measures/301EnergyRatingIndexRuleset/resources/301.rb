@@ -660,6 +660,13 @@ class EnergyRatingIndex301Ruleset
                      emittance: avg_emittance,
                      insulation_assembly_r_value: avg_r_value)
     end
+
+    # Preserve non-thermal boundary walls
+    walls_values.each do |wall, wall_values|
+      next if is_thermal_boundary(wall_values)
+
+      HPXML.add_wall(hpxml: hpxml, **wall_values)
+    end
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_details, hpxml)
