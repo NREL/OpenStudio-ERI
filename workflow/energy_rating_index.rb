@@ -24,20 +24,18 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run, hourly_output)
+def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_designdir(output_dir, design)
   rm_path(designdir)
 
-  if run
-    output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
-  end
+  output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, run, hourly_output)
+def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -46,10 +44,8 @@ def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip
   designdir = get_designdir(output_dir, design)
   rm_path(designdir)
 
-  if run
-    cli_path = OpenStudio.getOpenStudioCLI
-    system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation} #{hourly_output}")
-  end
+  cli_path = OpenStudio.getOpenStudioCLI
+  system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation} #{hourly_output}")
 
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
   return output_hpxml_path, designdir
@@ -1513,7 +1509,9 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   end
 
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run, options[:hourly_output])
+    next if not run
+
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
     raise Parallel::Kill unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
@@ -1540,7 +1538,9 @@ else # e.g., Windows
   # multiple processors.
 
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    output_hpxml_path, designdir = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], run, options[:hourly_output])
+    next if not run
+
+    output_hpxml_path, designdir = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
     raise Parallel::Kill unless File.exists? File.join(designdir, "in.idf")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
