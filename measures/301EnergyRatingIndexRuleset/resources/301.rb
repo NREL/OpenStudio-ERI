@@ -15,6 +15,9 @@ class EnergyRatingIndex301Ruleset
     @weather = weather
     @calc_type = calc_type
 
+    # Determine building type (single family attached or multifamily?)
+    @is_sfa_or_mf = !hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/*/*[contains(ExteriorAdjacentTo, 'other housing unit')]"].nil?
+
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml_doc = apply_reference_home_ruleset(hpxml_doc)
@@ -1613,6 +1616,10 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.calc_mech_vent_q_fan(q_tot, sla)
+    if @is_sfa_or_mf # No infiltration credit for attached/multifamily
+      return q_tot
+    end
+
     vert_distance = Float(@ncfl_ag) * @infilvolume / @cfa # vertical distance between lowest and highest above-grade points within the pressure boundary
     nl = 1000.0 * sla * (vert_distance / 8.202)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
@@ -1831,13 +1838,13 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.delete_wall_subsurfaces(orig_details, surface_id)
-    orig_details.elements.each("//*[AttachedToWall[@idref='#{surface_id}']]") do |subsurface|
+    orig_details.elements.each("Enclosure/*/*[AttachedToWall[@idref='#{surface_id}']]") do |subsurface|
       subsurface.parent.elements.delete subsurface
     end
   end
 
   def self.delete_roof_subsurfaces(orig_details, surface_id)
-    orig_details.elements.each("//*[AttachedToRoof[@idref='#{surface_id}']]") do |subsurface|
+    orig_details.elements.each("Enclosure/*/*[AttachedToRoof[@idref='#{surface_id}']]") do |subsurface|
       subsurface.parent.elements.delete subsurface
     end
   end
