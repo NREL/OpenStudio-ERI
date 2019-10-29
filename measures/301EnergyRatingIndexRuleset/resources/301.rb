@@ -924,6 +924,20 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_skylights_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Skylights
     set_enclosure_skylights_rated(orig_details, hpxml)
+
+    # Since the IAD roof area is scaled down but skylight area is maintained,
+    # it's possible that skylights no longer fit on the roof. To resolve this,
+    # scale down skylight area if needed to fit.
+    hpxml.elements.each("Building/BuildingDetails/Enclosure/Roofs/Roof") do |new_roof|
+      new_roof_values = HPXML.get_roof_values(roof: new_roof)
+      new_roof_id = new_roof_values[:id]
+      new_skylight_area = REXML::XPath.first(hpxml, "sum(Building/BuildingDetails/Enclosure/Skylights/Skylight[AttachedToRoof/@idref='#{new_roof_id}']/Area/text())")
+      if new_skylight_area > new_roof_values[:area]
+        hpxml.elements.each("Building/BuildingDetails/Enclosure/Skylights/Skylight[AttachedToRoof/@idref='#{new_roof_id}']") do |new_skylight|
+          new_skylight.elements["Area"].text = Float(new_skylight.elements["Area"].text) * new_roof_values[:area] / new_skylight_area * 0.99
+        end
+      end
+    end
   end
 
   def self.set_enclosure_doors_reference(orig_details, hpxml)
