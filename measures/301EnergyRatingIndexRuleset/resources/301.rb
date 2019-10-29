@@ -442,8 +442,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundations_reference(orig_details, hpxml)
-    # Check if vented crawlspace exists
-    return if orig_details.elements["Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - vented']"].nil?
+    # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists
+    return if orig_details.elements["Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or ExteriorAdjacentTo='crawlspace - unvented']"].nil?
 
     HPXML.add_foundation(hpxml: hpxml,
                          id: "VentedCrawlspace",
