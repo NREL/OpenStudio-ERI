@@ -506,6 +506,7 @@ class EnergyRatingIndex301Ruleset
       roof_values[:solar_absorptance] = solar_abs
       roof_values[:emittance] = emittance
       roof_values[:interior_adjacent_to].gsub!("unvented", "vented")
+      roof_values[:insulation_assembly_r_value] = 2.3 # uninsulated
       HPXML.add_roof(hpxml: hpxml, **roof_values)
     end
   end
@@ -572,6 +573,7 @@ class EnergyRatingIndex301Ruleset
       rim_joist_values[:emittance] = emittance
       rim_joist_values[:interior_adjacent_to].gsub!("unvented", "vented")
       rim_joist_values[:exterior_adjacent_to].gsub!("unvented", "vented")
+      rim_joist_values[:insulation_assembly_r_value] = 2.3 # uninsulated
       HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
     end
   end
@@ -627,6 +629,7 @@ class EnergyRatingIndex301Ruleset
       wall_values[:emittance] = emittance
       wall_values[:interior_adjacent_to].gsub!("unvented", "vented")
       wall_values[:exterior_adjacent_to].gsub!("unvented", "vented")
+      wall_values[:insulation_assembly_r_value] = 4.0 # uninsulated
       HPXML.add_wall(hpxml: hpxml, **wall_values)
     end
   end
@@ -680,6 +683,10 @@ class EnergyRatingIndex301Ruleset
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
       if is_thermal_boundary(fwall_values)
         fwall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
+        fwall_values[:insulation_r_value] = nil
+      else
+        fwall_values[:insulation_r_value] = 0 # uninsulated
+        fwall_values[:insulation_assembly_r_value] = nil
       end
       fwall_values[:interior_adjacent_to].gsub!("unvented", "vented")
       fwall_values[:exterior_adjacent_to].gsub!("unvented", "vented")
@@ -718,6 +725,8 @@ class EnergyRatingIndex301Ruleset
 
       if is_thermal_boundary(framefloor_values)
         framefloor_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
+      else
+        framefloor_values[:insulation_assembly_r_value] = 2.1 # uninsulated
       end
       framefloor_values[:interior_adjacent_to].gsub!("unvented", "vented")
       framefloor_values[:exterior_adjacent_to].gsub!("unvented", "vented")
@@ -771,6 +780,8 @@ class EnergyRatingIndex301Ruleset
 
       if is_thermal_boundary(framefloor_values)
         framefloor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
+      else
+        framefloor_values[:insulation_assembly_r_value] = 3.1 # uninsulated
       end
       framefloor_values[:interior_adjacent_to].gsub!("unvented", "vented")
       framefloor_values[:exterior_adjacent_to].gsub!("unvented", "vented")
@@ -812,6 +823,12 @@ class EnergyRatingIndex301Ruleset
         slab_values[:under_slab_insulation_spans_entire_slab] = nil
         slab_values[:perimeter_insulation_r_value] = slab_perim_rvalue
         slab_values[:under_slab_insulation_r_value] = slab_under_rvalue
+      else
+        slab_values[:perimeter_insulation_depth] = 0
+        slab_values[:under_slab_insulation_width] = 0
+        slab_values[:under_slab_insulation_spans_entire_slab] = nil
+        slab_values[:perimeter_insulation_r_value] = 0
+        slab_values[:under_slab_insulation_r_value] = 0
       end
       if ["living space", "basement - conditioned"].include? slab_values[:interior_adjacent_to]
         slab_values[:carpet_fraction] = 0.8

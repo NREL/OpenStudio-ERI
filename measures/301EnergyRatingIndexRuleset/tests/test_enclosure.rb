@@ -126,6 +126,24 @@ class EnclosureTest < MiniTest::Test
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_roofs(hpxml_doc, 1300, (33.33 * 1006 + 2.3 * 504) / 1510, 0.75, 0.9)
 
+    hpxml_name = "base-atticroof-unvented-insulated-roof.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_roofs(hpxml_doc, 1510, 25.8, 0.7, 0.92)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_roofs(hpxml_doc, 1510, 2.3, 0.75, 0.9)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_roofs(hpxml_doc, 1300, 25.8, 0.7, 0.92)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_roofs(hpxml_doc, 1300, 2.3, 0.75, 0.9)
+
     hpxml_name = "base-atticroof-flat.xml"
 
     # Rated Home
@@ -264,7 +282,7 @@ class EnclosureTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_rim_joists(hpxml_doc, 197, (23.0 * 116 + 2.3 * 81) / 197, 0.75, 0.9)
+    _check_rim_joists(hpxml_doc, 197, 2.3, 0.75, 0.9)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -302,7 +320,7 @@ class EnclosureTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml_doc, 1200, 8.9, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 0, 8, 7)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -322,7 +340,7 @@ class EnclosureTest < MiniTest::Test
 
       # Reference Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_foundation_walls(hpxml_doc, 600, 8.9, 4, 3)
+      _check_foundation_walls(hpxml_doc, 600, 0, 4, 3)
 
       # IAD Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -362,6 +380,24 @@ class EnclosureTest < MiniTest::Test
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_floors(hpxml_doc, 2700, (33.33 * 1350 + 30.3 * 1350) / 2700)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_floors(hpxml_doc, 2400, (39.3 * 1200 + 30.3 * 1200) / 2400)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_floors(hpxml_doc, 2400, (33.33 * 1200 + 30.3 * 1200) / 2400)
+
+    hpxml_name = "base-enclosure-garage.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_floors(hpxml_doc, 1950, (39.3 * 1350 + 2.1 * 600) / 1950)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_floors(hpxml_doc, 1950, (33.33 * 1350 + 2.1 * 600) / 1950)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
