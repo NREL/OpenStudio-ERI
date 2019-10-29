@@ -917,9 +917,9 @@ class EnergyRatingIndex301Ruleset
       next unless heating_values[:heating_system_fuel] != "electricity"
 
       if heating_values[:heating_system_type] == "Boiler"
-        add_reference_heating_gas_boiler(hpxml, ref_hvacdist_ids, heating_values[:fraction_heat_load_served], heating_values[:id])
+        add_reference_heating_gas_boiler(hpxml, ref_hvacdist_ids, heating_values)
       else
-        add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, heating_values[:fraction_heat_load_served], heating_values[:id])
+        add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, heating_values)
       end
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
@@ -931,11 +931,11 @@ class EnergyRatingIndex301Ruleset
     # Cooling
     orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |cooling|
       cooling_values = HPXML.get_cooling_system_values(cooling_system: cooling)
-      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, cooling_values[:fraction_cool_load_served], cooling_values[:id])
+      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, cooling_values)
     end
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |hp|
       hp_values = HPXML.get_heat_pump_values(heat_pump: hp)
-      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, hp_values[:fraction_cool_load_served], hp_values[:id])
+      add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, hp_values)
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/CoolingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]"].nil?
       add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids)
@@ -946,11 +946,11 @@ class EnergyRatingIndex301Ruleset
       heating_values = HPXML.get_heating_system_values(heating_system: heating)
       next unless heating_values[:heating_system_fuel] == "electricity"
 
-      add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, heating_values[:fraction_heat_load_served], heating_values[:id])
+      add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, heating_values)
     end
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |hp|
       hp_values = HPXML.get_heat_pump_values(heat_pump: hp)
-      add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, hp_values[:fraction_heat_load_served], hp_values[:id])
+      add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, hp_values)
     end
     if orig_details.elements["Systems/HVAC/HVACPlant/HeatingSystem"].nil? and orig_details.elements["Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]"].nil?
       if not has_fuel
@@ -1631,8 +1631,11 @@ class EnergyRatingIndex301Ruleset
     return [q_fan, 0].max
   end
 
-  def self.add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, values = {})
     # 78% AFUE gas furnace
+    load_frac = values[:fraction_heat_load_served]
+    load_frac = 1.0 if load_frac.nil?
+    seed_id = values[:id]
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem)")
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
@@ -1651,8 +1654,11 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_heating_gas_boiler(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_gas_boiler(hpxml, ref_hvacdist_ids, values = {})
     # 80% AFUE gas boiler
+    load_frac = values[:fraction_heat_load_served]
+    load_frac = 1.0 if load_frac.nil?
+    seed_id = values[:id]
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem)")
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     heat_sys = HPXML.add_heating_system(hpxml: hpxml,
@@ -1671,8 +1677,11 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_heating_heat_pump(hpxml, ref_hvacdist_ids, values = {})
     # 7.7 HSPF air source heat pump
+    load_frac = values[:fraction_heat_load_served]
+    load_frac = 1.0 if load_frac.nil?
+    seed_id = values[:id]
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump)")
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
@@ -1697,8 +1706,11 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, load_frac = 1.0, seed_id = nil)
+  def self.add_reference_cooling_air_conditioner(hpxml, ref_hvacdist_ids, values = {})
     # 13 SEER electric air conditioner
+    load_frac = values[:fraction_cool_load_served]
+    load_frac = 1.0 if load_frac.nil?
+    seed_id = values[:id]
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem)")
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     cool_sys = HPXML.add_cooling_system(hpxml: hpxml,
@@ -1708,7 +1720,8 @@ class EnergyRatingIndex301Ruleset
                                         cooling_system_fuel: "electricity",
                                         cooling_capacity: -1, # Use Manual J auto-sizing
                                         fraction_cool_load_served: load_frac,
-                                        cooling_efficiency_seer: 13.0)
+                                        cooling_efficiency_seer: 13.0,
+                                        cooling_shr: values[:cooling_shr])
     if not seed_id.nil? and [Constants.CalcTypeERIReferenceHome,
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
