@@ -1020,7 +1020,9 @@ class EnergyRatingIndex301Ruleset
     hvac_control = orig_details.elements["Systems/HVAC/HVACControl"]
     if not hvac_control.nil?
       hvac_control_values = HPXML.get_hvac_control_values(hvac_control: hvac_control)
-      HPXML.add_hvac_control(hpxml: hpxml, **hvac_control_values)
+      HPXML.add_hvac_control(hpxml: hpxml,
+                             id: hvac_control_values[:id],
+                             control_type: hvac_control_values[:control_type])
     else
       HPXML.add_hvac_control(hpxml: hpxml,
                              id: "HVACControl",
