@@ -424,6 +424,9 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_attics_reference(orig_details, hpxml)
+    # Check if vented attic (or unvented attic, which will become a vented attic) exists
+    return if orig_details.elements["Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - vented' or InteriorAdjacentTo='attic - unvented']"].nil?
+
     HPXML.add_attic(hpxml: hpxml,
                     id: "VentedAttic",
                     attic_type: "VentedAttic",
@@ -442,6 +445,9 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundations_reference(orig_details, hpxml)
+    # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists
+    return if orig_details.elements["Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or ExteriorAdjacentTo='crawlspace - unvented']"].nil?
+
     HPXML.add_foundation(hpxml: hpxml,
                          id: "VentedCrawlspace",
                          foundation_type: "VentedCrawlspace",
