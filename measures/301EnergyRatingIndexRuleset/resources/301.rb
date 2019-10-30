@@ -483,15 +483,13 @@ class EnergyRatingIndex301Ruleset
     solar_abs = 0.75
     emittance = 0.90
 
-    # Create thermal boundary roofs in each direction
-    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
-      next unless sum_gross_area > 0
-
+    # Create thermal boundary roof area
+    if sum_gross_area > 0
       HPXML.add_roof(hpxml: hpxml,
-                     id: "RoofsArea#{orientation}",
+                     id: "RoofArea",
                      interior_adjacent_to: "living space",
-                     area: sum_gross_area * 0.25,
-                     azimuth: azimuth,
+                     area: sum_gross_area,
+                     azimuth: nil,
                      solar_absorptance: solar_abs,
                      emittance: emittance,
                      pitch: avg_pitch,
@@ -550,16 +548,14 @@ class EnergyRatingIndex301Ruleset
     solar_abs = 0.75
     emittance = 0.90
 
-    # Create thermal boundary rim joists in each direction
-    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
-      next unless sum_gross_area > 0
-
+    # Create thermal boundary rim joist area
+    if sum_gross_area > 0
       HPXML.add_rim_joist(hpxml: hpxml,
-                          id: "RimJoistsArea#{orientation}",
+                          id: "RimJoistArea",
                           exterior_adjacent_to: "outside",
                           interior_adjacent_to: "living space",
-                          area: sum_gross_area * 0.25,
-                          azimuth: azimuth,
+                          area: sum_gross_area,
+                          azimuth: nil,
                           solar_absorptance: solar_abs,
                           emittance: emittance,
                           insulation_assembly_r_value: 1.0 / ufactor)
@@ -605,17 +601,15 @@ class EnergyRatingIndex301Ruleset
     solar_abs = 0.75
     emittance = 0.90
 
-    # Create thermal boundary walls in each direction
-    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
-      next unless sum_gross_area > 0
-
+    # Create thermal boundary wall area
+    if sum_gross_area > 0
       HPXML.add_wall(hpxml: hpxml,
-                     id: "WallsArea#{orientation}",
+                     id: "WallArea",
                      exterior_adjacent_to: "outside",
                      interior_adjacent_to: "living space",
                      wall_type: "WoodStud",
-                     area: sum_gross_area * 0.25,
-                     azimuth: azimuth,
+                     area: sum_gross_area,
+                     azimuth: nil,
                      solar_absorptance: solar_abs,
                      emittance: emittance,
                      insulation_assembly_r_value: 1.0 / ufactor)
@@ -653,19 +647,17 @@ class EnergyRatingIndex301Ruleset
     avg_emittance = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :emittance)
     avg_r_value = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :insulation_assembly_r_value, true)
 
-    # Create thermal boundary walls in each direction
-    for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
-      HPXML.add_wall(hpxml: hpxml,
-                     id: "WallsArea#{orientation}",
-                     exterior_adjacent_to: "outside",
-                     interior_adjacent_to: "living space",
-                     wall_type: "WoodStud",
-                     area: 2355.52 * 0.25,
-                     azimuth: azimuth,
-                     solar_absorptance: avg_solar_abs,
-                     emittance: avg_emittance,
-                     insulation_assembly_r_value: avg_r_value)
-    end
+    # Create thermal boundary wall area
+    HPXML.add_wall(hpxml: hpxml,
+                   id: "WallArea",
+                   exterior_adjacent_to: "outside",
+                   interior_adjacent_to: "living space",
+                   wall_type: "WoodStud",
+                   area: 2355.52,
+                   azimuth: nil,
+                   solar_absorptance: avg_solar_abs,
+                   emittance: avg_emittance,
+                   insulation_assembly_r_value: avg_r_value)
 
     # Preserve non-thermal boundary walls
     walls_values.each do |wall, wall_values|
@@ -878,12 +870,12 @@ class EnergyRatingIndex301Ruleset
     # Create windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
       HPXML.add_window(hpxml: hpxml,
-                       id: "WindowsArea#{orientation}",
+                       id: "WindowArea#{orientation}",
                        area: total_window_area * 0.25,
                        azimuth: azimuth,
                        ufactor: ufactor,
                        shgc: shgc,
-                       wall_idref: "WallsArea#{orientation}",
+                       wall_idref: "WallArea",
                        interior_shading_factor_summer: shade_summer,
                        interior_shading_factor_winter: shade_winter)
     end
@@ -917,12 +909,12 @@ class EnergyRatingIndex301Ruleset
     # Create windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
       HPXML.add_window(hpxml: hpxml,
-                       id: "WindowsArea#{orientation}",
+                       id: "WindowArea#{orientation}",
                        area: total_window_area * 0.25,
                        azimuth: azimuth,
                        ufactor: avg_ufactor,
                        shgc: avg_shgc,
-                       wall_idref: "WallsArea#{orientation}",
+                       wall_idref: "WallArea",
                        interior_shading_factor_summer: shade_summer,
                        interior_shading_factor_winter: shade_winter)
     end
@@ -967,8 +959,8 @@ class EnergyRatingIndex301Ruleset
 
     # Create new door
     HPXML.add_door(hpxml: hpxml,
-                   id: "DoorsAreaNorth",
-                   wall_idref: "WallsAreaNorth",
+                   id: "DoorAreaNorth",
+                   wall_idref: "WallArea",
                    area: door_area,
                    azimuth: 0,
                    r_value: 1.0 / ufactor)
@@ -993,11 +985,11 @@ class EnergyRatingIndex301Ruleset
 
     avg_r_value = calc_area_weighted_sum_of_thermal_boundary_values(doors_values.values, :r_value, true)
 
-    # Create new door (since it's impossible to preserve door orientation from the Rated Home)
+    # Create new door (since it's impossible to preserve the Rated Home's door orientation)
     # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
     HPXML.add_door(hpxml: hpxml,
-                   id: "DoorsAreaNorth",
-                   wall_idref: "WallsAreaNorth",
+                   id: "DoorAreaNorth",
+                   wall_idref: "WallArea",
                    area: door_area,
                    azimuth: 0,
                    r_value: avg_r_value)
