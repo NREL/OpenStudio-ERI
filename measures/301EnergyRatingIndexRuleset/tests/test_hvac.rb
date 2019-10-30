@@ -474,6 +474,20 @@ class HVACtest < MiniTest::Test
     _check_thermostat(hpxml_doc, "programmable thermostat")
   end
 
+  def test_custom_setpoints
+    hpxml_name = "base-hvac-setpoints.xml"
+
+    # Rated Home, Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIRatedHome,
+                  Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_thermostat(hpxml_doc, "manual thermostat")
+    end
+  end
+
   def test_dse
     hpxml_name = "base-hvac-dse.xml"
 
@@ -603,6 +617,8 @@ class HVACtest < MiniTest::Test
   def _check_thermostat(hpxml_doc, tstattype)
     tstat = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl"]
     assert_equal(tstat.elements["ControlType"].text, tstattype)
+    assert_nil(tstat.elements["SetpointTempHeatingSeason"])
+    assert_nil(tstat.elements["SetpointTempCoolingSeason"])
   end
 
   def _check_dse_heat(hpxml_doc, sys, dse)

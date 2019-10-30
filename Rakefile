@@ -2664,7 +2664,6 @@ def copy_sample_files
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-portable-heater-electric-only.xml',
                   'base-hvac-room-ac-only-shr.xml',
-                  'base-hvac-setpoints.xml',
                   'base-hvac-stove-oil-only-no-eae.xml',
                   'base-hvac-stove-wood-only.xml',
                   'base-hvac-wall-furnace-propane-only-no-eae.xml',

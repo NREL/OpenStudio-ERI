@@ -709,6 +709,132 @@ class EnclosureTest < MiniTest::Test
     _check_doors(hpxml_doc, { 0 => [40, 2.86] })
   end
 
+  def test_enclosure_attic_ventilation
+    hpxml_names = ["base.xml",
+                   "base-atticroof-conditioned.xml"]
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_attic_ventilation(hpxml_doc, nil)
+
+      # Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_attic_ventilation(hpxml_doc, 1.0 / 300.0)
+
+      # IAD Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_attic_ventilation(hpxml_doc, nil)
+
+      # IAD Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_attic_ventilation(hpxml_doc, 1.0 / 300.0)
+    end
+
+    hpxml_names = ["base-atticroof-cathedral.xml",
+                   "base-atticroof-flat.xml"]
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_attic_ventilation(hpxml_doc, nil)
+
+      # Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_attic_ventilation(hpxml_doc, nil)
+
+      # IAD Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_attic_ventilation(hpxml_doc, nil)
+
+      # IAD Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_attic_ventilation(hpxml_doc, nil)
+    end
+
+    hpxml_name = "base-atticroof-vented.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_attic_ventilation(hpxml_doc, 0.003)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_attic_ventilation(hpxml_doc, 1.0 / 300.0)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_attic_ventilation(hpxml_doc, 0.003)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_attic_ventilation(hpxml_doc, 1.0 / 300.0)
+  end
+
+  def test_enclosure_crawlspace_ventilation
+    hpxml_names = ["base-foundation-unvented-crawlspace.xml",
+                   "base-foundation-multiple.xml"]
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_crawlspace_ventilation(hpxml_doc, nil)
+
+      # Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+
+      # IAD Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+
+      # IAD Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+    end
+
+    hpxml_names = ["base.xml",
+                   "base-foundation-slab.xml",
+                   "base-foundation-unconditioned-basement.xml",
+                   "base-foundation-ambient.xml"]
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_crawlspace_ventilation(hpxml_doc, nil)
+
+      # Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_crawlspace_ventilation(hpxml_doc, nil)
+
+      # IAD Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+
+      # IAD Reference Home
+      hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+    end
+
+    hpxml_name = "base-foundation-vented-crawlspace.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_crawlspace_ventilation(hpxml_doc, 0.00667)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_crawlspace_ventilation(hpxml_doc, 1.0 / 150.0)
+  end
+
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
@@ -1008,6 +1134,24 @@ class EnclosureTest < MiniTest::Test
       area, rvalue = values
       assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.001)
       assert_in_epsilon(rvalue, azimuth_rvalue_values[azimuth].inject(:+) / azimuth_rvalue_values[azimuth].size, 0.001)
+    end
+  end
+
+  def _check_attic_ventilation(hpxml_doc, sla)
+    sla_element = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value"]
+    if sla.nil?
+      assert_nil(sla_element)
+    else
+      assert_in_epsilon(sla, Float(sla_element.text))
+    end
+  end
+
+  def _check_crawlspace_ventilation(hpxml_doc, sla)
+    sla_element = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value"]
+    if sla.nil?
+      assert_nil(sla_element)
+    else
+      assert_in_epsilon(sla, Float(sla_element.text))
     end
   end
 end
