@@ -2642,7 +2642,6 @@ def copy_sample_files
                   'base-enclosure-no-natural-ventilation.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-foundation-complex.xml',
-                  'base-foundation-unconditioned-basement-assembly-r.xml',
                   'base-hvac-air-to-air-heat-pump-2-speed-17F.xml',
                   'base-hvac-air-to-air-heat-pump-2-speed-shr.xml',
                   'base-hvac-air-to-air-heat-pump-var-speed-17F.xml',
