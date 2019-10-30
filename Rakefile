@@ -1907,8 +1907,10 @@ def get_hpxml_file_duct_leakage_measurements_values(hpxml_file, duct_leakage_mea
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-12.xml'].include? hpxml_file
     # No leakage
     duct_leakage_measurements_values = [[{ :duct_type => "supply",
+                                           :duct_leakage_units => "CFM25",
                                            :duct_leakage_value => 0 },
                                          { :duct_type => "return",
+                                           :duct_leakage_units => "CFM25",
                                            :duct_leakage_value => 0 }]]
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml',
          'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
@@ -2650,6 +2652,7 @@ def copy_sample_files
                   'base-hvac-central-ac-only-2-speed-shr.xml',
                   'base-hvac-central-ac-only-var-speed-shr.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
+                  'base-hvac-ducts-leakage-percent.xml',
                   'base-hvac-ducts-locations.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',
