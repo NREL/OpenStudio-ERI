@@ -528,13 +528,13 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     fail "Unexpected result" if gas_use.size != 8760
 
     # Fuel Oil
-    query = "SELECT SUM(VariableValue)*#{j_to_kbtu} FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName LIKE '%FuelOil#1 Energy' AND ReportingFrequency='Hourly') GROUP BY TimeIndex ORDER BY TimeIndex"
+    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
     oil_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
     oil_use += [0.0] * 8760 if oil_use.size == 0
     fail "Unexpected result" if oil_use.size != 8760
 
     # Propane
-    query = "SELECT SUM(VariableValue)*#{j_to_kbtu} FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName LIKE '%Propane Energy' AND ReportingFrequency='Hourly') GROUP BY TimeIndex ORDER BY TimeIndex"
+    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
     propane_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
     propane_use += [0.0] * 8760 if propane_use.size == 0
     fail "Unexpected result" if propane_use.size != 8760

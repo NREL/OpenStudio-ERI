@@ -94,29 +94,10 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
     output_var.setKeyValue('*')
 
     # Energy use by fuel:
-
-    # Electricity and Natural Gas can be retrieved from meters
-    ['Electricity:Facility', 'Gas:Facility'].each do |meter_fuel|
+    ['Electricity:Facility', 'Gas:Facility', 'FuelOil#1:Facility', 'Propane:Facility'].each do |meter_fuel|
       output_meter = OpenStudio::Model::OutputMeter.new(model)
       output_meter.setName(meter_fuel)
       output_meter.setReportingFrequency('hourly')
-    end
-
-    # Other fuels need to be rolled up
-    other_fuels = ['Heating Coil Propane Energy',
-                   'Heating Coil FuelOil#1 Energy',
-                   'Baseboard Propane Energy',
-                   'Baseboard FuelOil#1 Energy',
-                   'Boiler Propane Energy',
-                   'Boiler FuelOil#1 Energy',
-                   'Water Heater Propane Energy',
-                   'Water Heater FuelOil#1 Energy',
-                   'Other Equipment Propane Energy',
-                   'Other Equipment FuelOil#1 Energy']
-    other_fuels.each do |var_fuel|
-      output_var = OpenStudio::Model::OutputVariable.new(var_fuel, model)
-      output_var.setReportingFrequency('hourly')
-      output_var.setKeyValue('*')
     end
   end
 
