@@ -714,17 +714,20 @@ class EnergyRatingIndexTest < Minitest::Test
       assert(!File.exists?(csvs[:worksheet]))
 
       if not expect_error_msgs.nil?
-        run_log = File.readlines(File.join(rundir, "ERIRatedHome", "run.log")).map(&:strip)
-        expect_error_msgs.each do |error_msg|
-          found_error_msg = false
-          run_log.each do |run_line|
-            next unless run_line.include? error_msg
+        found_error_msg = false
+        ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
+          next unless File.exists? File.join(rundir, design, "run.log")
+          run_log = File.readlines(File.join(rundir, design, "run.log")).map(&:strip)
+          expect_error_msgs.each do |error_msg|
+            run_log.each do |run_line|
+              next unless run_line.include? error_msg
 
-            found_error_msg = true
-            break
+              found_error_msg = true
+              break
+            end
           end
-          assert(found_error_msg)
         end
+        assert(found_error_msg)
       end
 
     else
