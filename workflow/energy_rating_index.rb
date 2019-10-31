@@ -43,12 +43,12 @@ def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip
   # 2. There is overhead to spawning processes vs using forked processes
   designdir = get_designdir(output_dir, design)
   rm_path(designdir)
+  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  system("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation} #{hourly_output}")
+  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation} #{hourly_output}")
 
-  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
-  return output_hpxml_path, designdir
+  return output_hpxml_path, designdir, pid
 end
 
 def process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output)
@@ -115,6 +115,10 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   end
 
   sqlFile = OpenStudio::SqlFile.new(sql_path, false)
+  if not sqlFile.connectionOpen
+    puts "[#{design} Processing output unsuccessful."
+    return nil
+  end
 
   design_output = {}
 
@@ -1508,14 +1512,18 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
     readers[design], writers[design] = IO.pipe
   end
 
+  def kill
+    raise Parallel::Kill
+  end
+
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
     next if not run
 
     output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
-    raise Parallel::Kill unless File.exists? File.join(designdir, "in.idf")
+    kill unless File.exists? File.join(designdir, "eplusout.end")
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
-    raise Parallel::Kill if design_output.nil?
+    kill if design_output.nil?
 
     writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
   end
@@ -1537,14 +1545,32 @@ else # e.g., Windows
   # Fallback. Code runs in spawned child processes in order to take advantage of
   # multiple processors.
 
+  def kill(pids)
+    pids.values.each do |pid|
+      begin
+        Process.kill("KILL", pid)
+      rescue
+      end
+    end
+  end
+
+  pids = {}
+  killing_process = false
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
     next if not run
 
-    output_hpxml_path, designdir = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
-    raise Parallel::Kill unless File.exists? File.join(designdir, "in.idf")
+    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
+    Process.wait pids[design]
+    if not File.exists? File.join(designdir, "eplusout.end")
+      kill(pids)
+      next
+    end
 
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
-    raise Parallel::Kill if design_output.nil?
+    if design_output.nil?
+      kill(pids)
+      next
+    end
 
     design_outputs[design] = design_output
   end
