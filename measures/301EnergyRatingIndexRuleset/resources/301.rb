@@ -684,6 +684,7 @@ class EnergyRatingIndex301Ruleset
         fwall_values[:insulation_r_value] = nil
       else
         fwall_values[:insulation_r_value] = 0 # uninsulated
+        fwall_values[:insulation_distance_to_bottom] = 0
         fwall_values[:insulation_assembly_r_value] = nil
       end
       fwall_values[:interior_adjacent_to].gsub!("unvented", "vented")
