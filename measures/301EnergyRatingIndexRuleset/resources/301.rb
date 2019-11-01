@@ -665,9 +665,10 @@ class EnergyRatingIndex301Ruleset
                    emittance: avg_emittance,
                    insulation_assembly_r_value: avg_r_value)
 
-    # Preserve non-thermal boundary walls
+    # Preserve non-thermal boundary walls adjacent to attic
     walls_values.each do |wall, wall_values|
       next if is_thermal_boundary(wall_values)
+      next unless ["attic - vented", "attic - unvented"].include? wall_values[:interior_adjacent_to]
 
       HPXML.add_wall(hpxml: hpxml, **wall_values)
     end

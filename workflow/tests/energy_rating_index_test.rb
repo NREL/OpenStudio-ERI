@@ -717,6 +717,7 @@ class EnergyRatingIndexTest < Minitest::Test
         found_error_msg = false
         ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
           next unless File.exists? File.join(rundir, design, "run.log")
+
           run_log = File.readlines(File.join(rundir, design, "run.log")).map(&:strip)
           expect_error_msgs.each do |error_msg|
             run_log.each do |run_line|
