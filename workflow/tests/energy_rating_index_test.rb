@@ -10,6 +10,7 @@ require_relative '../../measures/HPXMLtoOpenStudio/resources/schedules'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative "../../measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 class EnergyRatingIndexTest < Minitest::Test
   def before_setup
@@ -24,14 +25,12 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     files = "base*.xml"
     all_results = {}
-    xmldir = "#{this_dir}/sample_files"
+    xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
@@ -70,25 +69,23 @@ class EnergyRatingIndexTest < Minitest::Test
                             'hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.",
                                                             "Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1."] }
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-    xmldir = "#{this_dir}/sample_files/invalid_files"
+    xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      run_eri_and_check(xml, this_dir, test_name, true, expected_error_msgs[File.basename(xml)])
+      run_eri(xml, test_name, true, expected_error_msgs[File.basename(xml)])
     end
   end
 
   def test_downloading_weather
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --download-weather"
     system(command)
 
-    num_epws_expected = File.readlines(File.join(this_dir, "..", "weather", "data.csv")).size - 1
-    num_epws_actual = Dir[File.join(this_dir, "..", "weather", "*.epw")].count
+    num_epws_expected = File.readlines(File.join(File.dirname(__FILE__), "..", "..", "weather", "data.csv")).size - 1
+    num_epws_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*.epw")].count
     assert_equal(num_epws_expected, num_epws_actual)
 
-    num_cache_expected = File.readlines(File.join(this_dir, "..", "weather", "data.csv")).size - 1
-    num_cache_actual = Dir[File.join(this_dir, "..", "weather", "*.cache")].count
+    num_cache_expected = File.readlines(File.join(File.dirname(__FILE__), "..", "..", "weather", "data.csv")).size - 1
+    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*.cache")].count
     assert_equal(num_cache_expected, num_cache_actual)
   end
 
@@ -97,14 +94,12 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Standard_140")
     all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(this_dir, xml)
-      sql_path, sim_time = run_straight_sim(xml, this_dir, test_name)
+      _test_schema_validation(xml)
+      sql_path, sim_time = run_simulation(xml, test_name)
       htg_load, clg_load = _get_simulation_load_results(sql_path)
       if xml.include? "C.xml"
         all_results << [xml, htg_load, "N/A", sim_time]
@@ -141,27 +136,20 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_HERS_AutoGen_Reference_Home")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next if xml.end_with? "ERIReferenceHome.xml" or xml.end_with? "_Ref.xml"
-
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      output_hpxml_path = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
+      run_ruleset(Constants.CalcTypeERIReferenceHome, xml, output_hpxml_path)
       test_num = File.basename(xml)[0, 2].to_i
-      all_results[File.basename(xml)] = _get_reference_home_components(hpxmls[:ref], test_num)
+      all_results[File.basename(xml)] = _get_reference_home_components(output_hpxml_path, test_num)
 
       # Re-simulate reference HPXML file
-      new_name = "#{xmldir}/#{File.basename(xml).gsub('.xml', '_Ref.xml')}"
-      FileUtils.cp(hpxmls[:ref], new_name)
-      hpxmls[:ref] = new_name
-      _override_ref_ref_mech_vent_infil(hpxmls[:ref], xml)
-      hpxmls, csvs, runtime = run_eri_and_check(hpxmls[:ref], this_dir, test_name)
+      _override_ref_ref_mech_vent_infil(output_hpxml_path, xml)
+      hpxmls, csvs, runtime = run_eri(output_hpxml_path, test_name)
       worksheet_results = _get_csv_results(csvs[:worksheet])
       all_results[File.basename(xml)]["e-Ratio"] = worksheet_results["Total Loads TnML"] / worksheet_results["Total Loads TRL"]
-      File.delete(new_name)
     end
     assert(all_results.size > 0)
 
@@ -190,15 +178,14 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_AutoGen_IAD_Home")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      output_hpxml_path = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
+      run_ruleset(Constants.CalcTypeERIIndexAdjustmentDesign, xml, output_hpxml_path)
       test_num = File.basename(xml)[0, 2].to_i
-      all_results[File.basename(xml)] = _get_iad_home_components(hpxmls[:iad], test_num)
+      all_results[File.basename(xml)] = _get_iad_home_components(output_hpxml_path, test_num)
     end
     assert(all_results.size > 0)
 
@@ -227,14 +214,12 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_HERS_Method")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:results])
     end
     assert(all_results.size > 0)
@@ -266,14 +251,12 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_PreAddendumE")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:results])
     end
     assert(all_results.size > 0)
@@ -305,14 +288,11 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     all_results = {}
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_Proposed")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:results])
     end
     assert(all_results.size > 0)
@@ -355,11 +335,10 @@ class EnergyRatingIndexTest < Minitest::Test
     File.delete(test_results_csv) if File.exists? test_results_csv
 
     # Run simulations
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_Task_Group")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
     end
     assert(all_results.size > 0)
@@ -396,14 +375,12 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.4_HVAC")
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(this_dir, xml)
-      sql_path, sim_time = run_straight_sim(xml, this_dir, test_name)
+      _test_schema_validation(xml)
+      sql_path, sim_time = run_simulation(xml, test_name)
 
       is_heat = false
       if xml.include? 'HVAC2'
@@ -450,14 +427,12 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.5_DSE")
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(this_dir, xml)
-      sql_path, sim_time = run_straight_sim(xml, this_dir, test_name, true)
+      _test_schema_validation(xml)
+      sql_path, sim_time = run_simulation(xml, test_name, true)
 
       is_heat = false
       if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
@@ -506,15 +481,13 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     base_vals = {}
     mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Hot_Water")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_hot_water(csvs[:rated_results])
       assert_operator(all_results[File.basename(xml)][0], :>, 0)
     end
@@ -566,15 +539,13 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     base_vals = {}
     mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_Hot_Water_PreAddendumA")
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_hot_water(csvs[:rated_results])
       assert_operator(all_results[File.basename(xml)][0], :>, 0)
     end
@@ -631,13 +602,11 @@ class EnergyRatingIndexTest < Minitest::Test
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exists? test_results_csv
 
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     # Run simulations
     all_results = {}
-    xmldir = "#{this_dir}/tests/NASEO_Technical_Exercises"
+    xmldir = "#{File.dirname(__FILE__)}/../tests/NASEO_Technical_Exercises"
     Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri_and_check(xml, this_dir, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
@@ -660,8 +629,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
-    this_dir = File.absolute_path(File.join(File.dirname(__FILE__), ".."))
-
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" --no-ssl #{File.absolute_path(__FILE__)} --name=foo"
     success = system(command)
@@ -670,7 +637,31 @@ class EnergyRatingIndexTest < Minitest::Test
 
   private
 
-  def run_eri_and_check(xml, this_dir, test_name, expect_error = false, expect_error_msgs = nil)
+  def run_ruleset(design, xml, output_hpxml_path)
+    model = OpenStudio::Model::Model.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    measures_dir = File.join(File.dirname(__FILE__), "../../measures")
+
+    measures = {}
+
+    # Add 301 measure to workflow
+    measure_subdir = "301EnergyRatingIndexRuleset"
+    args = {}
+    args['calc_type'] = design
+    args['hpxml_path'] = xml
+    args['weather_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../weather"))
+    args['schemas_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../measures/HPXMLtoOpenStudio/hpxml_schemas"))
+    args['hpxml_output_path'] = output_hpxml_path
+    args['skip_validation'] = false
+    update_args_hash(measures, measure_subdir, args)
+
+    # Apply measures
+    FileUtils.mkdir_p(File.dirname(output_hpxml_path))
+    success = apply_measures(measures_dir, measures, runner, model)
+    assert(success)
+  end
+
+  def run_eri(xml, test_name, expect_error = false, expect_error_msgs = nil)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
@@ -680,7 +671,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hourly = " --hourly-output"
     end
 
-    rundir = File.join(this_dir, "tests", test_name)
+    rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
@@ -742,52 +733,33 @@ class EnergyRatingIndexTest < Minitest::Test
         assert(File.exists?(hpxmls[:iad]))
         hpxmls[:iadref] = File.join(rundir, "results", "ERIIndexAdjustmentReferenceHome.xml")
         assert(File.exists?(hpxmls[:iadref]))
-        csvs[:iad_results] = File.join(this_dir, "results", "ERIIndexAdjustmentDesign.csv")
-        csvs[:iadref_results] = File.join(this_dir, "results", "ERIIndexAdjustmentReferenceHome.csv")
+        csvs[:iad_results] = File.join(rundir, "results", "ERIIndexAdjustmentDesign.csv")
+        csvs[:iadref_results] = File.join(rundir, "results", "ERIIndexAdjustmentReferenceHome.csv")
       end
 
       # Check HPXMLs are valid
-      _test_schema_validation(this_dir, xml)
-      _test_schema_validation(this_dir, hpxmls[:ref])
-      _test_schema_validation(this_dir, hpxmls[:rated])
+      _test_schema_validation(xml)
+      _test_schema_validation(hpxmls[:ref])
+      _test_schema_validation(hpxmls[:rated])
       if using_iaf
-        _test_schema_validation(this_dir, hpxmls[:iad])
-        _test_schema_validation(this_dir, hpxmls[:iadref])
-      end
-
-      # Copy files to separate directory to save them
-      test_dir = File.join(@test_files_dir, test_name, File.basename(xml))
-      ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
-        next unless File.exists? File.join(rundir, design)
-
-        FileUtils.mkdir_p test_dir unless File.exists? test_dir
-        FileUtils.copy_entry File.join(rundir, design), File.join(test_dir, design)
-      end
-      FileUtils.copy_entry File.join(rundir, "results"), File.join(test_dir, "results")
-      hpxmls.keys.each do |k|
-        hpxmls[k] = hpxmls[k].gsub(rundir, test_dir)
-      end
-      csvs.keys.each do |k|
-        csvs[k] = csvs[k].gsub(rundir, test_dir)
+        _test_schema_validation(hpxmls[:iad])
+        _test_schema_validation(hpxmls[:iadref])
       end
     end
-
-    # Clean up
-    _rm_path(rundir)
 
     return hpxmls, csvs, runtime
   end
 
-  def run_straight_sim(xml, this_dir, test_name, hourly_output = false)
+  def run_simulation(xml, test_name, hourly_output = false)
     require_relative '../../measures/HPXMLtoOpenStudio/resources/meta_measure'
 
     puts "Running #{xml}..."
 
     xml = File.absolute_path(xml)
 
-    rundir = File.join(this_dir, "tests", test_name)
+    rundir = File.join(@test_files_dir, test_name, File.basename(xml))
     _rm_path(rundir)
-    Dir.mkdir(rundir)
+    FileUtils.mkdir_p(rundir)
 
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
@@ -805,7 +777,7 @@ class EnergyRatingIndexTest < Minitest::Test
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measure
-    measures_dir = File.join(this_dir, "../measures")
+    measures_dir = File.join(File.dirname(__FILE__), "../../measures")
     success = apply_measures(measures_dir, measures, runner, model)
 
     # Report warnings/errors
@@ -842,12 +814,7 @@ class EnergyRatingIndexTest < Minitest::Test
     sim_time = (Time.now - start_time).round(1)
     puts "Completed #{File.basename(args['hpxml_path'])} simulation in #{sim_time}s."
 
-    # Copy files to separate directory to save them
-    test_dir = File.join(@test_files_dir, test_name, File.basename(xml))
-    FileUtils.mkdir_p File.join(@test_files_dir, test_name) unless File.exists? File.join(@test_files_dir, test_name)
-    FileUtils.copy_entry rundir, test_dir
-
-    sql_path = File.join(test_dir, "eplusout.sql")
+    sql_path = File.join(rundir, "eplusout.sql")
     assert(File.exists?(sql_path))
 
     if hourly_output
@@ -889,12 +856,9 @@ class EnergyRatingIndexTest < Minitest::Test
         end
       end
 
-      out_csv = File.join(test_dir, "hourly.csv")
+      out_csv = File.join(rundir, "hourly.csv")
       CSV.open(out_csv, "wb") { |csv| design_hourly_output.to_a.each { |elem| csv << elem } }
     end
-
-    # Clean up
-    _rm_path(rundir)
 
     return sql_path, sim_time
   end
@@ -969,9 +933,9 @@ class EnergyRatingIndexTest < Minitest::Test
     return hvac.round(2), hvac_fan.round(2)
   end
 
-  def _test_schema_validation(this_dir, xml)
+  def _test_schema_validation(xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(this_dir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
+    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
     hpxml_doc = REXML::Document.new(File.read(xml))
     errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), nil)
     if errors.size > 0
