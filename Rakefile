@@ -2668,6 +2668,7 @@ def copy_sample_files
                   'base-hvac-wall-furnace-propane-only-no-eae.xml',
                   'base-hvac-wall-furnace-wood-only.xml',
                   'base-infiltration-ach-natural.xml',
+                  'base-mechvent-cfis-24hrs.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-mechvent-erv-asre.xml',
                   'base-mechvent-erv-atre.xml',
