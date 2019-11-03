@@ -645,7 +645,7 @@ class HVACtest < MiniTest::Test
     if htg_setback_hrs.nil?
       assert_nil(tstat.elements["TotalSetbackHoursperWeekHeating"])
     else
-      assert_equal(Float(tstat.elements["TotalSetbackHoursperWeekHeating"].text), htg_setback_hrs)
+      assert_equal(Integer(tstat.elements["TotalSetbackHoursperWeekHeating"].text), htg_setback_hrs)
     end
     if htg_setback_start_hr.nil?
       assert_nil(tstat.elements["extension/SetbackStartHourHeating"])
@@ -662,7 +662,7 @@ class HVACtest < MiniTest::Test
     if clg_setup_hrs.nil?
       assert_nil(tstat.elements["TotalSetupHoursperWeekCooling"])
     else
-      assert_equal(Float(tstat.elements["TotalSetupHoursperWeekCooling"].text), clg_setup_hrs)
+      assert_equal(Integer(tstat.elements["TotalSetupHoursperWeekCooling"].text), clg_setup_hrs)
     end
     if clg_setup_start_hr.nil?
       assert_nil(tstat.elements["extension/SetupStartHourCooling"])
