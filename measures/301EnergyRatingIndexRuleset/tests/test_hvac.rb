@@ -477,18 +477,15 @@ class HVACtest < MiniTest::Test
   def test_ceiling_fan
     hpxml_name = "base-misc-ceiling-fans.xml"
 
-    # Reference Home, IAD, IAD Reference
-    calc_types = [Constants.CalcTypeERIReferenceHome,
+    # Rated Home, Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIRatedHome,
+                  Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78)
+      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil, nil, nil, 0.5)
     end
-
-    # Rated Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78, nil, nil, nil, nil, nil, nil, 0.5)
   end
 
   def test_custom_setpoints
