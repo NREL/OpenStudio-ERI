@@ -86,6 +86,45 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
     return output_hpxml_path, nil
   end
 
+  # Add annual output meters to increase precision of outputs relative to, e.g., ABUPS report
+  meter_names = ["Electricity:Facility",
+                 "Gas:Facility",
+                 "FuelOil#1:Facility",
+                 "Propane:Facility",
+                 "Heating:EnergyTransfer",
+                 "Cooling:EnergyTransfer",
+                 "Heating:DistrictHeating",
+                 "Cooling:DistrictCooling",
+                 "#{Constants.ObjectNameInteriorLighting}:InteriorLights:Electricity",
+                 "#{Constants.ObjectNameGarageLighting}:InteriorLights:Electricity",
+                 "ExteriorLights:Electricity",
+                 "InteriorEquipment:Electricity",
+                 "InteriorEquipment:Gas",
+                 "InteriorEquipment:FuelOil#1",
+                 "InteriorEquipment:Propane",
+                 "#{Constants.ObjectNameRefrigerator}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameDishwasher}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameClothesWasher}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Gas",
+                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:FuelOil#1",
+                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Propane",
+                 "#{Constants.ObjectNameMiscPlugLoads}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameMiscTelevision}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Gas",
+                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:FuelOil#1",
+                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane",
+                 "#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity",
+                 "#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity",
+                 "Photovoltaic:ElectricityProduced"]
+
+  meter_names.each do |meter_name|
+    output_meter = OpenStudio::Model::OutputMeter.new(model)
+    output_meter.setName(meter_name)
+    output_meter.setReportingFrequency('runperiod')
+  end
+
   # Add hourly output requests
   if hourly_output
     # Thermal zone temperatures:
