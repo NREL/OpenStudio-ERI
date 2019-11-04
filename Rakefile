@@ -1836,7 +1836,9 @@ def get_hpxml_file_hvac_control_values(hpxml_file, hvac_control_values)
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     hvac_control_values = { :id => "HVACControl",
-                            :control_type => "manual thermostat" }
+                            :control_type => "manual thermostat",
+                            :heating_setpoint_temp => 68,
+                            :cooling_setpoint_temp => 78 }
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     hvac_control_values = {}

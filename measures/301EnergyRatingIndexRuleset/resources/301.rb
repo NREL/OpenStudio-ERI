@@ -1058,9 +1058,18 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Table 303.4.1(1) - Thermostat
+    control_type = "manual thermostat"
+    if not orig_details.elements["Lighting/CeilingFan"].nil?
+      clg_ceiling_fan_offset = 0.5 # deg-F
+    else
+      clg_ceiling_fan_offset = nil
+    end
     HPXML.add_hvac_control(hpxml: hpxml,
                            id: "HVACControl",
-                           control_type: "manual thermostat")
+                           control_type: control_type,
+                           heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
+                           cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0],
+                           ceiling_fan_cooling_setpoint_temp_offset: clg_ceiling_fan_offset)
 
     # Distribution system
     add_reference_distribution_system(hpxml, ref_hvacdist_ids)
@@ -1114,15 +1123,37 @@ class EnergyRatingIndex301Ruleset
 
     # Table 303.4.1(1) - Thermostat
     hvac_control = orig_details.elements["Systems/HVAC/HVACControl"]
+    if not orig_details.elements["Lighting/CeilingFan"].nil?
+      clg_ceiling_fan_offset = 0.5 # deg-F
+    else
+      clg_ceiling_fan_offset = nil
+    end
     if not hvac_control.nil?
       hvac_control_values = HPXML.get_hvac_control_values(hvac_control: hvac_control)
+      control_type = hvac_control_values[:control_type]
+      htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
+      clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
       HPXML.add_hvac_control(hpxml: hpxml,
                              id: hvac_control_values[:id],
-                             control_type: hvac_control_values[:control_type])
+                             control_type: control_type,
+                             heating_setpoint_temp: htg_sp,
+                             heating_setback_temp: htg_setback_sp,
+                             heating_setback_hours_per_week: htg_setback_hrs_per_week,
+                             heating_setback_start_hour: htg_setback_start_hr,
+                             cooling_setpoint_temp: clg_sp,
+                             cooling_setup_temp: clg_setup_sp,
+                             cooling_setup_hours_per_week: clg_setup_hrs_per_week,
+                             cooling_setup_start_hour: clg_setup_start_hr,
+                             ceiling_fan_cooling_setpoint_temp_offset: clg_ceiling_fan_offset)
+
     else
+      control_type = "manual thermostat"
       HPXML.add_hvac_control(hpxml: hpxml,
                              id: "HVACControl",
-                             control_type: "manual thermostat")
+                             control_type: control_type,
+                             heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
+                             cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0],
+                             ceiling_fan_cooling_setpoint_temp_offset: clg_ceiling_fan_offset)
     end
 
     # Table 4.2.2(1) - Thermal distribution systems
