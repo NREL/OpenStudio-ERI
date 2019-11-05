@@ -128,49 +128,49 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
 
   # Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
 
   # Peak Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
+  query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
   design_output[:peakLoadHeatingBldg] = sqlFile.execAndReturnFirstDouble(query).get
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
+  query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
   design_output[:peakLoadCoolingBldg] = sqlFile.execAndReturnFirstDouble(query).get
 
   # Building Unmet Space Heating/Cooling Load (heating/cooling energy delivered by backup ideal air system)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:DistrictHeating' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:DistrictHeating' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:unmetLoadHeatingBldg] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:DistrictCooling' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:DistrictCooling' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:unmetLoadCoolingBldg] = get_sql_query_result(sqlFile, query)
 
   # Peak Electricity Consumption
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY SUMMER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
+  query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY SUMMER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
   design_output[:peakElecSummerTotal] = sqlFile.execAndReturnFirstDouble(query).get
-  query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY WINTER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
+  query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY WINTER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
   design_output[:peakElecWinterTotal] = sqlFile.execAndReturnFirstDouble(query).get
 
   # Electricity categories
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecTotal] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameInteriorLighting}:InteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameInteriorLighting}:InteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecIntLighting] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='ExteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='ExteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecExtLighting] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameGarageLighting}:InteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameGarageLighting}:InteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecGrgLighting] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecAppliances] = get_sql_query_result(sqlFile, query)
 
   # Fuel categories
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:gasTotal] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='FuelOil#1:Facility' OR VariableName='Propane:Facility') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='FuelOil#1:Facility' OR VariableName='Propane:Facility') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:otherTotal] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:gasAppliances] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='InteriorEquipment:FuelOil#1' OR VariableName='InteriorEquipment:Propane') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='InteriorEquipment:FuelOil#1' OR VariableName='InteriorEquipment:Propane') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:otherAppliances] = get_sql_query_result(sqlFile, query)
 
   # Space Heating (by System)
@@ -357,49 +357,49 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:loadHotWaterTankLosses] = get_sql_query_result(sqlFile, query)
 
   # PV
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Photovoltaic:ElectricityProduced' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Photovoltaic:ElectricityProduced' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecPV] = get_sql_query_result(sqlFile, query)
 
   # Fridge
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameRefrigerator}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameRefrigerator}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecFridge] = get_sql_query_result(sqlFile, query)
 
   # Dishwasher
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameDishwasher}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameDishwasher}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecDishwasher] = get_sql_query_result(sqlFile, query)
 
   # Clothes Washer
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesWasher}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesWasher}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecClothesWasher] = get_sql_query_result(sqlFile, query)
 
   # Clothes Dryer
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecClothesDryer] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:gasClothesDryer] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:FuelOil#1' OR VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Propane') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:FuelOil#1' OR VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Propane') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:otherClothesDryer] = get_sql_query_result(sqlFile, query)
 
   # MELS
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMiscPlugLoads}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMiscPlugLoads}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecMELs] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMiscTelevision}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMiscTelevision}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecTV] = get_sql_query_result(sqlFile, query)
 
   # Range/Oven
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecRangeOven] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:gasRangeOven] = get_sql_query_result(sqlFile, query)
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:FuelOil#1' OR VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:FuelOil#1' OR VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:otherRangeOven] = get_sql_query_result(sqlFile, query)
 
   # Ceiling Fans
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecCeilingFan] = get_sql_query_result(sqlFile, query)
 
   # Mechanical Ventilation
-  query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
 
   # Error Checking
@@ -504,25 +504,25 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     end
 
     # Electricity
-    query = "SELECT VariableValue*#{j_to_kwh} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    query = "SELECT VariableValue*#{j_to_kwh} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
     elec_use = sqlFile.execAndReturnVectorOfDouble(query).get
     elec_use += [0.0] * 8760 if elec_use.size == 0
     fail "Unexpected result" if elec_use.size != 8760
 
     # Natural Gas
-    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
     gas_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
     gas_use += [0.0] * 8760 if gas_use.size == 0
     fail "Unexpected result" if gas_use.size != 8760
 
     # Fuel Oil
-    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
     oil_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
     oil_use += [0.0] * 8760 if oil_use.size == 0
     fail "Unexpected result" if oil_use.size != 8760
 
     # Propane
-    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
     propane_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
     propane_use += [0.0] * 8760 if propane_use.size == 0
     fail "Unexpected result" if propane_use.size != 8760
@@ -533,7 +533,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
     # Space temperatures
     zone_names.each do |zone_name|
-      query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
       temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
       fail "Unexpected result" if temperatures.size != 8760
 
@@ -544,21 +544,21 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
     # Error Checking
     elec_sum_hourly_gj = (elec_use.inject(0, :+) / j_to_kwh) / 1000000000.0
-    query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     elec_annual_gj = get_sql_query_result(sqlFile, query, false)
     if (elec_annual_gj - elec_sum_hourly_gj).abs > tolerance
       fail "[#{design}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
     end
 
     gas_sum_hourly_gj = (gas_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
-    query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     gas_annual_gj = get_sql_query_result(sqlFile, query, false)
     if (gas_annual_gj - gas_sum_hourly_gj).abs > tolerance
       fail "[#{design}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
     end
 
     other_sum_hourly_gj = ((propane_use.inject(0, :+) + oil_use.inject(0, :+)) / j_to_kbtu) / 1000000000.0
-    query = "SELECT VariableValue/1000000000 FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex = (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='FuelOil#1:Facility' OR VariableName='Propane:Facility') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE (VariableName='FuelOil#1:Facility' OR VariableName='Propane:Facility') AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     other_annual_gj = get_sql_query_result(sqlFile, query, false)
     if (other_annual_gj - other_sum_hourly_gj).abs > tolerance
       fail "[#{design}] Hourly propane+oil fuel results (#{other_sum_hourly_gj}) do not sum to annual (#{other_annual_gj}).\n#{design_output.to_s}"
