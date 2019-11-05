@@ -144,17 +144,17 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
   
-  # Add Output:Table:Monthly objects for component loads
-  monthly_array = ['Output:Table:Monthly',
-                   'Winter Component Loads',
-                   '2',
-                   'Heating:EnergyTransfer:Zone:LIVING',
-                   'HoursPositive',
-                   '*:Wall Convection ...',
-                   'SumDuringHoursShown',
-                   '*:Window Convection ...',
-                   'SumDuringHoursShown']                   
-  model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
+  # # Add Output:Table:Monthly objects for component loads
+  # monthly_array = ['Output:Table:Monthly',
+  #                  'Winter Component Loads',
+  #                  '2',
+  #                  'Heating:EnergyTransfer:Zone:LIVING',
+  #                  'HoursPositive',
+  #                  '*:Wall Convection ...',
+  #                  'SumDuringHoursShown',
+  #                  '*:Window Convection ...',
+  #                  'SumDuringHoursShown']                   
+  # model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
 
   # Add Output:Table:Monthly objects for peak electricity outputs
   monthly_array = ['Output:Table:Monthly',
@@ -164,6 +164,7 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
                    'HoursPositive',
                    'Electricity:Facility',
                    'MaximumDuringHoursShown']
+                   puts(monthly_array.join(",").to_s)
   model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
 
   monthly_array = ['Output:Table:Monthly',

@@ -126,12 +126,26 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_heat_sys_ids] = design_output[:hpxml_eec_heats].keys
   design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
+
+  design_output[:componentHeatingWalls] = 0
+  design_output[:componentHeatingFoundWalls] = 0
+  design_output[:componentHeatingWindows] = 0
+  design_output[:componentHeatingCeiling] = 0
+  design_output[:componentHeatingFloor] = 0
+  design_output[:componentHeatingInfiltration] = 0
+  design_output[:componentCoolingWalls] = 0
+  design_output[:componentCoolingFoundWalls] = 0
+  design_output[:componentCoolingWindows] = 0
+  design_output[:componentCoolingCeiling] = 0
+  design_output[:componentCoolingFloor] = 0
+  design_output[:componentCoolingInfiltration] = 0
+
   
   # Component Loads
-  query = "..."
-  design_output[:componentLoadHeatingWalls] = ...
-  query = "..."
-  design_output[:componentLoadHeatingWindows] = ...
+  # query = "..."
+  # design_output[:componentLoadHeatingWalls] = ...
+  # query = "..."
+  # design_output[:componentLoadHeatingWindows] = ...
 
   # Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
@@ -1185,8 +1199,20 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg]]
   results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg]]
   results_out << [nil] # line break
-  results_out << ["Component Load: Heating: Walls (MBtu)", design_output[:componentLoadHeatingWalls]]
-  results_out << ["Component Load: Heating: Windows (MBtu)", design_output[:componentLoadHeatingWindows]]
+  results_out << ["Component Load: Heating: Walls (MBtu)", design_output[:componentHeatingWalls]]
+  results_out << ["Component Load: Heating: Foundation Walls (MBtu)", design_output[:componentHeatingFoundWalls]]
+  results_out << ["Component Load: Heating: Windows (MBtu)", design_output[:componentHeatingWindows]]
+  results_out << ["Component Load: Heating: Ceiling (MBtu)", design_output[:componentHeatingCeiling]]
+  results_out << ["Component Load: Heating: Floor (MBtu)", design_output[:componentHeatingFloor]]
+  results_out << ["Component Load: Heating: Infiltration (MBtu)", design_output[:componentHeatingInfiltration]]
+  results_out << ["Component Load: Cooling: Walls (MBtu)", design_output[:componentCoolingWalls]]
+  results_out << ["Component Load: Cooling: Foundation Walls (MBtu)", design_output[:componentCoolingFoundWalls]]
+  results_out << ["Component Load: Cooling: Windows (MBtu)", design_output[:componentCoolingWindows]]
+  results_out << ["Component Load: Cooling: Ceiling (MBtu)", design_output[:componentCoolingCeiling]]
+  results_out << ["Component Load: Cooling: Floor (MBtu)", design_output[:componentCoolingFloor]]
+  results_out << ["Component Load: Cooling: Infiltration (MBtu)", design_output[:componentCoolingInfiltration]]
+
+
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
@@ -1199,7 +1225,7 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
 
     fuel, enduse = var.split(": ")
     next if enduse.start_with? "Total " or enduse.start_with? "Net "
-
+    puts(var)
     sum_end_use_results[fuel] = 0.0 if sum_end_use_results[fuel].nil?
     sum_end_use_results[fuel] += value
   end
