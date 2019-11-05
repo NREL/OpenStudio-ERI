@@ -126,6 +126,12 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_heat_sys_ids] = design_output[:hpxml_eec_heats].keys
   design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
+  
+  # Component Loads
+  query = "..."
+  design_output[:componentLoadHeatingWalls] = ...
+  query = "..."
+  design_output[:componentLoadHeatingWindows] = ...
 
   # Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
@@ -1178,6 +1184,9 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << [nil] # line break
   results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg]]
   results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg]]
+  results_out << [nil] # line break
+  results_out << ["Component Load: Heating: Walls (MBtu)", design_output[:componentLoadHeatingWalls]]
+  results_out << ["Component Load: Heating: Windows (MBtu)", design_output[:componentLoadHeatingWindows]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent

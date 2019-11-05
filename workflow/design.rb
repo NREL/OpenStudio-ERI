@@ -85,7 +85,7 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
     print "[#{design}] Creating input unsuccessful.\n"
     return output_hpxml_path, nil
   end
-
+  
   # Add annual output meters to increase precision of outputs relative to, e.g., ABUPS report
   meter_names = ["Electricity:Facility",
                  "Gas:Facility",
@@ -143,6 +143,18 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
   # Translate model
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
+  
+  # Add Output:Table:Monthly objects for component loads
+  monthly_array = ['Output:Table:Monthly',
+                   'Winter Component Loads',
+                   '2',
+                   'Heating:EnergyTransfer:Zone:LIVING',
+                   'HoursPositive',
+                   '*:Wall Convection ...',
+                   'SumDuringHoursShown',
+                   '*:Window Convection ...',
+                   'SumDuringHoursShown']                   
+  model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
 
   # Add Output:Table:Monthly objects for peak electricity outputs
   monthly_array = ['Output:Table:Monthly',
