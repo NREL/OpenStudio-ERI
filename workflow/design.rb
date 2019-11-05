@@ -117,7 +117,7 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
                  "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane",
                  "#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity",
                  "#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity",
-                 "Photovoltaic:ElectricityProduced"]
+                 "ElectricityProduced:Facility"]
 
   meter_names.each do |meter_name|
     output_meter = OpenStudio::Model::OutputMeter.new(model)

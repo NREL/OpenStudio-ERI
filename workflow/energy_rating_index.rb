@@ -357,7 +357,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:loadHotWaterTankLosses] = get_sql_query_result(sqlFile, query)
 
   # PV
-  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Photovoltaic:ElectricityProduced' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='ElectricityProduced:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecPV] = get_sql_query_result(sqlFile, query)
 
   # Fridge
