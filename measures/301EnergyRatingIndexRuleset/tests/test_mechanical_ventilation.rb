@@ -258,6 +258,26 @@ class MechVentTest < MiniTest::Test
     _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
   end
 
+  def test_mech_vent_cfm50_infiltration
+    hpxml_name = "base-enclosure-infil-cfm50.xml"
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml_doc, "exhaust only", 37.0, 24, 0.0) # Should have airflow but not fan energy
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_mech_vent(hpxml_doc)
+
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_mech_vent(hpxml_doc, "balanced", 60.0, 24, 42.0)
+
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
+  end
+
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
