@@ -1214,8 +1214,8 @@ class EnergyRatingIndex301Ruleset
 
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
-    sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, sla)
+    ref_sla = 0.00036
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla)
 
     # Calculate fan cfm for fan power using Rated Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
@@ -1223,26 +1223,33 @@ class EnergyRatingIndex301Ruleset
       fan_type = 'exhaust only'
       fan_power_w = 0.0
     else
-      air_infiltration_measurement_values = nil
+      rated_sla = nil
+      air_infiltration_measurements_values = []
       # Check for eRatio workaround first
       orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |air_infiltration_measurement|
-        air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
-        break
+        air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
       end
-      if air_infiltration_measurement_values.nil?
+      if air_infiltration_measurements_values.empty?
         orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
-          air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+          air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+        end
+      end
+      air_infiltration_measurements_values.each do |air_infiltration_measurement_values|
+        if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
+          nach = air_infiltration_measurement_values[:air_leakage]
+          rated_sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
+          break
+        elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
+          ach50 = air_infiltration_measurement_values[:air_leakage] * 60.0 / @infilvolume
+          rated_sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
+          break
+        elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
+          ach50 = air_infiltration_measurement_values[:air_leakage]
+          rated_sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
           break
         end
       end
-      if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
-        nach = air_infiltration_measurement_values[:air_leakage]
-        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
-      elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
-        ach50 = air_infiltration_measurement_values[:air_leakage]
-        sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
-      end
-      q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
+      q_fan_power = calc_mech_vent_q_fan(q_tot, rated_sla)
 
       # Treat CFIS like supply ventilation
       if fan_type == 'central fan integrated supply'
