@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-10-24T09:57:27-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-11-06T07:58:44-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -191,8 +191,11 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+            <InteriorShading>
+              <SystemIdentifier id='WindowNorthInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -201,8 +204,11 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+            <InteriorShading>
+              <SystemIdentifier id='WindowSouthInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -211,8 +217,11 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+            <InteriorShading>
+              <SystemIdentifier id='WindowEastInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -221,8 +230,11 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
+            <InteriorShading>
+              <SystemIdentifier id='WindowWestInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
@@ -276,6 +288,8 @@
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
             <ControlType>manual thermostat</ControlType>
+            <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
+            <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution'/>

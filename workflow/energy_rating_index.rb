@@ -1431,7 +1431,7 @@ if OpenStudio.openStudioVersion != os_version
 end
 
 if options[:version]
-  workflow_version = "0.4.0"
+  workflow_version = "0.5.0"
   puts "OpenStudio-ERI v#{workflow_version}"
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
