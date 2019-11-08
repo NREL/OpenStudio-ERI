@@ -85,45 +85,6 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
     print "[#{design}] Creating input unsuccessful.\n"
     return output_hpxml_path, nil
   end
-  
-  # Add annual output meters to increase precision of outputs relative to, e.g., ABUPS report
-  meter_names = ["Electricity:Facility",
-                 "Gas:Facility",
-                 "FuelOil#1:Facility",
-                 "Propane:Facility",
-                 "Heating:EnergyTransfer",
-                 "Cooling:EnergyTransfer",
-                 "Heating:DistrictHeating",
-                 "Cooling:DistrictCooling",
-                 "#{Constants.ObjectNameInteriorLighting}:InteriorLights:Electricity",
-                 "#{Constants.ObjectNameGarageLighting}:InteriorLights:Electricity",
-                 "ExteriorLights:Electricity",
-                 "InteriorEquipment:Electricity",
-                 "InteriorEquipment:Gas",
-                 "InteriorEquipment:FuelOil#1",
-                 "InteriorEquipment:Propane",
-                 "#{Constants.ObjectNameRefrigerator}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameDishwasher}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameClothesWasher}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Gas",
-                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:FuelOil#1",
-                 "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Propane",
-                 "#{Constants.ObjectNameMiscPlugLoads}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameMiscTelevision}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Gas",
-                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:FuelOil#1",
-                 "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane",
-                 "#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity",
-                 "#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity",
-                 "ElectricityProduced:Facility"]
-
-  meter_names.each do |meter_name|
-    output_meter = OpenStudio::Model::OutputMeter.new(model)
-    output_meter.setName(meter_name)
-    output_meter.setReportingFrequency('runperiod')
-  end
 
   # Add hourly output requests
   if hourly_output
@@ -143,38 +104,18 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
   # Translate model
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
   model_idf = forward_translator.translateModel(model)
-  
-  # # Add Output:Table:Monthly objects for component loads
-  # monthly_array = ['Output:Table:Monthly',
-  #                  'Winter Component Loads',
-  #                  '2',
-  #                  'Heating:EnergyTransfer:Zone:LIVING',
-  #                  'HoursPositive',
-  #                  '*:Wall Convection ...',
-  #                  'SumDuringHoursShown',
-  #                  '*:Window Convection ...',
-  #                  'SumDuringHoursShown']                   
-  # model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
 
   # Add Output:Table:Monthly objects for peak electricity outputs
-  monthly_array = ['Output:Table:Monthly',
-                   'Peak Electricity Winter Total',
-                   '2',
-                   'Heating:EnergyTransfer:Zone:LIVING',
-                   'HoursPositive',
-                   'Electricity:Facility',
-                   'MaximumDuringHoursShown']
-                   puts(monthly_array.join(",").to_s)
-  model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
-
-  monthly_array = ['Output:Table:Monthly',
-                   'Peak Electricity Summer Total',
-                   '2',
-                   'Cooling:EnergyTransfer:Zone:LIVING',
-                   'HoursPositive',
-                   'Electricity:Facility',
-                   'MaximumDuringHoursShown']
-  model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
+  { "Heating" => "Winter", "Cooling" => "Summer" }.each do |mode, season|
+    monthly_array = ["Output:Table:Monthly",
+                     "Peak Electricity #{season} Total",
+                     "2",
+                     "#{mode}:EnergyTransfer",
+                     "HoursPositive",
+                     "Electricity:Facility",
+                     "MaximumDuringHoursShown"]
+    model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
+  end
 
   # Write model to IDF
   File.open(File.join(designdir, "in.idf"), 'w') { |f| f << model_idf.to_s }
