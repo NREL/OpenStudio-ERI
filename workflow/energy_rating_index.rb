@@ -135,9 +135,9 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
   # Peak Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
   query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
-  design_output[:peakLoadHeatingBldg] = sqlFile.execAndReturnFirstDouble(query).get
+  design_output[:peakLoadHeatingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "Wh", "kBtu")
   query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
-  design_output[:peakLoadCoolingBldg] = sqlFile.execAndReturnFirstDouble(query).get
+  design_output[:peakLoadCoolingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "Wh", "kBtu")
 
   # Building Unmet Space Heating/Cooling Load (heating/cooling energy delivered by backup ideal air system)
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:DistrictHeating' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
@@ -1233,8 +1233,8 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal]]
   results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
   results_out << [nil] # line break
-  results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg]]
-  results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg]]
+  results_out << ["Peak Load: Heating (kBtu)", design_output[:peakLoadHeatingBldg]]
+  results_out << ["Peak Load: Cooling (kBtu)", design_output[:peakLoadCoolingBldg]]
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
