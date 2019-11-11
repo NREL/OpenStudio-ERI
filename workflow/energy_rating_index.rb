@@ -82,6 +82,22 @@ def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
   return htg_energy * water_sys_frac
 end
 
+def get_component_load_map
+  return { "Ceilings/Roofs" => "ceilings_roofs",
+           "Walls/Rim Joists" => "walls",
+           "Foundation Walls" => "foundation_walls",
+           "Doors" => "doors",
+           "Windows" => "windows",
+           "Skylights" => "skylights",
+           "Floors" => "floors",
+           "Slabs" => "slabs",
+           "Internal Mass" => "internal_mass",
+           "Infiltration/Natural Ventilation" => "infil",
+           "Mechanical Ventilation" => "mechvent",
+           "Ducts" => "ducts",
+           "Internal Gains" => "intgains" }
+end
+
 def read_output(design, designdir, output_hpxml_path, hourly_output)
   sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
@@ -461,74 +477,18 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   end
 
   # Component Loads
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='ceilings_roofs_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingCeilingsRoofs] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='walls_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingWallsRimJoists] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='foundation_walls_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingFoundWalls] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='doors_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingDoors] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='windows_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingWindows] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='skylights_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingSkylights] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='floors_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingFloors] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='slabs_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingSlabs] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='internal_mass_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingInternalMass] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='infil_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingInfiltration] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='mechvent_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingMechVent] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='ducts_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingDucts] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='intgains_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingInternalGains] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName LIKE '%_htg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentHeatingUnknown] = design_output[:loadHeatingBldg] - UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='ceilings_roofs_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingCeilingsRoofs] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='walls_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingWallsRimJoists] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='foundation_walls_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingFoundWalls] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='doors_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingDoors] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='windows_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingWindows] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='skylights_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingSkylights] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='floors_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingFloors] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='slabs_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingSlabs] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='internal_mass_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingInternalMass] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='infil_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingInfiltration] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='mechvent_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingMechVent] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='ducts_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingDucts] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='intgains_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingInternalGains] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName LIKE '%_clg_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:componentCoolingUnknown] = design_output[:loadCoolingBldg] - UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-
-  # Component Loads Error Checking
-  sum_heating_component_loads = 0.0
-  sum_cooling_component_loads = 0.0
-  design_output.keys.each do |k|
-    if k.to_s.include? "componentHeating"
-      sum_heating_component_loads += design_output[k]
-    elsif k.to_s.include? "componentCooling"
-      sum_cooling_component_loads += design_output[k]
+  { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
+    get_component_load_map.each do |component, component_var|
+      query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='#{mode_var}_#{component_var}_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output["componentLoad#{mode}#{component}"] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
     end
   end
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName LIKE 'htg_%_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  sum_heating_component_loads = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName LIKE 'clg_%_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  sum_cooling_component_loads = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
   # FIXME: Uncomment
   # if (design_output[:loadHeatingBldg] - sum_heating_component_loads).abs > tolerance
   #  fail "[#{design}] Heating component loads (#{sum_heating_component_loads}) do not sum to total (#{design_output[:loadHeatingBldg]}).\n#{design_output.to_s}"
@@ -1243,34 +1203,11 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg]]
   results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg]]
   results_out << [nil] # line break
-  results_out << ["Component Load: Heating: Ceilings/Roofs (MBtu)", design_output[:componentHeatingCeilingsRoofs]]
-  results_out << ["Component Load: Heating: Walls/Rim Joists (MBtu)", design_output[:componentHeatingWallsRimJoists]]
-  results_out << ["Component Load: Heating: Foundation Walls (MBtu)", design_output[:componentHeatingFoundWalls]]
-  results_out << ["Component Load: Heating: Doors (MBtu)", design_output[:componentHeatingDoors]]
-  results_out << ["Component Load: Heating: Windows (MBtu)", design_output[:componentHeatingWindows]]
-  results_out << ["Component Load: Heating: Skylights (MBtu)", design_output[:componentHeatingSkylights]]
-  results_out << ["Component Load: Heating: Floors (MBtu)", design_output[:componentHeatingFloors]]
-  results_out << ["Component Load: Heating: Slabs (MBtu)", design_output[:componentHeatingSlabs]]
-  results_out << ["Component Load: Heating: Internal Mass (MBtu)", design_output[:componentHeatingInternalMass]]
-  results_out << ["Component Load: Heating: Infiltration/Natural Ventilation (MBtu)", design_output[:componentHeatingInfiltration]]
-  results_out << ["Component Load: Heating: Mechanical Ventilation (MBtu)", design_output[:componentHeatingMechVent]]
-  results_out << ["Component Load: Heating: Ducts (MBtu)", design_output[:componentHeatingDucts]]
-  results_out << ["Component Load: Heating: Internal Gains (MBtu)", design_output[:componentHeatingInternalGains]]
-  results_out << ["Component Load: Heating: Unknown (MBtu)", design_output[:componentHeatingUnknown]]
-  results_out << ["Component Load: Cooling: Ceilings/Roofs (MBtu)", design_output[:componentCoolingCeilingsRoofs]]
-  results_out << ["Component Load: Cooling: Walls/Rim Joists (MBtu)", design_output[:componentCoolingWallsRimJoists]]
-  results_out << ["Component Load: Cooling: Foundation Walls (MBtu)", design_output[:componentCoolingFoundWalls]]
-  results_out << ["Component Load: Cooling: Doors (MBtu)", design_output[:componentCoolingDoors]]
-  results_out << ["Component Load: Cooling: Windows (MBtu)", design_output[:componentCoolingWindows]]
-  results_out << ["Component Load: Cooling: Skylights (MBtu)", design_output[:componentCoolingSkylights]]
-  results_out << ["Component Load: Cooling: Floors (MBtu)", design_output[:componentCoolingFloors]]
-  results_out << ["Component Load: Cooling: Slabs (MBtu)", design_output[:componentCoolingSlabs]]
-  results_out << ["Component Load: Cooling: Internal Mass (MBtu)", design_output[:componentCoolingInternalMass]]
-  results_out << ["Component Load: Cooling: Infiltration/Natural Ventilation (MBtu)", design_output[:componentCoolingInfiltration]]
-  results_out << ["Component Load: Cooling: Mechanical Ventilation (MBtu)", design_output[:componentCoolingMechVent]]
-  results_out << ["Component Load: Cooling: Ducts (MBtu)", design_output[:componentCoolingDucts]]
-  results_out << ["Component Load: Cooling: Internal Gains (MBtu)", design_output[:componentCoolingInternalGains]]
-  results_out << ["Component Load: Cooling: Unknown (MBtu)", design_output[:componentCoolingUnknown]]
+  { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
+    get_component_load_map.each do |component, component_var|
+      results_out << ["Component Load: #{mode}: #{component} (MBtu)", design_output["componentLoad#{mode}#{component}"]]
+    end
+  end
 
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
