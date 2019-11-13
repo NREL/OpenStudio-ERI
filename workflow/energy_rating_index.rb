@@ -490,14 +490,6 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName LIKE 'clg_%_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   sum_cooling_component_loads = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
-  # FIXME: Uncomment
-  # if (design_output[:loadHeatingBldg] - sum_heating_component_loads).abs > tolerance
-  #  fail "[#{design}] Heating component loads (#{sum_heating_component_loads}) do not sum to total (#{design_output[:loadHeatingBldg]}).\n#{design_output.to_s}"
-  # end
-  # if (design_output[:loadCoolingBldg] - sum_cooling_component_loads).abs > tolerance
-  #  fail "[#{design}] Cooling component loads (#{sum_cooling_component_loads}) do not sum to total (#{design_output[:loadCoolingBldg]}).\n#{design_output.to_s}"
-  # end
-
   design_hourly_output = []
   if hourly_output
     # Generate CSV file with hourly output

@@ -56,6 +56,11 @@ The CSV file includes multiple sections with different outputs.
 
 6. The sixth section in the CSV includes **total building peak loads** in Watts for heating and cooling.
    Heating and cooling peak loads include duct losses.
+   
+7. The seventh section in the CSV includes **component building loads**.
+   Component loads represent the estimated contribution of different building components (e.g., walls, windows, infiltration, ducts, internal gains, etc.) to the annual heating/cooling building load.
+   The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
+   
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
