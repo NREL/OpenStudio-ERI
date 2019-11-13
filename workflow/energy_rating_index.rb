@@ -1170,7 +1170,7 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << ["Electricity: Ceiling Fan (MBtu)", design_output[:elecCeilingFan].round(2)]
   results_out << ["Electricity: Plug Loads (MBtu)", (design_output[:elecMELs] + design_output[:elecTV]).round(2)]
   if design_output[:elecPV] > 0
-    results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV]].round(2)
+    results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV].round(2)]
   else
     results_out << ["Electricity: PV (MBtu)", 0.0]
   end
