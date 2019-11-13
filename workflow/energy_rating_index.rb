@@ -83,8 +83,10 @@ def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
 end
 
 def get_component_load_map
-  return { "Ceilings/Roofs" => "ceilings_roofs",
-           "Walls/Rim Joists" => "walls",
+  return { "Roofs" => "roofs",
+           "Ceilings" => "ceilings",
+           "Walls" => "walls",
+           "Rim Joists" => "rim_joists",
            "Foundation Walls" => "foundation_walls",
            "Doors" => "doors",
            "Windows" => "windows",
@@ -1147,67 +1149,67 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}.csv")
 
   results_out = []
-  results_out << ["Electricity: Total (MBtu)", design_output[:elecTotal]]
-  results_out << ["Electricity: Net (MBtu)", design_output[:elecTotal] - design_output[:elecPV]]
-  results_out << ["Natural Gas: Total (MBtu)", design_output[:gasTotal]]
-  results_out << ["Other Fuel: Total (MBtu)", design_output[:otherTotal]]
+  results_out << ["Electricity: Total (MBtu)", design_output[:elecTotal].round(2)]
+  results_out << ["Electricity: Net (MBtu)", (design_output[:elecTotal] - design_output[:elecPV]).round(2)]
+  results_out << ["Natural Gas: Total (MBtu)", design_output[:gasTotal].round(2)]
+  results_out << ["Other Fuel: Total (MBtu)", design_output[:otherTotal].round(2)]
   results_out << [nil] # line break
-  results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Lighting Interior (MBtu)", design_output[:elecIntLighting]]
-  results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting]]
-  results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting]]
-  results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent]]
-  results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge]]
-  results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher]]
-  results_out << ["Electricity: Clothes Washer (MBtu)", design_output[:elecClothesWasher]]
-  results_out << ["Electricity: Clothes Dryer (MBtu)", design_output[:elecClothesDryer]]
-  results_out << ["Electricity: Range/Oven (MBtu)", design_output[:elecRangeOven]]
-  results_out << ["Electricity: Ceiling Fan (MBtu)", design_output[:elecCeilingFan]]
-  results_out << ["Electricity: Plug Loads (MBtu)", design_output[:elecMELs] + design_output[:elecTV]]
+  results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Lighting Interior (MBtu)", design_output[:elecIntLighting].round(2)]
+  results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting].round(2)]
+  results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting].round(2)]
+  results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent].round(2)]
+  results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge].round(2)]
+  results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher].round(2)]
+  results_out << ["Electricity: Clothes Washer (MBtu)", design_output[:elecClothesWasher].round(2)]
+  results_out << ["Electricity: Clothes Dryer (MBtu)", design_output[:elecClothesDryer].round(2)]
+  results_out << ["Electricity: Range/Oven (MBtu)", design_output[:elecRangeOven].round(2)]
+  results_out << ["Electricity: Ceiling Fan (MBtu)", design_output[:elecCeilingFan].round(2)]
+  results_out << ["Electricity: Plug Loads (MBtu)", (design_output[:elecMELs] + design_output[:elecTV]).round(2)]
   if design_output[:elecPV] > 0
-    results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV]]
+    results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV]].round(2)
   else
     results_out << ["Electricity: PV (MBtu)", 0.0]
   end
-  results_out << ["Natural Gas: Heating (MBtu)", design_output[:gasHeatingBySystem].values.inject(0, :+)]
-  results_out << ["Natural Gas: Hot Water (MBtu)", design_output[:gasHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Natural Gas: Clothes Dryer (MBtu)", design_output[:gasClothesDryer]]
-  results_out << ["Natural Gas: Range/Oven (MBtu)", design_output[:gasRangeOven]]
-  results_out << ["Other Fuel: Heating (MBtu)", design_output[:otherHeatingBySystem].values.inject(0, :+)]
-  results_out << ["Other Fuel: Hot Water (MBtu)", design_output[:otherHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Other Fuel: Clothes Dryer (MBtu)", design_output[:otherClothesDryer]]
-  results_out << ["Other Fuel: Range/Oven (MBtu)", design_output[:otherRangeOven]]
+  results_out << ["Natural Gas: Heating (MBtu)", design_output[:gasHeatingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Natural Gas: Hot Water (MBtu)", design_output[:gasHotWaterBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Natural Gas: Clothes Dryer (MBtu)", design_output[:gasClothesDryer].round(2)]
+  results_out << ["Natural Gas: Range/Oven (MBtu)", design_output[:gasRangeOven].round(2)]
+  results_out << ["Other Fuel: Heating (MBtu)", design_output[:otherHeatingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Other Fuel: Hot Water (MBtu)", design_output[:otherHotWaterBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Other Fuel: Clothes Dryer (MBtu)", design_output[:otherClothesDryer].round(2)]
+  results_out << ["Other Fuel: Range/Oven (MBtu)", design_output[:otherRangeOven].round(2)]
   results_out << [nil] # line break
-  results_out << ["Annual Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
-  results_out << ["Annual Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
-  results_out << ["Annual Load: Hot Water: Delivered (MBtu)", design_output[:loadHotWaterDelivered]]
-  results_out << ["Annual Load: Hot Water: Tank Losses (MBtu)", design_output[:loadHotWaterTankLosses]]
-  results_out << ["Annual Load: Hot Water: Desuperheater (MBtu)", design_output[:loadHotWaterDesuperheater]]
+  results_out << ["Annual Load: Heating (MBtu)", design_output[:loadHeatingBldg].round(2)]
+  results_out << ["Annual Load: Cooling (MBtu)", design_output[:loadCoolingBldg].round(2)]
+  results_out << ["Annual Load: Hot Water: Delivered (MBtu)", design_output[:loadHotWaterDelivered].round(2)]
+  results_out << ["Annual Load: Hot Water: Tank Losses (MBtu)", design_output[:loadHotWaterTankLosses].round(2)]
+  results_out << ["Annual Load: Hot Water: Desuperheater (MBtu)", design_output[:loadHotWaterDesuperheater].round(2)]
   results_out << [nil] # line break
-  results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
-  results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
+  results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg].round(2)]
+  results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg].round(2)]
   results_out << [nil] # line break
-  results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal]]
-  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
+  results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal].round(0)]
+  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal].round(0)]
   results_out << [nil] # line break
-  results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg]]
-  results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg]]
+  results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg].round(0)]
+  results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg].round(0)]
   results_out << [nil] # line break
   { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
     get_component_load_map.each do |component, component_var|
-      results_out << ["Component Load: #{mode}: #{component} (MBtu)", design_output["componentLoad#{mode}#{component}"]]
+      results_out << ["Component Load: #{mode}: #{component} (MBtu)", design_output["componentLoad#{mode}#{component}"].round(2)]
     end
   end
 
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
-  total_results = { "Electricity" => design_output[:elecTotal] - design_output[:elecPV],
-                    "Natural Gas" => design_output[:gasTotal],
-                    "Other Fuel" => design_output[:otherTotal] }
+  total_results = { "Electricity" => (design_output[:elecTotal] - design_output[:elecPV]).round(2),
+                    "Natural Gas" => design_output[:gasTotal].round(2),
+                    "Other Fuel" => design_output[:otherTotal].round(2) }
   sum_end_use_results = {}
   results_out.each do |var, value|
     next if var.nil?
