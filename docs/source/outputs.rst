@@ -37,15 +37,14 @@ ERI______Home.csv
 A CSV file is written for each of the homes simulated (e.g., ``ERIReferenceHome.csv`` for the Reference home).
 The CSV file includes multiple sections with different outputs.
 
-1. At the top of the file are **total annual consumption values for each fuel type** as well as an ``Electricity: Net`` field that incorporates any renewable generation.
+1. At the top of the file are **total annual consumption values for each fuel type** as well as an "Electricity: Net" field that incorporates any renewable generation.
 
 2. The next section includes **annual energy consumption values for each fuel type and end use**.
-   Current fuel types are ``Electricity``, ``Natural Gas``, and ``Other Fuel`` (oil, propane, etc.).
-   Current end uses are ``Heating``, ``Cooling``, ``Hot Water``, ``Hot Water Recirc Pump``, ``Lighting Interior``, ``Lighting Garage``, ``Lighting Exterior``, ``Mech Vent``, ``Refrigerator``, ``Dishwasher``, ``Clothes Washer``, ``Clothes Dryer``, ``Range/Oven``, ``Ceiling Fan``, ``Plug Loads``, and ``PV`` (negative value for generation).
+   Current fuel types are: "Electricity", "Natural Gas", "Fuel Oil", "Propane". Current end uses are: "Heating", "Cooling", "Hot Water", "Hot Water Recirc Pump", "Lighting Interior", "Lighting Garage", "Lighting Exterior", "Mech Vent", "Refrigerator", "Dishwasher", "Clothes Washer", "Clothes Dryer", "Range/Oven", "Ceiling Fan", "Plug Loads", "PV" (negative value for generation).
 
 3. The third section in the CSV includes the **annual building loads** for heating, cooling, and hot water.
    Heating and cooling loads include duct losses.
-   Hot water loads are disaggregated into 1) Delivered (i.e., the load associated with the delivered hot water by the water heater), 2) Tank Losses, and 3) Desuperheater.
+   Hot water loads are disaggregated into A) Delivered (i.e., the load associated with the delivered hot water by the water heater), B) Tank Losses, and C) Desuperheater.
 
 4. The fourth section in the CSV includes **unmet annual building loads** for heating and cooling.
    These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
@@ -56,11 +55,30 @@ The CSV file includes multiple sections with different outputs.
 
 6. The sixth section in the CSV includes **total building peak loads** in kBtu for heating and cooling.
    Heating and cooling peak loads include duct losses.
-   
+
 7. The seventh section in the CSV includes **component building loads**.
-   Component loads represent the estimated contribution of different building components (e.g., walls, windows, infiltration, ducts, internal gains, etc.) to the annual heating/cooling building load.
+   Component loads represent the estimated contribution of different building components to the annual heating/cooling building load.
    The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
+   Component loads are currently disaggregated by:
    
+   - Roofs: Heat transfer through HPXML ``Roof`` elements adjacent to conditioned space
+   - Ceilings: Heat transfer through HPXML ``FrameFloor`` elements (inferred to be ceilings) adjacent to conditioned space
+   - Walls: Heat transfer through HPXML ``Wall`` elements adjacent to conditioned space
+   - Rim Joists: Heat transfer through HPXML ``RimJoist`` elements adjacent to conditioned space
+   - Foundation Walls: Heat transfer through HPXML ``FoundationWall`` elements adjacent to conditioned space
+   - Doors: Heat transfer through HPXML ``Door`` elements on surfaces adjacent to conditioned space
+   - Windows: Heat transfer through HPXML ``Window`` elements on surfaces adjacent to conditioned space, including direct/diffuse transmitted solar
+   - Skylights: Heat transfer through HPXML ``Skylight`` elements on surfaces adjacent to conditioned space, including direct/diffuse transmitted solar
+   - Floors: Heat transfer through HPXML ``FrameFloor`` elements (inferred to be floors) adjacent to conditioned space
+   - Slabs: Heat transfer through HPXML ``Slab`` elements adjacent to conditioned space
+   - Internal Mass: Heat transfer from additional assumed mass (furniture, interior walls, interior floors between stories) in conditioned space
+   - Infiltration: Airflow induced by stack and wind effects
+   - Natural Ventilation: Airflow through operable windows
+   - Mechanical Ventilation: Airflow (and potentially fan heat gain) from a whole house mechanical ventilation system
+   - Ducts: Conduction and leakage losses through supply/return ducts outside conditioned space
+   - Internal Gains: Heat gains/losses due to appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
+   - Setpoint Change: Additional load due to, e.g., recovery from thermostat heating setbacks or cooling setups
+
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
