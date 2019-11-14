@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            rake test:all
+            openstudio workflow/tests/energy_rating_index_test.rb --name=test_sample_files
       - store_artifacts:
           path: workflow/tests/test_results
           destination: results
@@ -26,3 +26,5 @@ jobs:
       - store_artifacts:
           path: workflow/sample_files/base-location-dallas-tx.xml
           destination: base-location-dallas-tx.xml
+      - store_artifacts:
+          path: measures
