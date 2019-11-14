@@ -1735,11 +1735,7 @@ class EnergyRatingIndex301Ruleset
       ef = 0.97 - (0.00132 * wh_tank_vol)
     else
       ef = 0.67 - (0.0019 * wh_tank_vol)
-      if wh_fuel_type == 'natural gas' or wh_fuel_type == 'propane'
-        re = 0.76
-      elsif wh_fuel_type == 'fuel oil'
-        re = 0.78
-      end
+      re = 0.78
     end
     return ef.round(2), re
   end

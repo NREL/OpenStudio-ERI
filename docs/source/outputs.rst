@@ -54,7 +54,7 @@ The CSV file includes multiple sections with different outputs.
 5. The fifth section in the CSV includes **total building peak electricity** in Watts for the summer and winter seasons.
    The summer season is defined by the hours of the year when the cooling system is operating, and the winter season is defined by the hours of the year when the heating system is operating.
 
-6. The sixth section in the CSV includes **total building peak loads** in Watts for heating and cooling.
+6. The sixth section in the CSV includes **total building peak loads** in kBtu for heating and cooling.
    Heating and cooling peak loads include duct losses.
    
 7. The seventh section in the CSV includes **component building loads**.

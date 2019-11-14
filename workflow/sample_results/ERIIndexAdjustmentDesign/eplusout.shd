@@ -3,88 +3,77 @@ Shadowing Combinations
 ..In the following, only the first 10 reference surfaces will be shown.
 ..But all surfaces are used in the calculations.
 ==================================
-Surface=SURFACE DOORNORTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE DOORAREANORTH is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=DOORNORTH
+....Surface=DOORAREANORTH
 ==================================
-Surface=DOORNORTH is not used as Receiving Surface in calculations.
+Surface=DOORAREANORTH is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE DOORSOUTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOWAREAEAST is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=DOORSOUTH
+....Surface=WINDOWAREAEAST
 ==================================
-Surface=DOORSOUTH is not used as Receiving Surface in calculations.
+Surface=WINDOWAREAEAST is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_WALL_EAST is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOWAREANORTH is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=WINDOW_WALL_EAST
+....Surface=WINDOWAREANORTH
 ==================================
-Surface=WINDOW_WALL_EAST is not used as Receiving Surface in calculations.
+Surface=WINDOWAREANORTH is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_WALL_NORTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOWAREASOUTH is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=WINDOW_WALL_NORTH
+....Surface=WINDOWAREASOUTH
 ==================================
-Surface=WINDOW_WALL_NORTH is not used as Receiving Surface in calculations.
+Surface=WINDOWAREASOUTH is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_WALL_SOUTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE WINDOWAREAWEST is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=WINDOW_WALL_SOUTH
+....Surface=WINDOWAREAWEST
 ==================================
-Surface=WINDOW_WALL_SOUTH is not used as Receiving Surface in calculations.
+Surface=WINDOWAREAWEST is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE WINDOW_WALL_WEST is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=1
-....Surface=WINDOW_WALL_WEST
-==================================
-Surface=WINDOW_WALL_WEST is not used as Receiving Surface in calculations.
+Surface=WALLAREA:0 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=WALL:0 is used as Receiving Surface in calculations and is convex.
+Surface=WALLAREA:180 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=WALL:180 is used as Receiving Surface in calculations and is convex.
+Surface=WALLAREA:270 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=WALL:270 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=WALL:90 is used as Receiving Surface in calculations and is convex.
+Surface=WALLAREA:90 is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0

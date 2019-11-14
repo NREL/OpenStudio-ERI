@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-10-24T09:57:27-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2019-11-06T07:58:44-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -94,7 +94,7 @@
         </Roofs>
         <Walls>
           <Wall>
-            <SystemIdentifier id='Wall'/>
+            <SystemIdentifier id='WallArea'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -104,7 +104,7 @@
             <SolarAbsorptance>0.7</SolarAbsorptance>
             <Emittance>0.92</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallInsulation'/>
+              <SystemIdentifier id='WallAreaInsulation'/>
               <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
@@ -196,59 +196,64 @@
         </Slabs>
         <Windows>
           <Window>
-            <SystemIdentifier id='Window_Wall_north'/>
+            <SystemIdentifier id='WindowAreaNorth'/>
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            <AttachedToWall idref='Wall'/>
+            <InteriorShading>
+              <SystemIdentifier id='WindowAreaNorthInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
+            <AttachedToWall idref='WallArea'/>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_Wall_south'/>
+            <SystemIdentifier id='WindowAreaSouth'/>
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            <AttachedToWall idref='Wall'/>
+            <InteriorShading>
+              <SystemIdentifier id='WindowAreaSouthInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
+            <AttachedToWall idref='WallArea'/>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_Wall_east'/>
+            <SystemIdentifier id='WindowAreaEast'/>
             <Area>108.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            <AttachedToWall idref='Wall'/>
+            <InteriorShading>
+              <SystemIdentifier id='WindowAreaEastInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
+            <AttachedToWall idref='WallArea'/>
           </Window>
           <Window>
-            <SystemIdentifier id='Window_Wall_west'/>
+            <SystemIdentifier id='WindowAreaWest'/>
             <Area>108.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
-            <InteriorShadingFactorSummer>0.7</InteriorShadingFactorSummer>
-            <InteriorShadingFactorWinter>0.85</InteriorShadingFactorWinter>
-            <AttachedToWall idref='Wall'/>
+            <InteriorShading>
+              <SystemIdentifier id='WindowAreaWestInteriorShading'/>
+              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
+              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
+            </InteriorShading>
+            <AttachedToWall idref='WallArea'/>
           </Window>
         </Windows>
         <Doors>
           <Door>
-            <SystemIdentifier id='DoorNorth'/>
-            <AttachedToWall idref='Wall'/>
-            <Area>20.0</Area>
+            <SystemIdentifier id='DoorAreaNorth'/>
+            <AttachedToWall idref='WallArea'/>
+            <Area>40.0</Area>
             <Azimuth>0</Azimuth>
-            <RValue>4.4</RValue>
-          </Door>
-          <Door>
-            <SystemIdentifier id='DoorSouth'/>
-            <AttachedToWall idref='Wall'/>
-            <Area>20.0</Area>
-            <Azimuth>180</Azimuth>
             <RValue>4.4</RValue>
           </Door>
         </Doors>
@@ -286,6 +291,8 @@
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
             <ControlType>manual thermostat</ControlType>
+            <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
+            <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution_DSE1'/>

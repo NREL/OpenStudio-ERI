@@ -502,10 +502,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.8409430602176, -32.0017410564476, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.8409430602176, -32.0017410564476, 0.6096, !- X,Y,Z Vertex 2 {m}
-  40.8409431782131, -40.8409410564476, 0.6096, !- X,Y,Z Vertex 3 {m}
-  40.8409431782131, -40.8409410564476, 0.3048; !- X,Y,Z Vertex 4 {m}
+  40.8409430602175, -32.0017410564476, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.8409430602175, -32.0017410564476, 0.6096, !- X,Y,Z Vertex 2 {m}
+  40.840943178213, -40.8409410564476, 0.6096, !- X,Y,Z Vertex 3 {m}
+  40.840943178213, -40.8409410564476, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Slab,                                   !- Name
@@ -534,10 +534,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -21.2952700016384, 40.8409418747698, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -21.2952700016384, 40.8409418747698, 2.338816, !- X,Y,Z Vertex 2 {m}
-  -19.4653839446669, 40.8409418747698, 2.338816, !- X,Y,Z Vertex 3 {m}
-  -19.4653839446669, 40.8409418747698, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -21.2943700016384, 40.8409418747698, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -21.2943700016384, 40.8409418747698, 2.337916, !- X,Y,Z Vertex 2 {m}
+  -19.4662839446669, 40.8409418747698, 2.337916, !- X,Y,Z Vertex 3 {m}
+  -19.4662839446669, 40.8409418747698, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   DoorNorth,                              !- Name
@@ -565,10 +565,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -25.3537593079799, -40.8409431743945, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -25.3537593079799, -40.8409431743945, 2.338816, !- X,Y,Z Vertex 2 {m}
-  -27.1836453649514, -40.8409432232492, 2.338816, !- X,Y,Z Vertex 3 {m}
-  -27.1836453649514, -40.8409432232492, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -25.3546593079799, -40.8409431744185, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -25.3546593079799, -40.8409431744185, 2.337916, !- X,Y,Z Vertex 2 {m}
+  -27.1827453649514, -40.8409432232252, 2.337916, !- X,Y,Z Vertex 3 {m}
+  -27.1827453649514, -40.8409432232252, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   DoorSouth,                              !- Name
@@ -596,10 +596,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.840942817616, -24.4384459101423, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.840942817616, -24.4384459101423, 1.525, !- X,Y,Z Vertex 2 {m}
-  40.8409428542621, -27.1836459101423, 1.525, !- X,Y,Z Vertex 3 {m}
-  40.8409428542621, -27.1836459101423, 0.3048; !- X,Y,Z Vertex 4 {m}
+  40.840942817628, -24.4393459101423, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.840942817628, -24.4393459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
+  40.8409428542499, -27.1827459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
+  40.8409428542499, -27.1827459101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowEast,                             !- Name
@@ -611,10 +611,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  40.8409428176294, -24.4394459101423, 0.3058, !- X,Y,Z Vertex 1 {m}
-  40.8409428176294, -24.4394459101423, 1.525, !- X,Y,Z Vertex 2 {m}
-  40.8409428542487, -27.1826459101423, 1.525, !- X,Y,Z Vertex 3 {m}
-  40.8409428542487, -27.1826459101423, 0.3058; !- X,Y,Z Vertex 4 {m}
+  40.8409428176293, -24.4394459101423, 0.3049, !- X,Y,Z Vertex 1 {m}
+  40.8409428176293, -24.4394459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
+  40.8409428542486, -27.1826459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
+  40.8409428542486, -27.1826459101423, 0.3049; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowNorth,                    !- Name
@@ -627,10 +627,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -26.3391004016384, 40.8409418227032, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -26.3391004016384, 40.8409418227032, 1.525, !- X,Y,Z Vertex 2 {m}
-  -22.2223004016384, 40.8409418227032, 1.525, !- X,Y,Z Vertex 3 {m}
-  -22.2223004016384, 40.8409418227032, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -26.3382004016384, 40.8409418227032, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -26.3382004016384, 40.8409418227032, 1.5241, !- X,Y,Z Vertex 2 {m}
+  -22.2232004016384, 40.8409418227032, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -22.2232004016384, 40.8409418227032, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowNorth,                            !- Name
@@ -642,10 +642,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -26.3381004016384, 40.8409418227032, 0.3058, !- X,Y,Z Vertex 1 {m}
-  -26.3381004016384, 40.8409418227032, 1.525, !- X,Y,Z Vertex 2 {m}
-  -22.2233004016384, 40.8409418227032, 1.525, !- X,Y,Z Vertex 3 {m}
-  -22.2233004016384, 40.8409418227032, 0.3058; !- X,Y,Z Vertex 4 {m}
+  -26.3381004016384, 40.8409418227032, 0.3049, !- X,Y,Z Vertex 1 {m}
+  -26.3381004016384, 40.8409418227032, 1.5241, !- X,Y,Z Vertex 2 {m}
+  -22.2233004016384, 40.8409418227032, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -22.2233004016384, 40.8409418227032, 0.3049; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowSouth,                    !- Name
@@ -658,10 +658,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -20.3099289079799, -40.8409429876665, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -20.3099289079799, -40.8409429876665, 1.525, !- X,Y,Z Vertex 2 {m}
-  -24.4267289079799, -40.8409430975778, 1.525, !- X,Y,Z Vertex 3 {m}
-  -24.4267289079799, -40.8409430975778, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -20.3108289079799, -40.8409429876905, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -20.3108289079799, -40.8409429876905, 1.5241, !- X,Y,Z Vertex 2 {m}
+  -24.4258289079799, -40.8409430975538, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -24.4258289079799, -40.8409430975538, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowSouth,                            !- Name
@@ -673,10 +673,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -20.3109289079799, -40.8409429876932, 0.3058, !- X,Y,Z Vertex 1 {m}
-  -20.3109289079799, -40.8409429876932, 1.525, !- X,Y,Z Vertex 2 {m}
-  -24.4257289079799, -40.8409430975511, 1.525, !- X,Y,Z Vertex 3 {m}
-  -24.4257289079799, -40.8409430975511, 0.3058; !- X,Y,Z Vertex 4 {m}
+  -20.3109289079799, -40.8409429876932, 0.3049, !- X,Y,Z Vertex 1 {m}
+  -20.3109289079799, -40.8409429876932, 1.5241, !- X,Y,Z Vertex 2 {m}
+  -24.4257289079799, -40.8409430975511, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -24.4257289079799, -40.8409430975511, 0.3049; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowWest,                     !- Name
@@ -689,10 +689,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -40.8409434700797, 24.4384448197606, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -40.8409434700797, 24.4384448197606, 1.525, !- X,Y,Z Vertex 2 {m}
-  -40.8409435800178, 27.1836448197606, 1.525, !- X,Y,Z Vertex 3 {m}
-  -40.8409435800178, 27.1836448197606, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -40.8409434701158, 24.4393448197606, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -40.8409434701158, 24.4393448197606, 1.5241, !- X,Y,Z Vertex 2 {m}
+  -40.8409435799817, 27.1827448197606, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -40.8409435799817, 27.1827448197606, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowWest,                             !- Name
@@ -704,10 +704,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -40.8409434701198, 24.4394448197606, 0.3058, !- X,Y,Z Vertex 1 {m}
-  -40.8409434701198, 24.4394448197606, 1.525, !- X,Y,Z Vertex 2 {m}
-  -40.8409435799777, 27.1826448197606, 1.525, !- X,Y,Z Vertex 3 {m}
-  -40.8409435799777, 27.1826448197606, 0.3058; !- X,Y,Z Vertex 4 {m}
+  -40.8409434701198, 24.4394448197606, 0.3049, !- X,Y,Z Vertex 1 {m}
+  -40.8409434701198, 24.4394448197606, 1.5241, !- X,Y,Z Vertex 2 {m}
+  -40.8409435799777, 27.1826448197606, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -40.8409435799777, 27.1826448197606, 0.3049; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Wall:0,                                 !- Name
@@ -768,8 +768,8 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.8409425952342, -14.5569155101422, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.8409425952342, -14.5569155101422, 2.7432, !- X,Y,Z Vertex 2 {m}
+  40.8409425952342, -14.5569155101423, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.8409425952342, -14.5569155101423, 2.7432, !- X,Y,Z Vertex 2 {m}
   40.8409427147556, -23.5104155101423, 2.7432, !- X,Y,Z Vertex 3 {m}
   40.8409427147556, -23.5104155101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
@@ -1024,7 +1024,7 @@ Schedule:Day:Interval,
   21:00,                                  !- Time 20 {hh:mm}
   0.928337141860708,                      !- Value Until Time 20
   22:00,                                  !- Time 21 {hh:mm}
-  0.807461954396615,                      !- Value Until Time 21
+  0.807461954396616,                      !- Value Until Time 21
   23:00,                                  !- Time 22 {hh:mm}
   0.499769410655845,                      !- Value Until Time 22
   24:00,                                  !- Time 23 {hh:mm}
@@ -1153,7 +1153,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 11 {hh:mm}
   0.364038790657523,                      !- Value Until Time 11
   13:00,                                  !- Time 12 {hh:mm}
-  0.352108135865494,                      !- Value Until Time 12
+  0.352108135865495,                      !- Value Until Time 12
   14:00,                                  !- Time 13 {hh:mm}
   0.348597365709478,                      !- Value Until Time 13
   15:00,                                  !- Time 14 {hh:mm}
@@ -3400,8 +3400,8 @@ BuildingSurface:Detailed,
   ,                                       !- Number of Vertices
   -40.8409437071851, 28.1116753611774, 2.7432, !- X,Y,Z Vertex 1 {m}
   -30.2472251759044, 28.1116755025943, 8.04005926564035, !- X,Y,Z Vertex 2 {m}
-  -30.2472252154316, 31.0727098488997, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
-  -40.8409437467123, 31.0727097074828, 2.7432; !- X,Y,Z Vertex 4 {m}
+  -30.2472252154317, 31.0727098488997, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
+  -40.8409437467124, 31.0727097074828, 2.7432; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Roof:90,                                !- Name
@@ -3462,10 +3462,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -6.7371181079799, -40.84094243507, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -6.7371181079799, -40.84094243507, 2.7432, !- X,Y,Z Vertex 2 {m}
-  -9.49936810797992, -40.8409425088173, 2.7432, !- X,Y,Z Vertex 3 {m}
-  -9.49936810797992, -40.8409425088173, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -6.73711810797991, -40.84094243507, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -6.73711810797991, -40.84094243507, 2.7432, !- X,Y,Z Vertex 2 {m}
+  -9.49936810797991, -40.8409425088173, 2.7432, !- X,Y,Z Vertex 3 {m}
+  -9.49936810797991, -40.8409425088173, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallAtticGable:270,                     !- Name
@@ -3630,7 +3630,7 @@ GlobalGeometryRules,
 Material,
   Asphalt Shingles&#44 Light,             !- Name
   Rough,                                  !- Roughness
-  0.00952500000000001,                    !- Thickness {m}
+  0.009525,                               !- Thickness {m}
   0.162714,                               !- Conductivity {W/m-K}
   1121.4,                                 !- Density {kg/m3}
   1465.45,                                !- Specific Heat {J/kg-K}
@@ -4037,7 +4037,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4054,7 +4054,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4071,7 +4071,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4088,7 +4088,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4341,25 +4341,7 @@ SurfaceProperty:ExposedFoundationPerimeter,
   ;                                       !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 2,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
   Surface 6,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 4,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -4372,6 +4354,24 @@ SurfaceProperty:ConvectionCoefficients,
 
 SurfaceProperty:ConvectionCoefficients,
   Surface 3,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 1,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 2,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 4,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -5626,7 +5626,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707991,                      !- Value Until Time 19
+  0.190580370707992,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5675,7 +5675,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707991,                      !- Value Until Time 19
+  0.190580370707992,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5997,7 +5997,7 @@ Schedule:Day:Interval,
   14:00,                                  !- Time 9 {hh:mm}
   0.000281317833333333,                   !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  7.69215e-05,                            !- Value Until Time 10
+  7.69215e-005,                           !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0,                                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -6157,7 +6157,7 @@ Schedule:Day:Interval,
   05:00,                                  !- Time 3 {hh:mm}
   0.0526825224,                           !- Value Until Time 3
   06:00,                                  !- Time 4 {hh:mm}
-  7.25196e-05,                            !- Value Until Time 4
+  7.25196e-005,                           !- Value Until Time 4
   07:00,                                  !- Time 5 {hh:mm}
   0.02433412225,                          !- Value Until Time 5
   08:00,                                  !- Time 6 {hh:mm}
@@ -6320,7 +6320,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 9 {hh:mm}
   0.67956204379562,                       !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  0.713540145985401,                      !- Value Until Time 10
+  0.713540145985402,                      !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0.696551094890511,                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -7339,7 +7339,7 @@ Schedule:Day:Interval,
   07:00,                                  !- Time 6 {hh:mm}
   0.605633802816901,                      !- Value Until Time 6
   08:00,                                  !- Time 7 {hh:mm}
-  0.661971830985915,                      !- Value Until Time 7
+  0.661971830985916,                      !- Value Until Time 7
   09:00,                                  !- Time 8 {hh:mm}
   0.47887323943662,                       !- Value Until Time 8
   10:00,                                  !- Time 9 {hh:mm}
@@ -8467,7 +8467,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8488,7 +8488,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8509,7 +8509,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8530,7 +8530,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8551,7 +8551,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8572,7 +8572,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8593,7 +8593,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8614,7 +8614,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8635,7 +8635,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8656,7 +8656,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8677,7 +8677,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8698,7 +8698,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -17941,13 +17941,13 @@ Sizing:System,
   0,                                      !- Cooling Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  3.9475456e-005,                         !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
   DesignDay,                              !- Heating Supply Air Flow Rate Method
   0,                                      !- Heating Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  3.1588213e-005,                         !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
   ZoneSum,                                !- System Outdoor Air Method
   1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
   CoolingDesignCapacity,                  !- Cooling Design Capacity Method
@@ -18035,7 +18035,7 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
   436.969142031719,                       !- Pressure Rise {Pa}
-  0.942011816100742,                      !- Maximum Flow Rate {m3/s}
+  0.942011816100741,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 3,                                 !- Air Inlet Node Name
@@ -18080,7 +18080,7 @@ Curve:Biquadratic,
   -0.0750500892,                          !- Coefficient2 x
   0.00309713544,                          !- Coefficient3 x**2
   0.00240111,                             !- Coefficient4 y
-  -5.0544e-05,                            !- Coefficient5 y**2
+  -5.0544e-005,                           !- Coefficient5 y**2
   -0.00042728148,                         !- Coefficient6 x*y
   13.88,                                  !- Minimum Value of x {BasedOnField A2}
   23.88,                                  !- Maximum Value of x {BasedOnField A2}
@@ -18099,7 +18099,7 @@ Curve:Quadratic,
 
 Curve:Biquadratic,
   Cool-EIR-fT1,                           !- Name
-  -0.304282997,                           !- Coefficient1 Constant
+  -0.304282997000001,                     !- Coefficient1 Constant
   0.1180477062,                           !- Coefficient2 x
   -0.00342466704,                         !- Coefficient3 x**2
   -0.0062619138,                          !- Coefficient4 y
@@ -18556,894 +18556,555 @@ Foundation:Kiva:Settings,
   40,                                     !- Far-Field Width {m}
   ZeroFlux,                               !- Deep-Ground Boundary Condition
   40,                                     !- Deep-Ground Depth {m}
-  0.02,                                   !- Minimum Cell Dimension {m}
-  1.5,                                    !- Maximum Cell Growth Coefficient {dimensionless}
+  0.2,                                    !- Minimum Cell Dimension {m}
+  3,                                      !- Maximum Cell Growth Coefficient {dimensionless}
   Hourly;                                 !- Simulation Timestep
 
 ZoneProperty:UserViewFactors:bySurfaceName,
   living,                                 !- Zone or ZoneList Name
-  WindowEast,                             !- From Surface 1
-  WindowSouth,                            !- To Surface 1
-  0.00853171702925225,                    !- View Factor 1
-  WindowEast,                             !- From Surface 2
+  FloorBelowAttic,                        !- From Surface 1
+  Wall:0,                                 !- To Surface 1
+  0.0447615811818834,                     !- View Factor 1
+  FloorBelowAttic,                        !- From Surface 2
   Wall:270,                               !- To Surface 2
-  0.0371287685532274,                     !- View Factor 2
-  WindowEast,                             !- From Surface 3
-  Wall:0,                                 !- To Surface 3
-  0.0371287685532274,                     !- View Factor 3
-  WindowEast,                             !- From Surface 4
-  DoorSouth,                              !- To Surface 4
-  0.0063197903920387,                     !- View Factor 4
-  WindowEast,                             !- From Surface 5
-  WindowNorth,                            !- To Surface 5
-  0.00853171702925225,                    !- View Factor 5
-  WindowEast,                             !- From Surface 6
-  Wall:180,                               !- To Surface 6
-  0.0371287685532274,                     !- View Factor 6
-  WindowEast,                             !- From Surface 7
-  FloorBelowAttic,                        !- To Surface 7
-  0.213292925731306,                      !- View Factor 7
-  WindowEast,                             !- From Surface 8
-  DoorNorth,                              !- To Surface 8
-  0.0063197903920387,                     !- View Factor 8
-  WindowEast,                             !- From Surface 9
-  inferred conditioned floor,             !- To Surface 9
-  0.213292925731306,                      !- View Factor 9
-  WindowEast,                             !- From Surface 10
-  WindowWest,                             !- To Surface 10
-  0.00568781135283484,                    !- View Factor 10
-  WindowEast,                             !- From Surface 11
-  furniture mass living living,           !- To Surface 11
-  0.213292925731306,                      !- View Factor 11
-  WindowEast,                             !- From Surface 12
-  living Living Partition,                !- To Surface 12
-  0.213292925731306,                      !- View Factor 12
-  surface WindowEast,                     !- From Surface 13
-  WindowSouth,                            !- To Surface 13
-  0.00853171702925225,                    !- View Factor 13
-  surface WindowEast,                     !- From Surface 14
-  Wall:270,                               !- To Surface 14
-  0.0371287685532274,                     !- View Factor 14
-  surface WindowEast,                     !- From Surface 15
-  Wall:0,                                 !- To Surface 15
-  0.0371287685532274,                     !- View Factor 15
-  surface WindowEast,                     !- From Surface 16
-  DoorSouth,                              !- To Surface 16
-  0.0063197903920387,                     !- View Factor 16
-  surface WindowEast,                     !- From Surface 17
-  WindowNorth,                            !- To Surface 17
-  0.00853171702925225,                    !- View Factor 17
-  surface WindowEast,                     !- From Surface 18
-  Wall:180,                               !- To Surface 18
-  0.0371287685532274,                     !- View Factor 18
-  surface WindowEast,                     !- From Surface 19
+  0.0447615811818834,                     !- View Factor 2
+  FloorBelowAttic,                        !- From Surface 3
+  Wall:90,                                !- To Surface 3
+  0.0447615811818834,                     !- View Factor 3
+  FloorBelowAttic,                        !- From Surface 4
+  Wall:180,                               !- To Surface 4
+  0.0447615811818834,                     !- View Factor 4
+  FloorBelowAttic,                        !- From Surface 5
+  WindowSouth,                            !- To Surface 5
+  0.0102856399311562,                     !- View Factor 5
+  FloorBelowAttic,                        !- From Surface 6
+  WindowNorth,                            !- To Surface 6
+  0.0102856399311562,                     !- View Factor 6
+  FloorBelowAttic,                        !- From Surface 7
+  inferred conditioned floor,             !- To Surface 7
+  0.257140998278904,                      !- View Factor 7
+  FloorBelowAttic,                        !- From Surface 8
+  furniture mass living living,           !- To Surface 8
+  0.257140998278904,                      !- View Factor 8
+  FloorBelowAttic,                        !- From Surface 9
+  living Living Partition,                !- To Surface 9
+  0.257140998278904,                      !- View Factor 9
+  FoundationWall,                         !- From Surface 10
+  inferred conditioned ceiling,           !- To Surface 10
+  0.24603608529251,                       !- View Factor 10
+  FoundationWall,                         !- From Surface 11
+  Slab,                                   !- To Surface 11
+  0.24603608529251,                       !- View Factor 11
+  FoundationWall,                         !- From Surface 12
+  living Basement Partition,              !- To Surface 12
+  0.24603608529251,                       !- View Factor 12
+  FoundationWall,                         !- From Surface 13
+  furniture mass living basement,         !- To Surface 13
+  0.24603608529251,                       !- View Factor 13
+  RimJoistFoundation:270,                 !- From Surface 14
+  FoundationWall,                         !- To Surface 14
+  0.179452669358457,                      !- View Factor 14
+  RimJoistFoundation:270,                 !- From Surface 15
+  inferred conditioned ceiling,           !- To Surface 15
+  0.201884253028264,                      !- View Factor 15
+  RimJoistFoundation:270,                 !- From Surface 16
+  Slab,                                   !- To Surface 16
+  0.201884253028264,                      !- View Factor 16
+  RimJoistFoundation:270,                 !- From Surface 17
+  living Basement Partition,              !- To Surface 17
+  0.201884253028264,                      !- View Factor 17
+  RimJoistFoundation:270,                 !- From Surface 18
+  furniture mass living basement,         !- To Surface 18
+  0.201884253028264,                      !- View Factor 18
+  Wall:0,                                 !- From Surface 19
   FloorBelowAttic,                        !- To Surface 19
-  0.213292925731306,                      !- View Factor 19
-  surface WindowEast,                     !- From Surface 20
-  DoorNorth,                              !- To Surface 20
-  0.0063197903920387,                     !- View Factor 20
-  surface WindowEast,                     !- From Surface 21
-  inferred conditioned floor,             !- To Surface 21
-  0.213292925731306,                      !- View Factor 21
-  surface WindowEast,                     !- From Surface 22
-  WindowWest,                             !- To Surface 22
-  0.00568781135283484,                    !- View Factor 22
-  surface WindowEast,                     !- From Surface 23
-  furniture mass living living,           !- To Surface 23
-  0.213292925731306,                      !- View Factor 23
-  surface WindowEast,                     !- From Surface 24
-  living Living Partition,                !- To Surface 24
-  0.213292925731306,                      !- View Factor 24
-  FoundationWall,                         !- From Surface 25
-  RimJoistFoundation:270,                 !- To Surface 25
-  0.00528521960998725,                    !- View Factor 25
-  FoundationWall,                         !- From Surface 26
-  RimJoistFoundation:90,                  !- To Surface 26
-  0.00528521960998724,                    !- View Factor 26
-  FoundationWall,                         !- From Surface 27
-  inferred conditioned ceiling,           !- To Surface 27
-  0.24603608529251,                       !- View Factor 27
-  FoundationWall,                         !- From Surface 28
-  Slab,                                   !- To Surface 28
-  0.24603608529251,                       !- View Factor 28
-  FoundationWall,                         !- From Surface 29
-  RimJoistFoundation:180,                 !- To Surface 29
-  0.00528521960998725,                    !- View Factor 29
-  FoundationWall,                         !- From Surface 30
-  furniture mass living basement,         !- To Surface 30
-  0.24603608529251,                       !- View Factor 30
-  FoundationWall,                         !- From Surface 31
-  living Basement Partition,              !- To Surface 31
-  0.24603608529251,                       !- View Factor 31
-  WindowSouth,                            !- From Surface 32
-  WindowEast,                             !- To Surface 32
-  0.00574048637446613,                    !- View Factor 32
-  WindowSouth,                            !- From Surface 33
-  Wall:270,                               !- To Surface 33
-  0.0374726193888762,                     !- View Factor 33
-  WindowSouth,                            !- From Surface 34
-  Wall:90,                                !- To Surface 34
-  0.0374726193888761,                     !- View Factor 34
-  WindowSouth,                            !- From Surface 35
-  Wall:0,                                 !- To Surface 35
-  0.0374726193888761,                     !- View Factor 35
-  WindowSouth,                            !- From Surface 36
-  WindowNorth,                            !- To Surface 36
-  0.00861072956169919,                    !- View Factor 36
-  WindowSouth,                            !- From Surface 37
-  FloorBelowAttic,                        !- To Surface 37
-  0.21526823904248,                       !- View Factor 37
-  WindowSouth,                            !- From Surface 38
-  DoorNorth,                              !- To Surface 38
-  0.00637831819385125,                    !- View Factor 38
-  WindowSouth,                            !- From Surface 39
-  inferred conditioned floor,             !- To Surface 39
-  0.21526823904248,                       !- View Factor 39
-  WindowSouth,                            !- From Surface 40
-  WindowWest,                             !- To Surface 40
-  0.00574048637446613,                    !- View Factor 40
-  WindowSouth,                            !- From Surface 41
-  furniture mass living living,           !- To Surface 41
-  0.21526823904248,                       !- View Factor 41
-  WindowSouth,                            !- From Surface 42
-  living Living Partition,                !- To Surface 42
-  0.21526823904248,                       !- View Factor 42
-  surface WindowSouth,                    !- From Surface 43
-  WindowEast,                             !- To Surface 43
-  0.00574048637446613,                    !- View Factor 43
-  surface WindowSouth,                    !- From Surface 44
-  Wall:270,                               !- To Surface 44
-  0.0374726193888762,                     !- View Factor 44
-  surface WindowSouth,                    !- From Surface 45
-  Wall:90,                                !- To Surface 45
-  0.0374726193888761,                     !- View Factor 45
-  surface WindowSouth,                    !- From Surface 46
-  Wall:0,                                 !- To Surface 46
-  0.0374726193888761,                     !- View Factor 46
-  surface WindowSouth,                    !- From Surface 47
-  WindowNorth,                            !- To Surface 47
-  0.00861072956169919,                    !- View Factor 47
-  surface WindowSouth,                    !- From Surface 48
-  FloorBelowAttic,                        !- To Surface 48
-  0.21526823904248,                       !- View Factor 48
-  surface WindowSouth,                    !- From Surface 49
-  DoorNorth,                              !- To Surface 49
-  0.00637831819385125,                    !- View Factor 49
-  surface WindowSouth,                    !- From Surface 50
-  inferred conditioned floor,             !- To Surface 50
-  0.21526823904248,                       !- View Factor 50
-  surface WindowSouth,                    !- From Surface 51
-  WindowWest,                             !- To Surface 51
-  0.00574048637446613,                    !- View Factor 51
-  surface WindowSouth,                    !- From Surface 52
-  furniture mass living living,           !- To Surface 52
-  0.21526823904248,                       !- View Factor 52
-  surface WindowSouth,                    !- From Surface 53
-  living Living Partition,                !- To Surface 53
-  0.21526823904248,                       !- View Factor 53
-  Wall:270,                               !- From Surface 54
-  WindowEast,                             !- To Surface 54
-  0.00568781135283483,                    !- View Factor 54
-  Wall:270,                               !- From Surface 55
-  WindowSouth,                            !- To Surface 55
-  0.00853171702925225,                    !- View Factor 55
-  Wall:270,                               !- From Surface 56
-  Wall:90,                                !- To Surface 56
-  0.0371287685532274,                     !- View Factor 56
-  Wall:270,                               !- From Surface 57
-  Wall:0,                                 !- To Surface 57
-  0.0371287685532274,                     !- View Factor 57
-  Wall:270,                               !- From Surface 58
-  DoorSouth,                              !- To Surface 58
-  0.0063197903920387,                     !- View Factor 58
-  Wall:270,                               !- From Surface 59
-  WindowNorth,                            !- To Surface 59
-  0.00853171702925224,                    !- View Factor 59
-  Wall:270,                               !- From Surface 60
-  Wall:180,                               !- To Surface 60
-  0.0371287685532274,                     !- View Factor 60
-  Wall:270,                               !- From Surface 61
+  0.215275827489323,                      !- View Factor 19
+  Wall:0,                                 !- From Surface 20
+  Wall:270,                               !- To Surface 20
+  0.0374739403407341,                     !- View Factor 20
+  Wall:0,                                 !- From Surface 21
+  Wall:90,                                !- To Surface 21
+  0.0374739403407341,                     !- View Factor 21
+  Wall:0,                                 !- From Surface 22
+  Wall:180,                               !- To Surface 22
+  0.0374739403407341,                     !- View Factor 22
+  Wall:0,                                 !- From Surface 23
+  inferred conditioned floor,             !- To Surface 23
+  0.215275827489323,                      !- View Factor 23
+  Wall:0,                                 !- From Surface 24
+  furniture mass living living,           !- To Surface 24
+  0.215275827489323,                      !- View Factor 24
+  Wall:0,                                 !- From Surface 25
+  living Living Partition,                !- To Surface 25
+  0.215275827489323,                      !- View Factor 25
+  Wall:270,                               !- From Surface 26
+  FloorBelowAttic,                        !- To Surface 26
+  0.213302748371563,                      !- View Factor 26
+  Wall:270,                               !- From Surface 27
+  Wall:0,                                 !- To Surface 27
+  0.037130478420235,                      !- View Factor 27
+  Wall:270,                               !- From Surface 28
+  Wall:90,                                !- To Surface 28
+  0.037130478420235,                      !- View Factor 28
+  Wall:270,                               !- From Surface 29
+  Wall:180,                               !- To Surface 29
+  0.037130478420235,                      !- View Factor 29
+  Wall:270,                               !- From Surface 30
+  inferred conditioned floor,             !- To Surface 30
+  0.213302748371563,                      !- View Factor 30
+  Wall:270,                               !- From Surface 31
+  furniture mass living living,           !- To Surface 31
+  0.213302748371563,                      !- View Factor 31
+  Wall:270,                               !- From Surface 32
+  living Living Partition,                !- To Surface 32
+  0.213302748371563,                      !- View Factor 32
+  Wall:90,                                !- From Surface 33
+  FloorBelowAttic,                        !- To Surface 33
+  0.213302748371563,                      !- View Factor 33
+  Wall:90,                                !- From Surface 34
+  Wall:0,                                 !- To Surface 34
+  0.037130478420235,                      !- View Factor 34
+  Wall:90,                                !- From Surface 35
+  Wall:270,                               !- To Surface 35
+  0.037130478420235,                      !- View Factor 35
+  Wall:90,                                !- From Surface 36
+  Wall:180,                               !- To Surface 36
+  0.037130478420235,                      !- View Factor 36
+  Wall:90,                                !- From Surface 37
+  inferred conditioned floor,             !- To Surface 37
+  0.213302748371563,                      !- View Factor 37
+  Wall:90,                                !- From Surface 38
+  furniture mass living living,           !- To Surface 38
+  0.213302748371563,                      !- View Factor 38
+  Wall:90,                                !- From Surface 39
+  living Living Partition,                !- To Surface 39
+  0.213302748371563,                      !- View Factor 39
+  Wall:180,                               !- From Surface 40
+  FloorBelowAttic,                        !- To Surface 40
+  0.215275827489323,                      !- View Factor 40
+  Wall:180,                               !- From Surface 41
+  Wall:0,                                 !- To Surface 41
+  0.0374739403407341,                     !- View Factor 41
+  Wall:180,                               !- From Surface 42
+  Wall:270,                               !- To Surface 42
+  0.0374739403407341,                     !- View Factor 42
+  Wall:180,                               !- From Surface 43
+  Wall:90,                                !- To Surface 43
+  0.0374739403407341,                     !- View Factor 43
+  Wall:180,                               !- From Surface 44
+  inferred conditioned floor,             !- To Surface 44
+  0.215275827489323,                      !- View Factor 44
+  Wall:180,                               !- From Surface 45
+  furniture mass living living,           !- To Surface 45
+  0.215275827489323,                      !- View Factor 45
+  Wall:180,                               !- From Surface 46
+  living Living Partition,                !- To Surface 46
+  0.215275827489323,                      !- View Factor 46
+  RimJoistFoundation:0,                   !- From Surface 47
+  inferred conditioned ceiling,           !- To Surface 47
+  0.24603608529251,                       !- View Factor 47
+  RimJoistFoundation:0,                   !- From Surface 48
+  Slab,                                   !- To Surface 48
+  0.24603608529251,                       !- View Factor 48
+  RimJoistFoundation:0,                   !- From Surface 49
+  living Basement Partition,              !- To Surface 49
+  0.24603608529251,                       !- View Factor 49
+  RimJoistFoundation:0,                   !- From Surface 50
+  furniture mass living basement,         !- To Surface 50
+  0.24603608529251,                       !- View Factor 50
+  RimJoistFoundation:180,                 !- From Surface 51
+  FoundationWall,                         !- To Surface 51
+  0.179452669358457,                      !- View Factor 51
+  RimJoistFoundation:180,                 !- From Surface 52
+  inferred conditioned ceiling,           !- To Surface 52
+  0.201884253028264,                      !- View Factor 52
+  RimJoistFoundation:180,                 !- From Surface 53
+  Slab,                                   !- To Surface 53
+  0.201884253028264,                      !- View Factor 53
+  RimJoistFoundation:180,                 !- From Surface 54
+  living Basement Partition,              !- To Surface 54
+  0.201884253028264,                      !- View Factor 54
+  RimJoistFoundation:180,                 !- From Surface 55
+  furniture mass living basement,         !- To Surface 55
+  0.201884253028264,                      !- View Factor 55
+  RimJoistFoundation:90,                  !- From Surface 56
+  FoundationWall,                         !- To Surface 56
+  0.179452669358457,                      !- View Factor 56
+  RimJoistFoundation:90,                  !- From Surface 57
+  inferred conditioned ceiling,           !- To Surface 57
+  0.201884253028264,                      !- View Factor 57
+  RimJoistFoundation:90,                  !- From Surface 58
+  Slab,                                   !- To Surface 58
+  0.201884253028264,                      !- View Factor 58
+  RimJoistFoundation:90,                  !- From Surface 59
+  living Basement Partition,              !- To Surface 59
+  0.201884253028264,                      !- View Factor 59
+  RimJoistFoundation:90,                  !- From Surface 60
+  furniture mass living basement,         !- To Surface 60
+  0.201884253028264,                      !- View Factor 60
+  WindowSouth,                            !- From Surface 61
   FloorBelowAttic,                        !- To Surface 61
-  0.213292925731306,                      !- View Factor 61
-  Wall:270,                               !- From Surface 62
-  DoorNorth,                              !- To Surface 62
-  0.0063197903920387,                     !- View Factor 62
-  Wall:270,                               !- From Surface 63
-  inferred conditioned floor,             !- To Surface 63
-  0.213292925731306,                      !- View Factor 63
-  Wall:270,                               !- From Surface 64
-  furniture mass living living,           !- To Surface 64
-  0.213292925731306,                      !- View Factor 64
-  Wall:270,                               !- From Surface 65
-  living Living Partition,                !- To Surface 65
-  0.213292925731306,                      !- View Factor 65
-  Wall:90,                                !- From Surface 66
-  WindowSouth,                            !- To Surface 66
-  0.00853171702925225,                    !- View Factor 66
-  Wall:90,                                !- From Surface 67
-  Wall:270,                               !- To Surface 67
-  0.0371287685532274,                     !- View Factor 67
-  Wall:90,                                !- From Surface 68
-  Wall:0,                                 !- To Surface 68
-  0.0371287685532274,                     !- View Factor 68
-  Wall:90,                                !- From Surface 69
-  DoorSouth,                              !- To Surface 69
-  0.0063197903920387,                     !- View Factor 69
-  Wall:90,                                !- From Surface 70
-  WindowNorth,                            !- To Surface 70
-  0.00853171702925225,                    !- View Factor 70
-  Wall:90,                                !- From Surface 71
-  Wall:180,                               !- To Surface 71
-  0.0371287685532274,                     !- View Factor 71
-  Wall:90,                                !- From Surface 72
-  FloorBelowAttic,                        !- To Surface 72
-  0.213292925731306,                      !- View Factor 72
-  Wall:90,                                !- From Surface 73
-  DoorNorth,                              !- To Surface 73
-  0.0063197903920387,                     !- View Factor 73
-  Wall:90,                                !- From Surface 74
-  inferred conditioned floor,             !- To Surface 74
-  0.213292925731306,                      !- View Factor 74
-  Wall:90,                                !- From Surface 75
-  WindowWest,                             !- To Surface 75
-  0.00568781135283484,                    !- View Factor 75
-  Wall:90,                                !- From Surface 76
-  furniture mass living living,           !- To Surface 76
-  0.213292925731306,                      !- View Factor 76
-  Wall:90,                                !- From Surface 77
-  living Living Partition,                !- To Surface 77
-  0.213292925731306,                      !- View Factor 77
-  Wall:0,                                 !- From Surface 78
-  WindowEast,                             !- To Surface 78
-  0.00574048637446613,                    !- View Factor 78
-  Wall:0,                                 !- From Surface 79
-  WindowSouth,                            !- To Surface 79
-  0.00861072956169919,                    !- View Factor 79
-  Wall:0,                                 !- From Surface 80
-  Wall:270,                               !- To Surface 80
-  0.0374726193888762,                     !- View Factor 80
-  Wall:0,                                 !- From Surface 81
-  Wall:90,                                !- To Surface 81
-  0.0374726193888761,                     !- View Factor 81
-  Wall:0,                                 !- From Surface 82
-  DoorSouth,                              !- To Surface 82
-  0.00637831819385126,                    !- View Factor 82
-  Wall:0,                                 !- From Surface 83
-  Wall:180,                               !- To Surface 83
-  0.0374726193888761,                     !- View Factor 83
-  Wall:0,                                 !- From Surface 84
-  FloorBelowAttic,                        !- To Surface 84
-  0.21526823904248,                       !- View Factor 84
-  Wall:0,                                 !- From Surface 85
-  inferred conditioned floor,             !- To Surface 85
-  0.21526823904248,                       !- View Factor 85
-  Wall:0,                                 !- From Surface 86
-  WindowWest,                             !- To Surface 86
-  0.00574048637446613,                    !- View Factor 86
-  Wall:0,                                 !- From Surface 87
+  0.215275827489323,                      !- View Factor 61
+  WindowSouth,                            !- From Surface 62
+  Wall:0,                                 !- To Surface 62
+  0.0374739403407341,                     !- View Factor 62
+  WindowSouth,                            !- From Surface 63
+  Wall:270,                               !- To Surface 63
+  0.0374739403407341,                     !- View Factor 63
+  WindowSouth,                            !- From Surface 64
+  Wall:90,                                !- To Surface 64
+  0.0374739403407341,                     !- View Factor 64
+  WindowSouth,                            !- From Surface 65
+  inferred conditioned floor,             !- To Surface 65
+  0.215275827489323,                      !- View Factor 65
+  WindowSouth,                            !- From Surface 66
+  furniture mass living living,           !- To Surface 66
+  0.215275827489323,                      !- View Factor 66
+  WindowSouth,                            !- From Surface 67
+  living Living Partition,                !- To Surface 67
+  0.215275827489323,                      !- View Factor 67
+  surface WindowSouth,                    !- From Surface 68
+  FloorBelowAttic,                        !- To Surface 68
+  0.215275827489323,                      !- View Factor 68
+  surface WindowSouth,                    !- From Surface 69
+  Wall:0,                                 !- To Surface 69
+  0.0374739403407341,                     !- View Factor 69
+  surface WindowSouth,                    !- From Surface 70
+  Wall:270,                               !- To Surface 70
+  0.0374739403407341,                     !- View Factor 70
+  surface WindowSouth,                    !- From Surface 71
+  Wall:90,                                !- To Surface 71
+  0.0374739403407341,                     !- View Factor 71
+  surface WindowSouth,                    !- From Surface 72
+  inferred conditioned floor,             !- To Surface 72
+  0.215275827489323,                      !- View Factor 72
+  surface WindowSouth,                    !- From Surface 73
+  furniture mass living living,           !- To Surface 73
+  0.215275827489323,                      !- View Factor 73
+  surface WindowSouth,                    !- From Surface 74
+  living Living Partition,                !- To Surface 74
+  0.215275827489323,                      !- View Factor 74
+  WindowNorth,                            !- From Surface 75
+  FloorBelowAttic,                        !- To Surface 75
+  0.215275827489323,                      !- View Factor 75
+  WindowNorth,                            !- From Surface 76
+  Wall:270,                               !- To Surface 76
+  0.0374739403407341,                     !- View Factor 76
+  WindowNorth,                            !- From Surface 77
+  Wall:90,                                !- To Surface 77
+  0.0374739403407341,                     !- View Factor 77
+  WindowNorth,                            !- From Surface 78
+  Wall:180,                               !- To Surface 78
+  0.0374739403407341,                     !- View Factor 78
+  WindowNorth,                            !- From Surface 79
+  inferred conditioned floor,             !- To Surface 79
+  0.215275827489323,                      !- View Factor 79
+  WindowNorth,                            !- From Surface 80
+  furniture mass living living,           !- To Surface 80
+  0.215275827489323,                      !- View Factor 80
+  WindowNorth,                            !- From Surface 81
+  living Living Partition,                !- To Surface 81
+  0.215275827489323,                      !- View Factor 81
+  surface WindowNorth,                    !- From Surface 82
+  FloorBelowAttic,                        !- To Surface 82
+  0.215275827489323,                      !- View Factor 82
+  surface WindowNorth,                    !- From Surface 83
+  Wall:270,                               !- To Surface 83
+  0.0374739403407341,                     !- View Factor 83
+  surface WindowNorth,                    !- From Surface 84
+  Wall:90,                                !- To Surface 84
+  0.0374739403407341,                     !- View Factor 84
+  surface WindowNorth,                    !- From Surface 85
+  Wall:180,                               !- To Surface 85
+  0.0374739403407341,                     !- View Factor 85
+  surface WindowNorth,                    !- From Surface 86
+  inferred conditioned floor,             !- To Surface 86
+  0.215275827489323,                      !- View Factor 86
+  surface WindowNorth,                    !- From Surface 87
   furniture mass living living,           !- To Surface 87
-  0.21526823904248,                       !- View Factor 87
-  Wall:0,                                 !- From Surface 88
+  0.215275827489323,                      !- View Factor 87
+  surface WindowNorth,                    !- From Surface 88
   living Living Partition,                !- To Surface 88
-  0.21526823904248,                       !- View Factor 88
-  DoorSouth,                              !- From Surface 89
-  WindowEast,                             !- To Surface 89
-  0.00574048637446613,                    !- View Factor 89
-  DoorSouth,                              !- From Surface 90
-  Wall:270,                               !- To Surface 90
-  0.0374726193888762,                     !- View Factor 90
-  DoorSouth,                              !- From Surface 91
-  Wall:90,                                !- To Surface 91
-  0.0374726193888761,                     !- View Factor 91
-  DoorSouth,                              !- From Surface 92
-  Wall:0,                                 !- To Surface 92
-  0.0374726193888761,                     !- View Factor 92
-  DoorSouth,                              !- From Surface 93
-  WindowNorth,                            !- To Surface 93
-  0.00861072956169919,                    !- View Factor 93
-  DoorSouth,                              !- From Surface 94
-  FloorBelowAttic,                        !- To Surface 94
-  0.21526823904248,                       !- View Factor 94
-  DoorSouth,                              !- From Surface 95
-  DoorNorth,                              !- To Surface 95
-  0.00637831819385125,                    !- View Factor 95
-  DoorSouth,                              !- From Surface 96
-  inferred conditioned floor,             !- To Surface 96
-  0.21526823904248,                       !- View Factor 96
-  DoorSouth,                              !- From Surface 97
-  WindowWest,                             !- To Surface 97
-  0.00574048637446613,                    !- View Factor 97
-  DoorSouth,                              !- From Surface 98
+  0.215275827489323,                      !- View Factor 88
+  inferred conditioned ceiling,           !- From Surface 89
+  FoundationWall,                         !- To Surface 89
+  0.223630264629147,                      !- View Factor 89
+  inferred conditioned ceiling,           !- From Surface 90
+  Slab,                                   !- To Surface 90
+  0.25158404770779,                       !- View Factor 90
+  inferred conditioned ceiling,           !- From Surface 91
+  living Basement Partition,              !- To Surface 91
+  0.25158404770779,                       !- View Factor 91
+  inferred conditioned ceiling,           !- From Surface 92
+  furniture mass living basement,         !- To Surface 92
+  0.25158404770779,                       !- View Factor 92
+  WindowEast,                             !- From Surface 93
+  FloorBelowAttic,                        !- To Surface 93
+  0.213302748371563,                      !- View Factor 93
+  WindowEast,                             !- From Surface 94
+  Wall:0,                                 !- To Surface 94
+  0.037130478420235,                      !- View Factor 94
+  WindowEast,                             !- From Surface 95
+  Wall:270,                               !- To Surface 95
+  0.037130478420235,                      !- View Factor 95
+  WindowEast,                             !- From Surface 96
+  Wall:180,                               !- To Surface 96
+  0.037130478420235,                      !- View Factor 96
+  WindowEast,                             !- From Surface 97
+  inferred conditioned floor,             !- To Surface 97
+  0.213302748371563,                      !- View Factor 97
+  WindowEast,                             !- From Surface 98
   furniture mass living living,           !- To Surface 98
-  0.21526823904248,                       !- View Factor 98
-  DoorSouth,                              !- From Surface 99
+  0.213302748371563,                      !- View Factor 98
+  WindowEast,                             !- From Surface 99
   living Living Partition,                !- To Surface 99
-  0.21526823904248,                       !- View Factor 99
-  surface DoorSouth,                      !- From Surface 100
-  WindowEast,                             !- To Surface 100
-  0.00574048637446613,                    !- View Factor 100
-  surface DoorSouth,                      !- From Surface 101
-  Wall:270,                               !- To Surface 101
-  0.0374726193888762,                     !- View Factor 101
-  surface DoorSouth,                      !- From Surface 102
-  Wall:90,                                !- To Surface 102
-  0.0374726193888761,                     !- View Factor 102
-  surface DoorSouth,                      !- From Surface 103
-  Wall:0,                                 !- To Surface 103
-  0.0374726193888761,                     !- View Factor 103
-  surface DoorSouth,                      !- From Surface 104
-  WindowNorth,                            !- To Surface 104
-  0.00861072956169919,                    !- View Factor 104
-  surface DoorSouth,                      !- From Surface 105
-  FloorBelowAttic,                        !- To Surface 105
-  0.21526823904248,                       !- View Factor 105
-  surface DoorSouth,                      !- From Surface 106
-  DoorNorth,                              !- To Surface 106
-  0.00637831819385125,                    !- View Factor 106
-  surface DoorSouth,                      !- From Surface 107
-  inferred conditioned floor,             !- To Surface 107
-  0.21526823904248,                       !- View Factor 107
-  surface DoorSouth,                      !- From Surface 108
-  WindowWest,                             !- To Surface 108
-  0.00574048637446613,                    !- View Factor 108
-  surface DoorSouth,                      !- From Surface 109
-  furniture mass living living,           !- To Surface 109
-  0.21526823904248,                       !- View Factor 109
-  surface DoorSouth,                      !- From Surface 110
-  living Living Partition,                !- To Surface 110
-  0.21526823904248,                       !- View Factor 110
-  RimJoistFoundation:0,                   !- From Surface 111
-  RimJoistFoundation:270,                 !- To Surface 111
-  0.00528521960998725,                    !- View Factor 111
-  RimJoistFoundation:0,                   !- From Surface 112
-  RimJoistFoundation:90,                  !- To Surface 112
-  0.00528521960998724,                    !- View Factor 112
-  RimJoistFoundation:0,                   !- From Surface 113
-  inferred conditioned ceiling,           !- To Surface 113
-  0.24603608529251,                       !- View Factor 113
-  RimJoistFoundation:0,                   !- From Surface 114
-  Slab,                                   !- To Surface 114
-  0.24603608529251,                       !- View Factor 114
-  RimJoistFoundation:0,                   !- From Surface 115
-  RimJoistFoundation:180,                 !- To Surface 115
-  0.00528521960998725,                    !- View Factor 115
-  RimJoistFoundation:0,                   !- From Surface 116
-  furniture mass living basement,         !- To Surface 116
-  0.24603608529251,                       !- View Factor 116
-  RimJoistFoundation:0,                   !- From Surface 117
-  living Basement Partition,              !- To Surface 117
-  0.24603608529251,                       !- View Factor 117
-  WindowNorth,                            !- From Surface 118
-  WindowEast,                             !- To Surface 118
-  0.00574048637446613,                    !- View Factor 118
-  WindowNorth,                            !- From Surface 119
-  WindowSouth,                            !- To Surface 119
-  0.00861072956169919,                    !- View Factor 119
-  WindowNorth,                            !- From Surface 120
-  Wall:270,                               !- To Surface 120
-  0.0374726193888762,                     !- View Factor 120
-  WindowNorth,                            !- From Surface 121
-  Wall:90,                                !- To Surface 121
-  0.0374726193888761,                     !- View Factor 121
-  WindowNorth,                            !- From Surface 122
-  DoorSouth,                              !- To Surface 122
-  0.00637831819385126,                    !- View Factor 122
-  WindowNorth,                            !- From Surface 123
-  Wall:180,                               !- To Surface 123
-  0.0374726193888761,                     !- View Factor 123
-  WindowNorth,                            !- From Surface 124
-  FloorBelowAttic,                        !- To Surface 124
-  0.21526823904248,                       !- View Factor 124
-  WindowNorth,                            !- From Surface 125
-  inferred conditioned floor,             !- To Surface 125
-  0.21526823904248,                       !- View Factor 125
-  WindowNorth,                            !- From Surface 126
-  WindowWest,                             !- To Surface 126
-  0.00574048637446613,                    !- View Factor 126
-  WindowNorth,                            !- From Surface 127
-  furniture mass living living,           !- To Surface 127
-  0.21526823904248,                       !- View Factor 127
-  WindowNorth,                            !- From Surface 128
-  living Living Partition,                !- To Surface 128
-  0.21526823904248,                       !- View Factor 128
-  surface WindowNorth,                    !- From Surface 129
-  WindowEast,                             !- To Surface 129
-  0.00574048637446613,                    !- View Factor 129
-  surface WindowNorth,                    !- From Surface 130
-  WindowSouth,                            !- To Surface 130
-  0.00861072956169919,                    !- View Factor 130
-  surface WindowNorth,                    !- From Surface 131
+  0.213302748371563,                      !- View Factor 99
+  surface WindowEast,                     !- From Surface 100
+  FloorBelowAttic,                        !- To Surface 100
+  0.213302748371563,                      !- View Factor 100
+  surface WindowEast,                     !- From Surface 101
+  Wall:0,                                 !- To Surface 101
+  0.037130478420235,                      !- View Factor 101
+  surface WindowEast,                     !- From Surface 102
+  Wall:270,                               !- To Surface 102
+  0.037130478420235,                      !- View Factor 102
+  surface WindowEast,                     !- From Surface 103
+  Wall:180,                               !- To Surface 103
+  0.037130478420235,                      !- View Factor 103
+  surface WindowEast,                     !- From Surface 104
+  inferred conditioned floor,             !- To Surface 104
+  0.213302748371563,                      !- View Factor 104
+  surface WindowEast,                     !- From Surface 105
+  furniture mass living living,           !- To Surface 105
+  0.213302748371563,                      !- View Factor 105
+  surface WindowEast,                     !- From Surface 106
+  living Living Partition,                !- To Surface 106
+  0.213302748371563,                      !- View Factor 106
+  DoorSouth,                              !- From Surface 107
+  FloorBelowAttic,                        !- To Surface 107
+  0.215275827489323,                      !- View Factor 107
+  DoorSouth,                              !- From Surface 108
+  Wall:0,                                 !- To Surface 108
+  0.0374739403407341,                     !- View Factor 108
+  DoorSouth,                              !- From Surface 109
+  Wall:270,                               !- To Surface 109
+  0.0374739403407341,                     !- View Factor 109
+  DoorSouth,                              !- From Surface 110
+  Wall:90,                                !- To Surface 110
+  0.0374739403407341,                     !- View Factor 110
+  DoorSouth,                              !- From Surface 111
+  inferred conditioned floor,             !- To Surface 111
+  0.215275827489323,                      !- View Factor 111
+  DoorSouth,                              !- From Surface 112
+  furniture mass living living,           !- To Surface 112
+  0.215275827489323,                      !- View Factor 112
+  DoorSouth,                              !- From Surface 113
+  living Living Partition,                !- To Surface 113
+  0.215275827489323,                      !- View Factor 113
+  surface DoorSouth,                      !- From Surface 114
+  FloorBelowAttic,                        !- To Surface 114
+  0.215275827489323,                      !- View Factor 114
+  surface DoorSouth,                      !- From Surface 115
+  Wall:0,                                 !- To Surface 115
+  0.0374739403407341,                     !- View Factor 115
+  surface DoorSouth,                      !- From Surface 116
+  Wall:270,                               !- To Surface 116
+  0.0374739403407341,                     !- View Factor 116
+  surface DoorSouth,                      !- From Surface 117
+  Wall:90,                                !- To Surface 117
+  0.0374739403407341,                     !- View Factor 117
+  surface DoorSouth,                      !- From Surface 118
+  inferred conditioned floor,             !- To Surface 118
+  0.215275827489323,                      !- View Factor 118
+  surface DoorSouth,                      !- From Surface 119
+  furniture mass living living,           !- To Surface 119
+  0.215275827489323,                      !- View Factor 119
+  surface DoorSouth,                      !- From Surface 120
+  living Living Partition,                !- To Surface 120
+  0.215275827489323,                      !- View Factor 120
+  inferred conditioned floor,             !- From Surface 121
+  FloorBelowAttic,                        !- To Surface 121
+  0.257140998278904,                      !- View Factor 121
+  inferred conditioned floor,             !- From Surface 122
+  Wall:0,                                 !- To Surface 122
+  0.0447615811818834,                     !- View Factor 122
+  inferred conditioned floor,             !- From Surface 123
+  Wall:270,                               !- To Surface 123
+  0.0447615811818834,                     !- View Factor 123
+  inferred conditioned floor,             !- From Surface 124
+  Wall:90,                                !- To Surface 124
+  0.0447615811818834,                     !- View Factor 124
+  inferred conditioned floor,             !- From Surface 125
+  Wall:180,                               !- To Surface 125
+  0.0447615811818834,                     !- View Factor 125
+  inferred conditioned floor,             !- From Surface 126
+  WindowSouth,                            !- To Surface 126
+  0.0102856399311562,                     !- View Factor 126
+  inferred conditioned floor,             !- From Surface 127
+  WindowNorth,                            !- To Surface 127
+  0.0102856399311562,                     !- View Factor 127
+  inferred conditioned floor,             !- From Surface 128
+  furniture mass living living,           !- To Surface 128
+  0.257140998278904,                      !- View Factor 128
+  inferred conditioned floor,             !- From Surface 129
+  living Living Partition,                !- To Surface 129
+  0.257140998278904,                      !- View Factor 129
+  DoorNorth,                              !- From Surface 130
+  FloorBelowAttic,                        !- To Surface 130
+  0.215275827489323,                      !- View Factor 130
+  DoorNorth,                              !- From Surface 131
   Wall:270,                               !- To Surface 131
-  0.0374726193888762,                     !- View Factor 131
-  surface WindowNorth,                    !- From Surface 132
+  0.0374739403407341,                     !- View Factor 131
+  DoorNorth,                              !- From Surface 132
   Wall:90,                                !- To Surface 132
-  0.0374726193888761,                     !- View Factor 132
-  surface WindowNorth,                    !- From Surface 133
-  DoorSouth,                              !- To Surface 133
-  0.00637831819385126,                    !- View Factor 133
-  surface WindowNorth,                    !- From Surface 134
-  Wall:180,                               !- To Surface 134
-  0.0374726193888761,                     !- View Factor 134
-  surface WindowNorth,                    !- From Surface 135
-  FloorBelowAttic,                        !- To Surface 135
-  0.21526823904248,                       !- View Factor 135
-  surface WindowNorth,                    !- From Surface 136
-  inferred conditioned floor,             !- To Surface 136
-  0.21526823904248,                       !- View Factor 136
-  surface WindowNorth,                    !- From Surface 137
-  WindowWest,                             !- To Surface 137
-  0.00574048637446613,                    !- View Factor 137
-  surface WindowNorth,                    !- From Surface 138
-  furniture mass living living,           !- To Surface 138
-  0.21526823904248,                       !- View Factor 138
-  surface WindowNorth,                    !- From Surface 139
-  living Living Partition,                !- To Surface 139
-  0.21526823904248,                       !- View Factor 139
-  Wall:180,                               !- From Surface 140
-  WindowEast,                             !- To Surface 140
-  0.00574048637446613,                    !- View Factor 140
-  Wall:180,                               !- From Surface 141
-  Wall:270,                               !- To Surface 141
-  0.0374726193888762,                     !- View Factor 141
-  Wall:180,                               !- From Surface 142
-  Wall:90,                                !- To Surface 142
-  0.0374726193888761,                     !- View Factor 142
-  Wall:180,                               !- From Surface 143
-  Wall:0,                                 !- To Surface 143
-  0.0374726193888761,                     !- View Factor 143
-  Wall:180,                               !- From Surface 144
-  WindowNorth,                            !- To Surface 144
-  0.00861072956169919,                    !- View Factor 144
-  Wall:180,                               !- From Surface 145
-  FloorBelowAttic,                        !- To Surface 145
-  0.21526823904248,                       !- View Factor 145
-  Wall:180,                               !- From Surface 146
-  DoorNorth,                              !- To Surface 146
-  0.00637831819385125,                    !- View Factor 146
-  Wall:180,                               !- From Surface 147
-  inferred conditioned floor,             !- To Surface 147
-  0.21526823904248,                       !- View Factor 147
-  Wall:180,                               !- From Surface 148
-  WindowWest,                             !- To Surface 148
-  0.00574048637446613,                    !- View Factor 148
-  Wall:180,                               !- From Surface 149
-  furniture mass living living,           !- To Surface 149
-  0.21526823904248,                       !- View Factor 149
-  Wall:180,                               !- From Surface 150
-  living Living Partition,                !- To Surface 150
-  0.21526823904248,                       !- View Factor 150
-  RimJoistFoundation:270,                 !- From Surface 151
-  FoundationWall,                         !- To Surface 151
-  0.179452669358457,                      !- View Factor 151
-  RimJoistFoundation:270,                 !- From Surface 152
-  RimJoistFoundation:0,                   !- To Surface 152
-  0.00433677284282937,                    !- View Factor 152
-  RimJoistFoundation:270,                 !- From Surface 153
-  RimJoistFoundation:90,                  !- To Surface 153
-  0.00433677284282937,                    !- View Factor 153
-  RimJoistFoundation:270,                 !- From Surface 154
-  inferred conditioned ceiling,           !- To Surface 154
-  0.201884253028264,                      !- View Factor 154
-  RimJoistFoundation:270,                 !- From Surface 155
-  Slab,                                   !- To Surface 155
-  0.201884253028264,                      !- View Factor 155
-  RimJoistFoundation:270,                 !- From Surface 156
-  RimJoistFoundation:180,                 !- To Surface 156
-  0.00433677284282937,                    !- View Factor 156
-  RimJoistFoundation:270,                 !- From Surface 157
-  furniture mass living basement,         !- To Surface 157
-  0.201884253028264,                      !- View Factor 157
-  RimJoistFoundation:270,                 !- From Surface 158
-  living Basement Partition,              !- To Surface 158
-  0.201884253028264,                      !- View Factor 158
-  FloorBelowAttic,                        !- From Surface 159
-  WindowEast,                             !- To Surface 159
-  0.00685664704052177,                    !- View Factor 159
-  FloorBelowAttic,                        !- From Surface 160
-  WindowSouth,                            !- To Surface 160
-  0.0102849705607827,                     !- View Factor 160
-  FloorBelowAttic,                        !- From Surface 161
-  Wall:270,                               !- To Surface 161
-  0.0447586681811839,                     !- View Factor 161
-  FloorBelowAttic,                        !- From Surface 162
-  Wall:90,                                !- To Surface 162
-  0.0447586681811838,                     !- View Factor 162
-  FloorBelowAttic,                        !- From Surface 163
-  Wall:0,                                 !- To Surface 163
-  0.0447586681811838,                     !- View Factor 163
-  FloorBelowAttic,                        !- From Surface 164
-  DoorSouth,                              !- To Surface 164
-  0.00761849671169086,                    !- View Factor 164
-  FloorBelowAttic,                        !- From Surface 165
-  WindowNorth,                            !- To Surface 165
-  0.0102849705607827,                     !- View Factor 165
-  FloorBelowAttic,                        !- From Surface 166
-  Wall:180,                               !- To Surface 166
-  0.0447586681811838,                     !- View Factor 166
-  FloorBelowAttic,                        !- From Surface 167
-  DoorNorth,                              !- To Surface 167
-  0.00761849671169086,                    !- View Factor 167
-  FloorBelowAttic,                        !- From Surface 168
-  inferred conditioned floor,             !- To Surface 168
-  0.257124264019566,                      !- View Factor 168
-  FloorBelowAttic,                        !- From Surface 169
-  WindowWest,                             !- To Surface 169
-  0.00685664704052178,                    !- View Factor 169
-  FloorBelowAttic,                        !- From Surface 170
-  furniture mass living living,           !- To Surface 170
-  0.257124264019567,                      !- View Factor 170
-  FloorBelowAttic,                        !- From Surface 171
-  living Living Partition,                !- To Surface 171
-  0.257124264019567,                      !- View Factor 171
-  RimJoistFoundation:90,                  !- From Surface 172
-  FoundationWall,                         !- To Surface 172
-  0.179452669358457,                      !- View Factor 172
-  RimJoistFoundation:90,                  !- From Surface 173
-  RimJoistFoundation:0,                   !- To Surface 173
-  0.00433677284282937,                    !- View Factor 173
-  RimJoistFoundation:90,                  !- From Surface 174
-  RimJoistFoundation:270,                 !- To Surface 174
-  0.00433677284282937,                    !- View Factor 174
-  RimJoistFoundation:90,                  !- From Surface 175
-  inferred conditioned ceiling,           !- To Surface 175
-  0.201884253028264,                      !- View Factor 175
-  RimJoistFoundation:90,                  !- From Surface 176
-  Slab,                                   !- To Surface 176
-  0.201884253028264,                      !- View Factor 176
-  RimJoistFoundation:90,                  !- From Surface 177
-  RimJoistFoundation:180,                 !- To Surface 177
-  0.00433677284282937,                    !- View Factor 177
-  RimJoistFoundation:90,                  !- From Surface 178
-  furniture mass living basement,         !- To Surface 178
-  0.201884253028264,                      !- View Factor 178
-  RimJoistFoundation:90,                  !- From Surface 179
-  living Basement Partition,              !- To Surface 179
-  0.201884253028264,                      !- View Factor 179
-  inferred conditioned ceiling,           !- From Surface 180
-  FoundationWall,                         !- To Surface 180
-  0.223630264629146,                      !- View Factor 180
-  inferred conditioned ceiling,           !- From Surface 181
-  RimJoistFoundation:0,                   !- To Surface 181
-  0.00540439806187104,                    !- View Factor 181
-  inferred conditioned ceiling,           !- From Surface 182
-  RimJoistFoundation:270,                 !- To Surface 182
-  0.00540439806187105,                    !- View Factor 182
-  inferred conditioned ceiling,           !- From Surface 183
-  RimJoistFoundation:90,                  !- To Surface 183
-  0.00540439806187104,                    !- View Factor 183
-  inferred conditioned ceiling,           !- From Surface 184
-  Slab,                                   !- To Surface 184
-  0.25158404770779,                       !- View Factor 184
-  inferred conditioned ceiling,           !- From Surface 185
-  RimJoistFoundation:180,                 !- To Surface 185
-  0.00540439806187104,                    !- View Factor 185
-  inferred conditioned ceiling,           !- From Surface 186
-  furniture mass living basement,         !- To Surface 186
-  0.25158404770779,                       !- View Factor 186
-  inferred conditioned ceiling,           !- From Surface 187
-  living Basement Partition,              !- To Surface 187
-  0.25158404770779,                       !- View Factor 187
-  DoorNorth,                              !- From Surface 188
-  WindowEast,                             !- To Surface 188
-  0.00574048637446613,                    !- View Factor 188
-  DoorNorth,                              !- From Surface 189
-  WindowSouth,                            !- To Surface 189
-  0.00861072956169919,                    !- View Factor 189
-  DoorNorth,                              !- From Surface 190
-  Wall:270,                               !- To Surface 190
-  0.0374726193888762,                     !- View Factor 190
-  DoorNorth,                              !- From Surface 191
-  Wall:90,                                !- To Surface 191
-  0.0374726193888761,                     !- View Factor 191
-  DoorNorth,                              !- From Surface 192
-  DoorSouth,                              !- To Surface 192
-  0.00637831819385126,                    !- View Factor 192
-  DoorNorth,                              !- From Surface 193
-  Wall:180,                               !- To Surface 193
-  0.0374726193888761,                     !- View Factor 193
-  DoorNorth,                              !- From Surface 194
-  FloorBelowAttic,                        !- To Surface 194
-  0.21526823904248,                       !- View Factor 194
-  DoorNorth,                              !- From Surface 195
-  inferred conditioned floor,             !- To Surface 195
-  0.21526823904248,                       !- View Factor 195
-  DoorNorth,                              !- From Surface 196
-  WindowWest,                             !- To Surface 196
-  0.00574048637446613,                    !- View Factor 196
-  DoorNorth,                              !- From Surface 197
-  furniture mass living living,           !- To Surface 197
-  0.21526823904248,                       !- View Factor 197
-  DoorNorth,                              !- From Surface 198
-  living Living Partition,                !- To Surface 198
-  0.21526823904248,                       !- View Factor 198
-  surface DoorNorth,                      !- From Surface 199
-  WindowEast,                             !- To Surface 199
-  0.00574048637446613,                    !- View Factor 199
-  surface DoorNorth,                      !- From Surface 200
-  WindowSouth,                            !- To Surface 200
-  0.00861072956169919,                    !- View Factor 200
-  surface DoorNorth,                      !- From Surface 201
-  Wall:270,                               !- To Surface 201
-  0.0374726193888762,                     !- View Factor 201
-  surface DoorNorth,                      !- From Surface 202
-  Wall:90,                                !- To Surface 202
-  0.0374726193888761,                     !- View Factor 202
-  surface DoorNorth,                      !- From Surface 203
-  DoorSouth,                              !- To Surface 203
-  0.00637831819385126,                    !- View Factor 203
-  surface DoorNorth,                      !- From Surface 204
-  Wall:180,                               !- To Surface 204
-  0.0374726193888761,                     !- View Factor 204
-  surface DoorNorth,                      !- From Surface 205
-  FloorBelowAttic,                        !- To Surface 205
-  0.21526823904248,                       !- View Factor 205
-  surface DoorNorth,                      !- From Surface 206
-  inferred conditioned floor,             !- To Surface 206
-  0.21526823904248,                       !- View Factor 206
-  surface DoorNorth,                      !- From Surface 207
-  WindowWest,                             !- To Surface 207
-  0.00574048637446613,                    !- View Factor 207
-  surface DoorNorth,                      !- From Surface 208
-  furniture mass living living,           !- To Surface 208
-  0.21526823904248,                       !- View Factor 208
-  surface DoorNorth,                      !- From Surface 209
-  living Living Partition,                !- To Surface 209
-  0.21526823904248,                       !- View Factor 209
-  Slab,                                   !- From Surface 210
-  FoundationWall,                         !- To Surface 210
-  0.223630264629146,                      !- View Factor 210
-  Slab,                                   !- From Surface 211
-  RimJoistFoundation:0,                   !- To Surface 211
-  0.00540439806187104,                    !- View Factor 211
-  Slab,                                   !- From Surface 212
-  RimJoistFoundation:270,                 !- To Surface 212
-  0.00540439806187105,                    !- View Factor 212
-  Slab,                                   !- From Surface 213
-  RimJoistFoundation:90,                  !- To Surface 213
-  0.00540439806187104,                    !- View Factor 213
-  Slab,                                   !- From Surface 214
-  inferred conditioned ceiling,           !- To Surface 214
-  0.25158404770779,                       !- View Factor 214
-  Slab,                                   !- From Surface 215
-  RimJoistFoundation:180,                 !- To Surface 215
-  0.00540439806187104,                    !- View Factor 215
-  Slab,                                   !- From Surface 216
-  furniture mass living basement,         !- To Surface 216
-  0.25158404770779,                       !- View Factor 216
-  Slab,                                   !- From Surface 217
-  living Basement Partition,              !- To Surface 217
-  0.25158404770779,                       !- View Factor 217
-  RimJoistFoundation:180,                 !- From Surface 218
-  FoundationWall,                         !- To Surface 218
-  0.179452669358457,                      !- View Factor 218
-  RimJoistFoundation:180,                 !- From Surface 219
-  RimJoistFoundation:0,                   !- To Surface 219
-  0.00433677284282937,                    !- View Factor 219
-  RimJoistFoundation:180,                 !- From Surface 220
-  RimJoistFoundation:270,                 !- To Surface 220
-  0.00433677284282938,                    !- View Factor 220
-  RimJoistFoundation:180,                 !- From Surface 221
-  RimJoistFoundation:90,                  !- To Surface 221
-  0.00433677284282937,                    !- View Factor 221
-  RimJoistFoundation:180,                 !- From Surface 222
-  inferred conditioned ceiling,           !- To Surface 222
-  0.201884253028264,                      !- View Factor 222
-  RimJoistFoundation:180,                 !- From Surface 223
-  Slab,                                   !- To Surface 223
-  0.201884253028264,                      !- View Factor 223
-  RimJoistFoundation:180,                 !- From Surface 224
-  furniture mass living basement,         !- To Surface 224
-  0.201884253028264,                      !- View Factor 224
-  RimJoistFoundation:180,                 !- From Surface 225
-  living Basement Partition,              !- To Surface 225
-  0.201884253028264,                      !- View Factor 225
-  inferred conditioned floor,             !- From Surface 226
-  WindowEast,                             !- To Surface 226
-  0.00685664704052177,                    !- View Factor 226
-  inferred conditioned floor,             !- From Surface 227
-  WindowSouth,                            !- To Surface 227
-  0.0102849705607827,                     !- View Factor 227
-  inferred conditioned floor,             !- From Surface 228
-  Wall:270,                               !- To Surface 228
-  0.0447586681811839,                     !- View Factor 228
-  inferred conditioned floor,             !- From Surface 229
-  Wall:90,                                !- To Surface 229
-  0.0447586681811838,                     !- View Factor 229
-  inferred conditioned floor,             !- From Surface 230
-  Wall:0,                                 !- To Surface 230
-  0.0447586681811838,                     !- View Factor 230
-  inferred conditioned floor,             !- From Surface 231
-  DoorSouth,                              !- To Surface 231
-  0.00761849671169086,                    !- View Factor 231
-  inferred conditioned floor,             !- From Surface 232
-  WindowNorth,                            !- To Surface 232
-  0.0102849705607827,                     !- View Factor 232
-  inferred conditioned floor,             !- From Surface 233
-  Wall:180,                               !- To Surface 233
-  0.0447586681811838,                     !- View Factor 233
-  inferred conditioned floor,             !- From Surface 234
-  FloorBelowAttic,                        !- To Surface 234
-  0.257124264019566,                      !- View Factor 234
-  inferred conditioned floor,             !- From Surface 235
-  DoorNorth,                              !- To Surface 235
-  0.00761849671169086,                    !- View Factor 235
-  inferred conditioned floor,             !- From Surface 236
-  WindowWest,                             !- To Surface 236
-  0.00685664704052178,                    !- View Factor 236
-  inferred conditioned floor,             !- From Surface 237
-  furniture mass living living,           !- To Surface 237
-  0.257124264019567,                      !- View Factor 237
-  inferred conditioned floor,             !- From Surface 238
-  living Living Partition,                !- To Surface 238
-  0.257124264019567,                      !- View Factor 238
-  WindowWest,                             !- From Surface 239
-  WindowEast,                             !- To Surface 239
-  0.00568781135283483,                    !- View Factor 239
-  WindowWest,                             !- From Surface 240
-  WindowSouth,                            !- To Surface 240
-  0.00853171702925225,                    !- View Factor 240
-  WindowWest,                             !- From Surface 241
-  Wall:90,                                !- To Surface 241
-  0.0371287685532274,                     !- View Factor 241
-  WindowWest,                             !- From Surface 242
-  Wall:0,                                 !- To Surface 242
-  0.0371287685532274,                     !- View Factor 242
-  WindowWest,                             !- From Surface 243
-  DoorSouth,                              !- To Surface 243
-  0.0063197903920387,                     !- View Factor 243
-  WindowWest,                             !- From Surface 244
-  WindowNorth,                            !- To Surface 244
-  0.00853171702925224,                    !- View Factor 244
-  WindowWest,                             !- From Surface 245
-  Wall:180,                               !- To Surface 245
-  0.0371287685532274,                     !- View Factor 245
-  WindowWest,                             !- From Surface 246
-  FloorBelowAttic,                        !- To Surface 246
-  0.213292925731306,                      !- View Factor 246
-  WindowWest,                             !- From Surface 247
-  DoorNorth,                              !- To Surface 247
-  0.0063197903920387,                     !- View Factor 247
-  WindowWest,                             !- From Surface 248
-  inferred conditioned floor,             !- To Surface 248
-  0.213292925731306,                      !- View Factor 248
-  WindowWest,                             !- From Surface 249
-  furniture mass living living,           !- To Surface 249
-  0.213292925731306,                      !- View Factor 249
-  WindowWest,                             !- From Surface 250
-  living Living Partition,                !- To Surface 250
-  0.213292925731306,                      !- View Factor 250
-  surface WindowWest,                     !- From Surface 251
-  WindowEast,                             !- To Surface 251
-  0.00568781135283483,                    !- View Factor 251
-  surface WindowWest,                     !- From Surface 252
-  WindowSouth,                            !- To Surface 252
-  0.00853171702925225,                    !- View Factor 252
-  surface WindowWest,                     !- From Surface 253
-  Wall:90,                                !- To Surface 253
-  0.0371287685532274,                     !- View Factor 253
-  surface WindowWest,                     !- From Surface 254
-  Wall:0,                                 !- To Surface 254
-  0.0371287685532274,                     !- View Factor 254
-  surface WindowWest,                     !- From Surface 255
-  DoorSouth,                              !- To Surface 255
-  0.0063197903920387,                     !- View Factor 255
-  surface WindowWest,                     !- From Surface 256
-  WindowNorth,                            !- To Surface 256
-  0.00853171702925224,                    !- View Factor 256
-  surface WindowWest,                     !- From Surface 257
-  Wall:180,                               !- To Surface 257
-  0.0371287685532274,                     !- View Factor 257
-  surface WindowWest,                     !- From Surface 258
-  FloorBelowAttic,                        !- To Surface 258
-  0.213292925731306,                      !- View Factor 258
-  surface WindowWest,                     !- From Surface 259
-  DoorNorth,                              !- To Surface 259
-  0.0063197903920387,                     !- View Factor 259
-  surface WindowWest,                     !- From Surface 260
-  inferred conditioned floor,             !- To Surface 260
-  0.213292925731306,                      !- View Factor 260
-  surface WindowWest,                     !- From Surface 261
-  furniture mass living living,           !- To Surface 261
-  0.213292925731306,                      !- View Factor 261
-  surface WindowWest,                     !- From Surface 262
-  living Living Partition,                !- To Surface 262
-  0.213292925731306,                      !- View Factor 262
-  furniture mass living basement,         !- From Surface 263
-  RimJoistFoundation:270,                 !- To Surface 263
-  0.00700991056321006,                    !- View Factor 263
-  furniture mass living basement,         !- From Surface 264
-  RimJoistFoundation:90,                  !- To Surface 264
-  0.00700991056321006,                    !- View Factor 264
-  furniture mass living basement,         !- From Surface 265
-  inferred conditioned ceiling,           !- To Surface 265
-  0.326323422770123,                      !- View Factor 265
-  furniture mass living basement,         !- From Surface 266
-  Slab,                                   !- To Surface 266
-  0.326323422770123,                      !- View Factor 266
-  furniture mass living basement,         !- From Surface 267
-  RimJoistFoundation:180,                 !- To Surface 267
-  0.00700991056321006,                    !- View Factor 267
-  furniture mass living basement,         !- From Surface 268
-  living Basement Partition,              !- To Surface 268
-  0.326323422770123,                      !- View Factor 268
-  furniture mass living living,           !- From Surface 269
-  WindowEast,                             !- To Surface 269
-  0.00731522114953224,                    !- View Factor 269
-  furniture mass living living,           !- From Surface 270
-  WindowSouth,                            !- To Surface 270
-  0.0109728317242984,                     !- View Factor 270
-  furniture mass living living,           !- From Surface 271
-  Wall:270,                               !- To Surface 271
-  0.0477521380594466,                     !- View Factor 271
-  furniture mass living living,           !- From Surface 272
-  Wall:90,                                !- To Surface 272
-  0.0477521380594466,                     !- View Factor 272
-  furniture mass living living,           !- From Surface 273
-  DoorSouth,                              !- To Surface 273
-  0.00812802349948027,                    !- View Factor 273
-  furniture mass living living,           !- From Surface 274
-  Wall:180,                               !- To Surface 274
-  0.0477521380594466,                     !- View Factor 274
-  furniture mass living living,           !- From Surface 275
-  FloorBelowAttic,                        !- To Surface 275
-  0.274320793107459,                      !- View Factor 275
-  furniture mass living living,           !- From Surface 276
-  inferred conditioned floor,             !- To Surface 276
-  0.274320793107459,                      !- View Factor 276
-  furniture mass living living,           !- From Surface 277
-  WindowWest,                             !- To Surface 277
-  0.00731522114953224,                    !- View Factor 277
-  furniture mass living living,           !- From Surface 278
-  living Living Partition,                !- To Surface 278
-  0.274320793107459,                      !- View Factor 278
-  living Basement Partition,              !- From Surface 279
-  RimJoistFoundation:270,                 !- To Surface 279
-  0.00700991056321006,                    !- View Factor 279
-  living Basement Partition,              !- From Surface 280
-  RimJoistFoundation:90,                  !- To Surface 280
-  0.00700991056321006,                    !- View Factor 280
-  living Basement Partition,              !- From Surface 281
-  inferred conditioned ceiling,           !- To Surface 281
-  0.326323422770123,                      !- View Factor 281
-  living Basement Partition,              !- From Surface 282
-  Slab,                                   !- To Surface 282
-  0.326323422770123,                      !- View Factor 282
-  living Basement Partition,              !- From Surface 283
-  RimJoistFoundation:180,                 !- To Surface 283
-  0.00700991056321006,                    !- View Factor 283
-  living Basement Partition,              !- From Surface 284
-  furniture mass living basement,         !- To Surface 284
-  0.326323422770123,                      !- View Factor 284
-  living Living Partition,                !- From Surface 285
-  WindowEast,                             !- To Surface 285
-  0.00731522114953224,                    !- View Factor 285
-  living Living Partition,                !- From Surface 286
-  WindowSouth,                            !- To Surface 286
-  0.0109728317242984,                     !- View Factor 286
-  living Living Partition,                !- From Surface 287
-  Wall:270,                               !- To Surface 287
-  0.0477521380594466,                     !- View Factor 287
-  living Living Partition,                !- From Surface 288
-  Wall:90,                                !- To Surface 288
-  0.0477521380594466,                     !- View Factor 288
-  living Living Partition,                !- From Surface 289
-  DoorSouth,                              !- To Surface 289
-  0.00812802349948027,                    !- View Factor 289
-  living Living Partition,                !- From Surface 290
-  Wall:180,                               !- To Surface 290
-  0.0477521380594466,                     !- View Factor 290
-  living Living Partition,                !- From Surface 291
-  FloorBelowAttic,                        !- To Surface 291
-  0.274320793107459,                      !- View Factor 291
-  living Living Partition,                !- From Surface 292
-  inferred conditioned floor,             !- To Surface 292
-  0.274320793107459,                      !- View Factor 292
-  living Living Partition,                !- From Surface 293
-  WindowWest,                             !- To Surface 293
-  0.00731522114953224,                    !- View Factor 293
-  living Living Partition,                !- From Surface 294
-  furniture mass living living,           !- To Surface 294
-  0.274320793107459;                      !- View Factor 294
+  0.0374739403407341,                     !- View Factor 132
+  DoorNorth,                              !- From Surface 133
+  Wall:180,                               !- To Surface 133
+  0.0374739403407341,                     !- View Factor 133
+  DoorNorth,                              !- From Surface 134
+  inferred conditioned floor,             !- To Surface 134
+  0.215275827489323,                      !- View Factor 134
+  DoorNorth,                              !- From Surface 135
+  furniture mass living living,           !- To Surface 135
+  0.215275827489323,                      !- View Factor 135
+  DoorNorth,                              !- From Surface 136
+  living Living Partition,                !- To Surface 136
+  0.215275827489323,                      !- View Factor 136
+  surface DoorNorth,                      !- From Surface 137
+  FloorBelowAttic,                        !- To Surface 137
+  0.215275827489323,                      !- View Factor 137
+  surface DoorNorth,                      !- From Surface 138
+  Wall:270,                               !- To Surface 138
+  0.0374739403407341,                     !- View Factor 138
+  surface DoorNorth,                      !- From Surface 139
+  Wall:90,                                !- To Surface 139
+  0.0374739403407341,                     !- View Factor 139
+  surface DoorNorth,                      !- From Surface 140
+  Wall:180,                               !- To Surface 140
+  0.0374739403407341,                     !- View Factor 140
+  surface DoorNorth,                      !- From Surface 141
+  inferred conditioned floor,             !- To Surface 141
+  0.215275827489323,                      !- View Factor 141
+  surface DoorNorth,                      !- From Surface 142
+  furniture mass living living,           !- To Surface 142
+  0.215275827489323,                      !- View Factor 142
+  surface DoorNorth,                      !- From Surface 143
+  living Living Partition,                !- To Surface 143
+  0.215275827489323,                      !- View Factor 143
+  Slab,                                   !- From Surface 144
+  FoundationWall,                         !- To Surface 144
+  0.223630264629147,                      !- View Factor 144
+  Slab,                                   !- From Surface 145
+  inferred conditioned ceiling,           !- To Surface 145
+  0.25158404770779,                       !- View Factor 145
+  Slab,                                   !- From Surface 146
+  living Basement Partition,              !- To Surface 146
+  0.25158404770779,                       !- View Factor 146
+  Slab,                                   !- From Surface 147
+  furniture mass living basement,         !- To Surface 147
+  0.25158404770779,                       !- View Factor 147
+  WindowWest,                             !- From Surface 148
+  FloorBelowAttic,                        !- To Surface 148
+  0.213302748371563,                      !- View Factor 148
+  WindowWest,                             !- From Surface 149
+  Wall:0,                                 !- To Surface 149
+  0.037130478420235,                      !- View Factor 149
+  WindowWest,                             !- From Surface 150
+  Wall:90,                                !- To Surface 150
+  0.037130478420235,                      !- View Factor 150
+  WindowWest,                             !- From Surface 151
+  Wall:180,                               !- To Surface 151
+  0.037130478420235,                      !- View Factor 151
+  WindowWest,                             !- From Surface 152
+  inferred conditioned floor,             !- To Surface 152
+  0.213302748371563,                      !- View Factor 152
+  WindowWest,                             !- From Surface 153
+  furniture mass living living,           !- To Surface 153
+  0.213302748371563,                      !- View Factor 153
+  WindowWest,                             !- From Surface 154
+  living Living Partition,                !- To Surface 154
+  0.213302748371563,                      !- View Factor 154
+  surface WindowWest,                     !- From Surface 155
+  FloorBelowAttic,                        !- To Surface 155
+  0.213302748371563,                      !- View Factor 155
+  surface WindowWest,                     !- From Surface 156
+  Wall:0,                                 !- To Surface 156
+  0.037130478420235,                      !- View Factor 156
+  surface WindowWest,                     !- From Surface 157
+  Wall:90,                                !- To Surface 157
+  0.037130478420235,                      !- View Factor 157
+  surface WindowWest,                     !- From Surface 158
+  Wall:180,                               !- To Surface 158
+  0.037130478420235,                      !- View Factor 158
+  surface WindowWest,                     !- From Surface 159
+  inferred conditioned floor,             !- To Surface 159
+  0.213302748371563,                      !- View Factor 159
+  surface WindowWest,                     !- From Surface 160
+  furniture mass living living,           !- To Surface 160
+  0.213302748371563,                      !- View Factor 160
+  surface WindowWest,                     !- From Surface 161
+  living Living Partition,                !- To Surface 161
+  0.213302748371563,                      !- View Factor 161
+  furniture mass living living,           !- From Surface 162
+  FloorBelowAttic,                        !- To Surface 162
+  0.274333116056004,                      !- View Factor 162
+  furniture mass living living,           !- From Surface 163
+  Wall:270,                               !- To Surface 163
+  0.0477542831653045,                     !- View Factor 163
+  furniture mass living living,           !- From Surface 164
+  Wall:90,                                !- To Surface 164
+  0.0477542831653044,                     !- View Factor 164
+  furniture mass living living,           !- From Surface 165
+  Wall:180,                               !- To Surface 165
+  0.0477542831653045,                     !- View Factor 165
+  furniture mass living living,           !- From Surface 166
+  WindowSouth,                            !- To Surface 166
+  0.0109733246422402,                     !- View Factor 166
+  furniture mass living living,           !- From Surface 167
+  inferred conditioned floor,             !- To Surface 167
+  0.274333116056004,                      !- View Factor 167
+  furniture mass living living,           !- From Surface 168
+  living Living Partition,                !- To Surface 168
+  0.274333116056004,                      !- View Factor 168
+  living Basement Partition,              !- From Surface 169
+  inferred conditioned ceiling,           !- To Surface 169
+  0.326323422770123,                      !- View Factor 169
+  living Basement Partition,              !- From Surface 170
+  Slab,                                   !- To Surface 170
+  0.326323422770123,                      !- View Factor 170
+  living Basement Partition,              !- From Surface 171
+  furniture mass living basement,         !- To Surface 171
+  0.326323422770123,                      !- View Factor 171
+  furniture mass living basement,         !- From Surface 172
+  inferred conditioned ceiling,           !- To Surface 172
+  0.326323422770123,                      !- View Factor 172
+  furniture mass living basement,         !- From Surface 173
+  Slab,                                   !- To Surface 173
+  0.326323422770123,                      !- View Factor 173
+  furniture mass living basement,         !- From Surface 174
+  living Basement Partition,              !- To Surface 174
+  0.326323422770123,                      !- View Factor 174
+  living Living Partition,                !- From Surface 175
+  FloorBelowAttic,                        !- To Surface 175
+  0.274333116056004,                      !- View Factor 175
+  living Living Partition,                !- From Surface 176
+  Wall:270,                               !- To Surface 176
+  0.0477542831653045,                     !- View Factor 176
+  living Living Partition,                !- From Surface 177
+  Wall:90,                                !- To Surface 177
+  0.0477542831653044,                     !- View Factor 177
+  living Living Partition,                !- From Surface 178
+  Wall:180,                               !- To Surface 178
+  0.0477542831653045,                     !- View Factor 178
+  living Living Partition,                !- From Surface 179
+  WindowSouth,                            !- To Surface 179
+  0.0109733246422402,                     !- View Factor 179
+  living Living Partition,                !- From Surface 180
+  inferred conditioned floor,             !- To Surface 180
+  0.274333116056004,                      !- View Factor 180
+  living Living Partition,                !- From Surface 181
+  furniture mass living living,           !- To Surface 181
+  0.274333116056004;                      !- View Factor 181
 
 Exterior:Lights,
   exterior lighting,                      !- Name
@@ -19466,11 +19127,143 @@ Curve:Biquadratic,
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
 Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:FuelOil#1, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
   Electricity:Facility,                   !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Cooling:EnergyTransfer,                 !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Gas:Facility,                           !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  FuelOil#1:Facility,                     !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Propane, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Cooling:DistrictCooling,                !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Propane:Facility,                       !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Heating:EnergyTransfer,                 !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Heating:DistrictHeating,                !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:Electricity,          !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  interior lighting:InteriorLights:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  fridge:InteriorEquipment:Electricity,   !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  garage lighting:InteriorLights:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  ExteriorLights:Electricity,             !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:Gas,                  !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:FuelOil#1,            !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:Propane,              !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Propane:Facility,                       !- Key Name
   hourly;                                 !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
   Gas:Facility,                           !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  dishwasher:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes washer:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Gas,    !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  misc plug loads:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  misc tv:InteriorEquipment:Electricity,  !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Gas,    !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  FuelOil#1:Facility,                     !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:FuelOil#1, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Propane, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  mech vent house fan:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  ceiling fan:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  ElectricityProduced:Facility,           !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Electricity:Facility,                   !- Key Name
   hourly;                                 !- Reporting Frequency
 
 Output:Variable,
@@ -19540,58 +19333,8 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  Heating Coil Propane Energy,            !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Heating Coil FuelOil#1 Energy,          !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Baseboard Propane Energy,               !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Baseboard FuelOil#1 Energy,             !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Boiler Propane Energy,                  !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Boiler FuelOil#1 Energy,                !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Water Heater Propane Energy,            !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Water Heater FuelOil#1 Energy,          !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Other Equipment Propane Energy,         !- Variable Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
   central ac and furnace supply fan cool disaggregate, !- Variable Name
   monthly;                                !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  Other Equipment FuelOil#1 Energy,       !- Variable Name
-  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   central ac clg coil,                    !- Key Value
