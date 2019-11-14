@@ -1250,11 +1250,11 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg].round(2)]
   results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg].round(2)]
   results_out << [nil] # line break
-  results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal].round(0)]
-  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal].round(0)]
+  results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal].round(2)]
+  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal].round(2)]
   results_out << [nil] # line break
-  results_out << ["Peak Load: Heating (W)", design_output[:peakLoadHeatingBldg].round(0)]
-  results_out << ["Peak Load: Cooling (W)", design_output[:peakLoadCoolingBldg].round(0)]
+  results_out << ["Peak Load: Heating (kBtu)", design_output[:peakLoadHeatingBldg].round(2)]
+  results_out << ["Peak Load: Cooling (kBtu)", design_output[:peakLoadCoolingBldg].round(2)]
   results_out << [nil] # line break
   { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
     get_component_load_map.each do |component, component_var|
