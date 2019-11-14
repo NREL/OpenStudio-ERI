@@ -21,5 +21,8 @@ jobs:
           path: workflow/tests/test_results
           destination: results
       - store_artifacts:
-          path: measures
-          destination: measures
+          path: workflow/tests/test_files/sample_files/base-location-dallas-tx.xml
+          destination: test_results
+      - store_artifacts:
+          path: workflow/sample_files/base-location-dallas-tx.xml
+          destination: base-location-dallas-tx.xml
