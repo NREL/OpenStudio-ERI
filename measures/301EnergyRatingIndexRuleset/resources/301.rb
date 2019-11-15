@@ -484,8 +484,8 @@ class EnergyRatingIndex301Ruleset
       roofs_values[roof] = HPXML.get_roof_values(roof: roof)
     end
 
-    sum_gross_area = calc_sum_of_thermal_boundary_values(roofs_values.values)
-    avg_pitch = calc_area_weighted_sum_of_thermal_boundary_values(roofs_values.values, :pitch)
+    sum_gross_area = calc_sum_of_exterior_thermal_boundary_values(roofs_values.values)
+    avg_pitch = calc_area_weighted_sum_of_exterior_thermal_boundary_values(roofs_values.values, :pitch)
     solar_abs = 0.75
     emittance = 0.90
 
@@ -503,14 +503,18 @@ class EnergyRatingIndex301Ruleset
                      insulation_assembly_r_value: 1.0 / ceiling_ufactor)
     end
 
-    # Preserve non-thermal boundary roofs
+    # Preserve other roofs
     roofs_values.each do |roof, roof_values|
-      next if is_thermal_boundary(roof_values)
+      next if is_exterior_thermal_boundary(roof_values)
 
       roof_values[:solar_absorptance] = solar_abs
       roof_values[:emittance] = emittance
       roof_values[:interior_adjacent_to].gsub!("unvented", "vented")
-      roof_values[:insulation_assembly_r_value] = 2.3 # uninsulated
+      if is_thermal_boundary(roof_values)
+        roof_values[:insulation_assembly_r_value] = 1.0 / ceiling_ufactor
+      else
+        roof_values[:insulation_assembly_r_value] = 2.3 # uninsulated
+      end
       HPXML.add_roof(hpxml: hpxml, **roof_values)
     end
   end
@@ -550,7 +554,7 @@ class EnergyRatingIndex301Ruleset
       rim_joists_values[rim_joist] = HPXML.get_rim_joist_values(rim_joist: rim_joist)
     end
 
-    sum_gross_area = calc_sum_of_thermal_boundary_values(rim_joists_values.values)
+    sum_gross_area = calc_sum_of_exterior_thermal_boundary_values(rim_joists_values.values)
     solar_abs = 0.75
     emittance = 0.90
 
@@ -567,15 +571,19 @@ class EnergyRatingIndex301Ruleset
                           insulation_assembly_r_value: 1.0 / ufactor)
     end
 
-    # Preserve non-thermal boundary rim joists
+    # Preserve other rim joists
     rim_joists_values.each do |rim_joist, rim_joist_values|
-      next if is_thermal_boundary(rim_joist_values)
+      next if is_exterior_thermal_boundary(rim_joist_values)
 
       rim_joist_values[:solar_absorptance] = solar_abs
       rim_joist_values[:emittance] = emittance
       rim_joist_values[:interior_adjacent_to].gsub!("unvented", "vented")
       rim_joist_values[:exterior_adjacent_to].gsub!("unvented", "vented")
-      rim_joist_values[:insulation_assembly_r_value] = 2.3 # uninsulated
+      if is_thermal_boundary(rim_joist_values)
+        rim_joist_values[:insulation_assembly_r_value] = 1.0 / ufactor
+      else
+        rim_joist_values[:insulation_assembly_r_value] = 2.3 # uninsulated
+      end
       HPXML.add_rim_joist(hpxml: hpxml, **rim_joist_values)
     end
   end
@@ -603,7 +611,7 @@ class EnergyRatingIndex301Ruleset
       walls_values[wall] = HPXML.get_wall_values(wall: wall)
     end
 
-    sum_gross_area = calc_sum_of_thermal_boundary_values(walls_values.values)
+    sum_gross_area = calc_sum_of_exterior_thermal_boundary_values(walls_values.values)
     solar_abs = 0.75
     emittance = 0.90
 
@@ -621,15 +629,19 @@ class EnergyRatingIndex301Ruleset
                      insulation_assembly_r_value: 1.0 / ufactor)
     end
 
-    # Preserve non-thermal boundary walls
+    # Preserve other walls
     walls_values.each do |wall, wall_values|
-      next if is_thermal_boundary(wall_values)
+      next if is_exterior_thermal_boundary(wall_values)
 
       wall_values[:solar_absorptance] = solar_abs
       wall_values[:emittance] = emittance
       wall_values[:interior_adjacent_to].gsub!("unvented", "vented")
       wall_values[:exterior_adjacent_to].gsub!("unvented", "vented")
-      wall_values[:insulation_assembly_r_value] = 4.0 # uninsulated
+      if is_thermal_boundary(wall_values)
+        wall_values[:insulation_assembly_r_value] = 1.0 / ufactor
+      else
+        wall_values[:insulation_assembly_r_value] = 4.0 # uninsulated
+      end
       HPXML.add_wall(hpxml: hpxml, **wall_values)
     end
   end
@@ -649,9 +661,9 @@ class EnergyRatingIndex301Ruleset
       walls_values[wall] = HPXML.get_wall_values(wall: wall)
     end
 
-    avg_solar_abs = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :solar_absorptance)
-    avg_emittance = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :emittance)
-    avg_r_value = calc_area_weighted_sum_of_thermal_boundary_values(walls_values.values, :insulation_assembly_r_value, true)
+    avg_solar_abs = calc_area_weighted_sum_of_exterior_thermal_boundary_values(walls_values.values, :solar_absorptance)
+    avg_emittance = calc_area_weighted_sum_of_exterior_thermal_boundary_values(walls_values.values, :emittance)
+    avg_r_value = calc_area_weighted_sum_of_exterior_thermal_boundary_values(walls_values.values, :insulation_assembly_r_value, true)
 
     # Create thermal boundary wall area
     HPXML.add_wall(hpxml: hpxml,
@@ -911,8 +923,8 @@ class EnergyRatingIndex301Ruleset
       windows_values[window] = HPXML.get_window_values(window: window)
     end
 
-    avg_ufactor = calc_area_weighted_sum_of_thermal_boundary_values(windows_values.values, :ufactor)
-    avg_shgc = calc_area_weighted_sum_of_thermal_boundary_values(windows_values.values, :shgc)
+    avg_ufactor = calc_area_weighted_sum_of_exterior_thermal_boundary_values(windows_values.values, :ufactor)
+    avg_shgc = calc_area_weighted_sum_of_exterior_thermal_boundary_values(windows_values.values, :shgc)
 
     # Create windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
@@ -991,7 +1003,7 @@ class EnergyRatingIndex301Ruleset
       doors_values[door] = HPXML.get_door_values(door: door)
     end
 
-    avg_r_value = calc_area_weighted_sum_of_thermal_boundary_values(doors_values.values, :r_value, true)
+    avg_r_value = calc_area_weighted_sum_of_exterior_thermal_boundary_values(doors_values.values, :r_value, true)
 
     # Create new door (since it's impossible to preserve the Rated Home's door orientation)
     # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
@@ -1992,11 +2004,11 @@ class EnergyRatingIndex301Ruleset
   end
 end
 
-def calc_area_weighted_sum_of_thermal_boundary_values(surfaces_values, key, use_inverse = false)
+def calc_area_weighted_sum_of_exterior_thermal_boundary_values(surfaces_values, key, use_inverse = false)
   sum_area = 0
   sum_val_times_area = 0
   surfaces_values.each do |surface_values|
-    next unless is_thermal_boundary(surface_values) or (surface_values[:interior_adjacent_to].nil? and surface_values[:exterior_adjacent_to].nil?)
+    next unless is_exterior_thermal_boundary(surface_values) or (surface_values[:interior_adjacent_to].nil? and surface_values[:exterior_adjacent_to].nil?)
 
     sum_area += surface_values[:area]
     if use_inverse
@@ -2015,12 +2027,16 @@ def calc_area_weighted_sum_of_thermal_boundary_values(surfaces_values, key, use_
   return 0
 end
 
-def calc_sum_of_thermal_boundary_values(surfaces_values)
+def calc_sum_of_exterior_thermal_boundary_values(surfaces_values)
   sum_val = 0
   surfaces_values.each do |surface_values|
-    next unless is_thermal_boundary(surface_values) or (surface_values[:interior_adjacent_to].nil? and surface_values[:exterior_adjacent_to].nil?)
+    next unless is_exterior_thermal_boundary(surface_values) or (surface_values[:interior_adjacent_to].nil? and surface_values[:exterior_adjacent_to].nil?)
 
     sum_val += surface_values[:area]
   end
   return sum_val
+end
+
+def is_exterior_thermal_boundary(surface_values)
+  return (is_thermal_boundary(surface_values) and surface_values[:exterior_adjacent_to] == "outside")
 end

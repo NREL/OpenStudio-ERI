@@ -20,6 +20,3 @@ jobs:
       - store_artifacts:
           path: workflow/tests/test_results
           destination: results
-      - store_artifacts:
-          path: measures
-          destination: measures
