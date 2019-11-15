@@ -66,19 +66,6 @@ def process_design_output(design, designdir, resultsdir, output_hpxml_path, hour
   return design_output
 end
 
-def get_sql_query_result(sqlFile, query, convert_to_mbtu = true)
-  result = sqlFile.execAndReturnFirstDouble(query)
-  if result.is_initialized
-    if convert_to_mbtu
-      return result.get * 0.9478171203133172 # GJ => MBtu
-    else
-      return result.get # GJ
-    end
-  end
-
-  return 0
-end
-
 def get_combi_hvac_id(hpxml_doc, sys_id)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
     next unless sys_id == dhw_system.elements["SystemIdentifier"].attributes["id"]
@@ -93,6 +80,26 @@ end
 def get_combi_water_system_ec(hx_load, htg_load, htg_energy)
   water_sys_frac = hx_load / htg_load
   return htg_energy * water_sys_frac
+end
+
+def get_component_load_map
+  return { "Roofs" => "roofs",
+           "Ceilings" => "ceilings",
+           "Walls" => "walls",
+           "Rim Joists" => "rim_joists",
+           "Foundation Walls" => "foundation_walls",
+           "Doors" => "doors",
+           "Windows" => "windows",
+           "Skylights" => "skylights",
+           "Floors" => "floors",
+           "Slabs" => "slabs",
+           "Internal Mass" => "internal_mass",
+           "Infiltration" => "infil",
+           "Natural Ventilation" => "natvent",
+           "Mechanical Ventilation" => "mechvent",
+           "Ducts" => "ducts",
+           "Internal Gains" => "intgains",
+           "Setpoint Change" => "setpoint" }
 end
 
 def read_output(design, designdir, output_hpxml_path, hourly_output)
@@ -128,10 +135,10 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
 
   # Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
-  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:loadHeatingBldg] = get_sql_query_result(sqlFile, query)
-  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:loadCoolingBldg] = get_sql_query_result(sqlFile, query)
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer:Zone:LIVING' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  design_output[:loadHeatingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:EnergyTransfer:Zone:LIVING' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  design_output[:loadCoolingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Peak Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
   query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Maximum Value' AND Units='W'"
@@ -141,9 +148,9 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
   # Building Unmet Space Heating/Cooling Load (heating/cooling energy delivered by backup ideal air system)
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:DistrictHeating' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:unmetLoadHeatingBldg] = get_sql_query_result(sqlFile, query)
+  design_output[:unmetLoadHeatingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:DistrictCooling' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:unmetLoadCoolingBldg] = get_sql_query_result(sqlFile, query)
+  design_output[:unmetLoadCoolingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Peak Electricity Consumption
   query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='PEAK ELECTRICITY SUMMER TOTAL' AND ReportForString='Meter' AND TableName='Custom Monthly Report' AND RowName='Maximum of Months' AND Units='W'"
@@ -153,29 +160,29 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
   # Electricity categories
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecTotal] = get_sql_query_result(sqlFile, query)
+  design_output[:elecTotal] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameInteriorLighting}:InteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecIntLighting] = get_sql_query_result(sqlFile, query)
+  design_output[:elecIntLighting] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='ExteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecExtLighting] = get_sql_query_result(sqlFile, query)
+  design_output[:elecExtLighting] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameGarageLighting}:InteriorLights:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecGrgLighting] = get_sql_query_result(sqlFile, query)
+  design_output[:elecGrgLighting] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecAppliances] = get_sql_query_result(sqlFile, query)
+  design_output[:elecAppliances] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Fuel categories
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:gasTotal] = get_sql_query_result(sqlFile, query)
+  design_output[:gasTotal] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:oilTotal] = get_sql_query_result(sqlFile, query)
+  design_output[:oilTotal] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:propaneTotal] = get_sql_query_result(sqlFile, query)
+  design_output[:propaneTotal] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:gasAppliances] = get_sql_query_result(sqlFile, query)
+  design_output[:gasAppliances] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:FuelOil#1' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:oilAppliances] = get_sql_query_result(sqlFile, query)
+  design_output[:oilAppliances] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='InteriorEquipment:Propane' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:propaneAppliances] = get_sql_query_result(sqlFile, query)
+  design_output[:propaneAppliances] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Space Heating (by System)
   map_tsv_data = CSV.read(File.join(designdir, "map_hvac.tsv"), headers: false, col_sep: "\t")
@@ -191,27 +198,27 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     # Electricity Use
     vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingElectricity).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elecHeatingBySystemRaw = get_sql_query_result(sqlFile, query)
+    elecHeatingBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Natural Gas Use
     vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingNaturalGas).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    gasHeatingBySystemRaw = get_sql_query_result(sqlFile, query)
+    gasHeatingBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Oil Fuel Use
     vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingFuelOil).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    oilHeatingBySystemRaw = get_sql_query_result(sqlFile, query)
+    oilHeatingBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Propane Fuel Use
     vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingPropane).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    propaneHeatingBySystemRaw = get_sql_query_result(sqlFile, query)
+    propaneHeatingBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Disaggregated Fan Energy Use
     ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameFanPumpDisaggregate(false) }.join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elecHeatingBySystemRaw += get_sql_query_result(sqlFile, query)
+    elecHeatingBySystemRaw += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # apply dse to scale up energy use excluding no distribution systems
     if design_output[:hpxml_dse_heats][sys_id].nil?
@@ -247,12 +254,12 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     # Electricity Use
     vars = "'" + get_all_var_keys(OutputVars.SpaceCoolingElectricity).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elecCoolingBySystemRaw = get_sql_query_result(sqlFile, query)
+    elecCoolingBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Disaggregated Fan Energy Use
     ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameFanPumpDisaggregate(true) }.join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elecCoolingBySystemRaw += get_sql_query_result(sqlFile, query)
+    elecCoolingBySystemRaw += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # apply dse to scale up electricity energy use excluding no distribution systems
     if design_output[:hpxml_dse_cools][sys_id].nil?
@@ -285,48 +292,48 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     # Electricity Use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricity).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elecHotWaterBySystemRaw = get_sql_query_result(sqlFile, query)
+    elecHotWaterBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Electricity Use - Recirc Pump
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricityRecircPump).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:elecHotWaterRecircPumpBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    design_output[:elecHotWaterRecircPumpBySystem][sys_id] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
     design_output[:elecAppliances] -= design_output[:elecHotWaterRecircPumpBySystem][sys_id]
 
     # Natural Gas use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingNaturalGas).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    gasHotWaterBySystemRaw = get_sql_query_result(sqlFile, query)
+    gasHotWaterBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Oil Fuel use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingFuelOil).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    oilHotWaterBySystemRaw = get_sql_query_result(sqlFile, query)
+    oilHotWaterBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Propane Fuel use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingPropane).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    propaneHotWaterBySystemRaw = get_sql_query_result(sqlFile, query)
+    propaneHotWaterBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Building Hot Water Load (Delivered Energy)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadHotWaterBySystem][sys_id] = get_sql_query_result(sqlFile, query)
+    design_output[:loadHotWaterBySystem][sys_id] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Hot Water Load - Desuperheater
     vars = "'" + get_all_var_keys(OutputVars.WaterHeaterLoadDesuperheater).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    design_output[:loadHotWaterDesuperheater] += get_sql_query_result(sqlFile, query)
+    design_output[:loadHotWaterDesuperheater] += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Combi boiler water system
     hvac_id = get_combi_hvac_id(hpxml_doc, sys_id)
     if not hvac_id.nil?
       vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoilerHeatExchanger).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      hx_load = get_sql_query_result(sqlFile, query)
+      hx_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
       vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoiler).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND  KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-      htg_load = get_sql_query_result(sqlFile, query)
+      htg_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
       # Split combi boiler system energy use by water system load fraction
       htg_ec_elec = design_output[:elecHeatingBySystem][hvac_id]
@@ -364,7 +371,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     # EC_adj
     ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameWaterHeaterAdjustment(nil) }.join("','") + "'"
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    ec_adj = get_sql_query_result(sqlFile, query)
+    ec_adj = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
     if design_output[:gasHotWaterBySystem][sys_id] > 0
       design_output[:gasHotWaterBySystem][sys_id] += ec_adj
       design_output[:gasAppliances] -= ec_adj
@@ -383,65 +390,65 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
   # Hot Water Load - Tank Losses
   query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND VariableName='Water Heater Heat Loss Energy' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:loadHotWaterTankLosses] = get_sql_query_result(sqlFile, query)
+  design_output[:loadHotWaterTankLosses] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # PV
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='ElectricityProduced:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecPV] = get_sql_query_result(sqlFile, query)
+  design_output[:elecPV] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Fridge
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameRefrigerator}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecFridge] = get_sql_query_result(sqlFile, query)
+  design_output[:elecFridge] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Dishwasher
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameDishwasher}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecDishwasher] = get_sql_query_result(sqlFile, query)
+  design_output[:elecDishwasher] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Clothes Washer
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesWasher}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecClothesWasher] = get_sql_query_result(sqlFile, query)
+  design_output[:elecClothesWasher] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Clothes Dryer
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecClothesDryer] = get_sql_query_result(sqlFile, query)
+  design_output[:elecClothesDryer] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:gasClothesDryer] = get_sql_query_result(sqlFile, query)
+  design_output[:gasClothesDryer] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:FuelOil#1' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:oilClothesDryer] = get_sql_query_result(sqlFile, query)
+  design_output[:oilClothesDryer] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Propane' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:propaneClothesDryer] = get_sql_query_result(sqlFile, query)
+  design_output[:propaneClothesDryer] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # MELS
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMiscPlugLoads}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecMELs] = get_sql_query_result(sqlFile, query)
+  design_output[:elecMELs] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMiscTelevision}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecTV] = get_sql_query_result(sqlFile, query)
+  design_output[:elecTV] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Range/Oven
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecRangeOven] = get_sql_query_result(sqlFile, query)
+  design_output[:elecRangeOven] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Gas' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:gasRangeOven] = get_sql_query_result(sqlFile, query)
+  design_output[:gasRangeOven] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:FuelOil#1' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:oilRangeOven] = get_sql_query_result(sqlFile, query)
+  design_output[:oilRangeOven] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:propaneRangeOven] = get_sql_query_result(sqlFile, query)
+  design_output[:propaneRangeOven] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Ceiling Fans
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecCeilingFan] = get_sql_query_result(sqlFile, query)
+  design_output[:elecCeilingFan] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Mechanical Ventilation
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-  design_output[:elecMechVent] = get_sql_query_result(sqlFile, query)
+  design_output[:elecMechVent] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Error Checking
   tolerance = 0.1 # MMBtu
 
-  sum_fuels = (design_output[:elecTotal] + design_output[:gasTotal] + design_output[:oilTotal] + design_output[:propaneTotal])
   all_total = design_output[:elecTotal] + design_output[:gasTotal] + design_output[:oilTotal] + design_output[:propaneTotal]
-  if (all_total - sum_fuels).abs > tolerance
-    fail "[#{design}] Fuel consumptions (#{sum_fuels.round(1)}) do not sum to building total (#{all_total.round(1)}))."
+  if all_total == 0
+    puts "[#{design}] Processing output unsuccessful."
+    return nil
   end
 
   sum_elec_categories = (design_output[:elecHeatingBySystem].values.inject(0, :+) +
@@ -518,6 +525,19 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     end
   end
 
+  # Component Loads
+
+  { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
+    get_component_load_map.each do |component, component_var|
+      query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='#{mode_var}_#{component_var}_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      design_output["componentLoad#{mode}#{component}"] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+    end
+  end
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName LIKE 'htg_%_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  sum_heating_component_loads = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName LIKE 'clg_%_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  sum_cooling_component_loads = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
   design_hourly_output = []
   if hourly_output
     # Generate CSV file with hourly output
@@ -590,28 +610,28 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     # Error Checking
     elec_sum_hourly_gj = (elec_use.inject(0, :+) / j_to_kwh) / 1000000000.0
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elec_annual_gj = get_sql_query_result(sqlFile, query, false)
+    elec_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (elec_annual_gj - elec_sum_hourly_gj).abs > tolerance
       fail "[#{design}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
     end
 
     gas_sum_hourly_gj = (gas_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    gas_annual_gj = get_sql_query_result(sqlFile, query, false)
+    gas_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (gas_annual_gj - gas_sum_hourly_gj).abs > tolerance
       fail "[#{design}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
     end
 
     oil_sum_hourly_gj = (oil_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    oil_annual_gj = get_sql_query_result(sqlFile, query, false)
+    oil_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (oil_annual_gj - oil_sum_hourly_gj).abs > tolerance
       fail "[#{design}] Hourly oil fuel results (#{oil_sum_hourly_gj}) do not sum to annual (#{oil_annual_gj}).\n#{design_output.to_s}"
     end
 
     propane_sum_hourly_gj = (propane_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    propane_annual_gj = get_sql_query_result(sqlFile, query, false)
+    propane_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (propane_annual_gj - propane_sum_hourly_gj).abs > tolerance
       fail "[#{design}] Hourly propane fuel results (#{propane_sum_hourly_gj}) do not sum to annual (#{propane_annual_gj}).\n#{design_output.to_s}"
     end
@@ -1182,66 +1202,74 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}.csv")
 
   results_out = []
-  results_out << ["Electricity: Total (MBtu)", design_output[:elecTotal]]
-  results_out << ["Electricity: Net (MBtu)", design_output[:elecTotal] - design_output[:elecPV]]
-  results_out << ["Natural Gas: Total (MBtu)", design_output[:gasTotal]]
-  results_out << ["Fuel Oil: Total (MBtu)", design_output[:oilTotal]]
-  results_out << ["Propane: Total (MBtu)", design_output[:propaneTotal]]
+  results_out << ["Electricity: Total (MBtu)", design_output[:elecTotal].round(2)]
+  results_out << ["Electricity: Net (MBtu)", (design_output[:elecTotal] - design_output[:elecPV]).round(2)]
+  results_out << ["Natural Gas: Total (MBtu)", design_output[:gasTotal].round(2)]
+  results_out << ["Fuel Oil: Total (MBtu)", design_output[:oilTotal].round(2)]
+  results_out << ["Propane: Total (MBtu)", design_output[:propaneTotal].round(2)]
   results_out << [nil] # line break
-  results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+)]
-  results_out << ["Electricity: Lighting Interior (MBtu)", design_output[:elecIntLighting]]
-  results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting]]
-  results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting]]
-  results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent]]
-  results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge]]
-  results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher]]
-  results_out << ["Electricity: Clothes Washer (MBtu)", design_output[:elecClothesWasher]]
-  results_out << ["Electricity: Clothes Dryer (MBtu)", design_output[:elecClothesDryer]]
-  results_out << ["Electricity: Range/Oven (MBtu)", design_output[:elecRangeOven]]
-  results_out << ["Electricity: Ceiling Fan (MBtu)", design_output[:elecCeilingFan]]
-  results_out << ["Electricity: Plug Loads (MBtu)", design_output[:elecMELs] + design_output[:elecTV]]
+  results_out << ["Electricity: Heating (MBtu)", design_output[:elecHeatingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Lighting Interior (MBtu)", design_output[:elecIntLighting].round(2)]
+  results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting].round(2)]
+  results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting].round(2)]
+  results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent].round(2)]
+  results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge].round(2)]
+  results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher].round(2)]
+  results_out << ["Electricity: Clothes Washer (MBtu)", design_output[:elecClothesWasher].round(2)]
+  results_out << ["Electricity: Clothes Dryer (MBtu)", design_output[:elecClothesDryer].round(2)]
+  results_out << ["Electricity: Range/Oven (MBtu)", design_output[:elecRangeOven].round(2)]
+  results_out << ["Electricity: Ceiling Fan (MBtu)", design_output[:elecCeilingFan].round(2)]
+  results_out << ["Electricity: Plug Loads (MBtu)", (design_output[:elecMELs] + design_output[:elecTV]).round(2)]
   if design_output[:elecPV] > 0
-    results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV]]
+    results_out << ["Electricity: PV (MBtu)", -1.0 * design_output[:elecPV].round(2)]
   else
     results_out << ["Electricity: PV (MBtu)", 0.0]
   end
-  results_out << ["Natural Gas: Heating (MBtu)", design_output[:gasHeatingBySystem].values.inject(0, :+)]
-  results_out << ["Natural Gas: Hot Water (MBtu)", design_output[:gasHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Natural Gas: Clothes Dryer (MBtu)", design_output[:gasClothesDryer]]
-  results_out << ["Natural Gas: Range/Oven (MBtu)", design_output[:gasRangeOven]]
-  results_out << ["Fuel Oil: Heating (MBtu)", design_output[:oilHeatingBySystem].values.inject(0, :+)]
-  results_out << ["Fuel Oil: Hot Water (MBtu)", design_output[:oilHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Fuel Oil: Clothes Dryer (MBtu)", design_output[:oilClothesDryer]]
-  results_out << ["Fuel Oil: Range/Oven (MBtu)", design_output[:oilRangeOven]]
-  results_out << ["Propane: Heating (MBtu)", design_output[:propaneHeatingBySystem].values.inject(0, :+)]
-  results_out << ["Propane: Hot Water (MBtu)", design_output[:propaneHotWaterBySystem].values.inject(0, :+)]
-  results_out << ["Propane: Clothes Dryer (MBtu)", design_output[:propaneClothesDryer]]
-  results_out << ["Propane: Range/Oven (MBtu)", design_output[:propaneRangeOven]]
+  results_out << ["Natural Gas: Heating (MBtu)", design_output[:gasHeatingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Natural Gas: Hot Water (MBtu)", design_output[:gasHotWaterBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Natural Gas: Clothes Dryer (MBtu)", design_output[:gasClothesDryer].round(2)]
+  results_out << ["Natural Gas: Range/Oven (MBtu)", design_output[:gasRangeOven].round(2)]
+  results_out << ["Fuel Oil: Heating (MBtu)", design_output[:oilHeatingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Fuel Oil: Hot Water (MBtu)", design_output[:oilHotWaterBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Fuel Oil: Clothes Dryer (MBtu)", design_output[:oilClothesDryer].round(2)]
+  results_out << ["Fuel Oil: Range/Oven (MBtu)", design_output[:oilRangeOven].round(2)]
+  results_out << ["Propane: Heating (MBtu)", design_output[:propaneHeatingBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Propane: Hot Water (MBtu)", design_output[:propaneHotWaterBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Propane: Clothes Dryer (MBtu)", design_output[:propaneClothesDryer].round(2)]
+  results_out << ["Propane: Range/Oven (MBtu)", design_output[:propaneRangeOven].round(2)]
   results_out << [nil] # line break
-  results_out << ["Annual Load: Heating (MBtu)", design_output[:loadHeatingBldg]]
-  results_out << ["Annual Load: Cooling (MBtu)", design_output[:loadCoolingBldg]]
-  results_out << ["Annual Load: Hot Water: Delivered (MBtu)", design_output[:loadHotWaterDelivered]]
-  results_out << ["Annual Load: Hot Water: Tank Losses (MBtu)", design_output[:loadHotWaterTankLosses]]
-  results_out << ["Annual Load: Hot Water: Desuperheater (MBtu)", design_output[:loadHotWaterDesuperheater]]
+  results_out << ["Annual Load: Heating (MBtu)", design_output[:loadHeatingBldg].round(2)]
+  results_out << ["Annual Load: Cooling (MBtu)", design_output[:loadCoolingBldg].round(2)]
+  results_out << ["Annual Load: Hot Water: Delivered (MBtu)", design_output[:loadHotWaterDelivered].round(2)]
+  results_out << ["Annual Load: Hot Water: Tank Losses (MBtu)", design_output[:loadHotWaterTankLosses].round(2)]
+  results_out << ["Annual Load: Hot Water: Desuperheater (MBtu)", design_output[:loadHotWaterDesuperheater].round(2)]
   results_out << [nil] # line break
-  results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg]]
-  results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg]]
+  results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg].round(2)]
+  results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg].round(2)]
   results_out << [nil] # line break
-  results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal]]
-  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal]]
+  results_out << ["Peak Electricity: Winter Total (W)", design_output[:peakElecWinterTotal].round(2)]
+  results_out << ["Peak Electricity: Summer Total (W)", design_output[:peakElecSummerTotal].round(2)]
   results_out << [nil] # line break
-  results_out << ["Peak Load: Heating (kBtu)", design_output[:peakLoadHeatingBldg]]
-  results_out << ["Peak Load: Cooling (kBtu)", design_output[:peakLoadCoolingBldg]]
+  results_out << ["Peak Load: Heating (kBtu)", design_output[:peakLoadHeatingBldg].round(2)]
+  results_out << ["Peak Load: Cooling (kBtu)", design_output[:peakLoadCoolingBldg].round(2)]
+  results_out << [nil] # line break
+  { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
+    get_component_load_map.each do |component, component_var|
+      results_out << ["Component Load: #{mode}: #{component} (MBtu)", design_output["componentLoad#{mode}#{component}"].round(2)]
+    end
+  end
+
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # Check results are internally consistent
-  total_results = { "Electricity" => design_output[:elecTotal] - design_output[:elecPV],
-                    "Natural Gas" => design_output[:gasTotal],
-                    "Fuel Oil" => design_output[:oilTotal],
-                    "Propane" => design_output[:propaneTotal] }
+  total_results = { "Electricity" => (design_output[:elecTotal] - design_output[:elecPV]).round(2),
+                    "Natural Gas" => design_output[:gasTotal].round(2),
+                    "Fuel Oil" => design_output[:oilTotal].round(2),
+                    "Propane" => design_output[:propaneTotal].round(2) }
+
   sum_end_use_results = {}
   results_out.each do |var, value|
     next if var.nil?
