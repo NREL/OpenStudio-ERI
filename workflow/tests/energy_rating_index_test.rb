@@ -10,6 +10,7 @@ require_relative '../../measures/HPXMLtoOpenStudio/resources/schedules'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative "../../measures/HPXMLtoOpenStudio/resources/hvac_sizing"
 require_relative "../../measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 class EnergyRatingIndexTest < Minitest::Test
@@ -442,27 +443,13 @@ class EnergyRatingIndexTest < Minitest::Test
       is_electric_heat = false
 
       hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
-      all_results[File.basename(xml)] = [hvac, hvac_fan]
+
+      dse, seasonal_temp, percent_min, percent_max = _calc_dse(xml, sql_path)
+
+      all_results[File.basename(xml)] = [hvac, hvac_fan, seasonal_temp, dse, percent_min, percent_max]
     end
     assert(all_results.size > 0)
 
-    # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case", "Heat/Cool (kWh or therm)", "HVAC Fan (kWh)"]
-      all_results.each_with_index do |(xml, results), i|
-        next unless ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
-
-        csv << [xml, results[0], results[1]]
-      end
-      all_results.each_with_index do |(xml, results), i|
-        next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
-
-        csv << [xml, results[0], results[1]]
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-
-    # Check results
     all_results.each_with_index do |(xml, results), i|
       base_results = nil
       if ['HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? xml
@@ -472,7 +459,39 @@ class EnergyRatingIndexTest < Minitest::Test
       end
       next if base_results.nil?
 
-      _check_dse_test_results(xml, results, base_results)
+      if ['HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? xml
+        curr_val = results[0] / 10.0 + results[1] / 293.0
+        base_val = base_results[0] / 10.0 + base_results[1] / 293.0
+      else
+        curr_val = results[0] + results[1]
+        base_val = base_results[0] + base_results[1]
+      end
+
+      percent_change = ((curr_val - base_val) / base_val * 100.0).round(1)
+      all_results[xml] << percent_change.round(1)
+    end
+
+    # Write results to csv
+    CSV.open(test_results_csv, "w") do |csv|
+      csv << ["Test Case", "Heat/Cool (kWh or therm)", "HVAC Fan (kWh)", "Seasonal Duct Zone Temperature (F)", "Seasonal DSE", "Criteria Min (%)", "Criteria Max (%)", "Test Value (%)"]
+      all_results.each_with_index do |(xml, results), i|
+        next unless ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
+
+        csv << [xml, results[0], results[1], results[2], results[3], results[4], results[5], results[6]]
+      end
+      all_results.each_with_index do |(xml, results), i|
+        next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
+
+        csv << [xml, results[0], results[1], results[2], results[3], results[4], results[5], results[6]]
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    all_results.each_with_index do |(xml, results), i|
+      next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
+
+      _check_dse_test_results(xml, results)
     end
   end
 
@@ -750,7 +769,7 @@ class EnergyRatingIndexTest < Minitest::Test
     return hpxmls, csvs, runtime
   end
 
-  def run_simulation(xml, test_name, hourly_output = false)
+  def run_simulation(xml, test_name, request_dse_outputs = false)
     require_relative '../../measures/HPXMLtoOpenStudio/resources/meta_measure'
 
     puts "Running #{xml}..."
@@ -791,14 +810,29 @@ class EnergyRatingIndexTest < Minitest::Test
     end
     assert(success)
 
-    if hourly_output
+    if request_dse_outputs
       # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
-      #       based on EnergyPlus hourly outputs.
+      #       based on EnergyPlus hourly outputs for DSE tests.
 
-      # Thermal zone temperatures:
+      # Thermal zone temperatures
       output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
       output_var.setReportingFrequency('hourly')
       output_var.setKeyValue('*')
+
+      # Fan runtime fraction
+      output_var = OpenStudio::Model::OutputVariable.new('Fan Runtime Fraction', model)
+      output_var.setReportingFrequency('hourly')
+      output_var.setKeyValue('*')
+
+      # Heating season?
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName("Heating:EnergyTransfer")
+      output_meter.setReportingFrequency('hourly')
+
+      # Cooling season?
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName("Cooling:EnergyTransfer")
+      output_meter.setReportingFrequency('hourly')
     end
 
     # Write model to IDF
@@ -816,49 +850,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
     sql_path = File.join(rundir, "eplusout.sql")
     assert(File.exists?(sql_path))
-
-    if hourly_output
-      # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
-      #       based on EnergyPlus hourly outputs.
-
-      sqlFile = OpenStudio::SqlFile.new(sql_path, false)
-      design_hourly_output = []
-
-      # Get zone names (excluding duct zone/return plenum)
-      zone_names = []
-      query = "SELECT KeyValue FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature'"
-      sqlFile.execAndReturnVectorOfString(query).get.each do |zone_name|
-        query = "SELECT FloorArea FROM Zones WHERE ZoneName='#{zone_name}'"
-        floor_area = sqlFile.execAndReturnFirstDouble(query).get
-        next unless floor_area > 1.0
-
-        zone_names << zone_name
-      end
-      zone_names.sort!
-
-      # Header
-      design_hourly_output = [["Hour"]]
-      zone_names.each do |zone_name|
-        design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
-      end
-      for i in 1..8760
-        design_hourly_output << [i]
-      end
-
-      # Space temperatures
-      zone_names.each do |zone_name|
-        query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
-        temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
-        fail "Unexpected result" if temperatures.size != 8760
-
-        temperatures.each_with_index do |temperature, i|
-          design_hourly_output[i + 1] << temperature.round(2)
-        end
-      end
-
-      out_csv = File.join(rundir, "hourly.csv")
-      CSV.open(out_csv, "wb") { |csv| design_hourly_output.to_a.each { |elem| csv << elem } }
-    end
 
     return sql_path, sim_time
   end
@@ -931,6 +922,109 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(hvac_fan, :>, 0)
 
     return hvac.round(2), hvac_fan.round(2)
+  end
+
+  def _calc_dse(xml, sql_path)
+    xml = File.basename(xml)
+
+    if ["HVAC3a.xml", "HVAC3e.xml"].include? xml
+      return nil
+    end
+
+    if ["HVAC3b.xml", "HVAC3c.xml", "HVAC3d.xml"].include? xml
+      is_heating = true
+    elsif ["HVAC3f.xml", "HVAC3g.xml", "HVAC3h.xml"].include? xml
+      is_cooling = true
+    else
+      fail "Unexpected DSE test file: #{xml}"
+    end
+
+    # Read hourly outputs
+    sqlFile = OpenStudio::SqlFile.new(sql_path, false)
+    if is_heating
+      zone_name = Constants.SpaceTypeUnconditionedBasement.upcase
+      mode = "Heating"
+    elsif is_cooling
+      zone_name = Constants.SpaceTypeVentedAttic.upcase
+      mode = "Cooling"
+    end
+    query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
+    query = "SELECT VariableValue FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='#{mode}:EnergyTransfer' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    loads = sqlFile.execAndReturnVectorOfDouble(query).get
+    query = "SELECT VariableValue FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Fan Runtime Fraction' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    rtfs = sqlFile.execAndReturnVectorOfDouble(query).get
+    sqlFile.close
+
+    # Calculate seasonal average duct zone temperature
+    sum_seasonal_temps_x_rtfs = 0.0
+    sum_rtfs = 0.0
+    for i in 1..8760
+      next unless loads[i - 1] > 0
+
+      sum_seasonal_temps_x_rtfs += (temperatures[i - 1] * rtfs[i - 1])
+      sum_rtfs += rtfs[i - 1]
+    end
+    seasonal_temp = sum_seasonal_temps_x_rtfs / sum_rtfs
+
+    # Calculate DSE
+    air_dens = 0.075
+    air_cp = 0.24
+
+    if is_heating
+      dse_Qs = { "HVAC3b.xml" => 0.0, "HVAC3c.xml" => 0.0, "HVAC3d.xml" => 125.0 }[xml]
+      dse_Qr = dse_Qs
+      capacity = { "HVAC3b.xml" => 56000.0, "HVAC3c.xml" => 49000.0, "HVAC3d.xml" => 61000.0 }[xml]
+      cfm = 30.0 * capacity / 1000.0
+      dse_Tamb_s = seasonal_temp
+      dse_Tamb_r = dse_Tamb_s
+      dse_As = 308.0
+      dse_Ar = 77.0
+      t_setpoint = 68.0
+      dse_Fregain_s = 0.1
+      dse_Fregain_r = dse_Fregain_s
+      supply_r = { "HVAC3b.xml" => 1.5, "HVAC3c.xml" => 7.0, "HVAC3d.xml" => 7.0 }[xml]
+      return_r = supply_r
+
+      de = HVACSizing.calc_delivery_effectiveness_heating(dse_Qs, dse_Qr, cfm, capacity, dse_Tamb_s, dse_Tamb_r, dse_As, dse_Ar, t_setpoint, dse_Fregain_s, dse_Fregain_r, supply_r, return_r, air_dens, air_cp)
+
+      f_load_s = 0.999
+      f_equip_s = 1.0
+      f_cycloss = 0.02
+    elsif is_cooling
+      dse_Qs = { "HVAC3f.xml" => 0.0, "HVAC3g.xml" => 0.0, "HVAC3h.xml" => 125.0 }[xml]
+      dse_Qr = dse_Qs
+      capacity = { "HVAC3f.xml" => 49900.0, "HVAC3g.xml" => 42200.0, "HVAC3h.xml" => 55000.0 }[xml]
+      load_total = capacity
+      cfm = 30.0 * capacity / 1000.0
+      dse_Tamb_s = seasonal_temp
+      dse_Tamb_r = dse_Tamb_s
+      dse_As = 308.0
+      dse_Ar = 77.0
+      t_setpoint = 78.0
+      dse_Fregain_s = 0.1
+      dse_Fregain_r = dse_Fregain_s
+      supply_r = { "HVAC3f.xml" => 1.5, "HVAC3g.xml" => 7.0, "HVAC3h.xml" => 7.0 }[xml]
+      return_r = supply_r
+      lat = 55.0
+      dse_h_r = 30.9
+      h_in = 25.0
+
+      de = HVACSizing.calc_delivery_effectiveness_cooling(dse_Qs, dse_Qr, lat, cfm, capacity, dse_Tamb_s, dse_Tamb_r, dse_As, dse_Ar, t_setpoint, dse_Fregain_s, dse_Fregain_r, load_total, dse_h_r, supply_r, return_r, air_dens, air_cp, h_in)[0]
+
+      f_load_s = 0.999
+      f_equip_s = 0.965315315
+      f_cycloss = 0.02
+    end
+
+    dse = de * f_equip_s * f_load_s * (1.0 - f_cycloss)
+
+    # Calculate new test criteria based on this DSE
+    percent_avg = ((1.0 - 1.0 / dse).abs * 100.0).round(1)
+    percent_min = percent_avg - 5.0
+    percent_max = percent_avg + 5.0
+
+    return dse.round(3), seasonal_temp.round(1), percent_min, percent_max
   end
 
   def _test_schema_validation(xml)
@@ -1865,47 +1959,40 @@ class EnergyRatingIndexTest < Minitest::Test
     # assert_operator(percent_change, :<=, percent_max)
   end
 
-  def _check_dse_test_results(xml, results, base_results)
-    percent_min = nil
-    percent_max = nil
-
+  def _check_dse_test_results(xml, results)
     # Table 4.5.3(2): Heating Energy DSE Comparison Test Acceptance Criteria
-    if xml == 'HVAC3b.xml'
-      percent_min = 21.4
-      percent_max = 31.4
-    elsif xml == 'HVAC3c.xml'
-      percent_min = 2.5
-      percent_max = 12.5
-    elsif xml == 'HVAC3d.xml'
-      percent_min = 15.0
-      percent_max = 25.0
-    end
+    # if xml == 'HVAC3b.xml'
+    #  percent_min = 21.4
+    #  percent_max = 31.4
+    # elsif xml == 'HVAC3c.xml'
+    #  percent_min = 2.5
+    #  percent_max = 12.5
+    # elsif xml == 'HVAC3d.xml'
+    #  percent_min = 15.0
+    #  percent_max = 25.0
+    # end
 
     # Table 4.5.4(2): Cooling Energy DSE Comparison Test Acceptance Criteria
-    if xml == 'HVAC3f.xml'
-      percent_min = 26.2
-      percent_max = 36.2
-    elsif xml == 'HVAC3g.xml'
-      percent_min = 6.5
-      percent_max = 16.5
-    elsif xml == 'HVAC3h.xml'
-      percent_min = 21.1
-      percent_max = 31.1
-    end
+    # if xml == 'HVAC3f.xml'
+    #  percent_min = 26.2
+    #  percent_max = 36.2
+    # elsif xml == 'HVAC3g.xml'
+    #  percent_min = 6.5
+    #  percent_max = 16.5
+    # elsif xml == 'HVAC3h.xml'
+    #  percent_min = 21.1
+    #  percent_max = 31.1
+    # end
 
-    if ['HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? xml
-      curr_val = results[0] / 10.0 + results[1] / 293.0
-      base_val = base_results[0] / 10.0 + base_results[1] / 293.0
-    else
-      curr_val = results[0] + results[1]
-      base_val = base_results[0] + base_results[1]
-    end
+    # Test criteria calculated using EnergyPlus seasonal duct zone temperatures
+    # via ASHRAE 152 spreadsheet calculations.
+    percent_min = results[4]
+    percent_max = results[5]
 
-    percent_change = (curr_val - base_val) / base_val * 100.0
+    percent_change = results[6]
 
-    # FIXME: Test checks currently disabled
-    # assert_operator(percent_change, :>=, percent_min)
-    # assert_operator(percent_change, :<=, percent_max)
+    assert_operator(percent_change, :>, percent_min)
+    assert_operator(percent_change, :<, percent_max)
   end
 
   def _get_hot_water(results_csv)
