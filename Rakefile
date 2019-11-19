@@ -687,6 +687,17 @@ def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
     foundation_values = { :id => "VentedCrawlspace",
                           :foundation_type => "VentedCrawlspace",
                           :vented_crawlspace_sla => (1.0 / 150.0).round(5) }
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3b.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3c.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
+    foundation_values = { :id => "UnconditionedBasement",
+                          :foundation_type => "UnconditionedBasement",
+                          :unconditioned_basement_thermal_boundary => "frame floor" }
+  elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
+    foundation_values = { :id => "UnconditionedBasement",
+                          :foundation_type => "UnconditionedBasement",
+                          :unconditioned_basement_thermal_boundary => "foundation wall" }
   else
     foundation_values = {}
   end
