@@ -298,12 +298,14 @@ HVAC Distribution
 Each separate HVAC distribution system should be specified as a ``Systems/HVAC/HVACDistribution``.
 There should be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
-Also, note that some HVAC systems are not allowed to be attached to a distribution system.
+Also, note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
 
 ``AirDistribution`` systems are defined by:
 
-- Supply & return leakages in CFM25 to the outside (``DuctLeakageMeasurement/DuctLeakage/Value``)
-- One or more supply & return ducts (``Ducts``)
+- Supply leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='supply']/DuctLeakage/Value``)
+- Optional return leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='return']/DuctLeakage/Value``)
+- Optional supply ducts (``Ducts[DuctType='supply']``)
+- Optional return ducts (``Ducts[DuctType='return']``)
 
 For each duct, ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` must be provided.
 
