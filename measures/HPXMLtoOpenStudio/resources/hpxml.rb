@@ -444,6 +444,7 @@ class HPXML
                           id:,
                           foundation_type:,
                           vented_crawlspace_sla: nil,
+                          unconditioned_basement_thermal_boundary: nil,
                           **remainder)
     foundations = XMLHelper.create_elements_as_needed(hpxml, ["Building", "BuildingDetails", "Enclosure", "Foundations"])
     foundation = XMLHelper.add_element(foundations, "Foundation")
@@ -459,6 +460,7 @@ class HPXML
       elsif foundation_type == "UnconditionedBasement"
         basement = XMLHelper.add_element(foundation_type_e, "Basement")
         XMLHelper.add_element(basement, "Conditioned", false)
+        XMLHelper.add_element(foundation, "ThermalBoundary", unconditioned_basement_thermal_boundary)
       elsif foundation_type == "VentedCrawlspace"
         crawlspace = XMLHelper.add_element(foundation_type_e, "Crawlspace")
         XMLHelper.add_element(crawlspace, "Vented", true)
@@ -487,6 +489,7 @@ class HPXML
       foundation_type = "SlabOnGrade"
     elsif XMLHelper.has_element(foundation, "FoundationType/Basement[Conditioned='false']")
       foundation_type = "UnconditionedBasement"
+      unconditioned_basement_thermal_boundary = XMLHelper.get_value(foundation, "ThermalBoundary")
     elsif XMLHelper.has_element(foundation, "FoundationType/Basement[Conditioned='true']")
       foundation_type = "ConditionedBasement"
     elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace[Vented='false']")
@@ -500,7 +503,8 @@ class HPXML
 
     return { :id => HPXML.get_id(foundation),
              :foundation_type => foundation_type,
-             :vented_crawlspace_sla => vented_crawlspace_sla }
+             :vented_crawlspace_sla => vented_crawlspace_sla,
+             :unconditioned_basement_thermal_boundary => unconditioned_basement_thermal_boundary }
   end
 
   def self.add_roof(hpxml:,
@@ -1032,7 +1036,7 @@ class HPXML
                               distribution_system_idref: nil,
                               cooling_system_type:,
                               cooling_system_fuel:,
-                              cooling_capacity:,
+                              cooling_capacity: nil,
                               fraction_cool_load_served:,
                               cooling_efficiency_kw_per_ton: nil,
                               cooling_efficiency_cop: nil,
@@ -1051,7 +1055,7 @@ class HPXML
     end
     XMLHelper.add_element(cooling_system, "CoolingSystemType", cooling_system_type)
     XMLHelper.add_element(cooling_system, "CoolingSystemFuel", cooling_system_fuel)
-    XMLHelper.add_element(cooling_system, "CoolingCapacity", Float(cooling_capacity))
+    XMLHelper.add_element(cooling_system, "CoolingCapacity", Float(cooling_capacity)) unless cooling_capacity.nil?
     XMLHelper.add_element(cooling_system, "FractionCoolLoadServed", Float(fraction_cool_load_served))
     efficiencies = { "kW/ton" => cooling_efficiency_kw_per_ton,
                      "COP" => cooling_efficiency_cop,

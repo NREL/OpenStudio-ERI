@@ -687,6 +687,17 @@ def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
     foundation_values = { :id => "VentedCrawlspace",
                           :foundation_type => "VentedCrawlspace",
                           :vented_crawlspace_sla => (1.0 / 150.0).round(5) }
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3b.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3c.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
+    foundation_values = { :id => "UnconditionedBasement",
+                          :foundation_type => "UnconditionedBasement",
+                          :unconditioned_basement_thermal_boundary => "frame floor" }
+  elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
+    foundation_values = { :id => "UnconditionedBasement",
+                          :foundation_type => "UnconditionedBasement",
+                          :unconditioned_basement_thermal_boundary => "foundation wall" }
   else
     foundation_values = {}
   end
@@ -2614,6 +2625,7 @@ def copy_sample_files
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities4.xml',
                   'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
                   'invalid_files/hvac-distribution-multiple-attached-heating.xml',
+                  'invalid_files/hvac-distribution-return-duct-leakage-missing.xml',
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
@@ -2665,6 +2677,10 @@ def copy_sample_files
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-ducts-leakage-percent.xml',
                   'base-hvac-ducts-locations.xml',
+                  'base-hvac-evap-cooler-furnace-gas.xml',
+                  'base-hvac-evap-cooler-only-ducted.xml',
+                  'base-hvac-evap-cooler-only.xml',
+                  'base-hvac-flowrate.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-furnace-wood-only.xml',
