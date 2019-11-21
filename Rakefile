@@ -1513,15 +1513,19 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :heating_capacity => 46600,
                                 :heating_efficiency_afue => 0.78,
                                 :fraction_heat_load_served => 1 }]
+    heating_systems_values[0][:heating_cfm] = heating_systems_values[0][:heating_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to 56.0 kBtu/h
     heating_systems_values[0][:heating_capacity] = 56000
+    heating_systems_values[0][:heating_cfm] = heating_systems_values[0][:heating_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3c.xml'].include? hpxml_file
     # Change to 49.0 kBtu/h
     heating_systems_values[0][:heating_capacity] = 49000
+    heating_systems_values[0][:heating_cfm] = heating_systems_values[0][:heating_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
     # Change to 61.0 kBtu/h
     heating_systems_values[0][:heating_capacity] = 61000
+    heating_systems_values[0][:heating_cfm] = heating_systems_values[0][:heating_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Heating: gas furnace AFUE = 80%
@@ -1562,6 +1566,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :heating_efficiency_percent => 0.6,
                                 :fraction_heat_load_served => 1 }]
   end
+
   return heating_systems_values
 end
 
@@ -1633,15 +1638,19 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :cooling_capacity => 38400,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 10 }]
+    cooling_systems_values[0][:cooling_cfm] = cooling_systems_values[0][:cooling_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
     # Change to 49.9 kBtu/h
     cooling_systems_values[0][:cooling_capacity] = 49900
+    cooling_systems_values[0][:cooling_cfm] = cooling_systems_values[0][:cooling_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3g.xml'].include? hpxml_file
     # Change to 42.2 kBtu/h
     cooling_systems_values[0][:cooling_capacity] = 42200
+    cooling_systems_values[0][:cooling_cfm] = cooling_systems_values[0][:cooling_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
     # Change to 55.0 kBtu/h
     cooling_systems_values[0][:cooling_capacity] = 55000
+    cooling_systems_values[0][:cooling_cfm] = cooling_systems_values[0][:cooling_capacity] * 360.0 / 12000.0
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Cooling: Air conditioner SEER = 14
     cooling_systems_values = [{ :id => "CoolingSystem",
