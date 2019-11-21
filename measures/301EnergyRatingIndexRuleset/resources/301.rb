@@ -426,12 +426,12 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_attics_reference(orig_details, hpxml)
     # Check if vented attic (or unvented attic, which will become a vented attic) exists
-    return if orig_details.elements["Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - vented' or InteriorAdjacentTo='attic - unvented']"].nil?
-
-    HPXML.add_attic(hpxml: hpxml,
-                    id: "VentedAttic",
-                    attic_type: "VentedAttic",
-                    vented_attic_sla: Airflow.get_default_vented_attic_sla())
+    if not orig_details.elements["Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - vented' or InteriorAdjacentTo='attic - unvented']"].nil?
+      HPXML.add_attic(hpxml: hpxml,
+                      id: "VentedAttic",
+                      attic_type: "VentedAttic",
+                      vented_attic_sla: Airflow.get_default_vented_attic_sla())
+    end
   end
 
   def self.set_enclosure_attics_rated(orig_details, hpxml)
@@ -447,12 +447,23 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_foundations_reference(orig_details, hpxml)
     # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists
-    return if orig_details.elements["Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or ExteriorAdjacentTo='crawlspace - unvented']"].nil?
+    if not orig_details.elements["Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or ExteriorAdjacentTo='crawlspace - unvented']"].nil?
+      HPXML.add_foundation(hpxml: hpxml,
+                           id: "VentedCrawlspace",
+                           foundation_type: "VentedCrawlspace",
+                           vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
+    end
 
-    HPXML.add_foundation(hpxml: hpxml,
-                         id: "VentedCrawlspace",
-                         foundation_type: "VentedCrawlspace",
-                         vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
+    @uncond_bsmnt_thermal_bndry = nil
+    # Preserve rated home thermal boundary to be consistent with other software tools
+    orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement[Conditioned='false']]") do |uncond_bsmt|
+      fnd_values = HPXML.get_foundation_values(foundation: uncond_bsmt)
+      HPXML.add_foundation(hpxml: hpxml,
+                           id: fnd_values[:id],
+                           foundation_type: fnd_values[:foundation_type],
+                           unconditioned_basement_thermal_boundary: fnd_values[:unconditioned_basement_thermal_boundary])
+      @uncond_bsmnt_thermal_bndry = fnd_values[:unconditioned_basement_thermal_boundary]
+    end
   end
 
   def self.set_enclosure_foundations_rated(orig_details, hpxml)
@@ -466,6 +477,16 @@ class EnergyRatingIndex301Ruleset
       end
       HPXML.add_foundation(hpxml: hpxml, **vented_crawl_values)
     end
+
+    @uncond_bsmnt_thermal_bndry = nil
+    orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement[Conditioned='false']]") do |uncond_bsmt|
+      fnd_values = HPXML.get_foundation_values(foundation: uncond_bsmt)
+      HPXML.add_foundation(hpxml: hpxml,
+                           id: fnd_values[:id],
+                           foundation_type: fnd_values[:foundation_type],
+                           unconditioned_basement_thermal_boundary: fnd_values[:unconditioned_basement_thermal_boundary])
+      @uncond_bsmnt_thermal_bndry = fnd_values[:unconditioned_basement_thermal_boundary]
+    end
   end
 
   def self.set_enclosure_foundations_iad(orig_details, hpxml)
@@ -473,6 +494,8 @@ class EnergyRatingIndex301Ruleset
                          id: "VentedCrawlspace",
                          foundation_type: "VentedCrawlspace",
                          vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
+
+    @uncond_bsmnt_thermal_bndry = nil
   end
 
   def self.set_enclosure_roofs_reference(orig_details, hpxml)
@@ -692,7 +715,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Conditioned basement walls
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-      if is_thermal_boundary(fwall_values)
+      if is_thermal_boundary(fwall_values) or @uncond_bsmnt_thermal_bndry == "foundation wall"
         fwall_values[:insulation_assembly_r_value] = 1.0 / wall_ufactor
         fwall_values[:insulation_r_value] = nil
       else
@@ -791,7 +814,11 @@ class EnergyRatingIndex301Ruleset
                                           framefloor_values[:exterior_adjacent_to])
 
       if is_thermal_boundary(framefloor_values)
-        framefloor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
+        if @uncond_bsmnt_thermal_bndry == "foundation wall"
+          framefloor_values[:insulation_assembly_r_value] = 3.1 # uninsulated
+        else
+          framefloor_values[:insulation_assembly_r_value] = 1.0 / floor_ufactor
+        end
       else
         framefloor_values[:insulation_assembly_r_value] = 3.1 # uninsulated
       end

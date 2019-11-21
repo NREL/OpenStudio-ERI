@@ -278,7 +278,7 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_rim_joists(hpxml_doc, 197, (23.0 * 116 + 2.3 * 81) / 197, 0.7, 0.92)
+    _check_rim_joists(hpxml_doc, 197, 2.3, 0.7, 0.92)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -298,37 +298,55 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml_doc, 1200, 8.9, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 8.9, 9, 8, 7)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml_doc, 1200, 16.95, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 16.95, 8, 8, 7)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
 
     hpxml_name = "base-foundation-unconditioned-basement.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml_doc, 1200, 8.9, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 0, 0, 8, 7)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml_doc, 1200, 0, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 0, 0, 8, 7)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+
+    hpxml_name = "base-foundation-unconditioned-basement-wall-insulation.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_foundation_walls(hpxml_doc, 1200, 8.9, 4, 8, 7)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_foundation_walls(hpxml_doc, 1200, 16.95, 8, 8, 7)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
 
     hpxml_names = ["base-foundation-unvented-crawlspace.xml",
                    "base-foundation-vented-crawlspace.xml"]
@@ -336,19 +354,19 @@ class EnclosureTest < MiniTest::Test
     hpxml_names.each do |hpxml_name|
       # Rated Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_foundation_walls(hpxml_doc, 600, 8.9, 4, 3)
+      _check_foundation_walls(hpxml_doc, 600, 8.9, 4, 4, 3)
 
       # Reference Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_foundation_walls(hpxml_doc, 600, 0, 4, 3)
+      _check_foundation_walls(hpxml_doc, 600, 0, 0, 4, 3)
 
       # IAD Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_foundation_walls(hpxml_doc, 277.12, 0, 2, 0)
+      _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
 
       # IAD Reference Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_foundation_walls(hpxml_doc, 277.12, 0, 2, 0)
+      _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
     end
   end
 
@@ -398,6 +416,42 @@ class EnclosureTest < MiniTest::Test
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_floors(hpxml_doc, 1950, (33.33 * 1350 + 2.1 * 600) / 1950)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_floors(hpxml_doc, 2400, (39.3 * 1200 + 30.3 * 1200) / 2400)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_floors(hpxml_doc, 2400, (33.33 * 1200 + 30.3 * 1200) / 2400)
+
+    hpxml_name = "base-foundation-unconditioned-basement.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_floors(hpxml_doc, 2700, (39.3 * 1350 + 18.7 * 1350) / 2700)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_floors(hpxml_doc, 2700, (33.33 * 1350 + 30.3 * 1350) / 2700)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_floors(hpxml_doc, 2400, (39.3 * 1200 + 30.3 * 1200) / 2400)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_floors(hpxml_doc, 2400, (33.33 * 1200 + 30.3 * 1200) / 2400)
+
+    hpxml_name = "base-foundation-unconditioned-basement-wall-insulation.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_floors(hpxml_doc, 2700, (39.3 * 1350 + 2.1 * 1350) / 2700)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_floors(hpxml_doc, 2700, (33.33 * 1350 + 3.1 * 1350) / 2700)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -886,14 +940,14 @@ class EnclosureTest < MiniTest::Test
 
   def _check_roofs(hpxml_doc, area, rvalue, sabs, emit)
     area_values = []
-    rvalue_area_values = [] # Area-weighted
-    sabs_area_values = [] # Area-weighted
-    emit_area_values = [] # Area-weighted
+    rvalue_x_area_values = [] # Area-weighted
+    sabs_x_area_values = [] # Area-weighted
+    emit_x_area_values = [] # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof") do |roof|
       area_values << Float(roof.elements["Area"].text)
-      rvalue_area_values << Float(roof.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
-      sabs_area_values << Float(roof.elements["SolarAbsorptance"].text) * area_values[-1]
-      emit_area_values << Float(roof.elements["Emittance"].text) * area_values[-1]
+      rvalue_x_area_values << Float(roof.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
+      sabs_x_area_values << Float(roof.elements["SolarAbsorptance"].text) * area_values[-1]
+      emit_x_area_values << Float(roof.elements["Emittance"].text) * area_values[-1]
     end
 
     if area.nil?
@@ -902,49 +956,49 @@ class EnclosureTest < MiniTest::Test
       assert_in_epsilon(area, area_values.inject(:+), 0.001)
     end
     if rvalue.nil?
-      assert(rvalue_area_values.empty?)
+      assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     end
     if sabs.nil?
-      assert(sabs_area_values.empty?)
+      assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     end
     if emit.nil?
-      assert(emit_area_values.empty?)
+      assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     end
   end
 
   def _check_walls(hpxml_doc, area, rvalue, sabs, emit)
     area_values = []
-    rvalue_area_values = [] # Area-weighted
-    sabs_area_values = [] # Area-weighted
-    emit_area_values = [] # Area-weighted
+    rvalue_x_area_values = [] # Area-weighted
+    sabs_x_area_values = [] # Area-weighted
+    emit_x_area_values = [] # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall") do |wall|
       area_values << Float(wall.elements["Area"].text)
-      rvalue_area_values << Float(wall.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
-      sabs_area_values << Float(wall.elements["SolarAbsorptance"].text) * area_values[-1]
-      emit_area_values << Float(wall.elements["Emittance"].text) * area_values[-1]
+      rvalue_x_area_values << Float(wall.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
+      sabs_x_area_values << Float(wall.elements["SolarAbsorptance"].text) * area_values[-1]
+      emit_x_area_values << Float(wall.elements["Emittance"].text) * area_values[-1]
     end
     assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(sabs, sabs_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(emit, emit_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
   end
 
   def _check_rim_joists(hpxml_doc, area, rvalue, sabs, emit)
     area_values = []
-    rvalue_area_values = [] # Area-weighted
-    sabs_area_values = [] # Area-weighted
-    emit_area_values = [] # Area-weighted
+    rvalue_x_area_values = [] # Area-weighted
+    sabs_x_area_values = [] # Area-weighted
+    emit_x_area_values = [] # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist") do |rim_joist|
       area_values << Float(rim_joist.elements["Area"].text)
-      rvalue_area_values << Float(rim_joist.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
-      sabs_area_values << Float(rim_joist.elements["SolarAbsorptance"].text) * area_values[-1]
-      emit_area_values << Float(rim_joist.elements["Emittance"].text) * area_values[-1]
+      rvalue_x_area_values << Float(rim_joist.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
+      sabs_x_area_values << Float(rim_joist.elements["SolarAbsorptance"].text) * area_values[-1]
+      emit_x_area_values << Float(rim_joist.elements["Emittance"].text) * area_values[-1]
     end
 
     if area.nil?
@@ -953,118 +1007,121 @@ class EnclosureTest < MiniTest::Test
       assert_in_epsilon(area, area_values.inject(:+), 0.001)
     end
     if rvalue.nil?
-      assert(rvalue_area_values.empty?)
+      assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     end
     if sabs.nil?
-      assert(sabs_area_values.empty?)
+      assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     end
     if emit.nil?
-      assert(emit_area_values.empty?)
+      assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     end
   end
 
-  def _check_foundation_walls(hpxml_doc, area, rvalue, height, depth_below_grade)
+  def _check_foundation_walls(hpxml_doc, area, rvalue, ins_height, height, depth_below_grade)
     area_values = []
-    rvalue_area_values = [] # Area-weighted
-    height_area_values = [] # Area-weighted
-    depth_bg_area_values = [] # Area-weighted
+    rvalue_x_area_values = [] # Area-weighted
+    ins_height_x_area_values = [] # Area-weighted
+    height_x_area_values = [] # Area-weighted
+    depth_bg_x_area_values = [] # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
       area_values << Float(fnd_wall.elements["Area"].text)
       if not fnd_wall.elements["Insulation/AssemblyEffectiveRValue"].nil?
-        rvalue_area_values << Float(fnd_wall.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
+        rvalue_x_area_values << Float(fnd_wall.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
+        ins_height_x_area_values << Float(fnd_wall.elements["Height"].text) * area_values[-1] # Total wall height applies to R-value
       else
-        rvalue_area_values << Float(fnd_wall.elements["Insulation/Layer/NominalRValue"].text) * area_values[-1]
+        rvalue_x_area_values << Float(fnd_wall.elements["Insulation/Layer/NominalRValue"].text) * area_values[-1]
+        ins_height_x_area_values << Float(fnd_wall.elements["DistanceToBottomOfInsulation"].text) * area_values[-1]
       end
-      height_area_values << Float(fnd_wall.elements["Height"].text) * area_values[-1]
-      depth_bg_area_values << Float(fnd_wall.elements["DepthBelowGrade"].text) * area_values[-1]
+      height_x_area_values << Float(fnd_wall.elements["Height"].text) * area_values[-1]
+      depth_bg_x_area_values << Float(fnd_wall.elements["DepthBelowGrade"].text) * area_values[-1]
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(height, height_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(depth_below_grade, depth_bg_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
   end
 
   def _check_floors(hpxml_doc, area, rvalue)
     area_values = []
-    rvalue_area_values = [] # Area-weighted
+    rvalue_x_area_values = [] # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor") do |floor|
       area_values << Float(floor.elements["Area"].text)
-      rvalue_area_values << Float(floor.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
+      rvalue_x_area_values << Float(floor.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
   end
 
   def _check_slabs(hpxml_doc, area, exp_perim, perim_ins_depth, perim_ins_r, under_ins_width, under_ins_r, depth_below_grade)
     area_values = []
-    exp_perim_area_values = [] # Area-weighted
-    perim_ins_depth_area_values = [] # Area-weighted
-    perim_ins_r_area_values = [] # Area-weighted
-    under_ins_width_area_values = [] # Area-weighted
-    under_ins_r_area_values = [] # Area-weighted
-    depth_bg_area_values = [] # Area-weighted
+    exp_perim_x_area_values = [] # Area-weighted
+    perim_ins_depth_x_area_values = [] # Area-weighted
+    perim_ins_r_x_area_values = [] # Area-weighted
+    under_ins_width_x_area_values = [] # Area-weighted
+    under_ins_r_x_area_values = [] # Area-weighted
+    depth_bg_x_area_values = [] # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab") do |slab|
       area_values << Float(slab.elements["Area"].text)
-      exp_perim_area_values << Float(slab.elements["ExposedPerimeter"].text) * area_values[-1]
-      perim_ins_depth_area_values << Float(slab.elements["PerimeterInsulationDepth"].text) * area_values[-1]
-      perim_ins_r_area_values << Float(slab.elements["PerimeterInsulation/Layer/NominalRValue"].text) * area_values[-1]
+      exp_perim_x_area_values << Float(slab.elements["ExposedPerimeter"].text) * area_values[-1]
+      perim_ins_depth_x_area_values << Float(slab.elements["PerimeterInsulationDepth"].text) * area_values[-1]
+      perim_ins_r_x_area_values << Float(slab.elements["PerimeterInsulation/Layer/NominalRValue"].text) * area_values[-1]
       if not slab.elements["UnderSlabInsulationWidth"].nil?
-        under_ins_width_area_values << Float(slab.elements["UnderSlabInsulationWidth"].text) * area_values[-1]
+        under_ins_width_x_area_values << Float(slab.elements["UnderSlabInsulationWidth"].text) * area_values[-1]
       elsif slab.elements["UnderSlabInsulationSpansEntireSlab"].text == "true"
-        under_ins_width_area_values << 999 * area_values[-1]
+        under_ins_width_x_area_values << 999 * area_values[-1]
       end
-      under_ins_r_area_values << Float(slab.elements["UnderSlabInsulation/Layer/NominalRValue"].text) * area_values[-1]
-      depth_bg_area_values << Float(slab.elements["DepthBelowGrade"].text) * area_values[-1] unless slab.elements["DepthBelowGrade"].nil?
+      under_ins_r_x_area_values << Float(slab.elements["UnderSlabInsulation/Layer/NominalRValue"].text) * area_values[-1]
+      depth_bg_x_area_values << Float(slab.elements["DepthBelowGrade"].text) * area_values[-1] unless slab.elements["DepthBelowGrade"].nil?
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(exp_perim, exp_perim_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(perim_ins_depth, perim_ins_depth_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(perim_ins_r, perim_ins_r_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(under_ins_width, under_ins_width_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(under_ins_r, under_ins_r_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(exp_perim, exp_perim_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     if depth_below_grade.nil?
-      assert(depth_bg_area_values.empty?)
+      assert(depth_bg_x_area_values.empty?)
     else
-      assert_in_epsilon(depth_below_grade, depth_bg_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     end
   end
 
   def _check_windows(hpxml_doc, azimuth_values = {})
     azimuth_area_values = {}
-    azimuth_ufactor_area_values = {} # Area-weighted
-    azimuth_shgc_area_values = {} # Area-weighted
+    azimuth_ufactor_x_area_values = {} # Area-weighted
+    azimuth_shgc_x_area_values = {} # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Windows/Window") do |window|
       azimuth = Integer(window.elements["Azimuth"].text)
 
       # Init if needed
       azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?
-      azimuth_ufactor_area_values[azimuth] = [] if azimuth_ufactor_area_values[azimuth].nil?
-      azimuth_shgc_area_values[azimuth] = [] if azimuth_shgc_area_values[azimuth].nil?
+      azimuth_ufactor_x_area_values[azimuth] = [] if azimuth_ufactor_x_area_values[azimuth].nil?
+      azimuth_shgc_x_area_values[azimuth] = [] if azimuth_shgc_x_area_values[azimuth].nil?
 
       # Update
       azimuth_area_values[azimuth] << Float(window.elements["Area"].text)
-      azimuth_ufactor_area_values[azimuth] << Float(window.elements["UFactor"].text) * azimuth_area_values[azimuth][-1]
-      azimuth_shgc_area_values[azimuth] << Float(window.elements["SHGC"].text) * azimuth_area_values[azimuth][-1]
+      azimuth_ufactor_x_area_values[azimuth] << Float(window.elements["UFactor"].text) * azimuth_area_values[azimuth][-1]
+      azimuth_shgc_x_area_values[azimuth] << Float(window.elements["SHGC"].text) * azimuth_area_values[azimuth][-1]
     end
 
     assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
-    assert_equal(azimuth_values.keys.size, azimuth_ufactor_area_values.size)
-    assert_equal(azimuth_values.keys.size, azimuth_shgc_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_ufactor_x_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_shgc_x_area_values.size)
 
     azimuth_values.each do |azimuth, values|
       area, ufactor, shgc = values
       assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(ufactor, azimuth_ufactor_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(shgc, azimuth_shgc_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(ufactor, azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(shgc, azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
     end
   end
 
@@ -1084,56 +1141,56 @@ class EnclosureTest < MiniTest::Test
 
   def _check_skylights(hpxml_doc, azimuth_values = {})
     azimuth_area_values = {}
-    azimuth_ufactor_area_values = {} # Area-weighted
-    azimuth_shgc_area_values = {} # Area-weighted
+    azimuth_ufactor_x_area_values = {} # Area-weighted
+    azimuth_shgc_x_area_values = {} # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight") do |skylight|
       azimuth = Integer(skylight.elements["Azimuth"].text)
 
       # Init if needed
       azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?
-      azimuth_ufactor_area_values[azimuth] = [] if azimuth_ufactor_area_values[azimuth].nil?
-      azimuth_shgc_area_values[azimuth] = [] if azimuth_shgc_area_values[azimuth].nil?
+      azimuth_ufactor_x_area_values[azimuth] = [] if azimuth_ufactor_x_area_values[azimuth].nil?
+      azimuth_shgc_x_area_values[azimuth] = [] if azimuth_shgc_x_area_values[azimuth].nil?
 
       # Update
       azimuth_area_values[azimuth] << Float(skylight.elements["Area"].text)
-      azimuth_ufactor_area_values[azimuth] << Float(skylight.elements["UFactor"].text) * azimuth_area_values[azimuth][-1]
-      azimuth_shgc_area_values[azimuth] << Float(skylight.elements["SHGC"].text) * azimuth_area_values[azimuth][-1]
+      azimuth_ufactor_x_area_values[azimuth] << Float(skylight.elements["UFactor"].text) * azimuth_area_values[azimuth][-1]
+      azimuth_shgc_x_area_values[azimuth] << Float(skylight.elements["SHGC"].text) * azimuth_area_values[azimuth][-1]
     end
 
     assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
-    assert_equal(azimuth_values.keys.size, azimuth_ufactor_area_values.size)
-    assert_equal(azimuth_values.keys.size, azimuth_shgc_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_ufactor_x_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_shgc_x_area_values.size)
 
     azimuth_values.each do |azimuth, values|
       area, ufactor, shgc = values
       assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(ufactor, azimuth_ufactor_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(shgc, azimuth_shgc_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(ufactor, azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(shgc, azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
     end
   end
 
   def _check_doors(hpxml_doc, azimuth_values = {})
     azimuth_area_values = {}
-    azimuth_rvalue_area_values = {} # Area-weighted
+    azimuth_rvalue_x_area_values = {} # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Doors/Door") do |door|
       azimuth = Integer(door.elements["Azimuth"].text)
 
       # Init if needed
       azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?
-      azimuth_rvalue_area_values[azimuth] = [] if azimuth_rvalue_area_values[azimuth].nil?
+      azimuth_rvalue_x_area_values[azimuth] = [] if azimuth_rvalue_x_area_values[azimuth].nil?
 
       # Update
       azimuth_area_values[azimuth] << Float(door.elements["Area"].text)
-      azimuth_rvalue_area_values[azimuth] << Float(door.elements["RValue"].text) * azimuth_area_values[azimuth][-1]
+      azimuth_rvalue_x_area_values[azimuth] << Float(door.elements["RValue"].text) * azimuth_area_values[azimuth][-1]
     end
 
     assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
-    assert_equal(azimuth_values.keys.size, azimuth_rvalue_area_values.size)
+    assert_equal(azimuth_values.keys.size, azimuth_rvalue_x_area_values.size)
 
     azimuth_values.each do |azimuth, values|
       area, rvalue = values
       assert_in_epsilon(area, azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(rvalue, azimuth_rvalue_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(rvalue, azimuth_rvalue_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
     end
   end
 
