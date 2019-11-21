@@ -103,10 +103,10 @@ class EnergyRatingIndexTest < Minitest::Test
       sql_path, sim_time = run_simulation(xml, test_name)
       htg_load, clg_load = _get_simulation_load_results(sql_path)
       if xml.include? "C.xml"
-        all_results << [xml, htg_load, "N/A", sim_time]
+        all_results << [xml, htg_load, "N/A"]
         assert_operator(htg_load, :>, 0)
       elsif xml.include? "L.xml"
-        all_results << [xml, "N/A", clg_load, sim_time]
+        all_results << [xml, "N/A", clg_load]
         assert_operator(clg_load, :>, 0)
       end
     end
@@ -114,7 +114,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test", "Annual Heating Load [MMBtu]", "Annual Cooling Load [MMBtu]", "Simulation Runtime [s]"]
+      csv << ["Test", "Annual Heating Load [MMBtu]", "Annual Cooling Load [MMBtu]"]
       all_results.each do |results|
         next unless results[0].include? "C.xml"
 
