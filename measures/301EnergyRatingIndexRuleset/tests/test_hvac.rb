@@ -364,6 +364,30 @@ class HVACtest < MiniTest::Test
     _check_thermostat(hpxml_doc, "manual thermostat", 68, 78)
   end
 
+  def test_evaporative_cooler
+    hpxml_name = "base-hvac-evap-cooler-only.xml"
+
+    # Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml_doc, ["central air conditioner", "electricity", 13, 1.0, _dse(calc_type), nil])
+      _check_heating_system(hpxml_doc, ["Furnace", "natural gas", 0.78, 1.0, _dse(calc_type)])
+      _check_heat_pump(hpxml_doc)
+      _check_thermostat(hpxml_doc, "manual thermostat", 68, 78)
+    end
+
+    # Rated Home
+    calc_type = Constants.CalcTypeERIRatedHome
+    hpxml_doc = _test_measure(hpxml_name, calc_type)
+    _check_cooling_system(hpxml_doc, ["evaporative cooler", "electricity", nil, 1.0, nil, nil])
+    _check_heating_system(hpxml_doc, ["Furnace", "natural gas", 0.78, 1.0, _dse(calc_type)])
+    _check_heat_pump(hpxml_doc)
+    _check_thermostat(hpxml_doc, "manual thermostat", 68, 78)
+  end
+
   def test_furnace_gas_and_central_air_conditioner
     hpxml_name = "base.xml"
 

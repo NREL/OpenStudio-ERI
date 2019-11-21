@@ -254,16 +254,18 @@ Cooling Systems
 ***************
 
 Each cooling system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/CoolingSystem``.
-Inputs including ``CoolingSystemType``, ``CoolingCapacity``, and ``FractionCoolLoadServed`` must be provided.
+Inputs including ``CoolingSystemType`` and ``FractionCoolLoadServed`` must be provided.
+``CoolingCapacity`` must also be provided for all systems other than evaporative coolers.
 
 Depending on the type of cooling system specified, additional elements are required/available:
 
-=======================  ======================  =================  ======================= ====================
-CoolingSystemType        DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency SensibleHeatFraction
-=======================  ======================  =================  ======================= ====================
-central air conditioner  AirDistribution or DSE  electricity        SEER                    optional
-room air conditioner                             electricity        EER                     optional
-=======================  ======================  =================  ======================= ====================
+=======================  =================================  =================  =======================  ====================
+CoolingSystemType        DistributionSystem                 CoolingSystemFuel  AnnualCoolingEfficiency  SensibleHeatFraction
+=======================  =================================  =================  =======================  ====================
+central air conditioner  AirDistribution or DSE             electricity        SEER                     (optional)
+room air conditioner                                        electricity        EER                      (optional)
+evaporative cooler       AirDistribution or DSE (optional)  electricity
+=======================  =================================  =================  =======================  ====================
 
 Heat Pumps
 **********
@@ -274,13 +276,13 @@ Note that heat pumps are allowed to provide only heating (``FractionCoolLoadServ
 
 Depending on the type of heat pump specified, additional elements are required/available:
 
-=============  =================================  ============  =======================  ======================= =========================== ==================
-HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency CoolingSensibleHeatFraction HeatingCapacity17F
-=============  =================================  ============  =======================  ======================= =========================== ==================
-air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF                    optional                    optional
-mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                    optional                    optional
-ground-to-air  AirDistribution or DSE             electricity   EER                      COP                     optional
-=============  =================================  ============  =======================  ======================= =========================== ==================
+=============  =================================  ============  =======================  =======================  ===========================  ==================
+HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency  CoolingSensibleHeatFraction  HeatingCapacity17F
+=============  =================================  ============  =======================  =======================  ===========================  ==================
+air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF                     (optional)                   (optional)
+mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                     (optional)                   (optional)
+ground-to-air  AirDistribution or DSE             electricity   EER                      COP                      (optional)
+=============  =================================  ============  =======================  =======================  ===========================  ==================
 
 If the heat pump has integrated backup heating, it can be specified with ``BackupSystemFuel`` (currently only "electricity" is allowed), ``BackupAnnualHeatingEfficiency`` (percent), and ``BackupHeatingCapacity``.
 
@@ -296,12 +298,14 @@ HVAC Distribution
 Each separate HVAC distribution system should be specified as a ``Systems/HVAC/HVACDistribution``.
 There should be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
-Also, note that some HVAC systems are not allowed to be attached to a distribution system.
+Also, note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
 
 ``AirDistribution`` systems are defined by:
 
-- Supply & return leakages in CFM25 to the outside (``DuctLeakageMeasurement/DuctLeakage/Value``)
-- One or more supply & return ducts (``Ducts``)
+- Supply leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='supply']/DuctLeakage/Value``)
+- Optional return leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='return']/DuctLeakage/Value``)
+- Optional supply ducts (``Ducts[DuctType='supply']``)
+- Optional return ducts (``Ducts[DuctType='return']``)
 
 For each duct, ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` must be provided.
 
