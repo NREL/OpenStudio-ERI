@@ -1833,6 +1833,29 @@ class EnergyRatingIndex301Ruleset
     load_frac = values[:fraction_heat_load_served]
     load_frac = 1.0 if load_frac.nil?
     seed_id = values[:id]
+
+    # Handle backup
+    backup_fuel = nil
+    backup_efficiency_percent = nil
+    backup_capacity = nil
+    backup_switchover_temp = nil
+    if not values[:backup_heating_switchover_temp].nil?
+      # Dual-fuel HP
+      if values[:backup_heating_fuel] != "electricity"
+        backup_fuel = values[:backup_heating_fuel]
+        backup_efficiency_percent = 0.78
+        backup_capacity = -1
+        backup_switchover_temp = values[:backup_heating_switchover_temp]
+      else
+        # nop; backup is also 7.7 HSPF, so just model as normal heat pump w/o backup
+      end
+    else
+      # Normal heat pump
+      backup_fuel = "electricity"
+      backup_efficiency_percent = 1.0
+      backup_capacity = -1
+    end
+
     cnt = REXML::XPath.first(hpxml, "count(Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump)")
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     heat_pump = HPXML.add_heat_pump(hpxml: hpxml,
@@ -1842,9 +1865,10 @@ class EnergyRatingIndex301Ruleset
                                     heat_pump_fuel: "electricity",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
                                     heating_capacity: -1, # Use Manual J auto-sizing
-                                    backup_heating_fuel: "electricity",
-                                    backup_heating_capacity: -1,
-                                    backup_heating_efficiency_percent: 1.0,
+                                    backup_heating_fuel: backup_fuel,
+                                    backup_heating_capacity: backup_capacity,
+                                    backup_heating_efficiency_percent: backup_efficiency_percent,
+                                    backup_heating_switchover_temp: backup_switchover_temp,
                                     fraction_heat_load_served: load_frac,
                                     fraction_cool_load_served: 0.0,
                                     cooling_efficiency_seer: 13.0, # Arbitrary, not used

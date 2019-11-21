@@ -123,7 +123,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design)
+  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design) # FIXME: Need to handle DFHP? Add test file with DFHP+DSE?
   design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, design)
   design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, design)
   design_output[:hpxml_dwh_fuels] = get_dhw_fuels(hpxml_doc)
@@ -191,8 +191,24 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:oilHeatingBySystem] = {}
   design_output[:propaneHeatingBySystem] = {}
   design_output[:loadHeatingBySystem] = {}
+  # First, calculate dual-fuel heat pump load
+  dfhp_loads = {}
   design_output[:hpxml_heat_sys_ids].each do |sys_id|
-    ep_output_names = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+    ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+    keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
+    if dfhp_primary or dfhp_backup
+      if dfhp_primary
+        vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingDFHPPrimaryLoad).join("','") + "'"
+      else
+        vars = "'" + get_all_var_keys(OutputVars.SpaceHeatingDFHPBackupLoad).join("','") + "'"
+        sys_id = dfhp_primary_sys_id(sys_id)
+      end
+      query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      dfhp_loads[[sys_id, dfhp_primary]] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+    end
+  end
+  design_output[:hpxml_heat_sys_ids].each do |sys_id|
+    ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
 
     # Electricity Use
@@ -216,7 +232,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     propaneHeatingBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Disaggregated Fan Energy Use
-    ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameFanPumpDisaggregate(false) }.join("','") + "'"
+    ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameFanPumpDisaggregatePrimaryHeat or name.end_with? Constants.ObjectNameFanPumpDisaggregateBackupHeat }.join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     elecHeatingBySystemRaw += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
@@ -240,7 +256,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc, design)
+      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc, design, dfhp_loads)
     end
   end
 
@@ -257,7 +273,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     elecCoolingBySystemRaw = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Disaggregated Fan Energy Use
-    ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameFanPumpDisaggregate(true) }.join("','") + "'"
+    ems_keys = "'" + ep_output_names.select { |name| name.end_with? Constants.ObjectNameFanPumpDisaggregateCool }.join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     elecCoolingBySystemRaw += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
@@ -641,17 +657,28 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   return design_output, design_hourly_output
 end
 
-def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design)
+def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, dfhp_loads)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
     next unless get_system_or_seed_id(htg_system, design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(htg_system, "FractionHeatLoadServed"))
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    load_fraction = 1.0
+    if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+      if dfhp_primary_sys_id(sys_id) == sys_id
+        load_fraction = dfhp_loads[[sys_id, true]] / (dfhp_loads[[sys_id, true]] + dfhp_loads[[sys_id, false]])
+      else
+        sys_id = dfhp_primary_sys_id(sys_id)
+        load_fraction = dfhp_loads[[sys_id, false]] / (dfhp_loads[[sys_id, true]] + dfhp_loads[[sys_id, false]])
+      end
+    end
     next unless get_system_or_seed_id(heat_pump, design) == sys_id
 
-    return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed"))
+    return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed")) * load_fraction
   end
+
+  fail "Could not find load fraction for #{sys_id}."
 end
 
 def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design)
@@ -665,6 +692,16 @@ def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design)
 
     return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionCoolLoadServed"))
   end
+
+  fail "Could not find load fraction for #{sys_id}."
+end
+
+def dfhp_backup_sys_id(primary_sys_id)
+  return primary_sys_id + "_dfhp_backup_system"
+end
+
+def dfhp_primary_sys_id(backup_sys_id)
+  return backup_sys_id.gsub("_dfhp_backup_system", "")
 end
 
 def get_all_var_keys(var)
@@ -709,6 +746,9 @@ def get_heat_fuels(hpxml_doc, design)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)
     heat_fuels[sys_id] = XMLHelper.get_value(heat_pump, "HeatPumpFuel")
+    if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+      heat_fuels[dfhp_backup_sys_id(sys_id)] = XMLHelper.get_value(heat_pump, "BackupSystemFuel")
+    end
   end
 
   if heat_fuels.empty?
@@ -832,6 +872,14 @@ def get_eec_heats(hpxml_doc, design)
 
       eec_heats[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
+    if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+      units.each do |unit|
+        value = XMLHelper.get_value(heat_pump, "BackupAnnualHeatingEfficiency[Units='#{unit}']/Value")
+        next if value.nil?
+
+        eec_heats[dfhp_backup_sys_id(sys_id)] = get_eec_value_numerator(unit) / Float(value)
+      end
+    end
   end
 
   if eec_heats.empty?
@@ -923,18 +971,42 @@ def get_eec_dhws(hpxml_doc)
 end
 
 def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+  dfhp_primary = false
+  dfhp_backup = false
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem |
                            /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |system|
+    if not XMLHelper.get_value(system, "BackupHeatingSwitchoverTemperature").nil?
+      if dfhp_primary_sys_id(sys_id) == sys_id
+        dfhp_primary = true
+      else
+        dfhp_backup = true
+        sys_id = dfhp_primary_sys_id(sys_id)
+      end
+    end
     next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
 
     sys_id = system.elements["SystemIdentifier"].attributes["id"]
-    break
   end
-
+  
   map_tsv_data.each do |tsv_line|
     next unless tsv_line[0] == sys_id
 
-    return tsv_line[1..-1]
+    output_names = tsv_line[1..-1]
+
+    if dfhp_primary or dfhp_backup
+      # Exclude output names associated with primary/backup system as appropriate
+      output_names.reverse.each do |o|
+        is_backup_obj = (o.include? Constants.ObjectNameFanPumpDisaggregateBackupHeat or o.include? Constants.ObjectNameBackupHeatingCoil)
+        if dfhp_primary and is_backup_obj
+          output_names.delete(o)
+        elsif dfhp_backup and not is_backup_obj
+          output_names.delete(o)
+        end
+      end
+    end
+    fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}." if output_names.size == 0
+
+    return output_names, dfhp_primary, dfhp_backup
   end
 
   fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}."
