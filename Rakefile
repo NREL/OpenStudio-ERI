@@ -2674,6 +2674,7 @@ def copy_sample_files
                   'base-hvac-evap-cooler-furnace-gas.xml',
                   'base-hvac-evap-cooler-only-ducted.xml',
                   'base-hvac-evap-cooler-only.xml',
+                  'base-hvac-flowrate.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-furnace-wood-only.xml',

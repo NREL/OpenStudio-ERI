@@ -987,7 +987,7 @@ def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design
 
     sys_id = system.elements["SystemIdentifier"].attributes["id"]
   end
-  
+
   map_tsv_data.each do |tsv_line|
     next unless tsv_line[0] == sys_id
 
