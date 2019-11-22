@@ -1739,7 +1739,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
-                           :fraction_cool_load_served => 0,
+                           :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 6.8,
                            :cooling_efficiency_seer => 10 }]
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
@@ -1754,7 +1754,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
-                           :fraction_cool_load_served => 0,
+                           :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 9.85,
                            :cooling_efficiency_seer => 13 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml'].include? hpxml_file
