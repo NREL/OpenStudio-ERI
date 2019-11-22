@@ -538,6 +538,7 @@ class EnergyRatingIndex301Ruleset
       else
         roof_values[:insulation_assembly_r_value] = 2.3 # uninsulated
       end
+      roof_values[:radiant_barrier] = false
       HPXML.add_roof(hpxml: hpxml, **roof_values)
     end
   end
