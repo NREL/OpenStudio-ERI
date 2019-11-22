@@ -538,6 +538,7 @@ class EnergyRatingIndex301Ruleset
       else
         roof_values[:insulation_assembly_r_value] = 2.3 # uninsulated
       end
+      roof_values[:radiant_barrier] = false
       HPXML.add_roof(hpxml: hpxml, **roof_values)
     end
   end
@@ -1142,8 +1143,7 @@ class EnergyRatingIndex301Ruleset
       orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |cooling|
         cooling_values = HPXML.get_cooling_system_values(cooling_system: cooling)
         if cooling_values[:cooling_system_type] == "evaporative cooler"
-          # RESNET "SEER RATING FOR EVAPORATIVE COOLERS IN HOT AND DRY CLIMATES"
-          cooling_values[:cooling_efficiency_seer] = 15.0
+          cooling_values[:cooling_efficiency_seer] = 15.0 # Arbitrary
         end
         HPXML.add_cooling_system(hpxml: hpxml, **cooling_values)
       end
