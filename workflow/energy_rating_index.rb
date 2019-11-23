@@ -854,6 +854,10 @@ def get_eec_cools(hpxml_doc, design)
 
       eec_cools[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
+
+    if XMLHelper.get_value(clg_system, "CoolingSystemType") == "evaporative cooler"
+      eec_cools[sys_id] = get_eec_value_numerator("SEER") / 15.0 # Arbitrary
+    end
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)

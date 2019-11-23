@@ -1142,9 +1142,6 @@ class EnergyRatingIndex301Ruleset
       # Retain cooling system(s)
       orig_details.elements.each("Systems/HVAC/HVACPlant/CoolingSystem") do |cooling|
         cooling_values = HPXML.get_cooling_system_values(cooling_system: cooling)
-        if cooling_values[:cooling_system_type] == "evaporative cooler"
-          cooling_values[:cooling_efficiency_seer] = 15.0 # Arbitrary
-        end
         HPXML.add_cooling_system(hpxml: hpxml, **cooling_values)
       end
     end
