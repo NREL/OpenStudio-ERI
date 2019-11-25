@@ -1699,6 +1699,7 @@ class EnergyRatingIndex301Ruleset
                                      fuel_type: wh_sys_values[:fuel_type],
                                      water_heater_type: wh_sys_values[:water_heater_type],
                                      location: wh_sys_values[:location],
+                                     performance_adjustment: wh_sys_values[:performance_adjustment],
                                      tank_volume: wh_sys_values[:tank_volume],
                                      fraction_dhw_load_served: wh_sys_values[:fraction_dhw_load_served],
                                      heating_capacity: wh_sys_values[:heating_capacity],
