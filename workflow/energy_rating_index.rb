@@ -657,7 +657,7 @@ def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, d
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
     load_fraction = 1.0
-    if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+    if is_dfhp(heat_pump)
       if dfhp_primary_sys_id(sys_id) == sys_id
         load_fraction = dfhp_loads[[sys_id, true]] / (dfhp_loads[[sys_id, true]] + dfhp_loads[[sys_id, false]])
       else
@@ -694,6 +694,17 @@ end
 
 def dfhp_primary_sys_id(backup_sys_id)
   return backup_sys_id.gsub("_dfhp_backup_system", "")
+end
+
+def is_dfhp(system)
+  if XMLHelper.get_value(system, "BackupHeatingSwitchoverTemperature").nil?
+    return false
+  end
+  if XMLHelper.get_value(system, "BackupSystemFuel") == "electricity"
+    return false
+  end
+
+  return true
 end
 
 def get_all_var_keys(var)
@@ -738,7 +749,7 @@ def get_heat_fuels(hpxml_doc, design)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)
     heat_fuels[sys_id] = XMLHelper.get_value(heat_pump, "HeatPumpFuel")
-    if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+    if is_dfhp(heat_pump)
       heat_fuels[dfhp_backup_sys_id(sys_id)] = XMLHelper.get_value(heat_pump, "BackupSystemFuel")
     end
   end
@@ -796,7 +807,7 @@ def get_dse_heats(hpxml_doc, design)
       sys_id = get_system_or_seed_id(heat_pump, design)
       dse_heats[sys_id] = dse_heat
 
-      if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+      if is_dfhp(heat_pump)
         # Also apply to dual-fuel heat pump backup system
         dse_heats[dfhp_backup_sys_id(sys_id)] = dse_heat
       end
@@ -869,7 +880,7 @@ def get_eec_heats(hpxml_doc, design)
 
       eec_heats[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
-    if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+    if is_dfhp(heat_pump)
       units.each do |unit|
         value = XMLHelper.get_value(heat_pump, "BackupAnnualHeatingEfficiency[Units='#{unit}']/Value")
         next if value.nil?
@@ -976,7 +987,7 @@ def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design
   dfhp_backup = false
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem |
                            /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |system|
-    if not XMLHelper.get_value(system, "BackupHeatingSwitchoverTemperature").nil?
+    if is_dfhp(system)
       if dfhp_primary_sys_id(sys_id) == sys_id
         dfhp_primary = true
       else
