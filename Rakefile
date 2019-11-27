@@ -42,8 +42,8 @@ end
 
 desc 'update version'
 task :update_version do
-  eri_version_change = { :from => "0.4.0",
-                         :to => "0.5.0" }
+  eri_version_change = { :from => "0.5.0",
+                         :to => "0.6.0" }
 
   file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
 
