@@ -98,8 +98,7 @@ def get_component_load_map
            "Natural Ventilation" => "natvent",
            "Mechanical Ventilation" => "mechvent",
            "Ducts" => "ducts",
-           "Internal Gains" => "intgains",
-           "Setpoint Change" => "setpoint" }
+           "Internal Gains" => "intgains" }
 end
 
 def read_output(design, designdir, output_hpxml_path, hourly_output)

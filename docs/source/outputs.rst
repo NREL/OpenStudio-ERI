@@ -86,7 +86,6 @@ Component loads are currently disaggregated as follows:
    Mechanical Ventilation  Airflow (and potentially fan heat gain) from a whole house mechanical ventilation system
    Ducts                   Conduction and leakage losses through supply/return ducts outside conditioned space
    Internal Gains          Heat gains/losses due to appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
-   Setpoint Change         Additional load due to, e.g., recovery from thermostat heating setbacks or cooling setups
    ======================= =======================================================================================================================================
 
 
