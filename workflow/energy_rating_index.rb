@@ -122,7 +122,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design) # FIXME: Need to handle DFHP? Add test file with DFHP+DSE?
+  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design)
   design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, design)
   design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, design)
   design_output[:hpxml_dwh_fuels] = get_dhw_fuels(hpxml_doc)
@@ -236,22 +236,15 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     elecHeatingBySystemRaw += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # apply dse to scale up energy use excluding no distribution systems
-    if design_output[:hpxml_dse_heats][sys_id].nil?
-      design_output[:elecHeatingBySystem][sys_id] = elecHeatingBySystemRaw
-      design_output[:gasHeatingBySystem][sys_id] = gasHeatingBySystemRaw
-      design_output[:oilHeatingBySystem][sys_id] = oilHeatingBySystemRaw
-      design_output[:propaneHeatingBySystem][sys_id] = propaneHeatingBySystemRaw
-    else
-      design_output[:elecHeatingBySystem][sys_id] = elecHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
-      design_output[:gasHeatingBySystem][sys_id] = gasHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
-      design_output[:oilHeatingBySystem][sys_id] = oilHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
-      design_output[:propaneHeatingBySystem][sys_id] = propaneHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
-      # Also update totals:
-      design_output[:elecTotal] += (design_output[:elecHeatingBySystem][sys_id] - elecHeatingBySystemRaw)
-      design_output[:gasTotal] += (design_output[:gasHeatingBySystem][sys_id] - gasHeatingBySystemRaw)
-      design_output[:oilTotal] += (design_output[:oilHeatingBySystem][sys_id] - oilHeatingBySystemRaw)
-      design_output[:propaneTotal] += (design_output[:propaneHeatingBySystem][sys_id] - propaneHeatingBySystemRaw)
-    end
+    design_output[:elecHeatingBySystem][sys_id] = elecHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
+    design_output[:gasHeatingBySystem][sys_id] = gasHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
+    design_output[:oilHeatingBySystem][sys_id] = oilHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
+    design_output[:propaneHeatingBySystem][sys_id] = propaneHeatingBySystemRaw / design_output[:hpxml_dse_heats][sys_id]
+    # Also update totals:
+    design_output[:elecTotal] += (design_output[:elecHeatingBySystem][sys_id] - elecHeatingBySystemRaw)
+    design_output[:gasTotal] += (design_output[:gasHeatingBySystem][sys_id] - gasHeatingBySystemRaw)
+    design_output[:oilTotal] += (design_output[:oilHeatingBySystem][sys_id] - oilHeatingBySystemRaw)
+    design_output[:propaneTotal] += (design_output[:propaneHeatingBySystem][sys_id] - propaneHeatingBySystemRaw)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
@@ -802,6 +795,11 @@ def get_dse_heats(hpxml_doc, design)
 
       sys_id = get_system_or_seed_id(heat_pump, design)
       dse_heats[sys_id] = dse_heat
+
+      if not XMLHelper.get_value(heat_pump, "BackupHeatingSwitchoverTemperature").nil?
+        # Also apply to dual-fuel heat pump backup system
+        dse_heats[dfhp_backup_sys_id(sys_id)] = dse_heat
+      end
     end
   end
 
