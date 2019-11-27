@@ -98,8 +98,7 @@ def get_component_load_map
            "Natural Ventilation" => "natvent",
            "Mechanical Ventilation" => "mechvent",
            "Ducts" => "ducts",
-           "Internal Gains" => "intgains",
-           "Setpoint Change" => "setpoint" }
+           "Internal Gains" => "intgains" }
 end
 
 def read_output(design, designdir, output_hpxml_path, hourly_output)
@@ -902,6 +901,10 @@ def get_eec_cools(hpxml_doc, design)
 
       eec_cools[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
+
+    if XMLHelper.get_value(clg_system, "CoolingSystemType") == "evaporative cooler"
+      eec_cools[sys_id] = get_eec_value_numerator("SEER") / 15.0 # Arbitrary
+    end
   end
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)
@@ -1589,7 +1592,7 @@ if OpenStudio.openStudioVersion != os_version
 end
 
 if options[:version]
-  workflow_version = "0.5.0"
+  workflow_version = "0.6.0"
   puts "OpenStudio-ERI v#{workflow_version}"
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"

@@ -42,8 +42,8 @@ end
 
 desc 'update version'
 task :update_version do
-  eri_version_change = { :from => "0.4.0",
-                         :to => "0.5.0" }
+  eri_version_change = { :from => "0.5.0",
+                         :to => "0.6.0" }
 
   file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
 
@@ -687,6 +687,17 @@ def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
     foundation_values = { :id => "VentedCrawlspace",
                           :foundation_type => "VentedCrawlspace",
                           :vented_crawlspace_sla => (1.0 / 150.0).round(5) }
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3b.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3c.xml',
+         'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
+    foundation_values = { :id => "UnconditionedBasement",
+                          :foundation_type => "UnconditionedBasement",
+                          :unconditioned_basement_thermal_boundary => "frame floor" }
+  elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
+    foundation_values = { :id => "UnconditionedBasement",
+                          :foundation_type => "UnconditionedBasement",
+                          :unconditioned_basement_thermal_boundary => "foundation wall" }
   else
     foundation_values = {}
   end
@@ -1728,7 +1739,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
-                           :fraction_cool_load_served => 0,
+                           :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 6.8,
                            :cooling_efficiency_seer => 10 }]
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
@@ -1743,7 +1754,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :backup_heating_capacity => 34121,
                            :backup_heating_efficiency_percent => 1.0,
                            :fraction_heat_load_served => 1,
-                           :fraction_cool_load_served => 0,
+                           :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 9.85,
                            :cooling_efficiency_seer => 13 }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml'].include? hpxml_file
@@ -2671,9 +2682,6 @@ def copy_sample_files
                   'base-hvac-dual-fuel-mini-split-heat-pump-ducted.xml',
                   'base-hvac-ducts-leakage-percent.xml',
                   'base-hvac-ducts-locations.xml',
-                  'base-hvac-evap-cooler-furnace-gas.xml',
-                  'base-hvac-evap-cooler-only-ducted.xml',
-                  'base-hvac-evap-cooler-only.xml',
                   'base-hvac-flowrate.xml',
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',

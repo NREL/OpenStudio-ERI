@@ -50,6 +50,7 @@ The following building features/technologies are available for modeling:
   
     - Central Air Conditioners
     - Room Air Conditioners
+    - Evaporative Coolers
     
   - Heat Pumps
   
@@ -69,7 +70,8 @@ The following building features/technologies are available for modeling:
     - Heat Pump Water Heater
     - Indirect Water Heater (Combination Boiler)
     - Tankless Coil (Combination Boiler)
-    
+
+  - Desuperheaters
   - Hot Water Distribution
   
     - Recirculation

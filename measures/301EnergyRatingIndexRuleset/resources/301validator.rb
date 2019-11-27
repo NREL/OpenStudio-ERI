@@ -51,8 +51,6 @@ class EnergyRatingIndex301Validator
         "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH' or UnitofMeasure='CFM']/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage]" => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
         "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume" => one,
 
-        "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value" => zero_or_one, # Used for vented attic if provided
-        "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value" => zero_or_one, # Used for vented crawlspace if provided
         "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof" => zero_or_more, # See [Roof]
         "/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall" => one_or_more, # See [Wall]
         "/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist" => zero_or_more, # See [RimJoist]
@@ -105,7 +103,7 @@ class EnergyRatingIndex301Validator
       # [Roof]
       "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof" => {
         "SystemIdentifier" => one, # Required by HPXML schema
-        "[InteriorAdjacentTo='attic - vented' or InteriorAdjacentTo='attic - unvented' or InteriorAdjacentTo='living space' or InteriorAdjacentTo='garage']" => one,
+        "[InteriorAdjacentTo='attic - vented' or InteriorAdjacentTo='attic - unvented' or InteriorAdjacentTo='living space' or InteriorAdjacentTo='garage']" => one, # See [VentedAttic]
         "Area" => one,
         "Azimuth" => zero_or_one,
         "SolarAbsorptance" => one,
@@ -114,6 +112,11 @@ class EnergyRatingIndex301Validator
         "RadiantBarrier" => one,
         "Insulation/SystemIdentifier" => one, # Required by HPXML schema
         "Insulation/AssemblyEffectiveRValue" => one,
+      },
+
+      ## [VentedAttic]
+      "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - vented']" => {
+        "../../Attics/Attic[AtticType/Attic[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value" => zero_or_one,
       },
 
       # [Wall]
@@ -147,7 +150,7 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "[ExteriorAdjacentTo='ground' or ExteriorAdjacentTo='basement - conditioned' or ExteriorAdjacentTo='basement - unconditioned' or ExteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - unvented' or ExteriorAdjacentTo='garage' or ExteriorAdjacentTo='other housing unit']" => one,
-        "[InteriorAdjacentTo='basement - conditioned' or InteriorAdjacentTo='basement - unconditioned' or InteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or InteriorAdjacentTo='garage']" => one,
+        "[InteriorAdjacentTo='basement - conditioned' or InteriorAdjacentTo='basement - unconditioned' or InteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or InteriorAdjacentTo='garage']" => one, # See [VentedCrawlspace] or [UnconditionedBasement]
         "Height" => one,
         "Area" => one,
         "Azimuth" => zero_or_one,
@@ -155,8 +158,18 @@ class EnergyRatingIndex301Validator
         "DepthBelowGrade" => one,
         "Insulation/SystemIdentifier" => one, # Required by HPXML schema
         # Either specify insulation layer R-value and insulation height OR assembly R-value:
-        "DistanceToBottomOfInsulation | Insulation/AssemblyEffectiveRValue" => one,
-        "Insulation/Layer[InstallationType='continuous']/NominalRValue | Insulation/AssemblyEffectiveRValue" => one,
+        "[DistanceToBottomOfInsulation | Insulation/AssemblyEffectiveRValue]" => one,
+        "[Insulation/Layer[InstallationType='continuous']/NominalRValue | Insulation/AssemblyEffectiveRValue]" => one,
+      },
+
+      ## [VentedCrawlspace]
+      "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='crawlspace - vented']" => {
+        "../../Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value" => zero_or_one,
+      },
+
+      ## [UnconditionedBasement]
+      "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - unconditioned']" => {
+        "../../Foundations/Foundation[FoundationType/Basement[Conditioned='false']]/ThermalBoundary" => one,
       },
 
       # [FrameFloor]
@@ -275,9 +288,8 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "../../HVACControl" => one, # See [HVACControl]
-        "[CoolingSystemType='central air conditioner' or CoolingSystemType='room air conditioner']" => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC]
+        "[CoolingSystemType='central air conditioner' or CoolingSystemType='room air conditioner' or CoolingSystemType='evaporative cooler']" => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC] or [CoolingType=EvapCooler]
         "[CoolingSystemFuel='electricity']" => one,
-        "CoolingCapacity" => one,
         "FractionCoolLoadServed" => one, # Must sum to 1 across all CoolingSystems and HeatPumps
         "SensibleHeatFraction" => zero_or_one,
       },
@@ -286,13 +298,22 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType='central air conditioner']" => {
         "../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other='DSE']]" => one_or_more, # See [HVACDistribution]
         "DistributionSystem" => one,
+        "CoolingCapacity" => one,
         "AnnualCoolingEfficiency[Units='SEER']/Value" => one,
       },
 
       ## [CoolingType=RoomAC]
       "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType='room air conditioner']" => {
         "DistributionSystem" => zero,
+        "CoolingCapacity" => one,
         "AnnualCoolingEfficiency[Units='EER']/Value" => one,
+      },
+
+      ## [CoolingType=EvapCooler]
+      "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType='evaporative cooler']" => {
+        "../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other='DSE']]" => zero_or_more, # See [HVACDistribution]
+        "DistributionSystem" => zero_or_one,
+        "CoolingCapacity" => zero,
       },
 
       # [HeatPump]
@@ -357,10 +378,10 @@ class EnergyRatingIndex301Validator
 
       ## [HVACDistType=Air]
       "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution" => {
-        "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value" => one,
-        "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25' and TotalOrToOutside='to outside']/Value" => one,
-        "Ducts[DuctType='supply']" => one_or_more, # See [HVACDuct]
-        "Ducts[DuctType='return']" => one_or_more, # See [HVACDuct]
+        "DuctLeakageMeasurement[DuctType='supply']/DuctLeakage[Units='CFM25'][TotalOrToOutside='to outside']/Value" => one,
+        "DuctLeakageMeasurement[DuctType='return']/DuctLeakage[Units='CFM25'][TotalOrToOutside='to outside']/Value" => zero_or_one,
+        "Ducts[DuctType='supply']" => zero_or_more, # See [HVACDuct]
+        "Ducts[DuctType='return']" => zero_or_more, # See [HVACDuct]
       },
 
       ## [HVACDistType=DSE]
