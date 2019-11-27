@@ -66,8 +66,8 @@ def process_design_output(design, designdir, resultsdir, output_hpxml_path, hour
   return design_output
 end
 
-def get_combi_hvac_id(hpxml_doc, sys_id)
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+def get_combi_hvac_id(hpxml_doc, sys_id, dhws)
+  dhws.each do |dhw_system|
     next unless sys_id == dhw_system.elements["SystemIdentifier"].attributes["id"]
     next unless ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
 
@@ -122,13 +122,14 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
-  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, design)
-  design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, design)
-  design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, design)
-  design_output[:hpxml_dwh_fuels] = get_dhw_fuels(hpxml_doc)
-  design_output[:hpxml_eec_heats] = get_eec_heats(hpxml_doc, design)
-  design_output[:hpxml_eec_cools] = get_eec_cools(hpxml_doc, design)
-  design_output[:hpxml_eec_dhws] = get_eec_dhws(hpxml_doc)
+  htgs, clgs, hp_htgs, hp_clgs, dhws = get_systems(hpxml_doc)
+  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, htgs, hp_htgs, design)
+  design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, clgs, hp_clgs, design)
+  design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, htgs, hp_htgs, design)
+  design_output[:hpxml_dwh_fuels] = get_dhw_fuels(hpxml_doc, dhws)
+  design_output[:hpxml_eec_heats] = get_eec_heats(hpxml_doc, htgs, hp_htgs, design)
+  design_output[:hpxml_eec_cools] = get_eec_cools(hpxml_doc, clgs, hp_clgs, design)
+  design_output[:hpxml_eec_dhws] = get_eec_dhws(hpxml_doc, dhws)
   design_output[:hpxml_heat_sys_ids] = design_output[:hpxml_eec_heats].keys
   design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
@@ -248,7 +249,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc, design, dfhp_loads)
+      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc, design, dfhp_loads, htgs, hp_htgs)
     end
   end
 
@@ -280,7 +281,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
     # Reference Load
     if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      design_output[:loadCoolingBySystem][sys_id] = split_clg_load_to_system_by_fraction(sys_id, design_output[:loadCoolingBldg], hpxml_doc, design)
+      design_output[:loadCoolingBySystem][sys_id] = split_clg_load_to_system_by_fraction(sys_id, design_output[:loadCoolingBldg], hpxml_doc, design, clgs, hp_clgs)
     end
   end
 
@@ -334,7 +335,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     design_output[:loadHotWaterDesuperheater] += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Combi boiler water system
-    hvac_id = get_combi_hvac_id(hpxml_doc, sys_id)
+    hvac_id = get_combi_hvac_id(hpxml_doc, sys_id, dhws)
     if not hvac_id.nil?
       vars = "'" + get_all_var_keys(OutputVars.WaterHeatingCombiBoilerHeatExchanger).join("','") + "'"
       query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
@@ -649,13 +650,13 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   return design_output, design_hourly_output
 end
 
-def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, dfhp_loads)
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, dfhp_loads, htgs, hp_htgs)
+  htgs.each do |htg_system|
     next unless get_system_or_seed_id(htg_system, design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(htg_system, "FractionHeatLoadServed"))
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+  hp_htgs.each do |heat_pump|
     load_fraction = 1.0
     if is_dfhp(heat_pump)
       if dfhp_primary_sys_id(sys_id) == sys_id
@@ -673,13 +674,13 @@ def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, d
   fail "Could not find load fraction for #{sys_id}."
 end
 
-def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design)
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, clgs, hp_clgs)
+  clgs.each do |clg_system|
     next unless get_system_or_seed_id(clg_system, design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(clg_system, "FractionCoolLoadServed"))
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+  hp_clgs.each do |heat_pump|
     next unless get_system_or_seed_id(heat_pump, design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionCoolLoadServed"))
@@ -697,14 +698,11 @@ def dfhp_primary_sys_id(backup_sys_id)
 end
 
 def is_dfhp(system)
-  if XMLHelper.get_value(system, "BackupHeatingSwitchoverTemperature").nil?
-    return false
-  end
-  if XMLHelper.get_value(system, "BackupSystemFuel") == "electricity"
-    return false
+  if not XMLHelper.get_value(system, "BackupHeatingSwitchoverTemperature").nil? and XMLHelper.get_value(system, "BackupSystemFuel") != "electricity"
+    return true
   end
 
-  return true
+  return false
 end
 
 def get_all_var_keys(var)
@@ -739,14 +737,40 @@ def get_system_or_seed_id(sys, design)
   return sys.elements["SystemIdentifier"].attributes["id"]
 end
 
-def get_heat_fuels(hpxml_doc, design)
-  heat_fuels = {}
+def get_systems(hpxml_doc)
+  htgs = []
+  clgs = []
+  hp_htgs = []
+  hp_clgs = []
+  dhws = []
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+    htgs << htg_system
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    hp_htgs << heat_pump
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+    clgs << clg_system
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+    hp_clgs << heat_pump
+  end
+  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+    dhws << dhw_system
+  end
+
+  return htgs, clgs, hp_htgs, hp_clgs, dhws
+end
+
+def get_heat_fuels(hpxml_doc, htgs, hp_htgs, design)
+  heat_fuels = {}
+
+  htgs.each do |htg_system|
     sys_id = get_system_or_seed_id(htg_system, design)
     heat_fuels[sys_id] = XMLHelper.get_value(htg_system, "HeatingSystemFuel")
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+  hp_htgs.each do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)
     heat_fuels[sys_id] = XMLHelper.get_value(heat_pump, "HeatPumpFuel")
     if is_dfhp(heat_pump)
@@ -761,10 +785,10 @@ def get_heat_fuels(hpxml_doc, design)
   return heat_fuels
 end
 
-def get_dhw_fuels(hpxml_doc)
+def get_dhw_fuels(hpxml_doc, dhws)
   dhw_fuels = {}
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+  dhws.each do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
     if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? XMLHelper.get_value(dhw_system, "WaterHeaterType")
       orig_details = hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
@@ -782,7 +806,7 @@ def get_dhw_fuels(hpxml_doc)
   return dhw_fuels
 end
 
-def get_dse_heats(hpxml_doc, design)
+def get_dse_heats(hpxml_doc, htgs, hp_htgs, design)
   dse_heats = {}
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
     dist_id = hvac_dist.elements["SystemIdentifier"].attributes["id"]
@@ -793,14 +817,14 @@ def get_dse_heats(hpxml_doc, design)
       dse_heat = Float(dse_heat_raw)
     end
     # Get all HVAC systems attached to it
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+    htgs.each do |htg_system|
       next if htg_system.elements["DistributionSystem"].nil?
       next unless dist_id == htg_system.elements["DistributionSystem"].attributes["idref"]
 
       sys_id = get_system_or_seed_id(htg_system, design)
       dse_heats[sys_id] = dse_heat
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+    hp_htgs.each do |heat_pump|
       next if heat_pump.elements["DistributionSystem"].nil?
       next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
 
@@ -814,10 +838,29 @@ def get_dse_heats(hpxml_doc, design)
     end
   end
 
+  # All HVAC systems not attached to a distribution system get DSE = 1
+  htgs.each do |htg_system|
+    next unless htg_system.elements["DistributionSystem"].nil?
+
+    sys_id = get_system_or_seed_id(htg_system, design)
+    dse_heats[sys_id] = 1.0
+  end
+  hp_htgs.each do |heat_pump|
+    next unless heat_pump.elements["DistributionSystem"].nil?
+
+    sys_id = get_system_or_seed_id(heat_pump, design)
+    dse_heats[sys_id] = 1.0
+
+    if is_dfhp(heat_pump)
+      # Also apply to dual-fuel heat pump backup system
+      dse_heats[dfhp_backup_sys_id(sys_id)] = 1.0
+    end
+  end
+
   return dse_heats
 end
 
-def get_dse_cools(hpxml_doc, design)
+def get_dse_cools(hpxml_doc, clgs, hp_clgs, design)
   dse_cools = {}
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
@@ -829,19 +872,38 @@ def get_dse_cools(hpxml_doc, design)
       dse_cool = Float(dse_cool_raw)
     end
     # Get all HVAC systems attached to it
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+    clgs.each do |clg_system|
       next if clg_system.elements["DistributionSystem"].nil?
       next unless dist_id == clg_system.elements["DistributionSystem"].attributes["idref"]
 
       sys_id = get_system_or_seed_id(clg_system, design)
       dse_cools[sys_id] = dse_cool
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+    hp_clgs.each do |heat_pump|
       next if heat_pump.elements["DistributionSystem"].nil?
       next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
 
       sys_id = get_system_or_seed_id(heat_pump, design)
       dse_cools[sys_id] = dse_cool
+    end
+  end
+
+  # All HVAC systems not attached to a distribution system get DSE = 1
+  clgs.each do |clg_system|
+    next unless clg_system.elements["DistributionSystem"].nil?
+
+    sys_id = get_system_or_seed_id(clg_system, design)
+    dse_cools[sys_id] = 1.0
+  end
+  hp_clgs.each do |heat_pump|
+    next unless heat_pump.elements["DistributionSystem"].nil?
+
+    sys_id = get_system_or_seed_id(heat_pump, design)
+    dse_cools[sys_id] = 1.0
+
+    if is_dfhp(heat_pump)
+      # Also apply to dual-fuel heat pump backup system
+      dse_cools[dfhp_backup_sys_id(sys_id)] = 1.0
     end
   end
 
@@ -858,12 +920,12 @@ def get_eec_value_numerator(unit)
   fail "Unexpected unit #{unit}."
 end
 
-def get_eec_heats(hpxml_doc, design)
+def get_eec_heats(hpxml_doc, htgs, hp_htgs, design)
   eec_heats = {}
 
   units = ['HSPF', 'COP', 'AFUE', 'Percent']
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[FractionHeatLoadServed > 0]") do |htg_system|
+  htgs.each do |htg_system|
     sys_id = get_system_or_seed_id(htg_system, design)
     units.each do |unit|
       value = XMLHelper.get_value(htg_system, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
@@ -872,7 +934,7 @@ def get_eec_heats(hpxml_doc, design)
       eec_heats[sys_id] = get_eec_value_numerator(unit) / Float(value)
     end
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionHeatLoadServed > 0]") do |heat_pump|
+  hp_htgs.each do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
@@ -897,12 +959,12 @@ def get_eec_heats(hpxml_doc, design)
   return eec_heats
 end
 
-def get_eec_cools(hpxml_doc, design)
+def get_eec_cools(hpxml_doc, clgs, hp_clgs, design)
   eec_cools = {}
 
   units = ['SEER', 'COP', 'EER']
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[FractionCoolLoadServed > 0]") do |clg_system|
+  clgs.each do |clg_system|
     sys_id = get_system_or_seed_id(clg_system, design)
     units.each do |unit|
       value = XMLHelper.get_value(clg_system, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
@@ -915,7 +977,7 @@ def get_eec_cools(hpxml_doc, design)
       eec_cools[sys_id] = get_eec_value_numerator("SEER") / 15.0 # Arbitrary
     end
   end
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[FractionCoolLoadServed > 0]") do |heat_pump|
+  hp_clgs.each do |heat_pump|
     sys_id = get_system_or_seed_id(heat_pump, design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
@@ -932,10 +994,10 @@ def get_eec_cools(hpxml_doc, design)
   return eec_cools
 end
 
-def get_eec_dhws(hpxml_doc)
+def get_eec_dhws(hpxml_doc, dhws)
   eec_dhws = {}
 
-  hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[FractionDHWLoadServed > 0]") do |dhw_system|
+  dhws.each do |dhw_system|
     sys_id = dhw_system.elements["SystemIdentifier"].attributes["id"]
     value = XMLHelper.get_value(dhw_system, "EnergyFactor")
     wh_type = XMLHelper.get_value(dhw_system, "WaterHeaterType")
@@ -998,6 +1060,7 @@ def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design
     next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
 
     sys_id = system.elements["SystemIdentifier"].attributes["id"]
+    break
   end
 
   map_tsv_data.each do |tsv_line|
@@ -1030,6 +1093,7 @@ def get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design
     next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
 
     sys_id = system.elements["SystemIdentifier"].attributes["id"]
+    break
   end
 
   map_tsv_data.each do |tsv_line|
