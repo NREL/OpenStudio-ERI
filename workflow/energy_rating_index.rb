@@ -320,8 +320,8 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     design_output[:loadHotWaterBySystem][sys_id] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Hot Water Load - Desuperheater
-    vars = "'" + get_all_var_keys(OutputVars.WaterHeaterLoadDesuperheater).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterLoad(nil) }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHotWaterDesuperheater] += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Combi boiler water system
@@ -367,22 +367,30 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
       design_output[:propaneHotWaterBySystem][sys_id] = propaneHotWaterBySystemRaw
     end
 
-    # EC_adj
+    # EC adjustment
     ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameWaterHeaterAdjustment(nil) }.join("','") + "'"
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     ec_adj = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
+    # Desuperheater adjustment
+    ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterEnergy(nil) }.join("','") + "'"
+    query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    desuperheater_adj = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
+    # Adjust water heater/appliances energy consumptions for above adjustments
+    tot_adj = ec_adj + desuperheater_adj
     if design_output[:gasHotWaterBySystem][sys_id] > 0
-      design_output[:gasHotWaterBySystem][sys_id] += ec_adj
-      design_output[:gasAppliances] -= ec_adj
+      design_output[:gasHotWaterBySystem][sys_id] += tot_adj
+      design_output[:gasAppliances] -= tot_adj
     elsif design_output[:oilHotWaterBySystem][sys_id] > 0
-      design_output[:oilHotWaterBySystem][sys_id] += ec_adj
-      design_output[:oilAppliances] -= ec_adj
+      design_output[:oilHotWaterBySystem][sys_id] += tot_adj
+      design_output[:oilAppliances] -= tot_adj
     elsif design_output[:propaneHotWaterBySystem][sys_id] > 0
-      design_output[:propaneHotWaterBySystem][sys_id] += ec_adj
-      design_output[:propaneAppliances] -= ec_adj
+      design_output[:propaneHotWaterBySystem][sys_id] += tot_adj
+      design_output[:propaneAppliances] -= tot_adj
     else
-      design_output[:elecHotWaterBySystem][sys_id] += ec_adj
-      design_output[:elecAppliances] -= ec_adj
+      design_output[:elecHotWaterBySystem][sys_id] += tot_adj
+      design_output[:elecAppliances] -= tot_adj
     end
   end
   design_output[:loadHotWaterDelivered] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
