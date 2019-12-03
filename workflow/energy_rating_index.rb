@@ -370,11 +370,11 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     # EC adjustment
     query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName LIKE 'Annual and Peak Values%' AND RowName LIKE '%#{Constants.ObjectNameWaterHeaterAdjustment(nil)}:InteriorEquipment:Electricity' AND ColumnName LIKE '%Annual Value' AND Units='GJ'"
     ec_adj = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-    
+
     # Desuperheater adjustment
     query = "SELECT SUM(Value) FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND ReportForString='Entire Facility' AND TableName LIKE 'Annual and Peak Values%' AND RowName LIKE '%#{Constants.ObjectNameDesuperheater(nil)}:InteriorEquipment:Electricity' AND ColumnName LIKE '%Annual Value' AND Units='GJ'"
     desuperheater_adj = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-    
+
     # Adjust water heater/appliances energy consumptions for above adjustments
     tot_adj = ec_adj + desuperheater_adj
     if design_output[:gasHotWaterBySystem][sys_id] > 0
@@ -389,7 +389,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     else
       design_output[:elecHotWaterBySystem][sys_id] += tot_adj
       design_output[:elecAppliances] -= tot_adj
-    end    
+    end
   end
   design_output[:loadHotWaterDelivered] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
 
