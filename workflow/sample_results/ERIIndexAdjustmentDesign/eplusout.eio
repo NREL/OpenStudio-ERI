@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.11.06 07:58
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44
 ! <Version>, Version ID
  Version, 9.2
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -90,11 +90,14 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
 ! <OtherEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
  OtherEquipment Internal Gains Nominal, DHW FIXTURES LATENT,DHW FIXTURES SCHEDULE,LIVING,222.97,3.0,5740.214,25.745,1913.405,1.000,0.000,0.000,0.000,0.000,641.762
  OtherEquipment Internal Gains Nominal, DHW FIXTURES SENSIBLE,DHW FIXTURES SCHEDULE,LIVING,222.97,3.0,-5657.223,-25.372,-1885.741,0.000,0.600,0.000,0.400,0.000,-632.484
+ OtherEquipment Internal Gains Nominal, ERV OR HRV LATENT LOAD EQUIP,ALWAYS ON DISCRETE,LIVING,222.97,3.0,0.000,0.000,0.000,1.000,0.000,0.000,0.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, ERV OR HRV SENSIBLE LOAD EQUIP,ALWAYS ON DISCRETE,LIVING,222.97,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
  OtherEquipment Internal Gains Nominal, WATER HEATER EC ADJUSTMENT,ALWAYS ON DISCRETE,LIVING,222.97,3.0,1.000E-002,4.485E-005,3.333E-003,0.000,0.000,1.000,0.000,1.000E-002,1.000E-002
 ! <Shadowing/Sun Position Calculations Annual Simulations>, Calculation Method, Value {days}, Allowable Number Figures in Shadow Overlap {}, Polygon Clipping Algorithm, Sky Diffuse Modeling Algorithm, External Shading Calculation Method, Output External Shading Calculation Results, Disable Self-Shading Within Shading Zone Groups, Disable Self-Shading From Shading Zone Groups to Other Zones
 Shadowing/Sun Position Calculations Annual Simulations,AverageOverDaysInFrequency,20,200,SutherlandHodgman,SimpleSkyDiffuseModeling,InternalCalculation,No,No,No
 ! <ZoneInfiltration Airflow Stats Nominal>,Name,Schedule Name,Zone Name, Zone Floor Area {m2}, # Zone Occupants,Design Volume Flow Rate {m3/s},Volume Flow Rate/Floor Area {m3/s-m2},Volume Flow Rate/Exterior Surface Area {m3/s-m2},ACH - Air Changes per Hour,Equation A - Constant Term Coefficient {},Equation B - Temperature Term Coefficient {1/C},Equation C - Velocity Term Coefficient {s/m}, Equation D - Velocity Squared Term Coefficient {s2/m2}
  ZoneInfiltration Airflow Stats Nominal, INFIL FLOW,ALWAYS ON DISCRETE,LIVING,222.97,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
+ ZoneInfiltration Airflow Stats Nominal, MECH VENT FLOW,ALWAYS ON DISCRETE,LIVING,222.97,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
  ZoneInfiltration Airflow Stats Nominal, NATURAL VENT FLOW,ALWAYS ON DISCRETE,LIVING,222.97,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
  ZoneInfiltration Airflow Stats Nominal, INFIL|VENTED CRAWLSPACE,ALWAYS ON DISCRETE,VENTED CRAWLSPACE,111.48,0.0,7.425E-002,6.660E-004,N/A,3.933,1.000,0.000,0.000,0.000
 ! <AirFlow Model>, Simple
@@ -110,11 +113,11 @@ AirflowNetwork Model:Control,NoMultizoneOrDistribution
  Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, FURNACE LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.24553
  Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.34619
  Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.34619
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 5169.75373
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 5169.75662
  Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
  Component Sizing Information, Fan:OnOff, CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.34619
  Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Rated Air Flow Rate [m3/s], 0.26786
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 5169.75373
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 5169.75662
  Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Sensible Heat Ratio, 0.74040
 ! <DX Cooling Coil Standard Rating Information>, Component Type, Component Name, Standard Rating (Net) Cooling Capacity {W}, Standard Rated Net COP {W/W}, EER {Btu/W-h}, SEER {Btu/W-h}, IEER {Btu/W-h}
  DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, 4930.4, 3.28, 11.19, 13.25, 12.20
@@ -138,9 +141,9 @@ Environment:WarmupDays,  6
 ! <Tabular Report>,Style,Unit Conversion
 Tabular Report,HTML,None
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,8.3636801188E-014,5.4432891226E-014,Pass,Pass,0.1702889999,0.1939390608,Pass,Pass
- Warmup Convergence Information,UNVENTED ATTIC,RunPeriod: RUN PERIOD 1,2.0229052249,1.5258670926,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
- Warmup Convergence Information,VENTED CRAWLSPACE,RunPeriod: RUN PERIOD 1,0.4708199321,0.3968744904,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,8.5265128291E-014,8.2583082282E-014,Pass,Pass,0.1711611094,0.1810930791,Pass,Pass
+ Warmup Convergence Information,UNVENTED ATTIC,RunPeriod: RUN PERIOD 1,2.0229052253,1.5258670957,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,VENTED CRAWLSPACE,RunPeriod: RUN PERIOD 1,0.4708199323,0.3968744902,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

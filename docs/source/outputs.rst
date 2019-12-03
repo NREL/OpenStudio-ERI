@@ -94,7 +94,7 @@ See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/m
 ERI______Home_Hourly.csv
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the ``--hourly-output`` argument is provided when running the workflow, a CSV file of hourly outputs is written for each of the homes simulated (e.g., ``ERIReferenceHome_Hourly.csv`` for the Reference home).
+If the ``--hourly-output`` argument is provided when running the workflow, a CSV file of hourly outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv`` for the Reference home).
 
 The hourly output CSV files currently include:
 
