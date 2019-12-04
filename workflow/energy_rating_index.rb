@@ -1488,7 +1488,7 @@ OptionParser.new do |opts|
   end
 
   options[:hourly_output] = false
-  opts.on('', '--hourly-output', 'Request hourly output') do |t|
+  opts.on('--hourly-output', 'Request hourly output') do |t|
     options[:hourly_output] = true
   end
 
@@ -1585,6 +1585,12 @@ run_designs = {
   Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf,
   Constants.CalcTypeERIIndexAdjustmentReferenceHome => using_iaf
 }
+hourly_output = {
+  Constants.CalcTypeERIRatedHome => options[:hourly_output],
+  Constants.CalcTypeERIReferenceHome => options[:hourly_output],
+  Constants.CalcTypeERIIndexAdjustmentDesign => false,
+  Constants.CalcTypeERIIndexAdjustmentReferenceHome => false
+}
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
@@ -1607,10 +1613,10 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
     next if not run
 
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], hourly_output[design])
     kill unless File.exists? File.join(designdir, "eplusout.end")
 
-    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output[design])
     kill if design_output.nil?
 
     writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
@@ -1647,14 +1653,14 @@ else # e.g., Windows
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
     next if not run
 
-    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
+    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], hourly_output[design])
     Process.wait pids[design]
     if not File.exists? File.join(designdir, "eplusout.end")
       kill(pids)
       next
     end
 
-    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output[design])
     if design_output.nil?
       kill(pids)
       next

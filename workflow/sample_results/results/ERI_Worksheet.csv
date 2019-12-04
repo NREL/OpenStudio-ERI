@@ -16,16 +16,16 @@ EEC_r Hot Water,1.087
 nEC_x Heating,20.2383
 nEC_x Cooling,2.3543
 nEC_x Hot Water,9.4307
-nMEUL Heating,12.8372
+nMEUL Heating,12.8373
 nMEUL Cooling,5.3316
 nMEUL Hot Water,8.5731
 IAF CFA,0.9908
 IAF NBR,1.0
 IAF NS,1.0217
 IAF RH,1.0123
-Total Loads TnML,50.3489
+Total Loads TnML,50.349
 Total Loads TRL,65.6055
-Total Loads TRL*IAF,66.4122
+Total Loads TRL*IAF,66.4124
 ERI,75.81
 
 Ref Home CFA,2700.0
