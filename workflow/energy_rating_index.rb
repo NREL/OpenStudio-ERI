@@ -904,10 +904,9 @@ def get_eec_dhws(hpxml_doc)
         ua = nil
       elsif wh_type == 'space-heating boiler with storage tank'
         vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
-        jacket_r = XMLHelper.get_value(dhw_system, "WaterHeaterInsulation/Jacket/JacketRValue").to_f
-        assumed_ef = Waterheater.get_indirect_assumed_ef_for_tank_losses()
-        assumed_fuel = Waterheater.get_indirect_assumed_fuel_for_tank_losses()
-        dummy_u, ua, dummy_eta = Waterheater.calc_tank_UA(vol, assumed_fuel, assumed_ef, nil, nil, Constants.WaterHeaterTypeTank, 0.0, jacket_r, nil)
+        standby_loss = Float(XMLHelper.get_value(dhw_system, "extension/StandbyLoss"), exception: false)
+        act_vol = Waterheater.calc_storage_tank_actual_vol(vol, nil)
+        ua = Waterheater.calc_indirect_tank_ua(act_vol, standby_loss)
         combi_type = Constants.WaterHeaterTypeTank
       end
       combi_boiler_afue = nil
