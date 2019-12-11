@@ -906,7 +906,8 @@ def get_eec_dhws(hpxml_doc)
         vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
         standby_loss = Float(XMLHelper.get_value(dhw_system, "extension/StandbyLoss")) unless XMLHelper.get_value(dhw_system, "extension/StandbyLoss").nil?
         act_vol = Waterheater.calc_storage_tank_actual_vol(vol, nil)
-        ua = Waterheater.calc_indirect_tank_ua(act_vol, standby_loss)
+        standby_loss = Waterheater.get_indirect_standbyloss(standby_loss, act_vol)
+        ua = Waterheater.calc_indirect_ua_with_standbyloss(act_vol, standby_loss, nil, nil)
         combi_type = Constants.WaterHeaterTypeTank
       end
       combi_boiler_afue = nil

@@ -1708,7 +1708,8 @@ class EnergyRatingIndex301Ruleset
                                      recovery_efficiency: wh_sys_values[:recovery_efficiency],
                                      uses_desuperheater: wh_sys_values[:uses_desuperheater],
                                      jacket_r_value: wh_sys_values[:jacket_r_value],
-                                     related_hvac: wh_sys_values[:related_hvac])
+                                     related_hvac: wh_sys_values[:related_hvac],
+                                     standby_loss: wh_sys_values[:standby_loss])
     end
 
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?

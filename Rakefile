@@ -2654,6 +2654,7 @@ def copy_sample_files
                   'base-dhw-desuperheater-gshp.xml',
                   'base-dhw-desuperheater-tankless.xml',
                   'base-dhw-indirect-outside.xml',
+                  'base-dhw-indirect-standbyloss.xml',
                   'base-dhw-jacket-electric.xml',
                   'base-dhw-jacket-hpwh.xml',
                   'base-dhw-jacket-indirect.xml',
