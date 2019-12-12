@@ -135,9 +135,9 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_dhw_sys_ids] = design_output[:hpxml_eec_dhws].keys
 
   # Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
-  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer:Zone:LIVING' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHeatingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:EnergyTransfer:Zone:LIVING' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:EnergyTransfer' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadCoolingBldg] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # Peak Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
@@ -330,8 +330,8 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     design_output[:loadHotWaterBySystem][sys_id] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Hot Water Load - Desuperheater
-    vars = "'" + get_all_var_keys(OutputVars.WaterHeaterLoadDesuperheater).join("','") + "'"
-    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterLoad(nil) }.join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHotWaterDesuperheater] += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Combi boiler water system
@@ -377,22 +377,30 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
       design_output[:propaneHotWaterBySystem][sys_id] = propaneHotWaterBySystemRaw
     end
 
-    # EC_adj
+    # EC adjustment
     ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameWaterHeaterAdjustment(nil) }.join("','") + "'"
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     ec_adj = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
+    # Desuperheater adjustment
+    ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterEnergy(nil) }.join("','") + "'"
+    query = "SELECT SUM(VariableValue/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    desuperheater_adj = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
+    # Adjust water heater/appliances energy consumptions for above adjustments
+    tot_adj = ec_adj + desuperheater_adj
     if design_output[:gasHotWaterBySystem][sys_id] > 0
-      design_output[:gasHotWaterBySystem][sys_id] += ec_adj
-      design_output[:gasAppliances] -= ec_adj
+      design_output[:gasHotWaterBySystem][sys_id] += tot_adj
+      design_output[:gasAppliances] -= tot_adj
     elsif design_output[:oilHotWaterBySystem][sys_id] > 0
-      design_output[:oilHotWaterBySystem][sys_id] += ec_adj
-      design_output[:oilAppliances] -= ec_adj
+      design_output[:oilHotWaterBySystem][sys_id] += tot_adj
+      design_output[:oilAppliances] -= tot_adj
     elsif design_output[:propaneHotWaterBySystem][sys_id] > 0
-      design_output[:propaneHotWaterBySystem][sys_id] += ec_adj
-      design_output[:propaneAppliances] -= ec_adj
+      design_output[:propaneHotWaterBySystem][sys_id] += tot_adj
+      design_output[:propaneAppliances] -= tot_adj
     else
-      design_output[:elecHotWaterBySystem][sys_id] += ec_adj
-      design_output[:elecAppliances] -= ec_adj
+      design_output[:elecHotWaterBySystem][sys_id] += tot_adj
+      design_output[:elecAppliances] -= tot_adj
     end
   end
   design_output[:loadHotWaterDelivered] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
@@ -1625,7 +1633,7 @@ OptionParser.new do |opts|
   end
 
   options[:hourly_output] = false
-  opts.on('', '--hourly-output', 'Request hourly output') do |t|
+  opts.on('--hourly-output', 'Request hourly output') do |t|
     options[:hourly_output] = true
   end
 
@@ -1659,7 +1667,7 @@ OptionParser.new do |opts|
 end.parse!
 
 # Check for correct versions of OS
-os_version = "2.9.0"
+os_version = "2.9.1"
 if OpenStudio.openStudioVersion != os_version
   fail "OpenStudio version #{os_version} is required."
 end
@@ -1722,6 +1730,12 @@ run_designs = {
   Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf,
   Constants.CalcTypeERIIndexAdjustmentReferenceHome => using_iaf
 }
+hourly_output = {
+  Constants.CalcTypeERIRatedHome => options[:hourly_output],
+  Constants.CalcTypeERIReferenceHome => options[:hourly_output],
+  Constants.CalcTypeERIIndexAdjustmentDesign => false,
+  Constants.CalcTypeERIIndexAdjustmentReferenceHome => false
+}
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
@@ -1744,10 +1758,10 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
     next if not run
 
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], hourly_output[design])
     kill unless File.exists? File.join(designdir, "eplusout.end")
 
-    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output[design])
     kill if design_output.nil?
 
     writers[design].puts(Marshal.dump(design_output)) # Provide output data to parent process
@@ -1784,14 +1798,14 @@ else # e.g., Windows
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
     next if not run
 
-    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], options[:hourly_output])
+    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], hourly_output[design])
     Process.wait pids[design]
     if not File.exists? File.join(designdir, "eplusout.end")
       kill(pids)
       next
     end
 
-    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, options[:hourly_output])
+    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output[design])
     if design_output.nil?
       kill(pids)
       next

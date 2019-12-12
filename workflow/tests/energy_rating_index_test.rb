@@ -837,6 +837,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write model to IDF
     forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
+    forward_translator.setExcludeLCCObjects(true)
     model_idf = forward_translator.translateModel(model)
     File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
 
@@ -2159,7 +2160,7 @@ class EnergyRatingIndexTest < Minitest::Test
     unless orig_mech_vent_values.nil?
       ventilation_fan = XMLHelper.add_element(extension, "OverrideVentilationFan")
       sys_id = XMLHelper.add_element(ventilation_fan, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", orig_mech_vent_values[:id])
+      XMLHelper.add_attribute(sys_id, "id", "Override#{orig_mech_vent_values[:id]}")
       XMLHelper.add_element(ventilation_fan, "FanType", orig_mech_vent_values[:fan_type])
       XMLHelper.add_element(ventilation_fan, "TestedFlowRate", Float(orig_mech_vent_values[:tested_flow_rate]))
       XMLHelper.add_element(ventilation_fan, "HoursInOperation", Float(orig_mech_vent_values[:hours_in_operation]))
@@ -2178,7 +2179,7 @@ class EnergyRatingIndexTest < Minitest::Test
     extension = XMLHelper.add_element(ref_infil, "extension")
     air_infiltration_measurement = XMLHelper.add_element(extension, "OverrideAirInfiltrationMeasurement")
     sys_id = XMLHelper.add_element(air_infiltration_measurement, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", orig_infil_values[:id])
+    XMLHelper.add_attribute(sys_id, "id", "Override#{orig_infil_values[:id]}")
     XMLHelper.add_element(air_infiltration_measurement, "HousePressure", Float(orig_infil_values[:house_pressure])) unless orig_infil_values[:house_pressure].nil?
     if not orig_infil_values[:unit_of_measure].nil? and not orig_infil_values[:air_leakage].nil?
       building_air_leakage = XMLHelper.add_element(air_infiltration_measurement, "BuildingAirLeakage")

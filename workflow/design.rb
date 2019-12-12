@@ -103,7 +103,18 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
 
   # Translate model
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
+  forward_translator.setExcludeLCCObjects(true)
   model_idf = forward_translator.translateModel(model)
+
+  # Report warnings/errors
+  File.open(File.join(designdir, 'run.log'), 'a') do |f|
+    forward_translator.warnings.each do |s|
+      f << "FT Warning: #{s.logMessage}\n"
+    end
+    forward_translator.errors.each do |s|
+      f << "FT Error: #{s.logMessage}\n"
+    end
+  end
 
   # Add Output:Table:Monthly objects for peak electricity outputs
   { "Heating" => "Winter", "Cooling" => "Summer" }.each do |mode, season|

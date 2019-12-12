@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.11.06 07:58
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44
 ! <Version>, Version ID
  Version, 9.2
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -88,23 +88,24 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  ElectricEquipment Internal Gains Nominal, MISC PLUG LOADS,MISC PLUG LOADS SCHEDULE,LIVING,250.84,3.0,600.117,2.392,200.039,4.467E-002,0.513,0.101,0.342,misc plug loads,0.000,600.117
  ElectricEquipment Internal Gains Nominal, MISC TV,MISC PLUG LOADS SCHEDULE,LIVING,250.84,3.0,151.434,0.604,50.478,0.000,0.600,0.000,0.400,misc tv,0.000,151.434
 ! <OtherEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_RETCONDTORP EQUIP,ALWAYS ON DISCRETE,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,1.00,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_RETLATLKTORP EQUIP,ALWAYS ON DISCRETE,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,1.00,0.0,0.000,0.000,N/A,1.000,0.000,0.000,0.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_RETSENSLKTORP EQUIP,ALWAYS ON DISCRETE,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,1.00,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_SUPCONDTOLV EQUIP,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_SUPLATLKTOLV EQUIP,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,1.000,0.000,0.000,0.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_SUPSENSLKTOLV EQUIP,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP RETCONDTORP EQUIP,ALWAYS ON DISCRETE,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,1.00,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP RETLATLKTORP EQUIP,ALWAYS ON DISCRETE,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,1.00,0.0,0.000,0.000,N/A,1.000,0.000,0.000,0.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP RETSENSLKTORP EQUIP,ALWAYS ON DISCRETE,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,1.00,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP SUPCONDTOLV EQUIP,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP SUPLATLKTOLV EQUIP,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,1.000,0.000,0.000,0.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP SUPSENSLKTOLV EQUIP,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
  OtherEquipment Internal Gains Nominal, DHW FIXTURES LATENT,DHW FIXTURES SCHEDULE,LIVING,250.84,3.0,5740.214,22.884,1913.405,1.000,0.000,0.000,0.000,0.000,641.762
  OtherEquipment Internal Gains Nominal, DHW FIXTURES SENSIBLE,DHW FIXTURES SCHEDULE,LIVING,250.84,3.0,-5657.223,-22.553,-1885.741,0.000,0.600,0.000,0.400,0.000,-632.484
  OtherEquipment Internal Gains Nominal, WATER HEATER EC ADJUSTMENT,ALWAYS ON DISCRETE,LIVING,250.84,3.0,1.000E-002,3.987E-005,3.333E-003,0.000,0.000,1.000,0.000,1.000E-002,1.000E-002
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_RETCONDTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_SUPCONDTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_SUPLATLKTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,1.000,0.000,0.000,0.000,0.000,0.000
- OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_SUPSENSLKTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP RETCONDTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP SUPCONDTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP SUPLATLKTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,1.000,0.000,0.000,0.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP SUPSENSLKTODZ EQUIP,ALWAYS ON DISCRETE,UNVENTED ATTIC,125.42,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
 ! <Shadowing/Sun Position Calculations Annual Simulations>, Calculation Method, Value {days}, Allowable Number Figures in Shadow Overlap {}, Polygon Clipping Algorithm, Sky Diffuse Modeling Algorithm, External Shading Calculation Method, Output External Shading Calculation Results, Disable Self-Shading Within Shading Zone Groups, Disable Self-Shading From Shading Zone Groups to Other Zones
 Shadowing/Sun Position Calculations Annual Simulations,AverageOverDaysInFrequency,20,200,SutherlandHodgman,SimpleSkyDiffuseModeling,InternalCalculation,No,No,No
 ! <ZoneInfiltration Airflow Stats Nominal>,Name,Schedule Name,Zone Name, Zone Floor Area {m2}, # Zone Occupants,Design Volume Flow Rate {m3/s},Volume Flow Rate/Floor Area {m3/s-m2},Volume Flow Rate/Exterior Surface Area {m3/s-m2},ACH - Air Changes per Hour,Equation A - Constant Term Coefficient {},Equation B - Temperature Term Coefficient {1/C},Equation C - Velocity Term Coefficient {s/m}, Equation D - Velocity Squared Term Coefficient {s2/m2}
  ZoneInfiltration Airflow Stats Nominal, INFIL FLOW,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
+ ZoneInfiltration Airflow Stats Nominal, MECH VENT FLOW,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
  ZoneInfiltration Airflow Stats Nominal, NATURAL VENT FLOW,ALWAYS ON DISCRETE,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
 ! <Mixing Airflow Stats Nominal>,Name,Schedule Name,Zone Name, Zone Floor Area {m2}, # Zone Occupants,Design Volume Flow Rate {m3/s},Volume Flow Rate/Floor Area {m3/s-m2},Volume Flow Rate/person Area {m3/s-person},ACH - Air Changes per Hour,From/Source Zone,Delta Temperature {C}
  Mixing Airflow Stats Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_ZONEMIXDZTOLV MIX,ALWAYS ON CONTINUOUS,LIVING,250.84,3.0,0.000,0.000,0.000,0.000,UNVENTED ATTIC,0.00

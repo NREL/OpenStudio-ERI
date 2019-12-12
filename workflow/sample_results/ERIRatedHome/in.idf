@@ -321,7 +321,7 @@ BuildingSurface:Detailed,
   0, 0, 1;                                !- X,Y,Z Vertex 4 {m}
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_RetCondToRP equip, !- Name
+  central ac and furnace airloop RetCondToRP equip, !- Name
   None,                                   !- Fuel Type
   central ac and furnace airloop ret air zone, !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -336,7 +336,7 @@ OtherEquipment,
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_RetLatLkToRP equip, !- Name
+  central ac and furnace airloop RetLatLkToRP equip, !- Name
   None,                                   !- Fuel Type
   central ac and furnace airloop ret air zone, !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -351,7 +351,7 @@ OtherEquipment,
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_RetSensLkToRP equip, !- Name
+  central ac and furnace airloop RetSensLkToRP equip, !- Name
   None,                                   !- Fuel Type
   central ac and furnace airloop ret air zone, !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -502,10 +502,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.8409430602175, -32.0017410564476, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.8409430602175, -32.0017410564476, 0.6096, !- X,Y,Z Vertex 2 {m}
-  40.840943178213, -40.8409410564476, 0.6096, !- X,Y,Z Vertex 3 {m}
-  40.840943178213, -40.8409410564476, 0.3048; !- X,Y,Z Vertex 4 {m}
+  40.8409430602176, -32.0017410564476, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.8409430602176, -32.0017410564476, 0.6096, !- X,Y,Z Vertex 2 {m}
+  40.8409431782131, -40.8409410564476, 0.6096, !- X,Y,Z Vertex 3 {m}
+  40.8409431782131, -40.8409410564476, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Slab,                                   !- Name
@@ -596,10 +596,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.840942817628, -24.4393459101423, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.840942817628, -24.4393459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
-  40.8409428542499, -27.1827459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
-  40.8409428542499, -27.1827459101423, 0.3048; !- X,Y,Z Vertex 4 {m}
+  40.8409428176281, -24.4393459101423, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.8409428176281, -24.4393459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
+  40.84094285425, -27.1827459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
+  40.84094285425, -27.1827459101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowEast,                             !- Name
@@ -611,10 +611,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  40.8409428176293, -24.4394459101423, 0.3049, !- X,Y,Z Vertex 1 {m}
-  40.8409428176293, -24.4394459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
-  40.8409428542486, -27.1826459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
-  40.8409428542486, -27.1826459101423, 0.3049; !- X,Y,Z Vertex 4 {m}
+  40.8409428176294, -24.4394459101423, 0.3049, !- X,Y,Z Vertex 1 {m}
+  40.8409428176294, -24.4394459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
+  40.8409428542487, -27.1826459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
+  40.8409428542487, -27.1826459101423, 0.3049; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowNorth,                    !- Name
@@ -768,8 +768,8 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.8409425952342, -14.5569155101423, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.8409425952342, -14.5569155101423, 2.7432, !- X,Y,Z Vertex 2 {m}
+  40.8409425952342, -14.5569155101422, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.8409425952342, -14.5569155101422, 2.7432, !- X,Y,Z Vertex 2 {m}
   40.8409427147556, -23.5104155101423, 2.7432, !- X,Y,Z Vertex 3 {m}
   40.8409427147556, -23.5104155101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
@@ -1024,7 +1024,7 @@ Schedule:Day:Interval,
   21:00,                                  !- Time 20 {hh:mm}
   0.928337141860708,                      !- Value Until Time 20
   22:00,                                  !- Time 21 {hh:mm}
-  0.807461954396616,                      !- Value Until Time 21
+  0.807461954396615,                      !- Value Until Time 21
   23:00,                                  !- Time 22 {hh:mm}
   0.499769410655845,                      !- Value Until Time 22
   24:00,                                  !- Time 23 {hh:mm}
@@ -1153,7 +1153,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 11 {hh:mm}
   0.364038790657523,                      !- Value Until Time 11
   13:00,                                  !- Time 12 {hh:mm}
-  0.352108135865495,                      !- Value Until Time 12
+  0.352108135865494,                      !- Value Until Time 12
   14:00,                                  !- Time 13 {hh:mm}
   0.348597365709478,                      !- Value Until Time 13
   15:00,                                  !- Time 14 {hh:mm}
@@ -2026,7 +2026,7 @@ ElectricEquipment,
   misc tv;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_SupCondToLv equip, !- Name
+  central ac and furnace airloop SupCondToLv equip, !- Name
   None,                                   !- Fuel Type
   living,                                 !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -2041,7 +2041,7 @@ OtherEquipment,
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_SupLatLkToLv equip, !- Name
+  central ac and furnace airloop SupLatLkToLv equip, !- Name
   None,                                   !- Fuel Type
   living,                                 !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -2056,7 +2056,7 @@ OtherEquipment,
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_SupSensLkToLv equip, !- Name
+  central ac and furnace airloop SupSensLkToLv equip, !- Name
   None,                                   !- Fuel Type
   living,                                 !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -2117,6 +2117,20 @@ OtherEquipment,
 
 ZoneInfiltration:DesignFlowRate,
   infil flow,                             !- Name
+  living,                                 !- Zone or ZoneList Name
+  Always On Discrete,                     !- Schedule Name
+  Flow/Zone,                              !- Design Flow Rate Calculation Method
+  0,                                      !- Design Flow Rate {m3/s}
+  ,                                       !- Flow per Zone Floor Area {m3/s-m2}
+  ,                                       !- Flow per Exterior Surface Area {m3/s-m2}
+  ,                                       !- Air Changes per Hour {1/hr}
+  ,                                       !- Constant Term Coefficient
+  ,                                       !- Temperature Term Coefficient
+  ,                                       !- Velocity Term Coefficient
+  ;                                       !- Velocity Squared Term Coefficient
+
+ZoneInfiltration:DesignFlowRate,
+  mech vent flow,                         !- Name
   living,                                 !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
   Flow/Zone,                              !- Design Flow Rate Calculation Method
@@ -3400,8 +3414,8 @@ BuildingSurface:Detailed,
   ,                                       !- Number of Vertices
   -40.8409437071851, 28.1116753611774, 2.7432, !- X,Y,Z Vertex 1 {m}
   -30.2472251759044, 28.1116755025943, 8.04005926564035, !- X,Y,Z Vertex 2 {m}
-  -30.2472252154317, 31.0727098488997, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
-  -40.8409437467124, 31.0727097074828, 2.7432; !- X,Y,Z Vertex 4 {m}
+  -30.2472252154316, 31.0727098488997, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
+  -40.8409437467123, 31.0727097074828, 2.7432; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Roof:90,                                !- Name
@@ -3462,10 +3476,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -6.73711810797991, -40.84094243507, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -6.73711810797991, -40.84094243507, 2.7432, !- X,Y,Z Vertex 2 {m}
-  -9.49936810797991, -40.8409425088173, 2.7432, !- X,Y,Z Vertex 3 {m}
-  -9.49936810797991, -40.8409425088173, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -6.7371181079799, -40.84094243507, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -6.7371181079799, -40.84094243507, 2.7432, !- X,Y,Z Vertex 2 {m}
+  -9.49936810797992, -40.8409425088173, 2.7432, !- X,Y,Z Vertex 3 {m}
+  -9.49936810797992, -40.8409425088173, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallAtticGable:270,                     !- Name
@@ -3500,7 +3514,7 @@ BuildingSurface:Detailed,
   40.8409424922332, -13.6278851101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_RetCondToDZ equip, !- Name
+  central ac and furnace airloop RetCondToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3515,7 +3529,7 @@ OtherEquipment,
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_SupCondToDZ equip, !- Name
+  central ac and furnace airloop SupCondToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3530,7 +3544,7 @@ OtherEquipment,
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_SupLatLkToDZ equip, !- Name
+  central ac and furnace airloop SupLatLkToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3545,7 +3559,7 @@ OtherEquipment,
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central_ac_and_furnace_airloop_SupSensLkToDZ equip, !- Name
+  central ac and furnace airloop SupSensLkToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3630,7 +3644,7 @@ GlobalGeometryRules,
 Material,
   Asphalt Shingles&#44 Light,             !- Name
   Rough,                                  !- Roughness
-  0.009525,                               !- Thickness {m}
+  0.00952500000000001,                    !- Thickness {m}
   0.162714,                               !- Conductivity {W/m-K}
   1121.4,                                 !- Density {kg/m3}
   1465.45,                                !- Specific Heat {J/kg-K}
@@ -4037,7 +4051,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4054,7 +4068,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4071,7 +4085,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4088,7 +4102,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4341,19 +4355,13 @@ SurfaceProperty:ExposedFoundationPerimeter,
   ;                                       !- Exposed Perimeter Fraction {dimensionless}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 6,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
   Surface 5,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
+  Surface 4,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -4365,13 +4373,19 @@ SurfaceProperty:ConvectionCoefficients,
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 2,                              !- Surface Name
+  Surface 6,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 SurfaceProperty:ConvectionCoefficients,
-  Surface 4,                              !- Surface Name
+  Surface 3,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  999;                                    !- Convection Coefficient 1 {W/m2-K}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 2,                              !- Surface Name
   Inside,                                 !- Convection Coefficient 1 Location
   Value,                                  !- Convection Coefficient 1 Type
   999;                                    !- Convection Coefficient 1 {W/m2-K}
@@ -5626,7 +5640,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707992,                      !- Value Until Time 19
+  0.190580370707991,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5675,7 +5689,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707992,                      !- Value Until Time 19
+  0.190580370707991,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5997,7 +6011,7 @@ Schedule:Day:Interval,
   14:00,                                  !- Time 9 {hh:mm}
   0.000281317833333333,                   !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  7.69215e-005,                           !- Value Until Time 10
+  7.69215e-05,                            !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0,                                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -6157,7 +6171,7 @@ Schedule:Day:Interval,
   05:00,                                  !- Time 3 {hh:mm}
   0.0526825224,                           !- Value Until Time 3
   06:00,                                  !- Time 4 {hh:mm}
-  7.25196e-005,                           !- Value Until Time 4
+  7.25196e-05,                            !- Value Until Time 4
   07:00,                                  !- Time 5 {hh:mm}
   0.02433412225,                          !- Value Until Time 5
   08:00,                                  !- Time 6 {hh:mm}
@@ -6320,7 +6334,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 9 {hh:mm}
   0.67956204379562,                       !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  0.713540145985402,                      !- Value Until Time 10
+  0.713540145985401,                      !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0.696551094890511,                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -7339,7 +7353,7 @@ Schedule:Day:Interval,
   07:00,                                  !- Time 6 {hh:mm}
   0.605633802816901,                      !- Value Until Time 6
   08:00,                                  !- Time 7 {hh:mm}
-  0.661971830985916,                      !- Value Until Time 7
+  0.661971830985915,                      !- Value Until Time 7
   09:00,                                  !- Time 8 {hh:mm}
   0.47887323943662,                       !- Value Until Time 8
   10:00,                                  !- Time 9 {hh:mm}
@@ -8467,7 +8481,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8488,7 +8502,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8509,7 +8523,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8530,7 +8544,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8551,7 +8565,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8572,7 +8586,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8593,7 +8607,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8614,7 +8628,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8635,7 +8649,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8656,7 +8670,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8677,7 +8691,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8698,7 +8712,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.89693,                                !- Value Until Time 7
+  0.896930000000001,                      !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -17941,13 +17955,13 @@ Sizing:System,
   0,                                      !- Cooling Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-005,                         !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
   DesignDay,                              !- Heating Supply Air Flow Rate Method
   0,                                      !- Heating Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-005,                         !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
   ZoneSum,                                !- System Outdoor Air Method
   1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
   CoolingDesignCapacity,                  !- Cooling Design Capacity Method
@@ -18080,7 +18094,7 @@ Curve:Biquadratic,
   -0.0750500892,                          !- Coefficient2 x
   0.00309713544,                          !- Coefficient3 x**2
   0.00240111,                             !- Coefficient4 y
-  -5.0544e-005,                           !- Coefficient5 y**2
+  -5.0544e-05,                            !- Coefficient5 y**2
   -0.00042728148,                         !- Coefficient6 x*y
   13.88,                                  !- Minimum Value of x {BasedOnField A2}
   23.88,                                  !- Maximum Value of x {BasedOnField A2}
@@ -18099,7 +18113,7 @@ Curve:Quadratic,
 
 Curve:Biquadratic,
   Cool-EIR-fT1,                           !- Name
-  -0.304282997000001,                     !- Coefficient1 Constant
+  -0.304282997,                           !- Coefficient1 Constant
   0.1180477062,                           !- Coefficient2 x
   -0.00342466704,                         !- Coefficient3 x**2
   -0.0062619138,                          !- Coefficient4 y
@@ -18563,548 +18577,548 @@ Foundation:Kiva:Settings,
 ZoneProperty:UserViewFactors:bySurfaceName,
   living,                                 !- Zone or ZoneList Name
   FloorBelowAttic,                        !- From Surface 1
-  Wall:0,                                 !- To Surface 1
-  0.0447615811818834,                     !- View Factor 1
+  inferred conditioned floor,             !- To Surface 1
+  0.2571409983,                           !- View Factor 1
   FloorBelowAttic,                        !- From Surface 2
-  Wall:270,                               !- To Surface 2
-  0.0447615811818834,                     !- View Factor 2
+  Wall:0,                                 !- To Surface 2
+  0.0447615812,                           !- View Factor 2
   FloorBelowAttic,                        !- From Surface 3
-  Wall:90,                                !- To Surface 3
-  0.0447615811818834,                     !- View Factor 3
+  Wall:180,                               !- To Surface 3
+  0.0447615812,                           !- View Factor 3
   FloorBelowAttic,                        !- From Surface 4
-  Wall:180,                               !- To Surface 4
-  0.0447615811818834,                     !- View Factor 4
+  Wall:270,                               !- To Surface 4
+  0.0447615812,                           !- View Factor 4
   FloorBelowAttic,                        !- From Surface 5
-  WindowSouth,                            !- To Surface 5
-  0.0102856399311562,                     !- View Factor 5
+  Wall:90,                                !- To Surface 5
+  0.0447615812,                           !- View Factor 5
   FloorBelowAttic,                        !- From Surface 6
   WindowNorth,                            !- To Surface 6
-  0.0102856399311562,                     !- View Factor 6
+  0.0102856399,                           !- View Factor 6
   FloorBelowAttic,                        !- From Surface 7
-  inferred conditioned floor,             !- To Surface 7
-  0.257140998278904,                      !- View Factor 7
+  WindowSouth,                            !- To Surface 7
+  0.0102856399,                           !- View Factor 7
   FloorBelowAttic,                        !- From Surface 8
   furniture mass living living,           !- To Surface 8
-  0.257140998278904,                      !- View Factor 8
+  0.2571409983,                           !- View Factor 8
   FloorBelowAttic,                        !- From Surface 9
   living Living Partition,                !- To Surface 9
-  0.257140998278904,                      !- View Factor 9
+  0.2571409983,                           !- View Factor 9
   FoundationWall,                         !- From Surface 10
   inferred conditioned ceiling,           !- To Surface 10
-  0.24603608529251,                       !- View Factor 10
+  0.2460360853,                           !- View Factor 10
   FoundationWall,                         !- From Surface 11
   Slab,                                   !- To Surface 11
-  0.24603608529251,                       !- View Factor 11
+  0.2460360853,                           !- View Factor 11
   FoundationWall,                         !- From Surface 12
-  living Basement Partition,              !- To Surface 12
-  0.24603608529251,                       !- View Factor 12
+  furniture mass living basement,         !- To Surface 12
+  0.2460360853,                           !- View Factor 12
   FoundationWall,                         !- From Surface 13
-  furniture mass living basement,         !- To Surface 13
-  0.24603608529251,                       !- View Factor 13
-  RimJoistFoundation:270,                 !- From Surface 14
+  living Basement Partition,              !- To Surface 13
+  0.2460360853,                           !- View Factor 13
+  inferred conditioned ceiling,           !- From Surface 14
   FoundationWall,                         !- To Surface 14
-  0.179452669358457,                      !- View Factor 14
-  RimJoistFoundation:270,                 !- From Surface 15
-  inferred conditioned ceiling,           !- To Surface 15
-  0.201884253028264,                      !- View Factor 15
-  RimJoistFoundation:270,                 !- From Surface 16
-  Slab,                                   !- To Surface 16
-  0.201884253028264,                      !- View Factor 16
-  RimJoistFoundation:270,                 !- From Surface 17
+  0.2236302646,                           !- View Factor 14
+  inferred conditioned ceiling,           !- From Surface 15
+  Slab,                                   !- To Surface 15
+  0.2515840477,                           !- View Factor 15
+  inferred conditioned ceiling,           !- From Surface 16
+  furniture mass living basement,         !- To Surface 16
+  0.2515840477,                           !- View Factor 16
+  inferred conditioned ceiling,           !- From Surface 17
   living Basement Partition,              !- To Surface 17
-  0.201884253028264,                      !- View Factor 17
-  RimJoistFoundation:270,                 !- From Surface 18
-  furniture mass living basement,         !- To Surface 18
-  0.201884253028264,                      !- View Factor 18
-  Wall:0,                                 !- From Surface 19
-  FloorBelowAttic,                        !- To Surface 19
-  0.215275827489323,                      !- View Factor 19
-  Wall:0,                                 !- From Surface 20
-  Wall:270,                               !- To Surface 20
-  0.0374739403407341,                     !- View Factor 20
-  Wall:0,                                 !- From Surface 21
-  Wall:90,                                !- To Surface 21
-  0.0374739403407341,                     !- View Factor 21
-  Wall:0,                                 !- From Surface 22
-  Wall:180,                               !- To Surface 22
-  0.0374739403407341,                     !- View Factor 22
-  Wall:0,                                 !- From Surface 23
-  inferred conditioned floor,             !- To Surface 23
-  0.215275827489323,                      !- View Factor 23
-  Wall:0,                                 !- From Surface 24
-  furniture mass living living,           !- To Surface 24
-  0.215275827489323,                      !- View Factor 24
-  Wall:0,                                 !- From Surface 25
-  living Living Partition,                !- To Surface 25
-  0.215275827489323,                      !- View Factor 25
-  Wall:270,                               !- From Surface 26
-  FloorBelowAttic,                        !- To Surface 26
-  0.213302748371563,                      !- View Factor 26
-  Wall:270,                               !- From Surface 27
-  Wall:0,                                 !- To Surface 27
-  0.037130478420235,                      !- View Factor 27
-  Wall:270,                               !- From Surface 28
-  Wall:90,                                !- To Surface 28
-  0.037130478420235,                      !- View Factor 28
-  Wall:270,                               !- From Surface 29
-  Wall:180,                               !- To Surface 29
-  0.037130478420235,                      !- View Factor 29
-  Wall:270,                               !- From Surface 30
-  inferred conditioned floor,             !- To Surface 30
-  0.213302748371563,                      !- View Factor 30
-  Wall:270,                               !- From Surface 31
-  furniture mass living living,           !- To Surface 31
-  0.213302748371563,                      !- View Factor 31
-  Wall:270,                               !- From Surface 32
-  living Living Partition,                !- To Surface 32
-  0.213302748371563,                      !- View Factor 32
-  Wall:90,                                !- From Surface 33
-  FloorBelowAttic,                        !- To Surface 33
-  0.213302748371563,                      !- View Factor 33
-  Wall:90,                                !- From Surface 34
-  Wall:0,                                 !- To Surface 34
-  0.037130478420235,                      !- View Factor 34
-  Wall:90,                                !- From Surface 35
-  Wall:270,                               !- To Surface 35
-  0.037130478420235,                      !- View Factor 35
-  Wall:90,                                !- From Surface 36
-  Wall:180,                               !- To Surface 36
-  0.037130478420235,                      !- View Factor 36
-  Wall:90,                                !- From Surface 37
-  inferred conditioned floor,             !- To Surface 37
-  0.213302748371563,                      !- View Factor 37
-  Wall:90,                                !- From Surface 38
-  furniture mass living living,           !- To Surface 38
-  0.213302748371563,                      !- View Factor 38
-  Wall:90,                                !- From Surface 39
-  living Living Partition,                !- To Surface 39
-  0.213302748371563,                      !- View Factor 39
-  Wall:180,                               !- From Surface 40
-  FloorBelowAttic,                        !- To Surface 40
-  0.215275827489323,                      !- View Factor 40
-  Wall:180,                               !- From Surface 41
-  Wall:0,                                 !- To Surface 41
-  0.0374739403407341,                     !- View Factor 41
-  Wall:180,                               !- From Surface 42
-  Wall:270,                               !- To Surface 42
-  0.0374739403407341,                     !- View Factor 42
-  Wall:180,                               !- From Surface 43
-  Wall:90,                                !- To Surface 43
-  0.0374739403407341,                     !- View Factor 43
-  Wall:180,                               !- From Surface 44
-  inferred conditioned floor,             !- To Surface 44
-  0.215275827489323,                      !- View Factor 44
-  Wall:180,                               !- From Surface 45
-  furniture mass living living,           !- To Surface 45
-  0.215275827489323,                      !- View Factor 45
-  Wall:180,                               !- From Surface 46
-  living Living Partition,                !- To Surface 46
-  0.215275827489323,                      !- View Factor 46
-  RimJoistFoundation:0,                   !- From Surface 47
+  0.2515840477,                           !- View Factor 17
+  inferred conditioned floor,             !- From Surface 18
+  FloorBelowAttic,                        !- To Surface 18
+  0.2571409983,                           !- View Factor 18
+  inferred conditioned floor,             !- From Surface 19
+  Wall:0,                                 !- To Surface 19
+  0.0447615812,                           !- View Factor 19
+  inferred conditioned floor,             !- From Surface 20
+  Wall:180,                               !- To Surface 20
+  0.0447615812,                           !- View Factor 20
+  inferred conditioned floor,             !- From Surface 21
+  Wall:270,                               !- To Surface 21
+  0.0447615812,                           !- View Factor 21
+  inferred conditioned floor,             !- From Surface 22
+  Wall:90,                                !- To Surface 22
+  0.0447615812,                           !- View Factor 22
+  inferred conditioned floor,             !- From Surface 23
+  WindowNorth,                            !- To Surface 23
+  0.0102856399,                           !- View Factor 23
+  inferred conditioned floor,             !- From Surface 24
+  WindowSouth,                            !- To Surface 24
+  0.0102856399,                           !- View Factor 24
+  inferred conditioned floor,             !- From Surface 25
+  furniture mass living living,           !- To Surface 25
+  0.2571409983,                           !- View Factor 25
+  inferred conditioned floor,             !- From Surface 26
+  living Living Partition,                !- To Surface 26
+  0.2571409983,                           !- View Factor 26
+  RimJoistFoundation:0,                   !- From Surface 27
+  inferred conditioned ceiling,           !- To Surface 27
+  0.2460360853,                           !- View Factor 27
+  RimJoistFoundation:0,                   !- From Surface 28
+  Slab,                                   !- To Surface 28
+  0.2460360853,                           !- View Factor 28
+  RimJoistFoundation:0,                   !- From Surface 29
+  furniture mass living basement,         !- To Surface 29
+  0.2460360853,                           !- View Factor 29
+  RimJoistFoundation:0,                   !- From Surface 30
+  living Basement Partition,              !- To Surface 30
+  0.2460360853,                           !- View Factor 30
+  RimJoistFoundation:180,                 !- From Surface 31
+  FoundationWall,                         !- To Surface 31
+  0.1794526694,                           !- View Factor 31
+  RimJoistFoundation:180,                 !- From Surface 32
+  inferred conditioned ceiling,           !- To Surface 32
+  0.201884253,                            !- View Factor 32
+  RimJoistFoundation:180,                 !- From Surface 33
+  Slab,                                   !- To Surface 33
+  0.201884253,                            !- View Factor 33
+  RimJoistFoundation:180,                 !- From Surface 34
+  furniture mass living basement,         !- To Surface 34
+  0.201884253,                            !- View Factor 34
+  RimJoistFoundation:180,                 !- From Surface 35
+  living Basement Partition,              !- To Surface 35
+  0.201884253,                            !- View Factor 35
+  RimJoistFoundation:270,                 !- From Surface 36
+  FoundationWall,                         !- To Surface 36
+  0.1794526694,                           !- View Factor 36
+  RimJoistFoundation:270,                 !- From Surface 37
+  inferred conditioned ceiling,           !- To Surface 37
+  0.201884253,                            !- View Factor 37
+  RimJoistFoundation:270,                 !- From Surface 38
+  Slab,                                   !- To Surface 38
+  0.201884253,                            !- View Factor 38
+  RimJoistFoundation:270,                 !- From Surface 39
+  furniture mass living basement,         !- To Surface 39
+  0.201884253,                            !- View Factor 39
+  RimJoistFoundation:270,                 !- From Surface 40
+  living Basement Partition,              !- To Surface 40
+  0.201884253,                            !- View Factor 40
+  RimJoistFoundation:90,                  !- From Surface 41
+  FoundationWall,                         !- To Surface 41
+  0.1794526694,                           !- View Factor 41
+  RimJoistFoundation:90,                  !- From Surface 42
+  inferred conditioned ceiling,           !- To Surface 42
+  0.201884253,                            !- View Factor 42
+  RimJoistFoundation:90,                  !- From Surface 43
+  Slab,                                   !- To Surface 43
+  0.201884253,                            !- View Factor 43
+  RimJoistFoundation:90,                  !- From Surface 44
+  furniture mass living basement,         !- To Surface 44
+  0.201884253,                            !- View Factor 44
+  RimJoistFoundation:90,                  !- From Surface 45
+  living Basement Partition,              !- To Surface 45
+  0.201884253,                            !- View Factor 45
+  Slab,                                   !- From Surface 46
+  FoundationWall,                         !- To Surface 46
+  0.2236302646,                           !- View Factor 46
+  Slab,                                   !- From Surface 47
   inferred conditioned ceiling,           !- To Surface 47
-  0.24603608529251,                       !- View Factor 47
-  RimJoistFoundation:0,                   !- From Surface 48
-  Slab,                                   !- To Surface 48
-  0.24603608529251,                       !- View Factor 48
-  RimJoistFoundation:0,                   !- From Surface 49
+  0.2515840477,                           !- View Factor 47
+  Slab,                                   !- From Surface 48
+  furniture mass living basement,         !- To Surface 48
+  0.2515840477,                           !- View Factor 48
+  Slab,                                   !- From Surface 49
   living Basement Partition,              !- To Surface 49
-  0.24603608529251,                       !- View Factor 49
-  RimJoistFoundation:0,                   !- From Surface 50
-  furniture mass living basement,         !- To Surface 50
-  0.24603608529251,                       !- View Factor 50
-  RimJoistFoundation:180,                 !- From Surface 51
-  FoundationWall,                         !- To Surface 51
-  0.179452669358457,                      !- View Factor 51
-  RimJoistFoundation:180,                 !- From Surface 52
-  inferred conditioned ceiling,           !- To Surface 52
-  0.201884253028264,                      !- View Factor 52
-  RimJoistFoundation:180,                 !- From Surface 53
-  Slab,                                   !- To Surface 53
-  0.201884253028264,                      !- View Factor 53
-  RimJoistFoundation:180,                 !- From Surface 54
-  living Basement Partition,              !- To Surface 54
-  0.201884253028264,                      !- View Factor 54
-  RimJoistFoundation:180,                 !- From Surface 55
-  furniture mass living basement,         !- To Surface 55
-  0.201884253028264,                      !- View Factor 55
-  RimJoistFoundation:90,                  !- From Surface 56
-  FoundationWall,                         !- To Surface 56
-  0.179452669358457,                      !- View Factor 56
-  RimJoistFoundation:90,                  !- From Surface 57
-  inferred conditioned ceiling,           !- To Surface 57
-  0.201884253028264,                      !- View Factor 57
-  RimJoistFoundation:90,                  !- From Surface 58
-  Slab,                                   !- To Surface 58
-  0.201884253028264,                      !- View Factor 58
-  RimJoistFoundation:90,                  !- From Surface 59
-  living Basement Partition,              !- To Surface 59
-  0.201884253028264,                      !- View Factor 59
-  RimJoistFoundation:90,                  !- From Surface 60
-  furniture mass living basement,         !- To Surface 60
-  0.201884253028264,                      !- View Factor 60
-  WindowSouth,                            !- From Surface 61
-  FloorBelowAttic,                        !- To Surface 61
-  0.215275827489323,                      !- View Factor 61
-  WindowSouth,                            !- From Surface 62
-  Wall:0,                                 !- To Surface 62
-  0.0374739403407341,                     !- View Factor 62
-  WindowSouth,                            !- From Surface 63
-  Wall:270,                               !- To Surface 63
-  0.0374739403407341,                     !- View Factor 63
-  WindowSouth,                            !- From Surface 64
-  Wall:90,                                !- To Surface 64
-  0.0374739403407341,                     !- View Factor 64
-  WindowSouth,                            !- From Surface 65
+  0.2515840477,                           !- View Factor 49
+  surface DoorNorth,                      !- From Surface 50
+  FloorBelowAttic,                        !- To Surface 50
+  0.2152758275,                           !- View Factor 50
+  surface DoorNorth,                      !- From Surface 51
+  inferred conditioned floor,             !- To Surface 51
+  0.2152758275,                           !- View Factor 51
+  surface DoorNorth,                      !- From Surface 52
+  Wall:180,                               !- To Surface 52
+  0.0374739403,                           !- View Factor 52
+  surface DoorNorth,                      !- From Surface 53
+  Wall:270,                               !- To Surface 53
+  0.0374739403,                           !- View Factor 53
+  surface DoorNorth,                      !- From Surface 54
+  Wall:90,                                !- To Surface 54
+  0.0374739403,                           !- View Factor 54
+  surface DoorNorth,                      !- From Surface 55
+  furniture mass living living,           !- To Surface 55
+  0.2152758275,                           !- View Factor 55
+  surface DoorNorth,                      !- From Surface 56
+  living Living Partition,                !- To Surface 56
+  0.2152758275,                           !- View Factor 56
+  surface DoorSouth,                      !- From Surface 57
+  FloorBelowAttic,                        !- To Surface 57
+  0.2152758275,                           !- View Factor 57
+  surface DoorSouth,                      !- From Surface 58
+  inferred conditioned floor,             !- To Surface 58
+  0.2152758275,                           !- View Factor 58
+  surface DoorSouth,                      !- From Surface 59
+  Wall:0,                                 !- To Surface 59
+  0.0374739403,                           !- View Factor 59
+  surface DoorSouth,                      !- From Surface 60
+  Wall:270,                               !- To Surface 60
+  0.0374739403,                           !- View Factor 60
+  surface DoorSouth,                      !- From Surface 61
+  Wall:90,                                !- To Surface 61
+  0.0374739403,                           !- View Factor 61
+  surface DoorSouth,                      !- From Surface 62
+  furniture mass living living,           !- To Surface 62
+  0.2152758275,                           !- View Factor 62
+  surface DoorSouth,                      !- From Surface 63
+  living Living Partition,                !- To Surface 63
+  0.2152758275,                           !- View Factor 63
+  surface WindowEast,                     !- From Surface 64
+  FloorBelowAttic,                        !- To Surface 64
+  0.2133027484,                           !- View Factor 64
+  surface WindowEast,                     !- From Surface 65
   inferred conditioned floor,             !- To Surface 65
-  0.215275827489323,                      !- View Factor 65
-  WindowSouth,                            !- From Surface 66
-  furniture mass living living,           !- To Surface 66
-  0.215275827489323,                      !- View Factor 66
-  WindowSouth,                            !- From Surface 67
-  living Living Partition,                !- To Surface 67
-  0.215275827489323,                      !- View Factor 67
-  surface WindowSouth,                    !- From Surface 68
-  FloorBelowAttic,                        !- To Surface 68
-  0.215275827489323,                      !- View Factor 68
-  surface WindowSouth,                    !- From Surface 69
-  Wall:0,                                 !- To Surface 69
-  0.0374739403407341,                     !- View Factor 69
-  surface WindowSouth,                    !- From Surface 70
-  Wall:270,                               !- To Surface 70
-  0.0374739403407341,                     !- View Factor 70
-  surface WindowSouth,                    !- From Surface 71
-  Wall:90,                                !- To Surface 71
-  0.0374739403407341,                     !- View Factor 71
-  surface WindowSouth,                    !- From Surface 72
+  0.2133027484,                           !- View Factor 65
+  surface WindowEast,                     !- From Surface 66
+  Wall:0,                                 !- To Surface 66
+  0.0371304784,                           !- View Factor 66
+  surface WindowEast,                     !- From Surface 67
+  Wall:180,                               !- To Surface 67
+  0.0371304784,                           !- View Factor 67
+  surface WindowEast,                     !- From Surface 68
+  Wall:270,                               !- To Surface 68
+  0.0371304784,                           !- View Factor 68
+  surface WindowEast,                     !- From Surface 69
+  furniture mass living living,           !- To Surface 69
+  0.2133027484,                           !- View Factor 69
+  surface WindowEast,                     !- From Surface 70
+  living Living Partition,                !- To Surface 70
+  0.2133027484,                           !- View Factor 70
+  surface WindowNorth,                    !- From Surface 71
+  FloorBelowAttic,                        !- To Surface 71
+  0.2152758275,                           !- View Factor 71
+  surface WindowNorth,                    !- From Surface 72
   inferred conditioned floor,             !- To Surface 72
-  0.215275827489323,                      !- View Factor 72
-  surface WindowSouth,                    !- From Surface 73
-  furniture mass living living,           !- To Surface 73
-  0.215275827489323,                      !- View Factor 73
-  surface WindowSouth,                    !- From Surface 74
-  living Living Partition,                !- To Surface 74
-  0.215275827489323,                      !- View Factor 74
-  WindowNorth,                            !- From Surface 75
-  FloorBelowAttic,                        !- To Surface 75
-  0.215275827489323,                      !- View Factor 75
-  WindowNorth,                            !- From Surface 76
-  Wall:270,                               !- To Surface 76
-  0.0374739403407341,                     !- View Factor 76
-  WindowNorth,                            !- From Surface 77
-  Wall:90,                                !- To Surface 77
-  0.0374739403407341,                     !- View Factor 77
-  WindowNorth,                            !- From Surface 78
-  Wall:180,                               !- To Surface 78
-  0.0374739403407341,                     !- View Factor 78
-  WindowNorth,                            !- From Surface 79
+  0.2152758275,                           !- View Factor 72
+  surface WindowNorth,                    !- From Surface 73
+  Wall:180,                               !- To Surface 73
+  0.0374739403,                           !- View Factor 73
+  surface WindowNorth,                    !- From Surface 74
+  Wall:270,                               !- To Surface 74
+  0.0374739403,                           !- View Factor 74
+  surface WindowNorth,                    !- From Surface 75
+  Wall:90,                                !- To Surface 75
+  0.0374739403,                           !- View Factor 75
+  surface WindowNorth,                    !- From Surface 76
+  furniture mass living living,           !- To Surface 76
+  0.2152758275,                           !- View Factor 76
+  surface WindowNorth,                    !- From Surface 77
+  living Living Partition,                !- To Surface 77
+  0.2152758275,                           !- View Factor 77
+  surface WindowSouth,                    !- From Surface 78
+  FloorBelowAttic,                        !- To Surface 78
+  0.2152758275,                           !- View Factor 78
+  surface WindowSouth,                    !- From Surface 79
   inferred conditioned floor,             !- To Surface 79
-  0.215275827489323,                      !- View Factor 79
-  WindowNorth,                            !- From Surface 80
-  furniture mass living living,           !- To Surface 80
-  0.215275827489323,                      !- View Factor 80
-  WindowNorth,                            !- From Surface 81
-  living Living Partition,                !- To Surface 81
-  0.215275827489323,                      !- View Factor 81
-  surface WindowNorth,                    !- From Surface 82
-  FloorBelowAttic,                        !- To Surface 82
-  0.215275827489323,                      !- View Factor 82
-  surface WindowNorth,                    !- From Surface 83
-  Wall:270,                               !- To Surface 83
-  0.0374739403407341,                     !- View Factor 83
-  surface WindowNorth,                    !- From Surface 84
-  Wall:90,                                !- To Surface 84
-  0.0374739403407341,                     !- View Factor 84
-  surface WindowNorth,                    !- From Surface 85
-  Wall:180,                               !- To Surface 85
-  0.0374739403407341,                     !- View Factor 85
-  surface WindowNorth,                    !- From Surface 86
+  0.2152758275,                           !- View Factor 79
+  surface WindowSouth,                    !- From Surface 80
+  Wall:0,                                 !- To Surface 80
+  0.0374739403,                           !- View Factor 80
+  surface WindowSouth,                    !- From Surface 81
+  Wall:270,                               !- To Surface 81
+  0.0374739403,                           !- View Factor 81
+  surface WindowSouth,                    !- From Surface 82
+  Wall:90,                                !- To Surface 82
+  0.0374739403,                           !- View Factor 82
+  surface WindowSouth,                    !- From Surface 83
+  furniture mass living living,           !- To Surface 83
+  0.2152758275,                           !- View Factor 83
+  surface WindowSouth,                    !- From Surface 84
+  living Living Partition,                !- To Surface 84
+  0.2152758275,                           !- View Factor 84
+  surface WindowWest,                     !- From Surface 85
+  FloorBelowAttic,                        !- To Surface 85
+  0.2133027484,                           !- View Factor 85
+  surface WindowWest,                     !- From Surface 86
   inferred conditioned floor,             !- To Surface 86
-  0.215275827489323,                      !- View Factor 86
-  surface WindowNorth,                    !- From Surface 87
-  furniture mass living living,           !- To Surface 87
-  0.215275827489323,                      !- View Factor 87
-  surface WindowNorth,                    !- From Surface 88
-  living Living Partition,                !- To Surface 88
-  0.215275827489323,                      !- View Factor 88
-  inferred conditioned ceiling,           !- From Surface 89
-  FoundationWall,                         !- To Surface 89
-  0.223630264629147,                      !- View Factor 89
-  inferred conditioned ceiling,           !- From Surface 90
-  Slab,                                   !- To Surface 90
-  0.25158404770779,                       !- View Factor 90
-  inferred conditioned ceiling,           !- From Surface 91
-  living Basement Partition,              !- To Surface 91
-  0.25158404770779,                       !- View Factor 91
-  inferred conditioned ceiling,           !- From Surface 92
-  furniture mass living basement,         !- To Surface 92
-  0.25158404770779,                       !- View Factor 92
-  WindowEast,                             !- From Surface 93
-  FloorBelowAttic,                        !- To Surface 93
-  0.213302748371563,                      !- View Factor 93
-  WindowEast,                             !- From Surface 94
-  Wall:0,                                 !- To Surface 94
-  0.037130478420235,                      !- View Factor 94
-  WindowEast,                             !- From Surface 95
+  0.2133027484,                           !- View Factor 86
+  surface WindowWest,                     !- From Surface 87
+  Wall:0,                                 !- To Surface 87
+  0.0371304784,                           !- View Factor 87
+  surface WindowWest,                     !- From Surface 88
+  Wall:180,                               !- To Surface 88
+  0.0371304784,                           !- View Factor 88
+  surface WindowWest,                     !- From Surface 89
+  Wall:90,                                !- To Surface 89
+  0.0371304784,                           !- View Factor 89
+  surface WindowWest,                     !- From Surface 90
+  furniture mass living living,           !- To Surface 90
+  0.2133027484,                           !- View Factor 90
+  surface WindowWest,                     !- From Surface 91
+  living Living Partition,                !- To Surface 91
+  0.2133027484,                           !- View Factor 91
+  Wall:0,                                 !- From Surface 92
+  FloorBelowAttic,                        !- To Surface 92
+  0.2152758275,                           !- View Factor 92
+  Wall:0,                                 !- From Surface 93
+  inferred conditioned floor,             !- To Surface 93
+  0.2152758275,                           !- View Factor 93
+  Wall:0,                                 !- From Surface 94
+  Wall:180,                               !- To Surface 94
+  0.0374739403,                           !- View Factor 94
+  Wall:0,                                 !- From Surface 95
   Wall:270,                               !- To Surface 95
-  0.037130478420235,                      !- View Factor 95
-  WindowEast,                             !- From Surface 96
-  Wall:180,                               !- To Surface 96
-  0.037130478420235,                      !- View Factor 96
-  WindowEast,                             !- From Surface 97
-  inferred conditioned floor,             !- To Surface 97
-  0.213302748371563,                      !- View Factor 97
-  WindowEast,                             !- From Surface 98
-  furniture mass living living,           !- To Surface 98
-  0.213302748371563,                      !- View Factor 98
-  WindowEast,                             !- From Surface 99
-  living Living Partition,                !- To Surface 99
-  0.213302748371563,                      !- View Factor 99
-  surface WindowEast,                     !- From Surface 100
-  FloorBelowAttic,                        !- To Surface 100
-  0.213302748371563,                      !- View Factor 100
-  surface WindowEast,                     !- From Surface 101
+  0.0374739403,                           !- View Factor 95
+  Wall:0,                                 !- From Surface 96
+  Wall:90,                                !- To Surface 96
+  0.0374739403,                           !- View Factor 96
+  Wall:0,                                 !- From Surface 97
+  furniture mass living living,           !- To Surface 97
+  0.2152758275,                           !- View Factor 97
+  Wall:0,                                 !- From Surface 98
+  living Living Partition,                !- To Surface 98
+  0.2152758275,                           !- View Factor 98
+  Wall:180,                               !- From Surface 99
+  FloorBelowAttic,                        !- To Surface 99
+  0.2152758275,                           !- View Factor 99
+  Wall:180,                               !- From Surface 100
+  inferred conditioned floor,             !- To Surface 100
+  0.2152758275,                           !- View Factor 100
+  Wall:180,                               !- From Surface 101
   Wall:0,                                 !- To Surface 101
-  0.037130478420235,                      !- View Factor 101
-  surface WindowEast,                     !- From Surface 102
+  0.0374739403,                           !- View Factor 101
+  Wall:180,                               !- From Surface 102
   Wall:270,                               !- To Surface 102
-  0.037130478420235,                      !- View Factor 102
-  surface WindowEast,                     !- From Surface 103
-  Wall:180,                               !- To Surface 103
-  0.037130478420235,                      !- View Factor 103
-  surface WindowEast,                     !- From Surface 104
-  inferred conditioned floor,             !- To Surface 104
-  0.213302748371563,                      !- View Factor 104
-  surface WindowEast,                     !- From Surface 105
-  furniture mass living living,           !- To Surface 105
-  0.213302748371563,                      !- View Factor 105
-  surface WindowEast,                     !- From Surface 106
-  living Living Partition,                !- To Surface 106
-  0.213302748371563,                      !- View Factor 106
-  DoorSouth,                              !- From Surface 107
-  FloorBelowAttic,                        !- To Surface 107
-  0.215275827489323,                      !- View Factor 107
-  DoorSouth,                              !- From Surface 108
+  0.0374739403,                           !- View Factor 102
+  Wall:180,                               !- From Surface 103
+  Wall:90,                                !- To Surface 103
+  0.0374739403,                           !- View Factor 103
+  Wall:180,                               !- From Surface 104
+  furniture mass living living,           !- To Surface 104
+  0.2152758275,                           !- View Factor 104
+  Wall:180,                               !- From Surface 105
+  living Living Partition,                !- To Surface 105
+  0.2152758275,                           !- View Factor 105
+  Wall:270,                               !- From Surface 106
+  FloorBelowAttic,                        !- To Surface 106
+  0.2133027484,                           !- View Factor 106
+  Wall:270,                               !- From Surface 107
+  inferred conditioned floor,             !- To Surface 107
+  0.2133027484,                           !- View Factor 107
+  Wall:270,                               !- From Surface 108
   Wall:0,                                 !- To Surface 108
-  0.0374739403407341,                     !- View Factor 108
-  DoorSouth,                              !- From Surface 109
-  Wall:270,                               !- To Surface 109
-  0.0374739403407341,                     !- View Factor 109
-  DoorSouth,                              !- From Surface 110
+  0.0371304784,                           !- View Factor 108
+  Wall:270,                               !- From Surface 109
+  Wall:180,                               !- To Surface 109
+  0.0371304784,                           !- View Factor 109
+  Wall:270,                               !- From Surface 110
   Wall:90,                                !- To Surface 110
-  0.0374739403407341,                     !- View Factor 110
-  DoorSouth,                              !- From Surface 111
-  inferred conditioned floor,             !- To Surface 111
-  0.215275827489323,                      !- View Factor 111
-  DoorSouth,                              !- From Surface 112
-  furniture mass living living,           !- To Surface 112
-  0.215275827489323,                      !- View Factor 112
-  DoorSouth,                              !- From Surface 113
-  living Living Partition,                !- To Surface 113
-  0.215275827489323,                      !- View Factor 113
-  surface DoorSouth,                      !- From Surface 114
-  FloorBelowAttic,                        !- To Surface 114
-  0.215275827489323,                      !- View Factor 114
-  surface DoorSouth,                      !- From Surface 115
+  0.0371304784,                           !- View Factor 110
+  Wall:270,                               !- From Surface 111
+  furniture mass living living,           !- To Surface 111
+  0.2133027484,                           !- View Factor 111
+  Wall:270,                               !- From Surface 112
+  living Living Partition,                !- To Surface 112
+  0.2133027484,                           !- View Factor 112
+  Wall:90,                                !- From Surface 113
+  FloorBelowAttic,                        !- To Surface 113
+  0.2133027484,                           !- View Factor 113
+  Wall:90,                                !- From Surface 114
+  inferred conditioned floor,             !- To Surface 114
+  0.2133027484,                           !- View Factor 114
+  Wall:90,                                !- From Surface 115
   Wall:0,                                 !- To Surface 115
-  0.0374739403407341,                     !- View Factor 115
-  surface DoorSouth,                      !- From Surface 116
-  Wall:270,                               !- To Surface 116
-  0.0374739403407341,                     !- View Factor 116
-  surface DoorSouth,                      !- From Surface 117
-  Wall:90,                                !- To Surface 117
-  0.0374739403407341,                     !- View Factor 117
-  surface DoorSouth,                      !- From Surface 118
-  inferred conditioned floor,             !- To Surface 118
-  0.215275827489323,                      !- View Factor 118
-  surface DoorSouth,                      !- From Surface 119
-  furniture mass living living,           !- To Surface 119
-  0.215275827489323,                      !- View Factor 119
-  surface DoorSouth,                      !- From Surface 120
-  living Living Partition,                !- To Surface 120
-  0.215275827489323,                      !- View Factor 120
-  inferred conditioned floor,             !- From Surface 121
-  FloorBelowAttic,                        !- To Surface 121
-  0.257140998278904,                      !- View Factor 121
-  inferred conditioned floor,             !- From Surface 122
-  Wall:0,                                 !- To Surface 122
-  0.0447615811818834,                     !- View Factor 122
-  inferred conditioned floor,             !- From Surface 123
+  0.0371304784,                           !- View Factor 115
+  Wall:90,                                !- From Surface 116
+  Wall:180,                               !- To Surface 116
+  0.0371304784,                           !- View Factor 116
+  Wall:90,                                !- From Surface 117
+  Wall:270,                               !- To Surface 117
+  0.0371304784,                           !- View Factor 117
+  Wall:90,                                !- From Surface 118
+  furniture mass living living,           !- To Surface 118
+  0.2133027484,                           !- View Factor 118
+  Wall:90,                                !- From Surface 119
+  living Living Partition,                !- To Surface 119
+  0.2133027484,                           !- View Factor 119
+  DoorNorth,                              !- From Surface 120
+  FloorBelowAttic,                        !- To Surface 120
+  0.2152758275,                           !- View Factor 120
+  DoorNorth,                              !- From Surface 121
+  inferred conditioned floor,             !- To Surface 121
+  0.2152758275,                           !- View Factor 121
+  DoorNorth,                              !- From Surface 122
+  Wall:180,                               !- To Surface 122
+  0.0374739403,                           !- View Factor 122
+  DoorNorth,                              !- From Surface 123
   Wall:270,                               !- To Surface 123
-  0.0447615811818834,                     !- View Factor 123
-  inferred conditioned floor,             !- From Surface 124
+  0.0374739403,                           !- View Factor 123
+  DoorNorth,                              !- From Surface 124
   Wall:90,                                !- To Surface 124
-  0.0447615811818834,                     !- View Factor 124
-  inferred conditioned floor,             !- From Surface 125
-  Wall:180,                               !- To Surface 125
-  0.0447615811818834,                     !- View Factor 125
-  inferred conditioned floor,             !- From Surface 126
-  WindowSouth,                            !- To Surface 126
-  0.0102856399311562,                     !- View Factor 126
-  inferred conditioned floor,             !- From Surface 127
-  WindowNorth,                            !- To Surface 127
-  0.0102856399311562,                     !- View Factor 127
-  inferred conditioned floor,             !- From Surface 128
-  furniture mass living living,           !- To Surface 128
-  0.257140998278904,                      !- View Factor 128
-  inferred conditioned floor,             !- From Surface 129
-  living Living Partition,                !- To Surface 129
-  0.257140998278904,                      !- View Factor 129
-  DoorNorth,                              !- From Surface 130
-  FloorBelowAttic,                        !- To Surface 130
-  0.215275827489323,                      !- View Factor 130
-  DoorNorth,                              !- From Surface 131
-  Wall:270,                               !- To Surface 131
-  0.0374739403407341,                     !- View Factor 131
-  DoorNorth,                              !- From Surface 132
-  Wall:90,                                !- To Surface 132
-  0.0374739403407341,                     !- View Factor 132
-  DoorNorth,                              !- From Surface 133
-  Wall:180,                               !- To Surface 133
-  0.0374739403407341,                     !- View Factor 133
-  DoorNorth,                              !- From Surface 134
-  inferred conditioned floor,             !- To Surface 134
-  0.215275827489323,                      !- View Factor 134
-  DoorNorth,                              !- From Surface 135
-  furniture mass living living,           !- To Surface 135
-  0.215275827489323,                      !- View Factor 135
-  DoorNorth,                              !- From Surface 136
-  living Living Partition,                !- To Surface 136
-  0.215275827489323,                      !- View Factor 136
-  surface DoorNorth,                      !- From Surface 137
-  FloorBelowAttic,                        !- To Surface 137
-  0.215275827489323,                      !- View Factor 137
-  surface DoorNorth,                      !- From Surface 138
+  0.0374739403,                           !- View Factor 124
+  DoorNorth,                              !- From Surface 125
+  furniture mass living living,           !- To Surface 125
+  0.2152758275,                           !- View Factor 125
+  DoorNorth,                              !- From Surface 126
+  living Living Partition,                !- To Surface 126
+  0.2152758275,                           !- View Factor 126
+  DoorSouth,                              !- From Surface 127
+  FloorBelowAttic,                        !- To Surface 127
+  0.2152758275,                           !- View Factor 127
+  DoorSouth,                              !- From Surface 128
+  inferred conditioned floor,             !- To Surface 128
+  0.2152758275,                           !- View Factor 128
+  DoorSouth,                              !- From Surface 129
+  Wall:0,                                 !- To Surface 129
+  0.0374739403,                           !- View Factor 129
+  DoorSouth,                              !- From Surface 130
+  Wall:270,                               !- To Surface 130
+  0.0374739403,                           !- View Factor 130
+  DoorSouth,                              !- From Surface 131
+  Wall:90,                                !- To Surface 131
+  0.0374739403,                           !- View Factor 131
+  DoorSouth,                              !- From Surface 132
+  furniture mass living living,           !- To Surface 132
+  0.2152758275,                           !- View Factor 132
+  DoorSouth,                              !- From Surface 133
+  living Living Partition,                !- To Surface 133
+  0.2152758275,                           !- View Factor 133
+  WindowEast,                             !- From Surface 134
+  FloorBelowAttic,                        !- To Surface 134
+  0.2133027484,                           !- View Factor 134
+  WindowEast,                             !- From Surface 135
+  inferred conditioned floor,             !- To Surface 135
+  0.2133027484,                           !- View Factor 135
+  WindowEast,                             !- From Surface 136
+  Wall:0,                                 !- To Surface 136
+  0.0371304784,                           !- View Factor 136
+  WindowEast,                             !- From Surface 137
+  Wall:180,                               !- To Surface 137
+  0.0371304784,                           !- View Factor 137
+  WindowEast,                             !- From Surface 138
   Wall:270,                               !- To Surface 138
-  0.0374739403407341,                     !- View Factor 138
-  surface DoorNorth,                      !- From Surface 139
-  Wall:90,                                !- To Surface 139
-  0.0374739403407341,                     !- View Factor 139
-  surface DoorNorth,                      !- From Surface 140
-  Wall:180,                               !- To Surface 140
-  0.0374739403407341,                     !- View Factor 140
-  surface DoorNorth,                      !- From Surface 141
-  inferred conditioned floor,             !- To Surface 141
-  0.215275827489323,                      !- View Factor 141
-  surface DoorNorth,                      !- From Surface 142
-  furniture mass living living,           !- To Surface 142
-  0.215275827489323,                      !- View Factor 142
-  surface DoorNorth,                      !- From Surface 143
-  living Living Partition,                !- To Surface 143
-  0.215275827489323,                      !- View Factor 143
-  Slab,                                   !- From Surface 144
-  FoundationWall,                         !- To Surface 144
-  0.223630264629147,                      !- View Factor 144
-  Slab,                                   !- From Surface 145
-  inferred conditioned ceiling,           !- To Surface 145
-  0.25158404770779,                       !- View Factor 145
-  Slab,                                   !- From Surface 146
-  living Basement Partition,              !- To Surface 146
-  0.25158404770779,                       !- View Factor 146
-  Slab,                                   !- From Surface 147
-  furniture mass living basement,         !- To Surface 147
-  0.25158404770779,                       !- View Factor 147
-  WindowWest,                             !- From Surface 148
+  0.0371304784,                           !- View Factor 138
+  WindowEast,                             !- From Surface 139
+  furniture mass living living,           !- To Surface 139
+  0.2133027484,                           !- View Factor 139
+  WindowEast,                             !- From Surface 140
+  living Living Partition,                !- To Surface 140
+  0.2133027484,                           !- View Factor 140
+  WindowNorth,                            !- From Surface 141
+  FloorBelowAttic,                        !- To Surface 141
+  0.2152758275,                           !- View Factor 141
+  WindowNorth,                            !- From Surface 142
+  inferred conditioned floor,             !- To Surface 142
+  0.2152758275,                           !- View Factor 142
+  WindowNorth,                            !- From Surface 143
+  Wall:180,                               !- To Surface 143
+  0.0374739403,                           !- View Factor 143
+  WindowNorth,                            !- From Surface 144
+  Wall:270,                               !- To Surface 144
+  0.0374739403,                           !- View Factor 144
+  WindowNorth,                            !- From Surface 145
+  Wall:90,                                !- To Surface 145
+  0.0374739403,                           !- View Factor 145
+  WindowNorth,                            !- From Surface 146
+  furniture mass living living,           !- To Surface 146
+  0.2152758275,                           !- View Factor 146
+  WindowNorth,                            !- From Surface 147
+  living Living Partition,                !- To Surface 147
+  0.2152758275,                           !- View Factor 147
+  WindowSouth,                            !- From Surface 148
   FloorBelowAttic,                        !- To Surface 148
-  0.213302748371563,                      !- View Factor 148
-  WindowWest,                             !- From Surface 149
-  Wall:0,                                 !- To Surface 149
-  0.037130478420235,                      !- View Factor 149
-  WindowWest,                             !- From Surface 150
-  Wall:90,                                !- To Surface 150
-  0.037130478420235,                      !- View Factor 150
-  WindowWest,                             !- From Surface 151
-  Wall:180,                               !- To Surface 151
-  0.037130478420235,                      !- View Factor 151
-  WindowWest,                             !- From Surface 152
-  inferred conditioned floor,             !- To Surface 152
-  0.213302748371563,                      !- View Factor 152
-  WindowWest,                             !- From Surface 153
+  0.2152758275,                           !- View Factor 148
+  WindowSouth,                            !- From Surface 149
+  inferred conditioned floor,             !- To Surface 149
+  0.2152758275,                           !- View Factor 149
+  WindowSouth,                            !- From Surface 150
+  Wall:0,                                 !- To Surface 150
+  0.0374739403,                           !- View Factor 150
+  WindowSouth,                            !- From Surface 151
+  Wall:270,                               !- To Surface 151
+  0.0374739403,                           !- View Factor 151
+  WindowSouth,                            !- From Surface 152
+  Wall:90,                                !- To Surface 152
+  0.0374739403,                           !- View Factor 152
+  WindowSouth,                            !- From Surface 153
   furniture mass living living,           !- To Surface 153
-  0.213302748371563,                      !- View Factor 153
-  WindowWest,                             !- From Surface 154
+  0.2152758275,                           !- View Factor 153
+  WindowSouth,                            !- From Surface 154
   living Living Partition,                !- To Surface 154
-  0.213302748371563,                      !- View Factor 154
-  surface WindowWest,                     !- From Surface 155
+  0.2152758275,                           !- View Factor 154
+  WindowWest,                             !- From Surface 155
   FloorBelowAttic,                        !- To Surface 155
-  0.213302748371563,                      !- View Factor 155
-  surface WindowWest,                     !- From Surface 156
-  Wall:0,                                 !- To Surface 156
-  0.037130478420235,                      !- View Factor 156
-  surface WindowWest,                     !- From Surface 157
-  Wall:90,                                !- To Surface 157
-  0.037130478420235,                      !- View Factor 157
-  surface WindowWest,                     !- From Surface 158
+  0.2133027484,                           !- View Factor 155
+  WindowWest,                             !- From Surface 156
+  inferred conditioned floor,             !- To Surface 156
+  0.2133027484,                           !- View Factor 156
+  WindowWest,                             !- From Surface 157
+  Wall:0,                                 !- To Surface 157
+  0.0371304784,                           !- View Factor 157
+  WindowWest,                             !- From Surface 158
   Wall:180,                               !- To Surface 158
-  0.037130478420235,                      !- View Factor 158
-  surface WindowWest,                     !- From Surface 159
-  inferred conditioned floor,             !- To Surface 159
-  0.213302748371563,                      !- View Factor 159
-  surface WindowWest,                     !- From Surface 160
+  0.0371304784,                           !- View Factor 158
+  WindowWest,                             !- From Surface 159
+  Wall:90,                                !- To Surface 159
+  0.0371304784,                           !- View Factor 159
+  WindowWest,                             !- From Surface 160
   furniture mass living living,           !- To Surface 160
-  0.213302748371563,                      !- View Factor 160
-  surface WindowWest,                     !- From Surface 161
+  0.2133027484,                           !- View Factor 160
+  WindowWest,                             !- From Surface 161
   living Living Partition,                !- To Surface 161
-  0.213302748371563,                      !- View Factor 161
-  furniture mass living living,           !- From Surface 162
-  FloorBelowAttic,                        !- To Surface 162
-  0.274333116056004,                      !- View Factor 162
-  furniture mass living living,           !- From Surface 163
-  Wall:270,                               !- To Surface 163
-  0.0477542831653045,                     !- View Factor 163
-  furniture mass living living,           !- From Surface 164
-  Wall:90,                                !- To Surface 164
-  0.0477542831653044,                     !- View Factor 164
+  0.2133027484,                           !- View Factor 161
+  furniture mass living basement,         !- From Surface 162
+  inferred conditioned ceiling,           !- To Surface 162
+  0.3263234228,                           !- View Factor 162
+  furniture mass living basement,         !- From Surface 163
+  Slab,                                   !- To Surface 163
+  0.3263234228,                           !- View Factor 163
+  furniture mass living basement,         !- From Surface 164
+  living Basement Partition,              !- To Surface 164
+  0.3263234228,                           !- View Factor 164
   furniture mass living living,           !- From Surface 165
-  Wall:180,                               !- To Surface 165
-  0.0477542831653045,                     !- View Factor 165
+  FloorBelowAttic,                        !- To Surface 165
+  0.2743331161,                           !- View Factor 165
   furniture mass living living,           !- From Surface 166
-  WindowSouth,                            !- To Surface 166
-  0.0109733246422402,                     !- View Factor 166
+  inferred conditioned floor,             !- To Surface 166
+  0.2743331161,                           !- View Factor 166
   furniture mass living living,           !- From Surface 167
-  inferred conditioned floor,             !- To Surface 167
-  0.274333116056004,                      !- View Factor 167
+  Wall:180,                               !- To Surface 167
+  0.0477542832,                           !- View Factor 167
   furniture mass living living,           !- From Surface 168
-  living Living Partition,                !- To Surface 168
-  0.274333116056004,                      !- View Factor 168
-  living Basement Partition,              !- From Surface 169
-  inferred conditioned ceiling,           !- To Surface 169
-  0.326323422770123,                      !- View Factor 169
-  living Basement Partition,              !- From Surface 170
-  Slab,                                   !- To Surface 170
-  0.326323422770123,                      !- View Factor 170
-  living Basement Partition,              !- From Surface 171
-  furniture mass living basement,         !- To Surface 171
-  0.326323422770123,                      !- View Factor 171
-  furniture mass living basement,         !- From Surface 172
+  Wall:270,                               !- To Surface 168
+  0.0477542832,                           !- View Factor 168
+  furniture mass living living,           !- From Surface 169
+  Wall:90,                                !- To Surface 169
+  0.0477542832,                           !- View Factor 169
+  furniture mass living living,           !- From Surface 170
+  WindowSouth,                            !- To Surface 170
+  0.0109733246,                           !- View Factor 170
+  furniture mass living living,           !- From Surface 171
+  living Living Partition,                !- To Surface 171
+  0.2743331161,                           !- View Factor 171
+  living Basement Partition,              !- From Surface 172
   inferred conditioned ceiling,           !- To Surface 172
-  0.326323422770123,                      !- View Factor 172
-  furniture mass living basement,         !- From Surface 173
+  0.3263234228,                           !- View Factor 172
+  living Basement Partition,              !- From Surface 173
   Slab,                                   !- To Surface 173
-  0.326323422770123,                      !- View Factor 173
-  furniture mass living basement,         !- From Surface 174
-  living Basement Partition,              !- To Surface 174
-  0.326323422770123,                      !- View Factor 174
+  0.3263234228,                           !- View Factor 173
+  living Basement Partition,              !- From Surface 174
+  furniture mass living basement,         !- To Surface 174
+  0.3263234228,                           !- View Factor 174
   living Living Partition,                !- From Surface 175
   FloorBelowAttic,                        !- To Surface 175
-  0.274333116056004,                      !- View Factor 175
+  0.2743331161,                           !- View Factor 175
   living Living Partition,                !- From Surface 176
-  Wall:270,                               !- To Surface 176
-  0.0477542831653045,                     !- View Factor 176
+  inferred conditioned floor,             !- To Surface 176
+  0.2743331161,                           !- View Factor 176
   living Living Partition,                !- From Surface 177
-  Wall:90,                                !- To Surface 177
-  0.0477542831653044,                     !- View Factor 177
+  Wall:180,                               !- To Surface 177
+  0.0477542832,                           !- View Factor 177
   living Living Partition,                !- From Surface 178
-  Wall:180,                               !- To Surface 178
-  0.0477542831653045,                     !- View Factor 178
+  Wall:270,                               !- To Surface 178
+  0.0477542832,                           !- View Factor 178
   living Living Partition,                !- From Surface 179
-  WindowSouth,                            !- To Surface 179
-  0.0109733246422402,                     !- View Factor 179
+  Wall:90,                                !- To Surface 179
+  0.0477542832,                           !- View Factor 179
   living Living Partition,                !- From Surface 180
-  inferred conditioned floor,             !- To Surface 180
-  0.274333116056004,                      !- View Factor 180
+  WindowSouth,                            !- To Surface 180
+  0.0109733246,                           !- View Factor 180
   living Living Partition,                !- From Surface 181
   furniture mass living living,           !- To Surface 181
-  0.274333116056004;                      !- View Factor 181
+  0.2743331161;                           !- View Factor 181
 
 Exterior:Lights,
   exterior lighting,                      !- Name
@@ -19127,19 +19141,7 @@ Curve:Biquadratic,
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
 Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:FuelOil#1, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Electricity:Facility,                   !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Cooling:EnergyTransfer,                 !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Gas:Facility,                           !- Key Name
+  clothes dryer:InteriorEquipment:Propane, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19147,11 +19149,39 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  FuelOil#1:Facility,                     !- Key Name
+  interior lighting:InteriorLights:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Propane, !- Key Name
+  misc tv:InteriorEquipment:Electricity,  !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  garage lighting:InteriorLights:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Gas:Facility,                           !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  misc plug loads:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:Propane,              !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  FuelOil#1:Facility,                     !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Gas,    !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:FuelOil#1, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19159,11 +19189,35 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Propane:Facility,                       !- Key Name
+  clothes dryer:InteriorEquipment:Gas,    !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Heating:EnergyTransfer,                 !- Key Name
+  clothes dryer:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes washer:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  dishwasher:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Gas:Facility,                           !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:FuelOil#1,            !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Electricity:Facility,                   !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Heating:EnergyTransfer:Zone:LIVING,     !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19175,15 +19229,7 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  interior lighting:InteriorLights:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  fridge:InteriorEquipment:Electricity,   !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  garage lighting:InteriorLights:Electricity, !- Key Name
+  FuelOil#1:Facility,                     !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19195,58 +19241,6 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  InteriorEquipment:FuelOil#1,            !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  InteriorEquipment:Propane,              !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Propane:Facility,                       !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Gas:Facility,                           !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  dishwasher:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes washer:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Gas,    !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  misc plug loads:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  misc tv:InteriorEquipment:Electricity,  !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:Gas,    !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  FuelOil#1:Facility,                     !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:FuelOil#1, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
   cooking range:InteriorEquipment:Propane, !- Key Name
   runperiod;                              !- Reporting Frequency
 
@@ -19255,7 +19249,23 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
+  Propane:Facility,                       !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
   ceiling fan:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Electricity:Facility,                   !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:FuelOil#1, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  fridge:InteriorEquipment:Electricity,   !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19263,8 +19273,12 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Electricity:Facility,                   !- Key Name
+  Propane:Facility,                       !- Key Name
   hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Cooling:EnergyTransfer:Zone:LIVING,     !- Key Name
+  runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
@@ -19288,12 +19302,12 @@ Output:Variable,
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater Propane Energy,            !- Variable Name
+  Water Heater FuelOil#1 Energy,          !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater FuelOil#1 Energy,          !- Variable Name
+  Water Heater Propane Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19318,7 +19332,7 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  water heater EC adjustment,             !- Variable Name
+  water heater EC adjustment outvar,      !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19328,8 +19342,53 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  Zone Mean Air Temperature,              !- Variable Name
-  hourly;                                 !- Reporting Frequency
+  htg_walls_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_rim_joists_outvar,                  !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_foundation_walls_outvar,            !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_floors_outvar,                      !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_slabs_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_ceilings_outvar,                    !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_roofs_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_windows_outvar,                     !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_doors_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_skylights_outvar,                   !- Variable Name
+  runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
@@ -19337,8 +19396,108 @@ Output:Variable,
   monthly;                                !- Reporting Frequency
 
 Output:Variable,
+  *,                                      !- Key Value
+  htg_internal_mass_outvar,               !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_intgains_outvar,                    !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_infil_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_mechvent_outvar,                    !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_natvent_outvar,                     !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  htg_ducts_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_walls_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_rim_joists_outvar,                  !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_foundation_walls_outvar,            !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_floors_outvar,                      !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
   central ac clg coil,                    !- Key Value
   Cooling Coil Electric Energy,           !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_slabs_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_ceilings_outvar,                    !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_roofs_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_windows_outvar,                     !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_doors_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_skylights_outvar,                   !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_internal_mass_outvar,               !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_intgains_outvar,                    !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_infil_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_mechvent_outvar,                    !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19347,18 +19506,33 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
+  *,                                      !- Key Value
+  clg_natvent_outvar,                     !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  clg_ducts_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Zone Mean Air Temperature,              !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
   furnace htg coil,                       !- Key Value
   Heating Coil Gas Energy,                !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   furnace htg coil,                       !- Key Value
-  Heating Coil Propane Energy,            !- Variable Name
+  Heating Coil FuelOil#1 Energy,          !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   furnace htg coil,                       !- Key Value
-  Heating Coil FuelOil#1 Energy,          !- Variable Name
+  Heating Coil Propane Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19435,10 +19609,32 @@ EnergyManagementSystem:GlobalVariable,
 EnergyManagementSystem:GlobalVariable,
   central_ac_and_furnace_airloop_ZoneMixLvToDZ; !- Erl Variable Name 1
 
+EnergyManagementSystem:GlobalVariable,
+  prev_hr_clg_load_liv;                   !- Erl Variable Name 1
+
+EnergyManagementSystem:GlobalVariable,
+  prev_hr_clg_setpoint;                   !- Erl Variable Name 1
+
+EnergyManagementSystem:GlobalVariable,
+  prev_hr_htg_load_liv;                   !- Erl Variable Name 1
+
+EnergyManagementSystem:GlobalVariable,
+  prev_hr_htg_setpoint;                   !- Erl Variable Name 1
+
 EnergyManagementSystem:InternalVariable,
   central_ac_and_furnace_airloop_max_sup_fan_mfr, !- Name
   central ac and furnace supply fan,      !- Internal Data Index Key Name
   Fan Maximum Mass Flow Rate;             !- Internal Data Type
+
+EnergyManagementSystem:Sensor,
+  airflow_gain,                           !- Name
+  living,                                 !- Output:Variable or Output:Meter Index Key Name
+  Zone Infiltration Sensible Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  airflow_loss,                           !- Name
+  living,                                 !- Output:Variable or Output:Meter Index Key Name
+  Zone Infiltration Sensible Heat Loss Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   airflow_tin_s,                          !- Name
@@ -19511,9 +19707,304 @@ EnergyManagementSystem:Sensor,
   Cooling Coil Electric Energy;           !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
+  clg_load_liv,                           !- Name
+  ,                                       !- Output:Variable or Output:Meter Index Key Name
+  Cooling:EnergyTransfer:Zone:LIVING;     !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  clg_setpoint_temp,                      !- Name
+  living,                                 !- Output:Variable or Output:Meter Index Key Name
+  Zone Thermostat Cooling Setpoint Temperature; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  dhw_loss,                               !- Name
+  water heater,                           !- Output:Variable or Output:Meter Index Key Name
+  Water Heater Heat Loss Energy;          !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  dhw_rtf,                                !- Name
+  water heater,                           !- Output:Variable or Output:Meter Index Key Name
+  Water Heater Runtime Fraction;          !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_conv,                             !- Name
+  central ac and furnace airloop SupCondToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_conv_1,                           !- Name
+  central ac and furnace airloop SupLatLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_conv_2,                           !- Name
+  central ac and furnace airloop SupSensLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_rad,                              !- Name
+  central ac and furnace airloop SupCondToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_rad_1,                            !- Name
+  central ac and furnace airloop SupLatLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_rad_2,                            !- Name
+  central ac and furnace airloop SupSensLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  duct_mix_gain,                          !- Name
+  living,                                 !- Output:Variable or Output:Meter Index Key Name
+  Zone Mixing Sensible Heat Gain Energy;  !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  duct_mix_loss,                          !- Name
+  living,                                 !- Output:Variable or Output:Meter Index Key Name
+  Zone Mixing Sensible Heat Loss Energy;  !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
   furnace_htg_coil_s,                     !- Name
   furnace htg coil,                       !- Output:Variable or Output:Meter Index Key Name
   Heating Coil Gas Energy;                !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  htg_load_liv,                           !- Name
+  ,                                       !- Output:Variable or Output:Meter Index Key Name
+  Heating:EnergyTransfer:Zone:LIVING;     !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  htg_setpoint_temp,                      !- Name
+  living,                                 !- Output:Variable or Output:Meter Index Key Name
+  Zone Thermostat Heating Setpoint Temperature; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_conv,                             !- Name
+  clothes dryer,                          !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_conv_1,                           !- Name
+  clothes washer,                         !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_conv_2,                           !- Name
+  cooking range,                          !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_conv_3,                           !- Name
+  dishwasher,                             !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_conv_4,                           !- Name
+  fridge,                                 !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_conv_5,                           !- Name
+  misc plug loads,                        !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_conv_6,                           !- Name
+  misc tv,                                !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_rad,                              !- Name
+  clothes dryer,                          !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_rad_1,                            !- Name
+  clothes washer,                         !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_rad_2,                            !- Name
+  cooking range,                          !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_rad_3,                            !- Name
+  dishwasher,                             !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_rad_4,                            !- Name
+  fridge,                                 !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_rad_5,                            !- Name
+  misc plug loads,                        !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ee_rad_6,                            !- Name
+  misc tv,                                !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_lgt_conv,                            !- Name
+  interior lighting,                      !- Output:Variable or Output:Meter Index Key Name
+  Lights Convective Heating Energy;       !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_lgt_rad,                             !- Name
+  interior lighting,                      !- Output:Variable or Output:Meter Index Key Name
+  Lights Radiant Heating Energy;          !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_lgt_vis,                             !- Name
+  interior lighting,                      !- Output:Variable or Output:Meter Index Key Name
+  Lights Visible Radiation Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_oe_conv,                             !- Name
+  dhw fixtures Latent,                    !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_oe_conv_1,                           !- Name
+  dhw fixtures Sensible,                  !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_oe_conv_2,                           !- Name
+  water heater EC adjustment,             !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_oe_rad,                              !- Name
+  dhw fixtures Latent,                    !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_oe_rad_1,                            !- Name
+  dhw fixtures Sensible,                  !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_oe_rad_2,                            !- Name
+  water heater EC adjustment,             !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ppl_conv,                            !- Name
+  occupants,                              !- Output:Variable or Output:Meter Index Key Name
+  People Convective Heating Energy;       !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ig_ppl_rad,                             !- Name
+  occupants,                              !- Output:Variable or Output:Meter Index Key Name
+  People Radiant Heating Energy;          !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_conv,                                !- Name
+  furniture mass living basement,         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_conv_1,                              !- Name
+  furniture mass living living,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_conv_2,                              !- Name
+  living Basement Partition,              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_conv_3,                              !- Name
+  living Living Partition,                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_ig,                                  !- Name
+  furniture mass living basement,         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_ig_1,                                !- Name
+  furniture mass living living,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_ig_2,                                !- Name
+  living Basement Partition,              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_ig_3,                                !- Name
+  living Living Partition,                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_lgt,                                 !- Name
+  furniture mass living basement,         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_lgt_1,                               !- Name
+  furniture mass living living,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_lgt_2,                               !- Name
+  living Basement Partition,              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_lgt_3,                               !- Name
+  living Living Partition,                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_sol,                                 !- Name
+  furniture mass living basement,         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_sol_1,                               !- Name
+  furniture mass living living,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_sol_2,                               !- Name
+  living Basement Partition,              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_sol_3,                               !- Name
+  living Living Partition,                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_surf,                                !- Name
+  furniture mass living basement,         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_surf_1,                              !- Name
+  furniture mass living living,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_surf_2,                              !- Name
+  living Basement Partition,              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  im_surf_3,                              !- Name
+  living Living Partition,                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   mech_vent_bath_sch_s,                   !- Name
@@ -19529,6 +20020,36 @@ EnergyManagementSystem:Sensor,
   mech_vent_wh_sch_s,                     !- Name
   Always On Discrete,                     !- Output:Variable or Output:Meter Index Key Name
   Schedule Value;                         !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  mv_conv,                                !- Name
+  mech vent bath fan,                     !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  mv_conv_1,                              !- Name
+  mech vent house fan,                    !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  mv_conv_2,                              !- Name
+  mech vent range fan,                    !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  mv_rad,                                 !- Name
+  mech vent bath fan,                     !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  mv_rad_1,                               !- Name
+  mech vent house fan,                    !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  mv_rad_2,                               !- Name
+  mech vent range fan,                    !- Output:Variable or Output:Meter Index Key Name
+  Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   natural_vent_nva_s,                     !- Name
@@ -19556,6 +20077,441 @@ EnergyManagementSystem:Sensor,
   Site Wind Speed;                        !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
+  ss_conv,                                !- Name
+  DoorNorth,                              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_conv_1,                              !- Name
+  DoorSouth,                              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_conv_2,                              !- Name
+  WindowEast,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_conv_3,                              !- Name
+  WindowNorth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_conv_4,                              !- Name
+  WindowSouth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_conv_5,                              !- Name
+  WindowWest,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_ig,                                  !- Name
+  DoorNorth,                              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_ig_1,                                !- Name
+  DoorSouth,                              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_ig_2,                                !- Name
+  WindowEast,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_ig_3,                                !- Name
+  WindowNorth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_ig_4,                                !- Name
+  WindowSouth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_ig_5,                                !- Name
+  WindowWest,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_sol,                                 !- Name
+  WindowEast,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Window Transmitted Solar Radiation Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_sol_1,                               !- Name
+  WindowNorth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Window Transmitted Solar Radiation Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_sol_2,                               !- Name
+  WindowSouth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Window Transmitted Solar Radiation Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_sol_3,                               !- Name
+  WindowWest,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Window Transmitted Solar Radiation Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_surf,                                !- Name
+  DoorNorth,                              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_surf_1,                              !- Name
+  DoorSouth,                              !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_surf_2,                              !- Name
+  WindowEast,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_surf_3,                              !- Name
+  WindowNorth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_surf_4,                              !- Name
+  WindowSouth,                            !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ss_surf_5,                              !- Name
+  WindowWest,                             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv,                                 !- Name
+  FloorBelowAttic,                        !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_1,                               !- Name
+  FoundationWall,                         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_10,                              !- Name
+  Wall:180,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_11,                              !- Name
+  Wall:270,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_12,                              !- Name
+  Wall:90,                                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_2,                               !- Name
+  inferred conditioned ceiling,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_3,                               !- Name
+  inferred conditioned floor,             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_4,                               !- Name
+  RimJoistFoundation:0,                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_5,                               !- Name
+  RimJoistFoundation:180,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_6,                               !- Name
+  RimJoistFoundation:270,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_7,                               !- Name
+  RimJoistFoundation:90,                  !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_8,                               !- Name
+  Slab,                                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_conv_9,                               !- Name
+  Wall:0,                                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig,                                   !- Name
+  FloorBelowAttic,                        !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_1,                                 !- Name
+  FoundationWall,                         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_10,                                !- Name
+  Wall:180,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_11,                                !- Name
+  Wall:270,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_12,                                !- Name
+  Wall:90,                                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_2,                                 !- Name
+  inferred conditioned ceiling,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_3,                                 !- Name
+  inferred conditioned floor,             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_4,                                 !- Name
+  RimJoistFoundation:0,                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_5,                                 !- Name
+  RimJoistFoundation:180,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_6,                                 !- Name
+  RimJoistFoundation:270,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_7,                                 !- Name
+  RimJoistFoundation:90,                  !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_8,                                 !- Name
+  Slab,                                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_ig_9,                                 !- Name
+  Wall:0,                                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt,                                  !- Name
+  FloorBelowAttic,                        !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_1,                                !- Name
+  FoundationWall,                         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_10,                               !- Name
+  Wall:180,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_11,                               !- Name
+  Wall:270,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_12,                               !- Name
+  Wall:90,                                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_2,                                !- Name
+  inferred conditioned ceiling,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_3,                                !- Name
+  inferred conditioned floor,             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_4,                                !- Name
+  RimJoistFoundation:0,                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_5,                                !- Name
+  RimJoistFoundation:180,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_6,                                !- Name
+  RimJoistFoundation:270,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_7,                                !- Name
+  RimJoistFoundation:90,                  !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_8,                                !- Name
+  Slab,                                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_lgt_9,                                !- Name
+  Wall:0,                                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol,                                  !- Name
+  FloorBelowAttic,                        !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_1,                                !- Name
+  FoundationWall,                         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_10,                               !- Name
+  Wall:180,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_11,                               !- Name
+  Wall:270,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_12,                               !- Name
+  Wall:90,                                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_2,                                !- Name
+  inferred conditioned ceiling,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_3,                                !- Name
+  inferred conditioned floor,             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_4,                                !- Name
+  RimJoistFoundation:0,                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_5,                                !- Name
+  RimJoistFoundation:180,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_6,                                !- Name
+  RimJoistFoundation:270,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_7,                                !- Name
+  RimJoistFoundation:90,                  !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_8,                                !- Name
+  Slab,                                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_sol_9,                                !- Name
+  Wall:0,                                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf,                                 !- Name
+  FloorBelowAttic,                        !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_1,                               !- Name
+  FoundationWall,                         !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_10,                              !- Name
+  Wall:180,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_11,                              !- Name
+  Wall:270,                               !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_12,                              !- Name
+  Wall:90,                                !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_2,                               !- Name
+  inferred conditioned ceiling,           !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_3,                               !- Name
+  inferred conditioned floor,             !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_4,                               !- Name
+  RimJoistFoundation:0,                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_5,                               !- Name
+  RimJoistFoundation:180,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_6,                               !- Name
+  RimJoistFoundation:270,                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_7,                               !- Name
+  RimJoistFoundation:90,                  !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_8,                               !- Name
+  Slab,                                   !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  s_surf_9,                               !- Name
+  Wall:0,                                 !- Output:Variable or Output:Meter Index Key Name
+  Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
   water_heater_EC_adjustment_energy_consumption, !- Name
   water heater EC adjustment,             !- Output:Variable or Output:Meter Index Key Name
   Other Equipment Electric Energy;        !- Output:Variable or Output:Meter Name
@@ -19577,61 +20533,61 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetCondToDZ_equip_act, !- Name
-  central_ac_and_furnace_airloop_RetCondToDZ equip, !- Actuated Component Unique Name
+  central ac and furnace airloop RetCondToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetCondToRP_equip_act, !- Name
-  central_ac_and_furnace_airloop_RetCondToRP equip, !- Actuated Component Unique Name
+  central ac and furnace airloop RetCondToRP equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetLatLkToRP_equip_act, !- Name
-  central_ac_and_furnace_airloop_RetLatLkToRP equip, !- Actuated Component Unique Name
+  central ac and furnace airloop RetLatLkToRP equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetSensLkToRP_equip_act, !- Name
-  central_ac_and_furnace_airloop_RetSensLkToRP equip, !- Actuated Component Unique Name
+  central ac and furnace airloop RetSensLkToRP equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupCondToDZ_equip_act, !- Name
-  central_ac_and_furnace_airloop_SupCondToDZ equip, !- Actuated Component Unique Name
+  central ac and furnace airloop SupCondToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupCondToLv_equip_act, !- Name
-  central_ac_and_furnace_airloop_SupCondToLv equip, !- Actuated Component Unique Name
+  central ac and furnace airloop SupCondToLv equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupLatLkToDZ_equip_act, !- Name
-  central_ac_and_furnace_airloop_SupLatLkToDZ equip, !- Actuated Component Unique Name
+  central ac and furnace airloop SupLatLkToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupLatLkToLv_equip_act, !- Name
-  central_ac_and_furnace_airloop_SupLatLkToLv equip, !- Actuated Component Unique Name
+  central ac and furnace airloop SupLatLkToLv equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupSensLkToDZ_equip_act, !- Name
-  central_ac_and_furnace_airloop_SupSensLkToDZ equip, !- Actuated Component Unique Name
+  central ac and furnace airloop SupSensLkToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupSensLkToLv_equip_act, !- Name
-  central_ac_and_furnace_airloop_SupSensLkToLv equip, !- Actuated Component Unique Name
+  central ac and furnace airloop SupSensLkToLv equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
@@ -19658,6 +20614,12 @@ EnergyManagementSystem:Actuator,
   mech vent bath fan,                     !- Actuated Component Unique Name
   ElectricEquipment,                      !- Actuated Component Type
   Electric Power Level;                   !- Actuated Component Control Type
+
+EnergyManagementSystem:Actuator,
+  mech_vent_flow_act,                     !- Name
+  mech vent flow,                         !- Actuated Component Unique Name
+  Zone Infiltration,                      !- Actuated Component Type
+  Air Exchange Flow Rate;                 !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   mech_vent_house_fan_act,                !- Name
@@ -19719,6 +20681,204 @@ EnergyManagementSystem:Program,
   EndIf;                                  !- Program Line 7
 
 EnergyManagementSystem:Program,
+  component_loads_program,                !- Name
+  Set hr_walls = 0,                       !- Program Line 1
+  Set hr_walls = hr_walls + s_conv_9 + s_ig_9 + s_sol_9 + s_lgt_9 + s_surf_9, !- Program Line 2
+  Set hr_walls = hr_walls + s_conv_10 + s_ig_10 + s_sol_10 + s_lgt_10 + s_surf_10, !- Program Line 3
+  Set hr_walls = hr_walls + s_conv_11 + s_ig_11 + s_sol_11 + s_lgt_11 + s_surf_11, !- Program Line 4
+  Set hr_walls = hr_walls + s_conv_12 + s_ig_12 + s_sol_12 + s_lgt_12 + s_surf_12, !- Program Line 5
+  Set hr_rim_joists = 0,                  !- Program Line 6
+  Set hr_rim_joists = hr_rim_joists + s_conv_4 + s_ig_4 + s_sol_4 + s_lgt_4 + s_surf_4, !- Program Line 7
+  Set hr_rim_joists = hr_rim_joists + s_conv_5 + s_ig_5 + s_sol_5 + s_lgt_5 + s_surf_5, !- Program Line 8
+  Set hr_rim_joists = hr_rim_joists + s_conv_6 + s_ig_6 + s_sol_6 + s_lgt_6 + s_surf_6, !- Program Line 9
+  Set hr_rim_joists = hr_rim_joists + s_conv_7 + s_ig_7 + s_sol_7 + s_lgt_7 + s_surf_7, !- Program Line 10
+  Set hr_foundation_walls = 0,            !- Program Line 11
+  Set hr_foundation_walls = hr_foundation_walls + s_conv_1 + s_ig_1 + s_sol_1 + s_lgt_1 + s_surf_1, !- Program Line 12
+  Set hr_floors = 0,                      !- Program Line 13
+  Set hr_slabs = 0,                       !- Program Line 14
+  Set hr_slabs = hr_slabs + s_conv_8 + s_ig_8 + s_sol_8 + s_lgt_8 + s_surf_8, !- Program Line 15
+  Set hr_ceilings = 0,                    !- Program Line 16
+  Set hr_ceilings = hr_ceilings + s_conv + s_ig + s_sol + s_lgt + s_surf, !- Program Line 17
+  Set hr_roofs = 0,                       !- Program Line 18
+  Set hr_windows = 0,                     !- Program Line 19
+  Set hr_windows = hr_windows + ss_conv_2 + ss_ig_2 + ss_surf_2 - ss_sol, !- Program Line 20
+  Set hr_windows = hr_windows + ss_conv_3 + ss_ig_3 + ss_surf_3 - ss_sol_1, !- Program Line 21
+  Set hr_windows = hr_windows + ss_conv_4 + ss_ig_4 + ss_surf_4 - ss_sol_2, !- Program Line 22
+  Set hr_windows = hr_windows + ss_conv_5 + ss_ig_5 + ss_surf_5 - ss_sol_3, !- Program Line 23
+  Set hr_doors = 0,                       !- Program Line 24
+  Set hr_doors = hr_doors + ss_conv + ss_ig + ss_surf, !- Program Line 25
+  Set hr_doors = hr_doors + ss_conv_1 + ss_ig_1 + ss_surf_1, !- Program Line 26
+  Set hr_skylights = 0,                   !- Program Line 27
+  Set hr_internal_mass = 0,               !- Program Line 28
+  Set hr_internal_mass = hr_internal_mass + s_conv_2 + s_ig_2 + s_sol_2 + s_lgt_2 + s_surf_2, !- Program Line 29
+  Set hr_internal_mass = hr_internal_mass + s_conv_3 + s_ig_3 + s_sol_3 + s_lgt_3 + s_surf_3, !- Program Line 30
+  Set hr_internal_mass = hr_internal_mass + im_conv + im_ig + im_sol + im_lgt + im_surf, !- Program Line 31
+  Set hr_internal_mass = hr_internal_mass + im_conv_1 + im_ig_1 + im_sol_1 + im_lgt_1 + im_surf_1, !- Program Line 32
+  Set hr_internal_mass = hr_internal_mass + im_conv_2 + im_ig_2 + im_sol_2 + im_lgt_2 + im_surf_2, !- Program Line 33
+  Set hr_internal_mass = hr_internal_mass + im_conv_3 + im_ig_3 + im_sol_3 + im_lgt_3 + im_surf_3, !- Program Line 34
+  Set hr_intgains = 0,                    !- Program Line 35
+  Set hr_intgains = hr_intgains - ig_ee_conv - ig_ee_rad, !- Program Line 36
+  Set hr_intgains = hr_intgains - ig_ee_conv_1 - ig_ee_rad_1, !- Program Line 37
+  Set hr_intgains = hr_intgains - ig_ee_conv_2 - ig_ee_rad_2, !- Program Line 38
+  Set hr_intgains = hr_intgains - ig_ee_conv_3 - ig_ee_rad_3, !- Program Line 39
+  Set hr_intgains = hr_intgains - ig_ee_conv_4 - ig_ee_rad_4, !- Program Line 40
+  Set hr_intgains = hr_intgains - ig_ee_conv_5 - ig_ee_rad_5, !- Program Line 41
+  Set hr_intgains = hr_intgains - ig_ee_conv_6 - ig_ee_rad_6, !- Program Line 42
+  Set hr_intgains = hr_intgains - ig_oe_conv - ig_oe_rad, !- Program Line 43
+  Set hr_intgains = hr_intgains - ig_oe_conv_1 - ig_oe_rad_1, !- Program Line 44
+  Set hr_intgains = hr_intgains - ig_oe_conv_2 - ig_oe_rad_2, !- Program Line 45
+  Set hr_intgains = hr_intgains - ig_lgt_conv - ig_lgt_rad - ig_lgt_vis, !- Program Line 46
+  Set hr_intgains = hr_intgains - ig_ppl_conv - ig_ppl_rad, !- Program Line 47
+  Set hr_intgains = hr_intgains + dhw_loss * (1.0*(1-dhw_rtf) + 1.0*dhw_rtf), !- Program Line 48
+  Set hr_airflow_rate = infil_flow_act + mech_vent_flow_act + natural_vent_flow_act, !- Program Line 49
+  Set hr_infil = (airflow_loss - airflow_gain) * infil_flow_act / hr_airflow_rate, !- Program Line 50
+  Set hr_natvent = (airflow_loss - airflow_gain) * natural_vent_flow_act / hr_airflow_rate, !- Program Line 51
+  Set hr_mechvent = 0,                    !- Program Line 52
+  Set hr_mechvent = hr_mechvent + ((airflow_loss - airflow_gain) * mech_vent_flow_act / hr_airflow_rate), !- Program Line 53
+  Set hr_mechvent = hr_mechvent - mv_conv - mv_rad - mv_conv_1 - mv_rad_1 - mv_conv_2 - mv_rad_2, !- Program Line 54
+  Set hr_ducts = 0,                       !- Program Line 55
+  Set hr_ducts = hr_ducts - ducts_conv - ducts_rad, !- Program Line 56
+  Set hr_ducts = hr_ducts - ducts_conv_1 - ducts_rad_1, !- Program Line 57
+  Set hr_ducts = hr_ducts - ducts_conv_2 - ducts_rad_2, !- Program Line 58
+  Set hr_ducts = hr_ducts + (duct_mix_loss - duct_mix_gain), !- Program Line 59
+  Set htg_mode = 0,                       !- Program Line 60
+  If htg_load_liv > 0,                    !- Program Line 61
+  Set htg_mode = 1,                       !- Program Line 62
+  EndIf,                                  !- Program Line 63
+  Set htg_walls = hr_walls * htg_mode,    !- Program Line 64
+  Set htg_rim_joists = hr_rim_joists * htg_mode, !- Program Line 65
+  Set htg_foundation_walls = hr_foundation_walls * htg_mode, !- Program Line 66
+  Set htg_floors = hr_floors * htg_mode,  !- Program Line 67
+  Set htg_slabs = hr_slabs * htg_mode,    !- Program Line 68
+  Set htg_ceilings = hr_ceilings * htg_mode, !- Program Line 69
+  Set htg_roofs = hr_roofs * htg_mode,    !- Program Line 70
+  Set htg_windows = hr_windows * htg_mode, !- Program Line 71
+  Set htg_doors = hr_doors * htg_mode,    !- Program Line 72
+  Set htg_skylights = hr_skylights * htg_mode, !- Program Line 73
+  Set htg_internal_mass = hr_internal_mass * htg_mode, !- Program Line 74
+  Set htg_intgains = hr_intgains * htg_mode, !- Program Line 75
+  Set htg_infil = hr_infil * htg_mode,    !- Program Line 76
+  Set htg_mechvent = hr_mechvent * htg_mode, !- Program Line 77
+  Set htg_natvent = hr_natvent * htg_mode, !- Program Line 78
+  Set htg_ducts = hr_ducts * htg_mode,    !- Program Line 79
+  Set htg_ratio = 0,                      !- Program Line 80
+  If (htg_setpoint_temp <> prev_hr_htg_setpoint) && (htg_mode > 0), !- Program Line 81
+  Set htg_ratio = 1,                      !- Program Line 82
+  ElseIf (htg_load_liv * prev_hr_htg_load_liv == 0) && (htg_mode > 0), !- Program Line 83
+  Set htg_ratio = 1,                      !- Program Line 84
+  EndIf,                                  !- Program Line 85
+  If htg_ratio > 0,                       !- Program Line 86
+  Set htg_sum = 0,                        !- Program Line 87
+  Set htg_sum = htg_sum + htg_walls,      !- Program Line 88
+  Set htg_sum = htg_sum + htg_rim_joists, !- Program Line 89
+  Set htg_sum = htg_sum + htg_foundation_walls, !- Program Line 90
+  Set htg_sum = htg_sum + htg_floors,     !- Program Line 91
+  Set htg_sum = htg_sum + htg_slabs,      !- Program Line 92
+  Set htg_sum = htg_sum + htg_ceilings,   !- Program Line 93
+  Set htg_sum = htg_sum + htg_roofs,      !- Program Line 94
+  Set htg_sum = htg_sum + htg_windows,    !- Program Line 95
+  Set htg_sum = htg_sum + htg_doors,      !- Program Line 96
+  Set htg_sum = htg_sum + htg_skylights,  !- Program Line 97
+  Set htg_sum = htg_sum + htg_internal_mass, !- Program Line 98
+  Set htg_sum = htg_sum + htg_intgains,   !- Program Line 99
+  Set htg_sum = htg_sum + htg_infil,      !- Program Line 100
+  Set htg_sum = htg_sum + htg_mechvent,   !- Program Line 101
+  Set htg_sum = htg_sum + htg_natvent,    !- Program Line 102
+  Set htg_sum = htg_sum + htg_ducts,      !- Program Line 103
+  If htg_sum <> 0,                        !- Program Line 104
+  Set htg_load_ratio = htg_load_liv / htg_sum, !- Program Line 105
+  Else,                                   !- Program Line 106
+  Set htg_load_ratio = 1,                 !- Program Line 107
+  EndIf,                                  !- Program Line 108
+  Set htg_walls = htg_walls * htg_load_ratio, !- Program Line 109
+  Set htg_rim_joists = htg_rim_joists * htg_load_ratio, !- Program Line 110
+  Set htg_foundation_walls = htg_foundation_walls * htg_load_ratio, !- Program Line 111
+  Set htg_floors = htg_floors * htg_load_ratio, !- Program Line 112
+  Set htg_slabs = htg_slabs * htg_load_ratio, !- Program Line 113
+  Set htg_ceilings = htg_ceilings * htg_load_ratio, !- Program Line 114
+  Set htg_roofs = htg_roofs * htg_load_ratio, !- Program Line 115
+  Set htg_windows = htg_windows * htg_load_ratio, !- Program Line 116
+  Set htg_doors = htg_doors * htg_load_ratio, !- Program Line 117
+  Set htg_skylights = htg_skylights * htg_load_ratio, !- Program Line 118
+  Set htg_internal_mass = htg_internal_mass * htg_load_ratio, !- Program Line 119
+  Set htg_intgains = htg_intgains * htg_load_ratio, !- Program Line 120
+  Set htg_infil = htg_infil * htg_load_ratio, !- Program Line 121
+  Set htg_mechvent = htg_mechvent * htg_load_ratio, !- Program Line 122
+  Set htg_natvent = htg_natvent * htg_load_ratio, !- Program Line 123
+  Set htg_ducts = htg_ducts * htg_load_ratio, !- Program Line 124
+  EndIf,                                  !- Program Line 125
+  Set prev_hr_htg_load_liv = htg_load_liv, !- Program Line 126
+  Set prev_hr_htg_setpoint = htg_setpoint_temp, !- Program Line 127
+  Set clg_mode = 0,                       !- Program Line 128
+  If clg_load_liv > 0,                    !- Program Line 129
+  Set clg_mode = 1,                       !- Program Line 130
+  EndIf,                                  !- Program Line 131
+  Set clg_walls = -hr_walls * clg_mode,   !- Program Line 132
+  Set clg_rim_joists = -hr_rim_joists * clg_mode, !- Program Line 133
+  Set clg_foundation_walls = -hr_foundation_walls * clg_mode, !- Program Line 134
+  Set clg_floors = -hr_floors * clg_mode, !- Program Line 135
+  Set clg_slabs = -hr_slabs * clg_mode,   !- Program Line 136
+  Set clg_ceilings = -hr_ceilings * clg_mode, !- Program Line 137
+  Set clg_roofs = -hr_roofs * clg_mode,   !- Program Line 138
+  Set clg_windows = -hr_windows * clg_mode, !- Program Line 139
+  Set clg_doors = -hr_doors * clg_mode,   !- Program Line 140
+  Set clg_skylights = -hr_skylights * clg_mode, !- Program Line 141
+  Set clg_internal_mass = -hr_internal_mass * clg_mode, !- Program Line 142
+  Set clg_intgains = -hr_intgains * clg_mode, !- Program Line 143
+  Set clg_infil = -hr_infil * clg_mode,   !- Program Line 144
+  Set clg_mechvent = -hr_mechvent * clg_mode, !- Program Line 145
+  Set clg_natvent = -hr_natvent * clg_mode, !- Program Line 146
+  Set clg_ducts = -hr_ducts * clg_mode,   !- Program Line 147
+  Set clg_ratio = 0,                      !- Program Line 148
+  If (clg_setpoint_temp <> prev_hr_clg_setpoint) && (clg_mode > 0), !- Program Line 149
+  Set clg_ratio = 1,                      !- Program Line 150
+  ElseIf (clg_load_liv * prev_hr_clg_load_liv == 0) && (clg_mode > 0), !- Program Line 151
+  Set clg_ratio = 1,                      !- Program Line 152
+  EndIf,                                  !- Program Line 153
+  If clg_ratio > 0,                       !- Program Line 154
+  Set clg_sum = 0,                        !- Program Line 155
+  Set clg_sum = clg_sum + clg_walls,      !- Program Line 156
+  Set clg_sum = clg_sum + clg_rim_joists, !- Program Line 157
+  Set clg_sum = clg_sum + clg_foundation_walls, !- Program Line 158
+  Set clg_sum = clg_sum + clg_floors,     !- Program Line 159
+  Set clg_sum = clg_sum + clg_slabs,      !- Program Line 160
+  Set clg_sum = clg_sum + clg_ceilings,   !- Program Line 161
+  Set clg_sum = clg_sum + clg_roofs,      !- Program Line 162
+  Set clg_sum = clg_sum + clg_windows,    !- Program Line 163
+  Set clg_sum = clg_sum + clg_doors,      !- Program Line 164
+  Set clg_sum = clg_sum + clg_skylights,  !- Program Line 165
+  Set clg_sum = clg_sum + clg_internal_mass, !- Program Line 166
+  Set clg_sum = clg_sum + clg_intgains,   !- Program Line 167
+  Set clg_sum = clg_sum + clg_infil,      !- Program Line 168
+  Set clg_sum = clg_sum + clg_mechvent,   !- Program Line 169
+  Set clg_sum = clg_sum + clg_natvent,    !- Program Line 170
+  Set clg_sum = clg_sum + clg_ducts,      !- Program Line 171
+  If clg_sum <> 0,                        !- Program Line 172
+  Set clg_load_ratio = clg_load_liv / clg_sum, !- Program Line 173
+  Else,                                   !- Program Line 174
+  Set clg_load_ratio = 1,                 !- Program Line 175
+  EndIf,                                  !- Program Line 176
+  Set clg_walls = clg_walls * clg_load_ratio, !- Program Line 177
+  Set clg_rim_joists = clg_rim_joists * clg_load_ratio, !- Program Line 178
+  Set clg_foundation_walls = clg_foundation_walls * clg_load_ratio, !- Program Line 179
+  Set clg_floors = clg_floors * clg_load_ratio, !- Program Line 180
+  Set clg_slabs = clg_slabs * clg_load_ratio, !- Program Line 181
+  Set clg_ceilings = clg_ceilings * clg_load_ratio, !- Program Line 182
+  Set clg_roofs = clg_roofs * clg_load_ratio, !- Program Line 183
+  Set clg_windows = clg_windows * clg_load_ratio, !- Program Line 184
+  Set clg_doors = clg_doors * clg_load_ratio, !- Program Line 185
+  Set clg_skylights = clg_skylights * clg_load_ratio, !- Program Line 186
+  Set clg_internal_mass = clg_internal_mass * clg_load_ratio, !- Program Line 187
+  Set clg_intgains = clg_intgains * clg_load_ratio, !- Program Line 188
+  Set clg_infil = clg_infil * clg_load_ratio, !- Program Line 189
+  Set clg_mechvent = clg_mechvent * clg_load_ratio, !- Program Line 190
+  Set clg_natvent = clg_natvent * clg_load_ratio, !- Program Line 191
+  Set clg_ducts = clg_ducts * clg_load_ratio, !- Program Line 192
+  EndIf,                                  !- Program Line 193
+  Set prev_hr_clg_load_liv = clg_load_liv, !- Program Line 194
+  Set prev_hr_clg_setpoint = clg_setpoint_temp; !- Program Line 195
+
+EnergyManagementSystem:Program,
   infil_program,                          !- Name
   Set p_m = 0.14,                         !- Program Line 1
   Set p_s = 0.22,                         !- Program Line 2
@@ -19747,14 +20907,16 @@ EnergyManagementSystem:Program,
   Set QductsOut = QductsOut+central_ac_and_furnace_airloop_LkExhFanEquiv, !- Program Line 25
   Set QductsIn = QductsIn+central_ac_and_furnace_airloop_LkSupFanEquiv, !- Program Line 26
   Set Qout = Qrange+Qbath+Qdryer+QhpwhOut+QductsOut, !- Program Line 27
-  Set Qin = QWHV+QhpwhIn+QductsIn,        !- Program Line 28
-  Set Qu = @Abs (Qout- Qin),              !- Program Line 29
+  Set Qin = QhpwhIn+QductsIn,             !- Program Line 28
+  Set Qu = (@Abs (Qout-Qin)),             !- Program Line 29
   Set mech_vent_house_fan_act = 0.0,      !- Program Line 30
   Set mech_vent_range_fan_act = Qrange * 635.6640009867945, !- Program Line 31
   Set mech_vent_bath_fan_act = Qbath * 635.6640009867945, !- Program Line 32
   Set Q_acctd_for_elsewhere = QhpwhOut+QhpwhIn+QductsOut+QductsIn, !- Program Line 33
-  Set infil_flow_act = (((Qu^2)+(Qn^2))^0.5)-Q_acctd_for_elsewhere, !- Program Line 34
-  Set infil_flow_act = (@Max infil_flow_act 0); !- Program Line 35
+  Set Q_tot_flow = (((Qu^2)+(Qn^2))^0.5)-Q_acctd_for_elsewhere, !- Program Line 34
+  Set Q_tot_flow = (@Max Q_tot_flow 0),   !- Program Line 35
+  Set infil_flow_act = Q_tot_flow - QWHV, !- Program Line 36
+  Set mech_vent_flow_act = QWHV;          !- Program Line 37
 
 EnergyManagementSystem:Program,
   natural_vent_program,                   !- Name
@@ -19895,6 +21057,11 @@ EnergyManagementSystem:ProgramCallingManager,
   central_ac_and_furnace_supply_fan_disaggregate_program; !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
+  component loads program calling manager, !- Name
+  EndOfZoneTimestepAfterZoneReporting,    !- EnergyPlus Model Calling Point
+  component_loads_program;                !- Program Name 1
+
+EnergyManagementSystem:ProgramCallingManager,
   water heater EC_adj ProgramManager,     !- Name
   EndOfSystemTimestepBeforeHVACReporting, !- EnergyPlus Model Calling Point
   water_heater_EC_adj;                    !- Program Name 1
@@ -19916,7 +21083,263 @@ EnergyManagementSystem:OutputVariable,
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
-  water heater EC adjustment,             !- Name
+  clg_ceilings_outvar,                    !- Name
+  clg_ceilings,                           !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_doors_outvar,                       !- Name
+  clg_doors,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_ducts_outvar,                       !- Name
+  clg_ducts,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_floors_outvar,                      !- Name
+  clg_floors,                             !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_foundation_walls_outvar,            !- Name
+  clg_foundation_walls,                   !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_infil_outvar,                       !- Name
+  clg_infil,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_internal_mass_outvar,               !- Name
+  clg_internal_mass,                      !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_intgains_outvar,                    !- Name
+  clg_intgains,                           !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_mechvent_outvar,                    !- Name
+  clg_mechvent,                           !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_natvent_outvar,                     !- Name
+  clg_natvent,                            !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_rim_joists_outvar,                  !- Name
+  clg_rim_joists,                         !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_roofs_outvar,                       !- Name
+  clg_roofs,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_skylights_outvar,                   !- Name
+  clg_skylights,                          !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_slabs_outvar,                       !- Name
+  clg_slabs,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_walls_outvar,                       !- Name
+  clg_walls,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  clg_windows_outvar,                     !- Name
+  clg_windows,                            !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_ceilings_outvar,                    !- Name
+  htg_ceilings,                           !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_doors_outvar,                       !- Name
+  htg_doors,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_ducts_outvar,                       !- Name
+  htg_ducts,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_floors_outvar,                      !- Name
+  htg_floors,                             !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_foundation_walls_outvar,            !- Name
+  htg_foundation_walls,                   !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_infil_outvar,                       !- Name
+  htg_infil,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_internal_mass_outvar,               !- Name
+  htg_internal_mass,                      !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_intgains_outvar,                    !- Name
+  htg_intgains,                           !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_mechvent_outvar,                    !- Name
+  htg_mechvent,                           !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_natvent_outvar,                     !- Name
+  htg_natvent,                            !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_rim_joists_outvar,                  !- Name
+  htg_rim_joists,                         !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_roofs_outvar,                       !- Name
+  htg_roofs,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_skylights_outvar,                   !- Name
+  htg_skylights,                          !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_slabs_outvar,                       !- Name
+  htg_slabs,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_walls_outvar,                       !- Name
+  htg_walls,                              !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  htg_windows_outvar,                     !- Name
+  htg_windows,                            !- EMS Variable Name
+  Summed,                                 !- Type of Data in Variable
+  ZoneTimestep,                           !- Update Frequency
+  component_loads_program,                !- EMS Program or Subroutine Name
+  J;                                      !- Units
+
+EnergyManagementSystem:OutputVariable,
+  water heater EC adjustment outvar,      !- Name
   water_heater_EC_adjustment_energy_consumption, !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
@@ -19945,7 +21368,7 @@ LifeCycleCost:NonrecurringCost,
 Output:Table:Monthly,
   Peak Electricity Winter Total,          !- Name
   2,                                      !- Digits After Decimal
-  Heating:EnergyTransfer:Zone:LIVING,     !- Variable or Meter Name 1
+  Heating:EnergyTransfer,                 !- Variable or Meter Name 1
   HoursPositive,                          !- Aggregation Type for Variable or Meter 1
   Electricity:Facility,                   !- Variable or Meter Name 2
   MaximumDuringHoursShown;                !- Aggregation Type for Variable or Meter 2
@@ -19953,7 +21376,7 @@ Output:Table:Monthly,
 Output:Table:Monthly,
   Peak Electricity Summer Total,          !- Name
   2,                                      !- Digits After Decimal
-  Cooling:EnergyTransfer:Zone:LIVING,     !- Variable or Meter Name 1
+  Cooling:EnergyTransfer,                 !- Variable or Meter Name 1
   HoursPositive,                          !- Aggregation Type for Variable or Meter 1
   Electricity:Facility,                   !- Variable or Meter Name 2
   MaximumDuringHoursShown;                !- Aggregation Type for Variable or Meter 2

@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.11.06 07:58,
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Constant="ALWAYS ON CONTINUOUS", Blank Schedule Type Limits Name input -- will not be validated.
@@ -20,20 +20,20 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.11.06 07:58,
    ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC CLG COIL but not at the AHRI test condition due to curve out of bound.
    **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="PROPANE:FACILITY" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CEILING FAN:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FUELOIL#1:FACILITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FUELOIL#1:FACILITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="GARAGE LIGHTING:INTERIORLIGHTS:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:PROPANE" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:FUELOIL#1" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOIL#1" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#1" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FUELOIL#1:FACILITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:GAS" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="PROPANE:FACILITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOIL#1" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="GARAGE LIGHTING:INTERIORLIGHTS:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FUELOIL#1:FACILITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#1" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:GAS" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:FUELOIL#1" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="PROPANE:FACILITY" - not found.
    ************* Testing Individual Branch Integrity
@@ -85,10 +85,10 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.11.06 07:58,
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
    **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
    ************* Key=water heater, VarName=WATER HEATER GAS ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
    ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
    ************* There are 4 unused schedules in input.
    ************* There are 67 unused week schedules in input.
    ************* There are 40 unused day schedules in input.
@@ -113,4 +113,4 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.11.06 07:58,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 14448 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  6.88sec
+   ************* EnergyPlus Completed Successfully-- 14448 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.64sec
