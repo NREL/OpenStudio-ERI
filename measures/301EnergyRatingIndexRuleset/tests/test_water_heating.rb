@@ -590,6 +590,35 @@ class WaterHeatingTest < MiniTest::Test
     end
   end
 
+  def test_indirect_standbyloss
+    hpxml_name = "base-dhw-indirect-standbyloss.xml"
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_water_heater(hpxml_doc, ["storage water heater", "natural gas", "living space", 50, 0.575])
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 93.5, nil, nil, nil, nil)
+    _check_water_fixtures(hpxml_doc, false, false)
+    _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_water_heater(hpxml_doc, ["space-heating boiler with storage tank", nil, "living space", 50, nil, nil, 1.0])
+    _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 50, nil, nil, nil, nil)
+    _check_water_fixtures(hpxml_doc, true, false)
+    _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
+
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_water_heater(hpxml_doc, ["storage water heater", "natural gas", "living space", 50, 0.575])
+      _check_hot_water_distribution(hpxml_doc, "Standard", 0.0, 89.28, nil, nil, nil, nil)
+      _check_water_fixtures(hpxml_doc, false, false)
+      _check_drain_water_heat_recovery(hpxml_doc, false, nil, nil, nil)
+    end
+  end
+
   def test_water_heating_pre_addendum_a
     hpxml_name = "base-addenda-exclude-g-e-a.xml"
 
@@ -667,7 +696,7 @@ class WaterHeatingTest < MiniTest::Test
   def _check_water_heater(hpxml_doc, *systems)
     assert_equal(systems.size, hpxml_doc.elements["count(/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem)"])
     hpxml_doc.elements.each_with_index("/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem") do |wh, idx|
-      whtype, fuel_type, location, tank_vol, ef, jacket_r = systems[idx]
+      whtype, fuel_type, location, tank_vol, ef, jacket_r, standby_loss = systems[idx]
       assert_equal(wh.elements["WaterHeaterType"].text, whtype)
       assert_equal(wh.elements["Location"].text, location)
       if fuel_type.nil?
@@ -689,6 +718,11 @@ class WaterHeatingTest < MiniTest::Test
         assert_nil(wh.elements["WaterHeaterInsulation/Jacket/JacketRValue"])
       else
         assert_in_epsilon(Float(wh.elements["WaterHeaterInsulation/Jacket/JacketRValue"].text), jacket_r, 0.01)
+      end
+      if standby_loss.nil?
+        assert_nil(wh.elements["extension/StandbyLoss"])
+      else
+        assert_in_epsilon(Float(wh.elements["extension/StandbyLoss"].text), standby_loss, 0.01)
       end
     end
   end
