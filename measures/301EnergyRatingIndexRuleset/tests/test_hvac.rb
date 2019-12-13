@@ -334,7 +334,7 @@ class HVACtest < MiniTest::Test
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml_doc, ["air-to-air", "electricity", nil, nil, 1.0, 1.0, nil, nil, "natural gas", 0.8, 25.0])
+    _check_heat_pump(hpxml_doc, ["air-to-air", "electricity", nil, nil, 1.0, 1.0, nil, nil, "natural gas", 0.95, 25.0])
     _check_cooling_system(hpxml_doc)
     _check_heating_system(hpxml_doc)
     _check_thermostat(hpxml_doc, "manual thermostat", 68, 78)
