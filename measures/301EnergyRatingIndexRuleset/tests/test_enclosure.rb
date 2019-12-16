@@ -498,6 +498,24 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, nil)
+
+    hpxml_name = "base-foundation-conditioned-basement-slab-insulation.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_slabs(hpxml_doc, 1350, 150, 0, 0, 4, 10, nil)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_slabs(hpxml_doc, 1350, 150, 0, 0, 0, 0, nil)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, nil)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_slabs(hpxml_doc, 1200, 138.6, 0, 0, 0, 0, nil)
   end
 
   def test_enclosure_windows
