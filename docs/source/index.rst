@@ -14,7 +14,9 @@ OpenStudio-ERI documentation
    capabilities
    getting_started
    software_connection
+   outputs
    testing_framework
+   packaging
 
 Indices and tables
 ==================

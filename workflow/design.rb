@@ -11,10 +11,10 @@ def get_output_hpxml_path(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
+def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design}] Creating input...\n"
-  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation)
+  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation, hourly_output)
 
   if not designdir.nil?
     print "[#{design}] Running simulation...\n"
@@ -24,7 +24,7 @@ def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_valid
   return output_hpxml_path
 end
 
-def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation)
+def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation, hourly_output)
   designdir = get_designdir(output_dir, design)
   Dir.mkdir(designdir)
 
@@ -86,9 +86,49 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
     return output_hpxml_path, nil
   end
 
-  # Write model to IDF
+  # Add hourly output requests
+  if hourly_output
+    # Thermal zone temperatures:
+    output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
+    output_var.setReportingFrequency('hourly')
+    output_var.setKeyValue('*')
+
+    # Energy use by fuel:
+    ['Electricity:Facility', 'Gas:Facility', 'FuelOil#1:Facility', 'Propane:Facility'].each do |meter_fuel|
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName(meter_fuel)
+      output_meter.setReportingFrequency('hourly')
+    end
+  end
+
+  # Translate model
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
+  forward_translator.setExcludeLCCObjects(true)
   model_idf = forward_translator.translateModel(model)
+
+  # Report warnings/errors
+  File.open(File.join(designdir, 'run.log'), 'a') do |f|
+    forward_translator.warnings.each do |s|
+      f << "FT Warning: #{s.logMessage}\n"
+    end
+    forward_translator.errors.each do |s|
+      f << "FT Error: #{s.logMessage}\n"
+    end
+  end
+
+  # Add Output:Table:Monthly objects for peak electricity outputs
+  { "Heating" => "Winter", "Cooling" => "Summer" }.each do |mode, season|
+    monthly_array = ["Output:Table:Monthly",
+                     "Peak Electricity #{season} Total",
+                     "2",
+                     "#{mode}:EnergyTransfer",
+                     "HoursPositive",
+                     "Electricity:Facility",
+                     "MaximumDuringHoursShown"]
+    model_idf.addObject(OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get)
+  end
+
+  # Write model to IDF
   File.open(File.join(designdir, "in.idf"), 'w') { |f| f << model_idf.to_s }
 
   return output_hpxml_path, designdir
@@ -97,11 +137,11 @@ end
 def run_energyplus(design, designdir)
   # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
   ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
-  command = "cd #{designdir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
+  command = "cd \"#{designdir}\" && \"#{ep_path}\" -w in.epw in.idf > stdout-energyplus"
   system(command, :err => File::NULL)
 end
 
-if ARGV.size == 7
+if ARGV.size == 8
   basedir = ARGV[0]
   output_dir = ARGV[1]
   design = ARGV[2]
@@ -109,5 +149,6 @@ if ARGV.size == 7
   hpxml = ARGV[4]
   debug = (ARGV[5].downcase.to_s == "true")
   skip_validation = (ARGV[6].downcase.to_s == "true")
-  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation)
+  hourly_output = (ARGV[7].downcase.to_s == "true")
+  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
 end

@@ -20,12 +20,14 @@ The current set of tests include:
 Test Results
 ------------
 
-Test results in CSV format can be found on the `CI machine <https://circleci.com/gh/NREL/OpenStudio-ERI>`_ for any build under the "Artifacts" tab.
+Automatic test results in CSV format can be accessed on the `CI machine <https://circleci.com/gh/NREL/OpenStudio-ERI>`_ for any job that has completed (e.g., "SUCCESS") under the "Artifacts" tab.
+Each CI job represents running the complete set of tests for a given GitHub commit.
+Jobs that have not been completed will not have an "Artifacts" tab with results.
 
 If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
 Note that EnergyPlus cannot currently pass the ANSI/ASHRAE Standard 140-2011 tests, for which test criteria were set by decades old simulation engines.
-There have been discussions about updating the test criteria using EnergyPlus and other modern simulation engines, but nothing has been done to date.
-In order to apply for RESNET accreditation, software developers will need to use the "Process for Exceptions and Appeals" in the Procedures for Verification of RESNET Accredited HERS Software Tools document.
+There have been discussions about updating the test criteria using EnergyPlus and other modern simulation engines.
+In the meantime, in order to apply for RESNET accreditation software developers will need to use the "Process for Exceptions and Appeals" in the Procedures for Verification of RESNET Accredited HERS Software Tools document.
 
 Running Tests Locally
 ---------------------
@@ -37,6 +39,7 @@ Tests can also be run locally, as shown below. Individual tests (any method in w
 
 Test results in CSV format are created at workflow/tests/test_results. 
 For many RESNET tests, the Excel spreadsheet test criteria are also implemented in code to automate the process of checking for test failures.
+All simulation/HPXML/etc. files generated from running the tests can be found inside the workflow/tests/test_files directory.
 
 At the completion of the test, there will also be output that denotes the number of failures/errors like so:
 
