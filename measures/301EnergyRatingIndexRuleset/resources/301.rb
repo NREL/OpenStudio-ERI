@@ -1069,15 +1069,13 @@ class EnergyRatingIndex301Ruleset
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
-    total_window_area = 0.18 * @cfa * fa * f
-
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
     # Create windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
       HPXML.add_window(hpxml: hpxml,
                        id: "WindowArea#{orientation}",
-                       area: total_window_area * 0.25,
+                       area: 0.18 * @cfa * fa * f * 0.25,
                        azimuth: azimuth,
                        ufactor: ufactor,
                        shgc: shgc,
@@ -1109,8 +1107,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Glazing
-    total_window_area = 0.18 * @cfa
-
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
     windows_values = {}
@@ -1125,7 +1121,7 @@ class EnergyRatingIndex301Ruleset
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
       HPXML.add_window(hpxml: hpxml,
                        id: "WindowArea#{orientation}",
-                       area: total_window_area * 0.25,
+                       area: 0.18 * @cfa * 0.25,
                        azimuth: azimuth,
                        ufactor: avg_ufactor,
                        shgc: avg_shgc,
@@ -1177,13 +1173,12 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_doors_reference(orig_details, hpxml)
     # Table 4.2.2(1) - Doors
     ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
-    door_area = Constructions.get_default_door_area()
 
     # Create new door
     HPXML.add_door(hpxml: hpxml,
                    id: "DoorAreaNorth",
                    wall_idref: "WallArea",
-                   area: door_area,
+                   area: Constructions.get_default_door_area(),
                    azimuth: 0,
                    r_value: 1.0 / ufactor)
   end
@@ -1203,8 +1198,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_iad(orig_details, hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
-    door_area = Constructions.get_default_door_area()
-
     doors_values = {}
     orig_details.elements.each("Enclosure/Doors/Door") do |door|
       doors_values[door] = HPXML.get_door_values(door: door)
@@ -1217,7 +1210,7 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_door(hpxml: hpxml,
                    id: "DoorAreaNorth",
                    wall_idref: "WallArea",
-                   area: door_area,
+                   area: Constructions.get_default_door_area(),
                    azimuth: 0,
                    r_value: avg_r_value)
   end
@@ -1609,18 +1602,14 @@ class EnergyRatingIndex301Ruleset
         break
       end
     end
-    fan_type = "balanced"
     q_fan = calc_mech_vent_q_fan(q_tot, sla)
-
-    w_cfm = 0.70
-    fan_power_w = w_cfm * q_fan
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: "VentilationFan",
-                              fan_type: fan_type,
+                              fan_type: "balanced",
                               tested_flow_rate: q_fan,
                               hours_in_operation: 24,
-                              fan_power: fan_power_w)
+                              fan_power: 0.7 * q_fan)
   end
 
   def self.set_systems_water_heater_reference(orig_details, hpxml)
@@ -1637,9 +1626,6 @@ class EnergyRatingIndex301Ruleset
         wh_sys_values[:fuel_type] = Waterheater.get_combi_system_fuel(wh_sys_values[:related_hvac], orig_details)
       end
 
-      wh_sys_values[:water_heater_type] = 'storage water heater'
-      wh_sys_values[:jacket_r_value] = nil
-
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])
 
       num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
@@ -1651,25 +1637,17 @@ class EnergyRatingIndex301Ruleset
       end
       wh_sys_values[:location].gsub!("unvented", "vented")
 
-      # Ensure no desuperheater
-      wh_sys_values[:uses_desuperheater] = false
-      wh_sys_values[:related_hvac] = nil
-
       # New water heater
       HPXML.add_water_heating_system(hpxml: hpxml,
                                      id: wh_sys_values[:id],
                                      fuel_type: wh_sys_values[:fuel_type],
-                                     water_heater_type: wh_sys_values[:water_heater_type],
+                                     water_heater_type: 'storage water heater',
                                      location: wh_sys_values[:location],
                                      tank_volume: wh_sys_values[:tank_volume],
                                      fraction_dhw_load_served: wh_sys_values[:fraction_dhw_load_served],
                                      heating_capacity: wh_sys_values[:heating_capacity],
                                      energy_factor: wh_sys_values[:energy_factor],
-                                     uniform_energy_factor: wh_sys_values[:uniform_energy_factor],
-                                     recovery_efficiency: wh_sys_values[:recovery_efficiency],
-                                     uses_desuperheater: wh_sys_values[:uses_desuperheater],
-                                     jacket_r_value: wh_sys_values[:jacket_r_value],
-                                     related_hvac: wh_sys_values[:related_hvac])
+                                     recovery_efficiency: wh_sys_values[:recovery_efficiency])
     end
 
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
@@ -1684,9 +1662,10 @@ class EnergyRatingIndex301Ruleset
       wh_sys_values = HPXML.get_water_heating_system_values(water_heating_system: wh_sys)
 
       if wh_sys_values[:energy_factor].nil?
-        wh_uef = wh_sys_values[:uniform_energy_factor]
-        wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_sys_values[:water_heater_type]), to_beopt_fuel(wh_sys_values[:fuel_type]))
-        wh_sys_values[:uniform_energy_factor] = nil
+        if not ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? wh_sys_values[:water_heater_type]
+          wh_uef = wh_sys_values[:uniform_energy_factor]
+          wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_sys_values[:water_heater_type]), to_beopt_fuel(wh_sys_values[:fuel_type]))
+        end
       end
 
       if wh_sys_values[:water_heater_type] == 'storage water heater' and wh_sys_values[:heating_capacity].nil?
@@ -1709,7 +1688,6 @@ class EnergyRatingIndex301Ruleset
                                      fraction_dhw_load_served: wh_sys_values[:fraction_dhw_load_served],
                                      heating_capacity: wh_sys_values[:heating_capacity],
                                      energy_factor: wh_sys_values[:energy_factor],
-                                     uniform_energy_factor: wh_sys_values[:uniform_energy_factor],
                                      recovery_efficiency: wh_sys_values[:recovery_efficiency],
                                      uses_desuperheater: wh_sys_values[:uses_desuperheater],
                                      jacket_r_value: wh_sys_values[:jacket_r_value],
