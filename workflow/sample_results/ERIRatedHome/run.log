@@ -1,3 +1,6 @@
 Warning: Could not load nokogiri, no HPXML validation performed.
 Warning: Could not load nokogiri, no HPXML validation performed.
-Warning: Water heater energy consumption is being adjusted with equipment to account for distribution system waste.
+FT Warning: Cannot find DaylightingControl for Object of type 'OS:ShadingControl' and named 'WindowShadingControl'
+FT Warning: Cannot find DaylightingControl for Object of type 'OS:ShadingControl' and named 'WindowShadingControl 1'
+FT Warning: Cannot find DaylightingControl for Object of type 'OS:ShadingControl' and named 'WindowShadingControl 2'
+FT Warning: Cannot find DaylightingControl for Object of type 'OS:ShadingControl' and named 'WindowShadingControl 3'

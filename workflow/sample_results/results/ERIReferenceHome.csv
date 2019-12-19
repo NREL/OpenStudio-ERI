@@ -1,13 +1,14 @@
-Electricity: Total (MBtu),43.13
-Electricity: Net (MBtu),43.13
-Natural Gas: Total (MBtu),32.29
+Electricity: Total (MBtu),43.53
+Electricity: Net (MBtu),43.53
+Natural Gas: Total (MBtu),32.83
 Fuel Oil: Total (MBtu),0.0
 Propane: Total (MBtu),0.0
 
-Electricity: Heating (MBtu),0.87
-Electricity: Cooling (MBtu),2.64
+Electricity: Heating (MBtu),0.68
+Electricity: Cooling (MBtu),3.23
 Electricity: Hot Water (MBtu),11.36
 Electricity: Hot Water Recirc Pump (MBtu),0.0
+Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
 Electricity: Lighting Interior (MBtu),8.92
 Electricity: Lighting Garage (MBtu),0.0
 Electricity: Lighting Exterior (MBtu),0.8
@@ -20,7 +21,7 @@ Electricity: Range/Oven (MBtu),1.53
 Electricity: Ceiling Fan (MBtu),0.0
 Electricity: Plug Loads (MBtu),10.49
 Electricity: PV (MBtu),0.0
-Natural Gas: Heating (MBtu),32.29
+Natural Gas: Heating (MBtu),32.83
 Natural Gas: Hot Water (MBtu),0.0
 Natural Gas: Clothes Dryer (MBtu),0.0
 Natural Gas: Range/Oven (MBtu),0.0
@@ -38,12 +39,13 @@ Annual Load: Cooling (MBtu),5.99
 Annual Load: Hot Water: Delivered (MBtu),10.33
 Annual Load: Hot Water: Tank Losses (MBtu),1.03
 Annual Load: Hot Water: Desuperheater (MBtu),0.0
+Annual Load: Hot Water: Solar Thermal (MBtu),0.0
 
-Annual Unmet Load: Heating (MBtu),0.19
-Annual Unmet Load: Cooling (MBtu),1.41
+Annual Unmet Load: Heating (MBtu),0.0
+Annual Unmet Load: Cooling (MBtu),0.01
 
-Peak Electricity: Winter Total (W),7115.14
-Peak Electricity: Summer Total (W),6738.97
+Peak Electricity: Winter Total (W),7099.02
+Peak Electricity: Summer Total (W),6753.0
 
 Peak Load: Heating (kBtu),19.82
 Peak Load: Cooling (kBtu),14.72

@@ -8,6 +8,7 @@ Electricity: Heating (MBtu),0.61
 Electricity: Cooling (MBtu),3.06
 Electricity: Hot Water (MBtu),11.36
 Electricity: Hot Water Recirc Pump (MBtu),0.0
+Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
 Electricity: Lighting Interior (MBtu),4.26
 Electricity: Lighting Garage (MBtu),0.0
 Electricity: Lighting Exterior (MBtu),0.33
@@ -38,6 +39,7 @@ Annual Load: Cooling (MBtu),7.54
 Annual Load: Hot Water: Delivered (MBtu),10.33
 Annual Load: Hot Water: Tank Losses (MBtu),1.03
 Annual Load: Hot Water: Desuperheater (MBtu),0.0
+Annual Load: Hot Water: Solar Thermal (MBtu),0.0
 
 Annual Unmet Load: Heating (MBtu),0.0
 Annual Unmet Load: Cooling (MBtu),0.01

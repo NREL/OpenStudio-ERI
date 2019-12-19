@@ -19,8 +19,8 @@ The `HPXML Toolbox website <https://hpxml.nrel.gov/>`_ provides several resource
 ERI Use Case for HPXML
 ----------------------
 
-HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included.
-Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML fields or enumeration choices required to run the workflow.
+HPXML is an flexible and extensible format, where nearly all elements in the schema are optional and custom elements can be included.
+Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML elements or enumeration choices required to run the workflow.
 
 Software developers should use the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb>`_ (defined as a set of conditional XPath expressions) as well as the `HPXML schema <https://github.com/NREL/OpenStudio-ERI/tree/master/measures/HPXMLtoOpenStudio/hpxml_schemas>`_ to construct valid HPXML files for ERI calculations.
 
@@ -42,15 +42,15 @@ The building description is entered in HPXML's ``/HPXML/Building/BuildingDetails
 Building Summary
 ~~~~~~~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, etc.
+This section describes elements specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, etc.
 
-The ``BuildingSummary/Site/FuelTypesAvailable`` field is used to determine whether the home has access to natural gas or fossil fuel delivery (specified by any value other than "electricity").
+The ``BuildingSummary/Site/FuelTypesAvailable`` element is used to determine whether the home has access to natural gas or fossil fuel delivery (specified by any value other than "electricity").
 This information may be used for determining the heating system, as specified by the ERI 301 Standard.
 
 Climate and Weather
 ~~~~~~~~~~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``ClimateandRiskZones``.
+This section describes elements specified in HPXML's ``ClimateandRiskZones``.
 
 The ``ClimateandRiskZones/ClimateZoneIECC`` element specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
 
@@ -69,7 +69,7 @@ After processing is complete, each EPW file will have a corresponding \*.cache f
 Enclosure
 ~~~~~~~~~
 
-This section describes fields specified in HPXML's ``Enclosure``.
+This section describes elements specified in HPXML's ``Enclosure``.
 
 All surfaces that bound different space types in the building (i.e., not just thermal boundary surfaces) must be specified in the HPXML file.
 For example, an attached garage would generally be defined by walls adjacent to conditioned space, walls adjacent to outdoors, a slab, and a roof or ceiling.
@@ -98,7 +98,7 @@ other housing unit            Used to specify adiabatic surfaces.
 
 Also note that wall and roof surfaces do not require an azimuth to be specified. 
 Rather, only the windows/skylights themselves require an azimuth. 
-Thus, software tools can use a single wall (or roof) surface to represent multiple wall (or roof) surfaces for the entire building if all their other properties (construction type, interior/exterior adjacency, etc.) are identical.
+Thus, software tools can choose to use a single wall (or roof) surface to represent multiple wall (or roof) surfaces for the entire building if all their other properties (construction type, interior/exterior adjacency, etc.) are identical.
 
 Air Leakage
 ***********
@@ -120,14 +120,15 @@ Roofs
 *****
 
 Pitched or flat roof surfaces that are exposed to ambient conditions should be specified as an ``Enclosure/Roofs/Roof``. 
-For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``Floor`` and not a ``Roof``.
+For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``FrameFloor`` and not a ``Roof``.
 
 Beyond the specification of typical heat transfer properties (insulation R-value, solar absorptance, emittance, etc.), note that roofs can be defined as having a radiant barrier.
 
 Walls
 *****
 
-Any wall that has no contact with the ground and bounds a space type should be specified as an ``Enclosure/Walls/Wall``. Interior walls (for example, walls solely within the conditioned space of the building) are not required.
+Any wall that has no contact with the ground and bounds a space type should be specified as an ``Enclosure/Walls/Wall``. 
+Interior walls (for example, walls solely within the conditioned space of the building) are not required.
 
 Walls are primarily defined by their ``Insulation/AssemblyEffectiveRValue``.
 The choice of ``WallType`` has a secondary effect on heat transfer in that it informs the assumption of wall thermal mass.
@@ -188,7 +189,7 @@ Vertical insulation adjacent to the slab can be described by a ``PerimeterInsula
 Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. 
 The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
 
-For foundation types without walls, the ``DepthBelowGrade`` field must be provided.
+For foundation types without walls, the ``DepthBelowGrade`` element must be provided.
 For foundation types with walls, the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` values.
 
 Windows
@@ -225,7 +226,7 @@ Doors must also have an ``Azimuth`` specified, even if the attached wall does no
 Systems
 ~~~~~~~
 
-This section describes fields specified in HPXML's ``Systems``.
+This section describes elements specified in HPXML's ``Systems``.
 
 If any HVAC systems are entered that provide heating, the sum of all their ``FractionHeatLoadServed`` values must equal 1.
 The same holds true for ``FractionCoolLoadServeds`` for HVAC systems that provide cooling and ``FractionDHWLoadServed`` for water heating systems.
@@ -368,11 +369,11 @@ Hot Water Distribution
 A ``Systems/WaterHeating/HotWaterDistribution`` must be provided if any water heating systems are specified.
 Inputs including ``SystemType`` and ``PipeInsulation/PipeRValue`` must be provided.
 
-For a ``SystemType/Standard`` (non-recirculating) system, the following field is required:
+For a ``SystemType/Standard`` (non-recirculating) system, the following element is required:
 
 - ``PipingLength``: Measured length of hot water piping from the hot water heater to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
 
-For a ``SystemType/Recirculation`` system, the following fields are required:
+For a ``SystemType/Recirculation`` system, the following elements are required:
 
 - ``ControlType``
 - ``RecirculationPipingLoopLength``: Measured recirculation loop length including both supply and return sides, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements
@@ -393,11 +394,34 @@ Water fixtures should be entered as ``Systems/WaterHeating/WaterFixture`` elemen
 Each fixture must have ``WaterFixtureType`` and ``LowFlow`` elements provided.
 Fixtures should be specified as low flow if they are <= 2.0 gpm.
 
+Solar Thermal
+*************
+
+A solar hot water system can be entered as a ``Systems/SolarThermal/SolarThermalSystem``.
+The ``SystemType`` element must be 'hot water' and the ``ConnectedTo`` element is required and must point to a ``WaterHeatingSystem``.
+Note that the connected water heater cannot be of type space-heating boiler or attached to a desuperheater.
+
+Solar hot water systems can be described with either simple or detailed inputs.
+
+If using simple inputs, the following element is required:
+
+- ``SolarFraction``
+
+If using detailed inputs, the following elements are required:
+
+- ``CollectorLoopType``: 'liquid indirect' or 'liquid direct' or 'passive thermosyphon'
+- ``CollectorType``: 'single glazing black' or 'double glazing black' or 'evacuated tube' or 'integrated collector storage'
+- ``CollectorAzimuth``
+- ``CollectorTilt``
+- ``CollectorRatedOpticalEfficiency``: FRTA (y-intercept); see Directory of SRCC Certified Solar Collector Ratings
+- ``CollectorRatedThermalLosses``: FRUL (slope, in units of Btu/hr-ft^2-R); see Directory of SRCC Certified Solar Collector Ratings
+- ``StorageVolume``
+
 Photovoltaics
 *************
 
 Each solar electric (photovoltaic) system should be entered as a ``Systems/Photovoltaics/PVSystem``.
-The following fields, some adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_, are required for each PV system:
+The following elements, some adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_, are required for each PV system:
 
 - ``Location``: 'ground' or 'roof' mounted
 - ``ModuleType``: 'standard', 'premium', or 'thin film'
@@ -411,7 +435,7 @@ The following fields, some adopted from the `PVWatts model <https://pvwatts.nrel
 Appliances
 ~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``Appliances``.
+This section describes elements specified in HPXML's ``Appliances``.
 Many of the appliances' inputs are derived from EnergyGuide labels.
 
 The ``Location`` for clothes washers, clothes dryers, and refrigerators can be provided, while dishwashers and cooking ranges are assumed to be in the living space.

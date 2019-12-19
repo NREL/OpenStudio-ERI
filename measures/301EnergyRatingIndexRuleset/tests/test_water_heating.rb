@@ -648,6 +648,40 @@ class WaterHeatingTest < MiniTest::Test
     end
   end
 
+  def test_water_heating_solar_simple
+    hpxml_name = "base-dhw-solar-fraction.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_solar_thermal_system(hpxml_doc, true)
+
+    # Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_solar_thermal_system(hpxml_doc, false)
+    end
+  end
+
+  def test_water_heating_solar_detailed
+    hpxml_name = "base-dhw-solar-indirect-flat-plate.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_solar_thermal_system(hpxml_doc, true)
+
+    # Reference Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_solar_thermal_system(hpxml_doc, false)
+    end
+  end
+
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
@@ -782,6 +816,10 @@ class WaterHeatingTest < MiniTest::Test
     else
       assert_equal(Float(dist.elements["DrainWaterHeatRecovery/Efficiency"].text), efficiency)
     end
+  end
+
+  def _check_solar_thermal_system(hpxml_doc, present)
+    assert_equal(!hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem"].nil?, present)
   end
 
   def _check_desuperheater(hpxml_doc, present)

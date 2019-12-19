@@ -5,201 +5,6 @@ Version,
 Timestep,
   1;                                      !- Number of Timesteps per Hour
 
-LifeCycleCost:Parameters,
-  Life Cycle Cost Parameters,             !- Name
-  EndOfYear,                              !- Discounting Convention
-  ConstantDollar,                         !- Inflation Approach
-  0.03,                                   !- Real Discount Rate
-  ,                                       !- Nominal Discount Rate
-  ,                                       !- Inflation
-  ,                                       !- Base Date Month
-  2011,                                   !- Base Date Year
-  ,                                       !- Service Date Month
-  2011,                                   !- Service Date Year
-  25,                                     !- Length of Study Period in Years
-  ,                                       !- Tax rate
-  None;                                   !- Depreciation Method
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Electricity,       !- LCC Price Escalation Name
-  Electricity,                            !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9838,                                 !- Year Escalation 1
-  0.9730,                                 !- Year Escalation 2
-  0.9632,                                 !- Year Escalation 3
-  0.9611,                                 !- Year Escalation 4
-  0.9571,                                 !- Year Escalation 5
-  0.9553,                                 !- Year Escalation 6
-  0.9539,                                 !- Year Escalation 7
-  0.9521,                                 !- Year Escalation 8
-  0.9546,                                 !- Year Escalation 9
-  0.9550,                                 !- Year Escalation 10
-  0.9553,                                 !- Year Escalation 11
-  0.9564,                                 !- Year Escalation 12
-  0.9575,                                 !- Year Escalation 13
-  0.9596,                                 !- Year Escalation 14
-  0.9618,                                 !- Year Escalation 15
-  0.9614,                                 !- Year Escalation 16
-  0.9618,                                 !- Year Escalation 17
-  0.9618,                                 !- Year Escalation 18
-  0.9593,                                 !- Year Escalation 19
-  0.9589,                                 !- Year Escalation 20
-  0.9607,                                 !- Year Escalation 21
-  0.9625,                                 !- Year Escalation 22
-  0.9650,                                 !- Year Escalation 23
-  0.9708,                                 !- Year Escalation 24
-  0.9751,                                 !- Year Escalation 25
-  0.9762,                                 !- Year Escalation 26
-  0.9766,                                 !- Year Escalation 27
-  0.9766,                                 !- Year Escalation 28
-  0.9769,                                 !- Year Escalation 29
-  0.9773;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Distillate Oil,    !- LCC Price Escalation Name
-  FuelOil#1,                              !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9714,                                 !- Year Escalation 1
-  0.9730,                                 !- Year Escalation 2
-  0.9942,                                 !- Year Escalation 3
-  1.0164,                                 !- Year Escalation 4
-  1.0541,                                 !- Year Escalation 5
-  1.0928,                                 !- Year Escalation 6
-  1.1267,                                 !- Year Escalation 7
-  1.1580,                                 !- Year Escalation 8
-  1.1792,                                 !- Year Escalation 9
-  1.1967,                                 !- Year Escalation 10
-  1.2200,                                 !- Year Escalation 11
-  1.2333,                                 !- Year Escalation 12
-  1.2566,                                 !- Year Escalation 13
-  1.2709,                                 !- Year Escalation 14
-  1.2826,                                 !- Year Escalation 15
-  1.2985,                                 !- Year Escalation 16
-  1.3102,                                 !- Year Escalation 17
-  1.3250,                                 !- Year Escalation 18
-  1.3261,                                 !- Year Escalation 19
-  1.3282,                                 !- Year Escalation 20
-  1.3324,                                 !- Year Escalation 21
-  1.3356,                                 !- Year Escalation 22
-  1.3431,                                 !- Year Escalation 23
-  1.3510,                                 !- Year Escalation 24
-  1.3568,                                 !- Year Escalation 25
-  1.3606,                                 !- Year Escalation 26
-  1.3637,                                 !- Year Escalation 27
-  1.3674,                                 !- Year Escalation 28
-  1.3706,                                 !- Year Escalation 29
-  1.3743;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Residual Oil,      !- LCC Price Escalation Name
-  FuelOil#2,                              !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.8469,                                 !- Year Escalation 1
-  0.8257,                                 !- Year Escalation 2
-  0.8681,                                 !- Year Escalation 3
-  0.8988,                                 !- Year Escalation 4
-  0.9289,                                 !- Year Escalation 5
-  0.9604,                                 !- Year Escalation 6
-  0.9897,                                 !- Year Escalation 7
-  1.0075,                                 !- Year Escalation 8
-  1.0314,                                 !- Year Escalation 9
-  1.0554,                                 !- Year Escalation 10
-  1.0861,                                 !- Year Escalation 11
-  1.1278,                                 !- Year Escalation 12
-  1.1497,                                 !- Year Escalation 13
-  1.1620,                                 !- Year Escalation 14
-  1.1743,                                 !- Year Escalation 15
-  1.1852,                                 !- Year Escalation 16
-  1.1948,                                 !- Year Escalation 17
-  1.2037,                                 !- Year Escalation 18
-  1.2071,                                 !- Year Escalation 19
-  1.2119,                                 !- Year Escalation 20
-  1.2139,                                 !- Year Escalation 21
-  1.2194,                                 !- Year Escalation 22
-  1.2276,                                 !- Year Escalation 23
-  1.2365,                                 !- Year Escalation 24
-  1.2420,                                 !- Year Escalation 25
-  1.2461,                                 !- Year Escalation 26
-  1.2509,                                 !- Year Escalation 27
-  1.2550,                                 !- Year Escalation 28
-  1.2591,                                 !- Year Escalation 29
-  1.2638;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Natural gas,       !- LCC Price Escalation Name
-  NaturalGas,                             !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9823,                                 !- Year Escalation 1
-  0.9557,                                 !- Year Escalation 2
-  0.9279,                                 !- Year Escalation 3
-  0.9257,                                 !- Year Escalation 4
-  0.9346,                                 !- Year Escalation 5
-  0.9412,                                 !- Year Escalation 6
-  0.9512,                                 !- Year Escalation 7
-  0.9645,                                 !- Year Escalation 8
-  0.9856,                                 !- Year Escalation 9
-  1.0067,                                 !- Year Escalation 10
-  1.0222,                                 !- Year Escalation 11
-  1.0410,                                 !- Year Escalation 12
-  1.0610,                                 !- Year Escalation 13
-  1.0787,                                 !- Year Escalation 14
-  1.0942,                                 !- Year Escalation 15
-  1.1098,                                 !- Year Escalation 16
-  1.1220,                                 !- Year Escalation 17
-  1.1308,                                 !- Year Escalation 18
-  1.1386,                                 !- Year Escalation 19
-  1.1486,                                 !- Year Escalation 20
-  1.1619,                                 !- Year Escalation 21
-  1.1763,                                 !- Year Escalation 22
-  1.1918,                                 !- Year Escalation 23
-  1.2118,                                 !- Year Escalation 24
-  1.2284,                                 !- Year Escalation 25
-  1.2439,                                 !- Year Escalation 26
-  1.2605,                                 !- Year Escalation 27
-  1.2772,                                 !- Year Escalation 28
-  1.2938,                                 !- Year Escalation 29
-  1.3115;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Coal,              !- LCC Price Escalation Name
-  Coal,                                   !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9970,                                 !- Year Escalation 1
-  1.0089,                                 !- Year Escalation 2
-  1.0089,                                 !- Year Escalation 3
-  0.9941,                                 !- Year Escalation 4
-  0.9941,                                 !- Year Escalation 5
-  1.0000,                                 !- Year Escalation 6
-  1.0030,                                 !- Year Escalation 7
-  1.0059,                                 !- Year Escalation 8
-  1.0089,                                 !- Year Escalation 9
-  1.0119,                                 !- Year Escalation 10
-  1.0148,                                 !- Year Escalation 11
-  1.0178,                                 !- Year Escalation 12
-  1.0208,                                 !- Year Escalation 13
-  1.0267,                                 !- Year Escalation 14
-  1.0297,                                 !- Year Escalation 15
-  1.0356,                                 !- Year Escalation 16
-  1.0415,                                 !- Year Escalation 17
-  1.0534,                                 !- Year Escalation 18
-  1.0564,                                 !- Year Escalation 19
-  1.0593,                                 !- Year Escalation 20
-  1.0653,                                 !- Year Escalation 21
-  1.0712,                                 !- Year Escalation 22
-  1.0742,                                 !- Year Escalation 23
-  1.0801,                                 !- Year Escalation 24
-  1.0831,                                 !- Year Escalation 25
-  1.0831,                                 !- Year Escalation 26
-  1.0861,                                 !- Year Escalation 27
-  1.0890,                                 !- Year Escalation 28
-  1.0920,                                 !- Year Escalation 29
-  1.0950;                                 !- Year Escalation 30
-
 Building,
   Building 1,                             !- Name
   ,                                       !- North Axis {deg}
@@ -331,10 +136,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -41.5355465727226, 32.6963425500018, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -41.5355465727226, 32.6963425500018, 0.6096, !- X,Y,Z Vertex 2 {m}
-  -41.5355469267093, 41.5355425500018, 0.6096, !- X,Y,Z Vertex 3 {m}
-  -41.5355469267093, 41.5355425500018, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -41.5355465727225, 32.6963425500018, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -41.5355465727225, 32.6963425500018, 0.6096, !- X,Y,Z Vertex 2 {m}
+  -41.5355469267092, 41.5355425500018, 0.6096, !- X,Y,Z Vertex 3 {m}
+  -41.5355469267092, 41.5355425500018, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   RimJoistArea:90,                        !- Name
@@ -367,6 +172,12 @@ BuildingSurface:Detailed,
   -6.858, 4.572, -2.1336,                 !- X,Y,Z Vertex 2 {m}
   6.858, 4.572, -2.1336,                  !- X,Y,Z Vertex 3 {m}
   6.858, -4.572, -2.1336;                 !- X,Y,Z Vertex 4 {m}
+
+SurfaceProperty:ExposedFoundationPerimeter,
+  Slab,                                   !- Surface Name
+  TotalExposedPerimeter,                  !- Exposed Perimeter Calculation Method
+  45.72,                                  !- Total Exposed Perimeter {m}
+  ;                                       !- Exposed Perimeter Fraction {dimensionless}
 
 BuildingSurface:Detailed,
   surface DoorAreaNorth,                  !- Name
@@ -505,8 +316,8 @@ BuildingSurface:Detailed,
   ,                                       !- Number of Vertices
   -41.535545937894, 21.0601369566849, 0.3048, !- X,Y,Z Vertex 1 {m}
   -41.535545937894, 21.0601369566849, 1.5241, !- X,Y,Z Vertex 2 {m}
-  -41.5355462109055, 27.8773474036965, 1.5241, !- X,Y,Z Vertex 3 {m}
-  -41.5355462109055, 27.8773474036965, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -41.5355462109054, 27.8773474036965, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -41.5355462109054, 27.8773474036965, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowAreaWest,                         !- Name
@@ -520,8 +331,8 @@ FenestrationSurface:Detailed,
   ,                                       !- Number of Vertices
   -41.535545937898, 21.0602369566849, 0.3049, !- X,Y,Z Vertex 1 {m}
   -41.535545937898, 21.0602369566849, 1.5241, !- X,Y,Z Vertex 2 {m}
-  -41.5355462109014, 27.8772474036965, 1.5241, !- X,Y,Z Vertex 3 {m}
-  -41.5355462109014, 27.8772474036965, 0.3049; !- X,Y,Z Vertex 4 {m}
+  -41.5355462109013, 27.8772474036965, 1.5241, !- X,Y,Z Vertex 3 {m}
+  -41.5355462109013, 27.8772474036965, 0.3049; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallArea:0,                             !- Name
@@ -550,10 +361,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -12.4907123346539, -41.5355453190718, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -12.4907123346539, -41.5355453190718, 2.7432, !- X,Y,Z Vertex 2 {m}
-  -20.1312071111481, -41.5355455230596, 2.7432, !- X,Y,Z Vertex 3 {m}
-  -20.1312071111481, -41.5355455230596, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -12.4907123346539, -41.5355453190717, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -12.4907123346539, -41.5355453190717, 2.7432, !- X,Y,Z Vertex 2 {m}
+  -20.1312071111481, -41.5355455230595, 2.7432, !- X,Y,Z Vertex 3 {m}
+  -20.1312071111481, -41.5355455230595, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallArea:270,                           !- Name
@@ -584,8 +395,8 @@ BuildingSurface:Detailed,
   ,                                       !- Number of Vertices
   41.5355451523316, -12.490712889117, 0.3048, !- X,Y,Z Vertex 1 {m}
   41.5355451523316, -12.490712889117, 2.7432, !- X,Y,Z Vertex 2 {m}
-  41.5355452543255, -20.1312076656112, 2.7432, !- X,Y,Z Vertex 3 {m}
-  41.5355452543255, -20.1312076656112, 0.3048; !- X,Y,Z Vertex 4 {m}
+  41.5355452543255, -20.1312076656113, 2.7432, !- X,Y,Z Vertex 3 {m}
+  41.5355452543255, -20.1312076656113, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 InternalMass,
   furniture mass living basement,         !- Name
@@ -838,7 +649,7 @@ Schedule:Day:Interval,
   21:00,                                  !- Time 20 {hh:mm}
   0.928337141860708,                      !- Value Until Time 20
   22:00,                                  !- Time 21 {hh:mm}
-  0.807461954396615,                      !- Value Until Time 21
+  0.807461954396616,                      !- Value Until Time 21
   23:00,                                  !- Time 22 {hh:mm}
   0.499769410655845,                      !- Value Until Time 22
   24:00,                                  !- Time 23 {hh:mm}
@@ -967,7 +778,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 11 {hh:mm}
   0.364038790657523,                      !- Value Until Time 11
   13:00,                                  !- Time 12 {hh:mm}
-  0.352108135865494,                      !- Value Until Time 12
+  0.352108135865495,                      !- Value Until Time 12
   14:00,                                  !- Time 13 {hh:mm}
   0.348597365709478,                      !- Value Until Time 13
   15:00,                                  !- Time 14 {hh:mm}
@@ -3057,7 +2868,7 @@ AirTerminal:SingleDuct:ConstantVolume:NoReheat,
   Always On Discrete,                     !- Availability Schedule Name
   Node 9,                                 !- Air Inlet Node Name
   Node 7,                                 !- Air Outlet Node Name
-  0.11771874016816;                       !- Maximum Air Flow Rate {m3/s}
+  0.287536964777281;                      !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
   ADU central ac living terminal,         !- Name
@@ -3070,7 +2881,7 @@ AirTerminal:SingleDuct:ConstantVolume:NoReheat,
   Always On Discrete,                     !- Availability Schedule Name
   Node 16,                                !- Air Inlet Node Name
   Node 14,                                !- Air Outlet Node Name
-  0.143344016569639;                      !- Maximum Air Flow Rate {m3/s}
+  0.260920704750809;                      !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
   ADU furnace living terminal,            !- Name
@@ -3186,8 +2997,8 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -41.5355463652997, 28.8062779451133, 2.7432, !- X,Y,Z Vertex 1 {m}
-  -30.941827834019, 28.8062780865302, 8.04005926564035, !- X,Y,Z Vertex 2 {m}
+  -41.5355463652998, 28.8062779451133, 2.7432, !- X,Y,Z Vertex 1 {m}
+  -30.9418278340191, 28.8062780865302, 8.04005926564035, !- X,Y,Z Vertex 2 {m}
   -30.9418278735463, 31.7673124328355, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
   -41.535546404827, 31.7673122914187, 2.7432; !- X,Y,Z Vertex 4 {m}
 
@@ -3202,10 +3013,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  41.5355455962226, -28.8062790540397, 2.7432, !- X,Y,Z Vertex 1 {m}
+  41.5355455962225, -28.8062790540397, 2.7432, !- X,Y,Z Vertex 1 {m}
   30.9418270649418, -28.8062789126228, 8.04005926564035, !- X,Y,Z Vertex 2 {m}
   30.9418270254146, -31.7673132589282, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
-  41.5355455566954, -31.767313400345, 2.7432; !- X,Y,Z Vertex 4 {m}
+  41.5355455566953, -31.767313400345, 2.7432; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Surface 1 Reversed,                     !- Name
@@ -3250,8 +3061,8 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -8.79943193465386, -41.5355451386855, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -8.79943193465386, -41.5355451386855, 2.7432, !- X,Y,Z Vertex 2 {m}
+  -8.79943193465387, -41.5355451386855, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -8.79943193465387, -41.5355451386855, 2.7432, !- X,Y,Z Vertex 2 {m}
   -11.5616819346539, -41.5355452124327, 2.7432, !- X,Y,Z Vertex 3 {m}
   -11.5616819346539, -41.5355452124327, 0.3048; !- X,Y,Z Vertex 4 {m}
 
@@ -3268,8 +3079,8 @@ BuildingSurface:Detailed,
   ,                                       !- Number of Vertices
   -41.5355452561502, 8.7994313801907, 0.3048, !- X,Y,Z Vertex 1 {m}
   -41.5355452561502, 8.7994313801907, 2.7432, !- X,Y,Z Vertex 2 {m}
-  -41.5355453667711, 11.5616813801907, 2.7432, !- X,Y,Z Vertex 3 {m}
-  -41.5355453667711, 11.5616813801907, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -41.535545366771, 11.5616813801907, 2.7432, !- X,Y,Z Vertex 3 {m}
+  -41.535545366771, 11.5616813801907, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallAtticGable:90,                      !- Name
@@ -3355,7 +3166,7 @@ GlobalGeometryRules,
 Material,
   Asphalt Shingles&#44 Medium,            !- Name
   Rough,                                  !- Roughness
-  0.00952500000000001,                    !- Thickness {m}
+  0.009525,                               !- Thickness {m}
   0.162714,                               !- Conductivity {W/m-K}
   1121.4,                                 !- Density {kg/m3}
   1465.45,                                !- Specific Heat {J/kg-K}
@@ -3718,7 +3529,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3735,7 +3546,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3752,7 +3563,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3769,7 +3580,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -3986,12 +3797,6 @@ Construction,
 Construction,
   WindowConstruction 3,                   !- Name
   WindowMaterial;                         !- Layer 1
-
-SurfaceProperty:ExposedFoundationPerimeter,
-  Slab,                                   !- Surface Name
-  TotalExposedPerimeter,                  !- Exposed Perimeter Calculation Method
-  45.72,                                  !- Total Exposed Perimeter {m}
-  ;                                       !- Exposed Perimeter Fraction {dimensionless}
 
 ScheduleTypeLimits,
   ActivityLevel,                          !- Name
@@ -5242,7 +5047,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707991,                      !- Value Until Time 19
+  0.190580370707992,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5291,7 +5096,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707991,                      !- Value Until Time 19
+  0.190580370707992,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5613,7 +5418,7 @@ Schedule:Day:Interval,
   14:00,                                  !- Time 9 {hh:mm}
   0.000281317833333333,                   !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  7.69215e-05,                            !- Value Until Time 10
+  7.69215e-005,                           !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0,                                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -5773,7 +5578,7 @@ Schedule:Day:Interval,
   05:00,                                  !- Time 3 {hh:mm}
   0.0526825224,                           !- Value Until Time 3
   06:00,                                  !- Time 4 {hh:mm}
-  7.25196e-05,                            !- Value Until Time 4
+  7.25196e-005,                           !- Value Until Time 4
   07:00,                                  !- Time 5 {hh:mm}
   0.02433412225,                          !- Value Until Time 5
   08:00,                                  !- Time 6 {hh:mm}
@@ -5936,7 +5741,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 9 {hh:mm}
   0.67956204379562,                       !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  0.713540145985401,                      !- Value Until Time 10
+  0.713540145985402,                      !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0.696551094890511,                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -6955,7 +6760,7 @@ Schedule:Day:Interval,
   07:00,                                  !- Time 6 {hh:mm}
   0.605633802816901,                      !- Value Until Time 6
   08:00,                                  !- Time 7 {hh:mm}
-  0.661971830985915,                      !- Value Until Time 7
+  0.661971830985916,                      !- Value Until Time 7
   09:00,                                  !- Time 8 {hh:mm}
   0.47887323943662,                       !- Value Until Time 8
   10:00,                                  !- Time 9 {hh:mm}
@@ -8083,7 +7888,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8104,7 +7909,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8125,7 +7930,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8146,7 +7951,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8167,7 +7972,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8188,7 +7993,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8209,7 +8014,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8230,7 +8035,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8251,7 +8056,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8272,7 +8077,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8293,7 +8098,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8314,7 +8119,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -17526,7 +17331,7 @@ AirLoopHVAC,
   central ac airloop,                     !- Name
   ,                                       !- Controller List Name
   central ac airloopAvailability Manager List, !- Availability Manager List Name
-  0.11771874016816,                       !- Design Supply Air Flow Rate {m3/s}
+  0.287536964777281,                      !- Design Supply Air Flow Rate {m3/s}
   central ac airloop Supply Branches,     !- Branch List Name
   ,                                       !- Connector List Name
   Node 3,                                 !- Supply Side Inlet Node Name
@@ -17562,13 +17367,13 @@ Sizing:System,
   0,                                      !- Cooling Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  3.9475456e-005,                         !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
   DesignDay,                              !- Heating Supply Air Flow Rate Method
   0,                                      !- Heating Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  3.1588213e-005,                         !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
   ZoneSum,                                !- System Outdoor Air Method
   1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
   CoolingDesignCapacity,                  !- Cooling Design Capacity Method
@@ -17625,7 +17430,7 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0.11771874016816,                       !- Cooling Supply Air Flow Rate {m3/s}
+  0.287536964777281,                      !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -17656,7 +17461,7 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
   580.04340090045,                        !- Pressure Rise {Pa}
-  0.117723459642592,                      !- Maximum Flow Rate {m3/s}
+  0.287541684251713,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 3,                                 !- Air Inlet Node Name
@@ -17688,7 +17493,7 @@ Curve:Biquadratic,
   -0.0750500892,                          !- Coefficient2 x
   0.00309713544,                          !- Coefficient3 x**2
   0.00240111,                             !- Coefficient4 y
-  -5.0544e-05,                            !- Coefficient5 y**2
+  -5.0544e-005,                           !- Coefficient5 y**2
   -0.00042728148,                         !- Coefficient6 x*y
   13.88,                                  !- Minimum Value of x {BasedOnField A2}
   23.88,                                  !- Maximum Value of x {BasedOnField A2}
@@ -17707,7 +17512,7 @@ Curve:Quadratic,
 
 Curve:Biquadratic,
   Cool-EIR-fT1,                           !- Name
-  -0.304282997,                           !- Coefficient1 Constant
+  -0.304282997000001,                     !- Coefficient1 Constant
   0.1180477062,                           !- Coefficient2 x
   -0.00342466704,                         !- Coefficient3 x**2
   -0.0062619138,                          !- Coefficient4 y
@@ -17741,10 +17546,10 @@ Curve:Quadratic,
 Coil:Cooling:DX:SingleSpeed,
   central ac clg coil,                    !- Name
   Always On Discrete,                     !- Availability Schedule Name
-  1757.94635691048,                       !- Gross Rated Total Cooling Capacity {W}
+  4293.91751037475,                       !- Gross Rated Total Cooling Capacity {W}
   0.740402528813699,                      !- Gross Rated Sensible Heat Ratio
   3.99990781858502,                       !- Gross Rated Cooling COP {W/W}
-  0.0910845803184902,                     !- Rated Air Flow Rate {m3/s}
+  0.222481006213443,                      !- Rated Air Flow Rate {m3/s}
   773.3912012006,                         !- Rated Evaporator Fan Power Per Volume Flow Rate {W/(m3/s)}
   central ac unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
   Node 4,                                 !- Air Outlet Node Name
@@ -17796,7 +17601,7 @@ AirLoopHVAC,
   furnace airloop,                        !- Name
   ,                                       !- Controller List Name
   furnace airloopAvailability Manager List, !- Availability Manager List Name
-  0.143344016569639,                      !- Design Supply Air Flow Rate {m3/s}
+  0.260920704750809,                      !- Design Supply Air Flow Rate {m3/s}
   furnace airloop Supply Branches,        !- Branch List Name
   ,                                       !- Connector List Name
   Node 10,                                !- Supply Side Inlet Node Name
@@ -17832,13 +17637,13 @@ Sizing:System,
   0,                                      !- Cooling Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  3.9475456e-005,                         !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
   DesignDay,                              !- Heating Supply Air Flow Rate Method
   0,                                      !- Heating Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  3.1588213e-005,                         !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
   ZoneSum,                                !- System Outdoor Air Method
   1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
   CoolingDesignCapacity,                  !- Cooling Design Capacity Method
@@ -17900,7 +17705,7 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
   SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
-  0.143344016569639,                      !- Heating Supply Air Flow Rate {m3/s}
+  0.260920704750809,                      !- Heating Supply Air Flow Rate {m3/s}
   ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -17925,8 +17730,8 @@ Fan:OnOff,
   furnace supply fan,                     !- Name
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
-  731.213730978628,                       !- Pressure Rise {Pa}
-  0.143348736044071,                      !- Maximum Flow Rate {m3/s}
+  562.318530775531,                       !- Pressure Rise {Pa}
+  0.260925424225241,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 10,                                !- Air Inlet Node Name
@@ -17957,7 +17762,7 @@ Coil:Heating:Fuel,
   Always On Discrete,                     !- Availability Schedule Name
   NaturalGas,                             !- Fuel Type
   0.78,                                   !- Burner Efficiency
-  4031.49836540091,                       !- Nominal Capacity {W}
+  7338.29998541384,                       !- Nominal Capacity {W}
   furnace unitary system Fan - Heating Coil Node, !- Air Inlet Node Name
   Node 11,                                !- Air Outlet Node Name
   ,                                       !- Temperature Setpoint Node Name
@@ -19091,83 +18896,7 @@ Curve:Biquadratic,
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
 Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  ceiling fan:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  InteriorEquipment:Gas,                  !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Gas:Facility,                           !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:Propane, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  mech vent house fan:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  interior lighting:InteriorLights:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
   Electricity:Facility,                   !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  FuelOil#1:Facility,                     !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  misc plug loads:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Cooling:DistrictCooling,                !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  ExteriorLights:Electricity,             !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  dishwasher:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  InteriorEquipment:Propane,              !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Propane, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Gas,    !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes washer:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  fridge:InteriorEquipment:Electricity,   !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Gas:Facility,                           !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19175,7 +18904,35 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Cooling:EnergyTransfer:Zone:LIVING,     !- Key Name
+  Cooling:DistrictCooling,                !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Propane, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:Gas,                  !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  FuelOil#1:Facility,                     !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Gas:Facility,                           !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  ExteriorLights:Electricity,             !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Heating:EnergyTransfer,                 !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Cooling:EnergyTransfer,                 !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19183,7 +18940,7 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:FuelOil#1, !- Key Name
+  interior lighting:InteriorLights:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19195,15 +18952,27 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Heating:EnergyTransfer:Zone:LIVING,     !- Key Name
+  InteriorEquipment:FuelOil#1,            !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Electricity:Facility,                   !- Key Name
+  InteriorEquipment:Propane,              !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  FuelOil#1:Facility,                     !- Key Name
+  fridge:InteriorEquipment:Electricity,   !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  dishwasher:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes washer:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19211,7 +18980,19 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:Gas,    !- Key Name
+  clothes dryer:InteriorEquipment:Gas,    !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Gas:Facility,                           !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:FuelOil#1, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  misc plug loads:InteriorEquipment:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19219,7 +19000,23 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  InteriorEquipment:FuelOil#1,            !- Key Name
+  cooking range:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Gas,    !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Propane, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  ceiling fan:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  mech vent house fan:InteriorEquipment:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19227,13 +19024,26 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
+  Electricity:Facility,                   !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  FuelOil#1:Facility,                     !- Key Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
   Propane:Facility,                       !- Key Name
   hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac supply fan cool disaggregate, !- Variable Name
+  central ac supply fan clg disaggregate, !- Variable Name
   monthly;                                !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Off Cycle Parasitic Electric Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
@@ -19267,12 +19077,12 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac supply fan cool disaggregate, !- Variable Name
+  central ac supply fan clg disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  furnace supply fan heat disaggregate,   !- Variable Name
+  furnace supply fan htg primary disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19282,13 +19092,13 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  htg_walls_outvar,                       !- Variable Name
-  runperiod;                              !- Reporting Frequency
+  furnace supply fan htg primary disaggregate, !- Variable Name
+  monthly;                                !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  furnace supply fan heat disaggregate,   !- Variable Name
-  monthly;                                !- Reporting Frequency
+  htg_walls_outvar,                       !- Variable Name
+  runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
@@ -19336,13 +19146,13 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  htg_internal_mass_outvar,               !- Variable Name
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Electric Energy,           !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Electric Energy,           !- Variable Name
+  *,                                      !- Key Value
+  htg_internal_mass_outvar,               !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19391,13 +19201,13 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  clg_slabs_outvar,                       !- Variable Name
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
+  *,                                      !- Key Value
+  clg_slabs_outvar,                       !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19446,13 +19256,13 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  clg_natvent_outvar,                     !- Variable Name
+  furnace htg coil,                       !- Key Value
+  Heating Coil Gas Energy,                !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  furnace htg coil,                       !- Key Value
-  Heating Coil Gas Energy,                !- Variable Name
+  *,                                      !- Key Value
+  clg_natvent_outvar,                     !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19476,13 +19286,13 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater Electric Energy,           !- Variable Name
+  furnace htg coil,                       !- Key Value
+  Heating Coil Heating Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater Off Cycle Parasitic Electric Energy, !- Variable Name
+  Water Heater Electric Energy,           !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,
@@ -20372,9 +20182,9 @@ EnergyManagementSystem:Actuator,
 
 EnergyManagementSystem:Program,
   central_ac_supply_fan_disaggregate_program, !- Name
-  Set central_ac_supply_fan_cool = 0,     !- Program Line 1
+  Set central_ac_supply_fan_clg = 0,      !- Program Line 1
   If central_ac_clg_coil_s > 0,           !- Program Line 2
-  Set central_ac_supply_fan_cool = central_ac_supply_fan_s, !- Program Line 3
+  Set central_ac_supply_fan_clg = central_ac_supply_fan_s, !- Program Line 3
   EndIf;                                  !- Program Line 4
 
 EnergyManagementSystem:Program,
@@ -20572,9 +20382,9 @@ EnergyManagementSystem:Program,
 
 EnergyManagementSystem:Program,
   furnace_supply_fan_disaggregate_program, !- Name
-  Set furnace_supply_fan_heat = 0,        !- Program Line 1
+  Set furnace_supply_fan_primary_htg = 0, !- Program Line 1
   If furnace_htg_coil_s > 0,              !- Program Line 2
-  Set furnace_supply_fan_heat = furnace_supply_fan_s, !- Program Line 3
+  Set furnace_supply_fan_primary_htg = furnace_supply_fan_s, !- Program Line 3
   EndIf;                                  !- Program Line 4
 
 EnergyManagementSystem:Program,
@@ -20677,8 +20487,8 @@ EnergyManagementSystem:ProgramCallingManager,
   water_heater_EC_adj;                    !- Program Name 1
 
 EnergyManagementSystem:OutputVariable,
-  central ac supply fan cool disaggregate, !- Name
-  central_ac_supply_fan_cool,             !- EMS Variable Name
+  central ac supply fan clg disaggregate, !- Name
+  central_ac_supply_fan_clg,              !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
   central_ac_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
@@ -20813,8 +20623,8 @@ EnergyManagementSystem:OutputVariable,
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
-  furnace supply fan heat disaggregate,   !- Name
-  furnace_supply_fan_heat,                !- EMS Variable Name
+  furnace supply fan htg primary disaggregate, !- Name
+  furnace_supply_fan_primary_htg,         !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
   furnace_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name

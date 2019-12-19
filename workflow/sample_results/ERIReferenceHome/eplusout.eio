@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26
 ! <Version>, Version ID
  Version, 9.2
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -104,25 +104,25 @@ RoomAir Model,VENTED ATTIC,Mixing/Well-Stirred
 ! <AirflowNetwork Model:Control>, No Multizone or Distribution/Multizone with Distribution/Multizone without Distribution/Multizone with Distribution only during Fan Operation
 AirflowNetwork Model:Control,NoMultizoneOrDistribution
 ! <Component Sizing Information>, Component Type, Component Name, Input Field Description, Value
- Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, CENTRAL AC LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.11772
- Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, FURNACE LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.14334
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.11772
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.11772
- Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 1757.94636
+ Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, CENTRAL AC LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.28754
+ Component Sizing Information, AirTerminal:SingleDuct:ConstantVolume:NoReheat, FURNACE LIVING TERMINAL, User-Specified Maximum Air Flow Rate [m3/s], 0.26092
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.28754
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Cooling Supply Air Flow Rate [m3/s], 0.28754
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, User-Specified Nominal Cooling Capacity [W], 4293.91751
  Component Sizing Information, AirLoopHVAC:UnitarySystem, CENTRAL AC UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
- Component Sizing Information, Fan:OnOff, CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.11772
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Rated Air Flow Rate [m3/s], 9.10846E-002
- Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 1757.94636
+ Component Sizing Information, Fan:OnOff, CENTRAL AC SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.28754
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Rated Air Flow Rate [m3/s], 0.22248
+ Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Total Cooling Capacity [W], 4293.91751
  Component Sizing Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, User-Specified Gross Rated Sensible Heat Ratio, 0.74040
 ! <DX Cooling Coil Standard Rating Information>, Component Type, Component Name, Standard Rating (Net) Cooling Capacity {W}, Standard Rated Net COP {W/W}, EER {Btu/W-h}, SEER {Btu/W-h}, IEER {Btu/W-h}
- DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, 1676.6, 3.28, 11.19, 13.25, 12.20
- Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.14334
- Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.14334
- Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 4031.49837
+ DX Cooling Coil Standard Rating Information, Coil:Cooling:DX:SingleSpeed, CENTRAL AC CLG COIL, 4095.1, 3.28, 11.19, 13.25, 12.20
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Supply Air Flow Rate [m3/s], 0.26092
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Heating Supply Air Flow Rate [m3/s], 0.26092
+ Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Nominal Heating Capacity [W], 7338.29999
  Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, User-Specified Maximum Supply Air Temperature [C], 48.88889
  Component Sizing Information, AirLoopHVAC:UnitarySystem, FURNACE UNITARY SYSTEM, Fraction of Supply Air Flow That Goes Through the Controlling Zone, 1.00000
- Component Sizing Information, Fan:OnOff, FURNACE SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.14335
- Component Sizing Information, Coil:Heating:Fuel, FURNACE HTG COIL, User-Specified Nominal Capacity [W], 4031.49837
+ Component Sizing Information, Fan:OnOff, FURNACE SUPPLY FAN, User-Specified Maximum Flow Rate [m3/s], 0.26093
+ Component Sizing Information, Coil:Heating:Fuel, FURNACE HTG COIL, User-Specified Nominal Capacity [W], 7338.29999
 ! <Water Heater Information>,Type,Name,Volume {m3},Maximum Capacity {W},Standard Rated Recovery Efficiency, Standard Rated Energy Factor
 Water Heater Information,WaterHeater:Mixed,WATER HEATER,0.1362,4500.0,3.571,0.9447
  Component Sizing Information, WaterHeater:Mixed, WATER HEATER, Use Side Design Flow Rate [m3/s], 9.46974E-004
@@ -136,8 +136,8 @@ Environment:WarmupDays,  6
 ! <Tabular Report>,Style,Unit Conversion
 Tabular Report,HTML,None
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.9508073719E-002,7.0529175083E-002,Pass,Pass,0.1997678523,0.2438094004,Pass,Pass
- Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7813779449,1.7550028324,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,LIVING,RunPeriod: RUN PERIOD 1,1.9508077664E-002,7.0526366576E-002,Pass,Pass,0.1997680976,0.2438129230,Pass,Pass
+ Warmup Convergence Information,VENTED ATTIC,RunPeriod: RUN PERIOD 1,1.7813779401,1.7550028310,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data
