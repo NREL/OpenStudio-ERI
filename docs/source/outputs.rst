@@ -42,12 +42,14 @@ Current fuel types are: "Electricity", "Natural Gas", "Fuel Oil", "Propane".
 It also includes an "Electricity: Net" field that incorporates any renewable generation.
 
 2. **Annual Energy Consumption By Fuel Type and End Use**.
-Current fuel types are: "Electricity", "Natural Gas", "Fuel Oil", "Propane". Current end uses are: "Heating", "Cooling", "Hot Water", "Hot Water Recirc Pump", "Lighting Interior", "Lighting Garage", "Lighting Exterior", "Mech Vent", "Refrigerator", "Dishwasher", "Clothes Washer", "Clothes Dryer", "Range/Oven", "Ceiling Fan", "Plug Loads", "PV" (negative value for generation).
+Current fuel types are: "Electricity", "Natural Gas", "Fuel Oil", "Propane".
+Current end uses are: "Heating", "Cooling", "Hot Water", "Hot Water Recirc Pump", "Hot Water Solar Thermal Pump", "Lighting Interior", "Lighting Garage", "Lighting Exterior", "Mech Vent", "Refrigerator", "Dishwasher", "Clothes Washer", "Clothes Dryer", "Range/Oven", "Ceiling Fan", "Plug Loads", "PV" (negative value for generation).
 
 3. **Annual Building Loads**.
 Values are reported for heating, cooling, and hot water.
 Heating and cooling loads include duct losses.
-Hot water loads are disaggregated into A) Delivered (i.e., the load associated with the delivered hot water by the water heater), B) Tank Losses, and C) Desuperheater.
+Hot water loads are grouped into A) Delivered (i.e., the load associated with hot water delivered), B) Tank Losses, C) Desuperheater, and D) Solar Thermal.
+The Delivered hot water load includes any contributions from desuperheaters or solar thermal systems.
 
 4. **Annual Unmet Building Loads**.
 Values are reported for heating and cooling.

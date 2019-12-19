@@ -289,11 +289,14 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   map_tsv_data = CSV.read(File.join(designdir, "map_water_heating.tsv"), headers: false, col_sep: "\t")
   design_output[:elecHotWaterBySystem] = {}
   design_output[:elecHotWaterRecircPumpBySystem] = {}
+  design_output[:elecHotWaterSolarThermalPumpBySystem] = {}
   design_output[:gasHotWaterBySystem] = {}
   design_output[:oilHotWaterBySystem] = {}
   design_output[:propaneHotWaterBySystem] = {}
   design_output[:loadHotWaterBySystem] = {}
   design_output[:loadHotWaterDesuperheater] = 0
+  design_output[:loadHotWaterSolarThermal] = 0
+  solar_keys = nil
   design_output[:hpxml_dhw_sys_ids].each do |sys_id|
     ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
@@ -312,7 +315,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     # Electricity Use - Solar Thermal Pump
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingElectricitySolarThermalPump).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elecHotWaterBySystemRaw += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+    design_output[:elecHotWaterSolarThermalPumpBySystem][sys_id] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
     # Natural Gas use
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingNaturalGas).join("','") + "'"
@@ -333,14 +336,25 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     vars = "'" + get_all_var_keys(OutputVars.WaterHeatingLoad).join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHotWaterBySystem][sys_id] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-    # Apply solar fraction to load for simple solar water heating systems
-    solar_fraction = get_dhw_solar_fraction(hpxml_doc, sys_id)
-    design_output[:loadHotWaterBySystem][sys_id] /= (1.0 - solar_fraction)
 
     # Hot Water Load - Desuperheater
     ems_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterLoad(nil) }.join("','") + "'"
     query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName IN (#{ems_keys}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     design_output[:loadHotWaterDesuperheater] += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
+    # Hot Water Load - Solar Thermal
+    solar_keys = "'" + ep_output_names.select { |name| name.include? Constants.ObjectNameSolarHotWater }.map(&:upcase).join("','") + "'"
+    vars = "'" + get_all_var_keys(OutputVars.WaterHeaterLoadSolarThermal).join("','") + "'"
+    query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue IN (#{solar_keys}) AND VariableName IN (#{vars}) AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+    design_output[:loadHotWaterSolarThermal] += UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
+    # Apply solar fraction to load for simple solar water heating systems
+    solar_fraction = get_dhw_solar_fraction(hpxml_doc, sys_id)
+    if solar_fraction > 0
+      orig_load = design_output[:loadHotWaterBySystem][sys_id]
+      design_output[:loadHotWaterBySystem][sys_id] /= (1.0 - solar_fraction)
+      design_output[:loadHotWaterSolarThermal] = design_output[:loadHotWaterBySystem][sys_id] - orig_load
+    end
 
     # Combi boiler water system
     hvac_id = get_combi_hvac_id(hpxml_doc, sys_id, dhws)
@@ -413,8 +427,8 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   end
   design_output[:loadHotWaterDelivered] = design_output[:loadHotWaterBySystem].values.inject(0, :+)
 
-  # Hot Water Load - Tank Losses
-  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND VariableName='Water Heater Heat Loss Energy' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  # Hot Water Load - Tank Losses (excluding solar storage tank)
+  query = "SELECT SUM(ABS(VariableValue)/1000000000) FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue NOT IN (#{solar_keys}) AND VariableName='Water Heater Heat Loss Energy' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:loadHotWaterTankLosses] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   # PV
@@ -480,6 +494,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
                          design_output[:elecCoolingBySystem].values.inject(0, :+) +
                          design_output[:elecHotWaterBySystem].values.inject(0, :+) +
                          design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+) +
+                         design_output[:elecHotWaterSolarThermalPumpBySystem].values.inject(0, :+) +
                          design_output[:elecIntLighting] +
                          design_output[:elecGrgLighting] +
                          design_output[:elecExtLighting] +
@@ -1290,8 +1305,8 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
     eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
-    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:oilHotWaterBySystem][s] + rated_output[:propaneHotWaterBySystem][s] + rated_output[:elecHotWaterRecircPumpBySystem][s]
-    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:oilHotWaterBySystem][s] + ref_output[:propaneHotWaterBySystem][s] + ref_output[:elecHotWaterRecircPumpBySystem][s]
+    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:oilHotWaterBySystem][s] + rated_output[:propaneHotWaterBySystem][s] + rated_output[:elecHotWaterRecircPumpBySystem][s] + rated_output[:elecHotWaterSolarThermalPumpBySystem][s]
+    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:oilHotWaterBySystem][s] + ref_output[:propaneHotWaterBySystem][s] + ref_output[:elecHotWaterRecircPumpBySystem][s] + ref_output[:elecHotWaterSolarThermalPumpBySystem][s]
 
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
 
@@ -1386,6 +1401,7 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << ["Electricity: Cooling (MBtu)", design_output[:elecCoolingBySystem].values.inject(0, :+).round(2)]
   results_out << ["Electricity: Hot Water (MBtu)", design_output[:elecHotWaterBySystem].values.inject(0, :+).round(2)]
   results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", design_output[:elecHotWaterRecircPumpBySystem].values.inject(0, :+).round(2)]
+  results_out << ["Electricity: Hot Water Solar Thermal Pump (MBtu)", design_output[:elecHotWaterSolarThermalPumpBySystem].values.inject(0, :+).round(2)]
   results_out << ["Electricity: Lighting Interior (MBtu)", design_output[:elecIntLighting].round(2)]
   results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting].round(2)]
   results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting].round(2)]
@@ -1420,6 +1436,7 @@ def write_output_results(resultsdir, design, design_output, design_hourly_output
   results_out << ["Annual Load: Hot Water: Delivered (MBtu)", design_output[:loadHotWaterDelivered].round(2)]
   results_out << ["Annual Load: Hot Water: Tank Losses (MBtu)", design_output[:loadHotWaterTankLosses].round(2)]
   results_out << ["Annual Load: Hot Water: Desuperheater (MBtu)", design_output[:loadHotWaterDesuperheater].round(2)]
+  results_out << ["Annual Load: Hot Water: Solar Thermal (MBtu)", design_output[:loadHotWaterSolarThermal].round(2)]
   results_out << [nil] # line break
   results_out << ["Annual Unmet Load: Heating (MBtu)", design_output[:unmetLoadHeatingBldg].round(2)]
   results_out << ["Annual Unmet Load: Cooling (MBtu)", design_output[:unmetLoadCoolingBldg].round(2)]
