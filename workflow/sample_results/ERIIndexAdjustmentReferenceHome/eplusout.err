@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** ProcessScheduleInput: Schedule:Constant="ALWAYS ON CONTINUOUS", Blank Schedule Type Limits Name input -- will not be validated.
@@ -28,20 +28,20 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
    ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC CLG COIL but not at the AHRI test condition due to curve out of bound.
    **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#1" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FUELOIL#1:FACILITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="PROPANE:FACILITY" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="GARAGE LIGHTING:INTERIORLIGHTS:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CEILING FAN:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:FUELOIL#1" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:GAS" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:FUELOIL#1" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:GAS" - not found.
    ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOIL#1" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="PROPANE:FACILITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FUELOIL#1:FACILITY" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:GAS" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#1" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CEILING FAN:INTERIOREQUIPMENT:ELECTRICITY" - not found.
    ************* Testing Individual Branch Integrity
    ************* All Branches passed integrity testing
    ************* Testing Individual Supply Air Path Integrity
@@ -76,16 +76,6 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 12/24 17:00 - 18:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-ELECTRICITY" has no energy cost. 
-   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
-   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-DISTILLATE OIL" has no energy cost. 
-   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
-   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-RESIDUAL OIL" has no energy cost. 
-   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
-   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-NATURAL GAS" has no energy cost. 
-   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
-   ** Warning ** The resource referenced by LifeCycleCost:UsePriceEscalation= "U.S. AVG  COMMERCIAL-COAL" has no energy cost. 
-   **   ~~~   ** ... It is likely that the wrong resource is used. The resource should match the meter used in Utility:Tariff.
    ************* Simulation Error Summary *************
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
@@ -95,6 +85,8 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
    ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
    ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
    ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
+   ************* There are 1 unused objects in input.
+   ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
    ************* There are 4 unused schedules in input.
    ************* There are 67 unused week schedules in input.
    ************* There are 40 unused day schedules in input.
@@ -104,10 +96,10 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 23856 total times;
+   *************  **   ~~~   **   This error occurred 23776 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.003787E-005  Min=6.744133E-005
+   *************  **   ~~~   **   Max=7.003785E-005  Min=6.744133E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -119,4 +111,4 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 23898 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.13sec
+   ************* EnergyPlus Completed Successfully-- 23813 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 11.33sec

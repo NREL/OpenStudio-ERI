@@ -5,201 +5,6 @@ Version,
 Timestep,
   1;                                      !- Number of Timesteps per Hour
 
-LifeCycleCost:Parameters,
-  Life Cycle Cost Parameters,             !- Name
-  EndOfYear,                              !- Discounting Convention
-  ConstantDollar,                         !- Inflation Approach
-  0.03,                                   !- Real Discount Rate
-  ,                                       !- Nominal Discount Rate
-  ,                                       !- Inflation
-  ,                                       !- Base Date Month
-  2011,                                   !- Base Date Year
-  ,                                       !- Service Date Month
-  2011,                                   !- Service Date Year
-  25,                                     !- Length of Study Period in Years
-  ,                                       !- Tax rate
-  None;                                   !- Depreciation Method
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Electricity,       !- LCC Price Escalation Name
-  Electricity,                            !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9838,                                 !- Year Escalation 1
-  0.9730,                                 !- Year Escalation 2
-  0.9632,                                 !- Year Escalation 3
-  0.9611,                                 !- Year Escalation 4
-  0.9571,                                 !- Year Escalation 5
-  0.9553,                                 !- Year Escalation 6
-  0.9539,                                 !- Year Escalation 7
-  0.9521,                                 !- Year Escalation 8
-  0.9546,                                 !- Year Escalation 9
-  0.9550,                                 !- Year Escalation 10
-  0.9553,                                 !- Year Escalation 11
-  0.9564,                                 !- Year Escalation 12
-  0.9575,                                 !- Year Escalation 13
-  0.9596,                                 !- Year Escalation 14
-  0.9618,                                 !- Year Escalation 15
-  0.9614,                                 !- Year Escalation 16
-  0.9618,                                 !- Year Escalation 17
-  0.9618,                                 !- Year Escalation 18
-  0.9593,                                 !- Year Escalation 19
-  0.9589,                                 !- Year Escalation 20
-  0.9607,                                 !- Year Escalation 21
-  0.9625,                                 !- Year Escalation 22
-  0.9650,                                 !- Year Escalation 23
-  0.9708,                                 !- Year Escalation 24
-  0.9751,                                 !- Year Escalation 25
-  0.9762,                                 !- Year Escalation 26
-  0.9766,                                 !- Year Escalation 27
-  0.9766,                                 !- Year Escalation 28
-  0.9769,                                 !- Year Escalation 29
-  0.9773;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Distillate Oil,    !- LCC Price Escalation Name
-  FuelOil#1,                              !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9714,                                 !- Year Escalation 1
-  0.9730,                                 !- Year Escalation 2
-  0.9942,                                 !- Year Escalation 3
-  1.0164,                                 !- Year Escalation 4
-  1.0541,                                 !- Year Escalation 5
-  1.0928,                                 !- Year Escalation 6
-  1.1267,                                 !- Year Escalation 7
-  1.1580,                                 !- Year Escalation 8
-  1.1792,                                 !- Year Escalation 9
-  1.1967,                                 !- Year Escalation 10
-  1.2200,                                 !- Year Escalation 11
-  1.2333,                                 !- Year Escalation 12
-  1.2566,                                 !- Year Escalation 13
-  1.2709,                                 !- Year Escalation 14
-  1.2826,                                 !- Year Escalation 15
-  1.2985,                                 !- Year Escalation 16
-  1.3102,                                 !- Year Escalation 17
-  1.3250,                                 !- Year Escalation 18
-  1.3261,                                 !- Year Escalation 19
-  1.3282,                                 !- Year Escalation 20
-  1.3324,                                 !- Year Escalation 21
-  1.3356,                                 !- Year Escalation 22
-  1.3431,                                 !- Year Escalation 23
-  1.3510,                                 !- Year Escalation 24
-  1.3568,                                 !- Year Escalation 25
-  1.3606,                                 !- Year Escalation 26
-  1.3637,                                 !- Year Escalation 27
-  1.3674,                                 !- Year Escalation 28
-  1.3706,                                 !- Year Escalation 29
-  1.3743;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Residual Oil,      !- LCC Price Escalation Name
-  FuelOil#2,                              !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.8469,                                 !- Year Escalation 1
-  0.8257,                                 !- Year Escalation 2
-  0.8681,                                 !- Year Escalation 3
-  0.8988,                                 !- Year Escalation 4
-  0.9289,                                 !- Year Escalation 5
-  0.9604,                                 !- Year Escalation 6
-  0.9897,                                 !- Year Escalation 7
-  1.0075,                                 !- Year Escalation 8
-  1.0314,                                 !- Year Escalation 9
-  1.0554,                                 !- Year Escalation 10
-  1.0861,                                 !- Year Escalation 11
-  1.1278,                                 !- Year Escalation 12
-  1.1497,                                 !- Year Escalation 13
-  1.1620,                                 !- Year Escalation 14
-  1.1743,                                 !- Year Escalation 15
-  1.1852,                                 !- Year Escalation 16
-  1.1948,                                 !- Year Escalation 17
-  1.2037,                                 !- Year Escalation 18
-  1.2071,                                 !- Year Escalation 19
-  1.2119,                                 !- Year Escalation 20
-  1.2139,                                 !- Year Escalation 21
-  1.2194,                                 !- Year Escalation 22
-  1.2276,                                 !- Year Escalation 23
-  1.2365,                                 !- Year Escalation 24
-  1.2420,                                 !- Year Escalation 25
-  1.2461,                                 !- Year Escalation 26
-  1.2509,                                 !- Year Escalation 27
-  1.2550,                                 !- Year Escalation 28
-  1.2591,                                 !- Year Escalation 29
-  1.2638;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Natural gas,       !- LCC Price Escalation Name
-  NaturalGas,                             !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9823,                                 !- Year Escalation 1
-  0.9557,                                 !- Year Escalation 2
-  0.9279,                                 !- Year Escalation 3
-  0.9257,                                 !- Year Escalation 4
-  0.9346,                                 !- Year Escalation 5
-  0.9412,                                 !- Year Escalation 6
-  0.9512,                                 !- Year Escalation 7
-  0.9645,                                 !- Year Escalation 8
-  0.9856,                                 !- Year Escalation 9
-  1.0067,                                 !- Year Escalation 10
-  1.0222,                                 !- Year Escalation 11
-  1.0410,                                 !- Year Escalation 12
-  1.0610,                                 !- Year Escalation 13
-  1.0787,                                 !- Year Escalation 14
-  1.0942,                                 !- Year Escalation 15
-  1.1098,                                 !- Year Escalation 16
-  1.1220,                                 !- Year Escalation 17
-  1.1308,                                 !- Year Escalation 18
-  1.1386,                                 !- Year Escalation 19
-  1.1486,                                 !- Year Escalation 20
-  1.1619,                                 !- Year Escalation 21
-  1.1763,                                 !- Year Escalation 22
-  1.1918,                                 !- Year Escalation 23
-  1.2118,                                 !- Year Escalation 24
-  1.2284,                                 !- Year Escalation 25
-  1.2439,                                 !- Year Escalation 26
-  1.2605,                                 !- Year Escalation 27
-  1.2772,                                 !- Year Escalation 28
-  1.2938,                                 !- Year Escalation 29
-  1.3115;                                 !- Year Escalation 30
-
-LifeCycleCost:UsePriceEscalation,
-  U.S. Avg  Commercial-Coal,              !- LCC Price Escalation Name
-  Coal,                                   !- Resource
-  2011,                                   !- Escalation Start Year
-  January,                                !- Escalation Start Month
-  0.9970,                                 !- Year Escalation 1
-  1.0089,                                 !- Year Escalation 2
-  1.0089,                                 !- Year Escalation 3
-  0.9941,                                 !- Year Escalation 4
-  0.9941,                                 !- Year Escalation 5
-  1.0000,                                 !- Year Escalation 6
-  1.0030,                                 !- Year Escalation 7
-  1.0059,                                 !- Year Escalation 8
-  1.0089,                                 !- Year Escalation 9
-  1.0119,                                 !- Year Escalation 10
-  1.0148,                                 !- Year Escalation 11
-  1.0178,                                 !- Year Escalation 12
-  1.0208,                                 !- Year Escalation 13
-  1.0267,                                 !- Year Escalation 14
-  1.0297,                                 !- Year Escalation 15
-  1.0356,                                 !- Year Escalation 16
-  1.0415,                                 !- Year Escalation 17
-  1.0534,                                 !- Year Escalation 18
-  1.0564,                                 !- Year Escalation 19
-  1.0593,                                 !- Year Escalation 20
-  1.0653,                                 !- Year Escalation 21
-  1.0712,                                 !- Year Escalation 22
-  1.0742,                                 !- Year Escalation 23
-  1.0801,                                 !- Year Escalation 24
-  1.0831,                                 !- Year Escalation 25
-  1.0831,                                 !- Year Escalation 26
-  1.0861,                                 !- Year Escalation 27
-  1.0890,                                 !- Year Escalation 28
-  1.0920,                                 !- Year Escalation 29
-  1.0950;                                 !- Year Escalation 30
-
 Building,
   Building 1,                             !- Name
   ,                                       !- North Axis {deg}
@@ -240,6 +45,12 @@ BuildingSurface:Detailed,
   1, 1, 0,                                !- X,Y,Z Vertex 3 {m}
   1, 0, 0;                                !- X,Y,Z Vertex 4 {m}
 
+SurfaceProperty:ConvectionCoefficients,
+  Surface 1,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  30;                                     !- Convection Coefficient 1 {W/m2-K}
+
 BuildingSurface:Detailed,
   Surface 2,                              !- Name
   Wall,                                   !- Surface Type
@@ -255,6 +66,12 @@ BuildingSurface:Detailed,
   0, 1, 0,                                !- X,Y,Z Vertex 2 {m}
   0, 0, 0,                                !- X,Y,Z Vertex 3 {m}
   0, 0, 1;                                !- X,Y,Z Vertex 4 {m}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 2,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  30;                                     !- Convection Coefficient 1 {W/m2-K}
 
 BuildingSurface:Detailed,
   Surface 3,                              !- Name
@@ -272,6 +89,12 @@ BuildingSurface:Detailed,
   0, 1, 0,                                !- X,Y,Z Vertex 3 {m}
   0, 1, 1;                                !- X,Y,Z Vertex 4 {m}
 
+SurfaceProperty:ConvectionCoefficients,
+  Surface 3,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  30;                                     !- Convection Coefficient 1 {W/m2-K}
+
 BuildingSurface:Detailed,
   Surface 4,                              !- Name
   Wall,                                   !- Surface Type
@@ -287,6 +110,12 @@ BuildingSurface:Detailed,
   1, 0, 0,                                !- X,Y,Z Vertex 2 {m}
   1, 1, 0,                                !- X,Y,Z Vertex 3 {m}
   1, 1, 1;                                !- X,Y,Z Vertex 4 {m}
+
+SurfaceProperty:ConvectionCoefficients,
+  Surface 4,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  30;                                     !- Convection Coefficient 1 {W/m2-K}
 
 BuildingSurface:Detailed,
   Surface 5,                              !- Name
@@ -304,6 +133,12 @@ BuildingSurface:Detailed,
   1, 0, 0,                                !- X,Y,Z Vertex 3 {m}
   1, 0, 1;                                !- X,Y,Z Vertex 4 {m}
 
+SurfaceProperty:ConvectionCoefficients,
+  Surface 5,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  30;                                     !- Convection Coefficient 1 {W/m2-K}
+
 BuildingSurface:Detailed,
   Surface 6,                              !- Name
   Ceiling,                                !- Surface Type
@@ -320,8 +155,14 @@ BuildingSurface:Detailed,
   0, 1, 1,                                !- X,Y,Z Vertex 3 {m}
   0, 0, 1;                                !- X,Y,Z Vertex 4 {m}
 
+SurfaceProperty:ConvectionCoefficients,
+  Surface 6,                              !- Surface Name
+  Inside,                                 !- Convection Coefficient 1 Location
+  Value,                                  !- Convection Coefficient 1 Type
+  30;                                     !- Convection Coefficient 1 {W/m2-K}
+
 OtherEquipment,
-  central ac and furnace airloop RetCondToRP equip, !- Name
+  central_ac_and_furnace_airloop_RetCondToRP equip, !- Name
   None,                                   !- Fuel Type
   central ac and furnace airloop ret air zone, !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -329,14 +170,14 @@ OtherEquipment,
   0,                                      !- Design Level {W}
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
-  ,                                       !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop RetLatLkToRP equip, !- Name
+  central_ac_and_furnace_airloop_RetLatLkToRP equip, !- Name
   None,                                   !- Fuel Type
   central ac and furnace airloop ret air zone, !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -345,13 +186,13 @@ OtherEquipment,
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
   1,                                      !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop RetSensLkToRP equip, !- Name
+  central_ac_and_furnace_airloop_RetSensLkToRP equip, !- Name
   None,                                   !- Fuel Type
   central ac and furnace airloop ret air zone, !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -359,9 +200,9 @@ OtherEquipment,
   0,                                      !- Design Level {W}
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
-  ,                                       !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
@@ -502,10 +343,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.8409430602176, -32.0017410564476, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.8409430602176, -32.0017410564476, 0.6096, !- X,Y,Z Vertex 2 {m}
-  40.8409431782131, -40.8409410564476, 0.6096, !- X,Y,Z Vertex 3 {m}
-  40.8409431782131, -40.8409410564476, 0.3048; !- X,Y,Z Vertex 4 {m}
+  40.8409430602175, -32.0017410564476, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.8409430602175, -32.0017410564476, 0.6096, !- X,Y,Z Vertex 2 {m}
+  40.840943178213, -40.8409410564476, 0.6096, !- X,Y,Z Vertex 3 {m}
+  40.840943178213, -40.8409410564476, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Slab,                                   !- Name
@@ -522,6 +363,12 @@ BuildingSurface:Detailed,
   -6.858, 4.572, -2.1336,                 !- X,Y,Z Vertex 2 {m}
   6.858, 4.572, -2.1336,                  !- X,Y,Z Vertex 3 {m}
   6.858, -4.572, -2.1336;                 !- X,Y,Z Vertex 4 {m}
+
+SurfaceProperty:ExposedFoundationPerimeter,
+  Slab,                                   !- Surface Name
+  TotalExposedPerimeter,                  !- Exposed Perimeter Calculation Method
+  45.72,                                  !- Total Exposed Perimeter {m}
+  ;                                       !- Exposed Perimeter Fraction {dimensionless}
 
 BuildingSurface:Detailed,
   surface DoorNorth,                      !- Name
@@ -596,10 +443,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.8409428176281, -24.4393459101423, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.8409428176281, -24.4393459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
-  40.84094285425, -27.1827459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
-  40.84094285425, -27.1827459101423, 0.3048; !- X,Y,Z Vertex 4 {m}
+  40.840942817628, -24.4393459101423, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.840942817628, -24.4393459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
+  40.8409428542499, -27.1827459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
+  40.8409428542499, -27.1827459101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowEast,                             !- Name
@@ -611,10 +458,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  40.8409428176294, -24.4394459101423, 0.3049, !- X,Y,Z Vertex 1 {m}
-  40.8409428176294, -24.4394459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
-  40.8409428542487, -27.1826459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
-  40.8409428542487, -27.1826459101423, 0.3049; !- X,Y,Z Vertex 4 {m}
+  40.8409428176293, -24.4394459101423, 0.3049, !- X,Y,Z Vertex 1 {m}
+  40.8409428176293, -24.4394459101423, 1.5241, !- X,Y,Z Vertex 2 {m}
+  40.8409428542486, -27.1826459101423, 1.5241, !- X,Y,Z Vertex 3 {m}
+  40.8409428542486, -27.1826459101423, 0.3049; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowNorth,                    !- Name
@@ -768,8 +615,8 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  40.8409425952342, -14.5569155101422, 0.3048, !- X,Y,Z Vertex 1 {m}
-  40.8409425952342, -14.5569155101422, 2.7432, !- X,Y,Z Vertex 2 {m}
+  40.8409425952342, -14.5569155101423, 0.3048, !- X,Y,Z Vertex 1 {m}
+  40.8409425952342, -14.5569155101423, 2.7432, !- X,Y,Z Vertex 2 {m}
   40.8409427147556, -23.5104155101423, 2.7432, !- X,Y,Z Vertex 3 {m}
   40.8409427147556, -23.5104155101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
@@ -1024,7 +871,7 @@ Schedule:Day:Interval,
   21:00,                                  !- Time 20 {hh:mm}
   0.928337141860708,                      !- Value Until Time 20
   22:00,                                  !- Time 21 {hh:mm}
-  0.807461954396615,                      !- Value Until Time 21
+  0.807461954396616,                      !- Value Until Time 21
   23:00,                                  !- Time 22 {hh:mm}
   0.499769410655845,                      !- Value Until Time 22
   24:00,                                  !- Time 23 {hh:mm}
@@ -1153,7 +1000,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 11 {hh:mm}
   0.364038790657523,                      !- Value Until Time 11
   13:00,                                  !- Time 12 {hh:mm}
-  0.352108135865494,                      !- Value Until Time 12
+  0.352108135865495,                      !- Value Until Time 12
   14:00,                                  !- Time 13 {hh:mm}
   0.348597365709478,                      !- Value Until Time 13
   15:00,                                  !- Time 14 {hh:mm}
@@ -2026,7 +1873,7 @@ ElectricEquipment,
   misc tv;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop SupCondToLv equip, !- Name
+  central_ac_and_furnace_airloop_SupCondToLv equip, !- Name
   None,                                   !- Fuel Type
   living,                                 !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -2034,14 +1881,14 @@ OtherEquipment,
   0,                                      !- Design Level {W}
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
-  ,                                       !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop SupLatLkToLv equip, !- Name
+  central_ac_and_furnace_airloop_SupLatLkToLv equip, !- Name
   None,                                   !- Fuel Type
   living,                                 !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -2050,13 +1897,13 @@ OtherEquipment,
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
   1,                                      !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop SupSensLkToLv equip, !- Name
+  central_ac_and_furnace_airloop_SupSensLkToLv equip, !- Name
   None,                                   !- Fuel Type
   living,                                 !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -2064,9 +1911,9 @@ OtherEquipment,
   0,                                      !- Design Level {W}
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
-  ,                                       !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
@@ -3414,8 +3261,8 @@ BuildingSurface:Detailed,
   ,                                       !- Number of Vertices
   -40.8409437071851, 28.1116753611774, 2.7432, !- X,Y,Z Vertex 1 {m}
   -30.2472251759044, 28.1116755025943, 8.04005926564035, !- X,Y,Z Vertex 2 {m}
-  -30.2472252154316, 31.0727098488997, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
-  -40.8409437467123, 31.0727097074828, 2.7432; !- X,Y,Z Vertex 4 {m}
+  -30.2472252154317, 31.0727098488997, 8.04005926564035, !- X,Y,Z Vertex 3 {m}
+  -40.8409437467124, 31.0727097074828, 2.7432; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Roof:90,                                !- Name
@@ -3476,10 +3323,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -6.7371181079799, -40.84094243507, 0.3048, !- X,Y,Z Vertex 1 {m}
-  -6.7371181079799, -40.84094243507, 2.7432, !- X,Y,Z Vertex 2 {m}
-  -9.49936810797992, -40.8409425088173, 2.7432, !- X,Y,Z Vertex 3 {m}
-  -9.49936810797992, -40.8409425088173, 0.3048; !- X,Y,Z Vertex 4 {m}
+  -6.73711810797991, -40.84094243507, 0.3048, !- X,Y,Z Vertex 1 {m}
+  -6.73711810797991, -40.84094243507, 2.7432, !- X,Y,Z Vertex 2 {m}
+  -9.49936810797991, -40.8409425088173, 2.7432, !- X,Y,Z Vertex 3 {m}
+  -9.49936810797991, -40.8409425088173, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallAtticGable:270,                     !- Name
@@ -3514,7 +3361,7 @@ BuildingSurface:Detailed,
   40.8409424922332, -13.6278851101423, 0.3048; !- X,Y,Z Vertex 4 {m}
 
 OtherEquipment,
-  central ac and furnace airloop RetCondToDZ equip, !- Name
+  central_ac_and_furnace_airloop_RetCondToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3522,14 +3369,14 @@ OtherEquipment,
   0,                                      !- Design Level {W}
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
-  ,                                       !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop SupCondToDZ equip, !- Name
+  central_ac_and_furnace_airloop_SupCondToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3537,14 +3384,14 @@ OtherEquipment,
   0,                                      !- Design Level {W}
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
-  ,                                       !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop SupLatLkToDZ equip, !- Name
+  central_ac_and_furnace_airloop_SupLatLkToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3553,13 +3400,13 @@ OtherEquipment,
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
   1,                                      !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
 OtherEquipment,
-  central ac and furnace airloop SupSensLkToDZ equip, !- Name
+  central_ac_and_furnace_airloop_SupSensLkToDZ equip, !- Name
   None,                                   !- Fuel Type
   unvented attic,                         !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
@@ -3567,9 +3414,9 @@ OtherEquipment,
   0,                                      !- Design Level {W}
   ,                                       !- Power per Zone Floor Area {W/m2}
   ,                                       !- Power per Person {W/Person}
-  ,                                       !- Fraction Latent
-  ,                                       !- Fraction Radiant
-  ,                                       !- Fraction Lost
+  0,                                      !- Fraction Latent
+  0,                                      !- Fraction Radiant
+  0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   General;                                !- End-Use Subcategory
 
@@ -3644,7 +3491,7 @@ GlobalGeometryRules,
 Material,
   Asphalt Shingles&#44 Light,             !- Name
   Rough,                                  !- Roughness
-  0.00952500000000001,                    !- Thickness {m}
+  0.009525,                               !- Thickness {m}
   0.162714,                               !- Conductivity {W/m-K}
   1121.4,                                 !- Density {kg/m3}
   1465.45,                                !- Specific Heat {J/kg-K}
@@ -4051,7 +3898,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4068,7 +3915,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4085,7 +3932,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4102,7 +3949,7 @@ WindowMaterial:Shade,
   0.177284117647059,                      !- Solar Reflectance {dimensionless}
   0.822705882352941,                      !- Visible Transmittance {dimensionless}
   0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
+  1e-005,                                 !- Infrared Hemispherical Emissivity {dimensionless}
   0.822705882352941,                      !- Infrared Transmittance {dimensionless}
   0.0001,                                 !- Thickness {m}
   10000,                                  !- Conductivity {W/m-K}
@@ -4347,48 +4194,6 @@ Construction,
 Construction,
   WindowConstruction 3,                   !- Name
   WindowMaterial;                         !- Layer 1
-
-SurfaceProperty:ExposedFoundationPerimeter,
-  Slab,                                   !- Surface Name
-  TotalExposedPerimeter,                  !- Exposed Perimeter Calculation Method
-  45.72,                                  !- Total Exposed Perimeter {m}
-  ;                                       !- Exposed Perimeter Fraction {dimensionless}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 5,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 4,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 1,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 6,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 3,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
-
-SurfaceProperty:ConvectionCoefficients,
-  Surface 2,                              !- Surface Name
-  Inside,                                 !- Convection Coefficient 1 Location
-  Value,                                  !- Convection Coefficient 1 Type
-  999;                                    !- Convection Coefficient 1 {W/m2-K}
 
 ScheduleTypeLimits,
   ActivityLevel,                          !- Name
@@ -5640,7 +5445,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707991,                      !- Value Until Time 19
+  0.190580370707992,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -5689,7 +5494,7 @@ Schedule:Day:Interval,
   20:00,                                  !- Time 18 {hh:mm}
   0.326709206927985,                      !- Value Until Time 18
   21:00,                                  !- Time 19 {hh:mm}
-  0.190580370707991,                      !- Value Until Time 19
+  0.190580370707992,                      !- Value Until Time 19
   22:00,                                  !- Time 20 {hh:mm}
   0.136128836219994,                      !- Value Until Time 20
   23:00,                                  !- Time 21 {hh:mm}
@@ -6011,7 +5816,7 @@ Schedule:Day:Interval,
   14:00,                                  !- Time 9 {hh:mm}
   0.000281317833333333,                   !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  7.69215e-05,                            !- Value Until Time 10
+  7.69215e-005,                           !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0,                                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -6171,7 +5976,7 @@ Schedule:Day:Interval,
   05:00,                                  !- Time 3 {hh:mm}
   0.0526825224,                           !- Value Until Time 3
   06:00,                                  !- Time 4 {hh:mm}
-  7.25196e-05,                            !- Value Until Time 4
+  7.25196e-005,                           !- Value Until Time 4
   07:00,                                  !- Time 5 {hh:mm}
   0.02433412225,                          !- Value Until Time 5
   08:00,                                  !- Time 6 {hh:mm}
@@ -6334,7 +6139,7 @@ Schedule:Day:Interval,
   12:00,                                  !- Time 9 {hh:mm}
   0.67956204379562,                       !- Value Until Time 9
   15:00,                                  !- Time 10 {hh:mm}
-  0.713540145985401,                      !- Value Until Time 10
+  0.713540145985402,                      !- Value Until Time 10
   16:00,                                  !- Time 11 {hh:mm}
   0.696551094890511,                      !- Value Until Time 11
   17:00,                                  !- Time 12 {hh:mm}
@@ -7353,7 +7158,7 @@ Schedule:Day:Interval,
   07:00,                                  !- Time 6 {hh:mm}
   0.605633802816901,                      !- Value Until Time 6
   08:00,                                  !- Time 7 {hh:mm}
-  0.661971830985915,                      !- Value Until Time 7
+  0.661971830985916,                      !- Value Until Time 7
   09:00,                                  !- Time 8 {hh:mm}
   0.47887323943662,                       !- Value Until Time 8
   10:00,                                  !- Time 9 {hh:mm}
@@ -8481,7 +8286,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8502,7 +8307,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8523,7 +8328,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8544,7 +8349,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8565,7 +8370,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8586,7 +8391,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8607,7 +8412,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8628,7 +8433,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8649,7 +8454,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8670,7 +8475,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8691,7 +8496,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -8712,7 +8517,7 @@ Schedule:Day:Interval,
   18:00,                                  !- Time 6 {hh:mm}
   0.5531,                                 !- Value Until Time 6
   21:00,                                  !- Time 7 {hh:mm}
-  0.896930000000001,                      !- Value Until Time 7
+  0.89693,                                !- Value Until Time 7
   24:00,                                  !- Time 8 {hh:mm}
   1;                                      !- Value Until Time 8
 
@@ -17955,13 +17760,13 @@ Sizing:System,
   0,                                      !- Cooling Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  3.9475456e-005,                         !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
   DesignDay,                              !- Heating Supply Air Flow Rate Method
   0,                                      !- Heating Supply Air Flow Rate {m3/s}
   0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  3.1588213e-005,                         !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
   ZoneSum,                                !- System Outdoor Air Method
   1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
   CoolingDesignCapacity,                  !- Cooling Design Capacity Method
@@ -18049,7 +17854,7 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
   436.969142031719,                       !- Pressure Rise {Pa}
-  0.942011816100741,                      !- Maximum Flow Rate {m3/s}
+  0.942011816100742,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 3,                                 !- Air Inlet Node Name
@@ -18094,7 +17899,7 @@ Curve:Biquadratic,
   -0.0750500892,                          !- Coefficient2 x
   0.00309713544,                          !- Coefficient3 x**2
   0.00240111,                             !- Coefficient4 y
-  -5.0544e-05,                            !- Coefficient5 y**2
+  -5.0544e-005,                           !- Coefficient5 y**2
   -0.00042728148,                         !- Coefficient6 x*y
   13.88,                                  !- Minimum Value of x {BasedOnField A2}
   23.88,                                  !- Maximum Value of x {BasedOnField A2}
@@ -18113,7 +17918,7 @@ Curve:Quadratic,
 
 Curve:Biquadratic,
   Cool-EIR-fT1,                           !- Name
-  -0.304282997,                           !- Coefficient1 Constant
+  -0.304282997000001,                     !- Coefficient1 Constant
   0.1180477062,                           !- Coefficient2 x
   -0.00342466704,                         !- Coefficient3 x**2
   -0.0062619138,                          !- Coefficient4 y
@@ -19141,47 +18946,7 @@ Curve:Biquadratic,
   100;                                    !- Maximum Value of y {BasedOnField A3}
 
 Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Propane, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  interior lighting:InteriorLights:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  misc tv:InteriorEquipment:Electricity,  !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  garage lighting:InteriorLights:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Gas:Facility,                           !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  misc plug loads:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  InteriorEquipment:Propane,              !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  FuelOil#1:Facility,                     !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:Gas,    !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:FuelOil#1, !- Key Name
+  clothes washer:InteriorEquipment:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19189,19 +18954,15 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Gas,    !- Key Name
-  runperiod;                              !- Reporting Frequency
+  FuelOil#1:Facility,                     !- Key Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  clothes dryer:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
+  Gas:Facility,                           !- Key Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  clothes washer:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  dishwasher:InteriorEquipment:Electricity, !- Key Name
+  Electricity:Facility,                   !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19209,15 +18970,23 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  InteriorEquipment:FuelOil#1,            !- Key Name
+  FuelOil#1:Facility,                     !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Electricity:Facility,                   !- Key Name
+  Propane:Facility,                       !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  Heating:EnergyTransfer:Zone:LIVING,     !- Key Name
+  Heating:EnergyTransfer,                 !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Cooling:EnergyTransfer,                 !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  interior lighting:InteriorLights:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19225,11 +18994,19 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  InteriorEquipment:Electricity,          !- Key Name
+  cooking range:InteriorEquipment:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  FuelOil#1:Facility,                     !- Key Name
+  misc tv:InteriorEquipment:Electricity,  !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  InteriorEquipment:FuelOil#1,            !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  garage lighting:InteriorLights:Electricity, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19237,31 +19014,15 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
+  InteriorEquipment:Electricity,          !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
   InteriorEquipment:Gas,                  !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:Propane, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  mech vent house fan:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Propane:Facility,                       !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  ceiling fan:InteriorEquipment:Electricity, !- Key Name
-  runperiod;                              !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  Electricity:Facility,                   !- Key Name
-  hourly;                                 !- Reporting Frequency
-
-Output:Meter:MeterFileOnly,
-  cooking range:InteriorEquipment:FuelOil#1, !- Key Name
+  InteriorEquipment:Propane,              !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
@@ -19269,21 +19030,70 @@ Output:Meter:MeterFileOnly,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
+  dishwasher:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Gas,    !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:FuelOil#1, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  clothes dryer:InteriorEquipment:Propane, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  misc plug loads:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Gas,    !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:FuelOil#1, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  cooking range:InteriorEquipment:Propane, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  ceiling fan:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  mech vent house fan:InteriorEquipment:Electricity, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
   ElectricityProduced:Facility,           !- Key Name
   runperiod;                              !- Reporting Frequency
+
+Output:Meter:MeterFileOnly,
+  Electricity:Facility,                   !- Key Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Meter:MeterFileOnly,
   Propane:Facility,                       !- Key Name
   hourly;                                 !- Reporting Frequency
 
-Output:Meter:MeterFileOnly,
-  Cooling:EnergyTransfer:Zone:LIVING,     !- Key Name
-  runperiod;                              !- Reporting Frequency
-
 Output:Variable,
   *,                                      !- Key Value
-  central ac supply fan cool disaggregate, !- Variable Name
+  central ac supply fan clg disaggregate, !- Variable Name
   monthly;                                !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Electric Energy,           !- Variable Name
+  runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
@@ -19322,23 +19132,23 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan heat disaggregate, !- Variable Name
+  central ac and furnace supply fan clg disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan cool disaggregate, !- Variable Name
+  central ac and furnace supply fan htg primary disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  central ac and furnace supply fan clg disaggregate, !- Variable Name
+  monthly;                                !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
   water heater EC adjustment outvar,      !- Variable Name
   runperiod;                              !- Reporting Frequency
-
-Output:Variable,
-  *,                                      !- Key Value
-  central ac and furnace supply fan heat disaggregate, !- Variable Name
-  monthly;                                !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
@@ -19387,13 +19197,13 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  htg_skylights_outvar,                   !- Variable Name
-  runperiod;                              !- Reporting Frequency
+  central ac and furnace supply fan htg primary disaggregate, !- Variable Name
+  monthly;                                !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan cool disaggregate, !- Variable Name
-  monthly;                                !- Reporting Frequency
+  htg_skylights_outvar,                   !- Variable Name
+  runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
@@ -19441,13 +19251,13 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  clg_floors_outvar,                      !- Variable Name
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Electric Energy,           !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Electric Energy,           !- Variable Name
+  *,                                      !- Key Value
+  clg_floors_outvar,                      !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19496,13 +19306,13 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  *,                                      !- Key Value
-  clg_mechvent_outvar,                    !- Variable Name
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac clg coil,                    !- Key Value
-  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
+  *,                                      !- Key Value
+  clg_mechvent_outvar,                    !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -19536,8 +19346,8 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  water heater,                           !- Key Value
-  Water Heater Electric Energy,           !- Variable Name
+  furnace htg coil,                       !- Key Value
+  Heating Coil Heating Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,
@@ -19728,32 +19538,62 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Sensor,
   ducts_conv,                             !- Name
-  central ac and furnace airloop SupCondToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_airloop_RetCondToRP equip, !- Output:Variable or Output:Meter Index Key Name
   Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   ducts_conv_1,                           !- Name
-  central ac and furnace airloop SupLatLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_airloop_RetLatLkToRP equip, !- Output:Variable or Output:Meter Index Key Name
   Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   ducts_conv_2,                           !- Name
-  central ac and furnace airloop SupSensLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_airloop_RetSensLkToRP equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_conv_3,                           !- Name
+  central_ac_and_furnace_airloop_SupCondToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_conv_4,                           !- Name
+  central_ac_and_furnace_airloop_SupLatLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_conv_5,                           !- Name
+  central_ac_and_furnace_airloop_SupSensLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
   Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   ducts_rad,                              !- Name
-  central ac and furnace airloop SupCondToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_airloop_RetCondToRP equip, !- Output:Variable or Output:Meter Index Key Name
   Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   ducts_rad_1,                            !- Name
-  central ac and furnace airloop SupLatLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_airloop_RetLatLkToRP equip, !- Output:Variable or Output:Meter Index Key Name
   Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   ducts_rad_2,                            !- Name
-  central ac and furnace airloop SupSensLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_airloop_RetSensLkToRP equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_rad_3,                            !- Name
+  central_ac_and_furnace_airloop_SupCondToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_rad_4,                            !- Name
+  central_ac_and_furnace_airloop_SupLatLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
+  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  ducts_rad_5,                            !- Name
+  central_ac_and_furnace_airloop_SupSensLkToLv equip, !- Output:Variable or Output:Meter Index Key Name
   Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
@@ -20533,61 +20373,61 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetCondToDZ_equip_act, !- Name
-  central ac and furnace airloop RetCondToDZ equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_RetCondToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetCondToRP_equip_act, !- Name
-  central ac and furnace airloop RetCondToRP equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_RetCondToRP equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetLatLkToRP_equip_act, !- Name
-  central ac and furnace airloop RetLatLkToRP equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_RetLatLkToRP equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_RetSensLkToRP_equip_act, !- Name
-  central ac and furnace airloop RetSensLkToRP equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_RetSensLkToRP equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupCondToDZ_equip_act, !- Name
-  central ac and furnace airloop SupCondToDZ equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_SupCondToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupCondToLv_equip_act, !- Name
-  central ac and furnace airloop SupCondToLv equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_SupCondToLv equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupLatLkToDZ_equip_act, !- Name
-  central ac and furnace airloop SupLatLkToDZ equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_SupLatLkToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupLatLkToLv_equip_act, !- Name
-  central ac and furnace airloop SupLatLkToLv equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_SupLatLkToLv equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupSensLkToDZ_equip_act, !- Name
-  central ac and furnace airloop SupSensLkToDZ equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_SupSensLkToDZ equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_and_furnace_airloop_SupSensLkToLv_equip_act, !- Name
-  central ac and furnace airloop SupSensLkToLv equip, !- Actuated Component Unique Name
+  central_ac_and_furnace_airloop_SupSensLkToLv equip, !- Actuated Component Unique Name
   OtherEquipment,                         !- Actuated Component Type
   Power Level;                            !- Actuated Component Control Type
 
@@ -20672,12 +20512,12 @@ EnergyManagementSystem:Program,
 
 EnergyManagementSystem:Program,
   central_ac_and_furnace_supply_fan_disaggregate_program, !- Name
-  Set central_ac_and_furnace_supply_fan_heat = 0, !- Program Line 1
-  Set central_ac_and_furnace_supply_fan_cool = 0, !- Program Line 2
+  Set central_ac_and_furnace_supply_fan_clg = 0, !- Program Line 1
+  Set central_ac_and_furnace_supply_fan_primary_htg = 0, !- Program Line 2
   If central_ac_clg_coil_s > 0,           !- Program Line 3
-  Set central_ac_and_furnace_supply_fan_cool = central_ac_and_furnace_supply_fan_s, !- Program Line 4
+  Set central_ac_and_furnace_supply_fan_clg = central_ac_and_furnace_supply_fan_s, !- Program Line 4
   ElseIf furnace_htg_coil_s > 0,          !- Program Line 5
-  Set central_ac_and_furnace_supply_fan_heat = central_ac_and_furnace_supply_fan_s, !- Program Line 6
+  Set central_ac_and_furnace_supply_fan_primary_htg = central_ac_and_furnace_supply_fan_s, !- Program Line 6
   EndIf;                                  !- Program Line 7
 
 EnergyManagementSystem:Program,
@@ -20740,143 +20580,146 @@ EnergyManagementSystem:Program,
   Set hr_ducts = hr_ducts - ducts_conv - ducts_rad, !- Program Line 56
   Set hr_ducts = hr_ducts - ducts_conv_1 - ducts_rad_1, !- Program Line 57
   Set hr_ducts = hr_ducts - ducts_conv_2 - ducts_rad_2, !- Program Line 58
-  Set hr_ducts = hr_ducts + (duct_mix_loss - duct_mix_gain), !- Program Line 59
-  Set htg_mode = 0,                       !- Program Line 60
-  If htg_load_liv > 0,                    !- Program Line 61
-  Set htg_mode = 1,                       !- Program Line 62
-  EndIf,                                  !- Program Line 63
-  Set htg_walls = hr_walls * htg_mode,    !- Program Line 64
-  Set htg_rim_joists = hr_rim_joists * htg_mode, !- Program Line 65
-  Set htg_foundation_walls = hr_foundation_walls * htg_mode, !- Program Line 66
-  Set htg_floors = hr_floors * htg_mode,  !- Program Line 67
-  Set htg_slabs = hr_slabs * htg_mode,    !- Program Line 68
-  Set htg_ceilings = hr_ceilings * htg_mode, !- Program Line 69
-  Set htg_roofs = hr_roofs * htg_mode,    !- Program Line 70
-  Set htg_windows = hr_windows * htg_mode, !- Program Line 71
-  Set htg_doors = hr_doors * htg_mode,    !- Program Line 72
-  Set htg_skylights = hr_skylights * htg_mode, !- Program Line 73
-  Set htg_internal_mass = hr_internal_mass * htg_mode, !- Program Line 74
-  Set htg_intgains = hr_intgains * htg_mode, !- Program Line 75
-  Set htg_infil = hr_infil * htg_mode,    !- Program Line 76
-  Set htg_mechvent = hr_mechvent * htg_mode, !- Program Line 77
-  Set htg_natvent = hr_natvent * htg_mode, !- Program Line 78
-  Set htg_ducts = hr_ducts * htg_mode,    !- Program Line 79
-  Set htg_ratio = 0,                      !- Program Line 80
-  If (htg_setpoint_temp <> prev_hr_htg_setpoint) && (htg_mode > 0), !- Program Line 81
-  Set htg_ratio = 1,                      !- Program Line 82
-  ElseIf (htg_load_liv * prev_hr_htg_load_liv == 0) && (htg_mode > 0), !- Program Line 83
-  Set htg_ratio = 1,                      !- Program Line 84
-  EndIf,                                  !- Program Line 85
-  If htg_ratio > 0,                       !- Program Line 86
-  Set htg_sum = 0,                        !- Program Line 87
-  Set htg_sum = htg_sum + htg_walls,      !- Program Line 88
-  Set htg_sum = htg_sum + htg_rim_joists, !- Program Line 89
-  Set htg_sum = htg_sum + htg_foundation_walls, !- Program Line 90
-  Set htg_sum = htg_sum + htg_floors,     !- Program Line 91
-  Set htg_sum = htg_sum + htg_slabs,      !- Program Line 92
-  Set htg_sum = htg_sum + htg_ceilings,   !- Program Line 93
-  Set htg_sum = htg_sum + htg_roofs,      !- Program Line 94
-  Set htg_sum = htg_sum + htg_windows,    !- Program Line 95
-  Set htg_sum = htg_sum + htg_doors,      !- Program Line 96
-  Set htg_sum = htg_sum + htg_skylights,  !- Program Line 97
-  Set htg_sum = htg_sum + htg_internal_mass, !- Program Line 98
-  Set htg_sum = htg_sum + htg_intgains,   !- Program Line 99
-  Set htg_sum = htg_sum + htg_infil,      !- Program Line 100
-  Set htg_sum = htg_sum + htg_mechvent,   !- Program Line 101
-  Set htg_sum = htg_sum + htg_natvent,    !- Program Line 102
-  Set htg_sum = htg_sum + htg_ducts,      !- Program Line 103
-  If htg_sum <> 0,                        !- Program Line 104
-  Set htg_load_ratio = htg_load_liv / htg_sum, !- Program Line 105
-  Else,                                   !- Program Line 106
-  Set htg_load_ratio = 1,                 !- Program Line 107
-  EndIf,                                  !- Program Line 108
-  Set htg_walls = htg_walls * htg_load_ratio, !- Program Line 109
-  Set htg_rim_joists = htg_rim_joists * htg_load_ratio, !- Program Line 110
-  Set htg_foundation_walls = htg_foundation_walls * htg_load_ratio, !- Program Line 111
-  Set htg_floors = htg_floors * htg_load_ratio, !- Program Line 112
-  Set htg_slabs = htg_slabs * htg_load_ratio, !- Program Line 113
-  Set htg_ceilings = htg_ceilings * htg_load_ratio, !- Program Line 114
-  Set htg_roofs = htg_roofs * htg_load_ratio, !- Program Line 115
-  Set htg_windows = htg_windows * htg_load_ratio, !- Program Line 116
-  Set htg_doors = htg_doors * htg_load_ratio, !- Program Line 117
-  Set htg_skylights = htg_skylights * htg_load_ratio, !- Program Line 118
-  Set htg_internal_mass = htg_internal_mass * htg_load_ratio, !- Program Line 119
-  Set htg_intgains = htg_intgains * htg_load_ratio, !- Program Line 120
-  Set htg_infil = htg_infil * htg_load_ratio, !- Program Line 121
-  Set htg_mechvent = htg_mechvent * htg_load_ratio, !- Program Line 122
-  Set htg_natvent = htg_natvent * htg_load_ratio, !- Program Line 123
-  Set htg_ducts = htg_ducts * htg_load_ratio, !- Program Line 124
-  EndIf,                                  !- Program Line 125
-  Set prev_hr_htg_load_liv = htg_load_liv, !- Program Line 126
-  Set prev_hr_htg_setpoint = htg_setpoint_temp, !- Program Line 127
-  Set clg_mode = 0,                       !- Program Line 128
-  If clg_load_liv > 0,                    !- Program Line 129
-  Set clg_mode = 1,                       !- Program Line 130
-  EndIf,                                  !- Program Line 131
-  Set clg_walls = -hr_walls * clg_mode,   !- Program Line 132
-  Set clg_rim_joists = -hr_rim_joists * clg_mode, !- Program Line 133
-  Set clg_foundation_walls = -hr_foundation_walls * clg_mode, !- Program Line 134
-  Set clg_floors = -hr_floors * clg_mode, !- Program Line 135
-  Set clg_slabs = -hr_slabs * clg_mode,   !- Program Line 136
-  Set clg_ceilings = -hr_ceilings * clg_mode, !- Program Line 137
-  Set clg_roofs = -hr_roofs * clg_mode,   !- Program Line 138
-  Set clg_windows = -hr_windows * clg_mode, !- Program Line 139
-  Set clg_doors = -hr_doors * clg_mode,   !- Program Line 140
-  Set clg_skylights = -hr_skylights * clg_mode, !- Program Line 141
-  Set clg_internal_mass = -hr_internal_mass * clg_mode, !- Program Line 142
-  Set clg_intgains = -hr_intgains * clg_mode, !- Program Line 143
-  Set clg_infil = -hr_infil * clg_mode,   !- Program Line 144
-  Set clg_mechvent = -hr_mechvent * clg_mode, !- Program Line 145
-  Set clg_natvent = -hr_natvent * clg_mode, !- Program Line 146
-  Set clg_ducts = -hr_ducts * clg_mode,   !- Program Line 147
-  Set clg_ratio = 0,                      !- Program Line 148
-  If (clg_setpoint_temp <> prev_hr_clg_setpoint) && (clg_mode > 0), !- Program Line 149
-  Set clg_ratio = 1,                      !- Program Line 150
-  ElseIf (clg_load_liv * prev_hr_clg_load_liv == 0) && (clg_mode > 0), !- Program Line 151
-  Set clg_ratio = 1,                      !- Program Line 152
-  EndIf,                                  !- Program Line 153
-  If clg_ratio > 0,                       !- Program Line 154
-  Set clg_sum = 0,                        !- Program Line 155
-  Set clg_sum = clg_sum + clg_walls,      !- Program Line 156
-  Set clg_sum = clg_sum + clg_rim_joists, !- Program Line 157
-  Set clg_sum = clg_sum + clg_foundation_walls, !- Program Line 158
-  Set clg_sum = clg_sum + clg_floors,     !- Program Line 159
-  Set clg_sum = clg_sum + clg_slabs,      !- Program Line 160
-  Set clg_sum = clg_sum + clg_ceilings,   !- Program Line 161
-  Set clg_sum = clg_sum + clg_roofs,      !- Program Line 162
-  Set clg_sum = clg_sum + clg_windows,    !- Program Line 163
-  Set clg_sum = clg_sum + clg_doors,      !- Program Line 164
-  Set clg_sum = clg_sum + clg_skylights,  !- Program Line 165
-  Set clg_sum = clg_sum + clg_internal_mass, !- Program Line 166
-  Set clg_sum = clg_sum + clg_intgains,   !- Program Line 167
-  Set clg_sum = clg_sum + clg_infil,      !- Program Line 168
-  Set clg_sum = clg_sum + clg_mechvent,   !- Program Line 169
-  Set clg_sum = clg_sum + clg_natvent,    !- Program Line 170
-  Set clg_sum = clg_sum + clg_ducts,      !- Program Line 171
-  If clg_sum <> 0,                        !- Program Line 172
-  Set clg_load_ratio = clg_load_liv / clg_sum, !- Program Line 173
-  Else,                                   !- Program Line 174
-  Set clg_load_ratio = 1,                 !- Program Line 175
-  EndIf,                                  !- Program Line 176
-  Set clg_walls = clg_walls * clg_load_ratio, !- Program Line 177
-  Set clg_rim_joists = clg_rim_joists * clg_load_ratio, !- Program Line 178
-  Set clg_foundation_walls = clg_foundation_walls * clg_load_ratio, !- Program Line 179
-  Set clg_floors = clg_floors * clg_load_ratio, !- Program Line 180
-  Set clg_slabs = clg_slabs * clg_load_ratio, !- Program Line 181
-  Set clg_ceilings = clg_ceilings * clg_load_ratio, !- Program Line 182
-  Set clg_roofs = clg_roofs * clg_load_ratio, !- Program Line 183
-  Set clg_windows = clg_windows * clg_load_ratio, !- Program Line 184
-  Set clg_doors = clg_doors * clg_load_ratio, !- Program Line 185
-  Set clg_skylights = clg_skylights * clg_load_ratio, !- Program Line 186
-  Set clg_internal_mass = clg_internal_mass * clg_load_ratio, !- Program Line 187
-  Set clg_intgains = clg_intgains * clg_load_ratio, !- Program Line 188
-  Set clg_infil = clg_infil * clg_load_ratio, !- Program Line 189
-  Set clg_mechvent = clg_mechvent * clg_load_ratio, !- Program Line 190
-  Set clg_natvent = clg_natvent * clg_load_ratio, !- Program Line 191
-  Set clg_ducts = clg_ducts * clg_load_ratio, !- Program Line 192
-  EndIf,                                  !- Program Line 193
-  Set prev_hr_clg_load_liv = clg_load_liv, !- Program Line 194
-  Set prev_hr_clg_setpoint = clg_setpoint_temp; !- Program Line 195
+  Set hr_ducts = hr_ducts - ducts_conv_3 - ducts_rad_3, !- Program Line 59
+  Set hr_ducts = hr_ducts - ducts_conv_4 - ducts_rad_4, !- Program Line 60
+  Set hr_ducts = hr_ducts - ducts_conv_5 - ducts_rad_5, !- Program Line 61
+  Set hr_ducts = hr_ducts + (duct_mix_loss - duct_mix_gain), !- Program Line 62
+  Set htg_mode = 0,                       !- Program Line 63
+  If htg_load_liv > 0,                    !- Program Line 64
+  Set htg_mode = 1,                       !- Program Line 65
+  EndIf,                                  !- Program Line 66
+  Set htg_walls = hr_walls * htg_mode,    !- Program Line 67
+  Set htg_rim_joists = hr_rim_joists * htg_mode, !- Program Line 68
+  Set htg_foundation_walls = hr_foundation_walls * htg_mode, !- Program Line 69
+  Set htg_floors = hr_floors * htg_mode,  !- Program Line 70
+  Set htg_slabs = hr_slabs * htg_mode,    !- Program Line 71
+  Set htg_ceilings = hr_ceilings * htg_mode, !- Program Line 72
+  Set htg_roofs = hr_roofs * htg_mode,    !- Program Line 73
+  Set htg_windows = hr_windows * htg_mode, !- Program Line 74
+  Set htg_doors = hr_doors * htg_mode,    !- Program Line 75
+  Set htg_skylights = hr_skylights * htg_mode, !- Program Line 76
+  Set htg_internal_mass = hr_internal_mass * htg_mode, !- Program Line 77
+  Set htg_intgains = hr_intgains * htg_mode, !- Program Line 78
+  Set htg_infil = hr_infil * htg_mode,    !- Program Line 79
+  Set htg_mechvent = hr_mechvent * htg_mode, !- Program Line 80
+  Set htg_natvent = hr_natvent * htg_mode, !- Program Line 81
+  Set htg_ducts = hr_ducts * htg_mode,    !- Program Line 82
+  Set htg_ratio = 0,                      !- Program Line 83
+  If (htg_setpoint_temp <> prev_hr_htg_setpoint) && (htg_mode > 0), !- Program Line 84
+  Set htg_ratio = 1,                      !- Program Line 85
+  ElseIf (htg_load_liv * prev_hr_htg_load_liv == 0) && (htg_mode > 0), !- Program Line 86
+  Set htg_ratio = 1,                      !- Program Line 87
+  EndIf,                                  !- Program Line 88
+  If htg_ratio > 0,                       !- Program Line 89
+  Set htg_sum = 0,                        !- Program Line 90
+  Set htg_sum = htg_sum + htg_walls,      !- Program Line 91
+  Set htg_sum = htg_sum + htg_rim_joists, !- Program Line 92
+  Set htg_sum = htg_sum + htg_foundation_walls, !- Program Line 93
+  Set htg_sum = htg_sum + htg_floors,     !- Program Line 94
+  Set htg_sum = htg_sum + htg_slabs,      !- Program Line 95
+  Set htg_sum = htg_sum + htg_ceilings,   !- Program Line 96
+  Set htg_sum = htg_sum + htg_roofs,      !- Program Line 97
+  Set htg_sum = htg_sum + htg_windows,    !- Program Line 98
+  Set htg_sum = htg_sum + htg_doors,      !- Program Line 99
+  Set htg_sum = htg_sum + htg_skylights,  !- Program Line 100
+  Set htg_sum = htg_sum + htg_internal_mass, !- Program Line 101
+  Set htg_sum = htg_sum + htg_intgains,   !- Program Line 102
+  Set htg_sum = htg_sum + htg_infil,      !- Program Line 103
+  Set htg_sum = htg_sum + htg_mechvent,   !- Program Line 104
+  Set htg_sum = htg_sum + htg_natvent,    !- Program Line 105
+  Set htg_sum = htg_sum + htg_ducts,      !- Program Line 106
+  If htg_sum <> 0,                        !- Program Line 107
+  Set htg_load_ratio = htg_load_liv / htg_sum, !- Program Line 108
+  Else,                                   !- Program Line 109
+  Set htg_load_ratio = 1,                 !- Program Line 110
+  EndIf,                                  !- Program Line 111
+  Set htg_walls = htg_walls * htg_load_ratio, !- Program Line 112
+  Set htg_rim_joists = htg_rim_joists * htg_load_ratio, !- Program Line 113
+  Set htg_foundation_walls = htg_foundation_walls * htg_load_ratio, !- Program Line 114
+  Set htg_floors = htg_floors * htg_load_ratio, !- Program Line 115
+  Set htg_slabs = htg_slabs * htg_load_ratio, !- Program Line 116
+  Set htg_ceilings = htg_ceilings * htg_load_ratio, !- Program Line 117
+  Set htg_roofs = htg_roofs * htg_load_ratio, !- Program Line 118
+  Set htg_windows = htg_windows * htg_load_ratio, !- Program Line 119
+  Set htg_doors = htg_doors * htg_load_ratio, !- Program Line 120
+  Set htg_skylights = htg_skylights * htg_load_ratio, !- Program Line 121
+  Set htg_internal_mass = htg_internal_mass * htg_load_ratio, !- Program Line 122
+  Set htg_intgains = htg_intgains * htg_load_ratio, !- Program Line 123
+  Set htg_infil = htg_infil * htg_load_ratio, !- Program Line 124
+  Set htg_mechvent = htg_mechvent * htg_load_ratio, !- Program Line 125
+  Set htg_natvent = htg_natvent * htg_load_ratio, !- Program Line 126
+  Set htg_ducts = htg_ducts * htg_load_ratio, !- Program Line 127
+  EndIf,                                  !- Program Line 128
+  Set prev_hr_htg_load_liv = htg_load_liv, !- Program Line 129
+  Set prev_hr_htg_setpoint = htg_setpoint_temp, !- Program Line 130
+  Set clg_mode = 0,                       !- Program Line 131
+  If clg_load_liv > 0,                    !- Program Line 132
+  Set clg_mode = 1,                       !- Program Line 133
+  EndIf,                                  !- Program Line 134
+  Set clg_walls = -hr_walls * clg_mode,   !- Program Line 135
+  Set clg_rim_joists = -hr_rim_joists * clg_mode, !- Program Line 136
+  Set clg_foundation_walls = -hr_foundation_walls * clg_mode, !- Program Line 137
+  Set clg_floors = -hr_floors * clg_mode, !- Program Line 138
+  Set clg_slabs = -hr_slabs * clg_mode,   !- Program Line 139
+  Set clg_ceilings = -hr_ceilings * clg_mode, !- Program Line 140
+  Set clg_roofs = -hr_roofs * clg_mode,   !- Program Line 141
+  Set clg_windows = -hr_windows * clg_mode, !- Program Line 142
+  Set clg_doors = -hr_doors * clg_mode,   !- Program Line 143
+  Set clg_skylights = -hr_skylights * clg_mode, !- Program Line 144
+  Set clg_internal_mass = -hr_internal_mass * clg_mode, !- Program Line 145
+  Set clg_intgains = -hr_intgains * clg_mode, !- Program Line 146
+  Set clg_infil = -hr_infil * clg_mode,   !- Program Line 147
+  Set clg_mechvent = -hr_mechvent * clg_mode, !- Program Line 148
+  Set clg_natvent = -hr_natvent * clg_mode, !- Program Line 149
+  Set clg_ducts = -hr_ducts * clg_mode,   !- Program Line 150
+  Set clg_ratio = 0,                      !- Program Line 151
+  If (clg_setpoint_temp <> prev_hr_clg_setpoint) && (clg_mode > 0), !- Program Line 152
+  Set clg_ratio = 1,                      !- Program Line 153
+  ElseIf (clg_load_liv * prev_hr_clg_load_liv == 0) && (clg_mode > 0), !- Program Line 154
+  Set clg_ratio = 1,                      !- Program Line 155
+  EndIf,                                  !- Program Line 156
+  If clg_ratio > 0,                       !- Program Line 157
+  Set clg_sum = 0,                        !- Program Line 158
+  Set clg_sum = clg_sum + clg_walls,      !- Program Line 159
+  Set clg_sum = clg_sum + clg_rim_joists, !- Program Line 160
+  Set clg_sum = clg_sum + clg_foundation_walls, !- Program Line 161
+  Set clg_sum = clg_sum + clg_floors,     !- Program Line 162
+  Set clg_sum = clg_sum + clg_slabs,      !- Program Line 163
+  Set clg_sum = clg_sum + clg_ceilings,   !- Program Line 164
+  Set clg_sum = clg_sum + clg_roofs,      !- Program Line 165
+  Set clg_sum = clg_sum + clg_windows,    !- Program Line 166
+  Set clg_sum = clg_sum + clg_doors,      !- Program Line 167
+  Set clg_sum = clg_sum + clg_skylights,  !- Program Line 168
+  Set clg_sum = clg_sum + clg_internal_mass, !- Program Line 169
+  Set clg_sum = clg_sum + clg_intgains,   !- Program Line 170
+  Set clg_sum = clg_sum + clg_infil,      !- Program Line 171
+  Set clg_sum = clg_sum + clg_mechvent,   !- Program Line 172
+  Set clg_sum = clg_sum + clg_natvent,    !- Program Line 173
+  Set clg_sum = clg_sum + clg_ducts,      !- Program Line 174
+  If clg_sum <> 0,                        !- Program Line 175
+  Set clg_load_ratio = clg_load_liv / clg_sum, !- Program Line 176
+  Else,                                   !- Program Line 177
+  Set clg_load_ratio = 1,                 !- Program Line 178
+  EndIf,                                  !- Program Line 179
+  Set clg_walls = clg_walls * clg_load_ratio, !- Program Line 180
+  Set clg_rim_joists = clg_rim_joists * clg_load_ratio, !- Program Line 181
+  Set clg_foundation_walls = clg_foundation_walls * clg_load_ratio, !- Program Line 182
+  Set clg_floors = clg_floors * clg_load_ratio, !- Program Line 183
+  Set clg_slabs = clg_slabs * clg_load_ratio, !- Program Line 184
+  Set clg_ceilings = clg_ceilings * clg_load_ratio, !- Program Line 185
+  Set clg_roofs = clg_roofs * clg_load_ratio, !- Program Line 186
+  Set clg_windows = clg_windows * clg_load_ratio, !- Program Line 187
+  Set clg_doors = clg_doors * clg_load_ratio, !- Program Line 188
+  Set clg_skylights = clg_skylights * clg_load_ratio, !- Program Line 189
+  Set clg_internal_mass = clg_internal_mass * clg_load_ratio, !- Program Line 190
+  Set clg_intgains = clg_intgains * clg_load_ratio, !- Program Line 191
+  Set clg_infil = clg_infil * clg_load_ratio, !- Program Line 192
+  Set clg_mechvent = clg_mechvent * clg_load_ratio, !- Program Line 193
+  Set clg_natvent = clg_natvent * clg_load_ratio, !- Program Line 194
+  Set clg_ducts = clg_ducts * clg_load_ratio, !- Program Line 195
+  EndIf,                                  !- Program Line 196
+  Set prev_hr_clg_load_liv = clg_load_liv, !- Program Line 197
+  Set prev_hr_clg_setpoint = clg_setpoint_temp; !- Program Line 198
 
 EnergyManagementSystem:Program,
   infil_program,                          !- Name
@@ -21067,16 +20910,16 @@ EnergyManagementSystem:ProgramCallingManager,
   water_heater_EC_adj;                    !- Program Name 1
 
 EnergyManagementSystem:OutputVariable,
-  central ac and furnace supply fan cool disaggregate, !- Name
-  central_ac_and_furnace_supply_fan_cool, !- EMS Variable Name
+  central ac and furnace supply fan clg disaggregate, !- Name
+  central_ac_and_furnace_supply_fan_clg,  !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
   central_ac_and_furnace_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
-  central ac and furnace supply fan heat disaggregate, !- Name
-  central_ac_and_furnace_supply_fan_heat, !- EMS Variable Name
+  central ac and furnace supply fan htg primary disaggregate, !- Name
+  central_ac_and_furnace_supply_fan_primary_htg, !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
   central_ac_and_furnace_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name

@@ -1,4 +1,4 @@
-! Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.03 16:44,
+! Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26,
 ! Output:Variable Objects (applicable to this run)
 Output:Variable,*,Site Outdoor Air Drybulb Temperature,hourly; !- Zone Average [C]
 Output:Variable,*,Site Outdoor Air Dewpoint Temperature,hourly; !- Zone Average [C]
@@ -145,8 +145,8 @@ Output:Variable,*,Zone Other Equipment Total Heating Energy,hourly; !- Zone Sum 
 Output:Variable,*,Zone Other Equipment Total Heating Rate,hourly; !- Zone Average [W]
 Output:Variable,*,Other Equipment Electric Rate,hourly; !- Zone Average [W]
 Output:Variable,*,Other Equipment Electric Energy,hourly; !- Zone Sum [J]
-Output:Variable,*,central ac and furnace supply fan cool disaggregate,hourly; !- HVAC Sum [J]
-Output:Variable,*,central ac and furnace supply fan heat disaggregate,hourly; !- HVAC Sum [J]
+Output:Variable,*,central ac and furnace supply fan clg disaggregate,hourly; !- HVAC Sum [J]
+Output:Variable,*,central ac and furnace supply fan htg primary disaggregate,hourly; !- HVAC Sum [J]
 Output:Variable,*,clg_ceilings_outvar,hourly; !- Zone Sum [J]
 Output:Variable,*,clg_doors_outvar,hourly; !- Zone Sum [J]
 Output:Variable,*,clg_ducts_outvar,hourly; !- Zone Sum [J]
