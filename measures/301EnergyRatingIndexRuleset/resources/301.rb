@@ -564,7 +564,7 @@ class EnergyRatingIndex301Ruleset
       if is_thermal_boundary(roof_values)
         insulation_assembly_r_value = 1.0 / ceiling_ufactor
       else
-        insulation_assembly_r_value = 2.3 # uninsulated
+        insulation_assembly_r_value = [roof_values[:insulation_assembly_r_value], 2.3].min # uninsulated
       end
       HPXML.add_roof(hpxml: hpxml,
                      id: roof_values[:id],
@@ -649,7 +649,7 @@ class EnergyRatingIndex301Ruleset
       if is_thermal_boundary(rim_joist_values)
         insulation_assembly_r_value = 1.0 / ufactor
       else
-        insulation_assembly_r_value = 2.3 # uninsulated
+        insulation_assembly_r_value = [rim_joist_values[:insulation_assembly_r_value], 4.0].min # uninsulated
       end
       HPXML.add_rim_joist(hpxml: hpxml,
                           id: rim_joist_values[:id],
@@ -718,7 +718,7 @@ class EnergyRatingIndex301Ruleset
       if is_thermal_boundary(wall_values)
         insulation_assembly_r_value = 1.0 / ufactor
       else
-        insulation_assembly_r_value = 4.0 # uninsulated
+        insulation_assembly_r_value = [wall_values[:insulation_assembly_r_value], 4.0].min # uninsulated
       end
       HPXML.add_wall(hpxml: hpxml,
                      id: wall_values[:id],
@@ -869,7 +869,7 @@ class EnergyRatingIndex301Ruleset
       if is_thermal_boundary(framefloor_values)
         insulation_assembly_r_value = 1.0 / ceiling_ufactor
       else
-        insulation_assembly_r_value = 2.1 # uninsulated
+        insulation_assembly_r_value = [framefloor_values[:insulation_assembly_r_value], 2.1].min # uninsulated
       end
       HPXML.add_framefloor(hpxml: hpxml,
                            id: framefloor_values[:id],
@@ -933,12 +933,12 @@ class EnergyRatingIndex301Ruleset
 
       if is_thermal_boundary(framefloor_values)
         if @uncond_bsmnt_thermal_bndry == "foundation wall"
-          insulation_assembly_r_value = 3.1 # uninsulated
+          insulation_assembly_r_value = [framefloor_values[:insulation_assembly_r_value], 3.1].min # uninsulated
         else
           insulation_assembly_r_value = 1.0 / floor_ufactor
         end
       else
-        insulation_assembly_r_value = 3.1 # uninsulated
+        insulation_assembly_r_value = [framefloor_values[:insulation_assembly_r_value], 3.1].min # uninsulated
       end
 
       HPXML.add_framefloor(hpxml: hpxml,
