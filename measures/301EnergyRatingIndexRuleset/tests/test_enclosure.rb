@@ -451,7 +451,7 @@ class EnclosureTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_floors(hpxml_doc, 2700, (33.33 * 1350 + 3.1 * 1350) / 2700)
+    _check_floors(hpxml_doc, 2700, (33.33 * 1350 + 2.1 * 1350) / 2700)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
