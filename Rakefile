@@ -739,6 +739,12 @@ def get_hpxml_file_roofs_values(hpxml_file, roofs_values)
     for i in 0..roofs_values.size - 1
       roofs_values[i][:radiant_barrier] = true
     end
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
+         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
+    # Solar absorptance = 0.75; Emittance = 0.90; Slope = 18.4 degrees (pitch = 4/12)
+    for i in 0..roofs_values.size - 1
+      roofs_values[i][:solar_absorptance] = 0.75
+    end
   end
   return roofs_values
 end
@@ -871,6 +877,7 @@ def get_hpxml_file_walls_values(hpxml_file, walls_values)
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Cavity insulation = R-13, grade I; Continuous sheathing insulation = R-5; Framing fraction = 0.25; Solar absorptance = 0.75
     for i in 0..walls_values.size - 3
+      walls_values[i][:insulation_assembly_r_value] = 17.07
       walls_values[i][:solar_absorptance] = 0.75
     end
   end
@@ -1148,16 +1155,16 @@ def get_hpxml_file_framefloors_values(hpxml_file, framefloors_values)
     framefloors_values[1][:insulation_assembly_r_value] = 4.24
     framefloors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Blown insulation = R-38, grade I; Framing fraction = 0.11
-    framefloors_values[0][:insulation_assembly_r_value] = 39.3
+    # Blown insulation = R-49, grade I; Framing fraction = 0.11
+    framefloors_values[0][:insulation_assembly_r_value] = 48.72
     # Cavity insulation = R-30, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    framefloors_values[1][:insulation_assembly_r_value] = 28.1
+    framefloors_values[1][:insulation_assembly_r_value] = 28.66
     framefloors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # Blown insulation = R-49, grade I; Framing fraction = 0.11
-    framefloors_values[0][:insulation_assembly_r_value] = 50.3
+    # Blown insulation = R-38, grade I; Framing fraction = 0.11
+    framefloors_values[0][:insulation_assembly_r_value] = 37.53
     # Cavity insulation = R-19, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    framefloors_values[1][:insulation_assembly_r_value] = 20.4
+    framefloors_values[1][:insulation_assembly_r_value] = 19.45
     framefloors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml',
          'RESNET_Tests/4.1_Standard_140/L322XC.xml',
@@ -1244,8 +1251,8 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
                       :under_slab_insulation_spans_entire_slab => nil,
                       :perimeter_insulation_r_value => 0,
                       :under_slab_insulation_r_value => 0,
-                      :carpet_fraction => 1,
-                      :carpet_r_value => 2 }]
+                      :carpet_fraction => 0,
+                      :carpet_r_value => 0 }]
   elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
          'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
     slabs_values = [{ :id => "Slab",
@@ -2012,7 +2019,7 @@ def get_hpxml_file_ducts_values(hpxml_file, ducts_values)
     ducts_values = [[{ :duct_type => "supply",
                        :duct_insulation_r_value => 6,
                        :duct_location => "living space",
-                       :duct_surface_area => 308 },
+                       :duct_surface_area => 415.5 },
                      { :duct_type => "return",
                        :duct_insulation_r_value => 6,
                        :duct_location => "living space",
@@ -2123,7 +2130,7 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :fan_type => "central fan integrated supply",
                                  :tested_flow_rate => 168.6,
                                  :hours_in_operation => 8,
-                                 :fan_power => 14,
+                                 :fan_power => 373,
                                  :distribution_system_idref => "HVACDistribution" }]
   elsif ['NASEO_Technical_Exercises/NASEO-04.xml'].include? hpxml_file
     # Exhaust mechanical ventilation system with 50 cfm and 15 watts

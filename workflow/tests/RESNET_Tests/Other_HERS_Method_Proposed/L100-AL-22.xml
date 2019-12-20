@@ -91,7 +91,7 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>0</Azimuth>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
@@ -105,7 +105,7 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>180</Azimuth>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
@@ -129,7 +129,7 @@
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='WallNorthInsulation'/>
-              <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>17.07</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -145,7 +145,7 @@
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='WallEastInsulation'/>
-              <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>17.07</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -161,7 +161,7 @@
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='WallSouthInsulation'/>
-              <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>17.07</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -177,7 +177,7 @@
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='WallWestInsulation'/>
-              <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>17.07</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -295,7 +295,7 @@
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='FloorUnderAtticInsulation'/>
-              <AssemblyEffectiveRValue>50.3</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>37.53</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
           <FrameFloor>
@@ -305,7 +305,7 @@
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='FloorOverFoundationInsulation'/>
-              <AssemblyEffectiveRValue>20.4</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>19.45</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
         </FrameFloors>
@@ -333,8 +333,8 @@
               </Layer>
             </UnderSlabInsulation>
             <extension>
-              <CarpetFraction>1.0</CarpetFraction>
-              <CarpetRValue>2.0</CarpetRValue>
+              <CarpetFraction>0.0</CarpetFraction>
+              <CarpetRValue>0.0</CarpetRValue>
             </extension>
           </Slab>
         </Slabs>
@@ -449,7 +449,7 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - vented</DuctLocation>
-                  <DuctSurfaceArea>308.0</DuctSurfaceArea>
+                  <DuctSurfaceArea>415.5</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
