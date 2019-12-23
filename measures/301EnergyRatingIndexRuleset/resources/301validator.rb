@@ -158,9 +158,9 @@ class EnergyRatingIndex301Validator
         "Thickness" => one,
         "DepthBelowGrade" => one,
         "Insulation/SystemIdentifier" => one, # Required by HPXML schema
-        # Either specify insulation layer R-value and insulation height OR assembly R-value:
-        "[DistanceToBottomOfInsulation | Insulation/AssemblyEffectiveRValue]" => one,
-        "[Insulation/Layer[InstallationType='continuous']/NominalRValue | Insulation/AssemblyEffectiveRValue]" => one,
+        # Insulation: either specify interior and exterior layers OR assembly R-value:
+        "Insulation/Layer[InstallationType='continuous - interior'] | Insulation/AssemblyEffectiveRValue" => one, # See [FoundationWallInsLayer]
+        "Insulation/Layer[InstallationType='continuous - exterior'] | Insulation/AssemblyEffectiveRValue" => one, # See [FoundationWallInsLayer]
       },
 
       ## [VentedCrawlspace]
@@ -171,6 +171,13 @@ class EnergyRatingIndex301Validator
       ## [UnconditionedBasement]
       "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - unconditioned']" => {
         "../../Foundations/Foundation[FoundationType/Basement[Conditioned='false']]/ThermalBoundary" => one,
+      },
+
+      ## [FoundationWallInsLayer]
+      "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall/Insulation/Layer[InstallationType='continuous - exterior' or InstallationType='continuous - interior']" => {
+        "NominalRValue" => one,
+        "extension/DistanceToTopOfInsulation" => one,
+        "extension/DistanceToBottomOfInsulation" => one,
       },
 
       # [FrameFloor]
