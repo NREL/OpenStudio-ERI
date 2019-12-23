@@ -298,7 +298,25 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml_doc, 1200, 8.9, 0, 9, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 8.9, 0, 8, 8, 7)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_foundation_walls(hpxml_doc, 1200, 16.95, 0, 8, 8, 7)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
+
+    hpxml_name = "base-foundation-conditioned-basement-wall-interior-insulation.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_foundation_walls(hpxml_doc, 1200, 18.9, 1, 16, 8, 7)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -1058,8 +1076,8 @@ class EnclosureTest < MiniTest::Test
       ['interior', 'exterior'].each do |location|
         if not fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/NominalRValue"].nil?
           rvalue_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/NominalRValue"].text) * area_values[-1]
-          ins_top_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/DistanceToTopOfInsulation"].text) * area_values[-1]
-          ins_bottom_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/DistanceToBottomOfInsulation"].text) * area_values[-1]
+          ins_top_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/extension/DistanceToTopOfInsulation"].text) * area_values[-1]
+          ins_bottom_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/extension/DistanceToBottomOfInsulation"].text) * area_values[-1]
         end
       end
       height_x_area_values << Float(fnd_wall.elements["Height"].text) * area_values[-1]

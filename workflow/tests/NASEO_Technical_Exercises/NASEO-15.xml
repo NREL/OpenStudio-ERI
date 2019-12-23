@@ -223,18 +223,18 @@
               <SystemIdentifier id='FoundationWallNorthInsulation'/>
               <Layer>
                 <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-                <extension>
-                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
-                </extension>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>19.0</NominalRValue>
                 <extension>
                   <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
                   <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
                 </extension>
               </Layer>
             </Insulation>
@@ -252,18 +252,18 @@
               <SystemIdentifier id='FoundationWallEastInsulation'/>
               <Layer>
                 <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-                <extension>
-                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
-                </extension>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>19.0</NominalRValue>
                 <extension>
                   <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
                   <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
                 </extension>
               </Layer>
             </Insulation>
@@ -281,18 +281,18 @@
               <SystemIdentifier id='FoundationWallSouthInsulation'/>
               <Layer>
                 <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-                <extension>
-                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
-                </extension>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>19.0</NominalRValue>
                 <extension>
                   <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
                   <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
                 </extension>
               </Layer>
             </Insulation>
@@ -310,18 +310,18 @@
               <SystemIdentifier id='FoundationWallWestInsulation'/>
               <Layer>
                 <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-                <extension>
-                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
-                </extension>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>19.0</NominalRValue>
                 <extension>
                   <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
                   <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
                 </extension>
               </Layer>
             </Insulation>

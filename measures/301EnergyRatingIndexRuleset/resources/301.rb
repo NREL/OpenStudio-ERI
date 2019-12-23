@@ -828,12 +828,12 @@ class EnergyRatingIndex301Ruleset
                                 thickness: fwall_values[:thickness],
                                 depth_below_grade: fwall_values[:depth_below_grade],
                                 insulation_id: fwall_values[:insulation_id],
-                                insulation_interior_r_value: fwall_values[:insulation_interior_r_value],
-                                insulation_interior_distance_to_top: fwall_values[:insulation_interior_distance_to_top],
-                                insulation_interior_distance_to_bottom: fwall_values[:insulation_interior_distance_to_bottom],
-                                insulation_exterior_r_value: fwall_values[:insulation_exterior_r_value],
-                                insulation_exterior_distance_to_top: fwall_values[:insulation_exterior_distance_to_top],
-                                insulation_exterior_distance_to_bottom: fwall_values[:insulation_exterior_distance_to_bottom],
+                                insulation_interior_r_value: insulation_interior_r_value,
+                                insulation_interior_distance_to_top: insulation_interior_distance_to_top,
+                                insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
+                                insulation_exterior_r_value: insulation_exterior_r_value,
+                                insulation_exterior_distance_to_top: insulation_exterior_distance_to_top,
+                                insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom,
                                 insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
@@ -857,7 +857,7 @@ class EnergyRatingIndex301Ruleset
                                 insulation_exterior_r_value: fwall_values[:insulation_exterior_r_value],
                                 insulation_exterior_distance_to_top: fwall_values[:insulation_exterior_distance_to_top],
                                 insulation_exterior_distance_to_bottom: fwall_values[:insulation_exterior_distance_to_bottom],
-                                insulation_assembly_r_value: insulation_assembly_r_value)
+                                insulation_assembly_r_value: fwall_values[:insulation_assembly_r_value])
     end
   end
 
