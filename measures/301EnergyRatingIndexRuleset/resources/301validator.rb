@@ -176,8 +176,8 @@ class EnergyRatingIndex301Validator
       ## [FoundationWallInsLayer]
       "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall/Insulation/Layer[InstallationType='continuous - exterior' or InstallationType='continuous - interior']" => {
         "NominalRValue" => one,
-        "extension/DistanceToTopOfInsulation" => one,
-        "extension/DistanceToBottomOfInsulation" => one,
+        "extension/DistanceToTopOfInsulation" => one, # ft
+        "extension/DistanceToBottomOfInsulation" => one, # ft
       },
 
       # [FrameFloor]
@@ -204,7 +204,7 @@ class EnergyRatingIndex301Validator
         "PerimeterInsulation/Layer[InstallationType='continuous']/NominalRValue" => one,
         "UnderSlabInsulation/SystemIdentifier" => one, # Required by HPXML schema
         "UnderSlabInsulation/Layer[InstallationType='continuous']/NominalRValue" => one,
-        "extension/CarpetFraction" => one,
+        "extension/CarpetFraction" => one, # 0 - 1
         "extension/CarpetRValue" => one,
       },
 
@@ -474,7 +474,7 @@ class EnergyRatingIndex301Validator
         "RelatedHVACSystem" => one, # HeatingSystem (boiler)
         "TankVolume" => one,
         "WaterHeaterInsulation/Jacket/JacketRValue" => zero_or_one, # Capable to model tank wrap insulation
-        "extension/StandbyLoss" => zero_or_one, # F/h, refer to https://www.ahridirectory.org/NewSearch?programId=28&searchTypeId=3
+        "extension/StandbyLoss" => zero_or_one, # deg-F/h, refer to https://www.ahridirectory.org/NewSearch?programId=28&searchTypeId=3
       },
 
       ## [WHType=CombiTankless]
@@ -484,6 +484,7 @@ class EnergyRatingIndex301Validator
 
       ## [Desuperheater]
       "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[UsesDesuperheater='true']" => {
+        "[WaterHeaterType='storage water heater' or WaterHeaterType='instantaneous water heater']" => one, # Desuperheater is only supported with storage/tankless water heater
         "RelatedHVACSystem" => one, # HeatPump or CoolingSystem
       },
 
