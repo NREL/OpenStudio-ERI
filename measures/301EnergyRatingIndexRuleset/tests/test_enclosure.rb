@@ -298,55 +298,73 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml_doc, 1200, 8.9, 9, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 8.9, 0, 8, 8, 7)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml_doc, 1200, 16.95, 8, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 16.95, 0, 8, 8, 7)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
+
+    hpxml_name = "base-foundation-conditioned-basement-wall-interior-insulation.xml"
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_foundation_walls(hpxml_doc, 1200, 18.9, 1, 16, 8, 7)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_foundation_walls(hpxml_doc, 1200, 16.95, 0, 8, 8, 7)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
 
     hpxml_name = "base-foundation-unconditioned-basement.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml_doc, 1200, 0, 0, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 0, 0, 0, 8, 7)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml_doc, 1200, 0, 0, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 0, 0, 0, 8, 7)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
 
     hpxml_name = "base-foundation-unconditioned-basement-wall-insulation.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml_doc, 1200, 8.9, 4, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 8.9, 0, 4, 8, 7)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml_doc, 1200, 16.95, 8, 8, 7)
+    _check_foundation_walls(hpxml_doc, 1200, 16.95, 0, 8, 8, 7)
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+    _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
 
     hpxml_names = ["base-foundation-unvented-crawlspace.xml",
                    "base-foundation-vented-crawlspace.xml"]
@@ -354,19 +372,19 @@ class EnclosureTest < MiniTest::Test
     hpxml_names.each do |hpxml_name|
       # Rated Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_foundation_walls(hpxml_doc, 600, 8.9, 4, 4, 3)
+      _check_foundation_walls(hpxml_doc, 600, 8.9, 0, 4, 4, 3)
 
       # Reference Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_foundation_walls(hpxml_doc, 600, 0, 0, 4, 3)
+      _check_foundation_walls(hpxml_doc, 600, 0, 0, 0, 4, 3)
 
       # IAD Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+      _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
 
       # IAD Reference Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 2, 0)
+      _check_foundation_walls(hpxml_doc, 277.12, 0, 0, 0, 2, 0)
     end
   end
 
@@ -1041,20 +1059,26 @@ class EnclosureTest < MiniTest::Test
     end
   end
 
-  def _check_foundation_walls(hpxml_doc, area, rvalue, ins_height, height, depth_below_grade)
+  def _check_foundation_walls(hpxml_doc, area, rvalue, ins_top, ins_bottom, height, depth_below_grade)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
-    ins_height_x_area_values = [] # Area-weighted
+    ins_top_x_area_values = [] # Area-weighted
+    ins_bottom_x_area_values = [] # Area-weighted
     height_x_area_values = [] # Area-weighted
     depth_bg_x_area_values = [] # Area-weighted
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
       area_values << Float(fnd_wall.elements["Area"].text)
       if not fnd_wall.elements["Insulation/AssemblyEffectiveRValue"].nil?
         rvalue_x_area_values << Float(fnd_wall.elements["Insulation/AssemblyEffectiveRValue"].text) * area_values[-1]
-        ins_height_x_area_values << Float(fnd_wall.elements["Height"].text) * area_values[-1] # Total wall height applies to R-value
-      else
-        rvalue_x_area_values << Float(fnd_wall.elements["Insulation/Layer/NominalRValue"].text) * area_values[-1]
-        ins_height_x_area_values << Float(fnd_wall.elements["DistanceToBottomOfInsulation"].text) * area_values[-1]
+        ins_top_x_area_values << 0.0
+        ins_bottom_x_area_values << Float(fnd_wall.elements["Height"].text) * area_values[-1] # Total wall height applies to R-value
+      end
+      ['interior', 'exterior'].each do |location|
+        if not fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/NominalRValue"].nil?
+          rvalue_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/NominalRValue"].text) * area_values[-1]
+          ins_top_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/extension/DistanceToTopOfInsulation"].text) * area_values[-1]
+          ins_bottom_x_area_values << Float(fnd_wall.elements["Insulation/Layer[InstallationType='continuous - #{location}']/extension/DistanceToBottomOfInsulation"].text) * area_values[-1]
+        end
       end
       height_x_area_values << Float(fnd_wall.elements["Height"].text) * area_values[-1]
       depth_bg_x_area_values << Float(fnd_wall.elements["DepthBelowGrade"].text) * area_values[-1]
@@ -1062,6 +1086,8 @@ class EnclosureTest < MiniTest::Test
 
     assert_in_epsilon(area, area_values.inject(:+), 0.001)
     assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(ins_top, ins_top_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
     assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
   end

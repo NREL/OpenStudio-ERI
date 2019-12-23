@@ -800,14 +800,23 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Conditioned basement walls
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
       fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
-      insulation_assembly_r_value = nil
-      insulation_r_value = nil
-      insulation_distance_to_bottom = nil
       if is_thermal_boundary(fwall_values) or @uncond_bsmnt_thermal_bndry == "foundation wall"
         insulation_assembly_r_value = 1.0 / wall_ufactor
+        insulation_interior_r_value = nil
+        insulation_interior_distance_to_top = nil
+        insulation_interior_distance_to_bottom = nil
+        insulation_exterior_r_value = nil
+        insulation_exterior_distance_to_top = nil
+        insulation_exterior_distance_to_bottom = nil
       else
-        insulation_r_value = 0 # uninsulated
-        insulation_distance_to_bottom = 0
+        # uninsulated
+        insulation_interior_r_value = 0
+        insulation_interior_distance_to_top = 0
+        insulation_interior_distance_to_bottom = 0
+        insulation_exterior_r_value = 0
+        insulation_exterior_distance_to_top = 0
+        insulation_exterior_distance_to_bottom = 0
+        insulation_assembly_r_value = nil
       end
       HPXML.add_foundation_wall(hpxml: hpxml,
                                 id: fwall_values[:id],
@@ -818,9 +827,13 @@ class EnergyRatingIndex301Ruleset
                                 azimuth: fwall_values[:azimuth],
                                 thickness: fwall_values[:thickness],
                                 depth_below_grade: fwall_values[:depth_below_grade],
-                                insulation_distance_to_bottom: insulation_distance_to_bottom,
                                 insulation_id: fwall_values[:insulation_id],
-                                insulation_r_value: insulation_r_value,
+                                insulation_interior_r_value: insulation_interior_r_value,
+                                insulation_interior_distance_to_top: insulation_interior_distance_to_top,
+                                insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
+                                insulation_exterior_r_value: insulation_exterior_r_value,
+                                insulation_exterior_distance_to_top: insulation_exterior_distance_to_top,
+                                insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom,
                                 insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
@@ -837,9 +850,13 @@ class EnergyRatingIndex301Ruleset
                                 azimuth: fwall_values[:azimuth],
                                 thickness: fwall_values[:thickness],
                                 depth_below_grade: fwall_values[:depth_below_grade],
-                                insulation_distance_to_bottom: fwall_values[:insulation_distance_to_bottom],
                                 insulation_id: fwall_values[:insulation_id],
-                                insulation_r_value: fwall_values[:insulation_r_value],
+                                insulation_interior_r_value: fwall_values[:insulation_interior_r_value],
+                                insulation_interior_distance_to_top: fwall_values[:insulation_interior_distance_to_top],
+                                insulation_interior_distance_to_bottom: fwall_values[:insulation_interior_distance_to_bottom],
+                                insulation_exterior_r_value: fwall_values[:insulation_exterior_r_value],
+                                insulation_exterior_distance_to_top: fwall_values[:insulation_exterior_distance_to_top],
+                                insulation_exterior_distance_to_bottom: fwall_values[:insulation_exterior_distance_to_bottom],
                                 insulation_assembly_r_value: fwall_values[:insulation_assembly_r_value])
     end
   end
@@ -853,8 +870,12 @@ class EnergyRatingIndex301Ruleset
                               area: 2 * 34.64 * 4,
                               thickness: 8,
                               depth_below_grade: 0,
-                              insulation_distance_to_bottom: 0,
-                              insulation_r_value: 0)
+                              insulation_interior_r_value: 0,
+                              insulation_interior_distance_to_top: 0,
+                              insulation_interior_distance_to_bottom: 0,
+                              insulation_exterior_r_value: 0,
+                              insulation_exterior_distance_to_top: 0,
+                              insulation_exterior_distance_to_bottom: 0)
   end
 
   def self.set_enclosure_ceilings_reference(orig_details, hpxml)
