@@ -1755,7 +1755,7 @@ class OSModel
 
   def self.add_interior_shading_schedule(runner, model, weather)
     heating_season, cooling_season = HVAC.calc_heating_and_cooling_seasons(model, weather)
-    sch = MonthWeekdayWeekendSchedule.new(model, "interior shading schedule", Array.new(24, 1), Array.new(24, 1), cooling_season, mult_weekday = 1.0, mult_weekend = 1.0, normalize_values = true, create_sch_object = true, schedule_type_limits_name = Constants.ScheduleTypeLimitsFraction)
+    sch = MonthWeekdayWeekendSchedule.new(model, "interior shading schedule", Array.new(24, 1), Array.new(24, 1), cooling_season, 1.0, 1.0, true, true, Constants.ScheduleTypeLimitsFraction)
     return sch
   end
 
@@ -2762,7 +2762,7 @@ class OSModel
 
     # Base heating setpoint
     htg_setpoint = hvac_control_values[:heating_setpoint_temp]
-    @htg_weekday_setpoints = [[htg_setpoint] * 24] * 12
+    htg_weekday_setpoints = [[htg_setpoint] * 24] * 12
 
     # Apply heating setback?
     htg_setback = hvac_control_values[:heating_setback_temp]
@@ -2771,15 +2771,15 @@ class OSModel
       htg_setback_start_hr = hvac_control_values[:heating_setback_start_hour]
       for m in 1..12
         for hr in htg_setback_start_hr..htg_setback_start_hr + Integer(htg_setback_hrs_per_week / 7.0) - 1
-          @htg_weekday_setpoints[m - 1][hr % 24] = htg_setback
+          htg_weekday_setpoints[m - 1][hr % 24] = htg_setback
         end
       end
     end
-    @htg_weekend_setpoints = @htg_weekday_setpoints
+    htg_weekend_setpoints = htg_weekday_setpoints
 
     # Base cooling setpoint
     clg_setpoint = hvac_control_values[:cooling_setpoint_temp]
-    @clg_weekday_setpoints = [[clg_setpoint] * 24] * 12
+    clg_weekday_setpoints = [[clg_setpoint] * 24] * 12
 
     # Apply cooling setup?
     clg_setup = hvac_control_values[:cooling_setup_temp]
@@ -2788,7 +2788,7 @@ class OSModel
       clg_setup_start_hr = hvac_control_values[:cooling_setup_start_hour]
       for m in 1..12
         for hr in clg_setup_start_hr..clg_setup_start_hr + Integer(clg_setup_hrs_per_week / 7.0) - 1
-          @clg_weekday_setpoints[m - 1][hr % 24] = clg_setup
+          clg_weekday_setpoints[m - 1][hr % 24] = clg_setup
         end
       end
     end
@@ -2799,14 +2799,14 @@ class OSModel
       HVAC.get_ceiling_fan_operation_months(weather).each_with_index do |operation, m|
         next unless operation == 1
 
-        @clg_weekday_setpoints[m] = [@clg_weekday_setpoints[m], Array.new(24, clg_ceiling_fan_offset)].transpose.map { |i| i.reduce(:+) }
+        clg_weekday_setpoints[m] = [clg_weekday_setpoints[m], Array.new(24, clg_ceiling_fan_offset)].transpose.map { |i| i.reduce(:+) }
       end
     end
-    @clg_weekend_setpoints = @clg_weekday_setpoints
+    clg_weekend_setpoints = clg_weekday_setpoints
 
     HVAC.apply_setpoints(model, runner, weather, @living_zone,
-                         @htg_weekday_setpoints, @htg_weekend_setpoints, 1, 12,
-                         @clg_weekday_setpoints, @clg_weekend_setpoints, 1, 12)
+                         htg_weekday_setpoints, htg_weekend_setpoints, 1, 12,
+                         clg_weekday_setpoints, clg_weekend_setpoints, 1, 12)
   end
 
   def self.add_ceiling_fans(runner, model, building, weather)
@@ -3021,39 +3021,15 @@ class OSModel
 
     # Natural Ventilation
     if not disable_nat_vent.nil? and disable_nat_vent
-      nat_vent_htg_offset = 0
-      nat_vent_clg_offset = 0
-      nat_vent_ovlp_offset = 0
-      nat_vent_htg_season = false
-      nat_vent_clg_season = false
-      nat_vent_ovlp_season = false
-      nat_vent_num_weekdays = 0
-      nat_vent_num_weekends = 0
-      nat_vent_frac_windows_open = 0
-      nat_vent_frac_window_area_openable = 0
-      nat_vent_max_oa_hr = 0.0115
-      nat_vent_max_oa_rh = 0.7
+      nv_frac_windows_open = 0.0
+      nv_frac_window_area_openable = 0.0
     else
-      nat_vent_htg_offset = 1.0
-      nat_vent_clg_offset = 1.0
-      nat_vent_ovlp_offset = 1.0
-      nat_vent_htg_season = true
-      nat_vent_clg_season = true
-      nat_vent_ovlp_season = true
-      nat_vent_num_weekdays = 5
-      nat_vent_num_weekends = 2
-      # According to 2010 BA Benchmark, 33% of the windows will be open
-      # at any given time and can only be opened to 20% of their area.
-      nat_vent_frac_windows_open = 0.33
-      nat_vent_frac_window_area_openable = 0.2
-      nat_vent_max_oa_hr = 0.0115
-      nat_vent_max_oa_rh = 0.7
+      nv_frac_windows_open = 0.33
+      nv_frac_window_area_openable = 0.2
     end
-    nat_vent = NaturalVentilation.new(nat_vent_htg_offset, nat_vent_clg_offset, nat_vent_ovlp_offset, nat_vent_htg_season,
-                                      nat_vent_clg_season, nat_vent_ovlp_season, nat_vent_num_weekdays,
-                                      nat_vent_num_weekends, nat_vent_frac_windows_open, nat_vent_frac_window_area_openable,
-                                      nat_vent_max_oa_hr, nat_vent_max_oa_rh, @htg_weekday_setpoints, @htg_weekend_setpoints,
-                                      @clg_weekday_setpoints, @clg_weekend_setpoints)
+    nv_max_oa_hr = 0.0115
+    nv_max_oa_rh = 0.7
+    nat_vent = NaturalVentilation.new(nv_frac_windows_open, nv_frac_window_area_openable, nv_max_oa_hr, nv_max_oa_rh)
 
     # Ducts
     duct_systems = {}
