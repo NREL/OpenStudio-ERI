@@ -6,6 +6,7 @@
 
 Not all may apply:
 
+- [ ] OS-HPXML git subtree has been pulled
 - [ ] 301 ruleset and unit tests have been updated
 - [ ] 301validator.rb has been updated (reference EPvalidator.rb)
 - [ ] Workflow tests have been updated
