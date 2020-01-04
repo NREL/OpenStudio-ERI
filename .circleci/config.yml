@@ -10,10 +10,6 @@ jobs:
           command: |
             rm -f Gemfile.lock && bundle install
       - run:
-          name: Update measure
-          command: |
-            rake update_measures
-      - run:
           name: Run tests
           command: |
             rake test:all
