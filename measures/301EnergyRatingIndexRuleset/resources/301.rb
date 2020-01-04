@@ -1650,7 +1650,7 @@ class EnergyRatingIndex301Ruleset
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])
 
       num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
-      wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds, num_water_heaters) * 1000.0 # Btuh
+      wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(wh_sys_values[:fuel_type], @nbeds, num_water_heaters) * 1000.0 # Btuh
 
       if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Hot water equipment shall be located in conditioned space.
@@ -1685,13 +1685,13 @@ class EnergyRatingIndex301Ruleset
       if wh_sys_values[:energy_factor].nil?
         if not ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? wh_sys_values[:water_heater_type]
           wh_uef = wh_sys_values[:uniform_energy_factor]
-          wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_sys_values[:water_heater_type]), to_beopt_fuel(wh_sys_values[:fuel_type]))
+          wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, wh_sys_values[:water_heater_type], wh_sys_values[:fuel_type])
         end
       end
 
       if wh_sys_values[:water_heater_type] == 'storage water heater' and wh_sys_values[:heating_capacity].nil?
         num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
-        wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds, num_water_heaters) * 1000.0 # Btuh
+        wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(wh_sys_values[:fuel_type], @nbeds, num_water_heaters) * 1000.0 # Btuh
       end
 
       if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
@@ -1909,7 +1909,7 @@ class EnergyRatingIndex301Ruleset
                             id: dryer_values[:id],
                             location: "living space",
                             fuel_type: dryer_values[:fuel_type],
-                            combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(to_beopt_fuel(dryer_values[:fuel_type])),
+                            combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(dryer_values[:fuel_type]),
                             control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control())
   end
 
@@ -2308,7 +2308,7 @@ class EnergyRatingIndex301Ruleset
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds, 1) * 1000.0 # Btuh
+    wh_cap = Waterheater.calc_water_heater_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     HPXML.add_water_heating_system(hpxml: hpxml,
                                    id: 'WaterHeatingSystem',
