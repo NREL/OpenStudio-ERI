@@ -616,36 +616,6 @@ class EnergyRatingIndexTest < Minitest::Test
     # TODO
   end
 
-  def test_naseo_technical_exercises
-    test_name = "naseo_technical_exercises"
-    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
-
-    # Run simulations
-    all_results = {}
-    xmldir = "#{File.dirname(__FILE__)}/../tests/NASEO_Technical_Exercises"
-    Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri(xml, test_name)
-      all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
-      all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
-    end
-    assert(all_results.size > 0)
-
-    # Write results to csv
-    keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["XML"] + keys
-      all_results.each_with_index do |(xml, results), i|
-        csv_line = [File.basename(xml)]
-        keys.each do |key|
-          csv_line << results[key]
-        end
-        csv << csv_line
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-  end
-
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     cli_path = OpenStudio.getOpenStudioCLI
