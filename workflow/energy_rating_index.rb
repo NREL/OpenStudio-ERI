@@ -48,7 +48,7 @@ def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip
   return output_hpxml_path, designdir, pid
 end
 
-def retrieve_eri_outputs(design, resultsdir)
+def retrieve_eri_outputs(design, resultsdir, debug)
   csv_path = File.join(resultsdir, "#{design.gsub(' ', '')}_ERI.csv")
   if not File.exists? csv_path
     return nil
@@ -69,7 +69,7 @@ def retrieve_eri_outputs(design, resultsdir)
     end
   end
 
-  File.delete(csv_path)
+  File.delete(csv_path) if not debug
 
   return output_data
 end
@@ -645,7 +645,7 @@ design_outputs = {}
 run_designs.each do |design, run|
   next unless run
 
-  design_outputs[design] = retrieve_eri_outputs(design, resultsdir)
+  design_outputs[design] = retrieve_eri_outputs(design, resultsdir, options[:debug])
 
   if design_outputs[design].nil?
     puts "Errors encountered. Aborting..."
