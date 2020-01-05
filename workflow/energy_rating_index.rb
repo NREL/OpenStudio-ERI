@@ -6,7 +6,6 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
-require_relative "../measures/HPXMLtoOpenStudio/measure"
 require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
 require_relative "../measures/HPXMLtoOpenStudio/resources/waterheater"
 require_relative "../measures/HPXMLtoOpenStudio/resources/xmlhelper"
@@ -118,7 +117,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
   # HPXML
   design_output[:hpxml] = output_hpxml_path
-  hpxml_doc = REXML::Document.new(File.read(design_output[:hpxml]))
+  hpxml_doc = XMLHelper.parse_file(design_output[:hpxml])
   design_output[:hpxml_cfa] = get_cfa(hpxml_doc)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
