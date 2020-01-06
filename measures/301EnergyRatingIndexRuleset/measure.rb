@@ -41,7 +41,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     calc_types << Constants.CalcTypeERIIndexAdjustmentReferenceHome
     calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument("calc_type", calc_types, true)
     calc_type.setDisplayName("Calculation Type")
-    calc_type.setDefaultValue(Constants.CalcTypeStandard)
+    calc_type.setDefaultValue(Constants.CalcTypeERIRatedHome)
     args << calc_type
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_path", true)
@@ -64,12 +64,6 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the output HPXML file.")
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeBoolArgument("skip_validation", true)
-    arg.setDisplayName("Skip HPXML validation")
-    arg.setDescription("If true, only checks for and reports HPXML validation issues if an error occurs during processing. Used for faster runtime.")
-    arg.setDefaultValue(false)
-    args << arg
-
     return args
   end
 
@@ -88,7 +82,6 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     weather_dir = runner.getStringArgumentValue("weather_dir", user_arguments)
     schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
     hpxml_output_path = runner.getOptionalStringArgumentValue("hpxml_output_path", user_arguments)
-    skip_validation = runner.getBoolArgumentValue("skip_validation", user_arguments)
 
     unless (Pathname.new hpxml_path).absolute?
       hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
@@ -100,11 +93,8 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
     hpxml_doc = REXML::Document.new(File.read(hpxml_path))
 
-    # Check for invalid HPXML file up front?
-    if not skip_validation
-      if not validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
-        return false
-      end
+    if not validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
+      return false
     end
 
     begin
@@ -138,12 +128,6 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       # Apply 301 ruleset on HPXML object
       new_hpxml_doc = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
     rescue Exception => e
-      if skip_validation
-        # Something went wrong, check for invalid HPXML file now. This was previously
-        # skipped to reduce runtime (see https://github.com/NREL/OpenStudio-ERI/issues/47).
-        validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
-      end
-
       # Report exception
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
       return false
