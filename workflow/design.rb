@@ -18,7 +18,7 @@ def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_out
 
   if not designdir.nil?
     print "[#{design}] Running simulation...\n"
-    run_energyplus(design, designdir)
+    run_energyplus(design, designdir, debug)
   end
 
   return output_hpxml_path
@@ -132,11 +132,18 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_out
   return output_hpxml_path, designdir
 end
 
-def run_energyplus(design, designdir)
+def run_energyplus(design, designdir, debug)
   # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
   ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
-  command = "cd \"#{designdir}\" && \"#{ep_path}\" -w in.epw in.idf > stdout-energyplus"
-  system(command, :err => File::NULL)
+  command = "\"#{ep_path}\" -w in.epw in.idf > stdout-energyplus"
+  if debug
+    File.open(File.join(designdir, 'run.log'), 'a') do |f|
+      f << "Executing command '#{command}' from working directory '#{designdir}'"
+    end
+  end
+  Dir.chdir(designdir) do
+    system(command, :err => IO.sysopen(File.join(designdir, 'stderr-energyplus'), 'w'))
+  end
 end
 
 if ARGV.size == 7
