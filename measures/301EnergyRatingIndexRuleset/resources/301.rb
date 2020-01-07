@@ -82,6 +82,8 @@ class EnergyRatingIndex301Ruleset
     # MiscLoads
     set_misc_loads_reference(hpxml)
 
+    HPXML.reset_cache
+
     return hpxml_doc
   end
 
@@ -132,6 +134,8 @@ class EnergyRatingIndex301Ruleset
 
     # MiscLoads
     set_misc_loads_rated(hpxml)
+
+    HPXML.reset_cache
 
     return hpxml_doc
   end
@@ -186,6 +190,8 @@ class EnergyRatingIndex301Ruleset
     # MiscLoads
     set_misc_loads_iad(hpxml)
 
+    HPXML.reset_cache
+
     return hpxml_doc
   end
 
@@ -209,8 +215,7 @@ class EnergyRatingIndex301Ruleset
 
     # Roof
     orig_details.elements.each("Enclosure/Roofs/Roof") do |roof|
-      roof_values = HPXML.get_roof_values(roof: roof,
-                                          select: [:id, :interior_adjacent_to])
+      roof_values = HPXML.get_roof_values(roof: roof)
       if ["garage"].include? roof_values[:interior_adjacent_to]
         roof.parent.elements.delete roof
         delete_roof_subsurfaces(orig_details, roof_values[:id])
@@ -219,8 +224,7 @@ class EnergyRatingIndex301Ruleset
 
     # Rim Joist
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
-      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist,
-                                                    select: [:interior_adjacent_to, :exterior_adjacent_to])
+      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
       if ["garage", "other housing unit"].include? rim_joist_values[:interior_adjacent_to] or
          ["garage", "other housing unit"].include? rim_joist_values[:exterior_adjacent_to]
         rim_joist.parent.elements.delete rim_joist
@@ -229,8 +233,7 @@ class EnergyRatingIndex301Ruleset
 
     # Wall
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall,
-                                          select: [:id, :interior_adjacent_to, :exterior_adjacent_to])
+      wall_values = HPXML.get_wall_values(wall: wall)
       if ["garage", "other housing unit"].include? wall_values[:interior_adjacent_to] or
          ["garage", "other housing unit"].include? wall_values[:exterior_adjacent_to]
         wall.parent.elements.delete wall
@@ -240,8 +243,7 @@ class EnergyRatingIndex301Ruleset
 
     # FoundationWall
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fnd_wall|
-      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall,
-                                                         select: [:id, :interior_adjacent_to, :exterior_adjacent_to])
+      fnd_wall_values = HPXML.get_foundation_wall_values(foundation_wall: fnd_wall)
       if ["garage", "other housing unit"].include? fnd_wall_values[:interior_adjacent_to] or
          ["garage", "other housing unit"].include? fnd_wall_values[:exterior_adjacent_to]
         fnd_wall.parent.elements.delete fnd_wall
@@ -251,8 +253,7 @@ class EnergyRatingIndex301Ruleset
 
     # FrameFloor
     orig_details.elements.each("Enclosure/FrameFloors/FrameFloor") do |framefloor|
-      framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor,
-                                                      select: [:interior_adjacent_to, :exterior_adjacent_to])
+      framefloor_values = HPXML.get_framefloor_values(framefloor: framefloor)
       if ["garage"].include? framefloor_values[:interior_adjacent_to] or
          ["garage"].include? framefloor_values[:exterior_adjacent_to]
         framefloor.parent.elements.delete framefloor
@@ -261,8 +262,7 @@ class EnergyRatingIndex301Ruleset
 
     # Slab
     orig_details.elements.each("Enclosure/Slabs/Slab") do |slab|
-      slab_values = HPXML.get_slab_values(slab: slab,
-                                          select: [:interior_adjacent_to])
+      slab_values = HPXML.get_slab_values(slab: slab)
       if ["garage"].include? slab_values[:interior_adjacent_to]
         slab.parent.elements.delete slab
       end
@@ -271,8 +271,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_summary_reference(orig_details, hpxml)
     site = orig_details.elements["BuildingSummary/Site"]
-    site_values = HPXML.get_site_values(site: site,
-                                        select: [:fuels])
+    site_values = HPXML.get_site_values(site: site)
     construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
     construction_values = HPXML.get_building_construction_values(building_construction: construction)
 
@@ -302,8 +301,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_summary_rated(orig_details, hpxml)
     site = orig_details.elements["BuildingSummary/Site"]
-    site_values = HPXML.get_site_values(site: site,
-                                        select: [:fuels])
+    site_values = HPXML.get_site_values(site: site)
     construction = orig_details.elements["BuildingSummary/BuildingConstruction"]
     construction_values = HPXML.get_building_construction_values(building_construction: construction)
 
@@ -333,8 +331,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_summary_iad(orig_details, hpxml)
     site = orig_details.elements["BuildingSummary/Site"]
-    site_values = HPXML.get_site_values(site: site,
-                                        select: [:fuels])
+    site_values = HPXML.get_site_values(site: site)
 
     # Global variables
     # Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
@@ -1179,8 +1176,7 @@ class EnergyRatingIndex301Ruleset
     # it's possible that skylights no longer fit on the roof. To resolve this,
     # scale down skylight area if needed to fit.
     hpxml.elements.each("Building/BuildingDetails/Enclosure/Roofs/Roof") do |new_roof|
-      new_roof_values = HPXML.get_roof_values(roof: new_roof,
-                                              select: [:id, :area])
+      new_roof_values = HPXML.get_roof_values(roof: new_roof)
       new_roof_id = new_roof_values[:id]
       new_skylight_area = REXML::XPath.first(hpxml, "sum(Building/BuildingDetails/Enclosure/Skylights/Skylight[AttachedToRoof/@idref='#{new_roof_id}']/Area/text())")
       if new_skylight_area > new_roof_values[:area]
@@ -1399,8 +1395,7 @@ class EnergyRatingIndex301Ruleset
       clg_ceiling_fan_offset = nil
     end
     if not hvac_control.nil?
-      hvac_control_values = HPXML.get_hvac_control_values(hvac_control: hvac_control,
-                                                          select: [:id, :control_type])
+      hvac_control_values = HPXML.get_hvac_control_values(hvac_control: hvac_control)
       control_type = hvac_control_values[:control_type]
       htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
       clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
@@ -1487,8 +1482,7 @@ class EnergyRatingIndex301Ruleset
     fan_type = nil
     sys_id = "MechanicalVentilation"
     if not vent_fan.nil?
-      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan,
-                                                         select: [:id, :fan_type])
+      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
       fan_type = vent_fan_values[:fan_type]
       sys_id = vent_fan_values[:id]
     end
@@ -1650,7 +1644,7 @@ class EnergyRatingIndex301Ruleset
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])
 
       num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
-      wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds, num_water_heaters) * 1000.0 # Btuh
+      wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(wh_sys_values[:fuel_type], @nbeds, num_water_heaters) * 1000.0 # Btuh
 
       if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Hot water equipment shall be located in conditioned space.
@@ -1685,13 +1679,13 @@ class EnergyRatingIndex301Ruleset
       if wh_sys_values[:energy_factor].nil?
         if not ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? wh_sys_values[:water_heater_type]
           wh_uef = wh_sys_values[:uniform_energy_factor]
-          wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, to_beopt_wh_type(wh_sys_values[:water_heater_type]), to_beopt_fuel(wh_sys_values[:fuel_type]))
+          wh_sys_values[:energy_factor] = Waterheater.calc_ef_from_uef(wh_uef, wh_sys_values[:water_heater_type], wh_sys_values[:fuel_type])
         end
       end
 
       if wh_sys_values[:water_heater_type] == 'storage water heater' and wh_sys_values[:heating_capacity].nil?
         num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
-        wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_sys_values[:fuel_type]), @nbeds, num_water_heaters) * 1000.0 # Btuh
+        wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(wh_sys_values[:fuel_type], @nbeds, num_water_heaters) * 1000.0 # Btuh
       end
 
       if wh_sys_values[:water_heater_type] == 'instantaneous water heater'
@@ -1736,8 +1730,7 @@ class EnergyRatingIndex301Ruleset
     if water_heating.nil?
       sys_id = "HotWaterDistribution"
     else
-      hw_dist_values = HPXML.get_hot_water_distribution_values(hot_water_distribution: water_heating.elements["HotWaterDistribution"],
-                                                               select: [:id])
+      hw_dist_values = HPXML.get_hot_water_distribution_values(hot_water_distribution: water_heating.elements["HotWaterDistribution"])
       sys_id = hw_dist_values[:id]
     end
 
@@ -1867,8 +1860,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_washer_reference(orig_details, hpxml)
-    washer_values = HPXML.get_clothes_washer_values(clothes_washer: orig_details.elements["Appliances/ClothesWasher"],
-                                                    select: [:id])
+    washer_values = HPXML.get_clothes_washer_values(clothes_washer: orig_details.elements["Appliances/ClothesWasher"])
 
     HPXML.add_clothes_washer(hpxml: hpxml,
                              id: washer_values[:id],
@@ -1902,14 +1894,13 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_details, hpxml)
-    dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_details.elements["Appliances/ClothesDryer"],
-                                                  select: [:id, :fuel_type])
+    dryer_values = HPXML.get_clothes_dryer_values(clothes_dryer: orig_details.elements["Appliances/ClothesDryer"])
 
     HPXML.add_clothes_dryer(hpxml: hpxml,
                             id: dryer_values[:id],
                             location: "living space",
                             fuel_type: dryer_values[:fuel_type],
-                            combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(to_beopt_fuel(dryer_values[:fuel_type])),
+                            combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(dryer_values[:fuel_type]),
                             control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control())
   end
 
@@ -1931,8 +1922,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dishwasher_reference(orig_details, hpxml)
-    dishwasher_values = HPXML.get_dishwasher_values(dishwasher: orig_details.elements["Appliances/Dishwasher"],
-                                                    select: [:id])
+    dishwasher_values = HPXML.get_dishwasher_values(dishwasher: orig_details.elements["Appliances/Dishwasher"])
 
     HPXML.add_dishwasher(hpxml: hpxml,
                          id: dishwasher_values[:id],
@@ -1956,8 +1946,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_refrigerator_reference(orig_details, hpxml)
-    fridge_values = HPXML.get_refrigerator_values(refrigerator: orig_details.elements["Appliances/Refrigerator"],
-                                                  select: [:id])
+    fridge_values = HPXML.get_refrigerator_values(refrigerator: orig_details.elements["Appliances/Refrigerator"])
 
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric ERI Reference Homes
     refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
@@ -1983,10 +1972,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_cooking_range_oven_reference(orig_details, hpxml)
-    range_values = HPXML.get_cooking_range_values(cooking_range: orig_details.elements["Appliances/CookingRange"],
-                                                  select: [:id, :fuel_type])
-    oven_values = HPXML.get_oven_values(oven: orig_details.elements["Appliances/Oven"],
-                                        select: [:id])
+    range_values = HPXML.get_cooking_range_values(cooking_range: orig_details.elements["Appliances/CookingRange"])
+    oven_values = HPXML.get_oven_values(oven: orig_details.elements["Appliances/Oven"])
 
     HPXML.add_cooking_range(hpxml: hpxml,
                             id: range_values[:id],
@@ -2308,7 +2295,7 @@ class EnergyRatingIndex301Ruleset
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = Waterheater.calc_water_heater_capacity(to_beopt_fuel(wh_fuel_type), @nbeds, 1) * 1000.0 # Btuh
+    wh_cap = Waterheater.calc_water_heater_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     HPXML.add_water_heating_system(hpxml: hpxml,
                                    id: 'WaterHeatingSystem',
@@ -2326,8 +2313,7 @@ class EnergyRatingIndex301Ruleset
     fuel_fracs = {}
 
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatingSystem") do |heating|
-      heating_values = HPXML.get_heating_system_values(heating_system: heating,
-                                                       select: [:heating_system_fuel, :fraction_heat_load_served])
+      heating_values = HPXML.get_heating_system_values(heating_system: heating)
       fuel = heating_values[:heating_system_fuel]
       if fuel_fracs[fuel].nil?
         fuel_fracs[fuel] = 0.0
@@ -2336,8 +2322,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     orig_details.elements.each("Systems/HVAC/HVACPlant/HeatPump") do |hp|
-      hp_values = HPXML.get_heat_pump_values(heat_pump: hp,
-                                             select: [:heat_pump_fuel, :fraction_heat_load_served])
+      hp_values = HPXML.get_heat_pump_values(heat_pump: hp)
       fuel = hp_values[:heat_pump_fuel]
       if fuel_fracs[fuel].nil?
         fuel_fracs[fuel] = 0.0
@@ -2353,8 +2338,7 @@ class EnergyRatingIndex301Ruleset
   def self.get_infiltration_volume(orig_details)
     infilvolume = nil
     orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
-      air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement,
-                                                                                          select: [:infiltration_volume])
+      air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
       next if air_infiltration_measurement_values[:infiltration_volume].nil?
 
       infilvolume = air_infiltration_measurement_values[:infiltration_volume]
@@ -2370,8 +2354,7 @@ class EnergyRatingIndex301Ruleset
     common_wall_area = 0.0 # Excludes foundation walls
 
     orig_details.elements.each("Enclosure/Walls/Wall") do |wall|
-      wall_values = HPXML.get_wall_values(wall: wall,
-                                          select: [:area, :interior_adjacent_to, :exterior_adjacent_to])
+      wall_values = HPXML.get_wall_values(wall: wall)
       if is_thermal_boundary(wall_values)
         ag_bndry_wall_area += wall_values[:area]
       elsif wall_values[:exterior_adjacent_to] == "other housing unit"
@@ -2380,8 +2363,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     orig_details.elements.each("Enclosure/RimJoists/RimJoist") do |rim_joist|
-      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist,
-                                                    select: [:area, :interior_adjacent_to, :exterior_adjacent_to])
+      rim_joist_values = HPXML.get_rim_joist_values(rim_joist: rim_joist)
       if is_thermal_boundary(rim_joist_values)
         ag_bndry_wall_area += rim_joist_values[:area]
       elsif rim_joist_values[:exterior_adjacent_to] == "other housing unit"
@@ -2390,8 +2372,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     orig_details.elements.each("Enclosure/FoundationWalls/FoundationWall") do |fwall|
-      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall,
-                                                      select: [:area, :height, :depth_below_grade, :interior_adjacent_to, :exterior_adjacent_to])
+      fwall_values = HPXML.get_foundation_wall_values(foundation_wall: fwall)
       next unless is_thermal_boundary(fwall_values)
 
       height = fwall_values[:height]
