@@ -1622,10 +1622,6 @@ def cache_weather
     epw_file = OpenStudio::EpwFile.new(epw)
     OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
     weather = WeatherProcess.new(model, runner)
-    if weather.error? or weather.data.WSF.nil?
-      fail "Error."
-    end
-
     File.open(epw.gsub(".epw", ".csv"), "wb") do |file|
       weather.dump_to_csv(file)
     end
