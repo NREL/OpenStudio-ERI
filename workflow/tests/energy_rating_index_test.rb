@@ -86,7 +86,7 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(num_epws_expected, num_epws_actual)
 
     num_cache_expected = File.readlines(File.join(File.dirname(__FILE__), "..", "..", "weather", "data.csv")).size - 1
-    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*.cache")].count
+    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*.csv")].count
     assert_equal(num_cache_expected, num_cache_actual)
   end
 

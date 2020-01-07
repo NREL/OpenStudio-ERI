@@ -60,7 +60,7 @@ The ``WeatherStation/WMO`` must be one of the acceptable TMY3 WMO station number
 In addition to using the TMY3 weather files that are provided, custom weather files can be used if they are in EPW file format.
 To use custom weather files, first ensure that all weather files have a unique WMO station number (as provided in the first header line of the EPW file).
 Then place them in the ``weather`` directory and call ``openstudio energy_rating_index.rb --cache-weather``.
-After processing is complete, each EPW file will have a corresponding \*.cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
+After processing is complete, each EPW file will have a corresponding \*.csv cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
 
 .. note:: 
 

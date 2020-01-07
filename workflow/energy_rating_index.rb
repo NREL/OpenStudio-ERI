@@ -1570,7 +1570,7 @@ def download_epws
 
   tmpfile = Tempfile.new("epw")
 
-  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/tmy3s-cache.zip")
+  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/tmy3s-cache-csv.zip")
   http = Net::HTTP.new(url.host, url.port)
 
   params = { 'User-Agent' => 'curl/7.43.0', 'Accept-Encoding' => 'identity' }
@@ -1613,9 +1613,9 @@ def cache_weather
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-  puts "Creating *.cache for weather files..."
+  puts "Creating cache *.csv for weather files..."
   Dir["#{weather_dir}/*.epw"].each do |epw|
-    next if File.exists? epw.gsub(".epw", ".cache")
+    next if File.exists? epw.gsub(".epw", ".csv")
 
     puts "Processing #{epw}..."
     model = OpenStudio::Model::Model.new
@@ -1626,8 +1626,8 @@ def cache_weather
       fail "Error."
     end
 
-    File.open(epw.gsub(".epw", ".cache"), "wb") do |file|
-      Marshal.dump(weather, file)
+    File.open(epw.gsub(".epw", ".csv"), "wb") do |file|
+      weather.dump_to_csv(file)
     end
 
     # Also add file to data.csv

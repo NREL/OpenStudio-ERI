@@ -110,7 +110,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
           runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
           return false
         end
-        cache_path = epw_path.gsub('.epw', '.cache')
+        cache_path = epw_path.gsub('.epw', '.csv')
         if not File.exists?(cache_path)
           runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
           return false
@@ -123,7 +123,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       end
 
       # Obtain weather object
-      weather = Marshal.load(File.binread(cache_path))
+      weather = WeatherProcess.new(nil, nil, cache_path)
 
       # Apply 301 ruleset on HPXML object
       new_hpxml_doc = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml_doc, calc_type, weather)
