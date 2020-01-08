@@ -1139,15 +1139,15 @@ def get_eec_dhws(hpxml_doc, dhws)
     ## Combi system requires recalculating ef
     if value.nil?
       if wh_type == 'space-heating boiler with tankless coil'
-        combi_type = Constants.WaterHeaterTypeTankless
+        combi_type = 'instantaneous water heater'
         ua = nil
       elsif wh_type == 'space-heating boiler with storage tank'
+        combi_type = 'storage water heater'
         vol = Float(XMLHelper.get_value(dhw_system, "TankVolume"))
         standby_loss = Float(XMLHelper.get_value(dhw_system, "extension/StandbyLoss")) unless XMLHelper.get_value(dhw_system, "extension/StandbyLoss").nil?
         act_vol = Waterheater.calc_storage_tank_actual_vol(vol, nil)
         standby_loss = Waterheater.get_indirect_standbyloss(standby_loss, act_vol)
         ua = Waterheater.calc_indirect_ua_with_standbyloss(act_vol, standby_loss, nil, nil)
-        combi_type = Constants.WaterHeaterTypeTank
       end
       combi_boiler_afue = nil
       hvac_idref = dhw_system.elements["RelatedHVACSystem"].attributes["idref"]
