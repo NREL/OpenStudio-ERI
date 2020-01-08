@@ -60,7 +60,7 @@ The ``WeatherStation/WMO`` must be one of the acceptable TMY3 WMO station number
 In addition to using the TMY3 weather files that are provided, custom weather files can be used if they are in EPW file format.
 To use custom weather files, first ensure that all weather files have a unique WMO station number (as provided in the first header line of the EPW file).
 Then place them in the ``weather`` directory and call ``openstudio energy_rating_index.rb --cache-weather``.
-After processing is complete, each EPW file will have a corresponding \*.cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
+After processing is complete, each EPW file will have a corresponding \*.csv cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
 
 .. note:: 
 
@@ -159,12 +159,13 @@ Alternatively, an interior foundation wall between an 8 ft conditioned basement 
 
 Foundation wall insulation can be described in two ways: 
 
-Option 1. Interior/exterior continuous insulation layers with ``NominalRValue``, ``extension/DistanceToTopOfInsulation``, and ``extension/DistanceToBottomOfInsulation``. 
-Insulation layers are useful for describing foundation wall insulation that doesn't span the entire height (e.g., 4 ft of insulation for an 8 ft conditioned basement). 
-When an insulation layer R-value is specified, it is modeled with a concrete wall (whose ``Thickness`` is provided) as well as air film resistances as appropriate.
+Option 1. Both interior and exterior continuous insulation layers with ``NominalRValue``, ``extension/DistanceToTopOfInsulation``, and ``extension/DistanceToBottomOfInsulation``. 
+Insulation layers are particularly useful for describing foundation wall insulation that doesn't span the entire height (e.g., 4 ft of insulation for an 8 ft conditioned basement). 
+If there is not insulation on the interior and/or exterior of the foundation wall, the continuous insulation layer must still be provided -- with the nominal R-value, etc., set to zero.
+When insulation is specified with option 1, it is modeled with a concrete wall (whose ``Thickness`` is provided) as well as air film resistances as appropriate.
 
 Option 2. An ``AssemblyEffectiveRValue``. 
-When instead providing an assembly effective R-value, the R-value should include the concrete wall and an interior air film resistance. 
+The assembly effective R-value should include the concrete wall and an interior air film resistance. 
 The exterior air film resistance (for any above-grade exposure) or any soil thermal resistance should **not** be included.
 
 Frame Floors

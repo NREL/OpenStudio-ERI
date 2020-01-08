@@ -222,30 +222,7 @@ def create_hpxmls
     'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AD-HW-03.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AD-HW-03.xml',
     'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-01.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
     'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-02.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
-    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-03.xml',
-    'NASEO_Technical_Exercises/NASEO-01.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-02.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-03.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-04.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-05.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-06.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-07.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-08.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-09.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-09b.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-10.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-10b.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-11.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-12.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-13.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-14.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-15.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-16.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-17.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-18.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-19.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-20.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-    'NASEO_Technical_Exercises/NASEO-21.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'
+    'RESNET_Tests/Other_Hot_Water_PreAddendumA/L100AM-HW-03.xml' => 'RESNET_Tests/4.6_Hot_Water/L100AM-HW-03.xml'
   }
 
   puts "Generating #{hpxmls_files.size} HPXML files..."
@@ -536,8 +513,7 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
                                      :number_of_bedrooms => 3,
                                      :conditioned_floor_area => 1539,
                                      :conditioned_building_volume => 12312 }
-  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml',
-         'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     building_construction_values[:number_of_conditioned_floors] = 2
     building_construction_values[:conditioned_floor_area] = 3078
@@ -681,8 +657,7 @@ def get_hpxml_file_attic_values(hpxml_file, attic_values)
 end
 
 def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
-  if hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed' or
-     ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
+  if hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed'
     # Vented crawlspace
     foundation_values = { :id => "VentedCrawlspace",
                           :foundation_type => "VentedCrawlspace",
@@ -694,10 +669,6 @@ def get_hpxml_file_foundation_values(hpxml_file, foundation_values)
     foundation_values = { :id => "UnconditionedBasement",
                           :foundation_type => "UnconditionedBasement",
                           :unconditioned_basement_thermal_boundary => "frame floor" }
-  elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
-    foundation_values = { :id => "UnconditionedBasement",
-                          :foundation_type => "UnconditionedBasement",
-                          :unconditioned_basement_thermal_boundary => "foundation wall" }
   else
     foundation_values = {}
   end
@@ -953,8 +924,7 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
       foundation_walls_values[i][:insulation_interior_distance_to_top] = 0.0
       foundation_walls_values[i][:insulation_interior_distance_to_bottom] = 7.25
     end
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Un-vented crawlspace with R-7 crawlspace wall insulation
     foundation_walls_values = [{ :id => "FoundationWallNorth",
                                  :exterior_adjacent_to => "ground",
@@ -1071,126 +1041,6 @@ def get_hpxml_file_foundation_walls_values(hpxml_file, foundation_walls_values)
                                  :insulation_exterior_r_value => 0,
                                  :insulation_exterior_distance_to_top => 0,
                                  :insulation_exterior_distance_to_bottom => 0 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
-    # Vented crawlspace foundation with 4 ft height and uninsulated crawlspace wall insulation
-    foundation_walls_values = [{ :id => "FoundationWallNorth",
-                                 :exterior_adjacent_to => "ground",
-                                 :interior_adjacent_to => "crawlspace - vented",
-                                 :height => 4,
-                                 :area => 228,
-                                 :azimuth => 0,
-                                 :thickness => 8,
-                                 :depth_below_grade => 3,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 0,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 0 },
-                               { :id => "FoundationWallEast",
-                                 :exterior_adjacent_to => "ground",
-                                 :interior_adjacent_to => "crawlspace - vented",
-                                 :height => 4,
-                                 :area => 108,
-                                 :azimuth => 90,
-                                 :thickness => 8,
-                                 :depth_below_grade => 3,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 0,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 0 },
-                               { :id => "FoundationWallSouth",
-                                 :exterior_adjacent_to => "ground",
-                                 :interior_adjacent_to => "crawlspace - vented",
-                                 :height => 4,
-                                 :area => 228,
-                                 :azimuth => 180,
-                                 :thickness => 8,
-                                 :depth_below_grade => 3,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 0,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 0 },
-                               { :id => "FoundationWallWest",
-                                 :exterior_adjacent_to => "ground",
-                                 :interior_adjacent_to => "crawlspace - vented",
-                                 :height => 4,
-                                 :area => 108,
-                                 :azimuth => 270,
-                                 :thickness => 8,
-                                 :depth_below_grade => 3,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 0,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 0 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
-         'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
-    # R-19 basement wall insulation
-    foundation_walls_values = [{ :id => "FoundationWallNorth",
-                                 :exterior_adjacent_to => "ground",
-                                 :height => 8,
-                                 :area => 456,
-                                 :azimuth => 0,
-                                 :thickness => 8,
-                                 :depth_below_grade => 7,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 19,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 8 },
-                               { :id => "FoundationWallEast",
-                                 :exterior_adjacent_to => "ground",
-                                 :height => 8,
-                                 :area => 216,
-                                 :azimuth => 90,
-                                 :thickness => 8,
-                                 :depth_below_grade => 7,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 19,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 8 },
-                               { :id => "FoundationWallSouth",
-                                 :exterior_adjacent_to => "ground",
-                                 :height => 8,
-                                 :area => 456,
-                                 :azimuth => 180,
-                                 :thickness => 8,
-                                 :depth_below_grade => 7,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 19,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 8 },
-                               { :id => "FoundationWallWest",
-                                 :exterior_adjacent_to => "ground",
-                                 :height => 8,
-                                 :area => 216,
-                                 :azimuth => 270,
-                                 :thickness => 8,
-                                 :depth_below_grade => 7,
-                                 :insulation_interior_r_value => 0,
-                                 :insulation_interior_distance_to_top => 0,
-                                 :insulation_interior_distance_to_bottom => 0,
-                                 :insulation_exterior_r_value => 19,
-                                 :insulation_exterior_distance_to_top => 0,
-                                 :insulation_exterior_distance_to_bottom => 8 }]
-    for i in 0..foundation_walls_values.size - 1
-      if ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
-        foundation_walls_values[i][:interior_adjacent_to] = "basement - unconditioned"
-      else
-        foundation_walls_values[i][:interior_adjacent_to] = "basement - conditioned"
-      end
-    end
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     for i in 0..foundation_walls_values.size - 1
       foundation_walls_values[i][:interior_adjacent_to] = "basement - unconditioned"
@@ -1226,15 +1076,10 @@ def get_hpxml_file_framefloors_values(hpxml_file, framefloors_values)
     # Energy Inefficient
     framefloors_values[0][:insulation_assembly_r_value] = 11.75
     framefloors_values[1][:insulation_assembly_r_value] = 4.24
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'NASEO_Technical_Exercises/NASEO-13.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Uninsulated
     framefloors_values[1][:insulation_assembly_r_value] = 4.24
     framefloors_values[1][:exterior_adjacent_to] = "crawlspace - unvented"
-  elsif ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
-    # Uninsulated
-    framefloors_values[1][:insulation_assembly_r_value] = 4.24
-    framefloors_values[1][:exterior_adjacent_to] = "basement - unconditioned"
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Blown insulation = R-49, grade I; Framing fraction = 0.11
     framefloors_values[0][:insulation_assembly_r_value] = 48.72
@@ -1250,14 +1095,8 @@ def get_hpxml_file_framefloors_values(hpxml_file, framefloors_values)
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml',
          'RESNET_Tests/4.1_Standard_140/L322XC.xml',
          'RESNET_Tests/4.1_Standard_140/L324XC.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
-         'NASEO_Technical_Exercises/NASEO-16.xml',
-         'NASEO_Technical_Exercises/NASEO-17.xml'].include? hpxml_file
+         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     framefloors_values.delete_at(1)
-  elsif ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
-    # R-13 crawlspace ceiling insulation
-    framefloors_values[1][:exterior_adjacent_to] = "crawlspace - vented"
-    framefloors_values[1][:insulation_assembly_r_value] = 15.6
   end
   return framefloors_values
 end
@@ -1299,11 +1138,10 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
                       :under_slab_insulation_r_value => 0,
                       :carpet_fraction => 0,
                       :carpet_r_value => 0 }]
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'NASEO_Technical_Exercises/NASEO-13.xml',
-         'NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
-    # Unvented/vented crawlspace
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    # Unvented crawlspace
     slabs_values = [{ :id => "Slab",
+                      :interior_adjacent_to => "crawlspace - unvented",
                       :area => 1539,
                       :thickness => 0,
                       :exposed_perimeter => 168,
@@ -1314,11 +1152,6 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
                       :under_slab_insulation_r_value => 0,
                       :carpet_fraction => 0,
                       :carpet_r_value => 2.5 }]
-    if ['NASEO_Technical_Exercises/NASEO-14.xml'].include? hpxml_file
-      slabs_values[0][:interior_adjacent_to] = "crawlspace - vented"
-    else
-      slabs_values[0][:interior_adjacent_to] = "crawlspace - unvented"
-    end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 2 ft. high crawlspace above grade
@@ -1334,39 +1167,6 @@ def get_hpxml_file_slabs_values(hpxml_file, slabs_values)
                       :under_slab_insulation_r_value => 0,
                       :carpet_fraction => 0,
                       :carpet_r_value => 0 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-15.xml',
-         'NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
-    slabs_values = [{ :id => "Slab",
-                      :area => 1539,
-                      :thickness => 4,
-                      :exposed_perimeter => 168,
-                      :perimeter_insulation_depth => 0,
-                      :under_slab_insulation_width => 0,
-                      :under_slab_insulation_spans_entire_slab => nil,
-                      :perimeter_insulation_r_value => 0,
-                      :under_slab_insulation_r_value => 0,
-                      :carpet_fraction => 0,
-                      :carpet_r_value => 2.5 }]
-    if ['NASEO_Technical_Exercises/NASEO-15.xml'].include? hpxml_file
-      slabs_values[0][:interior_adjacent_to] = "basement - unconditioned"
-    elsif ['NASEO_Technical_Exercises/NASEO-16.xml'].include? hpxml_file
-      slabs_values[0][:interior_adjacent_to] = "basement - conditioned"
-    end
-  elsif ['NASEO_Technical_Exercises/NASEO-17.xml'].include? hpxml_file
-    # Slab-on-grade foundation with 4 ft of R-5 horizontal under-slab insulation
-    slabs_values = [{ :id => "Slab",
-                      :interior_adjacent_to => "living space",
-                      :area => 1539,
-                      :thickness => 4,
-                      :exposed_perimeter => 168,
-                      :perimeter_insulation_depth => 0,
-                      :under_slab_insulation_width => 4,
-                      :under_slab_insulation_spans_entire_slab => nil,
-                      :depth_below_grade => 0,
-                      :perimeter_insulation_r_value => 0,
-                      :under_slab_insulation_r_value => 5,
-                      :carpet_fraction => 0,
-                      :carpet_r_value => 2.5 }]
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     slabs_values[0][:interior_adjacent_to] = "basement - unconditioned"
   end
@@ -1521,8 +1321,7 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
                                 :heating_capacity => -1,
                                 :heating_efficiency_afue => 0.82,
                                 :fraction_heat_load_served => 1 }]
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-         'NASEO_Technical_Exercises/NASEO-07.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Electric strip heating with COP = 1.0
     heating_systems_values = [{ :id => "HeatingSystem",
                                 :heating_system_type => "ElectricResistance",
@@ -1628,31 +1427,6 @@ def get_hpxml_file_heating_systems_values(hpxml_file, heating_systems_values)
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-07.xml'].include? hpxml_file
     # High-efficiency gas furnace with AFUE = 96%
     heating_systems_values[0][:heating_efficiency_afue] = 0.96
-  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
-    # Boiler heating system with 80% AFUE and fuel oil
-    heating_systems_values = [{ :id => "HeatingSystem",
-                                :distribution_system_idref => "HVACDistribution",
-                                :heating_system_type => "Boiler",
-                                :heating_system_fuel => "fuel oil",
-                                :heating_capacity => -1,
-                                :heating_efficiency_afue => 0.8,
-                                :fraction_heat_load_served => 1 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-20.xml'].include? hpxml_file
-    # Wall furnace heating system with 80% AFUE and propane
-    heating_systems_values = [{ :id => "HeatingSystem",
-                                :heating_system_type => "WallFurnace",
-                                :heating_system_fuel => "propane",
-                                :heating_capacity => -1,
-                                :heating_efficiency_afue => 0.8,
-                                :fraction_heat_load_served => 1 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
-    # Stove heating system with 60% efficiency and natural gas
-    heating_systems_values = [{ :id => "HeatingSystem",
-                                :heating_system_type => "Stove",
-                                :heating_system_fuel => "natural gas",
-                                :heating_capacity => -1,
-                                :heating_efficiency_percent => 0.6,
-                                :fraction_heat_load_served => 1 }]
   end
 
   return heating_systems_values
@@ -1689,9 +1463,7 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
-         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml',
-         'NASEO_Technical_Exercises/NASEO-07.xml',
-         'NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
+         'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Cooling system – electric A/C with SEER = 10.0
     cooling_systems_values = [{ :id => "CoolingSystem",
                                 :distribution_system_idref => "HVACDistribution",
@@ -1700,9 +1472,6 @@ def get_hpxml_file_cooling_systems_values(hpxml_file, cooling_systems_values)
                                 :cooling_capacity => -1,
                                 :fraction_cool_load_served => 1,
                                 :cooling_efficiency_seer => 10 }]
-    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-08.xml'
-      cooling_systems_values[0][:distribution_system_idref] = "HVACDistribution2"
-    end
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
@@ -1771,11 +1540,7 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
-      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml',
-      'NASEO_Technical_Exercises/NASEO-07.xml',
-      'NASEO_Technical_Exercises/NASEO-08.xml',
-      'NASEO_Technical_Exercises/NASEO-20.xml',
-      'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
+      'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     heat_pumps_values = []
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Electric heat pump with HSPF = 7.5 and SEER = 12.0
@@ -1905,35 +1670,6 @@ def get_hpxml_file_heat_pumps_values(hpxml_file, heat_pumps_values)
                            :fraction_cool_load_served => 1,
                            :heating_efficiency_hspf => 12,
                            :cooling_efficiency_seer => 13 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-18.xml'].include? hpxml_file
-    # Ground source heat pump system with EER 20.2 and COP 4.2
-    heat_pumps_values = [{ :id => "HeatPump",
-                           :distribution_system_idref => "HVACDistribution",
-                           :heat_pump_type => "ground-to-air",
-                           :heat_pump_fuel => "electricity",
-                           :cooling_capacity => -1,
-                           :heating_capacity => -1,
-                           :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => -1,
-                           :backup_heating_efficiency_percent => 1.0,
-                           :fraction_heat_load_served => 1,
-                           :fraction_cool_load_served => 1,
-                           :heating_efficiency_cop => 4.2,
-                           :cooling_efficiency_eer => 20.2 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-19.xml'].include? hpxml_file
-    # Ductless mini-split heat pump system with SEER 23 and HSPF 10.5
-    heat_pumps_values = [{ :id => "HeatPump",
-                           :heat_pump_type => "mini-split",
-                           :heat_pump_fuel => "electricity",
-                           :cooling_capacity => -1,
-                           :heating_capacity => -1,
-                           :backup_heating_fuel => "electricity",
-                           :backup_heating_capacity => -1,
-                           :backup_heating_efficiency_percent => 1.0,
-                           :fraction_heat_load_served => 1,
-                           :fraction_cool_load_served => 1,
-                           :heating_efficiency_hspf => 10.5,
-                           :cooling_efficiency_seer => 23 }]
   end
   return heat_pumps_values
 end
@@ -1950,9 +1686,6 @@ def get_hpxml_file_hvac_control_values(hpxml_file, hvac_control_values)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     hvac_control_values = {}
-  elsif ['NASEO_Technical_Exercises/NASEO-06.xml'].include? hpxml_file
-    # Programmable thermostat
-    hvac_control_values[:control_type] = "programmable thermostat"
   end
   return hvac_control_values
 end
@@ -1986,15 +1719,6 @@ def get_hpxml_file_hvac_distributions_values(hpxml_file, hvac_distributions_valu
                                    :distribution_system_type => "DSE",
                                    :annual_heating_dse => 1,
                                    :annual_cooling_dse => 1 }]
-  elsif ['NASEO_Technical_Exercises/NASEO-19.xml',
-         'NASEO_Technical_Exercises/NASEO-20.xml',
-         'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
-    hvac_distributions_values = []
-  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
-    hvac_distributions_values = [{ :id => "HVACDistribution",
-                                   :distribution_system_type => "HydronicDistribution" },
-                                 { :id => "HVACDistribution2",
-                                   :distribution_system_type => "AirDistribution" }]
   end
   return hvac_distributions_values
 end
@@ -2040,17 +1764,6 @@ def get_hpxml_file_duct_leakage_measurements_values(hpxml_file, duct_leakage_mea
     for i in 0..duct_leakage_measurements_values[0].size - 1
       duct_leakage_measurements_values[0][i][:duct_leakage_value] = 61.5
     end
-  elsif ['NASEO_Technical_Exercises/NASEO-01.xml'].include? hpxml_file
-    # Leakage of 60 cfm25 with 50% return side and 50% supply side leakage
-    for i in 0..duct_leakage_measurements_values[0].size - 1
-      duct_leakage_measurements_values[0][i][:duct_leakage_value] = 30
-    end
-  elsif ['NASEO_Technical_Exercises/NASEO-19.xml',
-         'NASEO_Technical_Exercises/NASEO-20.xml',
-         'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
-    duct_leakage_measurements_values = [[]]
-  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
-    duct_leakage_measurements_values.unshift([])
   end
   return duct_leakage_measurements_values
 end
@@ -2120,21 +1833,6 @@ def get_hpxml_file_ducts_values(hpxml_file, ducts_values)
     end
     ducts_values[0][0][:duct_surface_area] = 385
     ducts_values[0][1][:duct_surface_area] = 77
-  elsif ['NASEO_Technical_Exercises/NASEO-01.xml'].include? hpxml_file
-    # Air distribution system in the attic with R-6 duct insulation for 300 ft2 of supply duct area and 75 ft2 of return duct area
-    for i in 0..ducts_values[0].size - 1
-      ducts_values[0][i][:duct_insulation_r_value] = 6
-      ducts_values[0][i][:duct_location] = "attic - vented"
-    end
-    ducts_values[0][0][:duct_surface_area] = 300
-    ducts_values[0][1][:duct_surface_area] = 75
-  elsif ['NASEO_Technical_Exercises/NASEO-19.xml',
-         'NASEO_Technical_Exercises/NASEO-20.xml',
-         'NASEO_Technical_Exercises/NASEO-21.xml'].include? hpxml_file
-    # No ducts
-    ducts_values = [[]]
-  elsif ['NASEO_Technical_Exercises/NASEO-08.xml'].include? hpxml_file
-    ducts_values.unshift([])
   end
   return ducts_values
 end
@@ -2213,13 +1911,6 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :hours_in_operation => 8,
                                  :fan_power => 373,
                                  :distribution_system_idref => "HVACDistribution" }]
-  elsif ['NASEO_Technical_Exercises/NASEO-04.xml'].include? hpxml_file
-    # Exhaust mechanical ventilation system with 50 cfm and 15 watts
-    ventilation_fans_values = [{ :id => "MechanicalVentilation",
-                                 :fan_type => "exhaust only",
-                                 :tested_flow_rate => 50,
-                                 :hours_in_operation => 24,
-                                 :fan_power => 15 }]
   end
   return ventilation_fans_values
 end
@@ -2352,20 +2043,11 @@ def get_hpxml_file_hot_water_distribution_values(hpxml_file, hot_water_distribut
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-07.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-07.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-18.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-18.xml',
-         'NASEO_Technical_Exercises/NASEO-03.xml'].include? hpxml_file
+         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-18.xml'].include? hpxml_file
     # Change to drain Water Heat Recovery (DWHR) with all facilities connected; equal flow; DWHR eff = 54%
     hot_water_distribution_values[:dwhr_facilities_connected] = "all"
     hot_water_distribution_values[:dwhr_equal_flow] = true
     hot_water_distribution_values[:dwhr_efficiency] = 0.54
-  elsif ['NASEO_Technical_Exercises/NASEO-02.xml'].include? hpxml_file
-    # Change to recirculation: loop length = 150 ft.; branch piping length = 10 ft.; pump power = 50 watts; R-3 piping insulation; and control = none
-    hot_water_distribution_values[:system_type] = "Recirculation"
-    hot_water_distribution_values[:recirculation_control_type] = "no control"
-    hot_water_distribution_values[:recirculation_piping_length] = 150
-    hot_water_distribution_values[:recirculation_branch_piping_length] = 10
-    hot_water_distribution_values[:recirculation_pump_power] = 50
-    hot_water_distribution_values[:pipe_r_value] = 3
   end
 
   has_uncond_bsmnt = false
@@ -2429,21 +2111,6 @@ def get_hpxml_file_clothes_washer_values(hpxml_file, clothes_washer_values)
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     clothes_washer_values = {}
-  elsif ['NASEO_Technical_Exercises/NASEO-09.xml',
-         'NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
-    # 3.2 IMEF
-    clothes_washer_values = { :id => "ClothesWasher",
-                              :location => "living space",
-                              :rated_annual_kwh => 150,
-                              :label_electric_rate => 0.11,
-                              :label_gas_rate => 1.1,
-                              :label_annual_gas_cost => 12,
-                              :capacity => 3.3 }
-    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-09.xml'
-      clothes_washer_values[:integrated_modified_energy_factor] = 2.2
-    elsif hpxml_file == 'NASEO_Technical_Exercises/NASEO-09b.xml'
-      clothes_washer_values[:modified_energy_factor] = 2.593
-    end
   else
     # Standard
     clothes_washer_values = { :id => "ClothesWasher",
@@ -2482,7 +2149,7 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
                              :location => "living space",
                              :fuel_type => "natural gas",
                              :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(Constants.FuelTypeGas) }
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('natural gas') }
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2497,19 +2164,7 @@ def get_hpxml_file_clothes_dryer_values(hpxml_file, clothes_dryer_values)
                              :location => "living space",
                              :fuel_type => "electricity",
                              :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(Constants.FuelTypeElectric) }
-  elsif ['NASEO_Technical_Exercises/NASEO-09.xml',
-         'NASEO_Technical_Exercises/NASEO-09b.xml'].include? hpxml_file
-    clothes_dryer_values = { :id => "ClothesDryer",
-                             :location => "living space",
-                             :fuel_type => "natural gas",
-                             :control_type => "moisture" }
-    # 2.3 CEF electric
-    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-09.xml'
-      clothes_dryer_values[:combined_energy_factor] = 2.3
-    elsif hpxml_file == 'NASEO_Technical_Exercises/NASEO-09b.xml'
-      clothes_dryer_values[:energy_factor] = 2.645
-    end
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('electricity') }
   end
   return clothes_dryer_values
 end
@@ -2520,16 +2175,6 @@ def get_hpxml_file_dishwasher_values(hpxml_file, dishwasher_values)
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     dishwasher_values = {}
-  elsif ['NASEO_Technical_Exercises/NASEO-10.xml',
-         'NASEO_Technical_Exercises/NASEO-10b.xml'].include? hpxml_file
-    # EF 0.5
-    dishwasher_values = { :id => "Dishwasher",
-                          :place_setting_capacity => 12 }
-    if hpxml_file == 'NASEO_Technical_Exercises/NASEO-10.xml'
-      dishwasher_values[:energy_factor] = 0.5
-    elsif hpxml_file == 'NASEO_Technical_Exercises/NASEO-10b.xml'
-      dishwasher_values[:rated_annual_kwh] = 430
-    end
   else
     # Standard
     dishwasher_values = { :id => "Dishwasher",
@@ -2545,11 +2190,6 @@ def get_hpxml_file_refrigerator_values(hpxml_file, refrigerator_values, building
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     refrigerator_values = {}
-  elsif ['NASEO_Technical_Exercises/NASEO-11.xml'].include? hpxml_file
-    # 614 kWh
-    refrigerator_values = { :id => "Refrigerator",
-                            :location => "living space",
-                            :rated_annual_kwh => 614 }
   else
     # Standard
     rated_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(building_construction_values[:number_of_bedrooms])
@@ -2596,11 +2236,6 @@ def get_hpxml_file_cooking_range_values(hpxml_file, cooking_range_values)
     cooking_range_values = { :id => "Range",
                              :fuel_type => "electricity",
                              :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection() }
-  elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
-    # Induction
-    cooking_range_values = { :id => "Range",
-                             :fuel_type => "electricity",
-                             :is_induction => true }
   end
   return cooking_range_values
 end
@@ -2611,10 +2246,6 @@ def get_hpxml_file_oven_values(hpxml_file, oven_values)
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     oven_values = {}
-  elsif ['NASEO_Technical_Exercises/NASEO-12.xml'].include? hpxml_file
-    # Convection
-    oven_values = { :id => "Oven",
-                    :is_convection => true }
   else
     # Standard
     oven_values = { :id => "Oven",
@@ -2629,8 +2260,7 @@ def get_hpxml_file_lighting_values(hpxml_file, lighting_values)
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     lighting_values = {}
-  elsif ['NASEO_Technical_Exercises/NASEO-05.xml',
-         'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
+  elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file
     # 75% high efficiency interior and exterior
     lighting_values = { :fraction_tier_i_interior => 0.75,
@@ -2716,8 +2346,10 @@ def copy_sample_files
                   'invalid_files/hvac-distribution-return-duct-leakage-missing.xml',
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
+                  'invalid_files/hvac-invalid-distribution-system-type.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
+                  'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/missing-surfaces.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
@@ -2762,14 +2394,12 @@ def copy_sample_files
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',
                   'base-foundation-complex.xml',
-                  'base-hvac-air-to-air-heat-pump-2-speed-17F.xml',
-                  'base-hvac-air-to-air-heat-pump-2-speed-shr.xml',
-                  'base-hvac-air-to-air-heat-pump-var-speed-17F.xml',
-                  'base-hvac-air-to-air-heat-pump-var-speed-shr.xml',
+                  'base-hvac-air-to-air-heat-pump-2-speed-detailed.xml',
+                  'base-hvac-air-to-air-heat-pump-var-speed-detailed.xml',
                   'base-hvac-boiler-gas-only-no-eae.xml',
                   'base-hvac-boiler-wood-only.xml',
-                  'base-hvac-central-ac-only-2-speed-shr.xml',
-                  'base-hvac-central-ac-only-var-speed-shr.xml',
+                  'base-hvac-central-ac-only-2-speed-detailed.xml',
+                  'base-hvac-central-ac-only-var-speed-detailed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-oil.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-propane.xml',
@@ -2782,13 +2412,12 @@ def copy_sample_files
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-furnace-wood-only.xml',
-                  'base-hvac-ground-to-air-heat-pump-shr.xml',
+                  'base-hvac-ground-to-air-heat-pump-detailed.xml',
                   'base-hvac-ideal-air.xml',
-                  'base-hvac-mini-split-heat-pump-ducted-17F.xml',
-                  'base-hvac-mini-split-heat-pump-ducted-shr.xml',
+                  'base-hvac-mini-split-heat-pump-ducted-detailed.xml',
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-portable-heater-electric-only.xml',
-                  'base-hvac-room-ac-only-shr.xml',
+                  'base-hvac-room-ac-only-detailed.xml',
                   'base-hvac-stove-oil-only-no-eae.xml',
                   'base-hvac-stove-wood-only.xml',
                   'base-hvac-undersized.xml',
@@ -2798,8 +2427,6 @@ def copy_sample_files
                   'base-location-epw-filename.xml',
                   'base-mechvent-cfis-24hrs.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
-                  'base-mechvent-erv-asre.xml',
-                  'base-mechvent-erv-atre.xml',
                   'base-misc-lighting-none.xml',
                   'base-misc-loads-detailed.xml',
                   'base-misc-number-of-occupants.xml',

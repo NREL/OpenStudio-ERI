@@ -11,21 +11,21 @@ def get_output_hpxml_path(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
+def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design}] Creating input...\n"
-  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation, hourly_output)
+  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_output)
 
   if not designdir.nil?
     print "[#{design}] Running simulation...\n"
-    run_energyplus(design, designdir)
+    run_energyplus(design, designdir, debug)
     design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output)
   end
 
   return output_hpxml_path
 end
 
-def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_validation, hourly_output)
+def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_output)
   designdir = get_designdir(output_dir, design)
   Dir.mkdir(designdir)
 
@@ -47,7 +47,6 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
   args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
   args['hpxml_output_path'] = output_hpxml_path
-  args['skip_validation'] = skip_validation
   update_args_hash(measures, measure_subdir, args)
 
   # Add HPXML translator measure to workflow
@@ -60,7 +59,6 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
   if debug
     args['osm_output_path'] = File.join(designdir, "in.osm")
   end
-  args['skip_validation'] = skip_validation
   args['map_tsv_dir'] = designdir
   update_args_hash(measures, measure_subdir, args)
 
@@ -135,11 +133,18 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, skip_valid
   return output_hpxml_path, designdir
 end
 
-def run_energyplus(design, designdir)
+def run_energyplus(design, designdir, debug)
   # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
   ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
-  command = "cd \"#{designdir}\" && \"#{ep_path}\" -w in.epw in.idf > stdout-energyplus"
-  system(command, :err => File::NULL)
+  command = "\"#{ep_path}\" -w in.epw in.idf > stdout-energyplus"
+  if debug
+    File.open(File.join(designdir, 'run.log'), 'a') do |f|
+      f << "Executing command '#{command}' from working directory '#{designdir}'"
+    end
+  end
+  Dir.chdir(designdir) do
+    system(command, :err => IO.sysopen(File.join(designdir, 'stderr-energyplus'), 'w'))
+  end
 end
 
 def process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output)
@@ -1431,14 +1436,13 @@ def write_eri_output_results(resultsdir, design, design_output)
   CSV.open(out_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 end
 
-if ARGV.size == 8
+if ARGV.size == 7
   basedir = ARGV[0]
   output_dir = ARGV[1]
   design = ARGV[2]
   resultsdir = ARGV[3]
   hpxml = ARGV[4]
   debug = (ARGV[5].downcase.to_s == "true")
-  skip_validation = (ARGV[6].downcase.to_s == "true")
-  hourly_output = (ARGV[7].downcase.to_s == "true")
-  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
+  hourly_output = (ARGV[6].downcase.to_s == "true")
+  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
 end

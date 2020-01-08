@@ -21,18 +21,18 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
+def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_designdir(output_dir, design)
   rm_path(designdir)
 
-  output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
+  output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip_validation, hourly_output)
+def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -43,7 +43,7 @@ def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, skip
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{skip_validation} #{hourly_output}")
+  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{hourly_output}")
 
   return output_hpxml_path, designdir, pid
 end
@@ -392,7 +392,7 @@ def download_epws
 
   tmpfile = Tempfile.new("epw")
 
-  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/tmy3s-cache.zip")
+  url = URI.parse("http://s3.amazonaws.com/epwweatherfiles/tmy3s-cache-csv.zip")
   http = Net::HTTP.new(url.host, url.port)
 
   params = { 'User-Agent' => 'curl/7.43.0', 'Accept-Encoding' => 'identity' }
@@ -434,22 +434,19 @@ def cache_weather
   # Process all epw files through weather.rb and serialize objects
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
+  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-  puts "Creating *.cache for weather files..."
+  puts "Creating cache *.csv for weather files..."
   Dir["#{weather_dir}/*.epw"].each do |epw|
-    next if File.exists? epw.gsub(".epw", ".cache")
+    next if File.exists? epw.gsub(".epw", "-cache.csv")
 
     puts "Processing #{epw}..."
     model = OpenStudio::Model::Model.new
     epw_file = OpenStudio::EpwFile.new(epw)
     OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
     weather = WeatherProcess.new(model, runner)
-    if weather.error? or weather.data.WSF.nil?
-      fail "Error."
-    end
-
-    File.open(epw.gsub(".epw", ".cache"), "wb") do |file|
-      Marshal.dump(weather, file)
+    File.open(epw.gsub(".epw", "-cache.csv"), "wb") do |file|
+      weather.dump_to_csv(file)
     end
 
     # Also add file to data.csv
@@ -479,7 +476,7 @@ end
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -s -x sample_files/base.xml\n"
+  opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/base.xml\n"
 
   opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
     options[:hpxml] = t
@@ -505,11 +502,6 @@ OptionParser.new do |opts|
   options[:debug] = false
   opts.on('-d', '--debug') do |t|
     options[:debug] = true
-  end
-
-  options[:skip_validation] = false
-  opts.on('-s', '--skip-validation', 'Skips HPXML validation') do |t|
-    options[:skip_validation] = true
   end
 
   options[:version] = false
@@ -608,7 +600,7 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
     next if not run
 
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], hourly_output[design])
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], hourly_output[design])
     kill unless File.exists? File.join(designdir, "eplusout.end")
   end
 
@@ -630,7 +622,7 @@ else # e.g., Windows
   Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
     next if not run
 
-    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], options[:skip_validation], hourly_output[design])
+    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], hourly_output[design])
     Process.wait pids[design]
     if not File.exists? File.join(designdir, "eplusout.end")
       kill(pids)

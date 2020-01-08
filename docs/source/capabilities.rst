@@ -116,6 +116,5 @@ There are additional ways that software developers using this workflow can reduc
 
 - Run on Linux/Mac platform, which is significantly faster by taking advantage of the POSIX fork call.
 - Use the ``--no-ssl`` flag to prevent SSL initialization in OpenStudio.
-- Use the ``-s`` flag to skip HPXML validation.
 - Do not use the ``--hourly-output`` flag unless hourly output is required.
 - Run on computing environments with 1) fast CPUs, 2) sufficient memory, and 3) enough processors to allow all simulations to run in parallel.

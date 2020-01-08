@@ -86,7 +86,7 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(num_epws_expected, num_epws_actual)
 
     num_cache_expected = File.readlines(File.join(File.dirname(__FILE__), "..", "..", "weather", "data.csv")).size - 1
-    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*.cache")].count
+    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*-cache.csv")].count
     assert_equal(num_cache_expected, num_cache_actual)
   end
 
@@ -616,36 +616,6 @@ class EnergyRatingIndexTest < Minitest::Test
     # TODO
   end
 
-  def test_naseo_technical_exercises
-    test_name = "naseo_technical_exercises"
-    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
-
-    # Run simulations
-    all_results = {}
-    xmldir = "#{File.dirname(__FILE__)}/../tests/NASEO_Technical_Exercises"
-    Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri(xml, test_name)
-      all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
-      all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
-    end
-    assert(all_results.size > 0)
-
-    # Write results to csv
-    keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["XML"] + keys
-      all_results.each_with_index do |(xml, results), i|
-        csv_line = [File.basename(xml)]
-        keys.each do |key|
-          csv_line << results[key]
-        end
-        csv << csv_line
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-  end
-
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     cli_path = OpenStudio.getOpenStudioCLI
@@ -671,7 +641,6 @@ class EnergyRatingIndexTest < Minitest::Test
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../weather"))
     args['schemas_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../measures/HPXMLtoOpenStudio/hpxml_schemas"))
     args['hpxml_output_path'] = output_hpxml_path
-    args['skip_validation'] = false
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measures
@@ -785,7 +754,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
     args = {}
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), "weather"))
-    args['skip_validation'] = false
     args['epw_output_path'] = File.absolute_path(File.join(rundir, "in.epw"))
     args['osm_output_path'] = File.absolute_path(File.join(rundir, "in.osm"))
     args['hpxml_path'] = xml
@@ -943,10 +911,10 @@ class EnergyRatingIndexTest < Minitest::Test
     # Read hourly outputs
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
     if is_heating
-      zone_name = Constants.SpaceTypeUnconditionedBasement.upcase
+      zone_name = 'basement - unconditioned'.upcase
       mode = "Heating"
     elsif is_cooling
-      zone_name = Constants.SpaceTypeVentedAttic.upcase
+      zone_name = 'attic - vented'.upcase
       mode = "Cooling"
     end
     query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
@@ -1622,7 +1590,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: CookingRange
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange") do |appl|
-      cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cook_fuel_type = XMLHelper.get_value(appl, "FuelType")
       cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
       oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
       cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
@@ -1662,7 +1630,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: ClothesDryer
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
-      cd_fuel = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cd_fuel = XMLHelper.get_value(appl, "FuelType")
       cd_ef = XMLHelper.get_value(appl, "EnergyFactor")
       if cd_ef.nil?
         cd_cef = Float(XMLHelper.get_value(appl, "CombinedEnergyFactor"))
