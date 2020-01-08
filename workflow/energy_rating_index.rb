@@ -1612,17 +1612,18 @@ def cache_weather
   # Process all epw files through weather.rb and serialize objects
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
+  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
   puts "Creating cache *.csv for weather files..."
   Dir["#{weather_dir}/*.epw"].each do |epw|
-    next if File.exists? epw.gsub(".epw", ".csv")
+    next if File.exists? epw.gsub(".epw", "-cache.csv")
 
     puts "Processing #{epw}..."
     model = OpenStudio::Model::Model.new
     epw_file = OpenStudio::EpwFile.new(epw)
     OpenStudio::Model::WeatherFile.setWeatherFile(model, epw_file).get
     weather = WeatherProcess.new(model, runner)
-    File.open(epw.gsub(".epw", ".csv"), "wb") do |file|
+    File.open(epw.gsub(".epw", "-cache.csv"), "wb") do |file|
       weather.dump_to_csv(file)
     end
 
