@@ -2346,6 +2346,7 @@ def copy_sample_files
                   'invalid_files/hvac-distribution-return-duct-leakage-missing.xml',
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
+                  'invalid_files/hvac-invalid-distribution-system-type.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
