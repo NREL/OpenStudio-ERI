@@ -2,8 +2,6 @@
 # http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require 'openstudio'
-require 'rexml/document'
-require 'rexml/xpath'
 require 'pathname'
 require 'csv'
 require_relative "resources/301"
@@ -91,7 +89,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    hpxml_doc = REXML::Document.new(File.read(hpxml_path))
+    hpxml_doc = XMLHelper.parse_file(hpxml_path)
 
     if not validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
       return false
