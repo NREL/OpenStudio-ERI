@@ -82,8 +82,6 @@ class EnergyRatingIndex301Ruleset
     # MiscLoads
     set_misc_loads_reference(hpxml)
 
-    HPXML.reset_cache
-
     return hpxml_doc
   end
 
@@ -134,8 +132,6 @@ class EnergyRatingIndex301Ruleset
 
     # MiscLoads
     set_misc_loads_rated(hpxml)
-
-    HPXML.reset_cache
 
     return hpxml_doc
   end
@@ -189,8 +185,6 @@ class EnergyRatingIndex301Ruleset
 
     # MiscLoads
     set_misc_loads_iad(hpxml)
-
-    HPXML.reset_cache
 
     return hpxml_doc
   end
