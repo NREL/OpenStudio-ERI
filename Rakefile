@@ -2427,7 +2427,8 @@ def create_sample_hpxmls
                   'base-pv-array-1axis-backtracked.xml',
                   'base-pv-array-2axis.xml',
                   'base-pv-array-fixed-open-rack.xml',
-                  'base-site-neighbors.xml']
+                  'base-site-neighbors.xml',
+                  'base-version-latest.xml']
   exclude_list.each do |exclude_file|
     if File.exists? "workflow/sample_files/#{exclude_file}"
       FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
@@ -2447,9 +2448,10 @@ def create_sample_hpxmls
   hpxml_paths.each do |hpxml_path|
     hpxml_doc = XMLHelper.parse_file(hpxml_path)
     software_info = hpxml_doc.elements["/HPXML/SoftwareInfo"]
-    XMLHelper.delete_element(software_info, "extension/ERICalculation") unless
-    eri_calculation = XMLHelper.add_element(software_info, "extension/ERICalculation")
-    XMLHelper.add_element(eri_calculation, "Version", "latest")
-    XMLHelper.write_file(hpxml_doc, hpxml_path)
+    eri_calculation = software_info.elements["extension/ERICalculation"]
+    if eri_calculation.nil?
+      XMLHelper.add_element(software_info, "extension/ERICalculation/Version", "latest")
+      XMLHelper.write_file(hpxml_doc, hpxml_path)
+    end
   end
 end
