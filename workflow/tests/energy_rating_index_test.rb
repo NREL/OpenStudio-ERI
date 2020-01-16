@@ -90,6 +90,32 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(num_cache_expected, num_cache_actual)
   end
 
+  def test_weather_cache
+    # Download new EPW
+    weather_dir = File.join(File.dirname(__FILE__), "..", "..", "weather")
+    weather_epw = File.join(weather_dir, "USA_CO_Denver-Stapleton.724690_TMY.epw")
+    require 'open-uri'
+    File.open(weather_epw, "wb") do |file|
+      file.write open('https://energyplus.net/weather-download/north_and_central_america_wmo_region_4/USA/CO/USA_CO_Denver-Stapleton.724690_TMY/USA_CO_Denver-Stapleton.724690_TMY.epw', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }).read
+    end
+
+    data_csv = File.join(weather_dir, "data.csv")
+    FileUtils.cp(data_csv, "#{data_csv}.bak")
+
+    cli_path = OpenStudio.getOpenStudioCLI
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --cache-weather"
+    system(command)
+
+    cache_csv = File.join(weather_dir, "USA_CO_Denver-Stapleton.724690_TMY-cache.csv")
+    assert(File.exists?(cache_csv))
+
+    # Restore original and cleanup
+    FileUtils.cp("#{data_csv}.bak", data_csv)
+    File.delete("#{data_csv}.bak")
+    File.delete(weather_epw)
+    File.delete(cache_csv)
+  end
+
   def test_resnet_ashrae_140
     test_name = "RESNET_Test_4.1_Standard_140"
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))

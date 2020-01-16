@@ -432,6 +432,8 @@ end
 
 def cache_weather
   # Process all epw files through weather.rb and serialize objects
+  require_relative "../measures/HPXMLtoOpenStudio/resources/weather"
+
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   weather_dir = File.join(File.dirname(__FILE__), "..", "weather")
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
