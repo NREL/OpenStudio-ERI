@@ -92,11 +92,18 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_weather_cache
     # Download new EPW
+    require 'openssl'
+    require 'open-uri'
+
     weather_dir = File.join(File.dirname(__FILE__), "..", "..", "weather")
     weather_epw = File.join(weather_dir, "USA_CO_Denver-Stapleton.724690_TMY.epw")
-    require 'open-uri'
-    File.open(weather_epw, "wb") do |file|
-      file.write open('https://energyplus.net/weather-download/north_and_central_america_wmo_region_4/USA/CO/USA_CO_Denver-Stapleton.724690_TMY/USA_CO_Denver-Stapleton.724690_TMY.epw', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }).read
+    begin
+      File.open(weather_epw, "wb") do |file|
+        file.write open('https://energyplus.net/weather-download/north_and_central_america_wmo_region_4/USA/CO/USA_CO_Denver-Stapleton.724690_TMY/USA_CO_Denver-Stapleton.724690_TMY.epw', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }).read
+      end
+    rescue
+      File.delete(weather_epw)
+      flunk "Could not download EPW."
     end
 
     data_csv = File.join(weather_dir, "data.csv")

@@ -3,30 +3,39 @@
 
 require_relative "../measures/HPXMLtoOpenStudio/resources/meta_measure"
 
-def get_designdir(output_dir, design)
-  return File.join(output_dir, design.gsub(' ', ''))
+def get_design_name_and_dir(output_dir, run)
+  design_name = ""
+  run.each do |x|
+    next if x.nil?
+
+    design_name += "_" if design_name.length > 0
+    design_name += x
+  end
+  return design_name, File.join(output_dir, design_name.gsub(' ', ''))
 end
 
 def get_output_hpxml_path(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def run_design(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
+def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+  eri_design = run[0]
+  design_name, designdir = get_design_name_and_dir(output_dir, run)
+
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
-  print "[#{design}] Creating input...\n"
-  output_hpxml_path, designdir = create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_output)
+  print "[#{design_name}] Creating input...\n"
+  output_hpxml_path, designdir = create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_output, designdir, design_name)
 
   if not designdir.nil?
-    print "[#{design}] Running simulation...\n"
-    run_energyplus(design, designdir, debug)
-    design_output = process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output)
+    print "[#{design_name}] Running simulation...\n"
+    run_energyplus(designdir, debug)
+    design_output = process_design_output(run, designdir, resultsdir, output_hpxml_path, hourly_output, design_name)
   end
 
   return output_hpxml_path
 end
 
-def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_output)
-  designdir = get_designdir(output_dir, design)
+def create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_output, designdir, design_name)
   Dir.mkdir(designdir)
 
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
@@ -39,15 +48,17 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_out
 
   measures = {}
 
-  # Add 301 measure to workflow
-  measure_subdir = "301EnergyRatingIndexRuleset"
-  args = {}
-  args['calc_type'] = design
-  args['hpxml_path'] = hpxml
-  args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
-  args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
-  args['hpxml_output_path'] = output_hpxml_path
-  update_args_hash(measures, measure_subdir, args)
+  if not run[0].nil?
+    # Add 301 measure to workflow
+    measure_subdir = "301EnergyRatingIndexRuleset"
+    args = {}
+    args['calc_type'] = run[0]
+    args['hpxml_path'] = hpxml
+    args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
+    args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
+    args['hpxml_output_path'] = output_hpxml_path
+    update_args_hash(measures, measure_subdir, args)
+  end
 
   # Add HPXML translator measure to workflow
   measure_subdir = "HPXMLtoOpenStudio"
@@ -81,7 +92,7 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_out
   end
 
   if not success
-    print "[#{design}] Creating input unsuccessful.\n"
+    print "[#{design_name}] Creating input unsuccessful.\n"
     return output_hpxml_path, nil
   end
 
@@ -133,7 +144,7 @@ def create_idf(design, basedir, output_dir, resultsdir, hpxml, debug, hourly_out
   return output_hpxml_path, designdir
 end
 
-def run_energyplus(design, designdir, debug)
+def run_energyplus(designdir, debug)
   # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
   ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
   command = "\"#{ep_path}\" -w in.epw in.idf > stdout-energyplus"
@@ -147,18 +158,18 @@ def run_energyplus(design, designdir, debug)
   end
 end
 
-def process_design_output(design, designdir, resultsdir, output_hpxml_path, hourly_output)
+def process_design_output(run, designdir, resultsdir, output_hpxml_path, hourly_output, design_name)
   return nil if output_hpxml_path.nil?
 
-  print "[#{design}] Processing output...\n"
+  print "[#{design_name}] Processing output...\n"
 
-  design_output, design_hourly_output = read_output(design, designdir, output_hpxml_path, hourly_output)
+  design_output, design_hourly_output = read_output(run[0], designdir, output_hpxml_path, hourly_output, design_name)
   return if design_output.nil?
 
-  write_summary_output_results(resultsdir, design, design_output, design_hourly_output)
-  write_eri_output_results(resultsdir, design, design_output)
+  write_summary_output_results(resultsdir, design_name, design_output, design_hourly_output)
+  write_eri_output_results(resultsdir, design_name, design_output)
 
-  print "[#{design}] Done.\n"
+  print "[#{design_name}] Done.\n"
 
   return design_output
 end
@@ -198,16 +209,16 @@ def get_component_load_map
            "Internal Gains" => "intgains" }
 end
 
-def read_output(design, designdir, output_hpxml_path, hourly_output)
+def read_output(eri_design, designdir, output_hpxml_path, hourly_output, design_name)
   sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
-    puts "[#{design}] Processing output unsuccessful."
+    puts "[#{design_name}] Processing output unsuccessful."
     return nil
   end
 
   sqlFile = OpenStudio::SqlFile.new(sql_path, false)
   if not sqlFile.connectionOpen
-    puts "[#{design} Processing output unsuccessful."
+    puts "[#{design_name} Processing output unsuccessful."
     return nil
   end
 
@@ -220,12 +231,12 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:hpxml_nbr] = get_nbr(hpxml_doc)
   design_output[:hpxml_nst] = get_nst(hpxml_doc)
   htgs, clgs, hp_htgs, hp_clgs, dhws = get_systems(hpxml_doc)
-  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, htgs, hp_htgs, design)
-  design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, clgs, hp_clgs, design)
-  design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, htgs, hp_htgs, design)
+  design_output[:hpxml_dse_heats] = get_dse_heats(hpxml_doc, htgs, hp_htgs, eri_design)
+  design_output[:hpxml_dse_cools] = get_dse_cools(hpxml_doc, clgs, hp_clgs, eri_design)
+  design_output[:hpxml_heat_fuels] = get_heat_fuels(hpxml_doc, htgs, hp_htgs, eri_design)
   design_output[:hpxml_dwh_fuels] = get_dhw_fuels(hpxml_doc, dhws)
-  design_output[:hpxml_eec_heats] = get_eec_heats(hpxml_doc, htgs, hp_htgs, design)
-  design_output[:hpxml_eec_cools] = get_eec_cools(hpxml_doc, clgs, hp_clgs, design)
+  design_output[:hpxml_eec_heats] = get_eec_heats(hpxml_doc, htgs, hp_htgs, eri_design)
+  design_output[:hpxml_eec_cools] = get_eec_cools(hpxml_doc, clgs, hp_clgs, eri_design)
   design_output[:hpxml_eec_dhws] = get_eec_dhws(hpxml_doc, dhws)
   design_output[:hpxml_heat_sys_ids] = design_output[:hpxml_eec_heats].keys
   design_output[:hpxml_cool_sys_ids] = design_output[:hpxml_eec_cools].keys
@@ -291,7 +302,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   # First, calculate dual-fuel heat pump load
   dfhp_loads = {}
   design_output[:hpxml_heat_sys_ids].each do |sys_id|
-    ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+    ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
     if dfhp_primary or dfhp_backup
       if dfhp_primary
@@ -305,7 +316,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     end
   end
   design_output[:hpxml_heat_sys_ids].each do |sys_id|
-    ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+    ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
 
     # Electricity Use
@@ -345,8 +356,8 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     design_output[:propaneTotal] += (design_output[:propaneHeatingBySystem][sys_id] - propaneHeatingBySystemRaw)
 
     # Reference Load
-    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc, design, dfhp_loads, htgs, hp_htgs)
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? eri_design
+      design_output[:loadHeatingBySystem][sys_id] = split_htg_load_to_system_by_fraction(sys_id, design_output[:loadHeatingBldg], hpxml_doc, eri_design, dfhp_loads, htgs, hp_htgs)
     end
   end
 
@@ -354,7 +365,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:elecCoolingBySystem] = {}
   design_output[:loadCoolingBySystem] = {}
   design_output[:hpxml_cool_sys_ids].each do |sys_id|
-    ep_output_names = get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design)
+    ep_output_names = get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
 
     # Electricity Use
@@ -377,8 +388,8 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     end
 
     # Reference Load
-    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
-      design_output[:loadCoolingBySystem][sys_id] = split_clg_load_to_system_by_fraction(sys_id, design_output[:loadCoolingBldg], hpxml_doc, design, clgs, hp_clgs)
+    if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? eri_design
+      design_output[:loadCoolingBySystem][sys_id] = split_clg_load_to_system_by_fraction(sys_id, design_output[:loadCoolingBldg], hpxml_doc, eri_design, clgs, hp_clgs)
     end
   end
 
@@ -395,7 +406,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   design_output[:loadHotWaterSolarThermal] = 0
   solar_keys = nil
   design_output[:hpxml_dhw_sys_ids].each do |sys_id|
-    ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
+    ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id)
     keys = "'" + ep_output_names.map(&:upcase).join("','") + "'"
 
     # Electricity Use
@@ -583,7 +594,7 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
 
   all_total = design_output[:elecTotal] + design_output[:gasTotal] + design_output[:oilTotal] + design_output[:propaneTotal]
   if all_total == 0
-    puts "[#{design}] Processing output unsuccessful."
+    puts "[#{design_name}] Processing output unsuccessful."
     return nil
   end
 
@@ -597,28 +608,28 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
                          design_output[:elecExtLighting] +
                          design_output[:elecAppliances])
   if (design_output[:elecTotal] - sum_elec_categories).abs > tolerance
-    fail "[#{design}] Electric category end uses (#{sum_elec_categories}) do not sum to total (#{design_output[:elecTotal]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Electric category end uses (#{sum_elec_categories}) do not sum to total (#{design_output[:elecTotal]}).\n#{design_output.to_s}"
   end
 
   sum_gas_categories = (design_output[:gasHeatingBySystem].values.inject(0, :+) +
                         design_output[:gasHotWaterBySystem].values.inject(0, :+) +
                         design_output[:gasAppliances])
   if (design_output[:gasTotal] - sum_gas_categories).abs > tolerance
-    fail "[#{design}] Natural gas category end uses (#{sum_gas_categories}) do not sum to total (#{design_output[:gasTotal]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Natural gas category end uses (#{sum_gas_categories}) do not sum to total (#{design_output[:gasTotal]}).\n#{design_output.to_s}"
   end
 
   sum_oil_categories = (design_output[:oilHeatingBySystem].values.inject(0, :+) +
                         design_output[:oilHotWaterBySystem].values.inject(0, :+) +
                         design_output[:oilAppliances])
   if (design_output[:oilTotal] - sum_oil_categories).abs > tolerance
-    fail "[#{design}] Oil fuel category end uses (#{sum_oil_categories}) do not sum to total (#{design_output[:oilTotal]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Oil fuel category end uses (#{sum_oil_categories}) do not sum to total (#{design_output[:oilTotal]}).\n#{design_output.to_s}"
   end
 
   sum_propane_categories = (design_output[:propaneHeatingBySystem].values.inject(0, :+) +
                             design_output[:propaneHotWaterBySystem].values.inject(0, :+) +
                             design_output[:propaneAppliances])
   if (design_output[:propaneTotal] - sum_propane_categories).abs > tolerance
-    fail "[#{design}] Propane fuel category end uses (#{sum_propane_categories}) do not sum to total (#{design_output[:propaneTotal]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Propane fuel category end uses (#{sum_propane_categories}) do not sum to total (#{design_output[:propaneTotal]}).\n#{design_output.to_s}"
   end
 
   sum_elec_appliances = (design_output[:elecFridge] +
@@ -631,34 +642,34 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
                          design_output[:elecCeilingFan] +
                          design_output[:elecMechVent])
   if (design_output[:elecAppliances] - sum_elec_appliances).abs > tolerance
-    fail "[#{design}] Electric appliances (#{sum_elec_appliances}) do not sum to total (#{design_output[:elecAppliances]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Electric appliances (#{sum_elec_appliances}) do not sum to total (#{design_output[:elecAppliances]}).\n#{design_output.to_s}"
   end
 
   sum_gas_appliances = (design_output[:gasClothesDryer] + design_output[:gasRangeOven])
   if (design_output[:gasAppliances] - sum_gas_appliances).abs > tolerance
-    fail "[#{design}] Natural gas appliances (#{sum_gas_appliances}) do not sum to total (#{design_output[:gasAppliances]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Natural gas appliances (#{sum_gas_appliances}) do not sum to total (#{design_output[:gasAppliances]}).\n#{design_output.to_s}"
   end
 
   sum_oil_appliances = (design_output[:oilClothesDryer] + design_output[:oilRangeOven])
   if (design_output[:oilAppliances] - sum_oil_appliances).abs > tolerance
-    fail "[#{design}] Oil fuel appliances (#{sum_oil_appliances}) do not sum to total (#{design_output[:oilAppliances]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Oil fuel appliances (#{sum_oil_appliances}) do not sum to total (#{design_output[:oilAppliances]}).\n#{design_output.to_s}"
   end
 
   sum_propane_appliances = (design_output[:propaneClothesDryer] + design_output[:propaneRangeOven])
   if (design_output[:propaneAppliances] - sum_propane_appliances).abs > tolerance
-    fail "[#{design}] Propane fuel appliances (#{sum_propane_appliances}) do not sum to total (#{design_output[:propaneAppliances]}).\n#{design_output.to_s}"
+    fail "[#{design_name}] Propane fuel appliances (#{sum_propane_appliances}) do not sum to total (#{design_output[:propaneAppliances]}).\n#{design_output.to_s}"
   end
 
   # REUL check: system cooling/heating sum to total bldg load
-  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+  if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? eri_design
     sum_sys_htg_load = design_output[:loadHeatingBySystem].values.inject(0) { |sum, value| sum + value }
     if (sum_sys_htg_load - design_output[:loadHeatingBldg]).abs > tolerance
-      fail "[#{design}] system heating load not sum to total building heating load"
+      fail "[#{design_name}] system heating load not sum to total building heating load"
     end
 
     sum_sys_clg_load = design_output[:loadCoolingBySystem].values.inject(0) { |sum, value| sum + value }
     if (sum_sys_clg_load - design_output[:loadCoolingBldg]).abs > tolerance
-      fail "[#{design}] system cooling load not sum to total building cooling load"
+      fail "[#{design_name}] system cooling load not sum to total building cooling load"
     end
   end
 
@@ -749,28 +760,28 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     elec_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (elec_annual_gj - elec_sum_hourly_gj).abs > tolerance
-      fail "[#{design}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
+      fail "[#{design_name}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
     end
 
     gas_sum_hourly_gj = (gas_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     gas_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (gas_annual_gj - gas_sum_hourly_gj).abs > tolerance
-      fail "[#{design}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
+      fail "[#{design_name}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
     end
 
     oil_sum_hourly_gj = (oil_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     oil_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (oil_annual_gj - oil_sum_hourly_gj).abs > tolerance
-      fail "[#{design}] Hourly oil fuel results (#{oil_sum_hourly_gj}) do not sum to annual (#{oil_annual_gj}).\n#{design_output.to_s}"
+      fail "[#{design_name}] Hourly oil fuel results (#{oil_sum_hourly_gj}) do not sum to annual (#{oil_annual_gj}).\n#{design_output.to_s}"
     end
 
     propane_sum_hourly_gj = (propane_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
     query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
     propane_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
     if (propane_annual_gj - propane_sum_hourly_gj).abs > tolerance
-      fail "[#{design}] Hourly propane fuel results (#{propane_sum_hourly_gj}) do not sum to annual (#{propane_annual_gj}).\n#{design_output.to_s}"
+      fail "[#{design_name}] Hourly propane fuel results (#{propane_sum_hourly_gj}) do not sum to annual (#{propane_annual_gj}).\n#{design_output.to_s}"
     end
 
   end
@@ -778,9 +789,9 @@ def read_output(design, designdir, output_hpxml_path, hourly_output)
   return design_output, design_hourly_output
 end
 
-def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, dfhp_loads, htgs, hp_htgs)
+def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, eri_design, dfhp_loads, htgs, hp_htgs)
   htgs.each do |htg_system|
-    next unless get_system_or_seed_id(htg_system, design) == sys_id
+    next unless get_system_or_seed_id(htg_system, eri_design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(htg_system, "FractionHeatLoadServed"))
   end
@@ -794,7 +805,7 @@ def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, d
         load_fraction = dfhp_loads[[sys_id, false]] / (dfhp_loads[[sys_id, true]] + dfhp_loads[[sys_id, false]])
       end
     end
-    next unless get_system_or_seed_id(heat_pump, design) == sys_id
+    next unless get_system_or_seed_id(heat_pump, eri_design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionHeatLoadServed")) * load_fraction
   end
@@ -802,14 +813,14 @@ def split_htg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, d
   fail "Could not find load fraction for #{sys_id}."
 end
 
-def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, design, clgs, hp_clgs)
+def split_clg_load_to_system_by_fraction(sys_id, bldg_load, hpxml_doc, eri_design, clgs, hp_clgs)
   clgs.each do |clg_system|
-    next unless get_system_or_seed_id(clg_system, design) == sys_id
+    next unless get_system_or_seed_id(clg_system, eri_design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(clg_system, "FractionCoolLoadServed"))
   end
   hp_clgs.each do |heat_pump|
-    next unless get_system_or_seed_id(heat_pump, design) == sys_id
+    next unless get_system_or_seed_id(heat_pump, eri_design) == sys_id
 
     return bldg_load * Float(XMLHelper.get_value(heat_pump, "FractionCoolLoadServed"))
   end
@@ -855,9 +866,9 @@ def get_nst(hpxml_doc)
   return Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade"))
 end
 
-def get_system_or_seed_id(sys, design)
+def get_system_or_seed_id(sys, eri_design)
   if [Constants.CalcTypeERIReferenceHome,
-      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design
+      Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? eri_design
     if XMLHelper.has_element(sys, "extension/SeedId")
       return XMLHelper.get_value(sys, "extension/SeedId")
     end
@@ -891,15 +902,15 @@ def get_systems(hpxml_doc)
   return htgs, clgs, hp_htgs, hp_clgs, dhws
 end
 
-def get_heat_fuels(hpxml_doc, htgs, hp_htgs, design)
+def get_heat_fuels(hpxml_doc, htgs, hp_htgs, eri_design)
   heat_fuels = {}
 
   htgs.each do |htg_system|
-    sys_id = get_system_or_seed_id(htg_system, design)
+    sys_id = get_system_or_seed_id(htg_system, eri_design)
     heat_fuels[sys_id] = XMLHelper.get_value(htg_system, "HeatingSystemFuel")
   end
   hp_htgs.each do |heat_pump|
-    sys_id = get_system_or_seed_id(heat_pump, design)
+    sys_id = get_system_or_seed_id(heat_pump, eri_design)
     heat_fuels[sys_id] = XMLHelper.get_value(heat_pump, "HeatPumpFuel")
     if is_dfhp(heat_pump)
       heat_fuels[dfhp_backup_sys_id(sys_id)] = XMLHelper.get_value(heat_pump, "BackupSystemFuel")
@@ -934,7 +945,7 @@ def get_dhw_fuels(hpxml_doc, dhws)
   return dhw_fuels
 end
 
-def get_dse_heats(hpxml_doc, htgs, hp_htgs, design)
+def get_dse_heats(hpxml_doc, htgs, hp_htgs, eri_design)
   dse_heats = {}
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
     dist_id = hvac_dist.elements["SystemIdentifier"].attributes["id"]
@@ -949,14 +960,14 @@ def get_dse_heats(hpxml_doc, htgs, hp_htgs, design)
       next if htg_system.elements["DistributionSystem"].nil?
       next unless dist_id == htg_system.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = get_system_or_seed_id(htg_system, design)
+      sys_id = get_system_or_seed_id(htg_system, eri_design)
       dse_heats[sys_id] = dse_heat
     end
     hp_htgs.each do |heat_pump|
       next if heat_pump.elements["DistributionSystem"].nil?
       next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = get_system_or_seed_id(heat_pump, design)
+      sys_id = get_system_or_seed_id(heat_pump, eri_design)
       dse_heats[sys_id] = dse_heat
 
       if is_dfhp(heat_pump)
@@ -970,13 +981,13 @@ def get_dse_heats(hpxml_doc, htgs, hp_htgs, design)
   htgs.each do |htg_system|
     next unless htg_system.elements["DistributionSystem"].nil?
 
-    sys_id = get_system_or_seed_id(htg_system, design)
+    sys_id = get_system_or_seed_id(htg_system, eri_design)
     dse_heats[sys_id] = 1.0
   end
   hp_htgs.each do |heat_pump|
     next unless heat_pump.elements["DistributionSystem"].nil?
 
-    sys_id = get_system_or_seed_id(heat_pump, design)
+    sys_id = get_system_or_seed_id(heat_pump, eri_design)
     dse_heats[sys_id] = 1.0
 
     if is_dfhp(heat_pump)
@@ -988,7 +999,7 @@ def get_dse_heats(hpxml_doc, htgs, hp_htgs, design)
   return dse_heats
 end
 
-def get_dse_cools(hpxml_doc, clgs, hp_clgs, design)
+def get_dse_cools(hpxml_doc, clgs, hp_clgs, eri_design)
   dse_cools = {}
 
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |hvac_dist|
@@ -1004,14 +1015,14 @@ def get_dse_cools(hpxml_doc, clgs, hp_clgs, design)
       next if clg_system.elements["DistributionSystem"].nil?
       next unless dist_id == clg_system.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = get_system_or_seed_id(clg_system, design)
+      sys_id = get_system_or_seed_id(clg_system, eri_design)
       dse_cools[sys_id] = dse_cool
     end
     hp_clgs.each do |heat_pump|
       next if heat_pump.elements["DistributionSystem"].nil?
       next unless dist_id == heat_pump.elements["DistributionSystem"].attributes["idref"]
 
-      sys_id = get_system_or_seed_id(heat_pump, design)
+      sys_id = get_system_or_seed_id(heat_pump, eri_design)
       dse_cools[sys_id] = dse_cool
     end
   end
@@ -1020,13 +1031,13 @@ def get_dse_cools(hpxml_doc, clgs, hp_clgs, design)
   clgs.each do |clg_system|
     next unless clg_system.elements["DistributionSystem"].nil?
 
-    sys_id = get_system_or_seed_id(clg_system, design)
+    sys_id = get_system_or_seed_id(clg_system, eri_design)
     dse_cools[sys_id] = 1.0
   end
   hp_clgs.each do |heat_pump|
     next unless heat_pump.elements["DistributionSystem"].nil?
 
-    sys_id = get_system_or_seed_id(heat_pump, design)
+    sys_id = get_system_or_seed_id(heat_pump, eri_design)
     dse_cools[sys_id] = 1.0
 
     if is_dfhp(heat_pump)
@@ -1048,13 +1059,13 @@ def get_eec_value_numerator(unit)
   fail "Unexpected unit #{unit}."
 end
 
-def get_eec_heats(hpxml_doc, htgs, hp_htgs, design)
+def get_eec_heats(hpxml_doc, htgs, hp_htgs, eri_design)
   eec_heats = {}
 
   units = ['HSPF', 'COP', 'AFUE', 'Percent']
 
   htgs.each do |htg_system|
-    sys_id = get_system_or_seed_id(htg_system, design)
+    sys_id = get_system_or_seed_id(htg_system, eri_design)
     units.each do |unit|
       value = XMLHelper.get_value(htg_system, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -1063,7 +1074,7 @@ def get_eec_heats(hpxml_doc, htgs, hp_htgs, design)
     end
   end
   hp_htgs.each do |heat_pump|
-    sys_id = get_system_or_seed_id(heat_pump, design)
+    sys_id = get_system_or_seed_id(heat_pump, eri_design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -1087,13 +1098,13 @@ def get_eec_heats(hpxml_doc, htgs, hp_htgs, design)
   return eec_heats
 end
 
-def get_eec_cools(hpxml_doc, clgs, hp_clgs, design)
+def get_eec_cools(hpxml_doc, clgs, hp_clgs, eri_design)
   eec_cools = {}
 
   units = ['SEER', 'COP', 'EER']
 
   clgs.each do |clg_system|
-    sys_id = get_system_or_seed_id(clg_system, design)
+    sys_id = get_system_or_seed_id(clg_system, eri_design)
     units.each do |unit|
       value = XMLHelper.get_value(clg_system, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -1106,7 +1117,7 @@ def get_eec_cools(hpxml_doc, clgs, hp_clgs, design)
     end
   end
   hp_clgs.each do |heat_pump|
-    sys_id = get_system_or_seed_id(heat_pump, design)
+    sys_id = get_system_or_seed_id(heat_pump, eri_design)
     units.each do |unit|
       value = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{unit}']/Value")
       next if value.nil?
@@ -1182,7 +1193,7 @@ def get_dhw_solar_fraction(hpxml_doc, sys_id)
   return solar_fraction
 end
 
-def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design)
+def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc)
   dfhp_primary = false
   dfhp_backup = false
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem |
@@ -1217,15 +1228,15 @@ def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id, hpxml_doc, design
         end
       end
     end
-    fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}." if output_names.size == 0
+    fail "[#{design_name}] Could not find EnergyPlus output name associated with #{sys_id}." if output_names.size == 0
 
     return output_names, dfhp_primary, dfhp_backup
   end
 
-  fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}."
+  fail "[#{design_name}] Could not find EnergyPlus output name associated with #{sys_id}."
 end
 
-def get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design)
+def get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc)
   hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem |
                            /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |system|
     next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
@@ -1240,21 +1251,21 @@ def get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id, hpxml_doc, design
     return tsv_line[1..-1]
   end
 
-  fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}."
+  fail "[#{design_name}] Could not find EnergyPlus output name associated with #{sys_id}."
 end
 
-def get_ep_output_names_for_water_heating(map_tsv_data, sys_id, hpxml_doc, design)
+def get_ep_output_names_for_water_heating(map_tsv_data, sys_id)
   map_tsv_data.each do |tsv_line|
     next unless tsv_line[0] == sys_id
 
     return tsv_line[1..-1]
   end
 
-  fail "[#{design}] Could not find EnergyPlus output name associated with #{sys_id}."
+  fail "[#{design_name}] Could not find EnergyPlus output name associated with #{sys_id}."
 end
 
-def write_summary_output_results(resultsdir, design, design_output, design_hourly_output)
-  out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}.csv")
+def write_summary_output_results(resultsdir, design_name, design_output, design_hourly_output)
+  out_csv = File.join(resultsdir, "#{design_name.gsub(' ', '')}.csv")
 
   results_out = []
   results_out << ["Electricity: Total (MBtu)", design_output[:elecTotal].round(2)]
@@ -1339,12 +1350,12 @@ def write_summary_output_results(resultsdir, design, design_output, design_hourl
   end
   for fuel in total_results.keys
     if (total_results[fuel] - sum_end_use_results[fuel]).abs > 0.1
-      fail "[#{design}] End uses (#{sum_end_use_results[fuel].round(1)}) do not sum to #{fuel} total (#{total_results[fuel].round(1)}))."
+      fail "[#{design_name}] End uses (#{sum_end_use_results[fuel].round(1)}) do not sum to #{fuel} total (#{total_results[fuel].round(1)}))."
     end
   end
 
   if not design_hourly_output.nil? and design_hourly_output.size > 0
-    out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}_Hourly.csv")
+    out_csv = File.join(resultsdir, "#{design_name.gsub(' ', '')}_Hourly.csv")
     CSV.open(out_csv, "wb") { |csv| design_hourly_output.to_a.each { |elem| csv << elem } }
   end
 end
@@ -1357,8 +1368,8 @@ def get_hash_values_in_order(keys, output)
   return vals
 end
 
-def write_eri_output_results(resultsdir, design, design_output)
-  out_csv = File.join(resultsdir, "#{design.gsub(' ', '')}_ERI.csv")
+def write_eri_output_results(resultsdir, design_name, design_output)
+  out_csv = File.join(resultsdir, "#{design_name.gsub(' ', '')}_ERI.csv")
 
   results_out = []
 
@@ -1439,10 +1450,10 @@ end
 if ARGV.size == 7
   basedir = ARGV[0]
   output_dir = ARGV[1]
-  design = ARGV[2]
+  run = ARGV[2].split("|").map { |x| (x.length == 0 ? nil : x) }
   resultsdir = ARGV[3]
   hpxml = ARGV[4]
   debug = (ARGV[5].downcase.to_s == "true")
   hourly_output = (ARGV[6].downcase.to_s == "true")
-  run_design(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
+  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
 end
