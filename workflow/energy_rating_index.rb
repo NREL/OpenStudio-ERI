@@ -6,7 +6,7 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
-require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
+require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
@@ -21,35 +21,35 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
+def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
-  designdir = get_designdir(output_dir, design)
+  design_name, designdir = get_design_name_and_dir(output_dir, run)
   rm_path(designdir)
 
-  output_hpxml_path = run_design(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
+  output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, design, resultsdir, hpxml, debug, hourly_output)
+def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
-  designdir = get_designdir(output_dir, design)
+  design_name, designdir = get_design_name_and_dir(output_dir, run)
   rm_path(designdir)
   output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{design}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{hourly_output}")
+  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{hourly_output}")
 
   return output_hpxml_path, designdir, pid
 end
 
-def retrieve_eri_outputs(design, resultsdir, debug)
-  csv_path = File.join(resultsdir, "#{design.gsub(' ', '')}_ERI.csv")
+def retrieve_eri_outputs(design_name, resultsdir, debug)
+  csv_path = File.join(resultsdir, "#{design_name.gsub(' ', '')}_ERI.csv")
   if not File.exists? csv_path
     return nil
   end
@@ -74,7 +74,7 @@ def retrieve_eri_outputs(design, resultsdir, debug)
   return output_data
 end
 
-def calculate_eri(rated_output, ref_output, results_iad = nil)
+def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results = {}
 
   # ======= #
@@ -305,8 +305,8 @@ def calculate_eri(rated_output, ref_output, results_iad = nil)
   return results
 end
 
-def write_results(results, resultsdir, design_outputs, using_iaf)
-  ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
+def write_results(results, resultsdir, design_outputs, results_iad)
+  ref_output = design_outputs[[Constants.CalcTypeERIReferenceHome]]
 
   # Results file
   results_csv = File.join(resultsdir, "ERI_Results.csv")
@@ -322,7 +322,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   results_out << ["EC_x Cooling (MBtu)", results[:ec_x_cool].values.map { |x| x.round(2) }.join(",")]
   results_out << ["EC_x Hot Water (MBtu)", results[:ec_x_dhw].values.map { |x| x.round(2) }.join(",")]
   results_out << ["EC_x L&A (MBtu)", results[:eul_la].round(2)]
-  if using_iaf
+  if not results_iad.nil?
     results_out << ["IAD_Save (%)", results[:iad_save].round(5)]
   end
   # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
@@ -352,7 +352,7 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   worksheet_out << ["nMEUL Heating", results[:nmeul_heat].values.map { |x| x.round(4) }.join(",")]
   worksheet_out << ["nMEUL Cooling", results[:nmeul_cool].values.map { |x| x.round(4) }.join(",")]
   worksheet_out << ["nMEUL Hot Water", results[:nmeul_dhw].values.map { |x| x.round(4) }.join(",")]
-  if using_iaf
+  if not results_iad.nil?
     worksheet_out << ["IAF CFA", results[:iaf_cfa].round(4)]
     worksheet_out << ["IAF NBR", results[:iaf_nbr].round(4)]
     worksheet_out << ["IAF NS", results[:iaf_ns].round(4)]
@@ -360,14 +360,14 @@ def write_results(results, resultsdir, design_outputs, using_iaf)
   end
   worksheet_out << ["Total Loads TnML", results[:tnml].round(4)]
   worksheet_out << ["Total Loads TRL", results[:trl].round(4)]
-  if using_iaf
+  if not results_iad.nil?
     worksheet_out << ["Total Loads TRL*IAF", (results[:trl] * results[:iaf_rh]).round(4)]
   end
   worksheet_out << ["ERI", results[:eri].round(2)]
   worksheet_out << [nil] # line break
   worksheet_out << ["Ref Home CFA", ref_output[:hpxml_cfa]]
   worksheet_out << ["Ref Home Nbr", ref_output[:hpxml_nbr]]
-  if using_iaf
+  if not results_iad.nil?
     worksheet_out << ["Ref Home NS", ref_output[:hpxml_nst]]
   end
   worksheet_out << ["Ref L&A resMELs", ref_output[:elecMELs].round(2)]
@@ -476,6 +476,58 @@ def cache_weather
   exit!
 end
 
+def get_versions(hpxml_path)
+  versions = {}
+
+  # Avoid REXML for performance reasons
+  text = File.read(hpxml_path)
+  text.gsub!("\r", "")
+  text.gsub!("\n", "")
+
+  # Check for versions
+  ["ERICalculation"].each do |program|
+    idx = text.index("<#{program}>")
+    if not idx.nil?
+      str_v = "<Version>"
+      idx_v = text.index(str_v, idx + 1)
+
+      str_v2 = "</Version>"
+      idx_v2 = text.index(str_v2, idx_v)
+
+      version = text.slice(idx_v + str_v.length, idx_v2 - idx_v - str_v.length)
+      versions[program] = version
+    end
+  end
+
+  fail "No calculations specified." if versions.empty?
+
+  return versions
+end
+
+def request_hourly_output(hourly_output, run)
+  if hourly_output
+    if run == [Constants.CalcTypeERIRatedHome] or run == [Constants.CalcTypeERIReferenceHome]
+      return true
+    end
+  end
+  return false
+end
+
+def calculate_eri(design_outputs, resultsdir)
+  if design_outputs.keys.include? [Constants.CalcTypeERIIndexAdjustmentDesign]
+    results_iad = _calculate_eri(design_outputs[[Constants.CalcTypeERIIndexAdjustmentDesign]],
+                                 design_outputs[[Constants.CalcTypeERIIndexAdjustmentReferenceHome]])
+  else
+    results_iad = nil
+  end
+  results = _calculate_eri(design_outputs[[Constants.CalcTypeERIRatedHome]],
+                           design_outputs[[Constants.CalcTypeERIReferenceHome]],
+                           results_iad)
+  write_results(results, resultsdir, design_outputs, results_iad)
+
+  return results
+end
+
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/base.xml\n"
@@ -564,29 +616,24 @@ resultsdir = File.join(options[:output_dir], "results")
 rm_path(resultsdir)
 Dir.mkdir(resultsdir)
 
-# Run w/ Addendum E House Size Index Adjustment Factor?
-using_iaf = false
-File.open(options[:hpxml], 'r').each do |line|
-  if line.strip.downcase.start_with? "<version>"
-    if line.include? '2014AE' or line.include? '2014AEG'
-      using_iaf = true
+versions = get_versions(options[:hpxml])
+
+# Determine designs to run
+# Create list of [ERI calc_type]
+runs = []
+versions.each do |program, version|
+  if program == "ERICalculation"
+    runs << [Constants.CalcTypeERIRatedHome]
+    runs << [Constants.CalcTypeERIReferenceHome]
+    if ['2014AE', '2014AEG', 'latest'].include? version
+      runs << [Constants.CalcTypeERIIndexAdjustmentDesign]
+      runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     end
     break
   end
 end
 
-run_designs = {
-  Constants.CalcTypeERIRatedHome => true,
-  Constants.CalcTypeERIReferenceHome => true,
-  Constants.CalcTypeERIIndexAdjustmentDesign => using_iaf,
-  Constants.CalcTypeERIIndexAdjustmentReferenceHome => using_iaf
-}
-hourly_output = {
-  Constants.CalcTypeERIRatedHome => options[:hourly_output],
-  Constants.CalcTypeERIReferenceHome => options[:hourly_output],
-  Constants.CalcTypeERIIndexAdjustmentDesign => false,
-  Constants.CalcTypeERIIndexAdjustmentReferenceHome => false
-}
+# TODO: Delete all old dirs for all possible runs
 
 # Run simulations
 puts "HPXML: #{options[:hpxml]}"
@@ -599,10 +646,8 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
     raise Parallel::Kill
   end
 
-  Parallel.map(run_designs, in_processes: run_designs.size) do |design, run|
-    next if not run
-
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], hourly_output[design])
+  Parallel.map(runs, in_processes: runs.size) do |run|
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], request_hourly_output(options[:hourly_output], run))
     kill unless File.exists? File.join(designdir, "eplusout.end")
   end
 
@@ -621,11 +666,9 @@ else # e.g., Windows
   end
 
   pids = {}
-  Parallel.map(run_designs, in_threads: run_designs.size) do |design, run|
-    next if not run
-
-    output_hpxml_path, designdir, pids[design] = run_design_spawn(basedir, options[:output_dir], design, resultsdir, options[:hpxml], options[:debug], hourly_output[design])
-    Process.wait pids[design]
+  Parallel.map(runs, in_threads: runs.size) do |run|
+    output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], request_hourly_output(options[:hourly_output], run))
+    Process.wait pids[run]
     if not File.exists? File.join(designdir, "eplusout.end")
       kill(pids)
       next
@@ -636,31 +679,24 @@ end
 
 # Retrieve outputs for ERI calculations
 design_outputs = {}
-run_designs.each do |design, run|
-  next unless run
+runs.each do |run|
+  design_name, designdir = get_design_name_and_dir(options[:output_dir], run)
+  design_outputs[run] = retrieve_eri_outputs(design_name, resultsdir, options[:debug])
 
-  design_outputs[design] = retrieve_eri_outputs(design, resultsdir, options[:debug])
-
-  if design_outputs[design].nil?
+  if design_outputs[run].nil?
     puts "Errors encountered. Aborting..."
     exit!
   end
 end
 
 # Calculate and write results
-puts "Calculating ERI..."
-if using_iaf
-  results_iad = calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
-                              design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
-else
-  results_iad = nil
+versions.each do |program, version|
+  if program == "ERICalculation"
+    puts "Calculating ERI..."
+    results = calculate_eri(design_outputs, resultsdir)
+    puts "ERI: #{results[:eri].round(0)}"
+  end
 end
-results = calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome],
-                        design_outputs[Constants.CalcTypeERIReferenceHome],
-                        results_iad)
 
-write_results(results, resultsdir, design_outputs, using_iaf)
-
-puts "ERI: #{results[:eri].round(2)}"
 puts "Output files written to '#{File.basename(resultsdir)}' directory."
 puts "Completed in #{(Time.now - start_time).round(1)} seconds."

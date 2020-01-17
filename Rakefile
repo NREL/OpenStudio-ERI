@@ -69,14 +69,13 @@ task :update_measures do
   puts "Applying rubocop style to measures..."
   system(command)
 
-  create_hpxmls
-
-  copy_sample_files
+  create_test_hpxmls
+  create_sample_hpxmls
 
   puts "Done."
 end
 
-def create_hpxmls
+def create_test_hpxmls
   require_relative "measures/HPXMLtoOpenStudio/resources/hpxml"
   require_relative "measures/HPXMLtoOpenStudio/resources/hotwater_appliances"
   require_relative "measures/HPXMLtoOpenStudio/resources/lighting"
@@ -2314,13 +2313,13 @@ def get_hpxml_file_misc_load_schedule_values(hpxml_file, misc_load_schedule_valu
   return misc_load_schedule_values
 end
 
-def copy_sample_files
-  # Copy sample files from HPXMLtoOpenStudio repo
+def create_sample_hpxmls
+  # Copy sample files from HPXMLtoOpenStudio measure
   puts "Copying sample files..."
-  FileUtils.rm_f(Dir.glob("workflow/sample_files/*.xml*"))
-  FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml*"))
-  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/*.xml*"), "workflow/sample_files")
-  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml*"), "workflow/sample_files/invalid_files")
+  FileUtils.rm_f(Dir.glob("workflow/sample_files/*.xml"))
+  FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml"))
+  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/*.xml"), "workflow/sample_files")
+  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml"), "workflow/sample_files/invalid_files")
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
@@ -2428,12 +2427,31 @@ def copy_sample_files
                   'base-pv-array-1axis-backtracked.xml',
                   'base-pv-array-2axis.xml',
                   'base-pv-array-fixed-open-rack.xml',
-                  'base-site-neighbors.xml']
+                  'base-site-neighbors.xml',
+                  'base-version-latest.xml']
   exclude_list.each do |exclude_file|
     if File.exists? "workflow/sample_files/#{exclude_file}"
       FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
     else
       puts "Warning: Excluded file workflow/sample_files/#{exclude_file} not found."
+    end
+  end
+
+  # Add ERI version
+  hpxml_paths = []
+  Dir["workflow/sample_files/*.xml"].each do |hpxml_path|
+    hpxml_paths << hpxml_path
+  end
+  Dir["workflow/sample_files/invalid_files/*.xml"].each do |hpxml_path|
+    hpxml_paths << hpxml_path
+  end
+  hpxml_paths.each do |hpxml_path|
+    hpxml_doc = XMLHelper.parse_file(hpxml_path)
+    software_info = hpxml_doc.elements["/HPXML/SoftwareInfo"]
+    eri_calculation = software_info.elements["extension/ERICalculation"]
+    if eri_calculation.nil?
+      XMLHelper.add_element(software_info, "extension/ERICalculation/Version", "latest")
+      XMLHelper.write_file(hpxml_doc, hpxml_path)
     end
   end
 end
