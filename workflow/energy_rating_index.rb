@@ -486,15 +486,18 @@ def get_versions(hpxml_path)
 
   # Check for versions
   ["ERICalculation"].each do |program|
-    idx = text.index("<#{program}>")
+    idx = text.index("<#{program}")
     if not idx.nil?
-      str_v = "<Version>"
-      idx_v = text.index(str_v, idx + 1)
+      idx_end = text.index(">", idx)
+
+      str_v = "<Version"
+      idx_v = text.index(str_v, idx_end + 1)
+      idx_v_end = text.index(">", idx_v)
 
       str_v2 = "</Version>"
       idx_v2 = text.index(str_v2, idx_v)
 
-      version = text.slice(idx_v + str_v.length, idx_v2 - idx_v - str_v.length)
+      version = text.slice(idx_v_end + 1, idx_v2 - idx_v_end - 1)
       versions[program] = version
     end
   end
@@ -576,7 +579,7 @@ if OpenStudio.openStudioVersion != os_version
 end
 
 if options[:version]
-  workflow_version = "0.6.0"
+  workflow_version = "0.7.0"
   puts "OpenStudio-ERI v#{workflow_version}"
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
