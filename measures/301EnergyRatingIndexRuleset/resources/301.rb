@@ -63,6 +63,7 @@ class EnergyRatingIndex301Ruleset
     # Systems
     set_systems_hvac_reference(orig_details, hpxml)
     set_systems_mechanical_ventilation_reference(orig_details, hpxml)
+    set_systems_whole_house_fan_reference(orig_details, hpxml)
     set_systems_water_heater_reference(orig_details, hpxml)
     set_systems_water_heating_use_reference(orig_details, hpxml)
     set_systems_solar_thermal_reference(hpxml)
@@ -114,6 +115,7 @@ class EnergyRatingIndex301Ruleset
     # Systems
     set_systems_hvac_rated(orig_details, hpxml)
     set_systems_mechanical_ventilation_rated(orig_details, hpxml)
+    set_systems_whole_house_fan_rated(orig_details, hpxml)
     set_systems_water_heater_rated(orig_details, hpxml)
     set_systems_water_heating_use_rated(orig_details, hpxml)
     set_systems_solar_thermal_rated(orig_details, hpxml)
@@ -167,6 +169,7 @@ class EnergyRatingIndex301Ruleset
     # Systems
     set_systems_hvac_iad(orig_details, hpxml)
     set_systems_mechanical_ventilation_iad(orig_details, hpxml)
+    set_systems_whole_house_fan_iad(orig_details, hpxml)
     set_systems_water_heater_iad(orig_details, hpxml)
     set_systems_water_heating_use_iad(orig_details, hpxml)
     set_systems_solar_thermal_iad(hpxml)
@@ -1546,7 +1549,8 @@ class EnergyRatingIndex301Ruleset
                               fan_type: fan_type,
                               tested_flow_rate: q_fan_airflow,
                               hours_in_operation: 24,
-                              fan_power: fan_power_w)
+                              fan_power: fan_power_w,
+                              used_for_whole_building_ventilation: true)
   end
 
   def self.set_systems_mechanical_ventilation_rated(orig_details, hpxml)
@@ -1591,7 +1595,8 @@ class EnergyRatingIndex301Ruleset
                                 sensible_recovery_efficiency: vent_fan_values[:sensible_recovery_efficiency],
                                 sensible_recovery_efficiency_adjusted: vent_fan_values[:sensible_recovery_efficiency_adjusted],
                                 fan_power: vent_fan_values[:fan_power],
-                                distribution_system_idref: vent_fan_values[:distribution_system_idref])
+                                distribution_system_idref: vent_fan_values[:distribution_system_idref],
+                                used_for_whole_building_ventilation: vent_fan_values[:used_for_whole_building_ventilation])
     end
   end
 
@@ -1618,7 +1623,29 @@ class EnergyRatingIndex301Ruleset
                               fan_type: "balanced",
                               tested_flow_rate: q_fan,
                               hours_in_operation: 24,
-                              fan_power: 0.7 * q_fan)
+                              fan_power: 0.7 * q_fan,
+                              used_for_whole_building_ventilation: true)
+  end
+
+  def self.set_systems_whole_house_fan_reference(orig_details, hpxml)
+    # nop
+  end
+
+  def self.set_systems_whole_house_fan_rated(orig_details, hpxml)
+    vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForSeasonalCoolingLoadReduction='true']"]
+    if not vent_fan.nil?
+      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+
+      HPXML.add_ventilation_fan(hpxml: hpxml,
+                                id: vent_fan_values[:id],
+                                rated_flow_rate: vent_fan_values[:rated_flow_rate],
+                                fan_power: vent_fan_values[:fan_power],
+                                used_for_seasonal_cooling_load_reduction: vent_fan_values[:used_for_seasonal_cooling_load_reduction])
+    end
+  end
+
+  def self.set_systems_whole_house_fan_iad(orig_details, hpxml)
+    # nop
   end
 
   def self.set_systems_water_heater_reference(orig_details, hpxml)

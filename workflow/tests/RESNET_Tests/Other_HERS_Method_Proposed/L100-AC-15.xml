@@ -512,7 +512,6 @@
               <FanType>central fan integrated supply</FanType>
               <TestedFlowRate>168.6</TestedFlowRate>
               <HoursInOperation>8.0</HoursInOperation>
-              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <FanPower>373.0</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution'/>
             </VentilationFan>

@@ -5,7 +5,7 @@ require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
 
-class MechVentTest < MiniTest::Test
+class VentTest < MiniTest::Test
   def before_setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
     @tmp_hpxml_path = File.join(@root_path, "workflow", "sample_files", "tmp.xml")
@@ -278,6 +278,26 @@ class MechVentTest < MiniTest::Test
     _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
   end
 
+  def test_whole_house_fan
+    hpxml_name = "base-misc-whole-house-fan.xml"
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_whf(hpxml_doc)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_whf(hpxml_doc, 4500, 300)
+
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_whf(hpxml_doc)
+
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_whf(hpxml_doc)
+  end
+
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
@@ -356,6 +376,16 @@ class MechVentTest < MiniTest::Test
       end
     else
       assert_nil(mechvent)
+    end
+  end
+
+  def _check_whf(hpxml_doc, flowrate = nil, power = nil)
+    whf = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForSeasonalCoolingLoadReduction='true']"]
+    if not flowrate.nil?
+      assert_in_epsilon(flowrate, Float(whf.elements["RatedFlowRate"].text), 0.01)
+      assert_in_epsilon(power, Float(whf.elements["FanPower"].text), 0.01)
+    else
+      assert_nil(whf)
     end
   end
 end
