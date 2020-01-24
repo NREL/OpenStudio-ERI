@@ -75,7 +75,8 @@ class VentTest < MiniTest::Test
                               fan_type: "exhaust only",
                               tested_flow_rate: 1.0,
                               hours_in_operation: 1,
-                              fan_power: 1.0)
+                              fan_power: 1.0,
+                              used_for_whole_building_ventilation: true)
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
