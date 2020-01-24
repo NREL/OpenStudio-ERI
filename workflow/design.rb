@@ -5,6 +5,8 @@ require_relative "../measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 HourlyOutputZoneTemperatures = "Zone Temperatures".upcase
 HourlyOutputFuelConsumptions = "Fuel Consumptions".upcase
+HourlyOutputTotalLoads = "Total Loads".upcase
+HourlyOutputComponentLoads = "Component Loads".upcase
 
 def get_design_name_and_dir(output_dir, run)
   design_name = ""
@@ -129,6 +131,39 @@ def create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_output
       output_meter = OpenStudio::Model::OutputMeter.new(model)
       output_meter.setName(meter_fuel)
       output_meter.setReportingFrequency('hourly')
+    end
+  end
+  if hourly_outputs.include? HourlyOutputTotalLoads
+    # Building heating/cooling loads
+    # FIXME: This needs to be updated when the new component loads algorithm is merged
+    ['Heating:EnergyTransfer', 'Cooling:EnergyTransfer'].each do |meter_load|
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName(meter_load)
+      output_meter.setReportingFrequency('hourly')
+    end
+  end
+  if hourly_outputs.include? HourlyOutputComponentLoads
+    loads_program = nil
+    model.getEnergyManagementSystemPrograms.each do |program|
+      next unless program.name.to_s == "component_loads_program"
+
+      loads_program = program
+    end
+    fail "Could not find component loads program." if loads_program.nil?
+
+    ["htg", "clg"].each do |mode|
+      get_component_load_map.each do |component, component_var|
+        ems_output_var = OpenStudio::Model::EnergyManagementSystemOutputVariable.new(model, "#{mode}_#{component_var}")
+        ems_output_var.setName("#{mode}_#{component_var}_hourly_outvar")
+        ems_output_var.setTypeOfDataInVariable("Summed")
+        ems_output_var.setUpdateFrequency("ZoneTimestep")
+        ems_output_var.setEMSProgramOrSubroutineName(loads_program)
+        ems_output_var.setUnits("J")
+
+        output_var = OpenStudio::Model::OutputVariable.new(ems_output_var.name.to_s, model)
+        output_var.setReportingFrequency('hourly')
+        output_var.setKeyValue('*')
+      end
     end
   end
 
@@ -740,6 +775,17 @@ def read_output(eri_design, designdir, output_hpxml_path, hourly_outputs, design
         design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
       end
     end
+    if hourly_outputs.include? HourlyOutputTotalLoads
+      design_hourly_output[0] << "Heating Load - Total [kBtu]"
+      design_hourly_output[0] << "Cooling Load - Total [kBtu]"
+    end
+    if hourly_outputs.include? HourlyOutputComponentLoads
+      ["Heating", "Cooling"].each do |mode|
+        get_component_load_map.each do |component, component_var|
+          design_hourly_output[0] << "#{mode} Load - #{component} [kBtu]"
+        end
+      end
+    end
 
     for hr in 1..8760
       design_hourly_output << [hr]
@@ -751,25 +797,21 @@ def read_output(eri_design, designdir, output_hpxml_path, hourly_outputs, design
       query = "SELECT VariableValue*#{j_to_kwh} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
       elec_use = sqlFile.execAndReturnVectorOfDouble(query).get
       elec_use += [0.0] * 8760 if elec_use.size == 0
-      fail "Unexpected result" if elec_use.size != 8760
 
       # Natural Gas
       query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
       gas_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
       gas_use += [0.0] * 8760 if gas_use.size == 0
-      fail "Unexpected result" if gas_use.size != 8760
 
       # Fuel Oil
       query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
       oil_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
       oil_use += [0.0] * 8760 if oil_use.size == 0
-      fail "Unexpected result" if oil_use.size != 8760
 
       # Propane
       query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
       propane_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
       propane_use += [0.0] * 8760 if propane_use.size == 0
-      fail "Unexpected result" if propane_use.size != 8760
 
       elec_use.zip(gas_use, oil_use, propane_use).each_with_index do |(elec, gas, oil, propane), i|
         design_hourly_output[i + 1] << elec.round(2)
@@ -817,6 +859,45 @@ def read_output(eri_design, designdir, output_hpxml_path, hourly_outputs, design
 
         temperatures.each_with_index do |temperature, i|
           design_hourly_output[i + 1] << temperature.round(2)
+        end
+      end
+    end
+
+    if hourly_outputs.include? HourlyOutputTotalLoads
+      # FIXME: This needs to be updated when the new component loads algorithm is merged
+
+      # Heating load total
+      query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Heating:EnergyTransfer' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      results = sqlFile.execAndReturnVectorOfDouble(query).get
+      fail "Unexpected result" if results.size != 8760
+
+      results.each_with_index do |htg_load, i|
+        design_hourly_output[i + 1] << htg_load.round(2)
+      end
+
+      # Cooling load total
+      query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Cooling:EnergyTransfer' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      results = sqlFile.execAndReturnVectorOfDouble(query).get
+      fail "Unexpected result" if results.size != 8760
+
+      results.each_with_index do |clg_load, i|
+        design_hourly_output[i + 1] << clg_load.round(2)
+      end
+    end
+
+    if hourly_outputs.include? HourlyOutputComponentLoads
+      ["htg", "clg"].each do |mode_var|
+        get_component_load_map.each do |component, component_var|
+          query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='#{mode_var}_#{component_var}_hourly_outvar' AND ReportingFrequency='Hourly' AND VariableUnits='J')"
+          results = sqlFile.execAndReturnVectorOfDouble(query).get
+          fail "Unexpected result" if results.size != 8760
+
+          results.each_with_index do |component_load, i|
+            next if i == 0 # EMS outputs lag by 1 hour
+
+            design_hourly_output[i] << component_load.round(2)
+          end
+          design_hourly_output[8760] << 0.0 # Add final hour
         end
       end
     end
