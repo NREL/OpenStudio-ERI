@@ -593,7 +593,6 @@ def read_output(eri_design, designdir, output_hpxml_path, hourly_output, design_
   # Whole House Fan
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameWholeHouseFan}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecWholeHouseFan] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-  puts "design_output[:elecWholeHouseFan] #{design_output[:elecWholeHouseFan]}"
 
   # Error Checking
   tolerance = 0.1 # MMBtu

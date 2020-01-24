@@ -153,6 +153,11 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nec_x_cool] = {}
   results[:nmeul_cool] = {}
 
+  tot_reul_cool = 0.0
+  rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, s|
+    tot_reul_cool += ref_output[:loadCoolingBySystem][s]
+  end
+
   rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, s|
     reul_cool = ref_output[:loadCoolingBySystem][s]
 
@@ -162,8 +167,9 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_cool = rated_output[:hpxml_eec_cools][s]
     eec_r_cool = ref_output[:hpxml_eec_cools][s]
 
-    ec_x_cool = rated_output[:elecCoolingBySystem][s]
-    ec_r_cool = ref_output[:elecCoolingBySystem][s]
+    # Add whole-house fan energy apportioned by load here (and subtract later from eul_la)
+    ec_x_cool = rated_output[:elecCoolingBySystem][s] + (rated_output[:elecWholeHouseFan] * reul_cool / tot_reul_cool)
+    ec_r_cool = ref_output[:elecCoolingBySystem][s] + (ref_output[:elecWholeHouseFan] * reul_cool / tot_reul_cool)
 
     dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
 
@@ -264,11 +270,13 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
   results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
                       rated_output[:elecGrgLighting] + rated_output[:elecAppliances] +
-                      rated_output[:gasAppliances] + rated_output[:oilAppliances] + rated_output[:propaneAppliances])
+                      rated_output[:gasAppliances] + rated_output[:oilAppliances] +
+                      rated_output[:propaneAppliances] - rated_output[:elecWholeHouseFan])
 
   results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
                        ref_output[:elecGrgLighting] + ref_output[:elecAppliances] +
-                       ref_output[:gasAppliances] + ref_output[:oilAppliances] + ref_output[:propaneAppliances])
+                       ref_output[:gasAppliances] + ref_output[:oilAppliances] +
+                       ref_output[:propaneAppliances] - ref_output[:elecWholeHouseFan])
 
   # === #
   # ERI #
