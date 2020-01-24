@@ -261,6 +261,7 @@ def get_component_load_map
            "Infiltration" => "infil",
            "Natural Ventilation" => "natvent",
            "Mechanical Ventilation" => "mechvent",
+           "Whole House Fan" => "whf",
            "Ducts" => "ducts",
            "Internal Gains" => "intgains" }
 end
@@ -645,6 +646,10 @@ def read_output(eri_design, designdir, output_hpxml_path, hourly_outputs, design
   query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
   design_output[:elecMechVent] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
+  # Whole House Fan
+  query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{Constants.ObjectNameWholeHouseFan}:InteriorEquipment:Electricity' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+  design_output[:elecWholeHouseFan] = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+
   # Error Checking
   tolerance = 0.1 # MMBtu
 
@@ -696,7 +701,8 @@ def read_output(eri_design, designdir, output_hpxml_path, hourly_outputs, design
                          design_output[:elecTV] +
                          design_output[:elecRangeOven] +
                          design_output[:elecCeilingFan] +
-                         design_output[:elecMechVent])
+                         design_output[:elecMechVent] +
+                         design_output[:elecWholeHouseFan])
   if (design_output[:elecAppliances] - sum_elec_appliances).abs > tolerance
     fail "[#{design_name}] Electric appliances (#{sum_elec_appliances}) do not sum to total (#{design_output[:elecAppliances]}).\n#{design_output.to_s}"
   end
@@ -1401,6 +1407,7 @@ def write_summary_output_results(resultsdir, design_name, design_output, design_
   results_out << ["Electricity: Lighting Garage (MBtu)", design_output[:elecGrgLighting].round(2)]
   results_out << ["Electricity: Lighting Exterior (MBtu)", design_output[:elecExtLighting].round(2)]
   results_out << ["Electricity: Mech Vent (MBtu)", design_output[:elecMechVent].round(2)]
+  results_out << ["Electricity: Whole House Fan (MBtu)", design_output[:elecWholeHouseFan].round(2)]
   results_out << ["Electricity: Refrigerator (MBtu)", design_output[:elecFridge].round(2)]
   results_out << ["Electricity: Dishwasher (MBtu)", design_output[:elecDishwasher].round(2)]
   results_out << ["Electricity: Clothes Washer (MBtu)", design_output[:elecClothesWasher].round(2)]
@@ -1546,6 +1553,7 @@ def write_eri_output_results(resultsdir, design_name, design_output)
   results_out << ["elecDishwasher", design_output[:elecDishwasher]]
   results_out << ["elecClothesWasher", design_output[:elecClothesWasher]]
   results_out << ["elecMechVent", design_output[:elecMechVent]]
+  results_out << ["elecWholeHouseFan", design_output[:elecWholeHouseFan]]
   results_out << ["gasAppliances", design_output[:gasAppliances]]
   results_out << ["gasRangeOven", design_output[:gasRangeOven]]
   results_out << ["gasClothesDryer", design_output[:gasClothesDryer]]

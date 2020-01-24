@@ -48,7 +48,8 @@ class EnclosureTest < MiniTest::Test
                               fan_type: "exhaust only",
                               tested_flow_rate: 300,
                               hours_in_operation: 24,
-                              fan_power: 30.0)
+                              fan_power: 30.0,
+                              used_for_whole_building_ventilation: true)
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)

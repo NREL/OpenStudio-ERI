@@ -1842,14 +1842,16 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :fan_type => "exhaust only",
                                  :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
-                                 :fan_power => 14.7 }]
+                                 :fan_power => 14.7,
+                                 :used_for_whole_building_ventilation => true }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "balanced",
                                  :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
-                                 :fan_power => 14.7 }]
+                                 :fan_power => 14.7,
+                                 :used_for_whole_building_ventilation => true }]
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% heat recovery system
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
@@ -1857,14 +1859,16 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
                                  :sensible_recovery_efficiency => 0.6,
-                                 :fan_power => 14.7 }]
+                                 :fan_power => 14.7,
+                                 :used_for_whole_building_ventilation => true }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Exhaust fan = 58.7 cfm, continuous; Fan power = 14.7 watts
     ventilation_fans_values = [{ :id => "MechanicalVentilation",
                                  :fan_type => "exhaust only",
                                  :tested_flow_rate => 58.7,
                                  :hours_in_operation => 24,
-                                 :fan_power => 14.7 }]
+                                 :fan_power => 14.7,
+                                 :used_for_whole_building_ventilation => true }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 51.2 cfm continuous with fan power = 12.8 watts
     ventilation_fans_values[0][:tested_flow_rate] = 51.2
@@ -1880,6 +1884,7 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :tested_flow_rate => 176.1,
                                  :hours_in_operation => 8,
                                  :fan_power => 14.7,
+                                 :used_for_whole_building_ventilation => true,
                                  :distribution_system_idref => "HVACDistribution" }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Exhaust fan = 56.2 cfm, continuous; Fan power = 14.0 watts
@@ -1887,7 +1892,8 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :fan_type => "exhaust only",
                                  :tested_flow_rate => 56.2,
                                  :hours_in_operation => 24,
-                                 :fan_power => 14 }]
+                                 :fan_power => 14,
+                                 :used_for_whole_building_ventilation => true }]
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 48.7 cfm continuous with fan power = 12.2 watts
     ventilation_fans_values[0][:tested_flow_rate] = 48.7
@@ -1903,6 +1909,7 @@ def get_hpxml_file_ventilation_fan_values(hpxml_file, ventilation_fans_values)
                                  :tested_flow_rate => 168.6,
                                  :hours_in_operation => 8,
                                  :fan_power => 373,
+                                 :used_for_whole_building_ventilation => true,
                                  :distribution_system_idref => "HVACDistribution" }]
   end
   return ventilation_fans_values
