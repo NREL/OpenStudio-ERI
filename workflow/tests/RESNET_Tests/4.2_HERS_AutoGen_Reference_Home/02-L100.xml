@@ -495,6 +495,7 @@
               <FanType>exhaust only</FanType>
               <TestedFlowRate>56.2</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <FanPower>14.7</FanPower>
             </VentilationFan>
           </VentilationFans>
