@@ -1,0 +1,5 @@
+Enabled,E+ Output(s),Note
+TRUE,Zone Temperatures,Temperatures for each E+ thermal zone
+TRUE,Fuel Consumptions,Total energy consumptions for each fuel type
+FALSE,Total Loads,Total heating/cooling loads
+FALSE,Component Loads,Heating/cooling loads disaggregated by component type

@@ -3,6 +3,9 @@
 
 require_relative "../measures/HPXMLtoOpenStudio/resources/meta_measure"
 
+HourlyOutputZoneTemperatures = "Zone Temperatures".upcase
+HourlyOutputFuelConsumptions = "Fuel Consumptions".upcase
+
 def get_design_name_and_dir(output_dir, run)
   design_name = ""
   run.each do |x|
@@ -21,21 +24,38 @@ end
 def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
   eri_design = run[0]
   design_name, designdir = get_design_name_and_dir(output_dir, run)
+  hourly_outputs = get_enabled_hourly_outputs(hourly_output)
 
   # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
   print "[#{design_name}] Creating input...\n"
-  output_hpxml_path, designdir = create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_output, designdir, design_name)
+  output_hpxml_path, designdir = create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_outputs, designdir, design_name)
 
   if not designdir.nil?
     print "[#{design_name}] Running simulation...\n"
     run_energyplus(designdir, debug)
-    design_output = process_design_output(run, designdir, resultsdir, output_hpxml_path, hourly_output, design_name)
+    design_output = process_design_output(run, designdir, resultsdir, output_hpxml_path, hourly_outputs, design_name)
   end
 
   return output_hpxml_path
 end
 
-def create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_output, designdir, design_name)
+def get_enabled_hourly_outputs(hourly_output)
+  hourly_outputs = []
+  if hourly_output
+    require 'csv'
+
+    hourly_outputs_rows = CSV.read(File.join(File.dirname(__FILE__), "hourly_outputs.csv"), headers: false)
+    hourly_outputs_rows.each do |hourly_output_row|
+      next unless hourly_output_row[0].upcase.strip == 'TRUE'
+
+      hourly_outputs << hourly_output_row[1].upcase.strip
+    end
+
+  end
+  return hourly_outputs
+end
+
+def create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_outputs, designdir, design_name)
   Dir.mkdir(designdir)
 
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
@@ -97,12 +117,13 @@ def create_idf(run, basedir, output_dir, resultsdir, hpxml, debug, hourly_output
   end
 
   # Add hourly output requests
-  if hourly_output
+  if hourly_outputs.include? HourlyOutputZoneTemperatures
     # Thermal zone temperatures:
     output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
     output_var.setReportingFrequency('hourly')
     output_var.setKeyValue('*')
-
+  end
+  if hourly_outputs.include? HourlyOutputFuelConsumptions
     # Energy use by fuel:
     ['Electricity:Facility', 'Gas:Facility', 'FuelOil#1:Facility', 'Propane:Facility'].each do |meter_fuel|
       output_meter = OpenStudio::Model::OutputMeter.new(model)
@@ -158,12 +179,12 @@ def run_energyplus(designdir, debug)
   end
 end
 
-def process_design_output(run, designdir, resultsdir, output_hpxml_path, hourly_output, design_name)
+def process_design_output(run, designdir, resultsdir, output_hpxml_path, hourly_outputs, design_name)
   return nil if output_hpxml_path.nil?
 
   print "[#{design_name}] Processing output...\n"
 
-  design_output, design_hourly_output = read_output(run[0], designdir, output_hpxml_path, hourly_output, design_name)
+  design_output, design_hourly_output = read_output(run[0], designdir, output_hpxml_path, hourly_outputs, design_name)
   return if design_output.nil?
 
   write_summary_output_results(resultsdir, design_name, design_output, design_hourly_output)
@@ -209,7 +230,7 @@ def get_component_load_map
            "Internal Gains" => "intgains" }
 end
 
-def read_output(eri_design, designdir, output_hpxml_path, hourly_output, design_name)
+def read_output(eri_design, designdir, output_hpxml_path, hourly_outputs, design_name)
   sql_path = File.join(designdir, "eplusout.sql")
   if not File.exists?(sql_path)
     puts "[#{design_name}] Processing output unsuccessful."
@@ -687,101 +708,117 @@ def read_output(eri_design, designdir, output_hpxml_path, hourly_output, design_
   sum_cooling_component_loads = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
 
   design_hourly_output = []
-  if hourly_output
+  if hourly_outputs.size > 0
     # Generate CSV file with hourly output
-
-    # Get zone names (excluding duct zone/return plenum)
-    zone_names = []
-    query = "SELECT KeyValue FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature'"
-    sqlFile.execAndReturnVectorOfString(query).get.each do |zone_name|
-      query = "SELECT FloorArea FROM Zones WHERE ZoneName='#{zone_name}'"
-      floor_area = sqlFile.execAndReturnFirstDouble(query).get
-      next unless floor_area > 1.0
-
-      zone_names << zone_name
-    end
-    zone_names.sort!
 
     # Unit conversions
     j_to_kwh = UnitConversions.convert(1.0, "j", "kwh")
     j_to_kbtu = UnitConversions.convert(1.0, "j", "kbtu")
 
     # Header
-    design_hourly_output = [["Hour",
-                             "Electricity Use [kWh]",
-                             "Natural Gas Use [kBtu]",
-                             "Fuel Oil Use [kBtu]",
-                             "Propane Use [kBtu]"]]
-    zone_names.each do |zone_name|
-      design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
+    design_hourly_output = [["Hour"]]
+    if hourly_outputs.include? HourlyOutputFuelConsumptions
+      design_hourly_output[0] << "Electricity Use [kWh]"
+      design_hourly_output[0] << "Natural Gas Use [kBtu]"
+      design_hourly_output[0] << "Fuel Oil Use [kBtu]"
+      design_hourly_output[0] << "Propane Use [kBtu]"
     end
+    if hourly_outputs.include? HourlyOutputZoneTemperatures
+      # Get zone names (excluding duct zone/return plenum)
+      zone_names = []
+      query = "SELECT KeyValue FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature'"
+      sqlFile.execAndReturnVectorOfString(query).get.each do |zone_name|
+        query = "SELECT FloorArea FROM Zones WHERE ZoneName='#{zone_name}'"
+        floor_area = sqlFile.execAndReturnFirstDouble(query).get
+        next unless floor_area > 1.0
 
-    # Electricity
-    query = "SELECT VariableValue*#{j_to_kwh} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
-    elec_use = sqlFile.execAndReturnVectorOfDouble(query).get
-    elec_use += [0.0] * 8760 if elec_use.size == 0
-    fail "Unexpected result" if elec_use.size != 8760
+        zone_names << zone_name
+      end
+      zone_names.sort!
 
-    # Natural Gas
-    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
-    gas_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
-    gas_use += [0.0] * 8760 if gas_use.size == 0
-    fail "Unexpected result" if gas_use.size != 8760
-
-    # Fuel Oil
-    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
-    oil_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
-    oil_use += [0.0] * 8760 if oil_use.size == 0
-    fail "Unexpected result" if oil_use.size != 8760
-
-    # Propane
-    query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
-    propane_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
-    propane_use += [0.0] * 8760 if propane_use.size == 0
-    fail "Unexpected result" if propane_use.size != 8760
-
-    elec_use.zip(gas_use, oil_use, propane_use).each_with_index do |(elec, gas, oil, propane), i|
-      design_hourly_output << [i + 1, elec.round(2), gas.round(2), oil.round(2), propane.round(2)]
-    end
-
-    # Space temperatures
-    zone_names.each do |zone_name|
-      query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
-      temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
-      fail "Unexpected result" if temperatures.size != 8760
-
-      temperatures.each_with_index do |temperature, i|
-        design_hourly_output[i + 1] << temperature.round(2)
+      zone_names.each do |zone_name|
+        design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
       end
     end
 
-    # Error Checking
-    elec_sum_hourly_gj = (elec_use.inject(0, :+) / j_to_kwh) / 1000000000.0
-    query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    elec_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
-    if (elec_annual_gj - elec_sum_hourly_gj).abs > tolerance
-      fail "[#{design_name}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
+    for hr in 1..8760
+      design_hourly_output << [hr]
     end
 
-    gas_sum_hourly_gj = (gas_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
-    query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    gas_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
-    if (gas_annual_gj - gas_sum_hourly_gj).abs > tolerance
-      fail "[#{design_name}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
+    # Data
+    if hourly_outputs.include? HourlyOutputFuelConsumptions
+      # Electricity
+      query = "SELECT VariableValue*#{j_to_kwh} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      elec_use = sqlFile.execAndReturnVectorOfDouble(query).get
+      elec_use += [0.0] * 8760 if elec_use.size == 0
+      fail "Unexpected result" if elec_use.size != 8760
+
+      # Natural Gas
+      query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      gas_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
+      gas_use += [0.0] * 8760 if gas_use.size == 0
+      fail "Unexpected result" if gas_use.size != 8760
+
+      # Fuel Oil
+      query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      oil_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
+      oil_use += [0.0] * 8760 if oil_use.size == 0
+      fail "Unexpected result" if oil_use.size != 8760
+
+      # Propane
+      query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+      propane_use = [] + sqlFile.execAndReturnVectorOfDouble(query).get
+      propane_use += [0.0] * 8760 if propane_use.size == 0
+      fail "Unexpected result" if propane_use.size != 8760
+
+      elec_use.zip(gas_use, oil_use, propane_use).each_with_index do |(elec, gas, oil, propane), i|
+        design_hourly_output[i + 1] << elec.round(2)
+        design_hourly_output[i + 1] << gas.round(2)
+        design_hourly_output[i + 1] << oil.round(2)
+        design_hourly_output[i + 1] << propane.round(2)
+      end
+
+      # Error Checking
+      elec_sum_hourly_gj = (elec_use.inject(0, :+) / j_to_kwh) / 1000000000.0
+      query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Electricity:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      elec_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
+      if (elec_annual_gj - elec_sum_hourly_gj).abs > tolerance
+        fail "[#{design_name}] Hourly electricity results (#{elec_sum_hourly_gj}) do not sum to annual (#{elec_annual_gj}).\n#{design_output.to_s}"
+      end
+
+      gas_sum_hourly_gj = (gas_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
+      query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Gas:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      gas_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
+      if (gas_annual_gj - gas_sum_hourly_gj).abs > tolerance
+        fail "[#{design_name}] Hourly natural gas results (#{gas_sum_hourly_gj}) do not sum to annual (#{gas_annual_gj}).\n#{design_output.to_s}"
+      end
+
+      oil_sum_hourly_gj = (oil_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
+      query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      oil_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
+      if (oil_annual_gj - oil_sum_hourly_gj).abs > tolerance
+        fail "[#{design_name}] Hourly oil fuel results (#{oil_sum_hourly_gj}) do not sum to annual (#{oil_annual_gj}).\n#{design_output.to_s}"
+      end
+
+      propane_sum_hourly_gj = (propane_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
+      query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
+      propane_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
+      if (propane_annual_gj - propane_sum_hourly_gj).abs > tolerance
+        fail "[#{design_name}] Hourly propane fuel results (#{propane_sum_hourly_gj}) do not sum to annual (#{propane_annual_gj}).\n#{design_output.to_s}"
+      end
     end
 
-    oil_sum_hourly_gj = (oil_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
-    query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='FuelOil#1:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    oil_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
-    if (oil_annual_gj - oil_sum_hourly_gj).abs > tolerance
-      fail "[#{design_name}] Hourly oil fuel results (#{oil_sum_hourly_gj}) do not sum to annual (#{oil_annual_gj}).\n#{design_output.to_s}"
-    end
+    if hourly_outputs.include? HourlyOutputZoneTemperatures
+      # Space temperatures
+      zone_names.each do |zone_name|
+        query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+        temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
+        fail "Unexpected result" if temperatures.size != 8760
 
-    propane_sum_hourly_gj = (propane_use.inject(0, :+) / j_to_kbtu) / 1000000000.0
-    query = "SELECT SUM(VariableValue/1000000000) FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='Propane:Facility' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
-    propane_annual_gj = sqlFile.execAndReturnFirstDouble(query).get
-    if (propane_annual_gj - propane_sum_hourly_gj).abs > tolerance
-      fail "[#{design_name}] Hourly propane fuel results (#{propane_sum_hourly_gj}) do not sum to annual (#{propane_annual_gj}).\n#{design_output.to_s}"
+        temperatures.each_with_index do |temperature, i|
+          design_hourly_output[i + 1] << temperature.round(2)
+        end
+      end
     end
 
   end
