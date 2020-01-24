@@ -153,6 +153,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nec_x_cool] = {}
   results[:nmeul_cool] = {}
 
+  tot_reul_cool = ref_output[:loadCoolingBySystem].inject(:+)
   rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, s|
     reul_cool = ref_output[:loadCoolingBySystem][s]
 
@@ -171,6 +172,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     if eec_x_cool * reul_cool > 0
       nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
     end
+    # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and subtract later from eul_la
+    nec_x_cool += (rated_output[:elecWholeHouseFan] * reul_cool / tot_reul_cool)
 
     nmeul_cool = 0
     if ec_r_cool > 0
@@ -264,11 +267,13 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
   results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
                       rated_output[:elecGrgLighting] + rated_output[:elecAppliances] +
-                      rated_output[:gasAppliances] + rated_output[:oilAppliances] + rated_output[:propaneAppliances])
+                      rated_output[:gasAppliances] + rated_output[:oilAppliances] +
+                      rated_output[:propaneAppliances] - rated_output[:elecWholeHouseFan])
 
   results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
                        ref_output[:elecGrgLighting] + ref_output[:elecAppliances] +
-                       ref_output[:gasAppliances] + ref_output[:oilAppliances] + ref_output[:propaneAppliances])
+                       ref_output[:gasAppliances] + ref_output[:oilAppliances] +
+                       ref_output[:propaneAppliances])
 
   # === #
   # ERI #
@@ -697,7 +702,7 @@ versions.each do |program, version|
   if program == "ERICalculation"
     puts "Calculating ERI..."
     results = calculate_eri(design_outputs, resultsdir)
-    puts "ERI: #{results[:eri].round(0)}"
+    puts "ERI: #{results[:eri].round(2)}"
   end
 end
 

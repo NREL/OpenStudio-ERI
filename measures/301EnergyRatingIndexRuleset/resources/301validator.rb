@@ -67,6 +67,7 @@ class EnergyRatingIndex301Validator
         "/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution" => zero_or_more, # See [HVACDistribution]
 
         "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']" => zero_or_one, # See [MechanicalVentilation]
+        "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForSeasonalCoolingLoadReduction='true']" => zero_or_one, # See [WholeHouseFan]
         "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem" => zero_or_more, # See [WaterHeatingSystem]
         "/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution" => zero_or_one, # See [HotWaterDistribution]
         "/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture" => zero_or_more, # See [WaterFixture]
@@ -409,7 +410,6 @@ class EnergyRatingIndex301Validator
         "[FanType='energy recovery ventilator' or FanType='heat recovery ventilator' or FanType='exhaust only' or FanType='supply only' or FanType='balanced' or FanType='central fan integrated supply']" => one, # See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS]
         "TestedFlowRate" => one,
         "HoursInOperation" => one,
-        "UsedForWholeBuildingVentilation" => one,
         "FanPower" => one,
       },
 
@@ -427,6 +427,13 @@ class EnergyRatingIndex301Validator
       ## [MechVentType=CFIS]
       "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true'][FanType='central fan integrated supply']" => {
         "AttachedToHVACDistributionSystem" => one,
+      },
+
+      # [WholeHouseFan]
+      "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForSeasonalCoolingLoadReduction='true']" => {
+        "SystemIdentifier" => one, # Required by HPXML schema
+        "RatedFlowRate" => one,
+        "FanPower" => one,
       },
 
       # [WaterHeatingSystem]
