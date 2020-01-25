@@ -40,7 +40,7 @@ def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_
   # 2. There is overhead to spawning processes vs using forked processes
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   rm_path(designdir)
-  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  output_hpxml_path = get_output_hpxml(resultsdir, designdir)
 
   cli_path = OpenStudio.getOpenStudioCLI
   pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{hourly_output}")
