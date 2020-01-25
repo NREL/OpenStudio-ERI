@@ -18,15 +18,28 @@ def get_output_hpxml(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
+def get_enabled_hourly_variables(hourly_output, hourly_output_csv)
+  hourly_variables = []
+  if hourly_output
+    require 'csv'
+    hourly_outputs_rows = CSV.read(hourly_output_csv, headers: false)
+    hourly_outputs_rows.each do |hourly_output_row|
+      next unless hourly_output_row[0].upcase.strip == 'TRUE'
+
+      hourly_variables << hourly_output_row[1].upcase.strip
+    end
+  end
+  return hourly_variables
+end
+
 def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
 
-  eri_design = run[0]
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   output_hpxml = get_output_hpxml(resultsdir, designdir)
 
   measures_dir = File.join(File.dirname(__FILE__), "../measures")
-  measures = get_measures_to_run(run, hpxml, output_hpxml, eri_design, design_name, hourly_output, debug, basedir, designdir, resultsdir)
+  measures = get_measures_to_run(run, hpxml, output_hpxml, hourly_output, debug, basedir, designdir)
 
   Dir.mkdir(designdir)
 
@@ -42,7 +55,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
 
   if not success
     print "[#{design_name}] Creating input unsuccessful.\n"
-    return output_hpxml, nil
+    return output_hpxml
   end
 
   # Translate model
@@ -57,28 +70,27 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   # Write model to IDF
   File.open(File.join(designdir, "in.idf"), 'w') { |f| f << model_idf.to_s }
 
-  if not designdir.nil?
-    print "[#{design_name}] Running simulation...\n"
-    run_energyplus(designdir, debug)
+  print "[#{design_name}] Running simulation...\n"
+  run_energyplus(designdir, debug)
 
-    print "[#{design_name}] Processing output...\n"
+  print "[#{design_name}] Processing output...\n"
 
-    # Apply measures
-    success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ReportingMeasure")
-    report_measure_errors_warnings(runner, designdir, debug)
+  # Apply measures
+  runner.setLastEnergyPlusSqlFilePath(File.join(designdir, "eplusout.sql"))
+  success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ReportingMeasure")
+  report_measure_errors_warnings(runner, designdir, debug)
 
-    if not success
-      print "[#{design_name}] Processing output unsuccessful.\n"
-      return output_hpxml, nil
-    end
-
-    print "[#{design_name}] Done.\n"
+  if not success
+    print "[#{design_name}] Processing output unsuccessful.\n"
+    return output_hpxml
   end
+
+  print "[#{design_name}] Done.\n"
 
   return output_hpxml
 end
 
-def get_measures_to_run(run, hpxml, output_hpxml, eri_design, design_name, hourly_output, debug, basedir, designdir, resultsdir)
+def get_measures_to_run(run, hpxml, output_hpxml, hourly_output, debug, basedir, designdir)
   measures = {}
 
   if not run[0].nil?
@@ -86,9 +98,7 @@ def get_measures_to_run(run, hpxml, output_hpxml, eri_design, design_name, hourl
     measure_subdir = "301EnergyRatingIndexRuleset"
     args = {}
     args['calc_type'] = run[0]
-    args['hpxml_path'] = hpxml
-    args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
-    args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
+    args['hpxml_input_path'] = hpxml
     args['hpxml_output_path'] = output_hpxml
     update_args_hash(measures, measure_subdir, args)
   end
@@ -98,28 +108,21 @@ def get_measures_to_run(run, hpxml, output_hpxml, eri_design, design_name, hourl
   args = {}
   args['hpxml_path'] = output_hpxml
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
-  args['schemas_dir'] = File.absolute_path(File.join(basedir, "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
   args['epw_output_path'] = File.join(designdir, "in.epw")
   if debug
     args['osm_output_path'] = File.join(designdir, "in.osm")
   end
-  args['map_tsv_dir'] = designdir
   update_args_hash(measures, measure_subdir, args)
 
   # Add reporting measure to workflow
+  hourly_variables = get_enabled_hourly_variables(hourly_output, File.join(File.dirname(__FILE__), "hourly_outputs.csv"))
   measure_subdir = "SimOutputReport"
   args = {}
-  # FIXME: Clean these arguments up
   args['hpxml_path'] = output_hpxml
-  args['eri_design'] = eri_design
-  args['sql_path'] = File.join(designdir, "eplusout.sql")
-  args['map_hvac_tsv'] = File.join(designdir, "map_hvac.tsv")
-  args['map_water_heating_tsv'] = File.join(designdir, "map_water_heating.tsv")
-  args['summary_output_csv'] = File.join(resultsdir, "#{design_name.gsub(' ', '')}.csv")
-  args['eri_output_csv'] = File.join(resultsdir, "#{design_name.gsub(' ', '')}_ERI.csv")
-  if hourly_output
-    args['hourly_output_csv'] = File.join(File.dirname(__FILE__), "hourly_outputs.csv")
-  end
+  args['hourly_output_fuel_consumptions'] = hourly_variables.include?("Fuel Consumptions".upcase)
+  args['hourly_output_zone_temperatures'] = hourly_variables.include?("Zone Temperatures".upcase)
+  args['hourly_output_total_loads'] = hourly_variables.include?("Total Loads".upcase)
+  args['hourly_output_component_loads'] = hourly_variables.include?("Component Loads".upcase)
   update_args_hash(measures, measure_subdir, args)
 
   return measures

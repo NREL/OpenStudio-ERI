@@ -5,11 +5,6 @@ require_relative "../HPXMLtoOpenStudio/resources/unit_conversions.rb"
 
 # start the measure
 class SimOutputReport < OpenStudio::Measure::ReportingMeasure
-  HourlyOutputZoneTemperatures = "Zone Temperatures".upcase
-  HourlyOutputFuelConsumptions = "Fuel Consumptions".upcase
-  HourlyOutputTotalLoads = "Total Loads".upcase
-  HourlyOutputComponentLoads = "Component Loads".upcase
-
   # human readable name
   def name
     # Measure name should be the title case of the class name.
@@ -23,46 +18,43 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
 
   # human readable description of modeling approach
   def modeler_description
-    return ''
+    return 'Writes a variety of output files to the directory where the HPXML file resides.'
   end
 
   # define the arguments that the user will input
   def arguments(ignore = nil)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    # FIXME: Gross arguments
-
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_path", true)
     arg.setDisplayName("HPXML File Path")
     arg.setDescription("Absolute/relative path of the HPXML file.")
     args << arg
 
-    eri_designs = []
-    eri_designs << Constants.CalcTypeERIReferenceHome
-    eri_designs << Constants.CalcTypeERIRatedHome
-    eri_designs << Constants.CalcTypeERIIndexAdjustmentDesign
-    eri_designs << Constants.CalcTypeERIIndexAdjustmentReferenceHome
-    eri_design = OpenStudio::Measure::OSArgument.makeChoiceArgument("eri_design", eri_designs, true)
-    eri_design.setDisplayName("ERI Design")
-    args << eri_design
-
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("sql_path", true)
+    arg = OpenStudio::Measure::OSArgument::makeBoolArgument("hourly_output_fuel_consumptions", true)
+    arg.setDisplayName("Generate Hourly Output: Fuel Consumptions")
+    arg.setDescription("Generates hourly energy consumptions for each fuel type.")
+    arg.setDefaultValue(false)
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("map_hvac_tsv", true)
+    arg = OpenStudio::Measure::OSArgument::makeBoolArgument("hourly_output_zone_temperatures", true)
+    arg.setDisplayName("Generate Hourly Output: Zone Temperatures")
+    arg.setDescription("Generates hourly temperatures for each thermal zone.")
+    arg.setDefaultValue(false)
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("map_water_heating_tsv", true)
+    arg = OpenStudio::Measure::OSArgument::makeBoolArgument("hourly_output_total_loads", true)
+    arg.setDisplayName("Generate Hourly Output: Total Loads")
+    arg.setDescription("Generates hourly heating/cooling loads.")
+    arg.setDefaultValue(false)
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("summary_output_csv", true)
+    arg = OpenStudio::Measure::OSArgument::makeBoolArgument("hourly_output_component_loads", true)
+    arg.setDisplayName("Generate Hourly Output: Component Loads")
+    arg.setDescription("Generates hourly heating/cooling loads disaggregated by component type.")
+    arg.setDefaultValue(false)
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("eri_output_csv", true)
-    args << arg
-
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hourly_output_csv", false)
-    args << arg
+    # TODO: Add hourly output for end uses
 
     return args
   end
@@ -71,7 +63,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
   def outputs
     outs = OpenStudio::Measure::OSOutputVector.new
 
-    # this measure does not produce machine readable outputs with registerValue, return an empty list
+    # TODO
 
     return outs
   end
@@ -90,6 +82,43 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     # get the last model and sql file
     model = runner.lastOpenStudioModel.get
 
+    # Add annual output meters to increase precision of outputs relative to, e.g., ABUPS report
+    meter_names = ["Electricity:Facility",
+                   "Gas:Facility",
+                   "FuelOil#1:Facility",
+                   "Propane:Facility",
+                   "Heating:EnergyTransfer",
+                   "Cooling:EnergyTransfer",
+                   "Heating:DistrictHeating",
+                   "Cooling:DistrictCooling",
+                   "#{Constants.ObjectNameInteriorLighting}:InteriorLights:Electricity",
+                   "#{Constants.ObjectNameGarageLighting}:InteriorLights:Electricity",
+                   "ExteriorLights:Electricity",
+                   "InteriorEquipment:Electricity",
+                   "InteriorEquipment:Gas",
+                   "InteriorEquipment:FuelOil#1",
+                   "InteriorEquipment:Propane",
+                   "#{Constants.ObjectNameRefrigerator}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameDishwasher}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameClothesWasher}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Gas",
+                   "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:FuelOil#1",
+                   "#{Constants.ObjectNameClothesDryer}:InteriorEquipment:Propane",
+                   "#{Constants.ObjectNameMiscPlugLoads}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameMiscTelevision}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Gas",
+                   "#{Constants.ObjectNameCookingRange}:InteriorEquipment:FuelOil#1",
+                   "#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane",
+                   "#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameMechanicalVentilationHouseFan}:InteriorEquipment:Electricity",
+                   "#{Constants.ObjectNameWholeHouseFan}:InteriorEquipment:Electricity",
+                   "ElectricityProduced:Facility"]
+    meter_names.each do |meter_name|
+      result << OpenStudio::IdfObject.load("Output:Meter,#{meter_name},runperiod;").get
+    end
+
     # Add Output:Table:Monthly objects for peak electricity outputs
     { "Heating" => "Winter", "Cooling" => "Summer" }.each do |mode, season|
       monthly_array = ["Output:Table:Monthly",
@@ -102,46 +131,44 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       result << OpenStudio::IdfObject.load("#{monthly_array.join(",").to_s};").get
     end
 
-    hourly_output_csv = runner.getOptionalStringArgumentValue("hourly_output_csv", user_arguments)
-    if hourly_output_csv.is_initialized
-      hourly_variables = get_enabled_hourly_variables(hourly_output_csv.get)
+    hourly_output_fuel_consumptions = runner.getBoolArgumentValue("hourly_output_fuel_consumptions", user_arguments)
+    if hourly_output_fuel_consumptions
+      # Energy use by fuel:
+      ['Electricity:Facility', 'Gas:Facility', 'FuelOil#1:Facility', 'Propane:Facility'].each do |meter_fuel|
+        result << OpenStudio::IdfObject.load("Output:Meter,#{meter_fuel},hourly;").get
+      end
+    end
 
-      if hourly_variables.include? HourlyOutputZoneTemperatures
-        # Thermal zone temperatures:
-        result << OpenStudio::IdfObject.load("Output:Variable,*,Zone Mean Air Temperature,hourly;").get
+    hourly_output_zone_temperatures = runner.getBoolArgumentValue("hourly_output_zone_temperatures", user_arguments)
+    if hourly_output_zone_temperatures
+      # Thermal zone temperatures:
+      result << OpenStudio::IdfObject.load("Output:Variable,*,Zone Mean Air Temperature,hourly;").get
+    end
+
+    hourly_output_total_loads = runner.getBoolArgumentValue("hourly_output_total_loads", user_arguments)
+    if hourly_output_total_loads
+      # Building heating/cooling loads
+      # FIXME: This needs to be updated when the new component loads algorithm is merged
+      ['Heating:EnergyTransfer', 'Cooling:EnergyTransfer'].each do |meter_load|
+        result << OpenStudio::IdfObject.load("Output:Meter,#{meter_load},hourly;").get
+      end
+    end
+
+    hourly_output_component_loads = runner.getBoolArgumentValue("hourly_output_component_loads", user_arguments)
+    if hourly_output_component_loads
+      loads_program = nil
+      model.getEnergyManagementSystemPrograms.each do |program|
+        next unless program.name.to_s == "component_loads_program"
+
+        loads_program = program
       end
 
-      if hourly_variables.include? HourlyOutputFuelConsumptions
-        # Energy use by fuel:
-        ['Electricity:Facility', 'Gas:Facility', 'FuelOil#1:Facility', 'Propane:Facility'].each do |meter_fuel|
-          result << OpenStudio::IdfObject.load("Output:Meter,#{meter_fuel},hourly;").get
+      ["htg", "clg"].each do |mode|
+        OutputVars.ComponentLoadsMap.each do |component, component_var|
+          result << OpenStudio::IdfObject.load("EnergyManagementSystem:OutputVariable,#{mode}_#{component_var}_hourly_outvar,#{mode}_#{component_var},Summed,ZoneTimestep,#{loads_program.name},J;").get
+          result << OpenStudio::IdfObject.load("Output:Variable,*,#{mode}_#{component_var}_hourly_outvar,hourly;").get
         end
       end
-
-      if hourly_variables.include? HourlyOutputTotalLoads
-        # Building heating/cooling loads
-        # FIXME: This needs to be updated when the new component loads algorithm is merged
-        ['Heating:EnergyTransfer', 'Cooling:EnergyTransfer'].each do |meter_load|
-          result << OpenStudio::IdfObject.load("Output:Meter,#{meter_load},hourly;").get
-        end
-      end
-
-      if hourly_variables.include? HourlyOutputComponentLoads
-        loads_program = nil
-        model.getEnergyManagementSystemPrograms.each do |program|
-          next unless program.name.to_s == "component_loads_program"
-
-          loads_program = program
-        end
-
-        ["htg", "clg"].each do |mode|
-          get_component_load_map.each do |component, component_var|
-            result << OpenStudio::IdfObject.load("EnergyManagementSystem:OutputVariable,#{mode}_#{component_var}_hourly_outvar,#{mode}_#{component_var},Summed,ZoneTimestep,#{loads_program.name},J;").get
-            result << OpenStudio::IdfObject.load("Output:Variable,*,#{mode}_#{component_var}_hourly_outvar,hourly;").get
-          end
-        end
-      end
-
     end
 
     return result
@@ -157,13 +184,10 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
 
     hpxml_path = runner.getStringArgumentValue("hpxml_path", user_arguments)
-    @eri_design = runner.getStringArgumentValue("eri_design", user_arguments)
-    sql_path = runner.getStringArgumentValue("sql_path", user_arguments)
-    map_hvac_tsv = runner.getStringArgumentValue("map_hvac_tsv", user_arguments)
-    map_water_heating_tsv = runner.getStringArgumentValue("map_water_heating_tsv", user_arguments)
-    summary_output_csv = runner.getStringArgumentValue("summary_output_csv", user_arguments)
-    eri_output_csv = runner.getStringArgumentValue("eri_output_csv", user_arguments)
-    hourly_output_csv = runner.getOptionalStringArgumentValue("hourly_output_csv", user_arguments)
+    hourly_output_fuel_consumptions = runner.getBoolArgumentValue("hourly_output_fuel_consumptions", user_arguments)
+    hourly_output_zone_temperatures = runner.getBoolArgumentValue("hourly_output_zone_temperatures", user_arguments)
+    hourly_output_total_loads = runner.getBoolArgumentValue("hourly_output_total_loads", user_arguments)
+    hourly_output_component_loads = runner.getBoolArgumentValue("hourly_output_component_loads", user_arguments)
 
     unless (Pathname.new hpxml_path).absolute?
       hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
@@ -174,6 +198,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
 
     @hpxml_doc = XMLHelper.parse_file(hpxml_path)
+    output_dir = File.dirname(hpxml_path)
 
     # get the last model and sql file
     model = runner.lastOpenStudioModel
@@ -183,30 +208,55 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
     model = model.get
 
-    @sqlFile = OpenStudio::SqlFile.new(sql_path, false)
-    if not @sqlFile.connectionOpen
-      runner.registerError("SQL file connection not open.")
+    sqlFile = runner.lastEnergyPlusSqlFile
+    if sqlFile.empty?
+      runner.registerError("Cannot find last sql file.")
       return false
     end
+    @sqlFile = sqlFile.get
+    model.setSqlFile(@sqlFile)
 
     # Error Checking
     @tolerance = 0.1 # MMBtu
 
+    # Retrieve HPXML->E+ object name maps
+    hvac_map = eval(model.getBuilding.additionalProperties.getFeatureAsString("hvac_map").get)
+    dhw_map = eval(model.getBuilding.additionalProperties.getFeatureAsString("dhw_map").get)
+
+    # Set paths
+    @eri_design = XMLHelper.get_value(@hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Design")
+    if not @eri_design.nil?
+      design_name = @eri_design.gsub(' ', '')
+      summary_output_csv_path = File.join(output_dir, "#{design_name}.csv")
+      eri_output_csv_path = File.join(output_dir, "#{design_name}_ERI.csv")
+      hourly_output_csv_path = File.join(output_dir, "#{design_name}_Hourly.csv")
+    else
+      summary_output_csv_path = File.join(output_dir, "results.csv")
+      eri_output_csv_path = nil
+      hourly_output_csv_path = File.join(output_dir, "results_hourly.csv")
+    end
+
     # Annual outputs
     outputs = {}
     get_hpxml_values(outputs, hpxml_path)
-    get_sim_outputs(outputs, map_hvac_tsv, map_water_heating_tsv)
-    return false unless check_for_errors(runner, outputs)
-    return false unless write_summary_output_results(outputs, summary_output_csv)
+    get_sim_outputs(outputs, hvac_map, dhw_map)
+    if not check_for_errors(runner, outputs)
+      return false
+    end
+    if not write_summary_output_results(outputs, summary_output_csv_path)
+      return false
+    end
 
-    write_eri_output_results(outputs, eri_output_csv)
+    write_eri_output_results(outputs, eri_output_csv_path)
 
     # Hourly outputs
-    if hourly_output_csv.is_initialized
-      hourly_outputs = []
-      get_sim_hourly_outputs(model, hourly_outputs, hourly_output_csv.get)
-      write_hourly_output_results(hourly_outputs, summary_output_csv.gsub('.csv', '_Hourly.csv'))
-    end
+    hourly_outputs = []
+    get_sim_hourly_outputs(model, hourly_outputs,
+                           hourly_output_fuel_consumptions,
+                           hourly_output_zone_temperatures,
+                           hourly_output_total_loads,
+                           hourly_output_component_loads)
+    write_hourly_output_results(hourly_outputs, hourly_output_csv_path)
 
     return true
   end
@@ -549,7 +599,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     return @sqlFile.execAndReturnFirstDouble(query).get
   end
 
-  def get_sim_outputs(outputs, map_hvac_tsv, map_water_heating_tsv)
+  def get_sim_outputs(outputs, hvac_map, dhw_map)
     # Building Space Heating/Cooling Loads (total heating/cooling energy delivered including backup ideal air system)
     outputs[:loadHeatingBldg] = get_report_meter_data_annual_mbtu("Heating:EnergyTransfer")
     outputs[:loadCoolingBldg] = get_report_meter_data_annual_mbtu("Cooling:EnergyTransfer")
@@ -567,7 +617,6 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     outputs[:peakElecWinterTotal] = get_tabular_data_value("PEAK ELECTRICITY WINTER TOTAL", "Meter", "Custom Monthly Report", "Maximum of Months", "ELECTRICITY:FACILITY {MAX FOR HOURS SHOWN", "W")
 
     # Electricity categories
-    # FIXME: Move all of these meter categories out of HPXML measure and into energyplus requests above
     outputs[:elecTotal] = get_report_meter_data_annual_mbtu("Electricity:Facility")
     outputs[:elecIntLighting] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameInteriorLighting}:InteriorLights:Electricity")
     outputs[:elecExtLighting] = get_report_meter_data_annual_mbtu("ExteriorLights:Electricity")
@@ -582,7 +631,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     outputs[:elecTV] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameMiscTelevision}:InteriorEquipment:Electricity")
     outputs[:elecRangeOven] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameCookingRange}:InteriorEquipment:Electricity")
     outputs[:elecCeilingFan] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameCeilingFan}:InteriorEquipment:Electricity")
-    outputs[:elecMechVent] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameMechanicalVentilation} house fan:InteriorEquipment:Electricity") # FIXME: Separate into three constants (house, bath, kitchen)
+    outputs[:elecMechVent] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameMechanicalVentilationHouseFan}:InteriorEquipment:Electricity")
     outputs[:elecWholeHouseFan] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameWholeHouseFan}:InteriorEquipment:Electricity")
 
     # Gas categories
@@ -604,15 +653,14 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     outputs[:propaneRangeOven] = get_report_meter_data_annual_mbtu("#{Constants.ObjectNameCookingRange}:InteriorEquipment:Propane")
 
     # Space Heating (by System)
-    map_tsv_data = CSV.read(map_hvac_tsv, headers: false, col_sep: "\t")
     outputs[:elecHeatingBySystem] = {}
     outputs[:gasHeatingBySystem] = {}
     outputs[:oilHeatingBySystem] = {}
     outputs[:propaneHeatingBySystem] = {}
     outputs[:loadHeatingBySystem] = {}
-    dfhp_loads = get_dfhp_loads(outputs, map_tsv_data) # Calculate dual-fuel heat pump load
+    dfhp_loads = get_dfhp_loads(outputs, hvac_map) # Calculate dual-fuel heat pump load
     outputs[:hpxml_heat_sys_ids].each do |sys_id|
-      ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id)
+      ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(hvac_map, sys_id)
       keys = ep_output_names.map(&:upcase)
 
       # Energy Use
@@ -644,7 +692,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     outputs[:elecCoolingBySystem] = {}
     outputs[:loadCoolingBySystem] = {}
     outputs[:hpxml_cool_sys_ids].each do |sys_id|
-      ep_output_names = get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id)
+      ep_output_names = get_ep_output_names_for_hvac_cooling(hvac_map, sys_id)
       keys = ep_output_names.map(&:upcase)
 
       # Energy Use
@@ -664,7 +712,6 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
 
     # Water Heating (by System)
-    map_tsv_data = CSV.read(map_water_heating_tsv, headers: false, col_sep: "\t")
     outputs[:elecHotWaterBySystem] = {}
     outputs[:elecHotWaterRecircPumpBySystem] = {}
     outputs[:elecHotWaterSolarThermalPumpBySystem] = {}
@@ -676,7 +723,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     outputs[:loadHotWaterSolarThermal] = 0
     solar_keys = nil
     outputs[:hpxml_dhw_sys_ids].each do |sys_id|
-      ep_output_names = get_ep_output_names_for_water_heating(map_tsv_data, sys_id)
+      ep_output_names = get_ep_output_names_for_water_heating(dhw_map, sys_id)
       keys = ep_output_names.map(&:upcase)
 
       # Energy Use
@@ -770,7 +817,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
 
     # Component Loads
     { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
-      get_component_load_map.each do |component, component_var|
+      OutputVars.ComponentLoadsMap.each do |component, component_var|
         outputs["componentLoad#{mode}#{component}"] = get_report_variable_data_annual_mbtu(["EMS"], ["#{mode_var}_#{component_var}_outvar"])
       end
     end
@@ -872,7 +919,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     return true
   end
 
-  def write_summary_output_results(outputs, summary_output_csv)
+  def write_summary_output_results(outputs, csv_path)
     results_out = []
     results_out << ["Electricity: Total (MBtu)", outputs[:elecTotal].round(2)]
     results_out << ["Electricity: Net (MBtu)", (outputs[:elecTotal] - outputs[:elecPV]).round(2)]
@@ -932,12 +979,12 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     results_out << ["Peak Load: Cooling (kBtu)", outputs[:peakLoadCoolingBldg].round(2)]
     results_out << [nil] # line break
     { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
-      get_component_load_map.each do |component, component_var|
+      OutputVars.ComponentLoadsMap.each do |component, component_var|
         results_out << ["Component Load: #{mode}: #{component} (MBtu)", outputs["componentLoad#{mode}#{component}"].round(2)]
       end
     end
 
-    CSV.open(summary_output_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
+    CSV.open(csv_path, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
 
     # Check results are internally consistent
     total_results = { "Electricity" => (outputs[:elecTotal] - outputs[:elecPV]).round(2),
@@ -965,7 +1012,9 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     return true
   end
 
-  def write_eri_output_results(outputs, eri_output_csv)
+  def write_eri_output_results(outputs, csv_path)
+    return true if csv_path.nil?
+
     def get_hash_values_in_order(keys, output)
       vals = []
       keys.each do |key|
@@ -1048,7 +1097,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     results_out << ["hpxml_nbr", outputs[:hpxml_nbr]]
     results_out << ["hpxml_nst", outputs[:hpxml_nst]]
 
-    CSV.open(eri_output_csv, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
+    CSV.open(csv_path, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
   end
 
   def get_combi_hvac_id(sys_id)
@@ -1067,10 +1116,10 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     return htg_energy * water_sys_frac
   end
 
-  def get_dfhp_loads(outputs, map_tsv_data)
+  def get_dfhp_loads(outputs, hvac_map)
     dfhp_loads = {}
     outputs[:hpxml_heat_sys_ids].each do |sys_id|
-      ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id)
+      ep_output_names, dfhp_primary, dfhp_backup = get_ep_output_names_for_hvac_heating(hvac_map, sys_id)
       keys = ep_output_names.map(&:upcase)
       if dfhp_primary or dfhp_backup
         if dfhp_primary
@@ -1156,7 +1205,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     return solar_fraction
   end
 
-  def get_ep_output_names_for_hvac_heating(map_tsv_data, sys_id)
+  def get_ep_output_names_for_hvac_heating(map, sys_id)
     dfhp_primary = false
     dfhp_backup = false
     @hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem |
@@ -1175,28 +1224,24 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       break
     end
 
-    map_tsv_data.each do |tsv_line|
-      next unless tsv_line[0] == sys_id
+    output_names = map[sys_id]
 
-      output_names = tsv_line[1..-1]
-
-      if dfhp_primary or dfhp_backup
-        # Exclude output names associated with primary/backup system as appropriate
-        output_names.reverse.each do |o|
-          is_backup_obj = (o.include? Constants.ObjectNameFanPumpDisaggregateBackupHeat or o.include? Constants.ObjectNameBackupHeatingCoil)
-          if dfhp_primary and is_backup_obj
-            output_names.delete(o)
-          elsif dfhp_backup and not is_backup_obj
-            output_names.delete(o)
-          end
+    if dfhp_primary or dfhp_backup
+      # Exclude output names associated with primary/backup system as appropriate
+      output_names.reverse.each do |o|
+        is_backup_obj = (o.include? Constants.ObjectNameFanPumpDisaggregateBackupHeat or o.include? Constants.ObjectNameBackupHeatingCoil)
+        if dfhp_primary and is_backup_obj
+          output_names.delete(o)
+        elsif dfhp_backup and not is_backup_obj
+          output_names.delete(o)
         end
       end
-
-      return output_names, dfhp_primary, dfhp_backup
     end
+
+    return output_names, dfhp_primary, dfhp_backup
   end
 
-  def get_ep_output_names_for_hvac_cooling(map_tsv_data, sys_id)
+  def get_ep_output_names_for_hvac_cooling(map, sys_id)
     @hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem |
                              /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |system|
       next unless XMLHelper.get_value(system, "extension/SeedId") == sys_id
@@ -1205,37 +1250,26 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       break
     end
 
-    map_tsv_data.each do |tsv_line|
-      next unless tsv_line[0] == sys_id
-
-      return tsv_line[1..-1]
-    end
+    return map[sys_id]
   end
 
-  def get_ep_output_names_for_water_heating(map_tsv_data, sys_id)
-    map_tsv_data.each do |tsv_line|
-      next unless tsv_line[0] == sys_id
-
-      return tsv_line[1..-1]
-    end
+  def get_ep_output_names_for_water_heating(map, sys_id)
+    return map[sys_id]
   end
 
-  def get_enabled_hourly_variables(hourly_output_csv)
-    require 'csv'
-    hourly_variables = []
-    hourly_outputs_rows = CSV.read(hourly_output_csv, headers: false)
-    hourly_outputs_rows.each do |hourly_output_row|
-      next unless hourly_output_row[0].upcase.strip == 'TRUE'
+  def get_sim_hourly_outputs(model, hourly_outputs,
+                             hourly_output_fuel_consumptions,
+                             hourly_output_zone_temperatures,
+                             hourly_output_total_loads,
+                             hourly_output_component_loads)
 
-      hourly_variables << hourly_output_row[1].upcase.strip
-    end
-    return hourly_variables
-  end
+    generate_hourly_output = false
+    generate_hourly_output = true if hourly_output_fuel_consumptions
+    generate_hourly_output = true if hourly_output_zone_temperatures
+    generate_hourly_output = true if hourly_output_total_loads
+    generate_hourly_output = true if hourly_output_component_loads
 
-  def get_sim_hourly_outputs(model, hourly_outputs, hourly_output_csv)
-    hourly_variables = get_enabled_hourly_variables(hourly_output_csv)
-
-    if hourly_variables.size > 0
+    if generate_hourly_output
       # Generate CSV file with hourly output
 
       # Unit conversions
@@ -1245,14 +1279,14 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       # Header
       hourly_outputs << ["Hour"]
 
-      if hourly_variables.include? HourlyOutputFuelConsumptions
+      if hourly_output_fuel_consumptions
         hourly_outputs[0] << "Electricity Use [kWh]"
         hourly_outputs[0] << "Natural Gas Use [kBtu]"
         hourly_outputs[0] << "Fuel Oil Use [kBtu]"
         hourly_outputs[0] << "Propane Use [kBtu]"
       end
 
-      if hourly_variables.include? HourlyOutputZoneTemperatures
+      if hourly_output_zone_temperatures
         zone_names = []
         model.getThermalZones.each do |zone|
           next unless zone.floorArea > 1
@@ -1266,14 +1300,14 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
         end
       end
 
-      if hourly_variables.include? HourlyOutputTotalLoads
+      if hourly_output_total_loads
         hourly_outputs[0] << "Heating Load - Total [kBtu]"
         hourly_outputs[0] << "Cooling Load - Total [kBtu]"
       end
 
-      if hourly_variables.include? HourlyOutputComponentLoads
+      if hourly_output_component_loads
         ["Heating", "Cooling"].each do |mode|
-          get_component_load_map.each do |component, component_var|
+          OutputVars.ComponentLoadsMap.each do |component, component_var|
             hourly_outputs[0] << "#{mode} Load - #{component} [kBtu]"
           end
         end
@@ -1284,10 +1318,9 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       end
 
       # Data
-      if hourly_variables.include? HourlyOutputFuelConsumptions
+      if hourly_output_fuel_consumptions
 
         sum_fuel_uses = []
-        # FIXME: Sync these up with energyplus output requests above
         { "Electricity:Facility" => j_to_kwh,
           "Gas:Facility" => j_to_kbtu,
           "FuelOil#1:Facility" => j_to_kbtu,
@@ -1302,7 +1335,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
         end
       end
 
-      if hourly_variables.include? HourlyOutputZoneTemperatures
+      if hourly_output_zone_temperatures
         # Space temperatures
         zone_names.each do |zone_name|
           query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
@@ -1314,7 +1347,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
         end
       end
 
-      if hourly_variables.include? HourlyOutputTotalLoads
+      if hourly_output_total_loads
         # FIXME: This needs to be updated when the new component loads algorithm is merged
         ["Heating:EnergyTransfer", "Cooling:EnergyTransfer"].each do |mode|
           query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportMeterData WHERE ReportMeterDataDictionaryIndex IN (SELECT ReportMeterDataDictionaryIndex FROM ReportMeterDataDictionary WHERE VariableName='#{mode}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
@@ -1326,9 +1359,9 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
         end
       end
 
-      if hourly_variables.include? HourlyOutputComponentLoads
+      if hourly_output_component_loads
         ["htg", "clg"].each do |mode_var|
-          get_component_load_map.each do |component, component_var|
+          OutputVars.ComponentLoadsMap.each do |component, component_var|
             query = "SELECT VariableValue*#{j_to_kbtu} FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='#{mode_var}_#{component_var}_hourly_outvar' AND ReportingFrequency='Hourly' AND VariableUnits='J')"
             results = @sqlFile.execAndReturnVectorOfDouble(query).get
 
@@ -1337,7 +1370,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
 
               hourly_outputs[i] << component_load.round(2)
             end
-            hourly_outputs[8760] << 0.0 # Add final hour
+            hourly_outputs[8760] << results[-1].round(2) # Add final hour (use same value as previous hour)
           end
         end
       end
@@ -1345,31 +1378,10 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
   end
 
-  def write_hourly_output_results(hourly_outputs, hourly_output_csv)
+  def write_hourly_output_results(hourly_outputs, csv_path)
     if hourly_outputs.size > 0
-      CSV.open(hourly_output_csv, "wb") { |csv| hourly_outputs.to_a.each { |elem| csv << elem } }
+      CSV.open(csv_path, "wb") { |csv| hourly_outputs.to_a.each { |elem| csv << elem } }
     end
-  end
-
-  # FIXME: Move to HPXMLtoOpenStudio/resources/constants.rb
-  def get_component_load_map
-    return { "Roofs" => "roofs",
-             "Ceilings" => "ceilings",
-             "Walls" => "walls",
-             "Rim Joists" => "rim_joists",
-             "Foundation Walls" => "foundation_walls",
-             "Doors" => "doors",
-             "Windows" => "windows",
-             "Skylights" => "skylights",
-             "Floors" => "floors",
-             "Slabs" => "slabs",
-             "Internal Mass" => "internal_mass",
-             "Infiltration" => "infil",
-             "Natural Ventilation" => "natvent",
-             "Mechanical Ventilation" => "mechvent",
-             "Whole House Fan" => "whf",
-             "Ducts" => "ducts",
-             "Internal Gains" => "intgains" }
   end
 end
 
