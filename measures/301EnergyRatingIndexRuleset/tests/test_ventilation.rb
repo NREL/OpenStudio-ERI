@@ -56,27 +56,14 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_below_ashrae_622
-    # Test Rated Home:
-    # For residences with Whole-House Mechanical Ventilation Systems, the measured infiltration rate
-    # combined with the time-averaged Whole-House Mechanical Ventilation System rate, which shall
-    # not be less than 0.03 x CFA + 7.5 x (Nbr+1) cfm
-
     # Create derivative file for testing
-    hpxml_name = "base.xml"
+    hpxml_name = "base-mechvent-exhaust.xml"
     hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
 
-    # Remove mech vent
-    mech_vent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    mech_vent.parent.elements.delete mech_vent unless mech_vent.nil?
-
-    # Set mech vent
-    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
-                              id: "MechanicalVentilation",
-                              fan_type: "exhaust only",
-                              tested_flow_rate: 1.0,
-                              hours_in_operation: 1,
-                              fan_power: 1.0,
-                              used_for_whole_building_ventilation: true)
+    vent_fan = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    vent_fan.elements["TestedFlowRate"].text = 1.0
+    vent_fan.elements["HoursInOperation"].text = 1
+    vent_fan.elements["FanPower"].text = 1.0
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)

@@ -1300,7 +1300,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       break
     end
 
-    output_names = map[sys_id]
+    output_names = map[sys_id].dup
 
     if dfhp_primary or dfhp_backup
       # Exclude output names associated with primary/backup system as appropriate
