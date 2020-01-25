@@ -47,11 +47,6 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Absolute (or relative) path of the input HPXML file.")
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", false)
-    arg.setDisplayName("HPXML Schemas Directory")
-    arg.setDescription("Absolute path of the hpxml schemas directory.")
-    args << arg
-
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_path", false)
     arg.setDisplayName("HPXML Output File Path")
     arg.setDescription("Absolute (or relative) path of the output HPXML file.")

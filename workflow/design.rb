@@ -115,10 +115,9 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_output, debug, basedir,
   update_args_hash(measures, measure_subdir, args)
 
   # Add reporting measure to workflow
-  hourly_variables = get_enabled_hourly_variables(hourly_output, File.join(File.dirname(__FILE__), "hourly_outputs.csv"))
   measure_subdir = "SimOutputReport"
   args = {}
-  args['hpxml_path'] = output_hpxml
+  hourly_variables = get_enabled_hourly_variables(hourly_output, File.join(File.dirname(__FILE__), "hourly_outputs.csv"))
   args['hourly_output_fuel_consumptions'] = hourly_variables.include?("Fuel Consumptions".upcase)
   args['hourly_output_zone_temperatures'] = hourly_variables.include?("Zone Temperatures".upcase)
   args['hourly_output_total_loads'] = hourly_variables.include?("Total Loads".upcase)

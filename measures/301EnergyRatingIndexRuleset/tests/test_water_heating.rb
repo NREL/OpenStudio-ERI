@@ -684,8 +684,7 @@ class WaterHeatingTest < MiniTest::Test
 
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
-    args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
-    args_hash['weather_dir'] = File.join(@root_path, "weather")
+    args_hash['hpxml_input_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 

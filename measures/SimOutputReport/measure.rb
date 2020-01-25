@@ -25,11 +25,6 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
   def arguments(ignore = nil)
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_path", true)
-    arg.setDisplayName("HPXML File Path")
-    arg.setDescription("Absolute/relative path of the HPXML file.")
-    args << arg
-
     arg = OpenStudio::Measure::OSArgument::makeBoolArgument("hourly_output_fuel_consumptions", true)
     arg.setDisplayName("Generate Hourly Output: Fuel Consumptions")
     arg.setDescription("Generates hourly energy consumptions for each fuel type.")
@@ -63,7 +58,35 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
   def outputs
     outs = OpenStudio::Measure::OSOutputVector.new
 
-    # TODO
+    output_names = [
+      "total_site_energy_mbtu",
+      "total_site_electricity_kwh",
+      "total_site_natural_gas_therm",
+      "total_site_fuel_oil_mbtu",
+      "total_site_propane_mbtu",
+      "net_site_energy_mbtu", # Incorporates PV
+      "net_site_electricity_kwh", # Incorporates PV
+      "electricity_heating_kwh",
+      "electricity_cooling_kwh",
+      "electricity_interior_lighting_kwh",
+      "electricity_exterior_lighting_kwh",
+      "electricity_garage_lighting_kwh",
+      "electricity_interior_equipment_kwh",
+      "electricity_water_systems_kwh",
+      "electricity_pv_kwh",
+      "natural_gas_heating_therm",
+      "natural_gas_interior_equipment_therm",
+      "natural_gas_water_systems_therm",
+      "fuel_oil_heating_mbtu",
+      "fuel_oil_interior_equipment_mbtu",
+      "fuel_oil_water_systems_mbtu",
+      "propane_heating_mbtu",
+      "propane_interior_equipment_mbtu",
+      "propane_water_systems_mbtu",
+    ]
+    output_names.each do |output_name|
+      outs << OpenStudio::Measure::OSOutput.makeDoubleOutput(output_name)
+    end
 
     return outs
   end
@@ -183,22 +206,10 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       return false
     end
 
-    hpxml_path = runner.getStringArgumentValue("hpxml_path", user_arguments)
     hourly_output_fuel_consumptions = runner.getBoolArgumentValue("hourly_output_fuel_consumptions", user_arguments)
     hourly_output_zone_temperatures = runner.getBoolArgumentValue("hourly_output_zone_temperatures", user_arguments)
     hourly_output_total_loads = runner.getBoolArgumentValue("hourly_output_total_loads", user_arguments)
     hourly_output_component_loads = runner.getBoolArgumentValue("hourly_output_component_loads", user_arguments)
-
-    unless (Pathname.new hpxml_path).absolute?
-      hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
-    end
-    unless File.exists?(hpxml_path) and hpxml_path.downcase.end_with? ".xml"
-      runner.registerError("'#{hpxml_path}' does not exist or is not an .xml file.")
-      return false
-    end
-
-    @hpxml_doc = XMLHelper.parse_file(hpxml_path)
-    output_dir = File.dirname(hpxml_path)
 
     # get the last model and sql file
     model = runner.lastOpenStudioModel
@@ -215,6 +226,11 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
     @sqlFile = sqlFile.get
     model.setSqlFile(@sqlFile)
+
+    hpxml_path = model.getBuilding.additionalProperties.getFeatureAsString("hpxml_path").get
+
+    @hpxml_doc = XMLHelper.parse_file(hpxml_path)
+    output_dir = File.dirname(hpxml_path)
 
     # Error Checking
     @tolerance = 0.1 # MMBtu
@@ -238,7 +254,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
 
     # Annual outputs
     outputs = {}
-    get_hpxml_values(outputs, hpxml_path)
+    get_hpxml_values(outputs)
     get_sim_outputs(outputs, hvac_map, dhw_map)
     if not check_for_errors(runner, outputs)
       return false
@@ -247,6 +263,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       return false
     end
 
+    report_sim_outputs(outputs, runner)
     write_eri_output_results(outputs, eri_output_csv_path)
 
     # Hourly outputs
@@ -261,9 +278,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     return true
   end
 
-  def get_hpxml_values(outputs, hpxml_path)
-    outputs[:hpxml] = hpxml_path
-
+  def get_hpxml_values(outputs)
     # HPXML Summary
     bldg_details = @hpxml_doc.elements["/HPXML/Building/BuildingDetails"]
     outputs[:hpxml_cfa] = Float(XMLHelper.get_value(bldg_details, "BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
@@ -807,6 +822,18 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
         outputs[:elecAppliances] -= tot_adj
       end
     end
+
+    outputs[:elecHeating] = outputs[:elecHeatingBySystem].values.inject(0, :+)
+    outputs[:elecCooling] = outputs[:elecCoolingBySystem].values.inject(0, :+)
+    outputs[:elecHotWater] = outputs[:elecHotWaterBySystem].values.inject(0, :+)
+    outputs[:elecHotWaterRecircPump] = outputs[:elecHotWaterRecircPumpBySystem].values.inject(0, :+)
+    outputs[:elecHotWaterSolarThermalPump] = outputs[:elecHotWaterSolarThermalPumpBySystem].values.inject(0, :+)
+    outputs[:gasHeating] = outputs[:gasHeatingBySystem].values.inject(0, :+)
+    outputs[:gasHotWater] = outputs[:gasHotWaterBySystem].values.inject(0, :+)
+    outputs[:oilHeating] = outputs[:oilHeatingBySystem].values.inject(0, :+)
+    outputs[:oilHotWater] = outputs[:oilHotWaterBySystem].values.inject(0, :+)
+    outputs[:propaneHeating] = outputs[:propaneHeatingBySystem].values.inject(0, :+)
+    outputs[:propaneHotWater] = outputs[:propaneHotWaterBySystem].values.inject(0, :+)
     outputs[:loadHotWaterDelivered] = outputs[:loadHotWaterBySystem].values.inject(0, :+)
 
     # Hot Water Load - Tank Losses (excluding solar storage tank)
@@ -830,11 +857,11 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       return false
     end
 
-    sum_elec_categories = (outputs[:elecHeatingBySystem].values.inject(0, :+) +
-                           outputs[:elecCoolingBySystem].values.inject(0, :+) +
-                           outputs[:elecHotWaterBySystem].values.inject(0, :+) +
-                           outputs[:elecHotWaterRecircPumpBySystem].values.inject(0, :+) +
-                           outputs[:elecHotWaterSolarThermalPumpBySystem].values.inject(0, :+) +
+    sum_elec_categories = (outputs[:elecHeating] +
+                           outputs[:elecCooling] +
+                           outputs[:elecHotWater] +
+                           outputs[:elecHotWaterRecircPump] +
+                           outputs[:elecHotWaterSolarThermalPump] +
                            outputs[:elecIntLighting] +
                            outputs[:elecGrgLighting] +
                            outputs[:elecExtLighting] +
@@ -844,24 +871,24 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       return false
     end
 
-    sum_gas_categories = (outputs[:gasHeatingBySystem].values.inject(0, :+) +
-                          outputs[:gasHotWaterBySystem].values.inject(0, :+) +
+    sum_gas_categories = (outputs[:gasHeating] +
+                          outputs[:gasHotWater] +
                           outputs[:gasAppliances])
     if (outputs[:gasTotal] - sum_gas_categories).abs > @tolerance
       runner.registerError("Natural gas category end uses (#{sum_gas_categories}) do not sum to total (#{outputs[:gasTotal]}).\n#{outputs.to_s}")
       return false
     end
 
-    sum_oil_categories = (outputs[:oilHeatingBySystem].values.inject(0, :+) +
-                          outputs[:oilHotWaterBySystem].values.inject(0, :+) +
+    sum_oil_categories = (outputs[:oilHeating] +
+                          outputs[:oilHotWater] +
                           outputs[:oilAppliances])
     if (outputs[:oilTotal] - sum_oil_categories).abs > @tolerance
       runner.registerError("Oil fuel category end uses (#{sum_oil_categories}) do not sum to total (#{outputs[:oilTotal]}).\n#{outputs.to_s}")
       return false
     end
 
-    sum_propane_categories = (outputs[:propaneHeatingBySystem].values.inject(0, :+) +
-                              outputs[:propaneHotWaterBySystem].values.inject(0, :+) +
+    sum_propane_categories = (outputs[:propaneHeating] +
+                              outputs[:propaneHotWater] +
                               outputs[:propaneAppliances])
     if (outputs[:propaneTotal] - sum_propane_categories).abs > @tolerance
       runner.registerError("Propane fuel category end uses (#{sum_propane_categories}) do not sum to total (#{outputs[:propaneTotal]}).\n#{outputs.to_s}")
@@ -919,6 +946,55 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     return true
   end
 
+  def report_sim_outputs(outputs, runner)
+    from_units = "MBtu"
+    total_site_units = "MBtu"
+    elec_site_units = "kWh"
+    gas_site_units = "therm"
+    other_fuel_site_units = "MBtu"
+
+    # ELECTRICITY
+
+    report_sim_output(runner, "total_site_electricity_kwh", outputs[:elecTotal], from_units, elec_site_units)
+    report_sim_output(runner, "net_site_electricity_kwh", (outputs[:elecTotal] - outputs[:elecPV]), from_units, elec_site_units)
+    report_sim_output(runner, "electricity_heating_kwh", outputs[:elecHeating], from_units, elec_site_units)
+    report_sim_output(runner, "electricity_cooling_kwh", outputs[:elecCooling], from_units, elec_site_units)
+    report_sim_output(runner, "electricity_interior_lighting_kwh", outputs[:elecIntLighting], from_units, elec_site_units)
+    report_sim_output(runner, "electricity_exterior_lighting_kwh", outputs[:elecExtLighting], from_units, elec_site_units)
+    report_sim_output(runner, "electricity_garage_lighting_kwh", outputs[:elecGrgLighting], from_units, elec_site_units)
+    report_sim_output(runner, "electricity_interior_equipment_kwh", outputs[:elecAppliances], from_units, elec_site_units)
+    report_sim_output(runner, "electricity_water_systems_kwh", (outputs[:elecHotWater] + outputs[:elecHotWaterRecircPump] + outputs[:elecHotWaterSolarThermalPump]), from_units, elec_site_units)
+    report_sim_output(runner, "electricity_pv_kwh", outputs[:elecPV], from_units, elec_site_units)
+
+    # NATURAL GAS
+
+    report_sim_output(runner, "total_site_natural_gas_therm", outputs[:gasTotal], from_units, gas_site_units)
+    report_sim_output(runner, "natural_gas_heating_therm", outputs[:gasHeating], from_units, gas_site_units)
+    report_sim_output(runner, "natural_gas_interior_equipment_therm", outputs[:gasAppliances], from_units, gas_site_units)
+    report_sim_output(runner, "natural_gas_water_systems_therm", outputs[:gasHotWater], from_units, gas_site_units)
+
+    # FUEL OIL
+
+    report_sim_output(runner, "total_site_fuel_oil_mbtu", outputs[:oilTotal], from_units, other_fuel_site_units)
+    report_sim_output(runner, "fuel_oil_heating_mbtu", outputs[:oilHeating], from_units, other_fuel_site_units)
+    report_sim_output(runner, "fuel_oil_interior_equipment_mbtu", outputs[:oilAppliances], from_units, other_fuel_site_units)
+    report_sim_output(runner, "fuel_oil_water_systems_mbtu", outputs[:oilHotWater], from_units, other_fuel_site_units)
+
+    # PROPANE
+
+    report_sim_output(runner, "total_site_propane_mbtu", outputs[:propaneTotal], from_units, other_fuel_site_units)
+    report_sim_output(runner, "propane_heating_mbtu", outputs[:propaneHeating], from_units, other_fuel_site_units)
+    report_sim_output(runner, "propane_interior_equipment_mbtu", outputs[:propaneAppliances], from_units, other_fuel_site_units)
+    report_sim_output(runner, "propane_water_systems_mbtu", outputs[:propaneHotWater], from_units, other_fuel_site_units)
+
+    # TOTAL
+    report_sim_output(runner, "total_site_energy_mbtu", (outputs[:elecTotal] + outputs[:gasTotal] + outputs[:oilTotal] + outputs[:propaneTotal]), from_units, total_site_units)
+    report_sim_output(runner, "net_site_energy_mbtu", (outputs[:elecTotal] - outputs[:elecPV] + outputs[:gasTotal] + outputs[:oilTotal] + outputs[:propaneTotal]), from_units, total_site_units)
+
+    # FIXME: Check results are internally consistent
+    # Replicate logic at end of write_summary_output_results() method, iterating through register values in runner.workflow.workflowSteps.
+  end
+
   def write_summary_output_results(outputs, csv_path)
     results_out = []
     results_out << ["Electricity: Total (MBtu)", outputs[:elecTotal].round(2)]
@@ -927,11 +1003,11 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     results_out << ["Fuel Oil: Total (MBtu)", outputs[:oilTotal].round(2)]
     results_out << ["Propane: Total (MBtu)", outputs[:propaneTotal].round(2)]
     results_out << [nil] # line break
-    results_out << ["Electricity: Heating (MBtu)", outputs[:elecHeatingBySystem].values.inject(0, :+).round(2)]
-    results_out << ["Electricity: Cooling (MBtu)", outputs[:elecCoolingBySystem].values.inject(0, :+).round(2)]
-    results_out << ["Electricity: Hot Water (MBtu)", outputs[:elecHotWaterBySystem].values.inject(0, :+).round(2)]
-    results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", outputs[:elecHotWaterRecircPumpBySystem].values.inject(0, :+).round(2)]
-    results_out << ["Electricity: Hot Water Solar Thermal Pump (MBtu)", outputs[:elecHotWaterSolarThermalPumpBySystem].values.inject(0, :+).round(2)]
+    results_out << ["Electricity: Heating (MBtu)", outputs[:elecHeating].round(2)]
+    results_out << ["Electricity: Cooling (MBtu)", outputs[:elecCooling].round(2)]
+    results_out << ["Electricity: Hot Water (MBtu)", outputs[:elecHotWater].round(2)]
+    results_out << ["Electricity: Hot Water Recirc Pump (MBtu)", outputs[:elecHotWaterRecircPump].round(2)]
+    results_out << ["Electricity: Hot Water Solar Thermal Pump (MBtu)", outputs[:elecHotWaterSolarThermalPump].round(2)]
     results_out << ["Electricity: Lighting Interior (MBtu)", outputs[:elecIntLighting].round(2)]
     results_out << ["Electricity: Lighting Garage (MBtu)", outputs[:elecGrgLighting].round(2)]
     results_out << ["Electricity: Lighting Exterior (MBtu)", outputs[:elecExtLighting].round(2)]
@@ -949,16 +1025,16 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     else
       results_out << ["Electricity: PV (MBtu)", 0.0]
     end
-    results_out << ["Natural Gas: Heating (MBtu)", outputs[:gasHeatingBySystem].values.inject(0, :+).round(2)]
-    results_out << ["Natural Gas: Hot Water (MBtu)", outputs[:gasHotWaterBySystem].values.inject(0, :+).round(2)]
+    results_out << ["Natural Gas: Heating (MBtu)", outputs[:gasHeating].round(2)]
+    results_out << ["Natural Gas: Hot Water (MBtu)", outputs[:gasHotWater].round(2)]
     results_out << ["Natural Gas: Clothes Dryer (MBtu)", outputs[:gasClothesDryer].round(2)]
     results_out << ["Natural Gas: Range/Oven (MBtu)", outputs[:gasRangeOven].round(2)]
-    results_out << ["Fuel Oil: Heating (MBtu)", outputs[:oilHeatingBySystem].values.inject(0, :+).round(2)]
-    results_out << ["Fuel Oil: Hot Water (MBtu)", outputs[:oilHotWaterBySystem].values.inject(0, :+).round(2)]
+    results_out << ["Fuel Oil: Heating (MBtu)", outputs[:oilHeating].round(2)]
+    results_out << ["Fuel Oil: Hot Water (MBtu)", outputs[:oilHotWater].round(2)]
     results_out << ["Fuel Oil: Clothes Dryer (MBtu)", outputs[:oilClothesDryer].round(2)]
     results_out << ["Fuel Oil: Range/Oven (MBtu)", outputs[:oilRangeOven].round(2)]
-    results_out << ["Propane: Heating (MBtu)", outputs[:propaneHeatingBySystem].values.inject(0, :+).round(2)]
-    results_out << ["Propane: Hot Water (MBtu)", outputs[:propaneHotWaterBySystem].values.inject(0, :+).round(2)]
+    results_out << ["Propane: Heating (MBtu)", outputs[:propaneHeating].round(2)]
+    results_out << ["Propane: Hot Water (MBtu)", outputs[:propaneHotWater].round(2)]
     results_out << ["Propane: Clothes Dryer (MBtu)", outputs[:propaneClothesDryer].round(2)]
     results_out << ["Propane: Range/Oven (MBtu)", outputs[:propaneRangeOven].round(2)]
     results_out << [nil] # line break
@@ -1382,6 +1458,16 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     if hourly_outputs.size > 0
       CSV.open(csv_path, "wb") { |csv| hourly_outputs.to_a.each { |elem| csv << elem } }
     end
+  end
+
+  def report_sim_output(runner, name, val, from_units = nil, to_units = nil)
+    if from_units.nil? or to_units.nil? or from_units == to_units
+      valInUnits = val
+    else
+      valInUnits = UnitConversions.convert(val, from_units, to_units)
+    end
+    runner.registerValue(name, valInUnits)
+    runner.registerInfo("Registering #{valInUnits.round(2)} for #{name}.")
   end
 end
 
