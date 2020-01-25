@@ -309,6 +309,7 @@ class HPXMLTranslatorTest < MiniTest::Test
     starting_index = sqlFile.execAndReturnFirstInt(query).get
 
     # TabularDataWithStrings table is positional, so we access results by position.
+    # TODO: When using E+ 9.3, update these queries based on https://github.com/NREL/EnergyPlus/pull/7584
     results = {}
     fueltypes.zip(full_categories, subcategories, units).each_with_index do |(fueltype, category, subcategory, fuel_units), index|
       next if ['District Cooling', 'District Heating'].include? fueltype # Exclude ideal loads results
@@ -384,26 +385,9 @@ class HPXMLTranslatorTest < MiniTest::Test
       compload_results["#{mode} - Unmet"] = sqlFile.execAndReturnFirstDouble(query).get
     end
 
-    components = { "Roofs" => "roofs",
-                   "Ceilings" => "ceilings",
-                   "Walls" => "walls",
-                   "Rim Joists" => "rim_joists",
-                   "Foundation Walls" => "foundation_walls",
-                   "Doors" => "doors",
-                   "Windows" => "windows",
-                   "Skylights" => "skylights",
-                   "Floors" => "floors",
-                   "Slabs" => "slabs",
-                   "Internal Mass" => "internal_mass",
-                   "Infiltration" => "infil",
-                   "Natural Ventilation" => "natvent",
-                   "Mechanical Ventilation" => "mechvent",
-                   "Whole House Fan" => "whf",
-                   "Ducts" => "ducts",
-                   "Internal Gains" => "intgains" }
     { "Heating" => "htg", "Cooling" => "clg" }.each do |mode, mode_var|
       compload_results["#{mode} - Sum"] = 0
-      components.each do |component, component_var|
+      OutputVars.ComponentLoadsMap.each do |component, component_var|
         query = "SELECT VariableValue/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableType='Sum' AND KeyValue='EMS' AND VariableName='#{mode_var}_#{component_var}_outvar' AND ReportingFrequency='Run Period' AND VariableUnits='J')"
         compload_results["#{mode} - #{component}"] = sqlFile.execAndReturnFirstDouble(query).get
         compload_results["#{mode} - Sum"] += compload_results["#{mode} - #{component}"]
@@ -440,7 +424,6 @@ class HPXMLTranslatorTest < MiniTest::Test
     args['epw_output_path'] = File.absolute_path(File.join(rundir, "in.epw"))
     args['osm_output_path'] = File.absolute_path(File.join(rundir, "in.osm"))
     args['hpxml_path'] = xml
-    args['map_tsv_dir'] = rundir
     args['weather_dir'] = "weather"
 
     # Add measure to workflow
@@ -520,6 +503,13 @@ class HPXMLTranslatorTest < MiniTest::Test
     output_var = OpenStudio::Model::OutputVariable.new('Boiler Heating Energy', model) # This is needed for energy checking if there's boiler not connected to combi systems.
     output_var.setReportingFrequency('runperiod')
     output_var.setKeyValue('*')
+
+    # Add output meters for component loads check
+    ["Cooling:EnergyTransfer", "Heating:EnergyTransfer"].each do |meter_name|
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName(meter_name)
+      output_meter.setReportingFrequency('runperiod')
+    end
 
     # Write model to IDF
     forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
