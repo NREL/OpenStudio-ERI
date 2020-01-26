@@ -4,9 +4,8 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require 'csv'
-require_relative '../../measures/HPXMLtoOpenStudio/measure'
+require_relative '../../measures/301EnergyRatingIndexRuleset/resources/constants'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/xmlhelper'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/schedules'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
@@ -670,9 +669,7 @@ class EnergyRatingIndexTest < Minitest::Test
     measure_subdir = "301EnergyRatingIndexRuleset"
     args = {}
     args['calc_type'] = design
-    args['hpxml_path'] = xml
-    args['weather_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../weather"))
-    args['schemas_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../measures/HPXMLtoOpenStudio/hpxml_schemas"))
+    args['hpxml_input_path'] = xml
     args['hpxml_output_path'] = output_hpxml_path
     update_args_hash(measures, measure_subdir, args)
 
