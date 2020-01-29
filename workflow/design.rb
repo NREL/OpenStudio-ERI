@@ -18,18 +18,18 @@ def get_output_hpxml(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def get_enabled_hourly_variables(hourly_output, hourly_output_csv)
-  hourly_variables = []
+def get_enabled_timeseries_variables(hourly_output, timeseries_output_csv)
+  timeseries_variables = []
   if hourly_output
     require 'csv'
-    hourly_outputs_rows = CSV.read(hourly_output_csv, headers: false)
+    hourly_outputs_rows = CSV.read(timeseries_output_csv, headers: false)
     hourly_outputs_rows.each do |hourly_output_row|
       next unless hourly_output_row[0].upcase.strip == 'TRUE'
 
-      hourly_variables << hourly_output_row[1].upcase.strip
+      timeseries_variables << hourly_output_row[1].upcase.strip
     end
   end
-  return hourly_variables
+  return timeseries_variables
 end
 
 def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
@@ -117,11 +117,13 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_output, debug, basedir,
   # Add reporting measure to workflow
   measure_subdir = "SimOutputReport"
   args = {}
-  hourly_variables = get_enabled_hourly_variables(hourly_output, File.join(File.dirname(__FILE__), "hourly_outputs.csv"))
-  args['hourly_output_fuel_consumptions'] = hourly_variables.include?("Fuel Consumptions".upcase)
-  args['hourly_output_zone_temperatures'] = hourly_variables.include?("Zone Temperatures".upcase)
-  args['hourly_output_total_loads'] = hourly_variables.include?("Total Loads".upcase)
-  args['hourly_output_component_loads'] = hourly_variables.include?("Component Loads".upcase)
+  timeseries_variables = get_enabled_timeseries_variables(hourly_output, File.join(File.dirname(__FILE__), "timeseries_outputs.csv"))
+  args['timeseries_frequency'] = 'hourly'
+  args['timeseries_output_zone_temperatures'] = timeseries_variables.include?("Zone Temperatures".upcase)
+  args['timeseries_output_fuel_consumptions'] = timeseries_variables.include?("Fuel Consumptions".upcase)
+  args['timeseries_output_end_use_consumptions'] = timeseries_variables.include?("End Use Consumptions".upcase)
+  args['timeseries_output_total_loads'] = timeseries_variables.include?("Total Loads".upcase)
+  args['timeseries_output_component_loads'] = timeseries_variables.include?("Component Loads".upcase)
   update_args_hash(measures, measure_subdir, args)
 
   return measures

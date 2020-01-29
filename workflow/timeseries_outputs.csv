@@ -1,0 +1,6 @@
+Enabled,Hourly Output,Note
+TRUE,Fuel Consumptions,Total energy consumptions for each fuel type
+TRUE,End Use Consumptions,Total energy consumptions for each end use
+TRUE,Total Loads,Total heating/cooling loads
+TRUE,Component Loads,Heating/cooling loads disaggregated by component type
+TRUE,Zone Temperatures,Temperatures for each thermal zone

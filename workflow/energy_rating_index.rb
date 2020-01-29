@@ -258,7 +258,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   # ===== #
 
   results[:teu] = rated_output[:elecTotal] + 0.4 * (rated_output[:gasTotal] + rated_output[:oilTotal] + rated_output[:propaneTotal])
-  results[:opp] = rated_output[:elecPV]
+  results[:opp] = -1 * rated_output[:elecPV]
 
   results[:pefrac] = 1.0
   if results[:teu] > 0
@@ -266,14 +266,26 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   end
 
   results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
-                      rated_output[:elecGrgLighting] + rated_output[:elecAppliances] +
-                      rated_output[:gasAppliances] + rated_output[:oilAppliances] +
-                      rated_output[:propaneAppliances] - rated_output[:elecWholeHouseFan])
+                      rated_output[:elecGrgLighting] + rated_output[:elecFridge] +
+                      rated_output[:elecDishwasher] + rated_output[:elecClothesWasher] +
+                      rated_output[:elecClothesDryer] + rated_output[:elecMELs] +
+                      rated_output[:elecTV] + rated_output[:elecRangeOven] +
+                      rated_output[:elecCeilingFan] + rated_output[:elecMechVent] +
+                      rated_output[:elecWholeHouseFan] + rated_output[:gasClothesDryer] +
+                      rated_output[:gasRangeOven] + rated_output[:oilClothesDryer] +
+                      rated_output[:oilRangeOven] + rated_output[:propaneClothesDryer] +
+                      rated_output[:propaneRangeOven] - rated_output[:elecWholeHouseFan])
 
   results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
-                       ref_output[:elecGrgLighting] + ref_output[:elecAppliances] +
-                       ref_output[:gasAppliances] + ref_output[:oilAppliances] +
-                       ref_output[:propaneAppliances])
+                       ref_output[:elecGrgLighting] + ref_output[:elecFridge] +
+                       ref_output[:elecDishwasher] + ref_output[:elecClothesWasher] +
+                       ref_output[:elecClothesDryer] + ref_output[:elecMELs] +
+                       ref_output[:elecTV] + ref_output[:elecRangeOven] +
+                       ref_output[:elecCeilingFan] + ref_output[:elecMechVent] +
+                       ref_output[:elecWholeHouseFan] + ref_output[:gasClothesDryer] +
+                       ref_output[:gasRangeOven] + ref_output[:oilClothesDryer] +
+                       ref_output[:oilRangeOven] + ref_output[:propaneClothesDryer] +
+                       ref_output[:propaneRangeOven])
 
   # === #
   # ERI #
