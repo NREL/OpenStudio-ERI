@@ -534,16 +534,6 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       end
       if solar_keys.empty?
         solar_keys = ep_output_names.select { |name| name.include? Constants.ObjectNameSolarHotWater }.map(&:upcase)
-        
-        # Hot Water Load - Solar Thermal
-        @loads[LT_HotWaterSolarThermal].annual_output = get_report_variable_data_annual_mbtu(solar_keys, get_all_var_keys(OutputVars.WaterHeaterLoadSolarThermal))
-        @loads[LT_HotWaterSolarThermal].annual_output *= -1 if @loads[LT_HotWaterSolarThermal].annual_output != 0
-
-        # Apply solar fraction to load for simple solar water heating systems
-        solar_fraction = get_dhw_solar_fraction(sys_id)
-        if solar_fraction > 0
-          apply_multiplier_to_output(@loads[LT_HotWaterDelivered], @loads[LT_HotWaterSolarThermal], sys_id, 1.0 / (1.0 - solar_fraction))
-        end
       end
     end
 
@@ -569,6 +559,10 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       end
     end
 
+    # Hot Water Load - Solar Thermal
+    @loads[LT_HotWaterSolarThermal].annual_output = get_report_variable_data_annual_mbtu(solar_keys, get_all_var_keys(OutputVars.WaterHeaterLoadSolarThermal))
+    @loads[LT_HotWaterSolarThermal].annual_output *= -1 if @loads[LT_HotWaterSolarThermal].annual_output != 0
+
     # Hot Water Load - Desuperheater
     @loads[LT_HotWaterDesuperheater].annual_output = get_report_variable_data_annual_mbtu(["EMS"], desuperheater_vars)
     @loads[LT_HotWaterDesuperheater].annual_output *= -1.0 if @loads[LT_HotWaterDesuperheater].annual_output != 0
@@ -576,6 +570,14 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     # Hot Water Load - Tank Losses (excluding solar storage tank)
     @loads[LT_HotWaterTankLosses].annual_output = get_report_variable_data_annual_mbtu(solar_keys, ["Water Heater Heat Loss Energy"], not_key: true)
     @loads[LT_HotWaterTankLosses].annual_output *= -1.0 if @loads[LT_HotWaterTankLosses].annual_output < 0
+
+    # Apply solar fraction to load for simple solar water heating systems
+    outputs[:hpxml_dhw_sys_ids].each do |sys_id|
+      solar_fraction = get_dhw_solar_fraction(sys_id)
+      if solar_fraction > 0
+        apply_multiplier_to_output(@loads[LT_HotWaterDelivered], @loads[LT_HotWaterSolarThermal], sys_id, 1.0 / (1.0 - solar_fraction))
+      end
+    end
 
     # Calculate aggregated values from per-system values as needed
     (@end_uses.values + @loads.values).each do |obj|
