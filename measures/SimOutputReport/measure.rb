@@ -437,7 +437,8 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
 
     # Water Heating (by System)
-    solar_keys = nil
+    solar_keys = []
+    desuperheater_vars = []
     outputs[:hpxml_dhw_sys_ids].each do |sys_id|
       ep_output_names = get_ep_output_names_for_water_heating(sys_id)
       keys = ep_output_names.map(&:upcase)
@@ -461,13 +462,6 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
 
         load.annual_output_by_system[sys_id] = get_report_variable_data_annual_mbtu(keys, get_all_var_keys(load.variable))
       end
-
-      # Hot Water Load - Desuperheater
-      @loads[LT_HotWaterDesuperheater].annual_output = get_report_variable_data_annual_mbtu(["EMS"], ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterLoad(nil) })
-
-      # Hot Water Load - Solar Thermal
-      solar_keys = ep_output_names.select { |name| name.include? Constants.ObjectNameSolarHotWater }.map(&:upcase)
-      @loads[LT_HotWaterSolarThermal].annual_output = get_report_variable_data_annual_mbtu(solar_keys, get_all_var_keys(OutputVars.WaterHeaterLoadSolarThermal))
 
       # Apply solar fraction to load for simple solar water heating systems
       solar_fraction = get_dhw_solar_fraction(sys_id)
@@ -515,7 +509,23 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
         end
         break # only apply once
       end
+
+      # Can only be one desuperheater or solar thermal system
+      if desuperheater_vars.empty?
+        desuperheater_vars = ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterLoad(nil) }
+      end
+      if solar_keys.empty?
+        solar_keys = ep_output_names.select { |name| name.include? Constants.ObjectNameSolarHotWater }.map(&:upcase)
+      end
     end
+
+    # Hot Water Load - Desuperheater
+    @loads[LT_HotWaterDesuperheater].annual_output = get_report_variable_data_annual_mbtu(["EMS"], desuperheater_vars)
+    @loads[LT_HotWaterDesuperheater].annual_output *= -1.0 if @loads[LT_HotWaterDesuperheater].annual_output != 0
+
+    # Hot Water Load - Solar Thermal
+    @loads[LT_HotWaterSolarThermal].annual_output = get_report_variable_data_annual_mbtu(solar_keys, get_all_var_keys(OutputVars.WaterHeaterLoadSolarThermal))
+    @loads[LT_HotWaterSolarThermal].annual_output *= -1 if @loads[LT_HotWaterSolarThermal].annual_output != 0
 
     # Hot Water Load - Tank Losses (excluding solar storage tank)
     @loads[LT_HotWaterTankLosses].annual_output = get_report_variable_data_annual_mbtu(solar_keys, ["Water Heater Heat Loss Energy"], not_key: true)
@@ -1296,7 +1306,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     [@hvac_map, @dhw_map].each do |map|
       map.each do |sys_id, object_names|
         object_names.each do |object_name|
-          names_to_objs[object_name] = @model.getModelObjectByName(object_name).get
+          names_to_objs[object_name] = @model.getModelObjectsByName(object_name, true)
         end
       end
     end
@@ -1309,11 +1319,12 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       map.each do |sys_id, object_names|
         objects_to_delete = []
         object_names.each do |object_name|
-          object = names_to_objs[object_name]
-          next if object.to_EnergyManagementSystemOutputVariable.is_initialized
-          next unless all_vars[object.class.to_s].nil? # Referenced?
+          names_to_objs[object_name].each do |object|
+            next if object.to_EnergyManagementSystemOutputVariable.is_initialized
+            next unless all_vars[object.class.to_s].nil? # Referenced?
 
-          objects_to_delete << object
+            objects_to_delete << object
+          end
         end
         objects_to_delete.uniq.each do |object|
           map[sys_id].delete object
@@ -1349,13 +1360,14 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     ems_objects = []
     @hvac_map.each do |sys_id, hvac_names|
       hvac_names.each do |hvac_name|
-        hvac_object = names_to_objs[hvac_name]
-        if hvac_object.to_EnergyManagementSystemOutputVariable.is_initialized
-          ems_objects << hvac_object
-        else
-          hvac_output_vars.each do |hvac_output_var|
-            add_output_variables(hvac_output_var, hvac_object, timeseries_frequency).each do |outvar|
-              results << outvar
+        names_to_objs[hvac_name].each do |hvac_object|
+          if hvac_object.to_EnergyManagementSystemOutputVariable.is_initialized
+            ems_objects << hvac_object
+          else
+            hvac_output_vars.each do |hvac_output_var|
+              add_output_variables(hvac_output_var, hvac_object, timeseries_frequency).each do |outvar|
+                results << outvar
+              end
             end
           end
         end
@@ -1363,13 +1375,14 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
     end
     @dhw_map.each do |sys_id, dhw_names|
       dhw_names.each do |dhw_name|
-        dhw_object = names_to_objs[dhw_name]
-        if dhw_object.to_EnergyManagementSystemOutputVariable.is_initialized
-          ems_objects << dhw_object
-        else
-          dhw_output_vars.each do |dhw_output_var|
-            add_output_variables(dhw_output_var, dhw_object, timeseries_frequency).each do |outvar|
-              results << outvar
+        names_to_objs[dhw_name].each do |dhw_object|
+          if dhw_object.to_EnergyManagementSystemOutputVariable.is_initialized
+            ems_objects << dhw_object
+          else
+            dhw_output_vars.each do |dhw_output_var|
+              add_output_variables(dhw_output_var, dhw_object, timeseries_frequency).each do |outvar|
+                results << outvar
+              end
             end
           end
         end
