@@ -507,13 +507,14 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       end
 
       # Adjust water heater/appliances energy consumptions
-      ec_vars = ep_output_names.select { |name| name.include? Constants.ObjectNameWaterHeaterAdjustment(nil) }
-      dsh_vars = ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterEnergy(nil) }
       @fuels.keys.reverse.each do |fuel_type| # Reverse so that FT_Elec is considered last
         end_use = @end_uses[[fuel_type, EUT_HotWater]]
         next if end_use.variable.nil?
         next unless end_use.annual_output_by_system[sys_id] > 0
 
+        ec_vars = ep_output_names.select { |name| name.include? Constants.ObjectNameWaterHeaterAdjustment(nil) }
+        dsh_vars = ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterEnergy(nil) }
+        
         ec_adj = get_report_variable_data_annual_mbtu(["EMS"], ec_vars)
         dsh_adj = get_report_variable_data_annual_mbtu(["EMS"], dsh_vars)
         break if ec_adj + dsh_adj == 0 # No adjustment
