@@ -18,28 +18,14 @@ def get_output_hpxml(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + ".xml")
 end
 
-def get_enabled_timeseries_variables(hourly_output, timeseries_output_csv)
-  timeseries_variables = []
-  if hourly_output
-    require 'csv'
-    hourly_outputs_rows = CSV.read(timeseries_output_csv, headers: false)
-    hourly_outputs_rows.each do |hourly_output_row|
-      next unless hourly_output_row[0].upcase.strip == 'TRUE'
-
-      timeseries_variables << hourly_output_row[1].upcase.strip
-    end
-  end
-  return timeseries_variables
-end
-
-def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
 
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   output_hpxml = get_output_hpxml(resultsdir, designdir)
 
   measures_dir = File.join(File.dirname(__FILE__), "../measures")
-  measures = get_measures_to_run(run, hpxml, output_hpxml, hourly_output, debug, basedir, designdir)
+  measures = get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir, designdir)
 
   Dir.mkdir(designdir)
 
@@ -90,7 +76,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   return output_hpxml
 end
 
-def get_measures_to_run(run, hpxml, output_hpxml, hourly_output, debug, basedir, designdir)
+def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir, designdir)
   measures = {}
 
   if not run[0].nil?
@@ -117,13 +103,12 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_output, debug, basedir,
   # Add reporting measure to workflow
   measure_subdir = "SimOutputReport"
   args = {}
-  timeseries_variables = get_enabled_timeseries_variables(hourly_output, File.join(File.dirname(__FILE__), "timeseries_outputs.csv"))
   args['timeseries_frequency'] = 'hourly'
-  args['timeseries_output_zone_temperatures'] = timeseries_variables.include?("Zone Temperatures".upcase)
-  args['timeseries_output_fuel_consumptions'] = timeseries_variables.include?("Fuel Consumptions".upcase)
-  args['timeseries_output_end_use_consumptions'] = timeseries_variables.include?("End Use Consumptions".upcase)
-  args['timeseries_output_total_loads'] = timeseries_variables.include?("Total Loads".upcase)
-  args['timeseries_output_component_loads'] = timeseries_variables.include?("Component Loads".upcase)
+  args['timeseries_output_zone_temperatures'] = hourly_outputs.include? "temperatures"
+  args['timeseries_output_fuel_consumptions'] = hourly_outputs.include? "fuels"
+  args['timeseries_output_end_use_consumptions'] = hourly_outputs.include? "enduses"
+  args['timeseries_output_total_loads'] = hourly_outputs.include? "loads"
+  args['timeseries_output_component_loads'] = hourly_outputs.include? "componentloads"
   update_args_hash(measures, measure_subdir, args)
 
   return measures
@@ -179,6 +164,6 @@ if ARGV.size == 7
   resultsdir = ARGV[3]
   hpxml = ARGV[4]
   debug = (ARGV[5].downcase.to_s == "true")
-  hourly_output = (ARGV[6].downcase.to_s == "true")
-  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+  hourly_outputs = ARGV[6].split("|")
+  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
 end

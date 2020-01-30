@@ -21,18 +21,27 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+def hourly_outputs_for_run(run, hourly_outputs)
+  if run == [Constants.CalcTypeERIRatedHome] or run == [Constants.CalcTypeERIReferenceHome]
+    return hourly_outputs
+  end
+
+  return []
+end
+
+def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   rm_path(designdir)
+  hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
-  output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+  output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -41,9 +50,10 @@ def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   rm_path(designdir)
   output_hpxml_path = get_output_hpxml(resultsdir, designdir)
+  hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{hourly_output}")
+  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\"")
 
   return output_hpxml_path, designdir, pid
 end
@@ -524,15 +534,6 @@ def get_versions(hpxml_path)
   return versions
 end
 
-def request_hourly_output(hourly_output, run)
-  if hourly_output
-    if run == [Constants.CalcTypeERIRatedHome] or run == [Constants.CalcTypeERIReferenceHome]
-      return true
-    end
-  end
-  return false
-end
-
 def calculate_eri(design_outputs, resultsdir)
   if design_outputs.keys.include? [Constants.CalcTypeERIIndexAdjustmentDesign]
     results_iad = _calculate_eri(design_outputs[[Constants.CalcTypeERIIndexAdjustmentDesign]],
@@ -548,11 +549,13 @@ def calculate_eri(design_outputs, resultsdir)
   return results
 end
 
+hourly_types = ["ALL", "fuels", "enduses", "loads", "componentloads", "temperatures"]
+
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/base.xml\n"
 
-  opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
+  opts.on('-x', '--xml <FILE.xml>', 'HPXML file') do |t|
     options[:hpxml] = t
   end
 
@@ -560,12 +563,12 @@ OptionParser.new do |opts|
     options[:output_dir] = t
   end
 
-  options[:hourly_output] = false
-  opts.on('--hourly-output', 'Request hourly output') do |t|
-    options[:hourly_output] = true
+  options[:hourly_outputs] = []
+  opts.on('--hourly TYPE', hourly_types, "Request hourly output type (#{hourly_types[0..3].join(', ')}", "#{hourly_types[4..-1].join(', ')}); can be called multiple times") do |t|
+    options[:hourly_outputs] << t
   end
 
-  opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
+  opts.on('-w', '--download-weather', 'Downloads all US TMY3 weather files') do |t|
     options[:epws] = t
   end
 
@@ -588,6 +591,10 @@ OptionParser.new do |opts|
     exit!
   end
 end.parse!
+
+if options[:hourly_outputs].include? "ALL"
+  options[:hourly_outputs] = hourly_types[1..-1]
+end
 
 # Check for correct versions of OS
 os_version = "2.9.1"
@@ -667,7 +674,7 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   end
 
   Parallel.map(runs, in_processes: runs.size) do |run|
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], request_hourly_output(options[:hourly_output], run))
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], options[:hourly_outputs])
     kill unless File.exists? File.join(designdir, "eplusout.end")
   end
 
@@ -687,7 +694,7 @@ else # e.g., Windows
 
   pids = {}
   Parallel.map(runs, in_threads: runs.size) do |run|
-    output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], request_hourly_output(options[:hourly_output], run))
+    output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], options[:hourly_outputs])
     Process.wait pids[run]
     if not File.exists? File.join(designdir, "eplusout.end")
       kill(pids)

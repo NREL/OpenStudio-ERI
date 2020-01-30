@@ -30,7 +30,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri(xml, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name, hourly_output: true)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
@@ -71,7 +71,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      run_eri(xml, test_name, true, expected_error_msgs[File.basename(xml)])
+      run_eri(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
     end
   end
 
@@ -679,14 +679,14 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(success)
   end
 
-  def run_eri(xml, test_name, expect_error = false, expect_error_msgs = nil)
+  def run_eri(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
     # Run sample files with hourly output turned on to test hourly results against annual results
     hourly = ""
-    if xml.include? "sample_files"
-      hourly = " --hourly-output"
+    if hourly_output
+      hourly = " --hourly ALL"
     end
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
