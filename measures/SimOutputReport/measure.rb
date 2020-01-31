@@ -514,7 +514,7 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
 
         ec_vars = ep_output_names.select { |name| name.include? Constants.ObjectNameWaterHeaterAdjustment(nil) }
         dsh_vars = ep_output_names.select { |name| name.include? Constants.ObjectNameDesuperheaterEnergy(nil) }
-        
+
         ec_adj = get_report_variable_data_annual_mbtu(["EMS"], ec_vars)
         dsh_adj = get_report_variable_data_annual_mbtu(["EMS"], dsh_vars)
         break if ec_adj + dsh_adj == 0 # No adjustment
@@ -646,16 +646,6 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
       end
     end
 
-    # Check sum of component loads equals total loads
-    [LT_Heating, LT_Cooling].each do |load_type|
-      load_total = @loads[load_type].annual_output
-      sum_loads = @component_loads.select { |k, v| k[0] == load_type }.values.map { |x| x.annual_output }.inject(:+)
-      if (load_total - sum_loads).abs > 0.5
-        runner.registerError("Component load outputs (#{sum_loads}) do not sum to building load (#{load_total}) for #{load_type}.")
-        return false
-      end
-    end
-
     return true
   end
 
@@ -713,83 +703,60 @@ class SimOutputReport < OpenStudio::Measure::ReportingMeasure
   def write_eri_output_results(outputs, csv_path)
     return true if csv_path.nil?
 
-    def get_hash_values_in_order(keys, output)
-      vals = []
-      keys.each do |key|
-        vals << output[key]
-      end
-      return vals
-    end
-
     line_break = nil
+
+    def sanitize_string(s)
+      [' ', ':', '/'].each do |c|
+        s.gsub!(c, '')
+      end
+      return s
+    end
 
     results_out = []
 
-    # Heating
-    keys = outputs[:hpxml_heat_sys_ids]
-    results_out << ["hpxml_heat_fuels"] + get_hash_values_in_order(keys, outputs[:hpxml_heat_fuels])
-    results_out << ["hpxml_eec_heats"] + get_hash_values_in_order(keys, outputs[:hpxml_eec_heats])
-    results_out << ["elecHeatingBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Elec, EUT_Heating]].annual_output_by_system)
-    results_out << ["gasHeatingBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Gas, EUT_Heating]].annual_output_by_system)
-    results_out << ["oilHeatingBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Oil, EUT_Heating]].annual_output_by_system)
-    results_out << ["propaneHeatingBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Propane, EUT_Heating]].annual_output_by_system)
-    results_out << ["loadHeatingBySystem"] + get_hash_values_in_order(keys, @loads[LT_Heating].annual_output_by_system)
+    # EECs
+    results_out << ["hpxml_eec_heats", outputs[:hpxml_eec_heats].values.to_s]
+    results_out << ["hpxml_eec_cools", outputs[:hpxml_eec_cools].values.to_s]
+    results_out << ["hpxml_eec_dhws", outputs[:hpxml_eec_dhws].values.to_s]
     results_out << [line_break]
 
-    # Cooling
-    keys = outputs[:hpxml_cool_sys_ids]
-    results_out << ["hpxml_eec_cools"] + get_hash_values_in_order(keys, outputs[:hpxml_eec_cools])
-    results_out << ["elecCoolingBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Elec, EUT_Cooling]].annual_output_by_system)
-    results_out << ["loadCoolingBySystem"] + get_hash_values_in_order(keys, @loads[LT_Cooling].annual_output_by_system)
+    # Fuel types
+    results_out << ["hpxml_heat_fuels", outputs[:hpxml_heat_fuels].values.to_s]
+    results_out << ["hpxml_dwh_fuels", outputs[:hpxml_dwh_fuels].values.to_s]
     results_out << [line_break]
 
-    # DHW
-    keys = outputs[:hpxml_dhw_sys_ids]
-    results_out << ["hpxml_dwh_fuels"] + get_hash_values_in_order(keys, outputs[:hpxml_dwh_fuels])
-    results_out << ["hpxml_eec_dhws"] + get_hash_values_in_order(keys, outputs[:hpxml_eec_dhws])
-    results_out << ["elecHotWaterBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Elec, EUT_HotWater]].annual_output_by_system)
-    results_out << ["elecHotWaterRecircPumpBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Elec, EUT_HotWaterRecircPump]].annual_output_by_system)
-    results_out << ["elecHotWaterSolarThermalPumpBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Elec, EUT_HotWaterSolarThermalPump]].annual_output_by_system)
-    results_out << ["gasHotWaterBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Gas, EUT_HotWater]].annual_output_by_system)
-    results_out << ["oilHotWaterBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Oil, EUT_HotWater]].annual_output_by_system)
-    results_out << ["propaneHotWaterBySystem"] + get_hash_values_in_order(keys, @end_uses[[FT_Propane, EUT_HotWater]].annual_output_by_system)
-    results_out << ["loadHotWaterBySystem"] + get_hash_values_in_order(keys, @loads[LT_HotWaterDelivered].annual_output_by_system)
+    # Fuel uses
+    @fuels.each do |fuel_type, fuel|
+      key_name = sanitize_string("fuel#{fuel_type}")
+      results_out << [key_name, fuel.annual_output.to_s]
+    end
     results_out << [line_break]
 
-    # Total
-    results_out << ["elecTotal", @fuels[FT_Elec].annual_output]
-    results_out << ["gasTotal", @fuels[FT_Gas].annual_output]
-    results_out << ["oilTotal", @fuels[FT_Oil].annual_output]
-    results_out << ["propaneTotal", @fuels[FT_Propane].annual_output]
-    results_out << ["elecPV", @end_uses[[FT_Elec, EUT_PV]].annual_output]
+    # End Uses
+    @end_uses.each do |key, end_use|
+      fuel_type, end_use_type = key
+      key_name = sanitize_string("enduse#{fuel_type}#{end_use_type}")
+      if not end_use.annual_output_by_system.empty?
+        results_out << [key_name, end_use.annual_output_by_system.values.to_s]
+      else
+        results_out << [key_name, end_use.annual_output.to_s]
+      end
+    end
     results_out << [line_break]
 
-    # Breakout
-    results_out << ["elecIntLighting", @end_uses[[FT_Elec, EUT_LightsInterior]].annual_output]
-    results_out << ["elecExtLighting", @end_uses[[FT_Elec, EUT_LightsExterior]].annual_output]
-    results_out << ["elecGrgLighting", @end_uses[[FT_Elec, EUT_LightsGarage]].annual_output]
-    results_out << ["elecMELs", @end_uses[[FT_Elec, EUT_PlugLoads]].annual_output]
-    results_out << ["elecFridge", @end_uses[[FT_Elec, EUT_Refrigerator]].annual_output]
-    results_out << ["elecTV", @end_uses[[FT_Elec, EUT_Television]].annual_output]
-    results_out << ["elecRangeOven", @end_uses[[FT_Elec, EUT_RangeOven]].annual_output]
-    results_out << ["elecClothesDryer", @end_uses[[FT_Elec, EUT_ClothesDryer]].annual_output]
-    results_out << ["elecDishwasher", @end_uses[[FT_Elec, EUT_Dishwasher]].annual_output]
-    results_out << ["elecClothesWasher", @end_uses[[FT_Elec, EUT_ClothesWasher]].annual_output]
-    results_out << ["elecMechVent", @end_uses[[FT_Elec, EUT_MechVent]].annual_output]
-    results_out << ["elecWholeHouseFan", @end_uses[[FT_Elec, EUT_WholeHouseFan]].annual_output]
-    results_out << ["elecCeilingFan", @end_uses[[FT_Elec, EUT_CeilingFan]].annual_output]
-    results_out << ["gasRangeOven", @end_uses[[FT_Gas, EUT_RangeOven]].annual_output]
-    results_out << ["gasClothesDryer", @end_uses[[FT_Gas, EUT_ClothesDryer]].annual_output]
-    results_out << ["oilRangeOven", @end_uses[[FT_Oil, EUT_RangeOven]].annual_output]
-    results_out << ["oilClothesDryer", @end_uses[[FT_Oil, EUT_ClothesDryer]].annual_output]
-    results_out << ["propaneRangeOven", @end_uses[[FT_Propane, EUT_RangeOven]].annual_output]
-    results_out << ["propaneClothesDryer", @end_uses[[FT_Propane, EUT_ClothesDryer]].annual_output]
+    # Loads by System
+    @loads.each do |load_type, load|
+      key_name = sanitize_string("load#{load_type}")
+      if not load.annual_output_by_system.empty?
+        results_out << [key_name, load.annual_output_by_system.values.to_s]
+      end
+    end
     results_out << [line_break]
 
     # Misc
-    results_out << ["hpxml_cfa", outputs[:hpxml_cfa]]
-    results_out << ["hpxml_nbr", outputs[:hpxml_nbr]]
-    results_out << ["hpxml_nst", outputs[:hpxml_nst]]
+    results_out << ["hpxml_cfa", outputs[:hpxml_cfa].to_s]
+    results_out << ["hpxml_nbr", outputs[:hpxml_nbr].to_s]
+    results_out << ["hpxml_nst", outputs[:hpxml_nst].to_s]
 
     CSV.open(csv_path, "wb") { |csv| results_out.to_a.each { |elem| csv << elem } }
   end

@@ -70,13 +70,13 @@ def retrieve_eri_outputs(design_name, resultsdir, debug)
   csv_data.each do |data|
     next if data.empty?
 
-    if data[0].include? "fuels"
-      output_data[data[0].to_sym] = data[1..-1] # Strings
-    elsif data[0].include? "eec" or data[0].include? "BySystem"
-      output_data[data[0].to_sym] = data[1..-1].map(&:to_f) # Array of numbers
-    else
-      output_data[data[0].to_sym] = data[1].to_f # Single number
-    end
+    key = data[0]
+    key.gsub!("enduseElectricity", "elec")
+    key.gsub!("enduseNaturalGas", "gas")
+    key.gsub!("enduseFuelOil", "oil")
+    key.gsub!("endusePropane", "propane")
+
+    output_data[key.to_sym] = eval(data[1])
   end
 
   File.delete(csv_path) if not debug
@@ -103,7 +103,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_heat] = []
 
   for s in 0..rated_output[:hpxml_eec_heats].size - 1
-    reul_heat = ref_output[:loadHeatingBySystem][s]
+    reul_heat = ref_output[:loadHeating][s]
 
     coeff_heat_a = nil
     coeff_heat_b = nil
@@ -121,8 +121,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_heat = rated_output[:hpxml_eec_heats][s]
     eec_r_heat = ref_output[:hpxml_eec_heats][s]
 
-    ec_x_heat = rated_output[:elecHeatingBySystem][s] + rated_output[:gasHeatingBySystem][s] + rated_output[:oilHeatingBySystem][s] + rated_output[:propaneHeatingBySystem][s]
-    ec_r_heat = ref_output[:elecHeatingBySystem][s] + ref_output[:gasHeatingBySystem][s] + ref_output[:oilHeatingBySystem][s] + ref_output[:propaneHeatingBySystem][s]
+    ec_x_heat = rated_output[:elecHeating][s] + rated_output[:gasHeating][s] + rated_output[:oilHeating][s] + rated_output[:propaneHeating][s]
+    ec_r_heat = ref_output[:elecHeating][s] + ref_output[:gasHeating][s] + ref_output[:oilHeating][s] + ref_output[:propaneHeating][s]
 
     dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
@@ -163,9 +163,9 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nec_x_cool] = []
   results[:nmeul_cool] = []
 
-  tot_reul_cool = ref_output[:loadCoolingBySystem].inject(:+)
+  tot_reul_cool = ref_output[:loadCooling].inject(:+)
   for s in 0..rated_output[:hpxml_eec_cools].size - 1
-    reul_cool = ref_output[:loadCoolingBySystem][s]
+    reul_cool = ref_output[:loadCooling][s]
 
     coeff_cool_a = 3.8090
     coeff_cool_b = 0.0
@@ -173,8 +173,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_cool = rated_output[:hpxml_eec_cools][s]
     eec_r_cool = ref_output[:hpxml_eec_cools][s]
 
-    ec_x_cool = rated_output[:elecCoolingBySystem][s]
-    ec_r_cool = ref_output[:elecCoolingBySystem][s]
+    ec_x_cool = rated_output[:elecCooling][s]
+    ec_r_cool = ref_output[:elecCooling][s]
 
     dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
 
@@ -182,7 +182,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     if eec_x_cool * reul_cool > 0
       nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
     end
-    # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and subtract later from eul_la
+    # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and excluded from eul_la
     nec_x_cool += (rated_output[:elecWholeHouseFan] * reul_cool / tot_reul_cool)
 
     nmeul_cool = 0
@@ -218,7 +218,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_dhw] = []
 
   for s in 0..rated_output[:hpxml_eec_dhws].size - 1
-    reul_dhw = ref_output[:loadHotWaterBySystem][s]
+    reul_dhw = ref_output[:loadHotWaterDelivered][s]
 
     coeff_dhw_a = nil
     coeff_dhw_b = nil
@@ -236,8 +236,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
     eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
-    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:oilHotWaterBySystem][s] + rated_output[:propaneHotWaterBySystem][s] + rated_output[:elecHotWaterRecircPumpBySystem][s] + rated_output[:elecHotWaterSolarThermalPumpBySystem][s]
-    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:oilHotWaterBySystem][s] + ref_output[:propaneHotWaterBySystem][s] + ref_output[:elecHotWaterRecircPumpBySystem][s] + ref_output[:elecHotWaterSolarThermalPumpBySystem][s]
+    ec_x_dhw = rated_output[:elecHotWater][s] + rated_output[:gasHotWater][s] + rated_output[:oilHotWater][s] + rated_output[:propaneHotWater][s] + rated_output[:elecHotWaterRecircPump][s] + rated_output[:elecHotWaterSolarThermalPump][s]
+    ec_r_dhw = ref_output[:elecHotWater][s] + ref_output[:gasHotWater][s] + ref_output[:oilHotWater][s] + ref_output[:propaneHotWater][s] + ref_output[:elecHotWaterRecircPump][s] + ref_output[:elecHotWaterSolarThermalPump][s]
 
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
 
@@ -267,7 +267,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   # Other #
   # ===== #
 
-  results[:teu] = rated_output[:elecTotal] + 0.4 * (rated_output[:gasTotal] + rated_output[:oilTotal] + rated_output[:propaneTotal])
+  results[:teu] = rated_output[:fuelElectricity] + 0.4 * (rated_output[:fuelNaturalGas] + rated_output[:fuelFuelOil] + rated_output[:fuelPropane])
   results[:opp] = -1 * rated_output[:elecPV]
 
   results[:pefrac] = 1.0
@@ -275,27 +275,25 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     results[:pefrac] = (results[:teu] - results[:opp]) / results[:teu]
   end
 
-  results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
-                      rated_output[:elecGrgLighting] + rated_output[:elecFridge] +
+  results[:eul_la] = (rated_output[:elecLightingInterior] + rated_output[:elecLightingExterior] +
+                      rated_output[:elecLightingGarage] + rated_output[:elecRefrigerator] +
                       rated_output[:elecDishwasher] + rated_output[:elecClothesWasher] +
-                      rated_output[:elecClothesDryer] + rated_output[:elecMELs] +
-                      rated_output[:elecTV] + rated_output[:elecRangeOven] +
+                      rated_output[:elecClothesDryer] + rated_output[:elecPlugLoads] +
+                      rated_output[:elecTelevision] + rated_output[:elecRangeOven] +
                       rated_output[:elecCeilingFan] + rated_output[:elecMechVent] +
-                      rated_output[:elecWholeHouseFan] + rated_output[:gasClothesDryer] +
-                      rated_output[:gasRangeOven] + rated_output[:oilClothesDryer] +
-                      rated_output[:oilRangeOven] + rated_output[:propaneClothesDryer] +
-                      rated_output[:propaneRangeOven] - rated_output[:elecWholeHouseFan])
+                      rated_output[:gasClothesDryer] + rated_output[:gasRangeOven] +
+                      rated_output[:oilClothesDryer] + rated_output[:oilRangeOven] +
+                      rated_output[:propaneClothesDryer] + rated_output[:propaneRangeOven])
 
-  results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
-                       ref_output[:elecGrgLighting] + ref_output[:elecFridge] +
+  results[:reul_la] = (ref_output[:elecLightingInterior] + ref_output[:elecLightingExterior] +
+                       ref_output[:elecLightingGarage] + ref_output[:elecRefrigerator] +
                        ref_output[:elecDishwasher] + ref_output[:elecClothesWasher] +
-                       ref_output[:elecClothesDryer] + ref_output[:elecMELs] +
-                       ref_output[:elecTV] + ref_output[:elecRangeOven] +
+                       ref_output[:elecClothesDryer] + ref_output[:elecPlugLoads] +
+                       ref_output[:elecTelevision] + ref_output[:elecRangeOven] +
                        ref_output[:elecCeilingFan] + ref_output[:elecMechVent] +
-                       ref_output[:elecWholeHouseFan] + ref_output[:gasClothesDryer] +
-                       ref_output[:gasRangeOven] + ref_output[:oilClothesDryer] +
-                       ref_output[:oilRangeOven] + ref_output[:propaneClothesDryer] +
-                       ref_output[:propaneRangeOven])
+                       ref_output[:gasClothesDryer] + ref_output[:gasRangeOven] +
+                       ref_output[:oilClothesDryer] + ref_output[:oilRangeOven] +
+                       ref_output[:propaneClothesDryer] + ref_output[:propaneRangeOven])
 
   # === #
   # ERI #
@@ -397,11 +395,11 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   if not results_iad.nil?
     worksheet_out << ["Ref Home NS", ref_output[:hpxml_nst]]
   end
-  worksheet_out << ["Ref L&A resMELs", ref_output[:elecMELs].round(2)]
-  worksheet_out << ["Ref L&A intLgt", (ref_output[:elecIntLighting] + ref_output[:elecGrgLighting]).round(2)]
-  worksheet_out << ["Ref L&A extLgt", ref_output[:elecExtLighting].round(2)]
-  worksheet_out << ["Ref L&A Fridg", ref_output[:elecFridge].round(2)]
-  worksheet_out << ["Ref L&A TVs", ref_output[:elecTV].round(2)]
+  worksheet_out << ["Ref L&A resMELs", ref_output[:elecPlugLoads].round(2)]
+  worksheet_out << ["Ref L&A intLgt", (ref_output[:elecLightingInterior] + ref_output[:elecLightingGarage]).round(2)]
+  worksheet_out << ["Ref L&A extLgt", ref_output[:elecLightingExterior].round(2)]
+  worksheet_out << ["Ref L&A Fridg", ref_output[:elecRefrigerator].round(2)]
+  worksheet_out << ["Ref L&A TVs", ref_output[:elecTelevision].round(2)]
   worksheet_out << ["Ref L&A R/O", (ref_output[:elecRangeOven] + ref_output[:gasRangeOven] + ref_output[:oilRangeOven] + ref_output[:propaneRangeOven]).round(2)]
   worksheet_out << ["Ref L&A cDryer", (ref_output[:elecClothesDryer] + ref_output[:gasClothesDryer] + ref_output[:oilClothesDryer] + ref_output[:propaneClothesDryer]).round(2)]
   worksheet_out << ["Ref L&A dWash", ref_output[:elecDishwasher].round(2)]
