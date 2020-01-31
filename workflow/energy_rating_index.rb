@@ -21,18 +21,27 @@ def rm_path(path)
   end
 end
 
-def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+def hourly_outputs_for_run(run, hourly_outputs)
+  if run == [Constants.CalcTypeERIRatedHome] or run == [Constants.CalcTypeERIReferenceHome]
+    return hourly_outputs
+  end
+
+  return []
+end
+
+def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   rm_path(designdir)
+  hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
-  output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+  output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output)
+def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -40,10 +49,11 @@ def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_
   # 2. There is overhead to spawning processes vs using forked processes
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   rm_path(designdir)
-  output_hpxml_path = get_output_hpxml_path(resultsdir, designdir)
+  output_hpxml_path = get_output_hpxml(resultsdir, designdir)
+  hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} #{hourly_output}")
+  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "design.rb")}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\"")
 
   return output_hpxml_path, designdir, pid
 end
@@ -60,13 +70,13 @@ def retrieve_eri_outputs(design_name, resultsdir, debug)
   csv_data.each do |data|
     next if data.empty?
 
-    if data[0].include? "sys_ids" or data[0].include? "fuels"
-      output_data[data[0].to_sym] = data[1..-1] # Strings
-    elsif data[0].include? "eec" or data[0].include? "BySystem"
-      output_data[data[0].to_sym] = data[1..-1].map(&:to_f) # Array of numbers
-    else
-      output_data[data[0].to_sym] = data[1].to_f # Single number
-    end
+    key = data[0]
+    key.gsub!("enduseElectricity", "elec")
+    key.gsub!("enduseNaturalGas", "gas")
+    key.gsub!("enduseFuelOil", "oil")
+    key.gsub!("endusePropane", "propane")
+
+    output_data[key.to_sym] = eval(data[1])
   end
 
   File.delete(csv_path) if not debug
@@ -81,19 +91,19 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   # Heating #
   # ======= #
 
-  results[:reul_heat] = {}
-  results[:coeff_heat_a] = {}
-  results[:coeff_heat_b] = {}
-  results[:eec_x_heat] = {}
-  results[:eec_r_heat] = {}
-  results[:ec_x_heat] = {}
-  results[:ec_r_heat] = {}
-  results[:dse_r_heat] = {}
-  results[:nec_x_heat] = {}
-  results[:nmeul_heat] = {}
+  results[:reul_heat] = []
+  results[:coeff_heat_a] = []
+  results[:coeff_heat_b] = []
+  results[:eec_x_heat] = []
+  results[:eec_r_heat] = []
+  results[:ec_x_heat] = []
+  results[:ec_r_heat] = []
+  results[:dse_r_heat] = []
+  results[:nec_x_heat] = []
+  results[:nmeul_heat] = []
 
-  rated_output[:hpxml_heat_sys_ids].each_with_index do |sys_id, s|
-    reul_heat = ref_output[:loadHeatingBySystem][s]
+  for s in 0..rated_output[:hpxml_eec_heats].size - 1
+    reul_heat = ref_output[:loadHeating][s]
 
     coeff_heat_a = nil
     coeff_heat_b = nil
@@ -111,8 +121,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_heat = rated_output[:hpxml_eec_heats][s]
     eec_r_heat = ref_output[:hpxml_eec_heats][s]
 
-    ec_x_heat = rated_output[:elecHeatingBySystem][s] + rated_output[:gasHeatingBySystem][s] + rated_output[:oilHeatingBySystem][s] + rated_output[:propaneHeatingBySystem][s]
-    ec_r_heat = ref_output[:elecHeatingBySystem][s] + ref_output[:gasHeatingBySystem][s] + ref_output[:oilHeatingBySystem][s] + ref_output[:propaneHeatingBySystem][s]
+    ec_x_heat = rated_output[:elecHeating][s] + rated_output[:gasHeating][s] + rated_output[:oilHeating][s] + rated_output[:propaneHeating][s]
+    ec_r_heat = ref_output[:elecHeating][s] + ref_output[:gasHeating][s] + ref_output[:oilHeating][s] + ref_output[:propaneHeating][s]
 
     dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
@@ -126,36 +136,36 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
       nmeul_heat = reul_heat * (nec_x_heat / ec_r_heat)
     end
 
-    results[:reul_heat][s] = reul_heat
-    results[:coeff_heat_a][s] = coeff_heat_a
-    results[:coeff_heat_b][s] = coeff_heat_b
-    results[:eec_x_heat][s] = eec_x_heat
-    results[:eec_r_heat][s] = eec_r_heat
-    results[:ec_x_heat][s] = ec_x_heat
-    results[:ec_r_heat][s] = ec_r_heat
-    results[:dse_r_heat][s] = dse_r_heat
-    results[:nec_x_heat][s] = nec_x_heat
-    results[:nmeul_heat][s] = nmeul_heat
+    results[:reul_heat] << reul_heat
+    results[:coeff_heat_a] << coeff_heat_a
+    results[:coeff_heat_b] << coeff_heat_b
+    results[:eec_x_heat] << eec_x_heat
+    results[:eec_r_heat] << eec_r_heat
+    results[:ec_x_heat] << ec_x_heat
+    results[:ec_r_heat] << ec_r_heat
+    results[:dse_r_heat] << dse_r_heat
+    results[:nec_x_heat] << nec_x_heat
+    results[:nmeul_heat] << nmeul_heat
   end
 
   # ======= #
   # Cooling #
   # ======= #
 
-  results[:reul_cool] = {}
-  results[:coeff_cool_a] = {}
-  results[:coeff_cool_b] = {}
-  results[:eec_x_cool] = {}
-  results[:eec_r_cool] = {}
-  results[:ec_x_cool] = {}
-  results[:ec_r_cool] = {}
-  results[:dse_r_cool] = {}
-  results[:nec_x_cool] = {}
-  results[:nmeul_cool] = {}
+  results[:reul_cool] = []
+  results[:coeff_cool_a] = []
+  results[:coeff_cool_b] = []
+  results[:eec_x_cool] = []
+  results[:eec_r_cool] = []
+  results[:ec_x_cool] = []
+  results[:ec_r_cool] = []
+  results[:dse_r_cool] = []
+  results[:nec_x_cool] = []
+  results[:nmeul_cool] = []
 
-  tot_reul_cool = ref_output[:loadCoolingBySystem].inject(:+)
-  rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, s|
-    reul_cool = ref_output[:loadCoolingBySystem][s]
+  tot_reul_cool = ref_output[:loadCooling].inject(:+)
+  for s in 0..rated_output[:hpxml_eec_cools].size - 1
+    reul_cool = ref_output[:loadCooling][s]
 
     coeff_cool_a = 3.8090
     coeff_cool_b = 0.0
@@ -163,8 +173,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_cool = rated_output[:hpxml_eec_cools][s]
     eec_r_cool = ref_output[:hpxml_eec_cools][s]
 
-    ec_x_cool = rated_output[:elecCoolingBySystem][s]
-    ec_r_cool = ref_output[:elecCoolingBySystem][s]
+    ec_x_cool = rated_output[:elecCooling][s]
+    ec_r_cool = ref_output[:elecCooling][s]
 
     dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
 
@@ -172,7 +182,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     if eec_x_cool * reul_cool > 0
       nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
     end
-    # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and subtract later from eul_la
+    # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and excluded from eul_la
     nec_x_cool += (rated_output[:elecWholeHouseFan] * reul_cool / tot_reul_cool)
 
     nmeul_cool = 0
@@ -180,35 +190,35 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
       nmeul_cool = reul_cool * (nec_x_cool / ec_r_cool)
     end
 
-    results[:reul_cool][s] = reul_cool
-    results[:coeff_cool_a][s] = coeff_cool_a
-    results[:coeff_cool_b][s] = coeff_cool_b
-    results[:eec_x_cool][s] = eec_x_cool
-    results[:eec_r_cool][s] = eec_r_cool
-    results[:ec_x_cool][s] = ec_x_cool
-    results[:ec_r_cool][s] = ec_r_cool
-    results[:dse_r_cool][s] = dse_r_cool
-    results[:nec_x_cool][s] = nec_x_cool
-    results[:nmeul_cool][s] = nmeul_cool
+    results[:reul_cool] << reul_cool
+    results[:coeff_cool_a] << coeff_cool_a
+    results[:coeff_cool_b] << coeff_cool_b
+    results[:eec_x_cool] << eec_x_cool
+    results[:eec_r_cool] << eec_r_cool
+    results[:ec_x_cool] << ec_x_cool
+    results[:ec_r_cool] << ec_r_cool
+    results[:dse_r_cool] << dse_r_cool
+    results[:nec_x_cool] << nec_x_cool
+    results[:nmeul_cool] << nmeul_cool
   end
 
   # ======== #
   # HotWater #
   # ======== #
 
-  results[:reul_dhw] = {}
-  results[:coeff_dhw_a] = {}
-  results[:coeff_dhw_b] = {}
-  results[:eec_x_dhw] = {}
-  results[:eec_r_dhw] = {}
-  results[:ec_x_dhw] = {}
-  results[:ec_r_dhw] = {}
-  results[:dse_r_dhw] = {}
-  results[:nec_x_dhw] = {}
-  results[:nmeul_dhw] = {}
+  results[:reul_dhw] = []
+  results[:coeff_dhw_a] = []
+  results[:coeff_dhw_b] = []
+  results[:eec_x_dhw] = []
+  results[:eec_r_dhw] = []
+  results[:ec_x_dhw] = []
+  results[:ec_r_dhw] = []
+  results[:dse_r_dhw] = []
+  results[:nec_x_dhw] = []
+  results[:nmeul_dhw] = []
 
-  rated_output[:hpxml_dhw_sys_ids].each_with_index do |sys_id, s|
-    reul_dhw = ref_output[:loadHotWaterBySystem][s]
+  for s in 0..rated_output[:hpxml_eec_dhws].size - 1
+    reul_dhw = ref_output[:loadHotWaterDelivered][s]
 
     coeff_dhw_a = nil
     coeff_dhw_b = nil
@@ -226,8 +236,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
     eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
 
-    ec_x_dhw = rated_output[:elecHotWaterBySystem][s] + rated_output[:gasHotWaterBySystem][s] + rated_output[:oilHotWaterBySystem][s] + rated_output[:propaneHotWaterBySystem][s] + rated_output[:elecHotWaterRecircPumpBySystem][s] + rated_output[:elecHotWaterSolarThermalPumpBySystem][s]
-    ec_r_dhw = ref_output[:elecHotWaterBySystem][s] + ref_output[:gasHotWaterBySystem][s] + ref_output[:oilHotWaterBySystem][s] + ref_output[:propaneHotWaterBySystem][s] + ref_output[:elecHotWaterRecircPumpBySystem][s] + ref_output[:elecHotWaterSolarThermalPumpBySystem][s]
+    ec_x_dhw = rated_output[:elecHotWater][s] + rated_output[:gasHotWater][s] + rated_output[:oilHotWater][s] + rated_output[:propaneHotWater][s] + rated_output[:elecHotWaterRecircPump][s] + rated_output[:elecHotWaterSolarThermalPump][s]
+    ec_r_dhw = ref_output[:elecHotWater][s] + ref_output[:gasHotWater][s] + ref_output[:oilHotWater][s] + ref_output[:propaneHotWater][s] + ref_output[:elecHotWaterRecircPump][s] + ref_output[:elecHotWaterSolarThermalPump][s]
 
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
 
@@ -241,51 +251,61 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
       nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
     end
 
-    results[:reul_dhw][s] = reul_dhw
-    results[:coeff_dhw_a][s] = coeff_dhw_a
-    results[:coeff_dhw_b][s] = coeff_dhw_b
-    results[:eec_x_dhw][s] = eec_x_dhw
-    results[:eec_r_dhw][s] = eec_r_dhw
-    results[:ec_x_dhw][s] = ec_x_dhw
-    results[:ec_r_dhw][s] = ec_r_dhw
-    results[:dse_r_dhw][s] = dse_r_dhw
-    results[:nec_x_dhw][s] = nec_x_dhw
-    results[:nmeul_dhw][s] = nmeul_dhw
+    results[:reul_dhw] << reul_dhw
+    results[:coeff_dhw_a] << coeff_dhw_a
+    results[:coeff_dhw_b] << coeff_dhw_b
+    results[:eec_x_dhw] << eec_x_dhw
+    results[:eec_r_dhw] << eec_r_dhw
+    results[:ec_x_dhw] << ec_x_dhw
+    results[:ec_r_dhw] << ec_r_dhw
+    results[:dse_r_dhw] << dse_r_dhw
+    results[:nec_x_dhw] << nec_x_dhw
+    results[:nmeul_dhw] << nmeul_dhw
   end
 
   # ===== #
   # Other #
   # ===== #
 
-  results[:teu] = rated_output[:elecTotal] + 0.4 * (rated_output[:gasTotal] + rated_output[:oilTotal] + rated_output[:propaneTotal])
-  results[:opp] = rated_output[:elecPV]
+  results[:teu] = rated_output[:fuelElectricity] + 0.4 * (rated_output[:fuelNaturalGas] + rated_output[:fuelFuelOil] + rated_output[:fuelPropane])
+  results[:opp] = -1 * rated_output[:elecPV]
 
   results[:pefrac] = 1.0
   if results[:teu] > 0
     results[:pefrac] = (results[:teu] - results[:opp]) / results[:teu]
   end
 
-  results[:eul_la] = (rated_output[:elecIntLighting] + rated_output[:elecExtLighting] +
-                      rated_output[:elecGrgLighting] + rated_output[:elecAppliances] +
-                      rated_output[:gasAppliances] + rated_output[:oilAppliances] +
-                      rated_output[:propaneAppliances] - rated_output[:elecWholeHouseFan])
+  results[:eul_la] = (rated_output[:elecLightingInterior] + rated_output[:elecLightingExterior] +
+                      rated_output[:elecLightingGarage] + rated_output[:elecRefrigerator] +
+                      rated_output[:elecDishwasher] + rated_output[:elecClothesWasher] +
+                      rated_output[:elecClothesDryer] + rated_output[:elecPlugLoads] +
+                      rated_output[:elecTelevision] + rated_output[:elecRangeOven] +
+                      rated_output[:elecCeilingFan] + rated_output[:elecMechVent] +
+                      rated_output[:gasClothesDryer] + rated_output[:gasRangeOven] +
+                      rated_output[:oilClothesDryer] + rated_output[:oilRangeOven] +
+                      rated_output[:propaneClothesDryer] + rated_output[:propaneRangeOven])
 
-  results[:reul_la] = (ref_output[:elecIntLighting] + ref_output[:elecExtLighting] +
-                       ref_output[:elecGrgLighting] + ref_output[:elecAppliances] +
-                       ref_output[:gasAppliances] + ref_output[:oilAppliances] +
-                       ref_output[:propaneAppliances])
+  results[:reul_la] = (ref_output[:elecLightingInterior] + ref_output[:elecLightingExterior] +
+                       ref_output[:elecLightingGarage] + ref_output[:elecRefrigerator] +
+                       ref_output[:elecDishwasher] + ref_output[:elecClothesWasher] +
+                       ref_output[:elecClothesDryer] + ref_output[:elecPlugLoads] +
+                       ref_output[:elecTelevision] + ref_output[:elecRangeOven] +
+                       ref_output[:elecCeilingFan] + ref_output[:elecMechVent] +
+                       ref_output[:gasClothesDryer] + ref_output[:gasRangeOven] +
+                       ref_output[:oilClothesDryer] + ref_output[:oilRangeOven] +
+                       ref_output[:propaneClothesDryer] + ref_output[:propaneRangeOven])
 
   # === #
   # ERI #
   # === #
 
-  results[:trl] = results[:reul_heat].values.inject(0, :+) +
-                  results[:reul_cool].values.inject(0, :+) +
-                  results[:reul_dhw].values.inject(0, :+) +
+  results[:trl] = results[:reul_heat].inject(0, :+) +
+                  results[:reul_cool].inject(0, :+) +
+                  results[:reul_dhw].inject(0, :+) +
                   results[:reul_la]
-  results[:tnml] = results[:nmeul_heat].values.inject(0, :+) +
-                   results[:nmeul_cool].values.inject(0, :+) +
-                   results[:nmeul_dhw].values.inject(0, :+) +
+  results[:tnml] = results[:nmeul_heat].inject(0, :+) +
+                   results[:nmeul_cool].inject(0, :+) +
+                   results[:nmeul_dhw].inject(0, :+) +
                    results[:eul_la]
 
   if not results_iad.nil?
@@ -317,15 +337,15 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   results_csv = File.join(resultsdir, "ERI_Results.csv")
   results_out = []
   results_out << ["ERI", results[:eri].round(2)]
-  results_out << ["REUL Heating (MBtu)", results[:reul_heat].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["REUL Cooling (MBtu)", results[:reul_cool].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["REUL Hot Water (MBtu)", results[:reul_dhw].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["EC_r Heating (MBtu)", results[:ec_r_heat].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["EC_r Cooling (MBtu)", results[:ec_r_cool].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["EC_r Hot Water (MBtu)", results[:ec_r_dhw].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["EC_x Heating (MBtu)", results[:ec_x_heat].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["EC_x Cooling (MBtu)", results[:ec_x_cool].values.map { |x| x.round(2) }.join(",")]
-  results_out << ["EC_x Hot Water (MBtu)", results[:ec_x_dhw].values.map { |x| x.round(2) }.join(",")]
+  results_out << ["REUL Heating (MBtu)", results[:reul_heat].map { |x| x.round(2) }.join(",")]
+  results_out << ["REUL Cooling (MBtu)", results[:reul_cool].map { |x| x.round(2) }.join(",")]
+  results_out << ["REUL Hot Water (MBtu)", results[:reul_dhw].map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_r Heating (MBtu)", results[:ec_r_heat].map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_r Cooling (MBtu)", results[:ec_r_cool].map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_r Hot Water (MBtu)", results[:ec_r_dhw].map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_x Heating (MBtu)", results[:ec_x_heat].map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_x Cooling (MBtu)", results[:ec_x_cool].map { |x| x.round(2) }.join(",")]
+  results_out << ["EC_x Hot Water (MBtu)", results[:ec_x_dhw].map { |x| x.round(2) }.join(",")]
   results_out << ["EC_x L&A (MBtu)", results[:eul_la].round(2)]
   if not results_iad.nil?
     results_out << ["IAD_Save (%)", results[:iad_save].round(5)]
@@ -336,27 +356,27 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   # Worksheet file
   worksheet_csv = File.join(resultsdir, "ERI_Worksheet.csv")
   worksheet_out = []
-  worksheet_out << ["Coeff Heating a", results[:coeff_heat_a].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["Coeff Heating b", results[:coeff_heat_b].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["Coeff Cooling a", results[:coeff_cool_a].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["Coeff Cooling b", results[:coeff_cool_b].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["Coeff Hot Water a", results[:coeff_dhw_a].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["Coeff Hot Water b", results[:coeff_dhw_b].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["DSE_r Heating", results[:dse_r_heat].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["DSE_r Cooling", results[:dse_r_cool].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["DSE_r Hot Water", results[:dse_r_dhw].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["EEC_x Heating", results[:eec_x_heat].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["EEC_x Cooling", results[:eec_x_cool].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["EEC_x Hot Water", results[:eec_x_dhw].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["EEC_r Heating", results[:eec_r_heat].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["EEC_r Cooling", results[:eec_r_cool].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["EEC_r Hot Water", results[:eec_r_dhw].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["nEC_x Heating", results[:nec_x_heat].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["nEC_x Cooling", results[:nec_x_cool].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["nEC_x Hot Water", results[:nec_x_dhw].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["nMEUL Heating", results[:nmeul_heat].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["nMEUL Cooling", results[:nmeul_cool].values.map { |x| x.round(4) }.join(",")]
-  worksheet_out << ["nMEUL Hot Water", results[:nmeul_dhw].values.map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Heating a", results[:coeff_heat_a].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Heating b", results[:coeff_heat_b].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Cooling a", results[:coeff_cool_a].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Cooling b", results[:coeff_cool_b].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Hot Water a", results[:coeff_dhw_a].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["Coeff Hot Water b", results[:coeff_dhw_b].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["DSE_r Heating", results[:dse_r_heat].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["DSE_r Cooling", results[:dse_r_cool].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["DSE_r Hot Water", results[:dse_r_dhw].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_x Heating", results[:eec_x_heat].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_x Cooling", results[:eec_x_cool].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_x Hot Water", results[:eec_x_dhw].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_r Heating", results[:eec_r_heat].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_r Cooling", results[:eec_r_cool].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["EEC_r Hot Water", results[:eec_r_dhw].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nEC_x Heating", results[:nec_x_heat].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nEC_x Cooling", results[:nec_x_cool].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nEC_x Hot Water", results[:nec_x_dhw].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nMEUL Heating", results[:nmeul_heat].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nMEUL Cooling", results[:nmeul_cool].map { |x| x.round(4) }.join(",")]
+  worksheet_out << ["nMEUL Hot Water", results[:nmeul_dhw].map { |x| x.round(4) }.join(",")]
   if not results_iad.nil?
     worksheet_out << ["IAF CFA", results[:iaf_cfa].round(4)]
     worksheet_out << ["IAF NBR", results[:iaf_nbr].round(4)]
@@ -375,11 +395,11 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   if not results_iad.nil?
     worksheet_out << ["Ref Home NS", ref_output[:hpxml_nst]]
   end
-  worksheet_out << ["Ref L&A resMELs", ref_output[:elecMELs].round(2)]
-  worksheet_out << ["Ref L&A intLgt", (ref_output[:elecIntLighting] + ref_output[:elecGrgLighting]).round(2)]
-  worksheet_out << ["Ref L&A extLgt", ref_output[:elecExtLighting].round(2)]
-  worksheet_out << ["Ref L&A Fridg", ref_output[:elecFridge].round(2)]
-  worksheet_out << ["Ref L&A TVs", ref_output[:elecTV].round(2)]
+  worksheet_out << ["Ref L&A resMELs", ref_output[:elecPlugLoads].round(2)]
+  worksheet_out << ["Ref L&A intLgt", (ref_output[:elecLightingInterior] + ref_output[:elecLightingGarage]).round(2)]
+  worksheet_out << ["Ref L&A extLgt", ref_output[:elecLightingExterior].round(2)]
+  worksheet_out << ["Ref L&A Fridg", ref_output[:elecRefrigerator].round(2)]
+  worksheet_out << ["Ref L&A TVs", ref_output[:elecTelevision].round(2)]
   worksheet_out << ["Ref L&A R/O", (ref_output[:elecRangeOven] + ref_output[:gasRangeOven] + ref_output[:oilRangeOven] + ref_output[:propaneRangeOven]).round(2)]
   worksheet_out << ["Ref L&A cDryer", (ref_output[:elecClothesDryer] + ref_output[:gasClothesDryer] + ref_output[:oilClothesDryer] + ref_output[:propaneClothesDryer]).round(2)]
   worksheet_out << ["Ref L&A dWash", ref_output[:elecDishwasher].round(2)]
@@ -512,15 +532,6 @@ def get_versions(hpxml_path)
   return versions
 end
 
-def request_hourly_output(hourly_output, run)
-  if hourly_output
-    if run == [Constants.CalcTypeERIRatedHome] or run == [Constants.CalcTypeERIReferenceHome]
-      return true
-    end
-  end
-  return false
-end
-
 def calculate_eri(design_outputs, resultsdir)
   if design_outputs.keys.include? [Constants.CalcTypeERIIndexAdjustmentDesign]
     results_iad = _calculate_eri(design_outputs[[Constants.CalcTypeERIIndexAdjustmentDesign]],
@@ -536,11 +547,13 @@ def calculate_eri(design_outputs, resultsdir)
   return results
 end
 
+hourly_types = ["ALL", "fuels", "enduses", "loads", "componentloads", "temperatures"]
+
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} -x building.xml\n e.g., #{File.basename(__FILE__)} -x sample_files/base.xml\n"
 
-  opts.on('-x', '--xml <FILE>', 'HPXML file') do |t|
+  opts.on('-x', '--xml <FILE.xml>', 'HPXML file') do |t|
     options[:hpxml] = t
   end
 
@@ -548,12 +561,12 @@ OptionParser.new do |opts|
     options[:output_dir] = t
   end
 
-  options[:hourly_output] = false
-  opts.on('--hourly-output', 'Request hourly output') do |t|
-    options[:hourly_output] = true
+  options[:hourly_outputs] = []
+  opts.on('--hourly TYPE', hourly_types, "Request hourly output type (#{hourly_types[0..3].join(', ')}", "#{hourly_types[4..-1].join(', ')}); can be called multiple times") do |t|
+    options[:hourly_outputs] << t
   end
 
-  opts.on('-w', '--download-weather', 'Downloads all weather files') do |t|
+  opts.on('-w', '--download-weather', 'Downloads all US TMY3 weather files') do |t|
     options[:epws] = t
   end
 
@@ -576,6 +589,10 @@ OptionParser.new do |opts|
     exit!
   end
 end.parse!
+
+if options[:hourly_outputs].include? "ALL"
+  options[:hourly_outputs] = hourly_types[1..-1]
+end
 
 # Check for correct versions of OS
 os_version = "2.9.1"
@@ -655,7 +672,7 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
   end
 
   Parallel.map(runs, in_processes: runs.size) do |run|
-    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], request_hourly_output(options[:hourly_output], run))
+    output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], options[:hourly_outputs])
     kill unless File.exists? File.join(designdir, "eplusout.end")
   end
 
@@ -675,7 +692,7 @@ else # e.g., Windows
 
   pids = {}
   Parallel.map(runs, in_threads: runs.size) do |run|
-    output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], request_hourly_output(options[:hourly_output], run))
+    output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug], options[:hourly_outputs])
     Process.wait pids[run]
     if not File.exists? File.join(designdir, "eplusout.end")
       kill(pids)

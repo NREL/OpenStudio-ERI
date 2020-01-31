@@ -4,9 +4,8 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require 'csv'
-require_relative '../../measures/HPXMLtoOpenStudio/measure'
+require_relative '../../measures/301EnergyRatingIndexRuleset/resources/constants'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/xmlhelper'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/schedules'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
@@ -31,7 +30,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri(xml, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name, hourly_output: true)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
@@ -72,7 +71,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      run_eri(xml, test_name, true, expected_error_msgs[File.basename(xml)])
+      run_eri(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
     end
   end
 
@@ -670,9 +669,7 @@ class EnergyRatingIndexTest < Minitest::Test
     measure_subdir = "301EnergyRatingIndexRuleset"
     args = {}
     args['calc_type'] = design
-    args['hpxml_path'] = xml
-    args['weather_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../weather"))
-    args['schemas_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../measures/HPXMLtoOpenStudio/hpxml_schemas"))
+    args['hpxml_input_path'] = xml
     args['hpxml_output_path'] = output_hpxml_path
     update_args_hash(measures, measure_subdir, args)
 
@@ -682,14 +679,14 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(success)
   end
 
-  def run_eri(xml, test_name, expect_error = false, expect_error_msgs = nil)
+  def run_eri(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
     # Run sample files with hourly output turned on to test hourly results against annual results
     hourly = ""
-    if xml.include? "sample_files"
-      hourly = " --hourly-output"
+    if hourly_output
+      hourly = " --hourly ALL"
     end
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))

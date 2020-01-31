@@ -15,12 +15,10 @@ class EnclosureTest < MiniTest::Test
     File.delete(@tmp_hpxml_path) if File.exists? @tmp_hpxml_path
   end
 
-  def test_enclosure_infiltration_without_mech_vent
+  def test_enclosure_infiltration
     hpxml_name = "base.xml"
 
     # Rated Home
-    # For residences, without Whole-House Mechanical Ventilation Systems, the measured
-    # infiltration rate but not less than 0.30 ACH
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_infiltration(hpxml_doc, 7.6)
 
@@ -35,25 +33,8 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
-  end
 
-  def test_enclosure_with_mech_vent
-    # Create derivative file for testing
-    hpxml_name = "base.xml"
-    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
-
-    # Add mech vent without flow rate
-    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements["/HPXML"],
-                              id: "MechanicalVentilation",
-                              fan_type: "exhaust only",
-                              tested_flow_rate: 300,
-                              hours_in_operation: 24,
-                              fan_power: 30.0,
-                              used_for_whole_building_ventilation: true)
-
-    # Save new file
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+    hpxml_name = "base-mechvent-exhaust.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -928,8 +909,7 @@ class EnclosureTest < MiniTest::Test
 
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
-    args_hash['hpxml_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
-    args_hash['weather_dir'] = File.join(@root_path, "weather")
+    args_hash['hpxml_input_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 

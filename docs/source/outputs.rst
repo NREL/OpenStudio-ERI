@@ -96,12 +96,15 @@ See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/m
 ERI______Home_Hourly.csv
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the ``--hourly-output`` argument is provided when running the workflow, a CSV file of hourly outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv`` for the Reference home).
+If the ``--hourly`` argument is provided when running the workflow, a CSV file of hourly outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv`` for the Reference home).
 
-The hourly output CSV files currently include:
+Depending on the hourly output types requested, CSV files may include:
 
-- Average space temperatures (in deg-F) for each space modeled (e.g., living space, vented attic, garage, unconditioned basement, crawlspace, etc.).
-- Whole-building site energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
+- ``temperatures``: Average space temperatures (in deg-F) for each space modeled (e.g., living space, vented attic, garage, unconditioned basement, crawlspace, etc.).
+- ``fuels``: Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
+- ``enduses``: Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
+- ``loads``: Heating and cooling loads (in kBtu) for the building.
+- ``componentloads``: Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
 
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
 

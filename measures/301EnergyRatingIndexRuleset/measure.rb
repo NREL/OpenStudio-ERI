@@ -42,19 +42,9 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     calc_type.setDefaultValue(Constants.CalcTypeERIRatedHome)
     args << calc_type
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_path", true)
-    arg.setDisplayName("HPXML File Path")
-    arg.setDescription("Absolute (or relative) path of the HPXML file.")
-    args << arg
-
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("weather_dir", true)
-    arg.setDisplayName("Weather Directory")
-    arg.setDescription("Absolute path of the weather directory.")
-    args << arg
-
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("schemas_dir", false)
-    arg.setDisplayName("HPXML Schemas Directory")
-    arg.setDescription("Absolute path of the hpxml schemas directory.")
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_input_path", true)
+    arg.setDisplayName("HPXML Input File Path")
+    arg.setDescription("Absolute (or relative) path of the input HPXML file.")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_path", false)
@@ -76,27 +66,26 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
     # assign the user inputs to variables
     calc_type = runner.getStringArgumentValue("calc_type", user_arguments)
-    hpxml_path = runner.getStringArgumentValue("hpxml_path", user_arguments)
-    weather_dir = runner.getStringArgumentValue("weather_dir", user_arguments)
-    schemas_dir = runner.getOptionalStringArgumentValue("schemas_dir", user_arguments)
+    hpxml_input_path = runner.getStringArgumentValue("hpxml_input_path", user_arguments)
     hpxml_output_path = runner.getOptionalStringArgumentValue("hpxml_output_path", user_arguments)
 
-    unless (Pathname.new hpxml_path).absolute?
-      hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
+    unless (Pathname.new hpxml_input_path).absolute?
+      hpxml_input_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_input_path))
     end
-    unless File.exists?(hpxml_path) and hpxml_path.downcase.end_with? ".xml"
-      runner.registerError("'#{hpxml_path}' does not exist or is not an .xml file.")
+    unless File.exists?(hpxml_input_path) and hpxml_input_path.downcase.end_with? ".xml"
+      runner.registerError("'#{hpxml_input_path}' does not exist or is not an .xml file.")
       return false
     end
 
-    hpxml_doc = XMLHelper.parse_file(hpxml_path)
+    hpxml_doc = XMLHelper.parse_file(hpxml_input_path)
 
-    if not validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
+    if not validate_hpxml(runner, hpxml_input_path, hpxml_doc)
       return false
     end
 
     begin
       # Weather file
+      weather_dir = File.join(File.dirname(__FILE__), "..", "..", "weather")
       weather_wmo = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation/WMO")
       epw_path = nil
       cache_path = nil
@@ -140,40 +129,25 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     return true
   end
 
-  def validate_hpxml(runner, hpxml_path, hpxml_doc, schemas_dir)
+  def validate_hpxml(runner, hpxml_input_path, hpxml_doc)
     is_valid = true
 
-    if schemas_dir.is_initialized
-      schemas_dir = schemas_dir.get
-      unless (Pathname.new schemas_dir).absolute?
-        schemas_dir = File.expand_path(File.join(File.dirname(__FILE__), schemas_dir))
-      end
-      unless Dir.exists?(schemas_dir)
-        runner.registerError("'#{schemas_dir}' does not exist.")
-        return false
-      end
-    else
-      schemas_dir = nil
-    end
+    schemas_dir = File.join(File.dirname(__FILE__), "..", "HPXMLtoOpenStudio", "hpxml_schemas")
 
     # Validate input HPXML against schema
-    if not schemas_dir.nil?
-      XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-        runner.registerError("#{hpxml_path}: #{error.to_s}")
-        is_valid = false
-      end
-      runner.registerInfo("#{hpxml_path}: Validated against HPXML schema.")
-    else
-      runner.registerWarning("#{hpxml_path}: No schema dir provided, no HPXML validation performed.")
+    XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
+      runner.registerError("#{hpxml_input_path}: #{error.to_s}")
+      is_valid = false
     end
+    runner.registerInfo("#{hpxml_input_path}: Validated against HPXML schema.")
 
     # Validate input HPXML against ERI Use Case
     errors = EnergyRatingIndex301Validator.run_validator(hpxml_doc)
     errors.each do |error|
-      runner.registerError("#{hpxml_path}: #{error}")
+      runner.registerError("#{hpxml_input_path}: #{error}")
       is_valid = false
     end
-    runner.registerInfo("#{hpxml_path}: Validated against HPXML ERI Use Case.")
+    runner.registerInfo("#{hpxml_input_path}: Validated against HPXML ERI Use Case.")
 
     return is_valid
   end

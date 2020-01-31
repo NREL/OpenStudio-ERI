@@ -201,6 +201,7 @@ class EnergyRatingIndex301Ruleset
                                    software_program_used: hpxml_values[:software_program_used],
                                    software_program_version: hpxml_values[:software_program_version],
                                    eri_calculation_version: hpxml_values[:eri_calculation_version],
+                                   eri_design: @calc_type,
                                    building_id: hpxml_values[:building_id],
                                    event_type: hpxml_values[:event_type])
 
