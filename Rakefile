@@ -2430,10 +2430,6 @@ def create_sample_hpxmls
                   'base-misc-lighting-none.xml',
                   'base-misc-loads-detailed.xml',
                   'base-misc-number-of-occupants.xml',
-                  'base-pv-array-1axis.xml',
-                  'base-pv-array-1axis-backtracked.xml',
-                  'base-pv-array-2axis.xml',
-                  'base-pv-array-fixed-open-rack.xml',
                   'base-site-neighbors.xml',
                   'base-version-latest.xml']
   exclude_list.each do |exclude_file|
