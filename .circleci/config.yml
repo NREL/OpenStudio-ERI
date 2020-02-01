@@ -12,11 +12,11 @@ jobs:
       - run:
           name: Run ruleset tests
           command: |
-            ruby rulesets/*/tests/*.rb
+            for file in `ls rulesets/*/tests/*.rb`; do ruby $file; done
       - run:
           name: Run workflow tests
           command: |
-            ruby workflow/tests/*.rb
+            for file in `ls workflow/tests/*.rb`; do ruby $file; done
       - store_artifacts:
           path: workflow/tests/test_results
           destination: results
