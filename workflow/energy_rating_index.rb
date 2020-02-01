@@ -6,7 +6,7 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
-require_relative "../measures/HPXMLtoOpenStudio/resources/constants"
+require_relative "../hpxml-measures/HPXMLtoOpenStudio/resources/constants"
 
 basedir = File.expand_path(File.dirname(__FILE__))
 

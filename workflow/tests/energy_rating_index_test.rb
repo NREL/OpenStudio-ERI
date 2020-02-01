@@ -4,12 +4,12 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require 'csv'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/xmlhelper'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-require_relative "../../measures/HPXMLtoOpenStudio/resources/hvac_sizing"
-require_relative "../../measures/HPXMLtoOpenStudio/resources/meta_measure"
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing"
+require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 class EnergyRatingIndexTest < Minitest::Test
   def before_setup
@@ -660,12 +660,12 @@ class EnergyRatingIndexTest < Minitest::Test
   def run_ruleset(design, xml, output_hpxml_path)
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    measures_dir = File.join(File.dirname(__FILE__), "../../measures")
+    measures_dir = File.join(File.dirname(__FILE__), "../..")
 
     measures = {}
 
     # Add 301 measure to workflow
-    measure_subdir = "301EnergyRatingIndexRuleset"
+    measure_subdir = "rulesets/301EnergyRatingIndexRuleset"
     args = {}
     args['calc_type'] = design
     args['hpxml_input_path'] = xml
@@ -1027,7 +1027,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _test_schema_validation(xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
+    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", "hpxml-measures", "HPXMLtoOpenStudio", "resources"))
     hpxml_doc = REXML::Document.new(File.read(xml))
     errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), nil)
     if errors.size > 0

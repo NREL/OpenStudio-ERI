@@ -11,7 +11,7 @@ namespace :test do
   desc 'Run all tests'
   Rake::TestTask.new('all') do |t|
     t.libs << 'test'
-    t.test_files = Dir['measures/*/tests/*.rb'] + Dir['workflow/tests/*.rb'] - Dir['measures/HPXMLtoOpenStudio/tests/*.rb'] # HPXMLtoOpenStudio is tested upstream
+    t.test_files = Dir['rulesets/*/tests/*.rb'] + Dir['workflow/tests/*.rb']
     t.warning = false
     t.verbose = true
   end
@@ -76,9 +76,9 @@ task :update_measures do
 end
 
 def create_test_hpxmls
-  require_relative "measures/HPXMLtoOpenStudio/resources/hpxml"
-  require_relative "measures/HPXMLtoOpenStudio/resources/hotwater_appliances"
-  require_relative "measures/HPXMLtoOpenStudio/resources/lighting"
+  require_relative "hpxml-measures/HPXMLtoOpenStudio/resources/hpxml"
+  require_relative "hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances"
+  require_relative "hpxml-measures/HPXMLtoOpenStudio/resources/lighting"
 
   this_dir = File.dirname(__FILE__)
   tests_dir = File.join(this_dir, "workflow/tests")
@@ -414,7 +414,7 @@ def create_test_hpxmls
       hpxml_path = File.join(tests_dir, derivative)
 
       # Validate file against HPXML schema
-      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
+      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "hpxml-measures", "HPXMLtoOpenStudio", "resources"))
       errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), nil)
       if errors.size > 0
         fail errors.to_s
@@ -2325,8 +2325,8 @@ def create_sample_hpxmls
   puts "Copying sample files..."
   FileUtils.rm_f(Dir.glob("workflow/sample_files/*.xml"))
   FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml"))
-  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/*.xml"), "workflow/sample_files")
-  FileUtils.cp(Dir.glob("measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml"), "workflow/sample_files/invalid_files")
+  FileUtils.cp(Dir.glob("hpxml-measures/HPXMLtoOpenStudio/tests/*.xml"), "workflow/sample_files")
+  FileUtils.cp(Dir.glob("hpxml-measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml"), "workflow/sample_files/invalid_files")
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
