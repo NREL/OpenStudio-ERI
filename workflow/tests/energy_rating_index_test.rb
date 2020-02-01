@@ -768,8 +768,6 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def run_simulation(xml, test_name, request_dse_outputs = false)
-    require_relative '../../measures/HPXMLtoOpenStudio/resources/meta_measure'
-
     puts "Running #{xml}..."
 
     xml = File.absolute_path(xml)
