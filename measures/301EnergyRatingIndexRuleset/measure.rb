@@ -6,7 +6,7 @@ require 'pathname'
 require 'csv'
 require_relative "resources/301"
 require_relative "resources/301validator"
-require_relative "resources/constants"
+require_relative "../HPXMLtoOpenStudio/resources/constants"
 require_relative "../HPXMLtoOpenStudio/resources/weather"
 require_relative "../HPXMLtoOpenStudio/resources/xmlhelper"
 
