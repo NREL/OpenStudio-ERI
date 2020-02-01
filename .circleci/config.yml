@@ -10,13 +10,9 @@ jobs:
           command: |
             rm -f Gemfile.lock && bundle install
       - run:
-          name: Run ruleset tests
+          name: Run tests
           command: |
-            for file in `ls rulesets/*/tests/*.rb`; do ruby $file; done
-      - run:
-          name: Run workflow tests
-          command: |
-            for file in `ls workflow/tests/*.rb`; do ruby $file; done
+            rake test_all
       - store_artifacts:
           path: workflow/tests/test_results
           destination: results
