@@ -668,7 +668,7 @@ class EnergyRatingIndexTest < Minitest::Test
     measure_subdir = "rulesets/301EnergyRatingIndexRuleset"
     args = {}
     args['calc_type'] = design
-    args['hpxml_input_path'] = xml
+    args['hpxml_input_path'] = File.absolute_path(xml)
     args['hpxml_output_path'] = output_hpxml_path
     update_args_hash(measures, measure_subdir, args)
 
@@ -787,11 +787,11 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Add measure to workflow
     measures = {}
-    measure_subdir = "HPXMLtoOpenStudio"
+    measure_subdir = "hpxml-measures/HPXMLtoOpenStudio"
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measure
-    measures_dir = File.join(File.dirname(__FILE__), "../../measures")
+    measures_dir = File.join(File.dirname(__FILE__), "../..")
     success = apply_measures(measures_dir, measures, runner, model)
 
     # Report warnings/errors
